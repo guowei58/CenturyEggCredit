@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
+import { NextResponse } from "next/server";
 import GitHub from "next-auth/providers/github";
 
 const githubConfigured =
@@ -34,7 +35,9 @@ export default {
         if (path.startsWith("/api/")) {
           return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
-        return false;
+        const login = new URL("/login", request.nextUrl);
+        if (path !== "/") login.searchParams.set("callbackUrl", `${path}${request.nextUrl.search}`);
+        return NextResponse.redirect(login);
       }
       return true;
     },
