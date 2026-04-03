@@ -4,13 +4,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
-export function LoginForm({
-  githubReady,
-  justRegistered,
-}: {
-  githubReady: boolean;
-  justRegistered: boolean;
-}) {
+export function LoginForm({ justRegistered }: { justRegistered: boolean }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -108,30 +102,6 @@ export function LoginForm({
             Create an account
           </Link>
         </p>
-        {githubReady && (
-          <>
-            <div className="my-6 flex items-center gap-3">
-              <div className="h-px flex-1" style={{ background: "var(--border)" }} />
-              <span className="text-xs" style={{ color: "var(--muted)" }}>
-                optional
-              </span>
-              <div className="h-px flex-1" style={{ background: "var(--border)" }} />
-            </div>
-            <div className="text-center">
-              <button
-                type="button"
-                className="btn-shell rounded-md px-5 py-2.5 text-sm font-medium"
-                style={{ borderColor: "var(--border)" }}
-                onClick={() => void signIn("github", { callbackUrl: "/" })}
-              >
-                Sign in with GitHub
-              </button>
-              <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>
-                For developers who prefer GitHub.
-              </p>
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
