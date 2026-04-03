@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Dog waste bag cursor: dark green knotted roll / inverted bag -->
+  <ellipse cx="16" cy="6" rx="6" ry="3.5" fill="#0f3d24" stroke="#062818" stroke-width="0.75"/>
+  <path
+    d="M9 9.5c0-1 1.5-2 7-2s7 1 7 2v0.5l-2.2 17.2c-0.8 3.2-4.2 5.3-8.8 5.3s-8-2.1-8.8-5.3L9 10Z"
+    fill="#1a7c47"
+    stroke="#0a3d24"
+    stroke-width="1"
+  />
+  <path d="M12 14c1.8 2.8 6.2 2.8 8 0" fill="none" stroke="#0d502e" stroke-width="1" stroke-linecap="round" opacity="0.65"/>
+  <ellipse cx="16" cy="24" rx="4" ry="2" fill="#145a32" opacity="0.45"/>
+</svg>

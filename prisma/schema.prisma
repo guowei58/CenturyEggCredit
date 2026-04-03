@@ -1,0 +1,157 @@
+// https://pris.ly/d/prisma-schema
+// Auth.js tables: https://authjs.dev/getting-started/adapters/prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Auth.js (NextAuth) adapter — required for Part 4+ ---
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  /** Bcrypt hash for email+password accounts; null for OAuth-only users */
+  passwordHash  String?   @map("password_hash")
+  accounts      Account[]
+  sessions      Session[]
+  watchlistEntries UserWatchlistEntry[]
+  tickerDocuments  UserTickerDocument[]
+  savedDocuments   UserSavedDocument[]
+  workspaceFiles UserTickerWorkspaceFile[]
+  aiChatState      UserAiChatState?
+  preferences      UserPreferences?
+
+  @@map("users")
+}
+
+/** JSON blob: UI prefs, feed caches, prompt overrides, credit memo drafts, etc. */
+model UserPreferences {
+  userId    String   @id @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payload   String   @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
+
+model UserWatchlistEntry {
+  id        String @id @default(cuid())
+  userId    String @map("user_id")
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker    String
+  sortOrder Int    @default(0) @map("sort_order")
+
+  @@unique([userId, ticker])
+  @@index([userId, sortOrder])
+  @@map("user_watchlist_entries")
+}
+
+model UserTickerDocument {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker    String
+  dataKey   String   @map("data_key")
+  content   String   @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker, dataKey])
+  @@index([userId, ticker])
+  @@map("user_ticker_documents")
+}
+
+/** User-scoped Saved Documents (PDFs etc.) — Postgres blob, not local disk. */
+model UserSavedDocument {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker         String
+  filename       String
+  title          String
+  originalUrl    String   @map("original_url") @db.Text
+  contentType    String?  @map("content_type")
+  body           Bytes
+  savedAtIso     String   @map("saved_at_iso")
+  bytes          Int
+  convertedToPdf Boolean  @default(false) @map("converted_to_pdf")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, ticker, filename])
+  @@index([userId, ticker])
+  @@map("user_saved_documents")
+}
+
+/**
+ * Arbitrary per-user blobs: IR indexer DB, X posts, Excel exports, credit memo projects JSON, etc.
+ * Use `ticker = "__global__"` for account-wide files (reddit, templates, …).
+ */
+model UserTickerWorkspaceFile {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker    String
+  /** Relative path with / only, e.g. "IR Indexer/db.json" */
+  path      String   @map("path")
+  body      Bytes
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker, path])
+  @@index([userId, ticker])
+  @@map("user_ticker_workspace_files")
+}
+
+model UserAiChatState {
+  userId    String   @id @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payload   String   @db.Text
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_ai_chat_state")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}

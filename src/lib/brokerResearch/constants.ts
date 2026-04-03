@@ -1,0 +1,30 @@
+/** Stable ids — safe for client imports (no env). */
+export const PRODUCTION_BROKER_IDS = [
+  "jpmorgan",
+  "goldman",
+  "morgan_stanley",
+  "ubs",
+  "bofa",
+  "jefferies",
+  "barclays",
+  "citi",
+  "deutsche_bank",
+  "wells_fargo",
+  "evercore",
+  "bmo",
+  "rbc",
+  "btig",
+  "guggenheim",
+  "morningstar",
+  "oppenheimer",
+  "bernstein",
+  "stifel",
+  "scotiabank",
+  "td_cowen",
+  "truist",
+  "canaccord",
+  "needham",
+  "benchmark",
+] as const;
+
+export type ProductionBrokerId = (typeof PRODUCTION_BROKER_IDS)[number];

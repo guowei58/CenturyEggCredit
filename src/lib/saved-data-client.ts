@@ -1,0 +1,110 @@
+/**
+ * Client helpers for per-ticker saved files (server-backed).
+ */
+
+export type SavedDataKey =
+  | "business-model"
+  | "company-history"
+  | "customers"
+  | "suppliers"
+  | "subsidiary-list"
+  | "credit-timeline"
+  | "management-board"
+  | "out-of-the-box-ideas"
+  | "research-roadmap"
+  | "ai-credit-memo-latest"
+  | "ai-credit-memo-latest-meta"
+  | "credit-agreements-indentures"
+  | "credit-agreements-indentures-credit-agreement"
+  | "credit-agreements-indentures-first-lien-indenture"
+  | "credit-agreements-indentures-second-lien-indenture"
+  | "credit-agreements-indentures-unsecured"
+  | "credit-agreements-indentures-other"
+  | "startup-risks"
+  | "risk-from-10k"
+  | "overview"
+  | "porters-five-forces"
+  | "competitors"
+  | "capital-structure"
+  | "news-events"
+  | "earnings-releases"
+  | "presentations"
+  | "trade-recommendation"
+  | "notes-thoughts"
+  | "org-chart-prompt"
+  | "historical-financials-prompt"
+  | "ai-credit-deck"
+  | "employee-contacts"
+  | "industry-contacts"
+  | "dear-diary"
+  | "ai-credit-memo-buffett"
+  | "ai-credit-memo-buffett-meta"
+  | "ai-credit-memo-buffett-source-pack"
+  | "ai-credit-memo-munger"
+  | "ai-credit-memo-munger-meta"
+  | "ai-credit-memo-munger-source-pack"
+  | "ai-credit-memo-shakespeare"
+  | "ai-credit-memo-shakespeare-meta"
+  | "ai-credit-memo-shakespeare-source-pack"
+  | "ai-credit-memo-lynch"
+  | "ai-credit-memo-lynch-meta"
+  | "ai-credit-memo-lynch-source-pack"
+  | "ai-credit-memo-soros"
+  | "ai-credit-memo-soros-meta"
+  | "ai-credit-memo-soros-source-pack"
+  | "ai-credit-memo-ackman"
+  | "ai-credit-memo-ackman-meta"
+  | "ai-credit-memo-ackman-source-pack"
+  | "ai-credit-memo-latest"
+  | "ai-credit-memo-latest-meta"
+  | "ai-credit-memo-latest-source-pack";
+
+/** No-op compatibility POST so clients can "warm" the session before first save. */
+export async function initTickerSaveFolder(ticker: string): Promise<void> {
+  const t = ticker?.trim();
+  if (!t) return;
+  try {
+    await fetch(`/api/saved-data/${encodeURIComponent(t)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ init: true }),
+    });
+  } catch {
+    // ignore 鈥?folder will be created on first save
+  }
+}
+
+export async function fetchSavedFromServer(ticker: string, key: SavedDataKey): Promise<string | null> {
+  const t = ticker?.trim();
+  if (!t) return null;
+  try {
+    const res = await fetch(`/api/saved-data/${encodeURIComponent(t)}?key=${encodeURIComponent(key)}`);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { content?: string };
+    return typeof data.content === "string" ? data.content : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveToServer(ticker: string, key: SavedDataKey, content: string): Promise<boolean> {
+  const t = ticker?.trim();
+  if (!t) return false;
+  try {
+    const res = await fetch(`/api/saved-data/${encodeURIComponent(t)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, content }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+/** Per-tab saved text from the server only (no browser storage). */
+export async function fetchSavedTabContent(ticker: string, key: SavedDataKey): Promise<string> {
+  const t = ticker?.trim();
+  if (!t) return "";
+  return (await fetchSavedFromServer(t, key)) ?? "";
+}
