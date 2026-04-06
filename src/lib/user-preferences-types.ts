@@ -7,6 +7,15 @@ export type UserPreferencesData = {
   v: typeof USER_PREFERENCES_VERSION;
   /** Set after first-load migration bookkeeping (browser import disabled). */
   migratedFromLocalStorage?: boolean;
+  /**
+   * User-editable profile bits.
+   * Note: this is *not* the auth identity; it’s UI-level preferences.
+   */
+  profile?: {
+    /** Displayed in Egg-Hoc chat UI + header (does not change auth email/id). */
+    chatDisplayId?: string;
+    /** Reserved for future fields (timezone, org, etc.). */
+  };
   aiProvider?: AiProvider;
   aiModels?: Partial<Record<AiProvider, string>>;
   /** Tab id → custom prompt template text */

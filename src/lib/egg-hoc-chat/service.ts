@@ -5,8 +5,60 @@ import {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { makeDirectPairKey } from "@/lib/egg-hoc-chat/directPairKey";
+import { parseUserPreferencesPayload } from "@/lib/user-preferences-types";
 
-const userPublicSelect = { id: true, name: true, email: true, image: true } as const;
+const userPublicSelect = {
+  id: true,
+  name: true,
+  email: true,
+  image: true,
+  preferences: { select: { payload: true } },
+} as const;
+
+function userChatIdFromPreferencesPayload(payload: string | null | undefined): string | null {
+  try {
+    const prefs = parseUserPreferencesPayload(payload ?? null);
+    const v = prefs.profile?.chatDisplayId?.trim();
+    return v ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function defaultChatIdFromEmail(email: string | null | undefined): string | null {
+  const e = typeof email === "string" ? email.trim().toLowerCase() : "";
+  if (!e || !e.includes("@")) return null;
+  const rawLocal = (e.split("@")[0] ?? "").trim();
+  if (!rawLocal) return null;
+  let s = rawLocal
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^[^a-z0-9]+/g, "")
+    .replace(/[^a-z0-9]+$/g, "");
+  if (!s) return null;
+  if (s.length > 24) s = s.slice(0, 24).replace(/[^a-z0-9]+$/g, "");
+  if (s.length < 3) return null;
+  return s;
+}
+
+function publicUserRowToPublicUser(u: {
+  id: string;
+  name: string | null;
+  email: string | null;
+  image: string | null;
+  preferences?: { payload: string } | null;
+}): { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId: string | null } {
+  const prefId = userChatIdFromPreferencesPayload(u.preferences?.payload);
+  const fallbackId = prefId ? null : defaultChatIdFromEmail(u.email);
+  return {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    image: u.image,
+    chatDisplayId: prefId || fallbackId,
+  };
+}
 
 /** Single app-wide general channel; `Conversation.lobbyKey` matches this value. */
 export const GLOBAL_LOBBY_KEY = "global" as const;
@@ -101,7 +153,7 @@ export async function countUnreadForMember(
 function titleForConversation(
   type: ConversationType,
   name: string | null,
-  members: Array<{ userId: string; user: { id: string; name: string | null; email: string | null } }>,
+  members: Array<{ userId: string; user: { id: string; name: string | null; email: string | null; preferences?: { payload: string } | null } }>,
   viewerUserId: string,
   lobbyKey: string | null
 ): string {
@@ -110,7 +162,8 @@ function titleForConversation(
     return name?.trim() || "Group chat";
   }
   const other = members.find((m) => m.userId !== viewerUserId)?.user;
-  return other?.name?.trim() || other?.email?.trim() || "Direct message";
+  const chatId = userChatIdFromPreferencesPayload(other?.preferences?.payload);
+  return chatId || other?.name?.trim() || other?.email?.trim() || "Direct message";
 }
 
 export async function listUserConversations(userId: string) {
@@ -143,6 +196,7 @@ export async function listUserConversations(userId: string) {
           : c.lastMessage.body.slice(0, 140) + (c.lastMessage.body.length > 140 ? "…" : "")
         : "";
       const isLobby = c.lobbyKey === GLOBAL_LOBBY_KEY;
+      const senderChatId = c.lastMessage ? userChatIdFromPreferencesPayload(c.lastMessage.sender?.preferences?.payload) : null;
       return {
         id: c.id,
         type: c.type,
@@ -154,6 +208,7 @@ export async function listUserConversations(userId: string) {
         lastMessagePreview: preview,
         unreadCount: unread,
         lastMessageSenderName:
+          senderChatId ||
           c.lastMessage?.sender?.name?.trim() ||
           c.lastMessage?.sender?.email?.trim() ||
           null,
@@ -214,7 +269,7 @@ export async function getConversationDetail(conversationId: string, userId: stri
         userId: m.userId,
         role: m.role,
         joinedAt: m.joinedAt.toISOString(),
-        user: m.user,
+        user: publicUserRowToPublicUser(m.user),
       })),
     },
   };
@@ -345,7 +400,7 @@ export async function getConversationMessages(
       editedAt: m.editedAt?.toISOString() ?? null,
       deletedAt: m.deletedAt?.toISOString() ?? null,
       createdAt: m.createdAt.toISOString(),
-      sender: m.sender,
+      sender: publicUserRowToPublicUser(m.sender),
     })),
     hasMore: messages.length === take,
     nextCursor,
@@ -388,7 +443,7 @@ export async function sendMessage(conversationId: string, userId: string, body: 
       editedAt: null,
       deletedAt: null,
       createdAt: msg.createdAt.toISOString(),
-      sender: msg.sender,
+      sender: publicUserRowToPublicUser(msg.sender),
     },
   };
 }
@@ -610,15 +665,16 @@ export async function searchUsers(query: string, excludeUserId: string, take = 2
   const lim = Math.min(take, 50);
 
   if (q.length < 2) {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       where: { id: { not: excludeUserId } },
       select: userPublicSelect,
       take: lim,
       orderBy: [{ name: "asc" }, { email: "asc" }],
     });
+    return users.map(publicUserRowToPublicUser);
   }
 
-  return prisma.user.findMany({
+  const users = await prisma.user.findMany({
     where: {
       id: { not: excludeUserId },
       OR: [
@@ -630,4 +686,5 @@ export async function searchUsers(query: string, excludeUserId: string, take = 2
     take: lim,
     orderBy: { email: "asc" },
   });
+  return users.map(publicUserRowToPublicUser);
 }

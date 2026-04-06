@@ -66,6 +66,9 @@ export type SavedDataKey =
   | "cs-recommendation-latest"
   | "cs-recommendation-latest-meta"
   | "cs-recommendation-latest-source-pack"
+  | "kpi-latest"
+  | "kpi-latest-meta"
+  | "kpi-latest-source-pack"
   | "forensic-accounting-latest"
   | "forensic-accounting-latest-meta"
   | "forensic-accounting-latest-source-pack";

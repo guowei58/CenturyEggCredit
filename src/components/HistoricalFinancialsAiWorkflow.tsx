@@ -196,6 +196,8 @@ export function HistoricalFinancialsAiWorkflow({
                 Minimize
               </button>
             }
+            ticker={safeTicker}
+            linkSourceText={isEditing ? editDraft : savedContent}
           >
             {isEditing ? (
               <>

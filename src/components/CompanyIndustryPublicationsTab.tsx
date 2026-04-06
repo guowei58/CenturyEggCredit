@@ -161,7 +161,11 @@ export function CompanyIndustryPublicationsTab({
   return (
     <Card title={`Industry Publications — ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
-        <SavedResponseExpandableShell className="min-w-0 flex-1">
+        <SavedResponseExpandableShell
+          className="min-w-0 flex-1"
+          ticker={safeTicker}
+          linkSourceText={isEditing ? editDraft : savedContent}
+        >
           {isEditing ? (
             <>
               <RichPasteTextarea

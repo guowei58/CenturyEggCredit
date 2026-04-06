@@ -291,6 +291,8 @@ export function CompanyCapitalStructureTab({
                   Minimize
                 </button>
               }
+              ticker={safeTicker}
+              linkSourceText={isEditing ? editDraft : savedContent}
             >
               {isEditing ? (
                 <>

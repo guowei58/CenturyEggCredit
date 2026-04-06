@@ -27,6 +27,7 @@ type CompanyTickersJson = Record<string, CompanyTickersEntry>;
 type SubmissionsRecent = {
   accessionNumber?: string[];
   filingDate?: string[];
+  reportDate?: string[];
   form?: string[];
   primaryDocument?: string[];
   primaryDocDescription?: string[];
@@ -39,7 +40,10 @@ type SubmissionsJson = {
   sicDescription?: string;
   stateOfIncorporation?: string;
   fiscalYearEnd?: string;
-  filings?: { recent?: SubmissionsRecent };
+  filings?: {
+    recent?: SubmissionsRecent;
+    files?: Array<{ name?: string; filingCount?: number; filingFrom?: string; filingTo?: string }>;
+  };
 };
 
 export type SecCompanyProfile = {
@@ -104,6 +108,83 @@ export async function getFilingsByCik(cik: string): Promise<SecFilingsResult | n
   return { companyName, cik: padded, filings };
 }
 
+type SubmissionsChunkJson = {
+  accessionNumber?: string[];
+  filingDate?: string[];
+  reportDate?: string[];
+  form?: string[];
+  primaryDocument?: string[];
+  primaryDocDescription?: string[];
+};
+
+async function fetchSubmissionsChunk(name: string): Promise<SubmissionsChunkJson | null> {
+  const clean = (name ?? "").trim();
+  if (!clean) return null;
+  // names are like "CIK0000320193-submissions-001.json"
+  const url = `https://data.sec.gov/submissions/${encodeURIComponent(clean)}`;
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) return null;
+  try {
+    return (await res.json()) as SubmissionsChunkJson;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetch all filings available in SEC submissions for a CIK by loading `filings.recent` plus `filings.files[]` chunks.
+ * This is needed for multi-year (e.g. 20-year quarterly) history.
+ */
+export async function getAllFilingsByCik(cik: string): Promise<SecFilingsResult | null> {
+  const padded = cik.replace(/\D/g, "").padStart(10, "0");
+  const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) return null;
+  const data = (await res.json()) as SubmissionsJson;
+
+  const companyName = data.name ?? "Unknown";
+  const out: SecFiling[] = [];
+
+  const pushFromBlock = (blk: SubmissionsChunkJson | SubmissionsRecent | null | undefined) => {
+    if (!blk?.accessionNumber?.length) return;
+    const len = blk.accessionNumber.length;
+    for (let i = 0; i < len; i++) {
+      const acc = blk.accessionNumber?.[i] ?? "";
+      const accNoDashes = acc.replace(/-/g, "");
+      const doc = blk.primaryDocument?.[i] ?? "";
+      const docUrl = `https://www.sec.gov/Archives/edgar/data/${parseInt(padded, 10)}/${accNoDashes}/${doc}`;
+      out.push({
+        form: blk.form?.[i] ?? "",
+        filingDate: blk.filingDate?.[i] ?? "",
+        description: blk.primaryDocDescription?.[i] ?? "",
+        accessionNumber: acc,
+        primaryDocument: doc,
+        docUrl,
+      });
+    }
+  };
+
+  pushFromBlock(data.filings?.recent);
+
+  const files = Array.isArray(data.filings?.files) ? data.filings!.files! : [];
+  for (const f of files) {
+    const name = (f.name ?? "").trim();
+    if (!name) continue;
+    const chunk = await fetchSubmissionsChunk(name);
+    pushFromBlock(chunk);
+  }
+
+  // de-dupe by accession + primary document
+  const uniq = new Map<string, SecFiling>();
+  for (const r of out) {
+    const k = `${r.accessionNumber}::${r.primaryDocument}`;
+    if (!uniq.has(k)) uniq.set(k, r);
+  }
+
+  const filings = Array.from(uniq.values()).sort((a, b) => (b.filingDate || "").localeCompare(a.filingDate || ""));
+  return { companyName, cik: padded, filings };
+}
+
 /**
  * Resolve ticker to CIK, then fetch and return recent filings.
  */
@@ -111,6 +192,13 @@ export async function getFilingsByTicker(ticker: string): Promise<SecFilingsResu
   const cik = await getCikFromTicker(ticker);
   if (!cik) return null;
   return getFilingsByCik(cik);
+}
+
+/** Resolve ticker to CIK, then fetch long-history submissions (recent + chunks). */
+export async function getAllFilingsByTicker(ticker: string): Promise<SecFilingsResult | null> {
+  const cik = await getCikFromTicker(ticker);
+  if (!cik) return null;
+  return getAllFilingsByCik(cik);
 }
 
 /**

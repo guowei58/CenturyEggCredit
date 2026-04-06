@@ -4,12 +4,14 @@ export type CompanyTopSectionId =
   | "overview"
   | "industry-competition"
   | "financials"
+  | "roic-ai"
   | "capital-structure"
   | "documents"
   | "risk"
   | "research"
   | "work-product";
 
+/** Sections shown in the company analysis top nav. (`roic-ai` is omitted on purpose; see `companyNav["roic-ai"]`.) */
 export const companyTopSections: Array<{ id: CompanyTopSectionId; label: string }> = [
   { id: "overview", label: "Overview" },
   { id: "industry-competition", label: "Industry & Competition" },
@@ -37,7 +39,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Capital Allocation",
           "Credit Timeline",
           "Out-of-the-Box Ideas",
-          "Research Roadmap",
           "IR Page Indexer",
         ],
       },
@@ -62,12 +63,20 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "Historical Financial Statements",
-          "20 year GAAP Net Income",
+          "KPI",
+          "SEC XBRL Financials",
           "Working Capital",
           "Liquidity Analysis",
           "Recovery Analysis",
           "Comps",
         ],
+      },
+    ],
+  },
+  "roic-ai": {
+    groups: [
+      {
+        tabs: ["Annual Financial Statements", "Quarterly Financial Statements", "Earnings call transcripts"],
       },
     ],
   },
@@ -130,6 +139,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
+          "Research Roadmap",
           "Earnings Releases",
           "Mgmt Presentations & Transcripts",
           "News & Events",

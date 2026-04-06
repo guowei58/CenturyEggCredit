@@ -926,7 +926,13 @@ function SavedResponseBox({
   }
 
   return (
-    <SavedResponseExpandableShell title={title} className="rounded-lg" fillViewportMinHeight={false}>
+    <SavedResponseExpandableShell
+      title={title}
+      className="rounded-lg"
+      fillViewportMinHeight={false}
+      ticker={safeTicker}
+      linkSourceText={isEditing ? editDraft : savedContent}
+    >
       {isEditing ? (
         <>
           <RichPasteTextarea

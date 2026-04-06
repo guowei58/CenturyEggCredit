@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { playEggHocIncomingBark, unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
+import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
 
-type PublicUser = { id: string; name: string | null; email: string | null; image: string | null };
+type PublicUser = { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId?: string | null };
 
 type ConvRow = {
   id: string;
@@ -90,6 +91,8 @@ function mergeMessagesChronological(prev: MsgRow[], incoming: MsgRow[]): MsgRow[
 export function EggHocCommitteeChat() {
   const { data: session, status } = useSession();
   const userId = session?.user?.id ?? null;
+  const prefs = useUserPreferencesOptional();
+  const myChatId = prefs?.preferences.profile?.chatDisplayId?.trim() || null;
 
   const [conversations, setConversations] = useState<ConvRow[]>([]);
   const [listLoading, setListLoading] = useState(true);
@@ -121,6 +124,8 @@ export function EggHocCommitteeChat() {
   const inboxPrimedRef = useRef(false);
   const threadMsgIdsRef = useRef<Set<string>>(new Set());
   const threadActiveIdRef = useRef<string | null>(null);
+  /** Last conversation id we loaded the thread for — detect switches without clearing on callback-only effect re-runs. */
+  const prevThreadConvIdRef = useRef<string | null>(null);
   const lastUserForInboxRef = useRef<string | null>(null);
 
   const fetchList = useCallback(async () => {
@@ -239,12 +244,16 @@ export function EggHocCommitteeChat() {
       setDetail(null);
       setMessages([]);
       setHasMoreOlder(false);
+      prevThreadConvIdRef.current = null;
       return;
     }
+    const switchedConv = prevThreadConvIdRef.current !== activeId;
+    prevThreadConvIdRef.current = activeId;
     let cancelled = false;
     (async () => {
       setThreadLoading(true);
       setHasMoreOlder(false);
+      if (switchedConv) setMessages([]);
       try {
         await fetchDetail(activeId);
         if (cancelled) return;
@@ -488,7 +497,7 @@ export function EggHocCommitteeChat() {
       <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center text-sm" style={{ color: "var(--muted2)" }}>
         <p style={{ color: "var(--text)" }}>Sign in to use Egg-Hoc Committee chat.</p>
         <p>
-          The Lobby, direct messages, and groups are available to signed-in OREO users.
+          The Lobby, direct messages, and groups are available to signed-in Pari Passu Pals.
         </p>
       </div>
     );
@@ -622,7 +631,7 @@ export function EggHocCommitteeChat() {
                 </h2>
                 {isLobby ? (
                   <p className="text-[10px]" style={{ color: "var(--muted)" }}>
-                    General channel · all signed-in OREO users
+                    General channel · all signed-in Pari Passu Pals
                   </p>
                 ) : isGroup ? (
                   <p className="text-[10px]" style={{ color: "var(--muted)" }}>
@@ -680,7 +689,11 @@ export function EggHocCommitteeChat() {
                         >
                           {showSender ? (
                             <span className="px-1 text-[10px] font-medium" style={{ color: "var(--muted)" }}>
-                              {m.sender.name?.trim() || m.sender.email || "User"}
+                              {(m.senderUserId === userId && myChatId) ||
+                                m.sender.chatDisplayId?.trim() ||
+                                m.sender.name?.trim() ||
+                                m.sender.email ||
+                                "Pari Passu Pal"}
                             </span>
                           ) : null}
                           <div
@@ -830,7 +843,7 @@ export function EggHocCommitteeChat() {
               ) : null}
               <input
                 type="search"
-                placeholder="Search users by name or email…"
+                placeholder="Search Pari Passu Pals by user ID…"
                 value={pickerQuery}
                 onChange={(e) => setPickerQuery(e.target.value)}
                 className="mb-2 w-full rounded border px-2 py-1.5 text-sm"
@@ -839,10 +852,14 @@ export function EggHocCommitteeChat() {
               <ul className="space-y-1">
                 {pickerResults.map((u) => (
                   <li key={u.id}>
+                    {/*
+                      Privacy: never display email addresses here.
+                      UX: show chat user ID only.
+                    */}
                     {newGroupOpen ? (
                       <div className="flex items-center justify-between gap-2 rounded border px-2 py-1.5" style={{ borderColor: "var(--border2)" }}>
                         <span className="truncate text-xs" style={{ color: "var(--text)" }}>
-                          {u.name || u.email}
+                          {u.chatDisplayId?.trim() || "—"}
                         </span>
                         <button
                           type="button"
@@ -850,8 +867,10 @@ export function EggHocCommitteeChat() {
                           style={{ color: "var(--accent)" }}
                           onClick={() => {
                             if (u.id === userId) return;
+                            if (!u.chatDisplayId?.trim()) return;
                             setGroupSelected((s) => (s.some((x) => x.id === u.id) ? s : [...s, u]));
                           }}
+                          disabled={!u.chatDisplayId?.trim()}
                         >
                           Add
                         </button>
@@ -862,9 +881,9 @@ export function EggHocCommitteeChat() {
                         className="w-full rounded border px-2 py-1.5 text-left text-xs transition-colors hover:bg-[var(--card)]"
                         style={{ borderColor: "var(--border2)", color: "var(--text)" }}
                         onClick={() => void startDm(u)}
+                        disabled={!u.chatDisplayId?.trim()}
                       >
-                        {u.name || u.email}
-                        {u.email && u.name ? <span style={{ color: "var(--muted)" }}> · {u.email}</span> : null}
+                        {u.chatDisplayId?.trim() || "—"}
                       </button>
                     )}
                   </li>
@@ -882,7 +901,7 @@ export function EggHocCommitteeChat() {
                         className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px]"
                         style={{ borderColor: "var(--border2)" }}
                       >
-                        {u.name || u.email}
+                        {u.chatDisplayId?.trim() || "—"}
                         <button type="button" aria-label="Remove" onClick={() => setGroupSelected((s) => s.filter((x) => x.id !== u.id))}>
                           ×
                         </button>

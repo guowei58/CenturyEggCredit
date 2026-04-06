@@ -56,7 +56,14 @@ import { CompanyEmployeeContactsTab } from "@/components/CompanyEmployeeContacts
 import { CompanyIndustryContactsTab } from "@/components/CompanyIndustryContactsTab";
 import { CompanyDearDiaryTab } from "@/components/CompanyDearDiaryTab";
 import { CompanyFinancialsTab } from "@/components/CompanyFinancialsTab";
-import { CompanyTwentyYearNetIncomeTab } from "@/components/CompanyTwentyYearNetIncomeTab";
+import { CompanyKpiTab } from "@/components/CompanyKpiTab";
+import { CompanySecXbrlFinancialsTab } from "@/components/CompanySecXbrlFinancialsTab";
+import { CompanyRoicAiTab } from "@/components/CompanyRoicAiTab";
+import {
+  CompanyRoicAiV2StatementsTab,
+  ROIC_ANNUAL_FINANCIAL_STATEMENTS_TAB_ID,
+  ROIC_QUARTERLY_FINANCIAL_STATEMENTS_TAB_ID,
+} from "@/components/CompanyRoicAiV2StatementsTab";
 import { Card, DataTable, EmptyState, MetricTile, TabBar } from "@/components/ui";
 
 /** Build company bar data: full mock for LUMN, else ticker + fetched name. */
@@ -285,8 +292,22 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "historical-financial-statements" || tabId === "financials") {
     return <CompanyFinancialsTab ticker={ticker} companyName={companyName} />;
   }
-  if (tabId === "20-year-gaap-net-income") {
-    return <CompanyTwentyYearNetIncomeTab ticker={ticker} />;
+  if (tabId === "kpi") {
+    return <CompanyKpiTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "sec-xbrl-financials") {
+    return <CompanySecXbrlFinancialsTab ticker={ticker} />;
+  }
+  if (tabId === ROIC_ANNUAL_FINANCIAL_STATEMENTS_TAB_ID) {
+    return <CompanyRoicAiV2StatementsTab ticker={ticker} statementPeriod="annual" title="Annual Financial Statements" />;
+  }
+  if (tabId === ROIC_QUARTERLY_FINANCIAL_STATEMENTS_TAB_ID) {
+    return (
+      <CompanyRoicAiV2StatementsTab ticker={ticker} statementPeriod="quarterly" title="Quarterly Financial Statements" />
+    );
+  }
+  if (tabId === "earnings-call-transcripts") {
+    return <CompanyRoicAiTab ticker={ticker} variant="transcript" />;
   }
   if (tabId === "capital-structure") {
     return (

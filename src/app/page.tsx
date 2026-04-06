@@ -31,6 +31,13 @@ export default function Home() {
     if (mode === "co" && ticker) void initTickerSaveFolder(ticker);
   }, [mode, ticker]);
 
+  /** ROIC AI is hidden from the section bar; bounce stale state to Financials. */
+  useEffect(() => {
+    if (companyTopSection !== "roic-ai") return;
+    setCompanyTopSection("financials");
+    setCompanyTab(getFirstTabIdForTopSection("financials"));
+  }, [companyTopSection]);
+
   return (
     <div
       className="shell"

@@ -13,6 +13,8 @@ import {
 import { AI_CHAT_NAV_ICON_FRAME_CLASSNAME, EggHocCommitteeMark } from "./EggHocCommitteeMark";
 import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
 import { OreoSablePlay } from "./OreoSablePlay";
+import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
+import { UserSettingsModal } from "@/components/layout/UserSettingsModal";
 
 const accent = { color: "var(--accent)" } as const;
 
@@ -59,11 +61,14 @@ export function TopNav({
   aiChatOpen?: boolean;
 }) {
   const { data: session, status } = useSession();
+  const prefs = useUserPreferencesOptional();
+  const chatDisplayId = prefs?.preferences.profile?.chatDisplayId?.trim() || "";
   const [eggHocUnreadTotal, setEggHocUnreadTotal] = useState(0);
   const [aiChatNavUnread, setAiChatNavUnread] = useState(false);
   const [dogOverlay, setDogOverlay] = useState(false);
   const [browserBackReturnHint, setBrowserBackReturnHint] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const closingViaDooDooRef = useRef(false);
   const dogOverlayRef = useRef(false);
 
@@ -233,8 +238,16 @@ export function TopNav({
             style={{ color: "var(--muted)" }}
           >
             <span className="max-w-[10rem] truncate sm:max-w-[14rem]" title={session.user.email ?? undefined}>
-              {session.user.email ?? session.user.name ?? session.user.id}
+              {chatDisplayId || session.user.email || session.user.name || session.user.id}
             </span>
+            <button
+              type="button"
+              className="shrink-0 rounded border px-2 py-0.5 text-[10px] font-medium sm:text-[11px]"
+              style={{ borderColor: "var(--border)", color: "var(--text)" }}
+              onClick={() => setSettingsOpen(true)}
+            >
+              Settings
+            </button>
             <button
               type="button"
               className="shrink-0 rounded border px-2 py-0.5 text-[10px] font-medium sm:text-[11px]"
@@ -354,6 +367,7 @@ export function TopNav({
           </div>,
           document.body
         )}
+      <UserSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </header>
   );
 }

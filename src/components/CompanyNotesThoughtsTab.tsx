@@ -76,7 +76,12 @@ export function CompanyNotesThoughtsTab({ ticker }: { ticker: string }) {
 
   return (
     <Card title={`Notes & Thoughts — ${safeTicker}`}>
-      <SavedResponseExpandableShell title="Saved notes" className="min-w-0 flex-1">
+      <SavedResponseExpandableShell
+        title="Saved notes"
+        className="min-w-0 flex-1"
+        ticker={safeTicker}
+        linkSourceText={isEditing ? editDraft : savedContent}
+      >
         {isEditing ? (
           <>
             <RichPasteTextarea

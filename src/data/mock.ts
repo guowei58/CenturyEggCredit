@@ -27,6 +27,8 @@ export const companyAnalysisTabs = [
   "IR Page Indexer",
   "Business Model",
   "Historical Financial Statements",
+  "KPI",
+  "SEC XBRL Financials",
   "Working Capital",
   "Org Chart",
   "Capital Structure",

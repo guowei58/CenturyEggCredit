@@ -246,6 +246,8 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
                   Minimize
                 </button>
               }
+              ticker={safeTicker}
+              linkSourceText={isEditing ? editDraft : savedContent}
             >
               {isEditing ? (
                 <>

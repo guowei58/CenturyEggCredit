@@ -6,7 +6,7 @@ import { EggHocCommitteeMark } from "./EggHocCommitteeMark";
 import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 
 /**
- * Peer-to-peer chat with other OREO users ("Pari Passu Pals").
+ * Peer-to-peer chat with other Pari Passu Pals.
  * Server-backed DMs and groups; list polling + thread refresh (real-time optional later).
  */
 
@@ -43,8 +43,7 @@ export function EggHocCommitteeDrawer({
               Egg-Hoc Committee Chat
             </div>
             <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
-              Message <span className="font-semibold" style={{ color: "var(--accent)" }}>Pari Passu Pals</span> — other OREO users
-              (not the AI chat).
+              Message with <span className="font-semibold" style={{ color: "var(--accent)" }}>Pari Passu Pals</span>
             </div>
           </div>
           <button
