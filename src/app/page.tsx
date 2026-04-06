@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { pmDashboardTabIds } from "@/lib/tabs";
 import { initTickerSaveFolder } from "@/lib/saved-data-client";
 import { TopNav, LeftSidebar, ChatDrawer, EggHocCommitteeDrawer } from "@/components/layout";
+import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 import { CompanyAnalysis } from "@/components/CompanyAnalysis";
 import { PMDashboard } from "@/components/PMDashboard";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
@@ -44,11 +45,13 @@ export default function Home() {
       <TopNav
         mode={mode}
         onModeChange={setMode}
+        aiChatOpen={aiChatOpen}
         onOpenAiChat={() => {
           setEggHocOpen(false);
           setAiChatOpen(true);
         }}
         onOpenEggHocCommittee={() => {
+          unlockEggHocNotificationAudio();
           setAiChatOpen(false);
           setEggHocOpen(true);
         }}
@@ -89,7 +92,6 @@ export default function Home() {
           setEggHocOpen(true);
         }}
         onClose={() => setEggHocOpen(false)}
-        ticker={ticker}
       />
     </div>
   );

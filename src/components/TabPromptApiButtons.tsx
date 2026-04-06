@@ -4,6 +4,10 @@ import { useCallback, useState } from "react";
 import type { AiProvider } from "@/lib/ai-provider";
 import { AI_PROVIDER_CHIP_SELECTED } from "@/lib/ai-provider";
 import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
+import {
+  META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE,
+  showMetaOllamaPlaceholder,
+} from "@/lib/meta-ollama-ui-placeholder";
 
 const API_PROVIDERS: AiProvider[] = ["claude", "openai", "gemini", "ollama"];
 
@@ -37,6 +41,10 @@ export function TabPromptApiButtons({
     async (provider: AiProvider) => {
       const trimmed = userPrompt.trim();
       if (!trimmed || pending) return;
+      if (provider === "ollama" && META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
+        showMetaOllamaPlaceholder();
+        return;
+      }
       setError(null);
       setPending(provider);
       try {

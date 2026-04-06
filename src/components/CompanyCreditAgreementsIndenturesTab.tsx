@@ -827,6 +827,8 @@ type SavedBoxKey =
   | "credit-agreements-indentures-first-lien-indenture"
   | "credit-agreements-indentures-second-lien-indenture"
   | "credit-agreements-indentures-unsecured"
+  | "credit-agreements-indentures-convertible"
+  | "credit-agreements-indentures-preferred"
   | "credit-agreements-indentures-other";
 
 const BOXES: Array<{ title: string; key: SavedBoxKey; storagePrefix: string; fallback?: { key: "credit-agreements-indentures"; storagePrefix: string } }> = [
@@ -855,6 +857,16 @@ const BOXES: Array<{ title: string; key: SavedBoxKey; storagePrefix: string; fal
     title: "Unsecured",
     key: "credit-agreements-indentures-unsecured",
     storagePrefix: "century-egg-credit-agreements-indentures-unsecured-",
+  },
+  {
+    title: "Convertible",
+    key: "credit-agreements-indentures-convertible",
+    storagePrefix: "century-egg-credit-agreements-indentures-convertible-",
+  },
+  {
+    title: "Preferred",
+    key: "credit-agreements-indentures-preferred",
+    storagePrefix: "century-egg-credit-agreements-indentures-preferred-",
   },
 ];
 

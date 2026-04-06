@@ -114,6 +114,178 @@ export async function getFilingsByTicker(ticker: string): Promise<SecFilingsResu
 }
 
 /**
+ * Accession numbers are FILER_CIK-yr-######. The issuer’s submissions feed includes filings
+ * filed under other CIKs (e.g. Form 4 by insiders, 13G by institutions), matching SEC “Entity” facets.
+ */
+export function parseFilerCikFromAccession(accessionNumber: string): string | null {
+  const raw = (accessionNumber || "").trim();
+  if (!raw) return null;
+  const dash = raw.indexOf("-");
+  if (dash < 1) return null;
+  const head = raw.slice(0, dash).replace(/\D/g, "");
+  if (!head || head.length > 10) return null;
+  const padded = head.padStart(10, "0");
+  if (padded === "0000000000") return null;
+  return padded;
+}
+
+/** Display name + tickers from submissions JSON (minimal parse). */
+export async function getCompanyMetadataByCik(cik: string): Promise<{ name: string; tickers: string[] } | null> {
+  const padded = cik.replace(/\D/g, "").padStart(10, "0");
+  const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) return null;
+  const data = (await res.json()) as { name?: string; tickers?: string[] };
+  const name = (data.name ?? "").trim();
+  const tickers = Array.isArray(data.tickers)
+    ? data.tickers.map((t) => String(t).trim().toUpperCase()).filter(Boolean)
+    : [];
+  return { name: name || `CIK ${padded}`, tickers };
+}
+
+export type SecCompanySearchHit = {
+  cik: string;
+  ticker: string;
+  title: string;
+};
+
+/**
+ * Strip punctuation so "GROUP INC" matches SEC title "GROUP, INC." and similar.
+ */
+export function normalizeCompanyNameForSearch(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** True if every significant token from the query appears in the title (order-free). */
+function titleMatchesAllTokens(normTitle: string, normQuery: string): boolean {
+  const tokens = normQuery
+    .split(" ")
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 2);
+  if (tokens.length === 0) return normQuery.length >= 2 && normTitle.includes(normQuery);
+  return tokens.every((t) => normTitle.includes(t));
+}
+
+function rankNormalizedMatch(normTitle: string, normQuery: string): number {
+  if (normTitle === normQuery) return 100;
+  if (normTitle.startsWith(normQuery)) return 85;
+  if (normTitle.includes(normQuery)) {
+    const idx = normTitle.indexOf(normQuery);
+    return 70 - Math.min(25, idx);
+  }
+  const tokenScore = titleMatchesAllTokens(normTitle, normQuery) ? 55 : 0;
+  return tokenScore;
+}
+
+function titleMatchesQuery(title: string, rawQuery: string): { ok: boolean; normTitle: string; normQuery: string } {
+  const normTitle = normalizeCompanyNameForSearch(title);
+  const normQuery = normalizeCompanyNameForSearch(rawQuery);
+  if (normQuery.length < 2) return { ok: false, normTitle, normQuery };
+  if (normTitle.includes(normQuery)) return { ok: true, normTitle, normQuery };
+  if (titleMatchesAllTokens(normTitle, normQuery)) return { ok: true, normTitle, normQuery };
+  return { ok: false, normTitle, normQuery };
+}
+
+export type TickerJsonEntry = { cik_str: number; ticker: string; title: string };
+
+let companyTickersCache: { entries: TickerJsonEntry[]; fetchedAt: number } | null = null;
+const COMPANY_TICKERS_CACHE_TTL_MS = 4 * 60 * 60 * 1000;
+
+/**
+ * SEC company_tickers.json (~10k issuers), cached in memory to avoid one fetch per name search.
+ */
+export async function getCompanyTickersEntriesCached(): Promise<TickerJsonEntry[] | null> {
+  const now = Date.now();
+  if (companyTickersCache && now - companyTickersCache.fetchedAt < COMPANY_TICKERS_CACHE_TTL_MS) {
+    return companyTickersCache.entries;
+  }
+  try {
+    const url = "https://www.sec.gov/files/company_tickers.json";
+    const res = await fetch(url, {
+      headers: { "User-Agent": USER_AGENT },
+      cache: "no-store",
+      next: { revalidate: 0 },
+    });
+    if (!res.ok) return null;
+    const raw = (await res.json()) as CompanyTickersJson | TickerJsonEntry[];
+    const entries = listCompanyTickersEntries(raw);
+    companyTickersCache = { entries, fetchedAt: now };
+    return entries;
+  } catch {
+    return null;
+  }
+}
+
+function listCompanyTickersEntries(data: CompanyTickersJson | TickerJsonEntry[]): TickerJsonEntry[] {
+  if (Array.isArray(data)) {
+    return data.filter(
+      (entry): entry is TickerJsonEntry =>
+        Boolean(entry && typeof entry === "object" && "cik_str" in entry)
+    );
+  }
+  const out: TickerJsonEntry[] = [];
+  for (const key of Object.keys(data)) {
+    const entry = data[key];
+    if (entry && typeof entry === "object" && "cik_str" in entry) out.push(entry as TickerJsonEntry);
+  }
+  return out;
+}
+
+/**
+ * Rank SEC company_tickers entries by name match (same rules as searchSecCompaniesByName).
+ */
+export function matchSecCompaniesByNameScored(
+  query: string,
+  entries: TickerJsonEntry[],
+  limit: number
+): { hit: SecCompanySearchHit; score: number }[] {
+  const trimmed = query.trim();
+  if (trimmed.length < 2 || !entries.length) return [];
+  const scored: { hit: SecCompanySearchHit; score: number }[] = [];
+  for (const entry of entries) {
+    const title = (entry.title ?? "").trim();
+    if (!title) continue;
+    const { ok, normTitle, normQuery } = titleMatchesQuery(title, trimmed);
+    if (!ok) continue;
+    const ticker = (entry.ticker ?? "").trim().toUpperCase();
+    const hit: SecCompanySearchHit = {
+      cik: String(entry.cik_str).padStart(10, "0"),
+      ticker: ticker || "—",
+      title,
+    };
+    scored.push({ hit, score: rankNormalizedMatch(normTitle, normQuery) });
+  }
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.hit.title.length - b.hit.title.length;
+  });
+  return scored.slice(0, Math.min(limit, 80));
+}
+
+/**
+ * Search SEC’s company_tickers.json by issuer name.
+ * Uses punctuation-insensitive matching so typed names align with SEC titles (e.g. "Inc" vs "INC.").
+ */
+export async function searchSecCompaniesByName(query: string, limit = 50): Promise<SecCompanySearchHit[]> {
+  const entries = await getCompanyTickersEntriesCached();
+  if (!entries?.length) return [];
+  return matchSecCompaniesByNameScored(query, entries, limit).map((s) => s.hit);
+}
+
+/** Normalize user CIK input to 10-digit string or null. */
+export function normalizeCikInput(raw: string): string | null {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length < 1 || digits.length > 10) return null;
+  return digits.padStart(10, "0");
+}
+
+/**
  * Fetch company profile from SEC submissions (name, industry, state, FY end, filings count).
  * No business description or financials — those would require 10-K parsing or other sources.
  */

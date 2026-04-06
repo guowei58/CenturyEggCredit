@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: [
+      "src/lib/egg-hoc-chat/**/*.test.ts",
       "src/lib/ratings-link-search/**/*.test.ts",
       "src/lib/news/**/*.test.ts",
       "src/lib/brokerResearch/**/*.test.ts",

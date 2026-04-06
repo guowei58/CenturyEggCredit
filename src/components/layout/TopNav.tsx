@@ -3,6 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { signOut, useSession } from "next-auth/react";
+import {
+  aiChatShowsUnreadNavDot,
+  fetchAiChatStateFromServer,
+  getAiChatLastSeenIso,
+  OREO_AI_CHAT_WAITING_REPLY_KEY,
+} from "@/lib/ai-chat-sessions";
 
 import { AI_CHAT_NAV_ICON_FRAME_CLASSNAME, EggHocCommitteeMark } from "./EggHocCommitteeMark";
 import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
@@ -36,18 +42,25 @@ function OrganizedResearchTagline({ className }: { className?: string }) {
 
 type Mode = "co" | "pm";
 
+const NAV_BADGE_POLL_MS = 10_000;
+
 export function TopNav({
   mode,
   onModeChange,
   onOpenAiChat,
   onOpenEggHocCommittee,
+  aiChatOpen = false,
 }: {
   mode: Mode;
   onModeChange: (m: Mode) => void;
   onOpenAiChat: () => void;
   onOpenEggHocCommittee: () => void;
+  /** When true, hide AI Chat unread dot (user is already in that drawer). */
+  aiChatOpen?: boolean;
 }) {
   const { data: session, status } = useSession();
+  const [eggHocUnreadTotal, setEggHocUnreadTotal] = useState(0);
+  const [aiChatNavUnread, setAiChatNavUnread] = useState(false);
   const [dogOverlay, setDogOverlay] = useState(false);
   const [browserBackReturnHint, setBrowserBackReturnHint] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -61,6 +74,57 @@ export function TopNav({
   useEffect(() => {
     setPortalReady(true);
   }, []);
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      setEggHocUnreadTotal(0);
+      setAiChatNavUnread(false);
+      return;
+    }
+
+    const refreshBadges = async () => {
+      try {
+        const res = await fetch("/api/egg-hoc/conversations");
+        const data = (await res.json()) as { conversations?: Array<{ unreadCount?: number }> };
+        if (res.ok && Array.isArray(data.conversations)) {
+          const sum = data.conversations.reduce((acc, c) => acc + (typeof c.unreadCount === "number" ? c.unreadCount : 0), 0);
+          setEggHocUnreadTotal(sum);
+        }
+      } catch {
+        /* ignore */
+      }
+
+      if (aiChatOpen) {
+        setAiChatNavUnread(false);
+        return;
+      }
+
+      let aiUnread = false;
+      try {
+        if (typeof sessionStorage !== "undefined" && sessionStorage.getItem(OREO_AI_CHAT_WAITING_REPLY_KEY) === "1") {
+          aiUnread = true;
+        }
+      } catch {
+        /* ignore */
+      }
+      if (!aiUnread) {
+        const st = await fetchAiChatStateFromServer();
+        if (st) {
+          aiUnread = aiChatShowsUnreadNavDot(st.sessions, getAiChatLastSeenIso());
+        }
+      }
+      setAiChatNavUnread(aiUnread);
+    };
+
+    void refreshBadges();
+    const id = window.setInterval(() => void refreshBadges(), NAV_BADGE_POLL_MS);
+    const onFocus = () => void refreshBadges();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [status, aiChatOpen]);
 
   useEffect(() => {
     const onPopState = () => {
@@ -184,9 +248,16 @@ export function TopNav({
         <div className="grid w-full min-w-0 max-w-[min(100%,22rem)] grid-cols-2 gap-1.5 sm:max-w-[24rem] sm:gap-2">
           <button
             type="button"
-            className="btn-shell hi flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
+            className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
             onClick={onOpenAiChat}
+            aria-label={aiChatNavUnread ? "AI Chat (unread activity)" : "AI Chat"}
           >
+            {aiChatNavUnread ? (
+              <span
+                className="absolute right-1 top-1 size-2 rounded-full bg-red-500 ring-2 ring-[var(--sb)]"
+                aria-hidden
+              />
+            ) : null}
             <span className={AI_CHAT_NAV_ICON_FRAME_CLASSNAME} aria-hidden="true">
               <span className="select-none text-[1.2rem] leading-none sm:text-[1.35rem]">🤖</span>
             </span>
@@ -194,9 +265,20 @@ export function TopNav({
           </button>
           <button
             type="button"
-            className="btn-shell hi flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
+            className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
             onClick={onOpenEggHocCommittee}
+            aria-label={
+              eggHocUnreadTotal > 0 ? `Egg-Hoc Committee Chat (${eggHocUnreadTotal} unread)` : "Egg-Hoc Committee Chat"
+            }
           >
+            {eggHocUnreadTotal > 0 ? (
+              <span
+                className="absolute -right-0.5 -top-0.5 flex min-h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-[var(--sb)]"
+                aria-hidden
+              >
+                {eggHocUnreadTotal > 99 ? "99+" : eggHocUnreadTotal}
+              </span>
+            ) : null}
             <EggHocCommitteeMark preset="nav" />
             <span className="min-w-0 max-sm:truncate text-center leading-tight sm:whitespace-normal">
               Egg-Hoc Committee Chat

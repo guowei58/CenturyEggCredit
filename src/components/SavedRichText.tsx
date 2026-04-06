@@ -1,10 +1,11 @@
 "use client";
 
-import type { AnchorHTMLAttributes, ImgHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, ImgHTMLAttributes, TableHTMLAttributes } from "react";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkLinkify from "remark-linkify";
+import remarkBreaks from "remark-breaks";
 import DOMPurify from "dompurify";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { saveRemoteUrlForTicker } from "@/lib/save-remote-url-client";
@@ -149,6 +150,14 @@ export function SavedRichText({
           />
         );
       },
+      table(props: TableHTMLAttributes<HTMLTableElement> & { node?: unknown }) {
+        const { node: _node, children, ...rest } = props;
+        return (
+          <div className="saved-rich-text-table-scroll">
+            <table {...rest}>{children}</table>
+          </div>
+        );
+      },
     }),
     [showSave, safeTicker]
   );
@@ -171,7 +180,7 @@ export function SavedRichText({
 
   return (
     <div className="saved-rich-text">
-      <ReactMarkdown remarkPlugins={[remarkGfm, remarkLinkify]} components={components}>
+      <ReactMarkdown remarkPlugins={[remarkGfm, remarkLinkify, remarkBreaks]} components={components}>
         {content}
       </ReactMarkdown>
     </div>

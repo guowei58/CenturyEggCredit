@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { INDUSTRY_CONTACTS_PROMPT_TEMPLATE } from "@/data/industry-contacts-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
@@ -13,6 +13,15 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
+import { stripLlmCitationArtifacts } from "@/lib/strip-llm-citation-artifacts";
+import {
+  industryContactPositionLine,
+  parseIndustryContactsTable,
+  type ParsedIndustryContactRow,
+} from "@/lib/parse-industry-contacts-table";
+import { buildOutreachLetter, openLinkedInOutreachDraftWindow } from "@/lib/linkedin-outreach";
+import { usePersistedLinkedInOutreach } from "@/hooks/usePersistedLinkedInOutreach";
+import { LinkedInOutreachSection } from "@/components/LinkedInOutreachSection";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -49,6 +58,7 @@ export function CompanyIndustryContactsTab({
   const [savedContent, setSavedContent] = useState("");
   const [editDraft, setEditDraft] = useState("");
   const [isEditing, setIsEditing] = useState(true);
+  const { outreachSig, setOutreachSig } = usePersistedLinkedInOutreach();
 
   const safeTicker = ticker?.trim() ?? "";
   const displayName = (companyName?.trim() || safeTicker) || "";
@@ -74,7 +84,7 @@ export function CompanyIndustryContactsTab({
     (async () => {
       const loaded = await fetchSavedTabContent(safeTicker, "industry-contacts");
       if (!cancelled) {
-        setSavedContent(loaded);
+        setSavedContent(stripLlmCitationArtifacts(loaded));
         setIsEditing(loaded.length === 0);
         setEditDraft("");
       }
@@ -85,7 +95,7 @@ export function CompanyIndustryContactsTab({
   }, [safeTicker]);
 
   async function handleSaveResponse() {
-    const trimmed = editDraft.trim();
+    const trimmed = stripLlmCitationArtifacts(editDraft.trim());
     if (!safeTicker) return;
     await saveToServer(safeTicker, "industry-contacts", trimmed);
     setSavedContent(trimmed);
@@ -166,6 +176,30 @@ export function CompanyIndustryContactsTab({
     openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
+  const savedTableContacts = useMemo(() => {
+    return parseIndustryContactsTable(stripLlmCitationArtifacts(savedContent));
+  }, [savedContent]);
+
+  function handleMessageInLinkedIn(contact: ParsedIndustryContactRow) {
+    const marketDefault = `${displayName} and related industry / market dynamics`;
+    const letter = buildOutreachLetter({
+      letterTemplate: outreachSig.letterTemplate,
+      contactName: contact.name,
+      company: displayName,
+      position: industryContactPositionLine(contact),
+      marketLine: outreachSig.marketLine.trim() || marketDefault,
+      yourName: outreachSig.yourName,
+      yourTitle: outreachSig.yourTitle,
+      yourEmail: outreachSig.yourEmail,
+      yourPhone: outreachSig.yourPhone,
+    });
+    setStatusMessage(null);
+    const ok = openLinkedInOutreachDraftWindow(contact.linkedinUrl, letter, contact.name);
+    if (!ok) {
+      setStatusMessage("Popup blocked — allow popups for this site to open the message draft window.");
+    }
+  }
+
   if (!safeTicker) {
     return (
       <Card title="Industry Contacts">
@@ -208,7 +242,59 @@ export function CompanyIndustryContactsTab({
                 style={{ color: "var(--text)" }}
               >
                 {savedContent ? (
-                  <SavedRichText content={savedContent} ticker={safeTicker} />
+                  savedTableContacts.length > 0 ? (
+                    <div className="saved-rich-text-table-scroll saved-html-content">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Why Relevant</th>
+                            <th>Relationship</th>
+                            <th>LinkedIn</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {savedTableContacts.map((c, idx) => (
+                              <tr key={`${idx}-${c.name}-${c.linkedinUrl ?? ""}`}>
+                                <td>{c.name}</td>
+                                <td>{c.whyRelevant}</td>
+                                <td>{c.relationship}</td>
+                                <td>
+                                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                                    {c.linkedinUrl ? (
+                                      <a
+                                        href={c.linkedinUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="underline break-all"
+                                      >
+                                        LinkedIn
+                                      </a>
+                                    ) : (
+                                      <span style={{ color: "var(--muted2)" }}>—</span>
+                                    )}
+                                    <button
+                                      type="button"
+                                      onClick={() => handleMessageInLinkedIn(c)}
+                                      className="shrink-0 rounded border px-2 py-1 text-[11px] font-semibold sm:text-xs"
+                                      style={{
+                                        borderColor: "#0a66c2",
+                                        color: "#60a5fa",
+                                        background: "rgba(10, 102, 194, 0.08)",
+                                      }}
+                                    >
+                                      Message in Linkedin
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <SavedRichText content={savedContent} ticker={safeTicker} />
+                  )
                 ) : (
                   <span style={{ color: "var(--muted)" }}>No saved response yet.</span>
                 )}
@@ -291,7 +377,7 @@ export function CompanyIndustryContactsTab({
           <TabPromptApiButtons
             userPrompt={prompt}
             onResult={(text) => {
-              setEditDraft(text);
+              setEditDraft(stripLlmCitationArtifacts(text));
               setIsEditing(true);
               setStatusMessage("Response from API — review and click Save to store.");
               setClipboardFailed(false);
@@ -310,6 +396,14 @@ export function CompanyIndustryContactsTab({
           )}
         </div>
       </div>
+
+      <LinkedInOutreachSection
+        headingId="industry-contacts-outreach-heading"
+        displayName={displayName}
+        outreachSig={outreachSig}
+        setOutreachSig={setOutreachSig}
+        tabContext="industry"
+      />
     </Card>
   );
 }

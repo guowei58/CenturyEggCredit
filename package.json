@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});\"",
     "dev": "next dev",
     "dev:clean": "npm run clean && next dev",
@@ -32,12 +33,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0",
+    "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "remark-linkify": "^1.1.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "@prisma/client": "^7.6.0",
+    "prisma": "^7.6.0"
   },
   "devDependencies": {
-    "@prisma/client": "^7.6.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/pdfkit": "^0.17.5",
@@ -49,7 +52,6 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.18",
     "postcss": "^8",
-    "prisma": "^7.6.0",
     "tailwindcss": "^3.4.14",
     "typescript": "^5",
     "vitest": "^4.1.2"

@@ -3,11 +3,13 @@
 import type { NormalizedNewsArticle } from "@/lib/news/types";
 
 export function NewsCard({ article }: { article: NormalizedNewsArticle }) {
-  let host = "";
-  try {
-    host = new URL(article.url).hostname;
-  } catch {
-    host = article.url;
+  let host = article.sourceDomain?.trim() || "";
+  if (!host) {
+    try {
+      host = new URL(article.url).hostname;
+    } catch {
+      host = article.url;
+    }
   }
 
   const when = article.publishedAt
@@ -56,6 +58,11 @@ export function NewsCard({ article }: { article: NormalizedNewsArticle }) {
         {article.summary ? (
           <p className="mt-2 text-[13px] leading-relaxed" style={{ color: "var(--muted2)" }}>
             {article.summary}
+          </p>
+        ) : null}
+        {article.providers.includes("newsapi") && article.matchedQuery ? (
+          <p className="mt-1 font-mono text-[10px] leading-snug" style={{ color: "var(--muted)" }} title="NewsAPI everything q=">
+            q: {article.matchedQuery}
           </p>
         ) : null}
         {article.tickers.length > 0 && (

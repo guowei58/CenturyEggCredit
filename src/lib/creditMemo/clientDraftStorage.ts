@@ -45,3 +45,32 @@ export function parseCreditMemoDraftJson(raw: string, ticker: string): CreditMem
 export function serializeCreditMemoDraft(draft: CreditMemoClientDraft): string {
   return JSON.stringify(draft);
 }
+
+/**
+ * Merge a freshly ingested project into server-backed credit memo draft prefs without
+ * clobbering memo fields. When the project id changes (re-ingest), memo job/outline/markdown
+ * are cleared to match CompanyAiCreditMemoTab behavior.
+ */
+export function mergeCreditMemoDraftAfterIngest(
+  raw: string | undefined,
+  ticker: string,
+  nextProject: CreditMemoProject,
+  prevProjectId: string | undefined
+): string {
+  const tk = ticker.trim().toUpperCase();
+  if (nextProject.ticker.trim().toUpperCase() !== tk) {
+    throw new Error("mergeCreditMemoDraftAfterIngest: ticker mismatch");
+  }
+  const prev = raw ? parseCreditMemoDraftJson(raw, tk) : null;
+  const projectChanged = Boolean(prevProjectId && prevProjectId !== nextProject.id);
+  return serializeCreditMemoDraft({
+    project: nextProject,
+    jobId: projectChanged ? null : (prev?.jobId ?? null),
+    outline: projectChanged ? null : (prev?.outline ?? null),
+    markdown: projectChanged ? null : (prev?.markdown ?? null),
+    memoTitle: prev?.memoTitle ?? "",
+    targetWords: prev?.targetWords ?? 10_000,
+    useTemplate: prev?.useTemplate !== false,
+    panel: prev?.panel ?? "folder",
+  });
+}

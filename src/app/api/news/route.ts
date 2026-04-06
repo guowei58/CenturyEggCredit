@@ -9,6 +9,7 @@ export const maxDuration = 60;
 type Body = {
   ticker?: string;
   companyName?: string;
+  aliases?: unknown;
   from?: string;
   to?: string;
   limit?: number;
@@ -34,9 +35,15 @@ export async function POST(req: Request) {
     ? body.enabledProviders.filter((x): x is string => typeof x === "string").map((s) => s.trim())
     : undefined;
 
+  const aliases =
+    Array.isArray(body.aliases) && body.aliases.length > 0
+      ? body.aliases.filter((x): x is string => typeof x === "string").map((s) => s.trim()).filter(Boolean)
+      : undefined;
+
   const params: NewsQueryParams = {
     ticker,
     companyName: typeof body.companyName === "string" ? body.companyName.trim() : undefined,
+    aliases,
     from: typeof body.from === "string" ? body.from : undefined,
     to: typeof body.to === "string" ? body.to : undefined,
     limit: typeof body.limit === "number" && Number.isFinite(body.limit) ? body.limit : undefined,

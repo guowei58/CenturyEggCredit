@@ -5,6 +5,7 @@
 export type SavedDataKey =
   | "business-model"
   | "company-history"
+  | "capital-allocation"
   | "customers"
   | "suppliers"
   | "subsidiary-list"
@@ -19,6 +20,8 @@ export type SavedDataKey =
   | "credit-agreements-indentures-first-lien-indenture"
   | "credit-agreements-indentures-second-lien-indenture"
   | "credit-agreements-indentures-unsecured"
+  | "credit-agreements-indentures-convertible"
+  | "credit-agreements-indentures-preferred"
   | "credit-agreements-indentures-other"
   | "startup-risks"
   | "risk-from-10k"
@@ -27,6 +30,8 @@ export type SavedDataKey =
   | "competitors"
   | "capital-structure"
   | "news-events"
+  | "industry-publications"
+  | "industry-value-chain"
   | "earnings-releases"
   | "presentations"
   | "trade-recommendation"
@@ -57,7 +62,13 @@ export type SavedDataKey =
   | "ai-credit-memo-ackman-source-pack"
   | "ai-credit-memo-latest"
   | "ai-credit-memo-latest-meta"
-  | "ai-credit-memo-latest-source-pack";
+  | "ai-credit-memo-latest-source-pack"
+  | "cs-recommendation-latest"
+  | "cs-recommendation-latest-meta"
+  | "cs-recommendation-latest-source-pack"
+  | "forensic-accounting-latest"
+  | "forensic-accounting-latest-meta"
+  | "forensic-accounting-latest-source-pack";
 
 /** No-op compatibility POST so clients can "warm" the session before first save. */
 export async function initTickerSaveFolder(ticker: string): Promise<void> {

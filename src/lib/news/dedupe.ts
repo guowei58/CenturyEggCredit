@@ -93,6 +93,8 @@ function mergeTwo(a: NormalizedNewsArticle, b: NormalizedNewsArticle): Normalize
   const rawCategories = Array.from(
     new Set([...(a.rawCategories ?? []), ...(b.rawCategories ?? [])].filter(Boolean))
   );
+  const sourceDomain = (a.sourceDomain || b.sourceDomain)?.trim() || undefined;
+  const matchedQuery = a.matchedQuery?.trim() || b.matchedQuery?.trim() || undefined;
   const prio = Math.min(a._bestProviderPriority ?? 999, b._bestProviderPriority ?? 999);
 
   return {
@@ -101,6 +103,7 @@ function mergeTwo(a: NormalizedNewsArticle, b: NormalizedNewsArticle): Normalize
     url,
     normalizedUrl: normalizeUrlForMatch(url) ?? undefined,
     sourceName,
+    sourceDomain,
     publishedAt,
     summary,
     imageUrl,
@@ -112,6 +115,7 @@ function mergeTwo(a: NormalizedNewsArticle, b: NormalizedNewsArticle): Normalize
     providerIds,
     rawCategories: rawCategories.length ? rawCategories : undefined,
     language,
+    matchedQuery,
     _bestProviderPriority: prio,
   };
 }

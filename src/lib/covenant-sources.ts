@@ -24,6 +24,8 @@ export const CREDIT_AGREEMENTS_SAVED_KEYS: ReadonlyArray<{ key: string; label: s
   { key: "credit-agreements-indentures-first-lien-indenture", label: "Credit Agreements — 1st lien indenture" },
   { key: "credit-agreements-indentures-second-lien-indenture", label: "Credit Agreements — 2nd lien indenture" },
   { key: "credit-agreements-indentures-unsecured", label: "Credit Agreements — Unsecured" },
+  { key: "credit-agreements-indentures-convertible", label: "Credit Agreements — Convertible" },
+  { key: "credit-agreements-indentures-preferred", label: "Credit Agreements — Preferred" },
   { key: "credit-agreements-indentures", label: "Credit Agreements — Legacy save (pre-split)" },
 ];
 

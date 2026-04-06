@@ -11,6 +11,7 @@ Provider-based pipeline that pulls normalized articles from multiple news APIs, 
 - **`aggregator.ts`** — Resolves active providers, runs fetches with `Promise.allSettled`, dedupes, ranks, caps the list.
 - **`dedupe.ts` / `rank.ts` / `normalize.ts` / `utils.ts`** — Cross-provider dedupe, scoring, URL/title normalization.
 - **`constants.ts`** — `PRODUCTION_NEWS_PROVIDER_IDS` (safe for client components; no env reads).
+- **`newsApiDomains.ts`** — Allowlisted domains for NewsAPI `everything` (`domains=`); edit the array to change publishers.
 
 ## Registering a new provider
 
@@ -24,7 +25,7 @@ Registrations that are **not** present in the env config map receive a default `
 
 ## Enabling and disabling providers
 
-- **Global:** `NEWS_PROVIDER_MARKETAUX_ENABLED`, `NEWS_PROVIDER_ALPHA_VANTAGE_ENABLED`, `NEWS_PROVIDER_FINNHUB_ENABLED` (`true` / `false`).
+- **Global:** `NEWS_PROVIDER_MARKETAUX_ENABLED`, `NEWS_PROVIDER_ALPHA_VANTAGE_ENABLED`, `NEWS_PROVIDER_FINNHUB_ENABLED`, `NEWS_PROVIDER_NEWSAPI_ENABLED` (`true` / `false`).
 - **Priority / limits:** `NEWS_PROVIDER_<NAME>_PRIORITY`, `_TIMEOUT_MS`, `_MAX_RESULTS`.
 - **Request:** JSON body may include `enabledProviders: ["marketaux","finnhub"]`. Globally disabled providers never run.
 
@@ -35,6 +36,7 @@ Registrations that are **not** present in the env config map receive a default `
 | `MARKETAUX_API_KEY` | Marketaux token |
 | `ALPHA_VANTAGE_API_KEY` | Alpha Vantage key (`NEWS_SENTIMENT`) |
 | `FINNHUB_API_KEY` | Finnhub token |
+| `NEWSAPI_KEY` | NewsAPI key (`/v2/everything`, server-only) |
 | `MOCK_NEWS_API_KEY` | Set to `__mock__` only when using `MOCK_NEWS_REGISTRATION` in tests |
 | `NEWS_PROVIDER_*` | Per-provider enabled flag, priority, timeout, max results |
 
@@ -48,6 +50,7 @@ See `.env.example` for the full list.
 {
   "ticker": "IBM",
   "companyName": "International Business Machines",
+  "aliases": ["IBM Corp", "Big Blue"],
   "from": "2026-01-01",
   "to": "2026-03-27",
   "limit": 100,
@@ -64,7 +67,8 @@ Components live under `src/components/news/` (`NewsFeed`, `NewsCard`, `NewsFilte
 
 ## Known limitations
 
-- **Rate limits:** Alpha Vantage free tier is strict; Finnhub and Marketaux enforce their own quotas.
+- **Rate limits:** Alpha Vantage free tier is strict; Finnhub, Marketaux, and NewsAPI enforce their own quotas (NewsAPI free tier may restrict `everything`).
+- **NewsAPI:** Uses headline-only search (`searchIn=title`), domain allowlist, and company-centric `q` (name + optional `aliases`; ticker only as fallback). Pagination is single-page (`pageSize` ≤ 100) unless extended later.
 - **Overlap:** The same story often appears from multiple vendors; dedupe reduces clutter but heuristics are imperfect.
 - **Coverage / latency:** Some tickers return sparse results; timeouts are per-provider (`NEWS_PROVIDER_*_TIMEOUT_MS`).
 

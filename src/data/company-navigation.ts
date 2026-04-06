@@ -34,6 +34,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Management & Board",
           "Business Model",
           "Company History",
+          "Capital Allocation",
           "Credit Timeline",
           "Out-of-the-Box Ideas",
           "Research Roadmap",
@@ -45,7 +46,14 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   "industry-competition": {
     groups: [
       {
-        tabs: ["Porter's Five Forces", "Competitors", "Customers", "Suppliers", "Startup Risks"],
+        tabs: [
+          "Porter's Five Forces",
+          "Industry Value Chain",
+          "Competitors",
+          "Customers",
+          "Suppliers",
+          "Startup Risks",
+        ],
       },
     ],
   },
@@ -66,21 +74,26 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   "capital-structure": {
     groups: [
       {
-        tabs: ["Capital Structure", "Org Chart", "Credit Agreements & Indentures", "Subsidiary List"],
+        tabs: [
+          "Capital Structure",
+          "Org Chart",
+          "Credit Agreements & Indentures",
+          "Subsidiary List",
+          "LME Analysis",
+        ],
       },
     ],
   },
   documents: {
     groups: [
       {
+        // "EdgarTools SEC" intentionally omitted from nav for now; CompanyEdgarToolsTab + /api/edgartools/* remain.
         tabs: [
           "Saved Documents",
           "SEC Filings",
           "FCC Filings",
           "Other Regulatory Filings",
           "Trademark IP Filings",
-          "Earnings Releases",
-          "Mgmt Presentations",
         ],
       },
     ],
@@ -91,7 +104,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
         label: "Claims",
         tabs: [
           "Risk from 10K",
-          "Ways to Get Screwed",
           "Environmental Claims",
           "Litigation Claims",
           "Labor/Pension Claims",
@@ -107,10 +119,8 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Forensic Accounting",
           "Entity Searches",
           "Liens",
-          "Management & Governance Diligence",
+          "Management Background Check",
           "Legal Searches",
-          "Channel Checks",
-          "Ex-Employee Checks",
           "Related Party Checks",
         ],
       },
@@ -120,7 +130,10 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
+          "Earnings Releases",
+          "Mgmt Presentations & Transcripts",
           "News & Events",
+          "Industry Publications",
           "Ratings Research Links",
           "Broker Research Reports",
           "The Cap Stack Rumor Mill",
@@ -138,9 +151,11 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
+          "Recommendation",
           "AI Memo and Deck",
           "Pre-Mortem Analysis",
           "Literary References",
+          "Biblical References",
           "Jokes",
         ],
       },

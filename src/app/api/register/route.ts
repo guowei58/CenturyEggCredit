@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,22 +23,36 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
   }
 
-  const existing = await prisma.user.findUnique({ where: { email: emailRaw } });
-  if (existing) {
-    return NextResponse.json({ error: "An account with this email already exists. Sign in instead." }, { status: 409 });
+  try {
+    const existing = await prisma.user.findUnique({ where: { email: emailRaw } });
+    if (existing) {
+      return NextResponse.json({ error: "An account with this email already exists. Sign in instead." }, { status: 409 });
+    }
+
+    const passwordHash = await hash(password, 12);
+    const localPart = emailRaw.split("@")[0] ?? "User";
+
+    await prisma.user.create({
+      data: {
+        email: emailRaw,
+        name: localPart,
+        emailVerified: new Date(),
+        passwordHash,
+      },
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error("[api/register]", e);
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      return NextResponse.json({ error: "An account with this email already exists. Sign in instead." }, { status: 409 });
+    }
+    return NextResponse.json(
+      {
+        error:
+          "Could not reach the database from the server. On Vercel + Neon, use the pooled connection string and remove channel_binding=require from DATABASE_URL.",
+      },
+      { status: 503 }
+    );
   }
-
-  const passwordHash = await hash(password, 12);
-  const localPart = emailRaw.split("@")[0] ?? "User";
-
-  await prisma.user.create({
-    data: {
-      email: emailRaw,
-      name: localPart,
-      emailVerified: new Date(),
-      passwordHash,
-    },
-  });
-
-  return NextResponse.json({ ok: true });
 }

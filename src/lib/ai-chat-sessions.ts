@@ -34,6 +34,48 @@ export type AiChatSession = {
 export const AI_CHAT_MAX_SESSIONS = 80;
 export const AI_CHAT_MAX_MESSAGES_PER_SESSION = 200;
 
+/** `localStorage`: last time the user had AI Chat open (or its messages in view). */
+export const OREO_AI_CHAT_LAST_SEEN_KEY = "oreo_ai_chat_last_seen_at";
+/** `sessionStorage`: set while a reply is being generated and the drawer is closed. */
+export const OREO_AI_CHAT_WAITING_REPLY_KEY = "oreo_ai_chat_waiting_reply";
+
+export function markAiChatViewedNow(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(OREO_AI_CHAT_LAST_SEEN_KEY, new Date().toISOString());
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+export function getAiChatLastSeenIso(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(OREO_AI_CHAT_LAST_SEEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** Latest `session.updatedAt` among sessions whose last message is from the assistant. */
+export function latestAssistantReplySessionUpdatedAt(sessions: AiChatSession[]): string | null {
+  let best: string | null = null;
+  for (const s of sessions) {
+    const last = s.messages[s.messages.length - 1];
+    if (!last || last.role !== "assistant") continue;
+    if (!best || s.updatedAt > best) best = s.updatedAt;
+  }
+  return best;
+}
+
+/** True if an assistant reply is newer than the last “viewed” timestamp (nav dot). */
+export function aiChatShowsUnreadNavDot(sessions: AiChatSession[], lastSeenIso: string | null): boolean {
+  const latest = latestAssistantReplySessionUpdatedAt(sessions);
+  if (!latest) return false;
+  if (!lastSeenIso) return true;
+  return latest > lastSeenIso;
+}
+
 export function createAiChatSession(): AiChatSession {
   const now = new Date().toISOString();
   return {

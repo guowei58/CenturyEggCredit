@@ -26,7 +26,10 @@ import { CompanyPresentationsTab } from "@/components/CompanyPresentationsTab";
 import { CompanyEarningsReleasesTab } from "@/components/CompanyEarningsReleasesTab";
 import { BusinessModelTab } from "@/components/BusinessModelTab";
 import { CompanyHistoryTab } from "@/components/CompanyHistoryTab";
+import { CompanyCapitalAllocationTab } from "@/components/CompanyCapitalAllocationTab";
 import { CompanyPortersFiveForcesTab } from "@/components/CompanyPortersFiveForcesTab";
+import { CompanyIndustryValueChainTab } from "@/components/CompanyIndustryValueChainTab";
+import { CompanyEnvironmentalClaimsTab } from "@/components/CompanyEnvironmentalClaimsTab";
 import { CompanyCompetitorsTab } from "@/components/CompanyCompetitorsTab";
 import { CompanyCustomersTab } from "@/components/CompanyCustomersTab";
 import { CompanySuppliersTab } from "@/components/CompanySuppliersTab";
@@ -34,9 +37,13 @@ import { CompanyStartupRisksTab } from "@/components/CompanyStartupRisksTab";
 import { CompanySavedDocumentsTab } from "@/components/CompanySavedDocumentsTab";
 import { CompanyTrademarkIpTab } from "@/components/CompanyTrademarkIpTab";
 import { CompanyNewsEventsTab } from "@/components/CompanyNewsEventsTab";
+import { CompanyIndustryPublicationsTab } from "@/components/CompanyIndustryPublicationsTab";
 import { CompanySubsidiaryListTab } from "@/components/CompanySubsidiaryListTab";
+import { CompanyLmeAnalysisTab } from "@/components/CompanyLmeAnalysisTab";
 import { CompanyCreditAgreementsIndenturesTab } from "@/components/CompanyCreditAgreementsIndenturesTab";
 import { CompanyAiCreditMemoTab } from "@/components/CompanyAiCreditMemoTab";
+import { CompanyCapStructureRecommendationTab } from "@/components/CompanyCapStructureRecommendationTab";
+import { CompanyForensicAccountingTab } from "@/components/CompanyForensicAccountingTab";
 import { CompanyCreditTimelineTab } from "@/components/CompanyCreditTimelineTab";
 import { CompanySubstackTab } from "@/components/CompanySubstackTab";
 import { CompanyRedditTab } from "@/components/CompanyRedditTab";
@@ -98,7 +105,15 @@ export function CompanyAnalysis({
     };
   }, [ticker]);
 
+  useEffect(() => {
+    if (activeTab === "edgartools-sec") {
+      onTabChange("sec-filings");
+    }
+  }, [activeTab, onTabChange]);
+
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
+  /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
+  const resolvedTab = activeTab === "edgartools-sec" ? "sec-filings" : activeTab;
 
   const navDef = companyNav[topSection];
   const groups = navDef?.groups ?? [];
@@ -143,7 +158,7 @@ export function CompanyAnalysis({
                     )}
                     <TabBar
                       tabs={tabs}
-                      activeId={activeTab}
+                      activeId={resolvedTab}
                       onSelect={(id) => onTabChange(id)}
                       variant="company"
                     />
@@ -154,7 +169,7 @@ export function CompanyAnalysis({
           )}
 
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-8 sm:py-5">
-            <CompanyTabContent tabId={activeTab} ticker={ticker!} companyName={co.name} />
+            <CompanyTabContent tabId={resolvedTab} ticker={ticker!} companyName={co.name} />
           </div>
         </>
       ) : (
@@ -299,6 +314,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "credit-agreements-indentures") {
     return <CompanyCreditAgreementsIndenturesTab ticker={ticker ?? ""} />;
   }
+  if (tabId === "lme-analysis") {
+    return <CompanyLmeAnalysisTab ticker={ticker ?? ""} />;
+  }
   if (tabId === "ratings-research-links") {
     return <RatingsResearchLinks ticker={ticker} companyName={companyName} />;
   }
@@ -307,6 +325,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "news-events") {
     return <CompanyNewsEventsTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "industry-publications") {
+    return <CompanyIndustryPublicationsTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "twitter-sentiment") {
     return <CompanyTwitterSentimentTab ticker={ticker} companyName={companyName} />;
@@ -329,7 +350,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "the-cap-stack-rumor-mill") {
     return <CompanyCapStackRumorMillTab ticker={ticker} companyName={companyName} />;
   }
-  if (tabId === "mgmt-presentations") {
+  if (tabId === "mgmt-presentations-transcripts") {
     return <CompanyPresentationsTab ticker={ticker ?? ""} companyName={companyName} />;
   }
   if (tabId === "earnings-releases") {
@@ -347,8 +368,14 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "company-history") {
     return <CompanyHistoryTab ticker={ticker} companyName={companyName} />;
   }
+  if (tabId === "capital-allocation") {
+    return <CompanyCapitalAllocationTab ticker={ticker} companyName={companyName} />;
+  }
   if (tabId === "porters-five-forces") {
     return <CompanyPortersFiveForcesTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "industry-value-chain") {
+    return <CompanyIndustryValueChainTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "competitors") {
     return <CompanyCompetitorsTab ticker={ticker} companyName={companyName} />;
@@ -368,17 +395,25 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "credit-timeline") {
     return <CompanyCreditTimelineTab ticker={ticker} companyName={companyName} />;
   }
+  if (tabId === "recommendation") {
+    return <CompanyCapStructureRecommendationTab ticker={ticker} companyName={companyName} />;
+  }
   if (tabId === "ai-memo-and-deck" || tabId === "ai-credit-memo") {
     return <CompanyAiCreditMemoTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "entity-searches") {
     return <CompanyEntitySearchesTab ticker={ticker} companyName={companyName} />;
   }
+  if (tabId === "forensic-accounting") {
+    return <CompanyForensicAccountingTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "environmental-claims") {
+    return <CompanyEnvironmentalClaimsTab ticker={ticker ?? ""} companyName={companyName} />;
+  }
   const newTabPlaceholders: Record<string, string> = {
     "recovery-analysis": "Recovery Analysis",
     "liquidity-analysis": "Liquidity Analysis",
     "other-regulatory-filings": "Other Regulatory Filings",
-    "ways-to-get-screwed": "Ways to Get Screwed",
     substack: "Substack",
     "twitter-sentiment": "Twitter Sentiment",
     "dear-diary": "Dear Diary",
@@ -389,20 +424,17 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     "startup-risks": "Startup Risks",
     "competitor-operating-metrics": "Competitor Operating Metrics",
     "literary-references": "Literary References",
+    "biblical-references": "Biblical References",
     jokes: "Jokes",
-    "environmental-claims": "Environmental Claims",
     "litigation-claims": "Litigation Claims",
     "laborpension-claims": "Labor/Pension Claims",
     "tax-claims": "Tax Claims",
     "regulatory-claims": "Regulatory Claims",
     "lease-claims": "Lease Claims",
     "tradesupply-chain-claims": "Trade/Supply Chain Claims",
-    "forensic-accounting": "Forensic Accounting",
     liens: "Liens",
-    "management-governance-diligence": "Management & Governance Diligence",
+    "management-background-check": "Management Background Check",
     "legal-searches": "Legal Searches",
-    "channel-checks": "Channel Checks",
-    "ex-employee-checks": "Ex-Employee Checks",
     "related-party-checks": "Related Party Checks",
     "credit-agreements-indentures": "Credit Agreements & Indentures",
     "subsidiary-list": "Subsidiary List",

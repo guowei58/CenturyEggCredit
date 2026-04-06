@@ -163,7 +163,7 @@ export function CompanyPresentationsTab({
 
   if (!safeTicker) {
     return (
-      <Card title="Presentations">
+      <Card title="Mgmt Presentations & Transcripts">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
           Select a company to open this prompt in Claude, ChatGPT, Gemini, or Meta AI.
         </p>
@@ -172,7 +172,7 @@ export function CompanyPresentationsTab({
   }
 
   return (
-    <Card title={`Presentations — ${safeTicker}`}>
+    <Card title={`Mgmt Presentations & Transcripts — ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell className="min-w-0 flex-1">
           {isEditing ? (

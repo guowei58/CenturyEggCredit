@@ -32,16 +32,16 @@ export const companyAnalysisTabs = [
   "Capital Structure",
   "Recovery Analysis",
   "Liquidity Analysis",
-  "Ways to Get Screwed",
   "Saved Documents",
   "SEC Filings",
   "FCC Filings",
   "Ratings Research Links",
   "News & Events",
-  "Mgmt Presentations",
+  "Mgmt Presentations & Transcripts",
   "Earnings Releases",
   "Comps",
   "Company History",
+  "Capital Allocation",
   "Credit Timeline",
   "Broker Research Reports",
   "Substack",
@@ -49,14 +49,17 @@ export const companyAnalysisTabs = [
   "Twitter Sentiment",
   "The Cap Stack Rumor Mill",
   "Porter's Five Forces",
+  "Industry Value Chain",
   "Competitors",
   "Competitor Operating Metrics",
 ] as const;
 
 export const companyAnalysisWorkOutputTabs = [
+  "Recommendation",
   "AI Memo and Deck",
   "Pre-Mortem Analysis",
   "Literary References",
+  "Biblical References",
   "Jokes",
   "Dear Diary",
 ] as const;
@@ -76,10 +79,8 @@ export const companyAnalysisFraudChecksTabs = [
   "Forensic Accounting",
   "Entity Searches",
   "Liens",
-  "Management & Governance Diligence",
+  "Management Background Check",
   "Legal Searches",
-  "Channel Checks",
-  "Ex-Employee Checks",
   "Related Party Checks",
 ] as const;
 

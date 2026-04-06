@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui";
 import { ORG_CHART_PROMPT_TEMPLATE, ORG_CHART_SAMPLE_IMAGE_PATHS, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
@@ -32,258 +32,8 @@ import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import { openGeminiNewChatWindow, CHATGPT_META_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
 import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
-import type { OrgChartApiResponse } from "@/lib/org-chart-types";
-import type { OrgChartData, OrgChartEntity, OrgChartEntityRole } from "@/lib/org-chart-types";
-
-const ROLE_LABELS: Record<OrgChartEntityRole, string> = {
-  parent: "Parent",
-  issuer: "Issuer",
-  borrower: "Borrower",
-  guarantor: "Guarantor",
-  "non-guarantor": "Non-guarantor",
-  "restricted-subsidiary": "Restricted Subsidiary",
-  "unrestricted-subsidiary": "Unrestricted Subsidiary",
-  "operating-subsidiary": "Operating Subsidiary",
-  "foreign-subsidiary": "Foreign Subsidiary",
-};
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
-
-function getNodeStyle(entity: OrgChartEntity): CSSProperties {
-  const hasDebt = entity.roles.some((r) => r === "issuer" || r === "borrower");
-  const isGuarantor = entity.roles.includes("guarantor");
-  const isUnrestricted = entity.roles.includes("unrestricted-subsidiary");
-  const isBucket = entity.isBucket;
-
-  if (hasDebt) {
-    return {
-      borderColor: "var(--accent)",
-      borderWidth: 2,
-      backgroundColor: "rgba(59, 130, 246, 0.08)",
-    };
-  }
-  if (isGuarantor) {
-    return {
-      borderColor: "var(--warn)",
-      borderWidth: 1.5,
-      backgroundColor: "rgba(234, 179, 8, 0.06)",
-    };
-  }
-  if (isUnrestricted) {
-    return {
-      borderColor: "var(--border2)",
-      borderWidth: 1,
-      backgroundColor: "var(--card2)",
-    };
-  }
-  if (isBucket) {
-    return {
-      borderColor: "var(--border2)",
-      borderWidth: 1,
-      borderStyle: "dashed",
-      backgroundColor: "transparent",
-    };
-  }
-  return {
-    borderColor: "var(--border2)",
-    borderWidth: 1,
-    backgroundColor: "var(--card)",
-  };
-}
-
-function OrgChartNode({ entity, depth = 0 }: { entity: OrgChartEntity; depth?: number }) {
-  const style = getNodeStyle(entity);
-  const roleLabels = entity.roles.map((r) => ROLE_LABELS[r]).filter(Boolean);
-  const hasChildren = entity.children && entity.children.length > 0;
-
-  return (
-    <div className="flex flex-col items-center">
-      <div
-        className="rounded-lg px-4 py-3 text-center min-w-[180px] max-w-[240px]"
-        style={style}
-      >
-        <div className="text-xs font-semibold" style={{ color: "var(--text)" }}>
-          {entity.name}
-        </div>
-        <div className="mt-1 flex flex-wrap justify-center gap-x-1.5 gap-y-0.5">
-          {roleLabels.map((l) => (
-            <span
-              key={l}
-              className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-              style={{
-                backgroundColor: "var(--card2)",
-                color: "var(--muted2)",
-              }}
-            >
-              {l}
-            </span>
-          ))}
-        </div>
-        {entity.debtInstrument && (
-          <div className="mt-1.5 text-[10px] font-mono" style={{ color: "var(--muted2)" }}>
-            {entity.debtInstrument}
-          </div>
-        )}
-        {entity.confidence && entity.confidence !== "confirmed" && (
-          <div className="mt-1 text-[9px] uppercase tracking-wider" style={{ color: "var(--muted)" }}>
-            {entity.confidence}
-          </div>
-        )}
-      </div>
-      {hasChildren && (
-        <>
-          <div className="w-px flex-1 min-h-[12px]" style={{ backgroundColor: "var(--border2)" }} />
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 pt-2">
-            {entity.children!.map((child) => (
-              <OrgChartNode key={child.id} entity={child} depth={depth + 1} />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function FilingLegend() {
-  return (
-    <div className="mt-6 flex flex-wrap gap-6 rounded-lg border px-4 py-3 text-xs" style={{ borderColor: "var(--border2)" }}>
-      <span className="font-medium" style={{ color: "var(--muted2)" }}>Legend:</span>
-      <span><span className="inline-block w-3 h-3 rounded mr-1.5 align-middle" style={{ backgroundColor: "rgba(59, 130, 246, 0.3)", border: "1px solid var(--accent)" }} /> Issuer / Borrower</span>
-      <span><span className="inline-block w-3 h-3 rounded mr-1.5 align-middle" style={{ backgroundColor: "rgba(234, 179, 8, 0.15)", border: "1px solid var(--warn)" }} /> Guarantor</span>
-      <span><span className="inline-block w-3 h-3 rounded mr-1.5 align-middle border" style={{ borderColor: "var(--border2)", backgroundColor: "var(--card)" }} /> Restricted / Other</span>
-      <span><span className="inline-block w-3 h-3 rounded mr-1.5 align-middle border border-dashed" style={{ borderColor: "var(--border2)" }} /> Grouped (e.g. Other Subsidiaries)</span>
-    </div>
-  );
-}
-
-function FilingDerivedOrgChartSection({ ticker }: { ticker: string }) {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<OrgChartData | null>(null);
-  const [insufficientMessage, setInsufficientMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const safeTicker = ticker?.trim();
-    if (!safeTicker) {
-      setData(null);
-      setInsufficientMessage(null);
-      setError(null);
-      setLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-    setLoading(true);
-    setData(null);
-    setInsufficientMessage(null);
-    setError(null);
-
-    fetch(`/api/org-chart/${encodeURIComponent(safeTicker)}`)
-      .then((res) => res.json())
-      .then((body: OrgChartApiResponse) => {
-        if (cancelled) return;
-        if (body.ok === true) {
-          setData(body.data);
-          setInsufficientMessage(null);
-          setError(null);
-        } else if (body.ok === false && "insufficient" in body && body.insufficient) {
-          setData(null);
-          setInsufficientMessage(body.message);
-          setError(null);
-        } else {
-          setData(null);
-          setInsufficientMessage(null);
-          setError("error" in body ? body.error : "Failed to load org chart");
-        }
-      })
-      .catch((e) => {
-        if (!cancelled) {
-          setData(null);
-          setInsufficientMessage(null);
-          setError(e instanceof Error ? e.message : "Failed to load org chart");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => { cancelled = true; };
-  }, [ticker]);
-
-  if (loading) {
-    return (
-      <Card title="Automated structure (from latest 10-K / 10-Q)">
-        <div className="flex items-center gap-2 py-8" style={{ color: "var(--muted)" }}>
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
-          Building filing-based preview for {ticker}…
-        </div>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card title="Automated structure (from latest 10-K / 10-Q)">
-        <div className="rounded-lg border py-4 px-4" style={{ borderColor: "var(--danger)", background: "rgba(239,68,68,0.06)" }}>
-          <p className="text-sm" style={{ color: "var(--danger)" }}>{error}</p>
-          <p className="mt-1 text-xs" style={{ color: "var(--muted)" }}>Check the ticker and try again. Data is derived from SEC 10-K/10-Q filings.</p>
-        </div>
-      </Card>
-    );
-  }
-
-  if (insufficientMessage) {
-    return (
-      <Card title="Automated structure (from latest 10-K / 10-Q)">
-        <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          {insufficientMessage}
-        </p>
-        <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>
-          This machine preview is separate from your AI org chart above. Use the Filings tab for Exhibit 21, guarantor disclosure, and debt documents.
-        </p>
-      </Card>
-    );
-  }
-
-  if (!data) {
-    return (
-      <Card title="Automated structure (from latest 10-K / 10-Q)">
-        <p className="text-sm py-6" style={{ color: "var(--muted2)" }}>
-          No filing-based structure available for {ticker}.
-        </p>
-      </Card>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <Card title={`Filing-based preview — ${data.companyName}`}>
-        {data.partial && (
-          <div className="mb-3 rounded border px-3 py-2 text-xs" style={{ borderColor: "var(--warn)", backgroundColor: "rgba(234, 179, 8, 0.08)", color: "var(--muted2)" }}>
-            Only partial structure available from current filings. Confirm with indenture and credit agreement.
-          </div>
-        )}
-        <p className="text-xs mb-4" style={{ color: "var(--muted2)" }}>
-          {data.sourceNote}
-        </p>
-        <div className="overflow-x-auto py-4">
-          <div className="flex justify-center">
-            <OrgChartNode entity={data.root} />
-          </div>
-        </div>
-        <FilingLegend />
-      </Card>
-
-      <Card title="Structural credit notes (from filing text)">
-        <ul className="list-disc pl-4 space-y-2 text-sm" style={{ color: "var(--muted2)" }}>
-          {data.structuralNotes.map((note, i) => (
-            <li key={i}>{note}</li>
-          ))}
-        </ul>
-      </Card>
-    </div>
-  );
-}
 
 export function CompanyOrgChartTab({
   ticker,
@@ -486,17 +236,16 @@ export function CompanyOrgChartTab({
     return (
       <Card title="Org Chart">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          Select a company to build the org chart prompt and filing preview.
+          Select a company to build the org chart prompt.
         </p>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <Card title={`Org Chart — ${safeTicker}`}>
+    <Card title={`Org Chart — ${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Use the three reference screenshots and prompt in Claude, ChatGPT, or Meta AI (vision). Save the model&apos;s answer below. The filing-based tree further down is an automated supplement from 10-K/10-Q text only.
+          Use the three reference screenshots and prompt in Claude, ChatGPT, Gemini, or Meta AI (vision). Save the model&apos;s answer below.
         </p>
         <div className="flex flex-col gap-6 lg:flex-row">
           {isSavedResponseCollapsed ? (
@@ -714,8 +463,6 @@ export function CompanyOrgChartTab({
             </div>
           </div>
         </div>
-      </Card>
-      <FilingDerivedOrgChartSection ticker={safeTicker} />
-    </div>
+    </Card>
   );
 }

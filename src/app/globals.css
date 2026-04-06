@@ -80,6 +80,272 @@
     text-decoration-color: var(--blue);
   }
 
+  /**
+   * Saved response body: readable typography for pasted AI / markdown / HTML.
+   * Applies to ReactMarkdown (.saved-rich-text) and sanitized HTML (.saved-html-content).
+   */
+  .saved-rich-text,
+  .saved-html-content {
+    font-size: 14px;
+    line-height: 1.68;
+    color: var(--text);
+    letter-spacing: 0.015em;
+  }
+
+  .saved-rich-text > *:first-child,
+  .saved-html-content > *:first-child {
+    margin-top: 0 !important;
+  }
+
+  .saved-rich-text p,
+  .saved-html-content p {
+    margin: 0 0 1.1em;
+  }
+
+  .saved-rich-text p:last-child,
+  .saved-html-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .saved-rich-text h1,
+  .saved-html-content h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.65em;
+    color: var(--text);
+  }
+
+  /* Full-width line above major titles (not the first block in the doc). */
+  .saved-rich-text h1:not(:first-child),
+  .saved-html-content h1:not(:first-child) {
+    border-top: 1px solid var(--border);
+    padding-top: 1.75rem;
+    margin-top: 2.35rem;
+    margin-bottom: 0.65em;
+  }
+
+  .saved-rich-text h2,
+  .saved-html-content h2 {
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    margin: 1.85rem 0 0.6rem;
+    padding-bottom: 0.4rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .saved-rich-text h2:not(:first-child),
+  .saved-html-content h2:not(:first-child) {
+    border-top: 1px solid var(--border);
+    padding-top: 1.65rem;
+    margin-top: 2.25rem;
+  }
+
+  .saved-rich-text h2:first-child,
+  .saved-html-content h2:first-child {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .saved-rich-text h3,
+  .saved-html-content h3 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 1.45rem 0 0.45rem;
+    color: color-mix(in srgb, var(--text) 92%, var(--accent));
+  }
+
+  .saved-rich-text h3:first-child,
+  .saved-html-content h3:first-child {
+    margin-top: 0;
+  }
+
+  .saved-rich-text h4,
+  .saved-rich-text h5,
+  .saved-rich-text h6,
+  .saved-html-content h4,
+  .saved-html-content h5,
+  .saved-html-content h6 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1.15rem 0 0.4rem;
+    color: var(--muted2);
+  }
+
+  .saved-rich-text ul,
+  .saved-rich-text ol,
+  .saved-html-content ul,
+  .saved-html-content ol {
+    margin: 0.65em 0 1.15em;
+    padding-left: 1.4rem;
+  }
+
+  .saved-rich-text li,
+  .saved-html-content li {
+    margin: 0.45em 0;
+  }
+
+  .saved-rich-text li > p,
+  .saved-html-content li > p {
+    margin: 0.35em 0;
+  }
+
+  .saved-rich-text ul ul,
+  .saved-rich-text ol ol,
+  .saved-rich-text ul ol,
+  .saved-rich-text ol ul,
+  .saved-html-content ul ul,
+  .saved-html-content ol ol,
+  .saved-html-content ul ol,
+  .saved-html-content ol ul {
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+  }
+
+  .saved-rich-text blockquote,
+  .saved-html-content blockquote {
+    margin: 1.15em 0;
+    padding: 0.75rem 1rem 0.75rem 1rem;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    background: color-mix(in srgb, var(--card2) 85%, var(--accent) 15%);
+    color: var(--muted2);
+  }
+
+  .saved-rich-text blockquote p:last-child,
+  .saved-html-content blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  .saved-rich-text hr,
+  .saved-html-content hr {
+    margin: 2.1rem 0;
+    border: none;
+    height: 0;
+    border-top: 1px solid var(--border);
+    background: none;
+    opacity: 1;
+  }
+
+  .saved-rich-text strong,
+  .saved-html-content strong,
+  .saved-rich-text b,
+  .saved-html-content b {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .saved-rich-text em,
+  .saved-html-content em {
+    color: color-mix(in srgb, var(--text) 88%, var(--muted));
+  }
+
+  .saved-rich-text code,
+  .saved-html-content code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.86em;
+    padding: 0.12em 0.38em;
+    border-radius: 4px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    color: color-mix(in srgb, var(--text) 90%, var(--accent));
+  }
+
+  .saved-rich-text pre,
+  .saved-html-content pre {
+    margin: 1.1em 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    border-radius: 8px;
+    background: var(--sb);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .saved-rich-text pre code,
+  .saved-html-content pre code {
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: inherit;
+    color: var(--muted2);
+  }
+
+  .saved-rich-text-table-scroll {
+    margin: 1.15rem 0;
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+  }
+
+  .saved-rich-text-table-scroll table {
+    width: 100%;
+    min-width: min(100%, 32rem);
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .saved-rich-text-table-scroll th,
+  .saved-rich-text-table-scroll td {
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .saved-rich-text-table-scroll th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    white-space: nowrap;
+  }
+
+  .saved-rich-text-table-scroll tr:last-child td {
+    border-bottom: none;
+  }
+
+  .saved-rich-text-table-scroll tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  /* Sanitized HTML pastes (no markdown table wrapper) */
+  .saved-html-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 1.1rem 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .saved-html-content table th,
+  .saved-html-content table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .saved-html-content table th {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--panel);
+  }
+
   /* Saved response fullscreen: let scroll body / textarea absorb remaining viewport */
   [data-saved-response-expanded="1"] .saved-response-fs-fill {
     max-height: none !important;

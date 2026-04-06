@@ -5,6 +5,8 @@
 export type NewsQueryParams = {
   ticker: string;
   companyName?: string;
+  /** Extra search phrases for NewsAPI keyword / ranking (e.g. subsidiary or brand names). */
+  aliases?: string[];
   from?: string;
   to?: string;
   limit?: number;
@@ -17,6 +19,8 @@ export type NormalizedNewsArticle = {
   url: string;
   normalizedUrl?: string;
   sourceName: string;
+  /** Hostname from the article URL when known (e.g. for NewsAPI domain filtering). */
+  sourceDomain?: string;
   publishedAt: string | null;
   summary: string | null;
   imageUrl: string | null;
@@ -28,6 +32,8 @@ export type NormalizedNewsArticle = {
   providerIds?: Record<string, string>;
   rawCategories?: string[];
   language?: string | null;
+  /** e.g. NewsAPI `q` string used to retrieve this article (debug / transparency). */
+  matchedQuery?: string;
   /** Internal: best provider priority among sources (lower = higher priority). */
   _bestProviderPriority?: number;
 };

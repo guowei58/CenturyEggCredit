@@ -1,0 +1,9 @@
+Egg-Hoc chat notification (egg-hoc-bark.mp3)
+--------------------------------------------
+Source: "Single Dog Bark" by kwahmah_02
+https://freesound.org/s/277058/
+
+License: Creative Commons 0 (public domain dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+File: low-quality preview MP3 from Freesound CDN, bundled for offline use in this app.

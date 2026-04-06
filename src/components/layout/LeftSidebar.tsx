@@ -43,7 +43,7 @@ export function LeftSidebar({
   currentTicker: string | null;
 }) {
   const { status } = useSession();
-  const [search, setSearch] = useState(currentTicker ?? "");
+  const [search, setSearch] = useState("");
   const [watchlist, setWatchlist] = useState<string[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -70,10 +70,6 @@ export function LeftSidebar({
       hydratedRef.current = true;
     })();
   }, [status, onTickerSelect]);
-
-  useEffect(() => {
-    setSearch(currentTicker ?? "");
-  }, [currentTicker]);
 
   useEffect(() => {
     if (watchlist.length === 0) {
@@ -112,6 +108,7 @@ export function LeftSidebar({
       return next;
     });
     onTickerSelect(ticker);
+    setSearch("");
   }
 
   function removeFromWatchlist(ticker: string) {

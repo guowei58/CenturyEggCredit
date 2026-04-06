@@ -24,6 +24,11 @@ export function scoreArticleForRanking(article: NormalizedNewsArticle, query: Ne
     if (first.length >= 3 && tokenHit(blob, first)) score += 10;
   }
 
+  for (const alias of query.aliases ?? []) {
+    const a = typeof alias === "string" ? alias.trim() : "";
+    if (a.length >= 3 && tokenHit(blob, a)) score += 12;
+  }
+
   const pub = article.publishedAt ? Date.parse(article.publishedAt) : NaN;
   if (Number.isFinite(pub)) {
     const ageDays = (Date.now() - pub) / (86400 * 1000);

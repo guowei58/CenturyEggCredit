@@ -26,7 +26,14 @@ export function RegisterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = (await res.json()) as { error?: string };
+      const text = await res.text();
+      let data: { error?: string } = {};
+      try {
+        data = text ? (JSON.parse(text) as { error?: string }) : {};
+      } catch {
+        setError(`Server error (${res.status}). Open Vercel → project → Logs if this keeps happening.`);
+        return;
+      }
       if (!res.ok) {
         setError(data.error || "Could not create account.");
         return;
@@ -34,7 +41,7 @@ export function RegisterForm() {
       router.push("/login?registered=1");
       router.refresh();
     } catch {
-      setError("Something went wrong. Try again.");
+      setError("Network error. Check your connection and try again.");
     } finally {
       setLoading(false);
     }

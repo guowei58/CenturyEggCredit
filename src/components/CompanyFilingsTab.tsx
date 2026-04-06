@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { Card, DataTable } from "@/components/ui";
+import { normalizeCikInput } from "@/lib/sec-edgar";
 
 type Filing = { form: string; filingDate: string; description: string; docUrl: string };
 
@@ -13,6 +14,22 @@ type SecFilingsResult = {
 };
 
 type QuickFilter = "all" | "10k10q" | "8k" | "proxy" | "prospectus";
+
+type LookupHit = { cik: string; ticker: string; title: string };
+
+type RelatedFilerRow = {
+  cik: string;
+  ticker: string;
+  entityName: string;
+  filingCount: number;
+};
+
+function looksLikeCikOnlyInput(t: string): boolean {
+  const trimmed = t.trim();
+  const digits = trimmed.replace(/\D/g, "");
+  if (digits.length < 4 || digits.length > 10) return false;
+  return trimmed.replace(/[\d\s.\-]/g, "") === "";
+}
 
 function normForm(form: string): string {
   return (form || "").trim().toUpperCase();
@@ -122,10 +139,88 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
   const [data, setData] = useState<SecFilingsResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viaLookup, setViaLookup] = useState(false);
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [lookupQuery, setLookupQuery] = useState("");
+  const [lookupBusy, setLookupBusy] = useState(false);
+  const [lookupResults, setLookupResults] = useState<LookupHit[] | null>(null);
+  const [lookupMsg, setLookupMsg] = useState<string | null>(null);
+
+  const [relatedRows, setRelatedRows] = useState<RelatedFilerRow[]>([]);
+  const [relatedLoading, setRelatedLoading] = useState(false);
+  const [relatedError, setRelatedError] = useState<string | null>(null);
+  const [relatedDisclaimer, setRelatedDisclaimer] = useState<string | null>(null);
 
   const safeTicker = ticker?.trim() ?? "";
+
+  const loadFilingsByCik = useCallback(async (cikPadded: string) => {
+    setLoading(true);
+    setError(null);
+    setData(null);
+    setViaLookup(true);
+    setLookupResults(null);
+    setLookupMsg(null);
+    try {
+      const res = await fetch(`/api/filings/by-cik/${encodeURIComponent(cikPadded)}`);
+      const body = (await res.json()) as SecFilingsResult & { error?: string };
+      if (!res.ok) {
+        throw new Error(body.error ?? "Could not load filings for this CIK");
+      }
+      setData(body);
+      setError(null);
+      setQuickFilter("all");
+      setSearchQuery("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load filings");
+      setData(null);
+      setViaLookup(false);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const runCompanyOrCikSearch = useCallback(async () => {
+    const raw = lookupQuery.trim();
+    if (raw.length < 2) {
+      setLookupMsg("Enter at least 2 characters, or a CIK (4–10 digits).");
+      setLookupResults(null);
+      return;
+    }
+    setLookupMsg(null);
+    setLookupResults(null);
+
+    if (looksLikeCikOnlyInput(raw)) {
+      const digits = raw.replace(/\D/g, "");
+      const cik = normalizeCikInput(digits);
+      if (cik) {
+        await loadFilingsByCik(cik);
+        return;
+      }
+    }
+
+    setLookupBusy(true);
+    try {
+      const res = await fetch(`/api/filings/search-companies?q=${encodeURIComponent(raw)}`);
+      const body = (await res.json()) as { matches?: LookupHit[]; error?: string };
+      if (!res.ok) {
+        setLookupMsg(body.error ?? "Search failed");
+        return;
+      }
+      const m = body.matches ?? [];
+      if (m.length === 0) {
+        setLookupMsg(
+          "No matches in SEC’s company/ticker list. Try a shorter name, another spelling, or enter a numeric CIK (from EDGAR or old filings). Subsidiaries often file under the parent—search the parent name."
+        );
+      } else {
+        setLookupResults(m);
+      }
+    } catch {
+      setLookupMsg("Search failed. Try again.");
+    } finally {
+      setLookupBusy(false);
+    }
+  }, [lookupQuery, loadFilingsByCik]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -133,8 +228,11 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
     setLoading(true);
     setError(null);
     setData(null);
+    setViaLookup(false);
     setQuickFilter("all");
     setSearchQuery("");
+    setLookupResults(null);
+    setLookupMsg(null);
     fetch(`/api/filings/${encodeURIComponent(safeTicker)}`)
       .then((res) => {
         if (!res.ok) {
@@ -158,7 +256,48 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
+  }, [safeTicker]);
+
+  useEffect(() => {
+    if (!safeTicker) return;
+    let cancelled = false;
+    setRelatedLoading(true);
+    setRelatedError(null);
+    setRelatedDisclaimer(null);
+    setRelatedRows([]);
+    fetch(`/api/filings/related-filers/${encodeURIComponent(safeTicker)}`)
+      .then(async (res) => {
+        const body = (await res.json()) as
+          | {
+              ok: true;
+              related?: RelatedFilerRow[];
+              disclaimer?: string;
+            }
+          | { ok: false; message?: string };
+        if (cancelled) return;
+        if (!res.ok || !body || typeof body !== "object" || !("ok" in body) || body.ok !== true) {
+          const msg =
+            body && typeof body === "object" && "message" in body && typeof body.message === "string"
+              ? body.message
+              : "Could not load related SEC registrants.";
+          setRelatedError(msg);
+          return;
+        }
+        setRelatedRows(Array.isArray(body.related) ? body.related : []);
+        setRelatedDisclaimer(typeof body.disclaimer === "string" ? body.disclaimer : null);
+      })
+      .catch(() => {
+        if (!cancelled) setRelatedError("Could not load related SEC registrants.");
+      })
+      .finally(() => {
+        if (!cancelled) setRelatedLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [safeTicker]);
 
   const filteredFilings = useMemo(() => {
@@ -171,6 +310,151 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
     return list;
   }, [data?.filings, quickFilter, searchQuery]);
 
+  const lookupPanel = (
+    <div
+      className="mb-4 rounded-lg border p-3"
+      style={{ borderColor: "var(--border2)", background: "var(--panel)" }}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
+        Search by company name or CIK
+      </p>
+      <p className="text-[10px] leading-relaxed mb-3" style={{ color: "var(--muted2)" }}>
+        Matches SEC’s public company/ticker file (~10k issuers). Subsidiaries often file only under a parent—try the parent name. For merged or delisted entities, use the{" "}
+        <strong>10-digit CIK</strong> from an old cover page or{" "}
+        <a
+          href="https://www.sec.gov/edgar/searchedgar/legacy/companysearch.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "var(--blue)" }}
+        >
+          SEC company search
+        </a>
+        .
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <input
+          type="text"
+          value={lookupQuery}
+          onChange={(e) => setLookupQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") void runCompanyOrCikSearch();
+          }}
+          placeholder="Company name, or 4–10 digit CIK"
+          className="min-w-[200px] flex-1 rounded border px-3 py-2 text-xs"
+          style={{ borderColor: "var(--border2)", background: "var(--bg)", color: "var(--text)" }}
+        />
+        <button
+          type="button"
+          disabled={lookupBusy}
+          onClick={() => void runCompanyOrCikSearch()}
+          className="rounded border px-3 py-2 text-xs font-medium disabled:opacity-50"
+          style={{ borderColor: "var(--border2)", color: "var(--accent)" }}
+        >
+          {lookupBusy ? "Searching…" : "Search"}
+        </button>
+      </div>
+      {lookupMsg ? (
+        <p className="mt-2 text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+          {lookupMsg}
+        </p>
+      ) : null}
+      {lookupResults && lookupResults.length > 0 ? (
+        <ul
+          className="mt-3 max-h-52 overflow-y-auto space-y-1 rounded border p-2"
+          style={{ borderColor: "var(--border2)" }}
+        >
+          {lookupResults.map((h) => (
+            <li key={h.cik}>
+              <button
+                type="button"
+                className="w-full rounded px-2 py-1.5 text-left text-xs transition-colors hover:bg-white/[0.05]"
+                onClick={() => void loadFilingsByCik(h.cik)}
+              >
+                <span className="font-medium" style={{ color: "var(--text)" }}>
+                  {h.title}
+                </span>
+                <span className="mt-0.5 block font-mono text-[10px]" style={{ color: "var(--muted)" }}>
+                  CIK {h.cik}
+                  {h.ticker && h.ticker !== "—" ? ` · ${h.ticker}` : ""}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+
+  const relatedSubsidiariesPanel = (
+    <div
+      className="mb-4 rounded-lg border p-3"
+      style={{ borderColor: "var(--border2)", background: "var(--panel)" }}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
+        Entity
+      </p>
+      <p className="text-[10px] leading-relaxed mb-2" style={{ color: "var(--muted2)" }}>
+        Filers (CIKs) that appear on filings in EDGAR’s submissions list for sidebar ticker{" "}
+        <span className="font-mono">{safeTicker}</span>, same filer CIK SEC uses in accession numbers. Click a row to load
+        that registrant’s filings; sidebar ticker is unchanged for save actions.
+      </p>
+      {relatedLoading && relatedRows.length === 0 && !relatedError ? (
+        <div className="flex items-center gap-2 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
+          Resolving filer names…
+        </div>
+      ) : null}
+      {relatedError ? (
+        <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+          {relatedError}
+        </p>
+      ) : null}
+      {!relatedLoading && !relatedError && relatedRows.length === 0 ? (
+        <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+          No accession data in the submissions feed for this ticker.
+        </p>
+      ) : null}
+      {relatedRows.length > 0 ? (
+        <ul className="mt-2 max-h-80 overflow-y-auto rounded border" style={{ borderColor: "var(--border2)" }}>
+          {relatedRows.map((r) => (
+            <li
+              key={r.cik}
+              className="border-b last:border-b-0"
+              style={{ borderColor: "var(--border2)" }}
+            >
+              <button
+                type="button"
+                title={`${r.filingCount} filing(s) in this issuer’s feed use accession numbers for CIK ${r.cik}`}
+                className="flex w-full items-start gap-2 px-2 py-2 text-left text-xs transition-colors hover:bg-white/[0.05]"
+                onClick={() => void loadFilingsByCik(r.cik)}
+              >
+                <span
+                  className="shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold tabular-nums"
+                  style={{ background: "var(--border2)", color: "var(--text)" }}
+                >
+                  {r.filingCount}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="font-medium" style={{ color: "var(--blue)" }}>
+                    {r.entityName}
+                  </span>
+                  <span className="mt-0.5 block font-mono text-[10px]" style={{ color: "var(--muted)" }}>
+                    {r.ticker && r.ticker !== "—" ? `(${r.ticker}) ` : ""}CIK {r.cik}
+                  </span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {relatedDisclaimer ? (
+        <p className="mt-2 text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+          {relatedDisclaimer}
+        </p>
+      ) : null}
+    </div>
+  );
+
   if (!safeTicker) {
     return (
       <Card title="SEC Filings">
@@ -182,9 +466,11 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
   if (loading) {
     return (
       <Card title="SEC Filings">
-        <div className="flex items-center gap-2 py-8" style={{ color: "var(--muted)" }}>
+        {lookupPanel}
+        {relatedSubsidiariesPanel}
+        <div className="flex items-center gap-2 py-6" style={{ color: "var(--muted)" }}>
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
-          Loading filings for {safeTicker}…
+          Loading filings…
         </div>
       </Card>
     );
@@ -193,9 +479,13 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
   if (error) {
     return (
       <Card title="SEC Filings">
+        {lookupPanel}
+        {relatedSubsidiariesPanel}
         <div className="rounded-lg border py-4" style={{ borderColor: "var(--danger)", background: "rgba(239,68,68,0.06)" }}>
           <p className="px-4 text-sm" style={{ color: "var(--danger)" }}>{error}</p>
-          <p className="mt-1 px-4 text-[11px]" style={{ color: "var(--muted)" }}>Check the ticker symbol or try again. Data from SEC EDGAR.</p>
+          <p className="mt-1 px-4 text-[11px]" style={{ color: "var(--muted)" }}>
+            Ticker not in SEC’s ticker list, or no data. Use the search above by name or CIK.
+          </p>
         </div>
       </Card>
     );
@@ -203,14 +493,27 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
 
   if (!data || data.filings.length === 0) {
     return (
-      <Card title="SEC Filings">
-        <p className="text-sm" style={{ color: "var(--muted2)" }}>No recent filings found for {safeTicker}.</p>
+      <Card title={data ? `SEC Filings — ${data.companyName}` : "SEC Filings"}>
+        {lookupPanel}
+        {relatedSubsidiariesPanel}
+        <p className="text-sm" style={{ color: "var(--muted2)" }}>
+          No recent filings in EDGAR for this entity
+          {viaLookup ? "" : ` (${safeTicker})`}.
+        </p>
       </Card>
     );
   }
 
   return (
     <Card title={`SEC Filings — ${data.companyName}`}>
+      {lookupPanel}
+      {relatedSubsidiariesPanel}
+      {viaLookup ? (
+        <p className="text-[10px] leading-relaxed mb-3" style={{ color: "var(--muted)" }}>
+          Filings for <span className="font-mono">{data.cik}</span> (name search / CIK). Sidebar ticker{" "}
+          <span className="font-mono">{safeTicker}</span> unchanged — save actions still use it.
+        </p>
+      ) : null}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="flex items-center gap-1 rounded border overflow-hidden" style={{ borderColor: "var(--border2)" }}>
           {(

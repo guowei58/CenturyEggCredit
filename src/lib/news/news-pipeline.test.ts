@@ -20,6 +20,8 @@ import {
 import { createAlphaVantageNewsProvider } from "./providers/alphaVantage";
 import { createFinnhubNewsProvider } from "./providers/finnhub";
 import { createMarketauxNewsProvider } from "./providers/marketaux";
+import { buildNewsApiKeywordQuery } from "./providers/newsapi";
+import { hostnameMatchesNewsApiAllowlist } from "./newsApiDomains";
 import { MOCK_NEWS_API_KEY } from "./providers/mockNewsProvider";
 import { rankArticles } from "./rank";
 import type { NormalizedNewsArticle, ProviderConfig } from "./types";
@@ -61,6 +63,29 @@ describe("provider registry", () => {
     const b = getProviderSingleton(reg);
     expect(a).toBe(b);
     __resetProviderSingletonsForTests();
+  });
+});
+
+describe("NewsAPI helpers", () => {
+  it("buildNewsApiKeywordQuery OR-joins company name and aliases", () => {
+    expect(
+      buildNewsApiKeywordQuery({
+        ticker: "LUMN",
+        companyName: "Lumen Technologies",
+        aliases: ["CenturyLink"],
+      })
+    ).toBe('"Lumen Technologies" OR CenturyLink');
+  });
+
+  it("buildNewsApiKeywordQuery falls back to ticker when no name or aliases", () => {
+    expect(buildNewsApiKeywordQuery({ ticker: "IBM" })).toBe("IBM");
+  });
+
+  it("hostnameMatchesNewsApiAllowlist accepts allowlisted hosts and subdomains", () => {
+    expect(hostnameMatchesNewsApiAllowlist("www.reuters.com")).toBe(true);
+    expect(hostnameMatchesNewsApiAllowlist("reuters.com")).toBe(true);
+    expect(hostnameMatchesNewsApiAllowlist("news.bloomberg.com")).toBe(true);
+    expect(hostnameMatchesNewsApiAllowlist("example.com")).toBe(false);
   });
 });
 
@@ -427,6 +452,7 @@ describe("aggregator resilience and extensibility", () => {
     vi.stubEnv("MARKETAUX_API_KEY", "x");
     vi.stubEnv("ALPHA_VANTAGE_API_KEY", "x");
     vi.stubEnv("FINNHUB_API_KEY", "x");
+    vi.stubEnv("NEWSAPI_KEY", "x");
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
@@ -436,7 +462,7 @@ describe("aggregator resilience and extensibility", () => {
     );
     const out = await aggregateNews({ ticker: "IBM" });
     expect(out.disabledProviders).toContain("marketaux");
-    expect(out.activeProviders.sort()).toEqual(["alpha_vantage", "finnhub"]);
+    expect(out.activeProviders.sort()).toEqual(["alpha_vantage", "finnhub", "newsapi"]);
     vi.unstubAllGlobals();
     __resetProviderSingletonsForTests();
   });

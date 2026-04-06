@@ -38,4 +38,7 @@ next-env.d.ts
 /data/saved-tickers/*
 !/data/saved-tickers/.gitkeep
 
+/data/env-risk-cache/*
+!/data/env-risk-cache/.gitkeep
+
 /src/generated/prisma

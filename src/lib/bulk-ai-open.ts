@@ -1,5 +1,5 @@
 /**
- * Opens every tab-style research prompt in new Claude, ChatGPT, Gemini, or Meta AI tabs, staggered, from the company bar.
+ * Opens every tab-style research prompt in new Claude, ChatGPT, Gemini, or Meta AI tabs from the company bar.
  */
 
 import {
@@ -19,9 +19,15 @@ import { EARNINGS_RELEASES_PROMPT_TEMPLATE } from "@/data/earnings-releases-prom
 import { EMPLOYEE_CONTACTS_PROMPT_TEMPLATE } from "@/data/employee-contacts-prompt";
 import { HISTORICAL_FINANCIALS_PROMPT_TEMPLATE } from "@/data/historical-financials-prompt";
 import { INDUSTRY_CONTACTS_PROMPT_TEMPLATE } from "@/data/industry-contacts-prompt";
+import { INDUSTRY_PUBLICATIONS_PROMPT_TEMPLATE } from "@/data/industry-publications-prompt";
+import {
+  INDUSTRY_VALUE_CHAIN_PROMPT_TEMPLATE,
+  resolveIndustryValueChainTemplate,
+} from "@/data/industry-value-chain-prompt";
 import { MANAGEMENT_BOARD_PROMPT_TEMPLATE } from "@/data/management-board-prompt";
 import { MGMT_PRESENTATIONS_PROMPT_TEMPLATE } from "@/data/mgmt-presentations-prompt";
 import { OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE } from "@/data/out-of-the-box-ideas-prompt";
+import { CAPITAL_ALLOCATION_PROMPT_TEMPLATE } from "@/data/capital-allocation-prompt";
 import { OVERVIEW_PROMPT_TEMPLATE } from "@/data/overview-prompt";
 import { RISK_FROM_10K_PROMPT_TEMPLATE } from "@/data/risk-from-10k-prompt";
 import { ORG_CHART_PROMPT_TEMPLATE, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
@@ -34,12 +40,14 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import { openGeminiNewChatWindow } from "@/lib/gemini-open-url";
 import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
+import {
+  META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE,
+  showMetaOllamaPlaceholder,
+} from "@/lib/meta-ollama-ui-placeholder";
 import { saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
-
-const STAGGER_MS = 220;
 
 export type BulkOpenContext = {
   ticker: string;
@@ -116,6 +124,13 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
         .replace(/\[INSERT COMPANY NAME\]/g, dn),
     },
     {
+      label: "Industry publications",
+      saveKey: "industry-publications",
+      prompt: ov("industry-publications", INDUSTRY_PUBLICATIONS_PROMPT_TEMPLATE)
+        .replace(/\[TICKER\]/g, tk)
+        .replace(/\[COMPANY NAME\]/g, dn),
+    },
+    {
       label: "Subsidiary list",
       saveKey: "subsidiary-list",
       prompt: ov("subsidiary-list", SUBSIDIARY_LIST_PROMPT_TEMPLATE).replace(/\{\{TICKER\}\}/g, tk),
@@ -148,6 +163,15 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       ),
     },
     {
+      label: "Industry Value Chain",
+      saveKey: "industry-value-chain",
+      prompt: resolveIndustryValueChainTemplate(
+        ov("industry-value-chain", INDUSTRY_VALUE_CHAIN_PROMPT_TEMPLATE),
+        tk,
+        ctx.companyName
+      ),
+    },
+    {
       label: "Startup risks",
       saveKey: "startup-risks",
       prompt: ov("startup-risks", STARTUP_RISKS_PROMPT_TEMPLATE).replace(/\[TICKER\]/g, tk),
@@ -167,7 +191,7 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
         .replace(/\{\{COMPANY_NAME\}\}/g, earningsCompanyNameLine(ctx)),
     },
     {
-      label: "Mgmt presentations",
+      label: "Mgmt Presentations & Transcripts",
       saveKey: "presentations",
       prompt: ov("presentations", MGMT_PRESENTATIONS_PROMPT_TEMPLATE)
         .replace(/\{\{TICKER\}\}/g, tk)
@@ -201,6 +225,13 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       label: "Company history",
       saveKey: "company-history",
       prompt: buildCompanyHistoryAiPrompt(tk, ctx.companyName, ov("company-history", COMPANY_HISTORY_PROMPT_TEMPLATE)),
+    },
+    {
+      label: "Capital allocation",
+      saveKey: "capital-allocation",
+      prompt: ov("capital-allocation", CAPITAL_ALLOCATION_PROMPT_TEMPLATE)
+        .replace(/\[COMPANY NAME\]/g, dn)
+        .replace(/\[TICKER\]/g, tk),
     },
     {
       label: "Credit agreements — find documents",
@@ -283,40 +314,43 @@ function openClaudePrefill(prompt: string): void {
   window.open(prefillUrl, "_blank", "noopener,noreferrer");
 }
 
-/** Opens one new Claude tab per prompt (~20), staggered to reduce popup blocking. */
+/**
+ * Opens one new Claude tab per prompt (~20).
+ * All opens run synchronously on the click stack: browsers only treat the first
+ * window.open after a setTimeout as user-initiated; staggered opens get blocked
+ * on production HTTPS and in stricter browsers (e.g. Opera).
+ */
 export function runBulkOpenClaude(ctx: BulkOpenContext): void {
   const entries = collectBulkClaudePromptEntries(ctx);
-  entries.forEach((e, i) => {
-    window.setTimeout(() => openClaudePrefill(e.prompt), i * STAGGER_MS);
-  });
+  for (const e of entries) {
+    openClaudePrefill(e.prompt);
+  }
 }
 
 /** Same prompts as Claude, opened in ChatGPT new-chat URLs (long prompts may be link-shortened). */
 export function runBulkOpenChatGPT(ctx: BulkOpenContext): void {
   const entries = collectBulkClaudePromptEntries(ctx);
-  entries.forEach((e, i) => {
-    window.setTimeout(() => {
-      openChatGptNewChatWindow(e.prompt);
-    }, i * STAGGER_MS);
-  });
+  for (const e of entries) {
+    openChatGptNewChatWindow(e.prompt);
+  }
 }
 
 /** Same prompts as Claude/ChatGPT, opened in Meta AI new-chat URLs (long prompts may be shortened). */
 export function runBulkOpenMetaAi(ctx: BulkOpenContext): void {
+  if (META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
+    showMetaOllamaPlaceholder();
+    return;
+  }
   const entries = collectBulkClaudePromptEntries(ctx);
-  entries.forEach((e, i) => {
-    window.setTimeout(() => {
-      openMetaAiNewChatWindow(e.prompt);
-    }, i * STAGGER_MS);
-  });
+  for (const e of entries) {
+    openMetaAiNewChatWindow(e.prompt);
+  }
 }
 
 /** Same prompts as Claude/ChatGPT/Meta, opened in Gemini web URLs (long prompts may be shortened). */
 export function runBulkOpenGemini(ctx: BulkOpenContext): void {
   const entries = collectBulkClaudePromptEntries(ctx);
-  entries.forEach((e, i) => {
-    window.setTimeout(() => {
-      openGeminiNewChatWindow(e.prompt);
-    }, i * STAGGER_MS);
-  });
+  for (const e of entries) {
+    openGeminiNewChatWindow(e.prompt);
+  }
 }

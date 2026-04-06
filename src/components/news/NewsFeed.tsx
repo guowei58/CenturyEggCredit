@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { NewsAggregationResponse, NormalizedNewsArticle } from "@/lib/news/types";
 import { PRODUCTION_NEWS_PROVIDER_IDS } from "@/lib/news/constants";
 import { NewsCard } from "./NewsCard";
@@ -32,6 +32,10 @@ export function NewsFeed({
   const tk = ticker?.trim() ?? "";
   const name = companyName?.trim() || undefined;
 
+  /** Comma-separated extra phrases for NewsAPI keyword search and relevance ranking. */
+  const [aliasesText, setAliasesText] = useState("");
+  const aliasesRef = useRef(aliasesText);
+  aliasesRef.current = aliasesText;
   const [sortMode, setSortMode] = useState<"relevance" | "recent">("relevance");
   const [enabledFilter, setEnabledFilter] = useState<string | "all">("all");
   const [multiSourceOnly, setMultiSourceOnly] = useState(false);
@@ -46,12 +50,17 @@ export function NewsFeed({
     setLoading(true);
     setError(null);
     try {
+      const aliases = aliasesRef.current
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length >= 2);
       const res = await fetch("/api/news", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ticker: tk,
           companyName: name,
+          aliases: aliases.length ? aliases : undefined,
           limit: 100,
           sortMode,
         }),
@@ -93,7 +102,8 @@ export function NewsFeed({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs" style={{ color: "var(--muted2)" }}>
-          Merged from configured feeds (Marketaux, Alpha Vantage, Finnhub). API keys are server-only.
+          Merged from configured feeds (Marketaux, Alpha Vantage, Finnhub, NewsAPI). API keys stay on the server. NewsAPI searches
+          headlines only, restricted to the domain allowlist in the news module config.
         </p>
         <button
           type="button"
@@ -104,6 +114,25 @@ export function NewsFeed({
         >
           {loading ? "Loading…" : "Refresh"}
         </button>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-[11px]" style={{ color: "var(--muted2)" }}>
+          <span className="mb-1 block font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+            Search aliases (optional)
+          </span>
+          <input
+            type="text"
+            value={aliasesText}
+            onChange={(e) => setAliasesText(e.target.value)}
+            placeholder='e.g. "Lumen Technologies", CenturyLink, subsidiary names — comma-separated'
+            className="w-full rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
+            style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+          />
+          <span className="mt-1 block text-[10px]" style={{ color: "var(--muted)" }}>
+            Combined with the company name for the NewsAPI keyword search and for relevance ranking. Click Refresh after editing.
+          </span>
+        </label>
       </div>
 
       <NewsFilters

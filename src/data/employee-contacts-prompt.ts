@@ -96,6 +96,11 @@ Output requirements:
 - No markdown code fences
 - No bullets
 
+Critical — no citation / reference tokens in the HTML:
+- Do NOT output ChatGPT (or any) internal citation placeholders. Forbidden anywhere in the output, including inside <td> cells: the substring "contentReference", "oaicite", and patterns like "{index=0}" or ":contentReference[...]{...}" or ":contentReference|oaicite:...|{...}".
+- Do not use a <caption> element, or if you do, it must be plain human-readable text with none of the above.
+- The table must contain only normal prose, titles, and <a href="..."> links—nothing that looks like machine citation syntax.
+
 The HTML table must have exactly these columns:
 <table>
   <thead>

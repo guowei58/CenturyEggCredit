@@ -27,6 +27,7 @@ function envKey(id: KnownNewsProviderId, suffix: string): string {
     marketaux: "MARKETAUX",
     alpha_vantage: "ALPHA_VANTAGE",
     finnhub: "FINNHUB",
+    newsapi: "NEWSAPI",
   };
   return `NEWS_PROVIDER_${map[id]}_${suffix}`;
 }
@@ -39,6 +40,7 @@ export function loadProviderConfigsFromEnv(): Map<string, ProviderConfig> {
     marketaux: { priority: 1 },
     alpha_vantage: { priority: 2 },
     finnhub: { priority: 3 },
+    newsapi: { priority: 4 },
   };
 
   const out = new Map<string, ProviderConfig>();
@@ -57,6 +59,7 @@ export function getApiKeyEnv(id: KnownNewsProviderId): string | undefined {
     marketaux: "MARKETAUX_API_KEY",
     alpha_vantage: "ALPHA_VANTAGE_API_KEY",
     finnhub: "FINNHUB_API_KEY",
+    newsapi: "NEWSAPI_KEY",
   };
   return process.env[keys[id]]?.trim() || undefined;
 }

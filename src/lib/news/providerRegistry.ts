@@ -3,6 +3,7 @@ import { PRODUCTION_NEWS_PROVIDER_IDS } from "./constants";
 import { createAlphaVantageNewsProvider } from "./providers/alphaVantage";
 import { createFinnhubNewsProvider } from "./providers/finnhub";
 import { createMarketauxNewsProvider } from "./providers/marketaux";
+import { createNewsApiNewsProvider } from "./providers/newsapi";
 import { createMockNewsProvider, MOCK_NEWS_API_KEY } from "./providers/mockNewsProvider";
 import type { NewsProvider } from "./types";
 
@@ -50,6 +51,12 @@ export const NEWS_PROVIDER_REGISTRATIONS: ProviderRegistration[] = [
     displayName: "Finnhub",
     getApiKey: () => getApiKeyEnv("finnhub"),
     create: createFinnhubNewsProvider,
+  },
+  {
+    id: "newsapi",
+    displayName: "NewsAPI",
+    getApiKey: () => getApiKeyEnv("newsapi"),
+    create: createNewsApiNewsProvider,
   },
 ];
 

@@ -12,11 +12,16 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { CHATGPT_LONG_URL_NOTICE } from "@/lib/chatgpt-open-url";
 import { GEMINI_LONG_URL_NOTICE, GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
 import { META_AI_LONG_URL_NOTICE } from "@/lib/meta-ai-open-url";
+import {
+  META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE,
+  showMetaOllamaPlaceholder,
+} from "@/lib/meta-ollama-ui-placeholder";
 
 const OLLAMA_BULK_COLOR = "#2563eb";
 
-const bulkApiBtnClass =
-  "tab-prompt-ai-action-btn w-full px-2.5 py-1.5 text-[11px] font-semibold sm:px-3 sm:text-xs disabled:cursor-not-allowed disabled:opacity-45";
+/** Bulk bar: fixed min-height so UI/API rows align; centered label; subtle fill reads calmer on dark sb. */
+const bulkBarBtnClass =
+  "tab-prompt-ai-action-btn inline-flex w-full min-h-[2.75rem] items-center justify-center whitespace-normal px-2 py-2 text-center text-[11px] font-semibold leading-snug sm:min-h-[2.5rem] sm:px-3 sm:text-xs sm:leading-tight disabled:cursor-not-allowed disabled:opacity-45 bg-[var(--card2)] transition-opacity hover:opacity-95";
 
 export type CompanyBarData = {
   ticker: string;
@@ -45,6 +50,10 @@ export function CompanyBar({
 
   async function startBulkApi(provider: AiProvider) {
     if (bulkApiBusy || !data.ticker.trim()) return;
+    if (provider === "ollama" && META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
+      showMetaOllamaPlaceholder();
+      return;
+    }
     const who =
       provider === "claude"
         ? "Claude API"
@@ -82,26 +91,32 @@ export function CompanyBar({
 
   return (
     <div
-      className="flex flex-shrink-0 flex-col border-b px-5 py-3 sm:px-6 sm:py-3.5"
+      className="flex flex-shrink-0 flex-col border-b px-5 py-3.5 sm:px-6 sm:py-4"
       style={{ background: "var(--sb)", borderColor: "var(--border)" }}
     >
-      <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
-        <span
-          className="rounded px-2 py-0.5 font-mono text-xs font-semibold tracking-wide text-black sm:px-2.5 sm:py-1 sm:text-sm"
-          style={{ background: "var(--accent)" }}
-        >
-          {data.ticker}
-        </span>
-        <div className="flex min-w-0 flex-1 flex-wrap items-start gap-2 sm:gap-3">
-          <div className="min-w-0 text-sm font-semibold leading-snug tracking-tight sm:text-base" style={{ color: "var(--text)" }}>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+        <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-3.5">
+          <span
+            className="inline-flex shrink-0 items-center justify-center rounded-md px-2.5 py-1.5 font-mono text-xs font-bold tracking-wide text-black sm:text-sm"
+            style={{ background: "var(--accent)" }}
+          >
+            {data.ticker}
+          </span>
+          <div
+            className="min-w-0 text-base font-semibold leading-tight tracking-tight sm:text-lg"
+            style={{ color: "var(--text)" }}
+          >
             {data.name}
           </div>
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <div className="grid w-full grid-cols-2 items-center gap-2 md:grid-cols-4">
+        </div>
+
+        <div className="min-w-0 w-full lg:max-w-[min(100%,52rem)] lg:flex-1">
+          <div className="flex flex-col gap-2">
+            <div className="grid w-full grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-4 md:items-stretch">
               <button
                 type="button"
-                className={bulkApiBtnClass}
-                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+                className={bulkBarBtnClass}
+                style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
                 title="Opens many Claude tabs—one per research prompt. Allow pop-ups if the browser blocks some."
                 onClick={() => runBulkOpenClaude(bulkCtx())}
               >
@@ -109,8 +124,8 @@ export function CompanyBar({
               </button>
               <button
                 type="button"
-                className={bulkApiBtnClass}
-                style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
+                className={bulkBarBtnClass}
+                style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
                 title={`Opens many ChatGPT tabs with the same prompts. ${CHATGPT_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
                 onClick={() => runBulkOpenChatGPT(bulkCtx())}
               >
@@ -118,8 +133,8 @@ export function CompanyBar({
               </button>
               <button
                 type="button"
-                className={bulkApiBtnClass}
-                style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR, background: "transparent" }}
+                className={bulkBarBtnClass}
+                style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR }}
                 title={`Opens many Gemini tabs with the same prompts. ${GEMINI_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
                 onClick={() => runBulkOpenGemini(bulkCtx())}
               >
@@ -127,20 +142,20 @@ export function CompanyBar({
               </button>
               <button
                 type="button"
-                className={bulkApiBtnClass}
-                style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                className={bulkBarBtnClass}
+                style={{ borderColor: "#0866FF", color: "#0866FF" }}
                 title={`Opens many Meta AI tabs with the same prompts. ${META_AI_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
                 onClick={() => runBulkOpenMetaAi(bulkCtx())}
               >
                 Update all via Meta AI
               </button>
             </div>
-            <div className="grid w-full grid-cols-2 items-center gap-2 md:grid-cols-4">
+            <div className="grid w-full grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-4 md:items-stretch">
               <button
                 type="button"
-                className={bulkApiBtnClass}
+                className={bulkBarBtnClass}
                 disabled={bulkApiBusy !== null}
-                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+                style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
                 title="Runs every research prompt through the Claude API and saves each answer to the matching tab (uses server API key)."
                 onClick={() => void startBulkApi("claude")}
               >
@@ -148,9 +163,9 @@ export function CompanyBar({
               </button>
               <button
                 type="button"
-                className={bulkApiBtnClass}
+                className={bulkBarBtnClass}
                 disabled={bulkApiBusy !== null}
-                style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
+                style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
                 title="Runs every research prompt through the OpenAI API and saves each answer to the matching tab."
                 onClick={() => void startBulkApi("openai")}
               >
@@ -158,9 +173,9 @@ export function CompanyBar({
               </button>
               <button
                 type="button"
-                className={bulkApiBtnClass}
+                className={bulkBarBtnClass}
                 disabled={bulkApiBusy !== null}
-                style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR, background: "transparent" }}
+                style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR }}
                 title="Runs every research prompt through the Gemini API and saves each answer to the matching tab."
                 onClick={() => void startBulkApi("gemini")}
               >
@@ -168,9 +183,9 @@ export function CompanyBar({
               </button>
               <button
                 type="button"
-                className={bulkApiBtnClass}
+                className={bulkBarBtnClass}
                 disabled={bulkApiBusy !== null}
-                style={{ borderColor: OLLAMA_BULK_COLOR, color: OLLAMA_BULK_COLOR, background: "transparent" }}
+                style={{ borderColor: OLLAMA_BULK_COLOR, color: OLLAMA_BULK_COLOR }}
                 title="Runs every research prompt through local Ollama (Meta AI has no API bulk path here)."
                 onClick={() => void startBulkApi("ollama")}
               >
@@ -178,7 +193,7 @@ export function CompanyBar({
               </button>
             </div>
             {bulkApiLine ? (
-              <p className="max-w-xl text-[10px] leading-snug sm:text-[11px]" style={{ color: "var(--muted2)" }}>
+              <p className="text-[10px] leading-snug sm:text-[11px] lg:text-right" style={{ color: "var(--muted2)" }}>
                 {bulkApiLine}
               </p>
             ) : null}

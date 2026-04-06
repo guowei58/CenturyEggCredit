@@ -1,0 +1,633 @@
+import {
+  ConversationMemberRole,
+  ConversationType,
+  EggHocMessageType,
+} from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
+import { makeDirectPairKey } from "@/lib/egg-hoc-chat/directPairKey";
+
+const userPublicSelect = { id: true, name: true, email: true, image: true } as const;
+
+/** Single app-wide general channel; `Conversation.lobbyKey` matches this value. */
+export const GLOBAL_LOBBY_KEY = "global" as const;
+
+const LOBBY_TITLE = "Lobby";
+
+function isPrismaUniqueViolation(e: unknown): boolean {
+  return typeof e === "object" && e !== null && "code" in e && (e as { code: string }).code === "P2002";
+}
+
+/**
+ * Ensures the global Lobby row exists and the user is a member (lazy join for every account).
+ */
+export async function ensureUserInGlobalLobby(userId: string): Promise<void> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let lobby = await prisma.conversation.findUnique({
+      where: { lobbyKey: GLOBAL_LOBBY_KEY },
+      select: { id: true },
+    });
+    if (!lobby) {
+      try {
+        await prisma.conversation.create({
+          data: {
+            type: ConversationType.GROUP,
+            name: LOBBY_TITLE,
+            lobbyKey: GLOBAL_LOBBY_KEY,
+            createdByUserId: userId,
+            members: {
+              create: { userId, role: ConversationMemberRole.MEMBER },
+            },
+          },
+        });
+      } catch (e) {
+        if (!isPrismaUniqueViolation(e)) throw e;
+      }
+      lobby = await prisma.conversation.findUnique({
+        where: { lobbyKey: GLOBAL_LOBBY_KEY },
+        select: { id: true },
+      });
+    }
+    if (!lobby) continue;
+
+    await prisma.conversationMember.upsert({
+      where: { conversationId_userId: { conversationId: lobby.id, userId } },
+      create: { conversationId: lobby.id, userId, role: ConversationMemberRole.MEMBER },
+      update: {},
+    });
+    return;
+  }
+}
+
+export async function assertMember(conversationId: string, userId: string) {
+  const m = await prisma.conversationMember.findUnique({
+    where: { conversationId_userId: { conversationId, userId } },
+    select: { id: true, role: true },
+  });
+  return m;
+}
+
+export async function countUnreadForMember(
+  conversationId: string,
+  userId: string,
+  lastReadMessageId: string | null
+): Promise<number> {
+  const base = {
+    conversationId,
+    deletedAt: null,
+    senderUserId: { not: userId },
+    messageType: EggHocMessageType.TEXT,
+  } as const;
+
+  if (!lastReadMessageId) {
+    return prisma.eggHocMessage.count({ where: base });
+  }
+
+  const anchor = await prisma.eggHocMessage.findUnique({
+    where: { id: lastReadMessageId },
+    select: { createdAt: true },
+  });
+  if (!anchor) {
+    return prisma.eggHocMessage.count({ where: base });
+  }
+
+  return prisma.eggHocMessage.count({
+    where: {
+      ...base,
+      createdAt: { gt: anchor.createdAt },
+    },
+  });
+}
+
+function titleForConversation(
+  type: ConversationType,
+  name: string | null,
+  members: Array<{ userId: string; user: { id: string; name: string | null; email: string | null } }>,
+  viewerUserId: string,
+  lobbyKey: string | null
+): string {
+  if (lobbyKey) return LOBBY_TITLE;
+  if (type === ConversationType.GROUP) {
+    return name?.trim() || "Group chat";
+  }
+  const other = members.find((m) => m.userId !== viewerUserId)?.user;
+  return other?.name?.trim() || other?.email?.trim() || "Direct message";
+}
+
+export async function listUserConversations(userId: string) {
+  await ensureUserInGlobalLobby(userId);
+
+  const memberships = await prisma.conversationMember.findMany({
+    where: { userId },
+    orderBy: { conversation: { updatedAt: "desc" } },
+    include: {
+      conversation: {
+        include: {
+          lastMessage: {
+            include: { sender: { select: userPublicSelect } },
+          },
+          members: {
+            include: { user: { select: userPublicSelect } },
+          },
+        },
+      },
+    },
+  });
+
+  const withUnread = await Promise.all(
+    memberships.map(async (row) => {
+      const c = row.conversation;
+      const unread = await countUnreadForMember(c.id, userId, row.lastReadMessageId);
+      const preview = c.lastMessage
+        ? c.lastMessage.deletedAt
+          ? "(deleted)"
+          : c.lastMessage.body.slice(0, 140) + (c.lastMessage.body.length > 140 ? "…" : "")
+        : "";
+      const isLobby = c.lobbyKey === GLOBAL_LOBBY_KEY;
+      return {
+        id: c.id,
+        type: c.type,
+        name: c.name,
+        isLobby,
+        updatedAt: c.updatedAt.toISOString(),
+        title: titleForConversation(c.type, c.name, c.members, userId, c.lobbyKey),
+        lastMessageAt: c.lastMessage?.createdAt.toISOString() ?? c.updatedAt.toISOString(),
+        lastMessagePreview: preview,
+        unreadCount: unread,
+        lastMessageSenderName:
+          c.lastMessage?.sender?.name?.trim() ||
+          c.lastMessage?.sender?.email?.trim() ||
+          null,
+      };
+    })
+  );
+
+  withUnread.sort((a, b) => {
+    if (a.isLobby !== b.isLobby) return a.isLobby ? -1 : 1;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
+  return withUnread;
+}
+
+export async function getConversationDetail(conversationId: string, userId: string) {
+  const lobbyRow = await prisma.conversation.findFirst({
+    where: { id: conversationId, lobbyKey: GLOBAL_LOBBY_KEY },
+    select: { id: true },
+  });
+  if (lobbyRow) await ensureUserInGlobalLobby(userId);
+
+  const member = await assertMember(conversationId, userId);
+  if (!member) return { ok: false as const, error: "Not a member of this conversation" };
+
+  const conversation = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    include: {
+      members: {
+        include: { user: { select: userPublicSelect } },
+        orderBy: { joinedAt: "asc" },
+      },
+      lastMessage: { include: { sender: { select: userPublicSelect } } },
+    },
+  });
+  if (!conversation) return { ok: false as const, error: "Conversation not found" };
+
+  const isLobby = conversation.lobbyKey === GLOBAL_LOBBY_KEY;
+
+  return {
+    ok: true as const,
+    conversation: {
+      id: conversation.id,
+      type: conversation.type,
+      name: conversation.name,
+      isLobby,
+      createdAt: conversation.createdAt.toISOString(),
+      updatedAt: conversation.updatedAt.toISOString(),
+      title: titleForConversation(
+        conversation.type,
+        conversation.name,
+        conversation.members,
+        userId,
+        conversation.lobbyKey
+      ),
+      myRole: member.role,
+      members: conversation.members.map((m) => ({
+        userId: m.userId,
+        role: m.role,
+        joinedAt: m.joinedAt.toISOString(),
+        user: m.user,
+      })),
+    },
+  };
+}
+
+export async function createDirectConversation(currentUserId: string, targetUserId: string) {
+  const target = targetUserId.trim();
+  if (!target || target === currentUserId) {
+    return { ok: false as const, error: "Invalid target user" };
+  }
+
+  const targetUser = await prisma.user.findUnique({ where: { id: target }, select: { id: true } });
+  if (!targetUser) return { ok: false as const, error: "User not found" };
+
+  const directPairKey = makeDirectPairKey(currentUserId, target);
+
+  const existing = await prisma.conversation.findUnique({
+    where: { directPairKey },
+    include: {
+      members: { include: { user: { select: userPublicSelect } } },
+      lastMessage: { include: { sender: { select: userPublicSelect } } },
+    },
+  });
+  if (existing) {
+    return { ok: true as const, conversationId: existing.id, created: false };
+  }
+
+  const conv = await prisma.$transaction(async (tx) => {
+    const c = await tx.conversation.create({
+      data: {
+        type: ConversationType.DIRECT,
+        directPairKey,
+        createdByUserId: currentUserId,
+        members: {
+          create: [
+            { userId: currentUserId, role: ConversationMemberRole.MEMBER },
+            { userId: target, role: ConversationMemberRole.MEMBER },
+          ],
+        },
+      },
+    });
+    return c;
+  });
+
+  return { ok: true as const, conversationId: conv.id, created: true };
+}
+
+export async function createGroupConversation(
+  currentUserId: string,
+  name: string,
+  memberUserIds: string[]
+) {
+  const title = name.trim();
+  if (!title) return { ok: false as const, error: "Group name is required" };
+
+  const ids = Array.from(
+    new Set([currentUserId, ...memberUserIds.map((x) => x.trim()).filter(Boolean)])
+  );
+  if (ids.length < 2) {
+    return { ok: false as const, error: "Add at least one other member" };
+  }
+
+  const users = await prisma.user.findMany({
+    where: { id: { in: ids } },
+    select: { id: true },
+  });
+  if (users.length !== ids.length) {
+    return { ok: false as const, error: "One or more users were not found" };
+  }
+
+  const conv = await prisma.conversation.create({
+    data: {
+      type: ConversationType.GROUP,
+      name: title,
+      createdByUserId: currentUserId,
+      members: {
+        create: ids.map((uid) => ({
+          userId: uid,
+          role: uid === currentUserId ? ConversationMemberRole.ADMIN : ConversationMemberRole.MEMBER,
+        })),
+      },
+    },
+  });
+
+  return { ok: true as const, conversationId: conv.id };
+}
+
+export async function getConversationMessages(
+  conversationId: string,
+  userId: string,
+  opts: { beforeMessageId?: string | null; take?: number }
+) {
+  const member = await assertMember(conversationId, userId);
+  if (!member) return { ok: false as const, error: "Not a member of this conversation" };
+
+  const take = Math.min(Math.max(opts.take ?? 40, 1), 100);
+
+  let cursorDate: Date | null = null;
+  if (opts.beforeMessageId) {
+    const cur = await prisma.eggHocMessage.findFirst({
+      where: { id: opts.beforeMessageId, conversationId },
+      select: { createdAt: true },
+    });
+    if (cur) cursorDate = cur.createdAt;
+  }
+
+  const messages = await prisma.eggHocMessage.findMany({
+    where: {
+      conversationId,
+      ...(cursorDate ? { createdAt: { lt: cursorDate } } : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    take,
+    include: { sender: { select: userPublicSelect } },
+  });
+
+  const chronological = [...messages].reverse();
+  const nextCursor = chronological.length > 0 ? chronological[0].id : null;
+
+  return {
+    ok: true as const,
+    messages: chronological.map((m) => ({
+      id: m.id,
+      conversationId: m.conversationId,
+      senderUserId: m.senderUserId,
+      body: m.body,
+      messageType: m.messageType,
+      editedAt: m.editedAt?.toISOString() ?? null,
+      deletedAt: m.deletedAt?.toISOString() ?? null,
+      createdAt: m.createdAt.toISOString(),
+      sender: m.sender,
+    })),
+    hasMore: messages.length === take,
+    nextCursor,
+  };
+}
+
+export async function sendMessage(conversationId: string, userId: string, body: string) {
+  const text = body.trim();
+  if (!text) return { ok: false as const, error: "Message cannot be empty" };
+  if (text.length > 20_000) return { ok: false as const, error: "Message too long" };
+
+  const member = await assertMember(conversationId, userId);
+  if (!member) return { ok: false as const, error: "Not a member of this conversation" };
+
+  const msg = await prisma.$transaction(async (tx) => {
+    const m = await tx.eggHocMessage.create({
+      data: {
+        conversationId,
+        senderUserId: userId,
+        body: text,
+        messageType: EggHocMessageType.TEXT,
+      },
+      include: { sender: { select: userPublicSelect } },
+    });
+    await tx.conversation.update({
+      where: { id: conversationId },
+      data: { lastMessageId: m.id },
+    });
+    return m;
+  });
+
+  return {
+    ok: true as const,
+    message: {
+      id: msg.id,
+      conversationId: msg.conversationId,
+      senderUserId: msg.senderUserId,
+      body: msg.body,
+      messageType: msg.messageType,
+      editedAt: null,
+      deletedAt: null,
+      createdAt: msg.createdAt.toISOString(),
+      sender: msg.sender,
+    },
+  };
+}
+
+export async function markConversationRead(conversationId: string, userId: string, messageId?: string | null) {
+  const member = await assertMember(conversationId, userId);
+  if (!member) return { ok: false as const, error: "Not a member of this conversation" };
+
+  let targetId = messageId?.trim() || null;
+  if (!targetId) {
+    const last = await prisma.eggHocMessage.findFirst({
+      where: { conversationId, deletedAt: null },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
+    targetId = last?.id ?? null;
+  }
+
+  if (targetId) {
+    const exists = await prisma.eggHocMessage.findFirst({
+      where: { id: targetId, conversationId },
+      select: { id: true },
+    });
+    if (!exists) return { ok: false as const, error: "Message not in this conversation" };
+  }
+
+  await prisma.conversationMember.update({
+    where: { conversationId_userId: { conversationId, userId } },
+    data: {
+      lastReadMessageId: targetId,
+      lastReadAt: new Date(),
+    },
+  });
+
+  return { ok: true as const };
+}
+
+export async function renameGroupConversation(conversationId: string, userId: string, name: string) {
+  const next = name.trim();
+  if (!next) return { ok: false as const, error: "Name required" };
+
+  const member = await assertMember(conversationId, userId);
+  if (!member) return { ok: false as const, error: "Not a member" };
+  if (member.role !== ConversationMemberRole.ADMIN) {
+    return { ok: false as const, error: "Only admins can rename the group" };
+  }
+
+  const conv = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    select: { type: true, lobbyKey: true },
+  });
+  if (!conv || conv.type !== ConversationType.GROUP) {
+    return { ok: false as const, error: "Not a group conversation" };
+  }
+  if (conv.lobbyKey) {
+    return { ok: false as const, error: "The Lobby cannot be renamed" };
+  }
+
+  await prisma.conversation.update({
+    where: { id: conversationId },
+    data: { name: next },
+  });
+
+  return { ok: true as const };
+}
+
+async function countAdmins(conversationId: string) {
+  return prisma.conversationMember.count({
+    where: { conversationId, role: ConversationMemberRole.ADMIN },
+  });
+}
+
+export async function addGroupMembers(conversationId: string, actorUserId: string, userIds: string[]) {
+  const member = await assertMember(conversationId, actorUserId);
+  if (!member) return { ok: false as const, error: "Not a member" };
+  if (member.role !== ConversationMemberRole.ADMIN) {
+    return { ok: false as const, error: "Only admins can add members" };
+  }
+
+  const conv = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    select: { type: true, lobbyKey: true },
+  });
+  if (!conv || conv.type !== ConversationType.GROUP) {
+    return { ok: false as const, error: "Not a group conversation" };
+  }
+  if (conv.lobbyKey) {
+    return { ok: false as const, error: "Members join the Lobby automatically" };
+  }
+
+  const unique = Array.from(new Set(userIds.map((x) => x.trim()).filter(Boolean)));
+  if (unique.length === 0) return { ok: false as const, error: "No users to add" };
+
+  const existing = await prisma.conversationMember.findMany({
+    where: { conversationId, userId: { in: unique } },
+    select: { userId: true },
+  });
+  const existingSet = new Set(existing.map((e) => e.userId));
+  const toAdd = unique.filter((id) => !existingSet.has(id));
+  if (toAdd.length === 0) return { ok: true as const, added: 0 };
+
+  const users = await prisma.user.findMany({ where: { id: { in: toAdd } }, select: { id: true } });
+  if (users.length !== toAdd.length) {
+    return { ok: false as const, error: "One or more users were not found" };
+  }
+
+  await prisma.conversationMember.createMany({
+    data: toAdd.map((uid) => ({
+      conversationId,
+      userId: uid,
+      role: ConversationMemberRole.MEMBER,
+    })),
+  });
+
+  return { ok: true as const, added: toAdd.length };
+}
+
+export async function removeGroupMember(conversationId: string, actorUserId: string, targetUserId: string) {
+  const actor = await assertMember(conversationId, actorUserId);
+  if (!actor) return { ok: false as const, error: "Not a member" };
+
+  const target = await assertMember(conversationId, targetUserId);
+  if (!target) return { ok: false as const, error: "User is not in this conversation" };
+
+  const conv = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    select: { type: true, lobbyKey: true },
+  });
+  if (!conv || conv.type !== ConversationType.GROUP) {
+    return { ok: false as const, error: "Not a group conversation" };
+  }
+  if (conv.lobbyKey) {
+    return {
+      ok: false as const,
+      error: "The Lobby includes everyone; membership is managed automatically",
+    };
+  }
+
+  const isSelf = actorUserId === targetUserId;
+  const actorIsAdmin = actor.role === ConversationMemberRole.ADMIN;
+
+  if (!isSelf && !actorIsAdmin) {
+    return { ok: false as const, error: "Only admins can remove other members" };
+  }
+
+  if (target.role === ConversationMemberRole.ADMIN) {
+    const admins = await countAdmins(conversationId);
+    if (admins <= 1 && targetUserId === actorUserId) {
+      return {
+        ok: false as const,
+        error: "You are the only admin. Promote another admin before leaving (contact support if needed).",
+      };
+    }
+    if (admins <= 1 && targetUserId !== actorUserId) {
+      return { ok: false as const, error: "Cannot remove the only admin" };
+    }
+  }
+
+  await prisma.conversationMember.delete({
+    where: { conversationId_userId: { conversationId, userId: targetUserId } },
+  });
+
+  return { ok: true as const };
+}
+
+export async function editMessage(messageId: string, userId: string, body: string) {
+  const text = body.trim();
+  if (!text) return { ok: false as const, error: "Message cannot be empty" };
+
+  const msg = await prisma.eggHocMessage.findUnique({
+    where: { id: messageId },
+    select: { id: true, senderUserId: true, deletedAt: true },
+  });
+  if (!msg || msg.deletedAt) return { ok: false as const, error: "Message not found" };
+  if (msg.senderUserId !== userId) return { ok: false as const, error: "You can only edit your own messages" };
+
+  await prisma.eggHocMessage.update({
+    where: { id: messageId },
+    data: { body: text, editedAt: new Date() },
+  });
+
+  return { ok: true as const };
+}
+
+export async function softDeleteMessage(messageId: string, userId: string) {
+  const msg = await prisma.eggHocMessage.findUnique({
+    where: { id: messageId },
+    select: { id: true, senderUserId: true, deletedAt: true, conversationId: true },
+  });
+  if (!msg || msg.deletedAt) return { ok: false as const, error: "Message not found" };
+  if (msg.senderUserId !== userId) return { ok: false as const, error: "You can only delete your own messages" };
+
+  await prisma.eggHocMessage.update({
+    where: { id: messageId },
+    data: { deletedAt: new Date(), body: "" },
+  });
+
+  const conv = await prisma.conversation.findUnique({
+    where: { id: msg.conversationId },
+    select: { lastMessageId: true },
+  });
+  if (conv?.lastMessageId === messageId) {
+    const prev = await prisma.eggHocMessage.findFirst({
+      where: { conversationId: msg.conversationId, deletedAt: null, id: { not: messageId } },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
+    await prisma.conversation.update({
+      where: { id: msg.conversationId },
+      data: { lastMessageId: prev?.id ?? null },
+    });
+  }
+
+  return { ok: true as const };
+}
+
+export async function searchUsers(query: string, excludeUserId: string, take = 20) {
+  const q = query.trim();
+  const lim = Math.min(take, 50);
+
+  if (q.length < 2) {
+    return prisma.user.findMany({
+      where: { id: { not: excludeUserId } },
+      select: userPublicSelect,
+      take: lim,
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+    });
+  }
+
+  return prisma.user.findMany({
+    where: {
+      id: { not: excludeUserId },
+      OR: [
+        { email: { contains: q, mode: "insensitive" } },
+        { name: { contains: q, mode: "insensitive" } },
+      ],
+    },
+    select: userPublicSelect,
+    take: lim,
+    orderBy: { email: "asc" },
+  });
+}

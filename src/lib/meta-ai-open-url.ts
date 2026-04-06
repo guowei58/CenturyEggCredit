@@ -4,6 +4,10 @@
  */
 
 import { CHATGPT_LONG_URL_NOTICE } from "@/lib/chatgpt-open-url";
+import {
+  META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE,
+  showMetaOllamaPlaceholder,
+} from "@/lib/meta-ollama-ui-placeholder";
 
 export const META_AI_NEW_CHAT_ORIGIN = "https://www.meta.ai/";
 
@@ -83,6 +87,10 @@ export function buildMetaAiNewChatUrl(fullPrompt: string): { href: string; wasSh
 }
 
 export function openMetaAiNewChatWindow(fullPrompt: string): { wasShortened: boolean } {
+  if (META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
+    showMetaOllamaPlaceholder();
+    return { wasShortened: false };
+  }
   const { href, wasShortened } = buildMetaAiNewChatUrl(fullPrompt);
   window.open(href, "_blank", "noopener,noreferrer");
   return { wasShortened };
@@ -95,6 +103,10 @@ export function openMetaAiWithClipboard(
   setClipboardFailed: (b: boolean) => void
 ): void {
   if (!prompt.trim()) return;
+  if (META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
+    showMetaOllamaPlaceholder();
+    return;
+  }
   setStatusMessage(null);
   setClipboardFailed(false);
   const { wasShortened } = openMetaAiNewChatWindow(prompt);

@@ -13,6 +13,8 @@ import {
   createAiChatSession,
   deriveSessionTitle,
   fetchAiChatStateFromServer,
+  markAiChatViewedNow,
+  OREO_AI_CHAT_WAITING_REPLY_KEY,
   pruneSessions,
   pushAiChatStateToServer,
 } from "@/lib/ai-chat-sessions";
@@ -65,6 +67,7 @@ export function ChatDrawer({
   /** When true and a sidebar ticker is set, POST includes saved OREO text (responses + Saved Documents .txt/.md). */
   const [includeOreoContext, setIncludeOreoContext] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingRef = useRef(false);
   const pendingAttachmentsRef = useRef<AiChatAttachment[]>([]);
@@ -186,6 +189,24 @@ export function ChatDrawer({
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [open, messages, pending]);
+
+  useEffect(() => {
+    if (!open) return;
+    markAiChatViewedNow();
+  }, [open, messages, pending]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (pending && !open) {
+        sessionStorage.setItem(OREO_AI_CHAT_WAITING_REPLY_KEY, "1");
+      } else {
+        sessionStorage.removeItem(OREO_AI_CHAT_WAITING_REPLY_KEY);
+      }
+    } catch {
+      /* private mode */
+    }
+  }, [pending, open]);
 
   const providerReady =
     aiProvider === "claude"
@@ -365,6 +386,9 @@ export function ChatDrawer({
       } finally {
         pendingRef.current = false;
         setPending(false);
+        requestAnimationFrame(() => {
+          chatInputRef.current?.focus();
+        });
       }
     },
     [
@@ -818,6 +842,7 @@ export function ChatDrawer({
                 </div>
               ) : null}
               <textarea
+                ref={chatInputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onPaste={(e) => {

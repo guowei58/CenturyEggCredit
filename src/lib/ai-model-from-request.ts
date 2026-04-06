@@ -37,6 +37,35 @@ export function resolveCommitteeChatModels(b: ModelOverrideBody) {
   };
 }
 
+/** Same env fallbacks as covenants; override with ANTHROPIC_LME_ANALYSIS_MODEL etc. if set. */
+export function resolveLmeAnalysisModels(b: ModelOverrideBody) {
+  return {
+    claudeModel:
+      sanitizeClientModelId(b.claudeModel) ||
+      process.env.ANTHROPIC_LME_ANALYSIS_MODEL?.trim() ||
+      process.env.ANTHROPIC_COVENANT_MODEL?.trim() ||
+      process.env.ANTHROPIC_MODEL?.trim() ||
+      "claude-haiku-4-5-20251001",
+    openaiModel:
+      sanitizeClientModelId(b.openaiModel) ||
+      process.env.OPENAI_LME_ANALYSIS_MODEL?.trim() ||
+      process.env.OPENAI_COVENANT_MODEL?.trim() ||
+      process.env.OPENAI_MODEL?.trim() ||
+      undefined,
+    geminiModel:
+      sanitizeClientModelId(b.geminiModel) ||
+      process.env.GEMINI_LME_ANALYSIS_MODEL?.trim() ||
+      process.env.GEMINI_COVENANT_MODEL?.trim() ||
+      process.env.GEMINI_MODEL?.trim() ||
+      undefined,
+    ollamaModel:
+      sanitizeClientModelId(b.ollamaModel) ||
+      process.env.OLLAMA_LME_ANALYSIS_MODEL?.trim() ||
+      process.env.OLLAMA_COVENANT_MODEL?.trim() ||
+      getOllamaModel(),
+  };
+}
+
 export function resolveCovenantModels(b: ModelOverrideBody) {
   return {
     claudeModel:

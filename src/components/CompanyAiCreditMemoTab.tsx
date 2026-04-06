@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -21,17 +21,12 @@ import type {
   CreditMemoProject,
   CreditMemoTemplate,
   CreditMemoTemplateIndex,
-  FolderCandidate,
   FolderResolveResult,
   MemoOutline,
 } from "@/lib/creditMemo/types";
-import { USER_WORKSPACE_INGEST_SENTINEL } from "@/lib/user-ticker-workspace-constants";
-
 /** Readable value + placeholder contrast on dark UI. */
 const MEMO_FIELD_CLASS =
   "w-full rounded border px-2 py-1 border-[var(--border2)] bg-[var(--card2)] text-[var(--text)] caret-[var(--accent)] shadow-sm [&::placeholder]:text-[var(--muted2)]";
-
-const MEMO_FIELD_CLASS_SM = `${MEMO_FIELD_CLASS} text-[11px]`;
 
 /** Primary, deck, and voice generators: same width; stretch to row height on wrap. */
 const MEMO_GENERATE_BTN_CLASS =
@@ -127,18 +122,6 @@ function variantLabelForLibrary(voice: CreditMemoVoiceId | null | undefined): st
   return voice;
 }
 
-function displayFolderPath(p: string): string {
-  if (p === USER_WORKSPACE_INGEST_SENTINEL)
-    return "Cloud workspace (server — workspace files, saved tab text, and Saved Documents for this ticker)";
-  return p;
-}
-
-function isCloudOnlyIngestChoice(res: FolderResolveResult): boolean {
-  if (!res.ok) return false;
-  if (res.chosen.path !== USER_WORKSPACE_INGEST_SENTINEL) return false;
-  return !(res.alternates ?? []).some((c) => c.path !== USER_WORKSPACE_INGEST_SENTINEL);
-}
-
 function TabButton({
   active,
   onClick,
@@ -170,7 +153,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   prefsRef.current = preferences;
   const defaultTitle = `${companyName ? `${companyName} (${tk})` : tk} — Credit Memo`;
 
-  const [panel, setPanel] = useState<"folder" | "template" | "sources" | "outline" | "memo" | "export">("folder");
+  const [panel, setPanel] = useState<"folder" | "template" | "outline" | "memo" | "export">("folder");
 
   const [targetWords, setTargetWords] = useState(10_000);
   const [memoTitle, setMemoTitle] = useState(defaultTitle);
@@ -182,8 +165,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
 
   const [resolveLoading, setResolveLoading] = useState(false);
   const [resolved, setResolved] = useState<FolderResolveResult | null>(null);
-  const [pickedPath, setPickedPath] = useState<string | null>(null);
-
   const [ingestLoading, setIngestLoading] = useState(false);
   const [ingestError, setIngestError] = useState<string | null>(null);
   const [project, setProject] = useState<CreditMemoProject | null>(null);
@@ -260,7 +241,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         setProject(null);
         setOutline(null);
         setResolved(null);
-        setPickedPath(null);
         setDraftReady(true);
         return;
       }
@@ -274,7 +254,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       setUseTemplate(true);
       setPanel("folder");
       setResolved(null);
-      setPickedPath(null);
       setDraftReady(true);
     })();
   }, [tk, prefsReady, defaultTitle]);
@@ -441,7 +420,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     if (!tk) return;
     setResolveLoading(true);
     setResolved(null);
-    setPickedPath(null);
     setProject(null);
     setMarkdown(null);
     setOutline(null);
@@ -458,7 +436,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       const fr = data as FolderResolveResult;
       success = fr;
       setResolved(fr);
-      if (fr.ok) setPickedPath(fr.chosen.path);
     } catch (e) {
       setResolved({
         ok: false,
@@ -469,7 +446,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     } finally {
       setResolveLoading(false);
     }
-    if (success?.ok && isCloudOnlyIngestChoice(success)) {
+    if (success?.ok) {
       await runIngestRef.current(success.chosen.path, success);
     }
   }, [tk]);
@@ -478,11 +455,11 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     (pathOverride: string, resolutionMeta: FolderResolveResult | null) => Promise<void>
   >(() => Promise.resolve());
   const runIngest = useCallback(
-    async (pathOverride?: string, resolutionOverride?: FolderResolveResult | null) => {
-      const pathToUse = (pathOverride ?? pickedPath)?.trim();
+    async (folderPath: string, resolutionOverride?: FolderResolveResult | null) => {
+      const pathToUse = folderPath.trim();
       const resolutionMeta = resolutionOverride ?? resolved;
       if (!tk || !pathToUse) {
-        setIngestError("Select or confirm a folder path first.");
+        setIngestError("Resolve did not return a folder path.");
         return;
       }
       setIngestLoading(true);
@@ -515,17 +492,16 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         if (data.ingestWarnings?.length) {
           setIngestError(data.ingestWarnings.join(" "));
         }
-        setPanel("sources");
       } catch (e) {
         setIngestError(e instanceof Error ? e.message : "Ingest failed");
       } finally {
         setIngestLoading(false);
       }
     },
-    [tk, pickedPath, resolved, project?.id]
+    [tk, resolved, project?.id]
   );
 
-  runIngestRef.current = (pathOverride, resolutionMeta) => runIngest(pathOverride, resolutionMeta);
+  runIngestRef.current = (folderPath, resolutionMeta) => runIngest(folderPath, resolutionMeta);
 
   /**
    * Signed-in: one automatic scan when there is no ingested project and no prior resolve result
@@ -541,7 +517,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
 
   const runGenerate = useCallback(async (voice?: CreditMemoVoiceId) => {
     if (!project) {
-      setGenError("Ingest a folder first.");
+      setGenError("Run Refresh Source, Ingest & Index first.");
       return;
     }
     setGenLoading(true);
@@ -614,7 +590,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
 
   const runGenerateDeck = useCallback(async () => {
     if (!project) {
-      setDeckGenError("Ingest a folder first.");
+      setDeckGenError("Run Refresh Source, Ingest & Index first.");
       return;
     }
     setDeckGenLoading(true);
@@ -691,12 +667,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     }
   }, [project, targetWords, memoTitle, defaultTitle, provider, useTemplate, tk, pushDeckToLibrary]);
 
-  const candidateRows: FolderCandidate[] = useMemo(() => {
-    if (!resolved) return [];
-    if (resolved.ok) return [resolved.chosen, ...resolved.alternates];
-    return resolved.candidates ?? [];
-  }, [resolved]);
-
   if (!tk) {
     return (
       <Card title="AI Memo and Deck">
@@ -712,20 +682,18 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       <Card title={`AI Memo and Deck — ${tk}`}>
         <p className="mb-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
           When you are signed in, your server-side data for this ticker (cloud workspace files, saved tab text, and Saved Documents)
-          is detected automatically and ingested without choosing a disk folder. If <code className="text-[10px]">RESEARCH_ROOT_DIR</code>{" "}
-          is configured, local research folders may appear as additional sources. The LLM only cites the ingested source pack.
+          is included automatically. If <code className="text-[10px]">RESEARCH_ROOT_DIR</code> is configured, the server picks the best-matching
+          research folder for this ticker. Click <strong>Refresh Source, Ingest &amp; Index</strong> to re-scan and rebuild the indexed
+          source pack — the LLM only cites that pack.
           Generate credit Deck produces a first-draft PowerPoint (slide titles match the memo outline; the shaded area on each slide is for your charts).
         </p>
 
         <div className="mb-3 flex flex-wrap gap-2">
           <TabButton active={panel === "folder"} onClick={() => setPanel("folder")}>
-            Ingest sources
+            Sources
           </TabButton>
           <TabButton active={panel === "template"} onClick={() => setPanel("template")}>
             Template
-          </TabButton>
-          <TabButton active={panel === "sources"} onClick={() => setPanel("sources")} disabled={!project}>
-            Sources
           </TabButton>
           <TabButton active={panel === "outline"} onClick={() => setPanel("outline")}>
             Outline
@@ -738,102 +706,65 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           </TabButton>
         </div>
 
-        {(panel === "folder" || panel === "sources") && (
-          <div className="mb-4 flex flex-wrap items-end gap-3">
-            <div>
-              <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-                Ticker
-              </div>
-              <input
-                readOnly
-                value={tk}
-                className={`${MEMO_FIELD_CLASS} font-mono text-sm`}
-              />
-            </div>
-            <button
-              type="button"
-              disabled={resolveLoading || ingestLoading}
-              onClick={() => void runResolve()}
-              className="rounded border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-            >
-              {resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh sources"}
-            </button>
-          </div>
-        )}
-
         {panel === "folder" && (
           <div className="space-y-3 text-sm">
+            <div className="flex flex-wrap items-end gap-3">
+              <div>
+                <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
+                  Ticker
+                </div>
+                <input
+                  readOnly
+                  value={tk}
+                  className={`${MEMO_FIELD_CLASS} font-mono text-sm`}
+                />
+              </div>
+              <button
+                type="button"
+                disabled={resolveLoading || ingestLoading}
+                onClick={() => void runResolve()}
+                className="rounded border px-3 py-2 text-sm"
+                style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+              >
+                {resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh Source, Ingest & Index"}
+              </button>
+            </div>
+
             {resolved && !resolved.ok ? (
               <div className="rounded border border-dashed p-2 text-xs" style={{ borderColor: "var(--warn)", color: "var(--warn)" }}>
                 {resolved.error}
               </div>
             ) : null}
-            {resolved?.ok ? (
-              <div className="rounded border p-2 text-xs" style={{ borderColor: "var(--border2)" }}>
-                <div className="font-semibold text-[var(--text)]">Chosen folder</div>
-                <div className="mt-1 font-mono text-[11px]">{displayFolderPath(resolved.chosen.path)}</div>
-                <div className="mt-1" style={{ color: "var(--muted)" }}>
-                  Score {resolved.chosen.score} — {resolved.chosen.matchType}. {resolved.chosen.reasons.join("; ")}
-                </div>
-              </div>
-            ) : null}
-            {candidateRows.length > 0 ? (
-              <div>
-                <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-                  {resolved?.ok ? "Alternate candidates" : "Pick folder"}
-                </div>
-                <div className="max-h-48 overflow-auto rounded border" style={{ borderColor: "var(--border2)" }}>
-                  <table className="w-full text-left text-[11px]">
-                    <thead style={{ color: "var(--muted)" }}>
-                      <tr>
-                        <th className="p-2">Folder</th>
-                        <th className="p-2">Score</th>
-                        <th className="p-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {candidateRows.map((c) => (
-                        <tr key={c.virtual ? `virt:${c.path}` : c.path} className="border-t border-[var(--border)]">
-                          <td className="p-2 font-mono text-[10px]">{displayFolderPath(c.path)}</td>
-                          <td className="p-2">{c.score}</td>
-                          <td className="p-2">
-                            <button type="button" className="underline" onClick={() => setPickedPath(c.path)}>
-                              Use
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ) : null}
-            <div>
-              <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-                Active path for ingest
-              </div>
-              <input
-                value={pickedPath ?? ""}
-                onChange={(e) => setPickedPath(e.target.value)}
-                placeholder={`RESEARCH_ROOT subfolder path, or "${USER_WORKSPACE_INGEST_SENTINEL}" for cloud workspace`}
-                className={`${MEMO_FIELD_CLASS_SM} font-mono`}
-              />
-            </div>
-            <button
-              type="button"
-              disabled={ingestLoading || !pickedPath}
-              onClick={() => void runIngest()}
-              className="rounded border px-3 py-2 text-sm font-medium disabled:opacity-50"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-            >
-              {ingestLoading ? "Ingesting…" : "Ingest & index"}
-            </button>
+
             {ingestError ? (
               <p className="text-xs" style={{ color: "var(--warn)" }}>
                 {ingestError}
               </p>
             ) : null}
+
+            {project ? (
+              <div className="max-h-[50vh] space-y-2 overflow-auto rounded border p-3 text-xs" style={{ borderColor: "var(--border2)" }}>
+                <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+                  Indexed files
+                </div>
+                <p style={{ color: "var(--muted2)" }}>
+                  {project.sources.length} files — {project.chunks.length} chunks. Warnings:{" "}
+                  {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
+                </p>
+                <ul className="space-y-1 font-mono text-[10px]">
+                  {project.sources.map((s) => (
+                    <li key={s.id}>
+                      {s.relPath} · {s.category} · {s.parseStatus} · {s.charExtracted}c
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-xs" style={{ color: "var(--muted2)" }}>
+                After a successful refresh, indexed files and chunk counts appear here. On first load, this runs automatically when
+                you are signed in.
+              </p>
+            )}
           </div>
         )}
 
@@ -914,22 +845,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                 Tip: apply Word heading styles (Heading 1/2/3). They become the outline order.
               </p>
             </div>
-          </div>
-        )}
-
-        {panel === "sources" && project && (
-          <div className="max-h-[50vh] space-y-2 overflow-auto text-xs">
-            <p style={{ color: "var(--muted2)" }}>
-              {project.sources.length} files — {project.chunks.length} chunks. Warnings:{" "}
-              {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
-            </p>
-            <ul className="space-y-1 font-mono text-[10px]">
-              {project.sources.map((s) => (
-                <li key={s.id}>
-                  {s.relPath} · {s.category} · {s.parseStatus} · {s.charExtracted}c
-                </li>
-              ))}
-            </ul>
           </div>
         )}
 
