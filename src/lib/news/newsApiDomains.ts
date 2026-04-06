@@ -20,7 +20,7 @@ export function hostnameMatchesNewsApiAllowlist(hostname: string): boolean {
   const h = hostname.trim().toLowerCase().replace(/^www\./, "");
   if (ALLOWED_SET.has(h)) return true;
   // Subdomains, e.g. www.reuters.com → reuters.com
-  for (const d of ALLOWED_SET) {
+  for (const d of Array.from(ALLOWED_SET)) {
     if (h === d || h.endsWith(`.${d}`)) return true;
   }
   return false;

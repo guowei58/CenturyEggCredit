@@ -54,7 +54,7 @@ export async function getRelatedSecFilersForTicker(ticker: string): Promise<Rela
     counts.set(filer, (counts.get(filer) ?? 0) + 1);
   }
 
-  const sorted = [...counts.entries()]
+  const sorted = Array.from(counts.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, MAX_ENTITIES);
 

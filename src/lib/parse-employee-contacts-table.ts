@@ -14,13 +14,13 @@ export function parseEmployeeContactsTable(html: string): ParsedEmployeeContactR
     const tables = doc.querySelectorAll("table");
     const out: ParsedEmployeeContactRow[] = [];
 
-    for (const table of tables) {
+    for (const table of Array.from(tables)) {
       let rows = table.querySelectorAll("tbody tr");
       if (rows.length === 0) {
         rows = table.querySelectorAll("tr");
       }
 
-      for (const row of rows) {
+      for (const row of Array.from(rows)) {
         if (row.querySelector("th")) continue;
         const cells = row.querySelectorAll("td");
         if (cells.length < 3) continue;

@@ -12,6 +12,7 @@ import { AiModelPicker } from "@/components/AiModelPicker";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import type { CreditMemoVoiceId } from "@/data/credit-memo-voices";
 import {
+  type CreditMemoClientDraft,
   parseCreditMemoDraftJson,
   serializeCreditMemoDraft,
 } from "@/lib/creditMemo/clientDraftStorage";
@@ -48,6 +49,18 @@ type SavedMemoVariant = {
   metaKey: string;
   sourcePackKey: string;
 };
+
+type MemoWorkspacePanel = "folder" | "template" | "outline" | "memo" | "export";
+
+/** Draft JSON may still use legacy `"sources"`; this tab folds that into the Folder step. */
+function normalizeDraftPanelToWorkspace(
+  markdown: string | null | undefined,
+  saved: CreditMemoClientDraft["panel"]
+): MemoWorkspacePanel {
+  if (!markdown?.trim()) return "folder";
+  if (saved === "sources") return "folder";
+  return saved;
+}
 
 const SAVED_MEMO_VARIANTS: readonly SavedMemoVariant[] = [
   {
@@ -153,7 +166,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   prefsRef.current = preferences;
   const defaultTitle = `${companyName ? `${companyName} (${tk})` : tk} — Credit Memo`;
 
-  const [panel, setPanel] = useState<"folder" | "template" | "outline" | "memo" | "export">("folder");
+  const [panel, setPanel] = useState<MemoWorkspacePanel>("folder");
 
   const [targetWords, setTargetWords] = useState(10_000);
   const [memoTitle, setMemoTitle] = useState(defaultTitle);
@@ -214,7 +227,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       setMemoTitle(d.memoTitle.trim() || defaultTitle);
       setTargetWords(d.targetWords);
       setUseTemplate(d.useTemplate);
-      setPanel(d.markdown ? d.panel : "folder");
+      setPanel(normalizeDraftPanelToWorkspace(d.markdown, d.panel));
       setDraftReady(true);
       return;
     }
