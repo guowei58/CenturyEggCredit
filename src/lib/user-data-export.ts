@@ -6,8 +6,17 @@
 import JSZip from "jszip";
 
 import { prisma } from "@/lib/prisma";
-import { SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
+import { SAVED_DATA_FILES, sanitizeTicker } from "@/lib/saved-ticker-data";
 import { getWatchlistTickers } from "@/lib/user-workspace-store";
+
+/** `null` = export all ticker-scoped data; non-empty `Set` = only those normalized tickers (plus always `account/`). */
+export type ExportTickerFilter = Set<string> | null;
+
+function matchesExportTickerFilter(dbTicker: string, filter: ExportTickerFilter): boolean {
+  if (filter == null) return true;
+  const k = sanitizeTicker(dbTicker);
+  return k != null && filter.has(k);
+}
 
 function tabFilenameForDataKey(dataKey: string): string {
   if (Object.prototype.hasOwnProperty.call(SAVED_DATA_FILES, dataKey)) {
@@ -67,9 +76,35 @@ const README_BODY = [
 ].join("\n");
 
 /**
- * Ordered list of exportable files with sizes (cheap) and lazy loaders (per part).
+ * Distinct tickers the user has any saved data or workspace files for, plus watchlist symbols (sorted).
  */
-export async function listPlannedExportEntries(userId: string): Promise<PlannedExportEntry[]> {
+export async function listExportableTickersForUser(userId: string): Promise<string[]> {
+  const fromDb = await prisma.$queryRaw<Array<{ ticker: string }>>`
+    SELECT DISTINCT ticker FROM (
+      SELECT ticker FROM user_ticker_documents WHERE user_id = ${userId}
+      UNION
+      SELECT ticker FROM user_saved_documents WHERE user_id = ${userId}
+      UNION
+      SELECT ticker FROM user_ticker_workspace_files WHERE user_id = ${userId}
+    ) AS t
+  `;
+  const set = new Set<string>();
+  for (const r of fromDb) {
+    const k = sanitizeTicker(r.ticker);
+    if (k) set.add(k);
+  }
+  for (const t of await getWatchlistTickers(userId)) {
+    const k = sanitizeTicker(t);
+    if (k) set.add(k);
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Ordered list of exportable files with sizes (cheap) and lazy loaders (per part).
+ * @param tickerFilter When set, only includes `tickers/<symbol>/…` entries whose symbol matches; `account/` always included.
+ */
+export async function listPlannedExportEntries(userId: string, tickerFilter: ExportTickerFilter = null): Promise<PlannedExportEntry[]> {
   const out: PlannedExportEntry[] = [];
 
   const prefs = await prisma.userPreferences.findUnique({ where: { userId } });
@@ -112,6 +147,7 @@ export async function listPlannedExportEntries(userId: string): Promise<PlannedE
 
   for (const row of tabSizes) {
     const ticker = row.ticker;
+    if (!matchesExportTickerFilter(ticker, tickerFilter)) continue;
     const dataKey = row.data_key;
     const size = Number(row.len);
     const fn = tabFilenameForDataKey(dataKey);
@@ -136,6 +172,7 @@ export async function listPlannedExportEntries(userId: string): Promise<PlannedE
   });
 
   for (const r of savedRows) {
+    if (!matchesExportTickerFilter(r.ticker, tickerFilter)) continue;
     const fn = safeZipPathSegment(r.filename);
     const zp = `tickers/${safeZipPathSegment(r.ticker)}/saved-documents/${fn}`;
     out.push({
@@ -161,6 +198,7 @@ export async function listPlannedExportEntries(userId: string): Promise<PlannedE
   `;
 
   for (const row of wsSizes) {
+    if (!matchesExportTickerFilter(row.ticker, tickerFilter)) continue;
     const rel = row.path.replace(/\\/g, "/").replace(/^\/+/, "");
     if (!rel || rel.includes("..")) continue;
     const size = Number(row.len);
@@ -216,12 +254,22 @@ export function partitionExportEntries(entries: PlannedExportEntry[], maxBytes: 
   return parts.length > 0 ? parts : [[]];
 }
 
-function readmeForPart(generatedAt: string, part: number, totalParts: number, oversizedNote: boolean): string {
+function readmeForPart(
+  generatedAt: string,
+  part: number,
+  totalParts: number,
+  oversizedNote: boolean,
+  isPartial: boolean
+): string {
+  const scopeLine = isPartial
+    ? "Scope: selected tickers only — ticker folders in this ZIP are a subset; account/ (preferences, watchlist, AI chat state) is always included."
+    : "";
   const header =
     totalParts > 1
       ? [
           "Century Egg Credit — full data export",
           `Generated (UTC): ${generatedAt}`,
+          scopeLine,
           `This archive is part ${part} of ${totalParts}. Download every part and unzip each; together they contain your full export.`,
           oversizedNote
             ? "Note: At least one file alone exceeded the per-part size limit and occupies its own part (that ZIP may be larger than the configured part cap)."
@@ -233,6 +281,7 @@ function readmeForPart(generatedAt: string, part: number, totalParts: number, ov
       : [
           "Century Egg Credit — full data export",
           `Generated (UTC): ${generatedAt}`,
+          scopeLine,
           oversizedNote
             ? "Note: At least one file alone exceeded the per-part size limit and occupies its own part."
             : "",
@@ -257,18 +306,22 @@ export type UserExportManifest = {
 };
 
 /** Lightweight JSON for the client (no ZIP build). Filenames match the next GET ?part= responses. */
-export async function getUserExportManifest(userId: string): Promise<UserExportManifest> {
+export async function getUserExportManifest(
+  userId: string,
+  tickerFilter: ExportTickerFilter = null
+): Promise<UserExportManifest> {
   const maxBytes = maxExportUncompressedBytesPerPart();
-  const entries = await listPlannedExportEntries(userId);
+  const entries = await listPlannedExportEntries(userId, tickerFilter);
   const partitions = partitionExportEntries(entries, maxBytes);
   const totalParts = partitions.length;
   const day = new Date().toISOString().slice(0, 10);
+  const scope = tickerFilter && tickerFilter.size > 0 ? "-selected" : "";
   const parts = partitions.map((_, i) => {
     const part = i + 1;
     const filename =
       totalParts > 1
-        ? `century-egg-export-${day}-part${part}of${totalParts}.zip`
-        : `century-egg-export-${day}.zip`;
+        ? `century-egg-export-${day}${scope}-part${part}of${totalParts}.zip`
+        : `century-egg-export-${day}${scope}.zip`;
     return { part, filename };
   });
   return { totalParts, parts };
@@ -277,9 +330,13 @@ export async function getUserExportManifest(userId: string): Promise<UserExportM
 /**
  * Build one ZIP part (1-based index). Recomputes plan and partition each call (stateless, correct if data changes mid-export).
  */
-export async function buildUserExportPartZip(userId: string, part1Based: number): Promise<UserExportPartResult> {
+export async function buildUserExportPartZip(
+  userId: string,
+  part1Based: number,
+  tickerFilter: ExportTickerFilter = null
+): Promise<UserExportPartResult> {
   const maxBytes = maxExportUncompressedBytesPerPart();
-  const entries = await listPlannedExportEntries(userId);
+  const entries = await listPlannedExportEntries(userId, tickerFilter);
   const partitions = partitionExportEntries(entries, maxBytes);
   const totalParts = partitions.length;
   const part = Math.floor(part1Based);
@@ -290,6 +347,7 @@ export async function buildUserExportPartZip(userId: string, part1Based: number)
   const slice = partitions[part - 1] ?? [];
   const generatedAt = new Date().toISOString();
   const oversizedNote = entries.some((e) => e.size > maxBytes);
+  const isPartial = Boolean(tickerFilter && tickerFilter.size > 0);
 
   const zip = new JSZip();
   const root = zip.folder("century-egg-export");
@@ -297,7 +355,7 @@ export async function buildUserExportPartZip(userId: string, part1Based: number)
     throw new Error("Failed to create zip root");
   }
 
-  root.file("README.txt", readmeForPart(generatedAt, part, totalParts, oversizedNote));
+  root.file("README.txt", readmeForPart(generatedAt, part, totalParts, oversizedNote, isPartial));
 
   for (const e of slice) {
     const body = await e.load();
@@ -311,10 +369,11 @@ export async function buildUserExportPartZip(userId: string, part1Based: number)
   });
 
   const day = generatedAt.slice(0, 10);
+  const scope = tickerFilter && tickerFilter.size > 0 ? "-selected" : "";
   const filename =
     totalParts > 1
-      ? `century-egg-export-${day}-part${part}of${totalParts}.zip`
-      : `century-egg-export-${day}.zip`;
+      ? `century-egg-export-${day}${scope}-part${part}of${totalParts}.zip`
+      : `century-egg-export-${day}${scope}.zip`;
 
   return { buffer, part, totalParts, filename };
 }

@@ -150,7 +150,7 @@ export async function ensureUserInGlobalLobby(userId: string): Promise<void> {
 export async function assertMember(conversationId: string, userId: string) {
   const m = await prisma.conversationMember.findUnique({
     where: { conversationId_userId: { conversationId, userId } },
-    select: { id: true, role: true },
+    select: { id: true, role: true, joinedAt: true },
   });
   return m;
 }
@@ -158,13 +158,15 @@ export async function assertMember(conversationId: string, userId: string) {
 export async function countUnreadForMember(
   conversationId: string,
   userId: string,
-  lastReadMessageId: string | null
+  lastReadMessageId: string | null,
+  memberJoinedAt: Date
 ): Promise<number> {
   const base = {
     conversationId,
     deletedAt: null,
     senderUserId: { not: userId },
     messageType: EggHocMessageType.TEXT,
+    createdAt: { gte: memberJoinedAt },
   } as const;
 
   if (!lastReadMessageId) {
@@ -175,7 +177,7 @@ export async function countUnreadForMember(
     where: { id: lastReadMessageId },
     select: { createdAt: true },
   });
-  if (!anchor) {
+  if (!anchor || anchor.createdAt < memberJoinedAt) {
     return prisma.eggHocMessage.count({ where: base });
   }
 
@@ -212,9 +214,6 @@ export async function listUserConversations(userId: string) {
     include: {
       conversation: {
         include: {
-          lastMessage: {
-            include: { sender: { select: userPublicSelect } },
-          },
           members: {
             include: { user: { select: userPublicSelect } },
           },
@@ -226,14 +225,24 @@ export async function listUserConversations(userId: string) {
   const withUnread = await Promise.all(
     memberships.map(async (row) => {
       const c = row.conversation;
-      const unread = await countUnreadForMember(c.id, userId, row.lastReadMessageId);
-      const preview = c.lastMessage
-        ? c.lastMessage.deletedAt
-          ? "(deleted)"
-          : c.lastMessage.body.slice(0, 140) + (c.lastMessage.body.length > 140 ? "…" : "")
+      const joinedAt = row.joinedAt;
+      const unread = await countUnreadForMember(c.id, userId, row.lastReadMessageId, joinedAt);
+
+      const lastVisible = await prisma.eggHocMessage.findFirst({
+        where: {
+          conversationId: c.id,
+          deletedAt: null,
+          createdAt: { gte: joinedAt },
+        },
+        orderBy: { createdAt: "desc" },
+        include: { sender: { select: userPublicSelect } },
+      });
+
+      const preview = lastVisible
+        ? lastVisible.body.slice(0, 140) + (lastVisible.body.length > 140 ? "…" : "")
         : "";
       const isLobby = c.lobbyKey === GLOBAL_LOBBY_KEY;
-      const senderRow = c.lastMessage?.sender;
+      const senderRow = lastVisible?.sender;
       const lastSenderLabel = senderRow
         ? displayChatIdFromUserRow(senderRow) ?? fallbackChatDisplayId(senderRow.id)
         : null;
@@ -244,7 +253,7 @@ export async function listUserConversations(userId: string) {
         isLobby,
         updatedAt: c.updatedAt.toISOString(),
         title: titleForConversation(c.type, c.name, c.members, userId, c.lobbyKey),
-        lastMessageAt: c.lastMessage?.createdAt.toISOString() ?? c.updatedAt.toISOString(),
+        lastMessageAt: lastVisible?.createdAt.toISOString() ?? joinedAt.toISOString(),
         lastMessagePreview: preview,
         unreadCount: unread,
         lastMessageSenderName: lastSenderLabel,
@@ -277,7 +286,6 @@ export async function getConversationDetail(conversationId: string, userId: stri
         include: { user: { select: userPublicSelect } },
         orderBy: { joinedAt: "asc" },
       },
-      lastMessage: { include: { sender: { select: userPublicSelect } } },
     },
   });
   if (!conversation) return { ok: false as const, error: "Conversation not found" };
@@ -325,10 +333,7 @@ export async function createDirectConversation(currentUserId: string, targetUser
 
   const existing = await prisma.conversation.findUnique({
     where: { directPairKey },
-    include: {
-      members: { include: { user: { select: userPublicSelect } } },
-      lastMessage: { include: { sender: { select: userPublicSelect } } },
-    },
+    select: { id: true },
   });
   if (existing) {
     return { ok: true as const, conversationId: existing.id, created: false };
@@ -403,6 +408,7 @@ export async function getConversationMessages(
   if (!member) return { ok: false as const, error: "Not a member of this conversation" };
 
   const take = Math.min(Math.max(opts.take ?? 40, 1), 100);
+  const joinedAt = member.joinedAt;
 
   let cursorDate: Date | null = null;
   if (opts.beforeMessageId) {
@@ -416,7 +422,10 @@ export async function getConversationMessages(
   const messages = await prisma.eggHocMessage.findMany({
     where: {
       conversationId,
-      ...(cursorDate ? { createdAt: { lt: cursorDate } } : {}),
+      createdAt: {
+        gte: joinedAt,
+        ...(cursorDate ? { lt: cursorDate } : {}),
+      },
     },
     orderBy: { createdAt: "desc" },
     take,
@@ -489,10 +498,12 @@ export async function markConversationRead(conversationId: string, userId: strin
   const member = await assertMember(conversationId, userId);
   if (!member) return { ok: false as const, error: "Not a member of this conversation" };
 
+  const joinedAt = member.joinedAt;
+
   let targetId = messageId?.trim() || null;
   if (!targetId) {
     const last = await prisma.eggHocMessage.findFirst({
-      where: { conversationId, deletedAt: null },
+      where: { conversationId, deletedAt: null, createdAt: { gte: joinedAt } },
       orderBy: { createdAt: "desc" },
       select: { id: true },
     });
@@ -501,7 +512,7 @@ export async function markConversationRead(conversationId: string, userId: strin
 
   if (targetId) {
     const exists = await prisma.eggHocMessage.findFirst({
-      where: { id: targetId, conversationId },
+      where: { id: targetId, conversationId, createdAt: { gte: joinedAt } },
       select: { id: true },
     });
     if (!exists) return { ok: false as const, error: "Message not in this conversation" };
