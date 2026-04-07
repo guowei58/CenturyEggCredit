@@ -5,7 +5,8 @@ export default function LoginPage({
 }: {
   searchParams: Record<string, string | string[] | undefined>;
 }) {
-  const justRegistered = searchParams.registered === "1";
+  const checkEmail = searchParams.checkEmail === "1";
+  const resetOk = searchParams.reset === "1";
 
-  return <LoginForm justRegistered={justRegistered} />;
+  return <LoginForm checkEmail={checkEmail} resetOk={resetOk} />;
 }

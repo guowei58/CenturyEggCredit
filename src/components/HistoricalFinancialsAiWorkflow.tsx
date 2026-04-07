@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui";
-import { HISTORICAL_FINANCIALS_PROMPT_TEMPLATE } from "@/data/historical-financials-prompt";
+import {
+  fillHistoricalFinancialsPromptPlaceholders,
+  HISTORICAL_FINANCIALS_PROMPT_TEMPLATE,
+} from "@/data/historical-financials-prompt";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
@@ -22,9 +25,12 @@ const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 export function HistoricalFinancialsAiWorkflow({
   ticker,
   companyName,
+  noOuterCard,
 }: {
   ticker: string;
   companyName?: string | null;
+  /** When true, render inside a parent card (e.g. Financials tab section). */
+  noOuterCard?: boolean;
 }) {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [clipboardFailed, setClipboardFailed] = useState(false);
@@ -38,7 +44,7 @@ export function HistoricalFinancialsAiWorkflow({
   const displayName = (companyName?.trim() || safeTicker) || "";
   const prompt = useMemo(() => {
     if (!safeTicker) return "";
-    return HISTORICAL_FINANCIALS_PROMPT_TEMPLATE.replace(/\[COMPANY NAME\]/g, displayName).replace(/\[TICKER\]/g, safeTicker);
+    return fillHistoricalFinancialsPromptPlaceholders(HISTORICAL_FINANCIALS_PROMPT_TEMPLATE, displayName, safeTicker);
   }, [safeTicker, displayName]);
 
   useEffect(() => {
@@ -154,22 +160,18 @@ export function HistoricalFinancialsAiWorkflow({
     );
   }
 
-  if (!safeTicker) {
-    return (
-      <Card title="Historical Financial Statements">
-        <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          Select a company to build the 20-year SEC-based model prompt and save your AI response.
-        </p>
-      </Card>
-    );
-  }
+  const noTickerBody = (
+    <p className="text-sm py-2" style={{ color: "var(--muted2)" }}>
+      Select a company to fill in the forensic model prompt and save your AI response for this ticker.
+    </p>
+  );
 
-  return (
-    <Card title={`Historical Financial Statements — ${safeTicker}`}>
-      <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-        Use the prompt in Claude, ChatGPT, Gemini, or Meta AI to produce a 20-year GAAP model from SEC filings (presentation-faithful). Save the
-        model narrative or notes below and upload the Excel workbook. The FMP tables further down are a quick third-party
-        reference only—not a substitute for filing-based work.
+  const mainBody = (
+    <>
+      <p className="mb-4 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
+        Use the prompt in Claude, ChatGPT, Gemini, or Meta AI to draft a filing-faithful historical model (10 annual years, 20 quarters per
+        the instructions). Save notes or output below and attach the per-ticker Excel workbook. Ground numbers in original filings and your
+        spreadsheet—not third-party aggregators.
       </p>
       <div className="flex flex-col gap-6 lg:flex-row">
         {isSavedResponseCollapsed ? (
@@ -282,11 +284,10 @@ export function HistoricalFinancialsAiWorkflow({
         <div className="flex w-full flex-col lg:w-80 flex-shrink-0 gap-3">
           <div>
             <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-              Prompt for a filing-based 20-year model (SEC / XBRL). Open in AI; copy attaches to clipboard.{" "}
-              {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+              Forensic extraction prompt (SEC / XBRL). Open in AI; copy attaches to clipboard. {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
             </p>
             <div
-              className="rounded border p-3 mb-2 text-xs max-h-[min(40vh,320px)] overflow-y-auto whitespace-pre-wrap"
+              className="mb-2 max-h-[min(55vh,520px)] overflow-y-auto whitespace-pre-wrap rounded border p-3 text-xs"
               style={{
                 borderColor: "var(--border2)",
                 color: "var(--text)",
@@ -364,6 +365,21 @@ export function HistoricalFinancialsAiWorkflow({
           </div>
         </div>
       </div>
-    </Card>
+    </>
   );
+
+  if (!safeTicker) {
+    if (noOuterCard) return noTickerBody;
+    return (
+      <Card title="Historical Financial Statements">
+        {noTickerBody}
+      </Card>
+    );
+  }
+
+  if (noOuterCard) {
+    return <div className="space-y-4">{mainBody}</div>;
+  }
+
+  return <Card title={`Historical Financial Statements — ${safeTicker}`}>{mainBody}</Card>;
 }

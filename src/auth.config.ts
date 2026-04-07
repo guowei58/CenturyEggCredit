@@ -23,8 +23,13 @@ export default {
       if (path.startsWith("/api/auth")) return true;
       if (path === "/api/register") return true;
 
-      const isAuthPage = path.startsWith("/login") || path.startsWith("/register");
-      if (isAuthPage) {
+      const isPublicAuthPage =
+        path.startsWith("/login") ||
+        path.startsWith("/register") ||
+        path.startsWith("/auth/") ||
+        path.startsWith("/forgot-password") ||
+        path.startsWith("/reset-password");
+      if (isPublicAuthPage) {
         if (auth?.user) {
           return Response.redirect(new URL("/", request.nextUrl));
         }

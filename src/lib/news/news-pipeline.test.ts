@@ -326,21 +326,22 @@ describe("provider normalization (API → NormalizedNewsArticle)", () => {
   });
 
   it("maps Marketaux rows", async () => {
+    const mxBody = JSON.stringify({
+      data: [
+        {
+          uuid: "u1",
+          title: "Mx story",
+          url: "https://mx.test/z",
+          published_at: "2026-02-01T12:00:00Z",
+          source: "MX",
+          description: "Desc",
+          entities: [{ symbol: "IBM", name: "Intl", sentiment_score: 0.2 }],
+        },
+      ],
+    });
     fetchMock.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({
-        data: [
-          {
-            uuid: "u1",
-            title: "Mx story",
-            url: "https://mx.test/z",
-            published_at: "2026-02-01T12:00:00Z",
-            source: "MX",
-            description: "Desc",
-            entities: [{ symbol: "IBM", name: "Intl", sentiment_score: 0.2 }],
-          },
-        ],
-      }),
+      text: async () => mxBody,
     } as Response);
 
     const p = createMarketauxNewsProvider();

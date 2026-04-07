@@ -2,7 +2,14 @@
  * Tab ID derivation from tab labels. Single source of truth for URL-safe ids.
  */
 
-import { companyAnalysisTabs, companyAnalysisWorkOutputTabs, companyAnalysisClaimsTabs, companyAnalysisFraudChecksTabs, pmDashboardTabs } from "@/data/mock";
+import {
+  companyAnalysisTabs,
+  companyAnalysisWorkOutputTabs,
+  companyAnalysisDesktopRisksTabs,
+  companyAnalysisClaimsTabs,
+  companyAnalysisFraudChecksTabs,
+  pmDashboardTabs,
+} from "@/data/mock";
 
 export function tabLabelToId(label: string): string {
   return label
@@ -14,6 +21,7 @@ export function tabLabelToId(label: string): string {
 
 export const companyAnalysisTabIds = companyAnalysisTabs.map(tabLabelToId);
 export const companyAnalysisWorkOutputTabIds = companyAnalysisWorkOutputTabs.map(tabLabelToId);
+export const companyAnalysisDesktopRisksTabIds = companyAnalysisDesktopRisksTabs.map(tabLabelToId);
 export const companyAnalysisClaimsTabIds = companyAnalysisClaimsTabs.map(tabLabelToId);
 export const companyAnalysisFraudChecksTabIds = companyAnalysisFraudChecksTabs.map(tabLabelToId);
 export const pmDashboardTabIds = pmDashboardTabs.map(tabLabelToId);

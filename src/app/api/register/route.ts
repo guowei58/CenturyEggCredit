@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { Prisma } from "@/generated/prisma/client";
+import {
+  emailVerificationIdentifier,
+  issueEmailVerificationToken,
+  sendSignupVerificationEmail,
+} from "@/lib/auth-tokens";
 import { prisma } from "@/lib/prisma";
 import { defaultUserPreferences } from "@/lib/user-preferences-types";
 import { setUserPreferences } from "@/lib/user-preferences-store";
@@ -54,7 +59,6 @@ export async function POST(req: Request) {
       data: {
         email: emailRaw,
         name: localPart,
-        emailVerified: new Date(),
         passwordHash,
       },
       select: { id: true },
@@ -75,6 +79,17 @@ export async function POST(req: Request) {
       if (saved.ok) break;
       // If it failed for a reason other than "taken", stop trying.
       if (!/already taken/i.test(saved.error)) break;
+    }
+
+    const { token } = await issueEmailVerificationToken(emailRaw);
+    const mailed = await sendSignupVerificationEmail(emailRaw, token);
+    if (!mailed.ok) {
+      await prisma.verificationToken.deleteMany({ where: { identifier: emailVerificationIdentifier(emailRaw) } });
+      await prisma.user.delete({ where: { id: user.id } });
+      return NextResponse.json(
+        { error: mailed.error || "Could not send confirmation email. Try again later." },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json({ ok: true });

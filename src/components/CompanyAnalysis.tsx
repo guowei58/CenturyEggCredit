@@ -4,13 +4,7 @@ import { useEffect, useState } from "react";
 import { tabLabelToId } from "@/lib/tabs";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
 import { companyNav, companyTopSections } from "@/data/company-navigation";
-import {
-  MOCK_TICKER,
-  mockCompanyBar,
-  mockCapitalStructure,
-  mockFinancialsChartYears,
-  mockWorkingCapital,
-} from "@/data/mock";
+import { MOCK_TICKER, mockCompanyBar } from "@/data/mock";
 import { CompanyBar } from "@/components/layout";
 import { CompanyFilingsTab } from "@/components/CompanyFilingsTab";
 import { CompanyFccFilingsTab } from "@/components/CompanyFccFilingsTab";
@@ -64,7 +58,8 @@ import {
   ROIC_ANNUAL_FINANCIAL_STATEMENTS_TAB_ID,
   ROIC_QUARTERLY_FINANCIAL_STATEMENTS_TAB_ID,
 } from "@/components/CompanyRoicAiV2StatementsTab";
-import { Card, DataTable, EmptyState, MetricTile, TabBar } from "@/components/ui";
+import { DownloadAllUserDataButton } from "@/components/DownloadAllUserDataButton";
+import { Card, EmptyState, TabBar } from "@/components/ui";
 
 /** Build company bar data: full mock for LUMN, else ticker + fetched name. */
 function getCompanyBarData(ticker: string, companyName: string | null) {
@@ -132,19 +127,22 @@ export function CompanyAnalysis({
         <>
           {/* Level 1: section tabs directly under ticker/name (primary style) */}
           <nav
-            className="nav-section-row flex flex-shrink-0 items-center gap-1 px-6 sm:px-8"
+            className="nav-section-row flex w-full min-w-0 flex-shrink-0 items-center gap-3 px-6 sm:px-8"
             aria-label="Sections"
           >
-            {companyTopSections.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => onTopSectionChange(s.id)}
-                className={`nav-section-tab ${topSection === s.id ? "active" : ""}`}
-              >
-                {s.label}
-              </button>
-            ))}
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
+              {companyTopSections.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => onTopSectionChange(s.id)}
+                  className={`nav-section-tab ${topSection === s.id ? "active" : ""}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+            <DownloadAllUserDataButton />
           </nav>
 
           {/* Level 2: sub-tabs for the active top-level section only (secondary) */}
@@ -223,71 +221,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "business-model") {
     return <BusinessModelTab ticker={ticker} companyName={companyName} />;
-  }
-  if (tabId === "working-capital") {
-    const fmt = (v: number) => (Math.abs(v) >= 1000 ? `${v < 0 ? "-" : ""}$${Math.abs(v) / 1000}B` : `${v < 0 ? "-" : ""}$${Math.abs(v)}M`);
-    const fmtDays = (v: number) => `${v < 0 ? "-" : ""}${Math.abs(v)} days`;
-    const wcBalances = mockWorkingCapital.filter((r) => r.kind === "dollars");
-    const wcDays = mockWorkingCapital.filter((r) => r.kind === "days");
-    return (
-      <div className="space-y-6">
-        <Card title="Working capital balances ($M)">
-          <DataTable>
-            <thead>
-              <tr>
-                <th></th>
-                {mockFinancialsChartYears.map((y) => (
-                  <th key={y} className="text-right">
-                    {y}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {wcBalances.map((row) => (
-                <tr key={row.line}>
-                  <td style={{ color: "var(--muted2)" }}>{row.line}</td>
-                  <td className="text-right font-mono">{fmt(row.fy2021)}</td>
-                  <td className="text-right font-mono">{fmt(row.fy2022)}</td>
-                  <td className="text-right font-mono">{fmt(row.fy2023)}</td>
-                  <td className="text-right font-mono" style={{ color: row.line === "Net working capital" ? "var(--warn)" : undefined }}>
-                    {fmt(row.ltm)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </DataTable>
-        </Card>
-        <Card title="Working capital efficiency (days)">
-          <DataTable>
-            <thead>
-              <tr>
-                <th></th>
-                {mockFinancialsChartYears.map((y) => (
-                  <th key={y} className="text-right">
-                    {y}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {wcDays.map((row) => (
-                <tr key={row.line}>
-                  <td style={{ color: "var(--muted2)" }}>{row.line}</td>
-                  <td className="text-right font-mono">{fmtDays(row.fy2021)}</td>
-                  <td className="text-right font-mono">{fmtDays(row.fy2022)}</td>
-                  <td className="text-right font-mono">{fmtDays(row.fy2023)}</td>
-                  <td className="text-right font-mono">{fmtDays(row.ltm)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </DataTable>
-        </Card>
-        <p className="text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
-          Mock data for credit workflow. Wire to filings, internal model, or comps when ready.
-        </p>
-      </div>
-    );
   }
   if (tabId === "historical-financial-statements" || tabId === "financials") {
     return <CompanyFinancialsTab ticker={ticker} companyName={companyName} />;
@@ -377,15 +310,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "earnings-releases") {
     return <CompanyEarningsReleasesTab ticker={ticker ?? ""} companyName={companyName} />;
   }
-  if (tabId === "comps") {
-    return (
-      <Card title="Comps (Mock)">
-        <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Peer comparison tables, trading comps, and valuation metrics. Placeholder 鈥?no real data.
-        </p>
-      </Card>
-    );
-  }
   if (tabId === "company-history") {
     return <CompanyHistoryTab ticker={ticker} companyName={companyName} />;
   }
@@ -432,8 +356,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     return <CompanyEnvironmentalClaimsTab ticker={ticker ?? ""} companyName={companyName} />;
   }
   const newTabPlaceholders: Record<string, string> = {
-    "recovery-analysis": "Recovery Analysis",
-    "liquidity-analysis": "Liquidity Analysis",
     "other-regulatory-filings": "Other Regulatory Filings",
     substack: "Substack",
     "twitter-sentiment": "Twitter Sentiment",

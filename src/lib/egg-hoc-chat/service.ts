@@ -42,22 +42,59 @@ function defaultChatIdFromEmail(email: string | null | undefined): string | null
   return s;
 }
 
+/**
+ * Chat-visible handle: Egg-Hoc `profile.chatDisplayId` from preferences, else slug from email.
+ * Never uses `User.name` (often a stale OAuth / registration username like guowei58).
+ */
+function displayChatIdFromUserRow(u: {
+  email: string | null;
+  preferences?: { payload: string } | null;
+} | null | undefined): string | null {
+  if (!u) return null;
+  const prefId = userChatIdFromPreferencesPayload(u.preferences?.payload);
+  if (prefId) return prefId;
+  return defaultChatIdFromEmail(u.email);
+}
+
+/** Last-resort label when prefs + email rules yield nothing — still avoids `User.name`. */
+function fallbackChatDisplayId(userId: string): string {
+  const a = userId.replace(/[^a-z0-9]/gi, "");
+  const tail = (a.length >= 6 ? a.slice(-8) : userId.slice(0, 8)) || "user";
+  return `pal-${tail}`;
+}
+
 function publicUserRowToPublicUser(u: {
   id: string;
   name: string | null;
   email: string | null;
   image: string | null;
   preferences?: { payload: string } | null;
-}): { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId: string | null } {
-  const prefId = userChatIdFromPreferencesPayload(u.preferences?.payload);
-  const fallbackId = prefId ? null : defaultChatIdFromEmail(u.email);
+}): { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId: string } {
+  const chatDisplayId = displayChatIdFromUserRow(u) ?? fallbackChatDisplayId(u.id);
   return {
     id: u.id,
     name: u.name,
     email: u.email,
     image: u.image,
-    chatDisplayId: prefId || fallbackId,
+    chatDisplayId,
   };
+}
+
+function dedupeConversationMembers<
+  T extends {
+    userId: string;
+    role: ConversationMemberRole;
+    joinedAt: Date;
+    user: { id: string; name: string | null; email: string | null; image: string | null; preferences?: { payload: string } | null };
+  },
+>(members: T[]): T[] {
+  const rank = (r: ConversationMemberRole) => (r === ConversationMemberRole.ADMIN ? 2 : 1);
+  const best = new Map<string, T>();
+  for (const m of members) {
+    const cur = best.get(m.userId);
+    if (!cur || rank(m.role) > rank(cur.role)) best.set(m.userId, m);
+  }
+  return Array.from(best.values()).sort((a, b) => a.joinedAt.getTime() - b.joinedAt.getTime());
 }
 
 /** Single app-wide general channel; `Conversation.lobbyKey` matches this value. */
@@ -162,8 +199,8 @@ function titleForConversation(
     return name?.trim() || "Group chat";
   }
   const other = members.find((m) => m.userId !== viewerUserId)?.user;
-  const chatId = userChatIdFromPreferencesPayload(other?.preferences?.payload);
-  return chatId || other?.name?.trim() || other?.email?.trim() || "Direct message";
+  if (!other) return "Direct message";
+  return displayChatIdFromUserRow(other) ?? fallbackChatDisplayId(other.id);
 }
 
 export async function listUserConversations(userId: string) {
@@ -196,7 +233,10 @@ export async function listUserConversations(userId: string) {
           : c.lastMessage.body.slice(0, 140) + (c.lastMessage.body.length > 140 ? "…" : "")
         : "";
       const isLobby = c.lobbyKey === GLOBAL_LOBBY_KEY;
-      const senderChatId = c.lastMessage ? userChatIdFromPreferencesPayload(c.lastMessage.sender?.preferences?.payload) : null;
+      const senderRow = c.lastMessage?.sender;
+      const lastSenderLabel = senderRow
+        ? displayChatIdFromUserRow(senderRow) ?? fallbackChatDisplayId(senderRow.id)
+        : null;
       return {
         id: c.id,
         type: c.type,
@@ -207,11 +247,7 @@ export async function listUserConversations(userId: string) {
         lastMessageAt: c.lastMessage?.createdAt.toISOString() ?? c.updatedAt.toISOString(),
         lastMessagePreview: preview,
         unreadCount: unread,
-        lastMessageSenderName:
-          senderChatId ||
-          c.lastMessage?.sender?.name?.trim() ||
-          c.lastMessage?.sender?.email?.trim() ||
-          null,
+        lastMessageSenderName: lastSenderLabel,
       };
     })
   );
@@ -247,6 +283,7 @@ export async function getConversationDetail(conversationId: string, userId: stri
   if (!conversation) return { ok: false as const, error: "Conversation not found" };
 
   const isLobby = conversation.lobbyKey === GLOBAL_LOBBY_KEY;
+  const uniqueMembers = dedupeConversationMembers(conversation.members);
 
   return {
     ok: true as const,
@@ -260,12 +297,12 @@ export async function getConversationDetail(conversationId: string, userId: stri
       title: titleForConversation(
         conversation.type,
         conversation.name,
-        conversation.members,
+        uniqueMembers,
         userId,
         conversation.lobbyKey
       ),
       myRole: member.role,
-      members: conversation.members.map((m) => ({
+      members: uniqueMembers.map((m) => ({
         userId: m.userId,
         role: m.role,
         joinedAt: m.joinedAt.toISOString(),

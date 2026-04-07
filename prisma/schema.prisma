@@ -238,3 +238,14 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
+
+/** Singleton row id=1: shared .xlsx template for Historical Financial Statements (all signed-in users may download). */
+model AppSharedHistoricalFinancialsTemplate {
+  id              Int      @id
+  filename        String
+  body            Bytes
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  updatedByUserId String?  @map("updated_by_user_id")
+
+  @@map("app_shared_historical_financials_template")
+}

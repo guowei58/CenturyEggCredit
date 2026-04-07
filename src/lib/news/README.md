@@ -65,6 +65,11 @@ Response includes `activeProviders`, `disabledProviders`, `providerStats`, dedup
 
 Components live under `src/components/news/` (`NewsFeed`, `NewsCard`, `NewsFilters`, `ProviderStatus`). Import provider ids from `constants.ts` in client code; do not import `providerRegistry` in the browser bundle.
 
+## Troubleshooting
+
+- **NewsAPI “Missing API key”:** Set `NEWSAPI_KEY` in `.env.local` (not `NEWS_API_KEY`) and restart the dev server. Keys are read only on the server.
+- **Marketaux “Invalid JSON” / “Non-JSON response”:** The HTTP body was not JSON—often an HTML error page (bad token, CDN/WAF, proxy) or an empty body. Confirm `MARKETAUX_API_KEY` in the Marketaux dashboard, check plan/rate limits, and read the new status + body snippet in the provider error message. A `User-Agent` header is sent to reduce CDN blocks.
+
 ## Known limitations
 
 - **Rate limits:** Alpha Vantage free tier is strict; Finnhub, Marketaux, and NewsAPI enforce their own quotas (NewsAPI free tier may restrict `everything`).

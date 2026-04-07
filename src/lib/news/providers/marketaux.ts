@@ -46,16 +46,29 @@ export function createMarketauxNewsProvider(): NewsProvider {
 
       let res: Response;
       try {
-        res = await fetchWithTimeout(url.toString(), runtime.config.timeoutMs);
+        res = await fetchWithTimeout(url.toString(), runtime.config.timeoutMs, {
+          headers: {
+            Accept: "application/json",
+            // Some CDNs return HTML without a normal browser UA.
+            "User-Agent": "CenturyEggCredit/1.0 (news aggregation)",
+          },
+        });
       } catch (e) {
         return errResult("marketaux", e instanceof Error ? e.message : "Network error");
       }
 
+      const text = await res.text();
       let json: MarketauxResponse;
       try {
-        json = (await res.json()) as MarketauxResponse;
+        json = JSON.parse(text) as MarketauxResponse;
       } catch {
-        return errResult("marketaux", "Invalid JSON response");
+        const hint = text.trim().replace(/\s+/g, " ").slice(0, 200);
+        return errResult(
+          "marketaux",
+          hint.length
+            ? `Non-JSON response (HTTP ${res.status}): ${hint}${text.length > 200 ? "…" : ""}`
+            : `Empty body (HTTP ${res.status}) — check MARKETAUX_API_KEY and plan limits at marketaux.com`
+        );
       }
 
       if (!res.ok) {

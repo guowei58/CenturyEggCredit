@@ -26,14 +26,10 @@ export const companyAnalysisTabs = [
   "Business Overview",
   "IR Page Indexer",
   "Business Model",
-  "Historical Financial Statements",
-  "KPI",
   "SEC XBRL Financials",
-  "Working Capital",
+  "Historical Financial Statements",
   "Org Chart",
   "Capital Structure",
-  "Recovery Analysis",
-  "Liquidity Analysis",
   "Saved Documents",
   "SEC Filings",
   "FCC Filings",
@@ -41,7 +37,6 @@ export const companyAnalysisTabs = [
   "News & Events",
   "Mgmt Presentations & Transcripts",
   "Earnings Releases",
-  "Comps",
   "Company History",
   "Capital Allocation",
   "Credit Timeline",
@@ -57,6 +52,7 @@ export const companyAnalysisTabs = [
 ] as const;
 
 export const companyAnalysisWorkOutputTabs = [
+  "KPI",
   "Recommendation",
   "AI Memo and Deck",
   "Pre-Mortem Analysis",
@@ -66,8 +62,9 @@ export const companyAnalysisWorkOutputTabs = [
   "Dear Diary",
 ] as const;
 
+export const companyAnalysisDesktopRisksTabs = ["Risk from 10K", "Forensic Accounting"] as const;
+
 export const companyAnalysisClaimsTabs = [
-  "Risk from 10K",
   "Environmental Claims",
   "Litigation Claims",
   "Labor/Pension Claims",
@@ -78,7 +75,6 @@ export const companyAnalysisClaimsTabs = [
 ] as const;
 
 export const companyAnalysisFraudChecksTabs = [
-  "Forensic Accounting",
   "Entity Searches",
   "Liens",
   "Management Background Check",

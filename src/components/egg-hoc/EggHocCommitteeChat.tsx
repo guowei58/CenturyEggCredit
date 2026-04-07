@@ -3,8 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { playEggHocIncomingBark, unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
-import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
-
 type PublicUser = { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId?: string | null };
 
 type ConvRow = {
@@ -88,11 +86,14 @@ function mergeMessagesChronological(prev: MsgRow[], incoming: MsgRow[]): MsgRow[
   );
 }
 
+/** Server sets `chatDisplayId` from preferences (Egg-Hoc chat ID) or email slug — never from legacy `User.name`. */
+function eggHocPublicUserLabel(u: PublicUser): string {
+  return u.chatDisplayId?.trim() || "Pari Passu Pal";
+}
+
 export function EggHocCommitteeChat() {
   const { data: session, status } = useSession();
   const userId = session?.user?.id ?? null;
-  const prefs = useUserPreferencesOptional();
-  const myChatId = prefs?.preferences.profile?.chatDisplayId?.trim() || null;
 
   const [conversations, setConversations] = useState<ConvRow[]>([]);
   const [listLoading, setListLoading] = useState(true);
@@ -689,11 +690,7 @@ export function EggHocCommitteeChat() {
                         >
                           {showSender ? (
                             <span className="px-1 text-[10px] font-medium" style={{ color: "var(--muted)" }}>
-                              {(m.senderUserId === userId && myChatId) ||
-                                m.sender.chatDisplayId?.trim() ||
-                                m.sender.name?.trim() ||
-                                m.sender.email ||
-                                "Pari Passu Pal"}
+                              {eggHocPublicUserLabel(m.sender)}
                             </span>
                           ) : null}
                           <div
@@ -986,7 +983,7 @@ export function EggHocCommitteeChat() {
                     style={{ color: "var(--text)" }}
                   >
                     <span>
-                      {m.user.name || m.user.email}
+                      {eggHocPublicUserLabel(m.user)}
                       <span style={{ color: "var(--muted)" }}> · {m.role}</span>
                     </span>
                     {isAdmin && m.userId !== userId ? (
@@ -1035,7 +1032,7 @@ export function EggHocCommitteeChat() {
                             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
                             onClick={() => void addMember(u)}
                           >
-                            + {u.name || u.email}
+                            + {eggHocPublicUserLabel(u)}
                           </button>
                         </li>
                       ))}

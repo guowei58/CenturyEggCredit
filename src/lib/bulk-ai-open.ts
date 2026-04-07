@@ -17,7 +17,10 @@ import { CUSTOMERS_PROMPT_TEMPLATE } from "@/data/customers-prompt";
 import { SUPPLIERS_PROMPT_TEMPLATE } from "@/data/suppliers-prompt";
 import { EARNINGS_RELEASES_PROMPT_TEMPLATE } from "@/data/earnings-releases-prompt";
 import { EMPLOYEE_CONTACTS_PROMPT_TEMPLATE } from "@/data/employee-contacts-prompt";
-import { HISTORICAL_FINANCIALS_PROMPT_TEMPLATE } from "@/data/historical-financials-prompt";
+import {
+  fillHistoricalFinancialsPromptPlaceholders,
+  HISTORICAL_FINANCIALS_PROMPT_TEMPLATE,
+} from "@/data/historical-financials-prompt";
 import { INDUSTRY_CONTACTS_PROMPT_TEMPLATE } from "@/data/industry-contacts-prompt";
 import { INDUSTRY_PUBLICATIONS_PROMPT_TEMPLATE } from "@/data/industry-publications-prompt";
 import {
@@ -200,7 +203,7 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
     {
       label: "Historical financials",
       saveKey: "historical-financials-prompt",
-      prompt: HISTORICAL_FINANCIALS_PROMPT_TEMPLATE.replace(/\[COMPANY NAME\]/g, dn).replace(/\[TICKER\]/g, tk),
+      prompt: fillHistoricalFinancialsPromptPlaceholders(HISTORICAL_FINANCIALS_PROMPT_TEMPLATE, dn, tk),
     },
     {
       label: "Capital structure",

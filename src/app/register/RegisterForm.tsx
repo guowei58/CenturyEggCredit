@@ -38,7 +38,7 @@ export function RegisterForm() {
         setError(data.error || "Could not create account.");
         return;
       }
-      router.push("/login?registered=1");
+      router.push("/login?checkEmail=1");
       router.refresh();
     } catch {
       setError("Network error. Check your connection and try again.");
@@ -55,7 +55,7 @@ export function RegisterForm() {
       <div className="w-full max-w-sm">
         <h1 className="text-center text-xl font-semibold tracking-tight">Create account</h1>
         <p className="mt-2 text-center text-sm" style={{ color: "var(--muted)" }}>
-          Email and password — same as most websites.
+          We will email you a confirmation link. You can sign in only after you confirm your email.
         </p>
         <form onSubmit={(e) => void onSubmit(e)} className="mt-6 flex flex-col gap-3">
           <label className="flex flex-col gap-1 text-sm">

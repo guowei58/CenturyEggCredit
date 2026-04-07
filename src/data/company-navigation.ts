@@ -61,15 +61,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   financials: {
     groups: [
       {
-        tabs: [
-          "Historical Financial Statements",
-          "KPI",
-          "SEC XBRL Financials",
-          "Working Capital",
-          "Liquidity Analysis",
-          "Recovery Analysis",
-          "Comps",
-        ],
+        tabs: ["SEC XBRL Financials", "Historical Financial Statements"],
       },
     ],
   },
@@ -110,9 +102,12 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   risk: {
     groups: [
       {
+        label: "Desktop Risks",
+        tabs: ["Risk from 10K", "Forensic Accounting"],
+      },
+      {
         label: "Claims",
         tabs: [
-          "Risk from 10K",
           "Environmental Claims",
           "Litigation Claims",
           "Labor/Pension Claims",
@@ -125,7 +120,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         label: "Fraud Checks / Diligence",
         tabs: [
-          "Forensic Accounting",
           "Entity Searches",
           "Liens",
           "Management Background Check",
@@ -161,6 +155,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
+          "KPI",
           "Recommendation",
           "AI Memo and Deck",
           "Pre-Mortem Analysis",
