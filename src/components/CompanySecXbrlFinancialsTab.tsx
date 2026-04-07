@@ -33,7 +33,32 @@ function fmt(v: number | null): string {
   return `${sign}$${s}M`;
 }
 
+/** Hide period columns where the share of rows with a non-zero amount is at or below this threshold (e.g. 0.1 = 10%). */
+const SPARSE_PERIOD_MAX_FILL_RATIO = 0.1;
+
+/**
+ * Period columns that are mostly empty (≤10% of rows with a non-zero value) are omitted so sparse XBRL columns
+ * don’t dominate the table. If every column would be hidden, all periods are kept.
+ */
+function visiblePeriodsForAsPresentedStatement(stmt: PresentedStatement): PresentedStatement["periods"] {
+  const { periods, rows } = stmt;
+  const n = rows.length;
+  if (n === 0 || periods.length === 0) return periods;
+
+  const kept = periods.filter((p) => {
+    let nonZero = 0;
+    for (const r of rows) {
+      const v = r.values[p.key];
+      if (v !== null && Number.isFinite(v) && v !== 0) nonZero++;
+    }
+    return nonZero / n > SPARSE_PERIOD_MAX_FILL_RATIO;
+  });
+
+  return kept.length > 0 ? kept : periods;
+}
+
 function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
+  const periods = visiblePeriodsForAsPresentedStatement(stmt);
   return (
     <Card title={stmt.title}>
       <div className="overflow-auto">
@@ -43,7 +68,7 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
               <th className="sticky left-0 z-10 bg-[var(--panel)] p-2 text-left" style={{ color: "var(--muted2)" }}>
                 Line
               </th>
-              {stmt.periods.map((p) => (
+              {periods.map((p) => (
                 <th key={p.key} className="p-2 text-right align-bottom" style={{ color: "var(--muted2)" }} title={p.label}>
                   <span className="inline-block max-w-[140px] whitespace-normal text-[10px] leading-snug">{p.label}</span>
                 </th>
@@ -60,7 +85,7 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
                 >
                   {r.label}
                 </td>
-                {stmt.periods.map((p) => (
+                {periods.map((p) => (
                   <td key={p.key} className="p-2 text-right font-mono" style={{ color: "var(--text)" }}>
                     {fmt(r.values[p.key] ?? null)}
                   </td>
@@ -72,10 +97,11 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
       </div>
       <p className="mt-2 text-[10px]" style={{ color: "var(--muted)" }}>
         Amounts in <span className="font-medium">$ millions</span> (USD). Primary statement only (consolidated presentation
-        linkbase). Up to five period columns; rows tagged{" "}
-        <span className="font-mono">[Abstract]</span> / <span className="font-mono">[Member]</span> are taxonomy structure
-        and usually have no amounts. Dashes can also mean the fact lives in another XBRL context (segment, parenthetical,
-        etc.). Role: <span className="font-mono">{stmt.role}</span>
+        linkbase). Period columns with non-zero values in at most {Math.round(SPARSE_PERIOD_MAX_FILL_RATIO * 100)}% of rows
+        are hidden. Up to five period columns; rows tagged <span className="font-mono">[Abstract]</span> /{" "}
+        <span className="font-mono">[Member]</span> are taxonomy structure and usually have no amounts. Dashes can also
+        mean the fact lives in another XBRL context (segment, parenthetical, etc.). Role:{" "}
+        <span className="font-mono">{stmt.role}</span>
       </p>
     </Card>
   );
@@ -199,17 +225,20 @@ export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
                     filingDate: sel.filingDate ?? filingMeta?.filingDate ?? "",
                     accessionNumber: sel.accessionNumber,
                   },
-                  statements: statements.map((s) => ({
-                    title: s.title,
-                    role: s.role,
-                    periods: s.periods.map((p) => ({ key: p.key, label: p.label })),
-                    rows: s.rows.map((r) => ({
-                      concept: r.concept,
-                      label: r.label,
-                      depth: r.depth,
-                      values: r.values,
-                    })),
-                  })),
+                  statements: statements.map((s) => {
+                    const periods = visiblePeriodsForAsPresentedStatement(s);
+                    return {
+                      title: s.title,
+                      role: s.role,
+                      periods: periods.map((p) => ({ key: p.key, label: p.label })),
+                      rows: s.rows.map((r) => ({
+                        concept: r.concept,
+                        label: r.label,
+                        depth: r.depth,
+                        values: r.values,
+                      })),
+                    };
+                  }),
                 });
               }}
             >
