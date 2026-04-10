@@ -18,8 +18,11 @@ import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-/** Allow long GPT-5 + XBRL runs; keep ≥ OpenAI client wait (see openAiXbrlConsolidateFetchTimeoutMs). */
-export const maxDuration = 600;
+/**
+ * Vercel caps this at 300s on Hobby (and many hosts). Keep OpenAI wait ≤ this via
+ * OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS; Pro plans allow higher `maxDuration` if you raise both.
+ */
+export const maxDuration = 300;
 
 const SAVE_KEY = "xbrl-consolidated-financials-ai" as const;
 
