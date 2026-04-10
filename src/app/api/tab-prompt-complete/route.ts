@@ -4,6 +4,9 @@ import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
+import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
+import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
+import { isOpenAiWebSearchEnabled } from "@/lib/openai";
 
 export const dynamic = "force-dynamic";
 /** Align with `anthropicFetchTimeoutMs()` default (300s) so Claude can finish large tab prompts. */
@@ -14,7 +17,9 @@ const MAX_SYSTEM_CHARS = 24_000;
 
 const DEFAULT_SYSTEM = `You are a senior credit and equity research assistant. The user message is a prompt they prepared for analysis in their workflow.
 
-Answer thoroughly. Use Markdown (headings, lists, tables) when it improves clarity. Follow any output structure the user asked for. Do not invent facts; if information is missing, say so briefly.`;
+Answer thoroughly. Use Markdown (headings, lists, tables) when it improves clarity. Follow any output structure the user asked for. Do not invent facts; if information is missing, say so briefly.
+
+The server prepends the current date/time and adds rigor instructions (self-check; for Claude with web search—verify recent facts when needed). Treat those as binding.`;
 
 /**
  * POST { provider, userPrompt, systemPrompt?, maxTokens?, claudeModel?, openaiModel?, geminiModel?, deepseekModel? }
@@ -84,6 +89,10 @@ export async function POST(request: Request) {
     openaiModel: models.openaiModel,
     geminiModel: models.geminiModel,
     deepseekModel: models.deepseekModel,
+    claudeTools:
+      provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
+    openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
+    geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
     apiKeys: bundle,
   });
 

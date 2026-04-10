@@ -6,7 +6,7 @@
  */
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
-import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
+import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
@@ -20,6 +20,121 @@ function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } 
 /** OpenAI-compatible Gemini API base (see Google Generative Language docs). */
 const GEMINI_OPENAI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
 const GEMINI_OPENAI_CHAT_URL = `${GEMINI_OPENAI_BASE}/chat/completions`;
+
+/** Native generateContent (grounding, tools). @see https://ai.google.dev/gemini-api/docs/google-search */
+const GEMINI_GENERATE_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_GROUNDING_TIMEOUT_MS = 180_000;
+
+/** Set OREO_GEMINI_GOOGLE_SEARCH=0 (or false/off) to skip Google Search grounding on tab prompts and AI Chat. */
+export function isGeminiGoogleSearchEnabled(): boolean {
+  const v = process.env.OREO_GEMINI_GOOGLE_SEARCH?.trim().toLowerCase();
+  return v !== "0" && v !== "false" && v !== "off";
+}
+
+function normalizeGeminiModelId(model: string): string {
+  return model.replace(/^models\//, "").trim();
+}
+
+function extractGeminiGenerateText(data: unknown): string | null {
+  const d = data as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    error?: { message?: string };
+  };
+  if (d.error?.message) return null;
+  const parts = d.candidates?.[0]?.content?.parts;
+  if (!parts?.length) return null;
+  const texts = parts.map((p) => (typeof p.text === "string" ? p.text : "")).filter(Boolean);
+  return texts.length ? texts.join("") : null;
+}
+
+function geminiNativeUserParts(content: string | ChatUserContentPart[]): Array<Record<string, unknown>> {
+  if (typeof content === "string") return [{ text: content }];
+  const out: Array<Record<string, unknown>> = [];
+  for (const p of content) {
+    if (p.type === "text") {
+      out.push({ text: p.text });
+    } else if (p.type === "image") {
+      out.push({
+        inlineData: { mimeType: p.source.media_type, data: p.source.data },
+      });
+    }
+  }
+  return out.length ? out : [{ text: "" }];
+}
+
+function geminiNativeContentsFromMessages(messages: ChatConversationTurn[]): Array<{ role: string; parts: Array<Record<string, unknown>> }> {
+  const out: Array<{ role: string; parts: Array<Record<string, unknown>> }> = [];
+  for (const m of messages) {
+    if (m.role === "assistant") {
+      out.push({ role: "model", parts: [{ text: m.content }] });
+    } else {
+      out.push({ role: "user", parts: geminiNativeUserParts(m.content) });
+    }
+  }
+  return out;
+}
+
+/** PDF user parts cannot use native grounding path (no inline part built). */
+function conversationCompatibleWithGeminiGoogleSearch(messages: ChatConversationTurn[]): boolean {
+  for (const m of messages) {
+    if (m.role !== "user") continue;
+    if (typeof m.content === "string") continue;
+    for (const p of m.content) {
+      if (p.type === "document") return false;
+    }
+  }
+  return true;
+}
+
+async function callGeminiGenerateContentWithGoogleSearch(
+  systemAug: string,
+  contents: Array<{ role: string; parts: Array<Record<string, unknown>> }>,
+  modelId: string,
+  maxTokens: number,
+  apiKey: string
+): Promise<GeminiResult> {
+  const mid = normalizeGeminiModelId(modelId);
+  const url = `${GEMINI_GENERATE_BASE}/${encodeURIComponent(mid)}:generateContent`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey.trim(),
+      },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemAug }] },
+        contents,
+        tools: [{ google_search: {} }],
+        generationConfig: {
+          maxOutputTokens: maxTokens,
+        },
+      }),
+      signal: AbortSignal.timeout(GEMINI_GROUNDING_TIMEOUT_MS),
+    });
+    const raw = await res.text();
+    if (!res.ok) {
+      return normalizeGeminiApiError(res.status, raw);
+    }
+    let data: unknown;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      return { ok: false, error: "Invalid JSON from Gemini generateContent" };
+    }
+    const text = extractGeminiGenerateText(data)?.trim() ?? "";
+    if (!text) {
+      return { ok: false, error: "Empty response from Gemini (grounded generateContent)" };
+    }
+    return { ok: true, text };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Gemini network error";
+    if (msg.toLowerCase().includes("aborted")) {
+      return { ok: false, error: "Gemini request timed out. Retry in ~30–60s.", status: 504 };
+    }
+    return { ok: false, error: msg };
+  }
+}
 
 export type GeminiResult =
   | { ok: true; text: string }
@@ -43,15 +158,32 @@ function normalizeGeminiApiError(status: number, raw: string): GeminiResult {
 export async function callGemini(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    apiKeys?: LlmCallApiKeys;
+    /** Native generateContent + Google Search grounding (not OpenAI-compatible chat). */
+    googleSearch?: boolean;
+  } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;
+  const googleSearch = options.googleSearch === true && isGeminiGoogleSearchEnabled();
+
+  if (googleSearch) {
+    return callGeminiGenerateContentWithGoogleSearch(
+      systemAug,
+      [{ role: "user", parts: [{ text: userMessage }] }],
+      model,
+      maxTokens,
+      key
+    );
+  }
 
   try {
     const res = await fetch(GEMINI_OPENAI_CHAT_URL, {
@@ -122,15 +254,35 @@ function geminiUserMessageContent(content: string | ChatUserContentPart[]): stri
 export async function callGeminiConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    apiKeys?: LlmCallApiKeys;
+    googleSearch?: boolean;
+  } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;
+
+  const googleSearch =
+    options.googleSearch === true &&
+    isGeminiGoogleSearchEnabled() &&
+    conversationCompatibleWithGeminiGoogleSearch(messages);
+
+  if (googleSearch) {
+    return callGeminiGenerateContentWithGoogleSearch(
+      systemAug,
+      geminiNativeContentsFromMessages(messages),
+      model,
+      maxTokens,
+      key
+    );
+  }
 
   const apiMessages: Array<
     | { role: "system"; content: string }

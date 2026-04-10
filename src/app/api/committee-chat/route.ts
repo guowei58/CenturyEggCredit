@@ -7,6 +7,9 @@ import { buildCommitteeOreoContext } from "@/lib/committee-ticker-context";
 import { isProviderConfigured, llmCompleteConversation } from "@/lib/llm-router";
 import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
+import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
+import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
+import { isOpenAiWebSearchEnabled } from "@/lib/openai";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -98,6 +101,10 @@ export async function POST(request: Request) {
     openaiModel,
     geminiModel,
     deepseekModel,
+    claudeTools:
+      provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
+    openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
+    geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
   });
 
   if (!result.ok) {

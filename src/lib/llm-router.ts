@@ -48,6 +48,10 @@ export async function llmCompleteSingle(
      * When omitted, cloud providers read from process.env (scripts / legacy).
      */
     apiKeys?: LlmCallApiKeys;
+    /** OpenAI Chat Completions web search (tab prompts / AI Chat when enabled server-side). */
+    openaiWebSearch?: boolean;
+    /** Gemini native Google Search grounding (tab prompts / AI Chat when enabled server-side). */
+    geminiGoogleSearch?: boolean;
   } = {}
 ): Promise<LlmResult> {
   const ak = options.apiKeys;
@@ -57,6 +61,7 @@ export async function llmCompleteSingle(
       model: options.openaiModel,
       fetchTimeoutMs: options.openaiFetchTimeoutMs,
       apiKeys: ak,
+      webSearch: options.openaiWebSearch === true,
     });
     return toLlm(r);
   }
@@ -65,6 +70,7 @@ export async function llmCompleteSingle(
       maxTokens: options.maxTokens,
       model: options.geminiModel,
       apiKeys: ak,
+      googleSearch: options.geminiGoogleSearch === true,
     });
     return toLlm(r);
   }
@@ -94,8 +100,11 @@ export async function llmCompleteConversation(
     openaiModel?: string;
     geminiModel?: string;
     deepseekModel?: string;
+    claudeTools?: ClaudeTools;
     openaiFetchTimeoutMs?: number;
     apiKeys?: LlmCallApiKeys;
+    openaiWebSearch?: boolean;
+    geminiGoogleSearch?: boolean;
   } = {}
 ): Promise<LlmResult> {
   if ((provider === "openai" || provider === "gemini") && conversationHasPdf(messages)) {
@@ -121,6 +130,7 @@ export async function llmCompleteConversation(
       model: options.openaiModel,
       fetchTimeoutMs: options.openaiFetchTimeoutMs,
       apiKeys: ak,
+      webSearch: options.openaiWebSearch === true,
     });
     return toLlm(r);
   }
@@ -129,6 +139,7 @@ export async function llmCompleteConversation(
       maxTokens: options.maxTokens,
       model: options.geminiModel,
       apiKeys: ak,
+      googleSearch: options.geminiGoogleSearch === true,
     });
     return toLlm(r);
   }
@@ -143,6 +154,7 @@ export async function llmCompleteConversation(
   return callClaudeConversation(system, messages, {
     maxTokens: options.maxTokens,
     model: options.claudeModel,
+    tools: options.claudeTools,
     apiKeys: ak,
   });
 }

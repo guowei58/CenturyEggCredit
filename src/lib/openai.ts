@@ -3,7 +3,7 @@
  */
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
-import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
+import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -45,6 +45,24 @@ export function openAiXbrlConsolidateFetchTimeoutMs(): number {
 /** Default when no OPENAI_MODEL and no per-request override (cheap, reliable for long tab prompts). */
 export const OPENAI_DEFAULT_MODEL = "gpt-4o-mini";
 
+/** Set OREO_OPENAI_WEB_SEARCH=0 (or false/off) to skip Chat Completions web search on tab prompts and AI Chat. */
+export function isOpenAiWebSearchEnabled(): boolean {
+  const v = process.env.OREO_OPENAI_WEB_SEARCH?.trim().toLowerCase();
+  return v !== "0" && v !== "false" && v !== "off";
+}
+
+/**
+ * Chat Completions web search requires search-specific models (see OpenAI "Web search" guide).
+ * Maps the user's chosen model to the closest search variant.
+ */
+export function openAiChatCompletionsSearchModel(requestedModel: string): string {
+  const m = requestedModel.toLowerCase().trim();
+  if (m.includes("gpt-5")) return "gpt-5-search-api";
+  if (m.includes("mini")) return "gpt-4o-mini-search-preview";
+  if (m.includes("gpt-4o")) return "gpt-4o-search-preview";
+  return "gpt-4o-mini-search-preview";
+}
+
 /** Legacy GPT-4 class models: `max_tokens` ceiling (completion tokens). */
 const OPENAI_LEGACY_MAX_COMPLETION_TOKENS = 16_384;
 
@@ -73,13 +91,21 @@ function reasoningEffortForGpt5(): string {
   return "high";
 }
 
-function openAiChatRequestBody(model: string, messages: unknown[], maxTokens: number): Record<string, unknown> {
+function openAiChatRequestBody(
+  model: string,
+  messages: unknown[],
+  maxTokens: number,
+  webSearch?: boolean
+): Record<string, unknown> {
   const body: Record<string, unknown> = { model, messages };
   if (usesGpt5ChatCompletionShape(model)) {
     body.max_completion_tokens = maxTokens;
     body.reasoning_effort = reasoningEffortForGpt5();
   } else {
     body.max_tokens = maxTokens;
+  }
+  if (webSearch) {
+    body.web_search_options = {};
   }
   return body;
 }
@@ -154,14 +180,23 @@ export type OpenAIMessage = { role: "user" | "assistant" | "system"; content: st
 export async function callOpenAI(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string; fetchTimeoutMs?: number; apiKeys?: LlmCallApiKeys } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    fetchTimeoutMs?: number;
+    apiKeys?: LlmCallApiKeys;
+    /** Use OpenAI Chat Completions web search (switches to a search-capable model). */
+    webSearch?: boolean;
+  } = {}
 ): Promise<OpenAIResult> {
   const resolved = resolveOpenAiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
-  const model = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
+  const baseModel = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
+  const webSearch = options.webSearch === true && isOpenAiWebSearchEnabled();
+  const model = webSearch ? openAiChatCompletionsSearchModel(baseModel) : baseModel;
   const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? 4096, model);
   const waitMs =
     options.fetchTimeoutMs != null && Number.isFinite(options.fetchTimeoutMs)
@@ -176,10 +211,15 @@ export async function callOpenAI(
         Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify(
-        openAiChatRequestBody(model, [
-          { role: "system", content: systemAug },
-          { role: "user", content: userMessage },
-        ], maxTokens)
+        openAiChatRequestBody(
+          model,
+          [
+            { role: "system", content: systemAug },
+            { role: "user", content: userMessage },
+          ],
+          maxTokens,
+          webSearch
+        )
       ),
       signal: AbortSignal.timeout(waitMs),
     });
@@ -243,14 +283,22 @@ function openAIUserMessageContent(content: string | ChatUserContentPart[]): stri
 export async function callOpenAIConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string; fetchTimeoutMs?: number; apiKeys?: LlmCallApiKeys } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    fetchTimeoutMs?: number;
+    apiKeys?: LlmCallApiKeys;
+    webSearch?: boolean;
+  } = {}
 ): Promise<OpenAIResult> {
   const resolved = resolveOpenAiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
-  const model = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
+  const baseModel = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
+  const webSearch = options.webSearch === true && isOpenAiWebSearchEnabled();
+  const model = webSearch ? openAiChatCompletionsSearchModel(baseModel) : baseModel;
   const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? 4096, model);
   const waitMs =
     options.fetchTimeoutMs != null && Number.isFinite(options.fetchTimeoutMs)
@@ -278,7 +326,7 @@ export async function callOpenAIConversation(
         "Content-Type": "application/json",
         Authorization: `Bearer ${key}`,
       },
-      body: JSON.stringify(openAiChatRequestBody(model, apiMessages, maxTokens)),
+      body: JSON.stringify(openAiChatRequestBody(model, apiMessages, maxTokens, webSearch)),
       signal: AbortSignal.timeout(waitMs),
     });
 

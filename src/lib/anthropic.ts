@@ -4,7 +4,7 @@
  */
 
 import { conversationHasPdf, type ChatConversationTurn, type ChatUserContentPart } from "@/lib/chat-multimodal-types";
-import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
+import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -52,6 +52,12 @@ export const WEB_SEARCH_TOOL = {
   max_uses: 5,
 } as const;
 
+/** Set OREO_CLAUDE_WEB_SEARCH=0 (or false/off) to stop attaching web_search on tab prompts and AI Chat. */
+export function isClaudeWebSearchToolEnabled(): boolean {
+  const v = process.env.OREO_CLAUDE_WEB_SEARCH?.trim().toLowerCase();
+  return v !== "0" && v !== "false" && v !== "off";
+}
+
 /**
  * Call Anthropic Messages API. Returns result with text or error details.
  * API key must be set in ANTHROPIC_API_KEY.
@@ -71,7 +77,7 @@ export async function callClaude(
   const resolved = resolveAnthropicKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
   const { maxTokens = 2048, model = defaultModel, tools } = options;
@@ -179,7 +185,7 @@ export async function callClaudeConversation(
   const resolved = resolveAnthropicKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
   const { maxTokens = 4096, model = defaultModel, tools } = options;

@@ -3,6 +3,7 @@ import path from "path";
 import PDFDocument from "pdfkit";
 import { PassThrough } from "stream";
 import { chromium } from "playwright";
+import { SEC_EDGAR_USER_AGENT } from "@/lib/sec-edgar";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import {
   createUserSavedDocument,
@@ -26,6 +27,23 @@ export type SavedDocumentItem = {
 };
 
 const SUBFOLDER_NAME = "Saved Documents";
+
+/** Browser-like UA for non-SEC hosts (many sites block empty/generic bots). */
+const BROWSER_LIKE_UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+
+function userAgentForRemoteSave(urlStr: string): string {
+  try {
+    const host = new URL(urlStr).hostname.toLowerCase();
+    if (host === "sec.gov" || host.endsWith(".sec.gov")) {
+      const fromEnv = process.env.SEC_EDGAR_USER_AGENT?.trim();
+      return fromEnv && fromEnv.length > 8 ? fromEnv : SEC_EDGAR_USER_AGENT;
+    }
+  } catch {
+    // ignore
+  }
+  return BROWSER_LIKE_UA;
+}
 
 function rowToSavedItem(row: UserSavedDocumentListRow): SavedDocumentItem {
   return {
@@ -150,29 +168,59 @@ function formatXml(xml: string): string {
   return out.join("\n");
 }
 
-async function fetchViaReadableMirror(urlStr: string): Promise<string | null> {
-  const mirrorUrl = `https://r.jina.ai/http://${urlStr.replace(/^https?:\/\//i, "")}`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25_000);
+/**
+ * Jina Reader fetches a URL and returns readable text. Format is `https://r.jina.ai/<targetUrl>`
+ * with the full target URL (including https://) — not `.../http://host` only.
+ * @see https://jina.ai/reader
+ */
+function jinaReaderMirrorCandidates(urlStr: string): string[] {
+  let canonical: string;
   try {
-    const res = await fetch(mirrorUrl, {
-      method: "GET",
-      signal: controller.signal,
-      headers: {
-        Accept: "text/plain,text/markdown;q=0.9,*/*;q=0.8",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-      },
-    });
-    if (!res.ok) return null;
-    const text = (await res.text()).trim();
-    if (!text) return null;
-    return text;
+    canonical = new URL(urlStr.trim()).href;
   } catch {
-    return null;
-  } finally {
-    clearTimeout(timeout);
+    return [];
   }
+  const out: string[] = [];
+  const push = (u: string) => {
+    if (!out.includes(u)) out.push(u);
+  };
+  push(`https://r.jina.ai/${canonical}`);
+  try {
+    const u = new URL(canonical);
+    const rest = `${u.host}${u.pathname}${u.search}${u.hash}`;
+    push(`https://r.jina.ai/http://${rest}`);
+  } catch {
+    // ignore
+  }
+  return out;
+}
+
+async function fetchViaReadableMirror(urlStr: string): Promise<string | null> {
+  const candidates = jinaReaderMirrorCandidates(urlStr);
+  if (!candidates.length) return null;
+
+  for (const mirrorUrl of candidates) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25_000);
+    try {
+      const res = await fetch(mirrorUrl, {
+        method: "GET",
+        signal: controller.signal,
+        headers: {
+          Accept: "text/plain,text/markdown;q=0.9,*/*;q=0.8",
+          "User-Agent": BROWSER_LIKE_UA,
+        },
+      });
+      if (!res.ok) continue;
+      const text = (await res.text()).trim();
+      if (text.length > 0) return text;
+    } catch {
+      // try next candidate
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  return null;
 }
 
 async function pdfFromText(params: { title: string; url: string; text: string }): Promise<Buffer> {
@@ -206,8 +254,7 @@ async function pdfFromRenderedHtmlUrl(url: string): Promise<Buffer> {
   });
   try {
     const page = await browser.newPage({
-      userAgent:
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      userAgent: userAgentForRemoteSave(url),
     });
     await page.goto(url, { waitUntil: "networkidle", timeout: 45_000 });
     return await page.pdf({
@@ -228,8 +275,7 @@ async function pdfFromRenderedHtmlContent(params: { url: string; html: string })
   });
   try {
     const page = await browser.newPage({
-      userAgent:
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      userAgent: userAgentForRemoteSave(params.url),
     });
     // Provide a base URL so relative CSS/asset paths resolve correctly.
     const htmlWithBase = /<head[^>]*>/i.test(params.html)
@@ -365,11 +411,11 @@ export async function saveDocumentFromUrl(
     return { ok: false, error: "URL must be http(s)" };
   }
 
-  const fetchAttempts: Array<HeadersInit | undefined> = [
+  const saveUa = userAgentForRemoteSave(url.toString());
+  const fetchAttempts: HeadersInit[] = [
     // First attempt: browser-like request profile to reduce 403 blocks on HTML pages.
     {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      "User-Agent": saveUa,
       Accept:
         "text/html,application/xhtml+xml,application/xml;q=0.9,application/pdf;q=0.9,*/*;q=0.8",
       "Accept-Language": "en-US,en;q=0.9",
@@ -377,8 +423,8 @@ export async function saveDocumentFromUrl(
       Pragma: "no-cache",
       "Upgrade-Insecure-Requests": "1",
     },
-    // Second attempt: no custom headers (some hosts block nonstandard header combinations).
-    undefined,
+    // Second attempt: minimal headers (some hosts block nonstandard combinations; SEC still needs a proper UA).
+    { "User-Agent": saveUa },
   ];
 
   let res: Response | null = null;
@@ -487,15 +533,24 @@ export async function saveDocumentFromUrl(
   };
 
   if (!res) {
-    const browserFallback = await tryRenderUrlDirectly();
-    if (browserFallback) return browserFallback;
+    // Prefer Jina Reader before Playwright: serverless hosts usually cannot run Chromium; mirror is cheap HTTP.
     const mirrorFallback = await tryReadableMirrorFallback();
     if (mirrorFallback) return mirrorFallback;
-    const msg = lastFetchError ?? "Fetch failed";
+    const browserFallback = await tryRenderUrlDirectly();
+    if (browserFallback) return browserFallback;
+    const baseMsg =
+      lastFetchError ??
+      (lastStatus != null ? `HTTP ${lastStatus}` : "Fetch failed");
+    if (lastStatus === 403 || lastStatus === 401) {
+      return {
+        ok: false,
+        error: `${baseMsg} — the host denied access from this server (common for cloud IPs vs SEC.gov). Set SEC_EDGAR_USER_AGENT on production to a descriptive value with a contact email, redeploy, and try again; or use a direct .pdf exhibit link when available.`,
+      };
+    }
     const helpful =
-      msg.toLowerCase().includes("fetch failed") || msg.toLowerCase().includes("network")
-        ? `${msg} — the server could not download the URL. This host may block automated requests. Try a direct SEC exhibit/PDF URL or another public source URL.`
-        : msg;
+      baseMsg.toLowerCase().includes("fetch failed") || baseMsg.toLowerCase().includes("network")
+        ? `${baseMsg} — the server could not download the URL. This host may block automated requests. Try a direct SEC exhibit/PDF URL or another public source URL.`
+        : baseMsg;
     return { ok: false, error: helpful };
   }
 

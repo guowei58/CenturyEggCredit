@@ -3,7 +3,7 @@
  */
 
 import type { ChatConversationTurn } from "@/lib/chat-multimodal-types";
-import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
+import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/v1/chat/completions";
@@ -75,7 +75,7 @@ export async function callDeepSeek(
   const model = options.model?.trim() || getDeepSeekModel();
   const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
   const waitMs = deepSeekFetchTimeoutMs();
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   try {
     const res = await fetch(DEEPSEEK_CHAT_URL, {
@@ -123,7 +123,7 @@ export async function callDeepSeekConversation(
   const model = options.model?.trim() || getDeepSeekModel();
   const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
   const waitMs = deepSeekFetchTimeoutMs();
-  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const apiMessages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
     { role: "system", content: systemAug },
