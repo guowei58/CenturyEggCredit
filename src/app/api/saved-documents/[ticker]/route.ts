@@ -12,6 +12,7 @@ import {
 import { getUserSavedDocumentBody } from "@/lib/user-workspace-store";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 function contentTypeForFilename(filename: string): string {
   const ext = path.extname(filename).toLowerCase();

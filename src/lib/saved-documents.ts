@@ -294,11 +294,14 @@ async function pdfFromRenderedHtmlContent(params: { url: string; html: string })
 }
 
 async function ensurePdfkitFontMetricsAvailable(): Promise<void> {
-  // In Next.js server bundles, PDFKit sometimes resolves built-in AFM files from:
-  // .next/server/vendor-chunks/data/*.afm
-  // Ensure those files exist by copying from node_modules/pdfkit/js/data at runtime.
+  // If PDFKit is webpack-bundled, it resolves AFM files under `.next/server/chunks/data/` (broken __dirname).
+  // Prefer `serverComponentsExternalPackages: ['pdfkit']` in next.config.js so `__dirname` stays `.../pdfkit/js`.
+  // This copy is a dev / fallback safety net when source exists (e.g. local node_modules).
   const sourceDir = path.join(process.cwd(), "node_modules", "pdfkit", "js", "data");
-  const targetDir = path.join(process.cwd(), ".next", "server", "vendor-chunks", "data");
+  const targetDirs = [
+    path.join(process.cwd(), ".next", "server", "chunks", "data"),
+    path.join(process.cwd(), ".next", "server", "vendor-chunks", "data"),
+  ];
 
   try {
     const stat = await fs.stat(sourceDir);
@@ -306,8 +309,6 @@ async function ensurePdfkitFontMetricsAvailable(): Promise<void> {
   } catch {
     return;
   }
-
-  await fs.mkdir(targetDir, { recursive: true });
 
   let entries: string[] = [];
   try {
@@ -317,19 +318,22 @@ async function ensurePdfkitFontMetricsAvailable(): Promise<void> {
   }
 
   const afmFiles = entries.filter((name) => name.toLowerCase().endsWith(".afm"));
-  for (const name of afmFiles) {
-    const src = path.join(sourceDir, name);
-    const dst = path.join(targetDir, name);
-    try {
-      await fs.access(dst);
-      continue;
-    } catch {
-      // missing in target, copy it
-    }
-    try {
-      await fs.copyFile(src, dst);
-    } catch {
-      // best effort; PDFKit may still succeed if it needs a different font file
+  for (const targetDir of targetDirs) {
+    await fs.mkdir(targetDir, { recursive: true });
+    for (const name of afmFiles) {
+      const src = path.join(sourceDir, name);
+      const dst = path.join(targetDir, name);
+      try {
+        await fs.access(dst);
+        continue;
+      } catch {
+        // missing in target, copy it
+      }
+      try {
+        await fs.copyFile(src, dst);
+      } catch {
+        // best effort
+      }
     }
   }
 }

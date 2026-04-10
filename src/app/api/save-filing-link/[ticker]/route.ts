@@ -4,6 +4,8 @@ import { isFilingsTabUrlAllowed } from "@/lib/filing-link-allowlist";
 import { saveDocumentFromUrl } from "@/lib/saved-documents";
 
 export const dynamic = "force-dynamic";
+/** Save + fetch + PDF can exceed default 10s on Vercel Hobby; raise on paid plans as needed. */
+export const maxDuration = 60;
 
 /**
  * POST { url } — fetch URL server-side and store PDF in Postgres (Saved Documents pipeline).
