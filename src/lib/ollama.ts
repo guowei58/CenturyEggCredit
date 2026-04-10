@@ -3,6 +3,7 @@
  */
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
 
 export type OllamaResult =
   | { ok: true; text: string }
@@ -168,12 +169,13 @@ export async function callOllama(
   const model = options.model?.trim() || getOllamaModel();
   const maxTokens = options.maxTokens ?? 4096;
   const temperature = options.temperature ?? parseOllamaTemperature();
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const body: Record<string, unknown> = {
     model,
     stream: false,
     messages: [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: systemAug },
       { role: "user", content: userMessage },
     ],
     options: {
@@ -237,8 +239,9 @@ export async function callOllamaConversation(
   const model = options.model?.trim() || getOllamaModel();
   const maxTokens = options.maxTokens ?? 4096;
   const temperature = options.temperature ?? parseOllamaTemperature();
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
-  const apiMessages: Array<{ role: string; content: string }> = [{ role: "system", content: systemPrompt }];
+  const apiMessages: Array<{ role: string; content: string }> = [{ role: "system", content: systemAug }];
 
   for (const m of messages) {
     if (m.role === "assistant") {

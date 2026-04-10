@@ -43,7 +43,7 @@ function valuesByConceptForColumn(grid: string[][], conceptCol: number, valueCol
 }
 
 function firstConceptMatch(vals: Map<string, number>, pattern: RegExp): number | null {
-  for (const [k, v] of vals) {
+  for (const [k, v] of Array.from(vals.entries())) {
     if (pattern.test(k)) return v;
   }
   return null;

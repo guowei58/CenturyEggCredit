@@ -72,7 +72,7 @@ async function main() {
 
   const range = findMdnaCharRangeInFlatText(acc, chosen.form)!;
   let n = 0;
-  for (const [tbl, off] of tableOffsets) {
+  for (const [tbl, off] of Array.from(tableOffsets.entries())) {
     if (off < range.start || off >= range.end) continue;
     const text = $(tbl).text().replace(/\s+/g, " ").trim().slice(0, 400);
     console.log("--- table", n++, "off", off, "---");

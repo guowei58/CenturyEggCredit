@@ -59,7 +59,7 @@ function lookupFactValue(
   const ck = `${kind}\t${concept}`;
   const pm = byConcept.get(ck);
   if (!pm) return null;
-  for (const [pl, v] of pm) {
+  for (const [pl, v] of Array.from(pm.entries())) {
     if (periodKeysCompatible(pl, periodHeader)) return v;
   }
   return null;

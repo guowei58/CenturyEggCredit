@@ -3,6 +3,7 @@
  */
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -158,6 +159,7 @@ export async function callOpenAI(
   const resolved = resolveOpenAiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const model = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
   const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? 4096, model);
@@ -175,7 +177,7 @@ export async function callOpenAI(
       },
       body: JSON.stringify(
         openAiChatRequestBody(model, [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: systemAug },
           { role: "user", content: userMessage },
         ], maxTokens)
       ),
@@ -246,6 +248,7 @@ export async function callOpenAIConversation(
   const resolved = resolveOpenAiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const model = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
   const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? 4096, model);
@@ -258,7 +261,7 @@ export async function callOpenAIConversation(
     | { role: "system"; content: string }
     | { role: "user"; content: string | OpenAIMultimodalUserPart[] }
     | { role: "assistant"; content: string }
-  > = [{ role: "system", content: systemPrompt }];
+  > = [{ role: "system", content: systemAug }];
 
   for (const m of messages) {
     if (m.role === "assistant") {

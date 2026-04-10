@@ -64,31 +64,10 @@ export async function POST(request: Request) {
         ? "OPENAI_API_KEY is not set. Add it to .env.local to use ChatGPT in AI Chat."
         : provider === "gemini"
           ? "GEMINI_API_KEY is not set. Add it to .env.local to use Gemini in AI Chat."
-          : "ANTHROPIC_API_KEY is not set. Add it to .env.local to use Claude in AI Chat.";
+          : provider === "deepseek"
+            ? "DEEPSEEK_API_KEY is not set. Add it to .env.local (or your DeepSeek API key in User Settings) to use DeepSeek in AI Chat."
+            : "ANTHROPIC_API_KEY is not set. Add it to .env.local to use Claude in AI Chat.";
     return NextResponse.json({ error: hint }, { status: 503 });
-  }
-  if (provider === "ollama") {
-    const health = await checkOllamaHealth();
-    if (health.status === "disconnected") {
-      return NextResponse.json(
-        { error: "Ollama is not reachable. Run `ollama serve` (default http://localhost:11434)." },
-        { status: 503 }
-      );
-    }
-    if (health.status === "model_missing") {
-      return NextResponse.json(
-        {
-          error: `Ollama model "${health.model}" is not installed. Run: ollama pull ${health.model}`,
-        },
-        { status: 503 }
-      );
-    }
-    if (health.status === "error") {
-      return NextResponse.json(
-        { error: health.detail?.slice(0, 200) ?? "Ollama health check failed." },
-        { status: 503 }
-      );
-    }
   }
   const parsed = parseCommitteeChatMessages(b.messages);
   if (!Array.isArray(parsed)) {
@@ -111,14 +90,14 @@ export async function POST(request: Request) {
     }
   }
 
-  const { claudeModel, openaiModel, geminiModel, ollamaModel } = resolveCommitteeChatModels(b);
+  const { claudeModel, openaiModel, geminiModel, deepseekModel } = resolveCommitteeChatModels(b);
 
   const result = await llmCompleteConversation(provider, system, parsed, {
     maxTokens: 4096,
     claudeModel,
     openaiModel,
     geminiModel,
-    ollamaModel,
+    deepseekModel,
   });
 
   if (!result.ok) {
@@ -129,8 +108,8 @@ export async function POST(request: Request) {
         ? "OpenAI"
         : provider === "gemini"
           ? "Gemini"
-          : provider === "ollama"
-            ? "Ollama"
+          : provider === "deepseek"
+            ? "DeepSeek"
             : "Claude";
     const short =
       result.error.length > 500 ? `${label} request failed` : result.error;

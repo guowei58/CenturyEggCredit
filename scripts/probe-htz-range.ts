@@ -106,25 +106,25 @@ async function main() {
   let mdnaAny = 0;
   let mdna1 = 0;
   let out3 = 0;
-  for (const [tbl, off] of tableOffsets) {
+  for (const [tbl, off] of Array.from(tableOffsets.entries())) {
     if (off < range.start || off >= range.end) continue;
     const nf = countNonFractionsInTable(tbl);
     if (nf > 0) mdnaAny++;
     if (nf >= 1) mdna1++;
     if (nf >= 3) mdna3++;
   }
-  for (const [tbl] of tableOffsets) {
+  for (const [tbl] of Array.from(tableOffsets.entries())) {
     const nf = countNonFractionsInTable(tbl);
     if (nf >= 3) out3++;
   }
   console.log("in-range tables any nf", mdnaAny, "3+ nf", mdna3, "total tables in range");
   let inRangeTotal = 0;
-  for (const [, off] of tableOffsets) {
+  for (const [, off] of Array.from(tableOffsets.entries())) {
     if (off >= range.start && off < range.end) inRangeTotal++;
   }
   console.log("inRangeTotal", inRangeTotal, "total3+nf whole doc", out3);
   const sample: number[] = [];
-  for (const [tbl, off] of tableOffsets) {
+  for (const [tbl, off] of Array.from(tableOffsets.entries())) {
     const nf = countNonFractionsInTable(tbl);
     if (nf < 3) continue;
     sample.push(off);

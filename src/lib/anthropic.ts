@@ -4,6 +4,7 @@
  */
 
 import { conversationHasPdf, type ChatConversationTurn, type ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -70,6 +71,7 @@ export async function callClaude(
   const resolved = resolveAnthropicKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
   const { maxTokens = 2048, model = defaultModel, tools } = options;
@@ -77,7 +79,7 @@ export async function callClaude(
   const body: Record<string, unknown> = {
     model,
     max_tokens: maxTokens,
-    system: systemPrompt,
+    system: systemAug,
     messages: [{ role: "user", content: userMessage }],
   };
   if (tools && tools.length > 0) {
@@ -177,6 +179,7 @@ export async function callClaudeConversation(
   const resolved = resolveAnthropicKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
   const { maxTokens = 4096, model = defaultModel, tools } = options;
@@ -186,7 +189,7 @@ export async function callClaudeConversation(
   const body: Record<string, unknown> = {
     model,
     max_tokens: maxTokens,
-    system: systemPrompt,
+    system: systemAug,
     messages: messages.map((m) => ({
       role: m.role,
       content: m.role === "assistant" ? m.content : normalizeUserContentForApi(m.content),

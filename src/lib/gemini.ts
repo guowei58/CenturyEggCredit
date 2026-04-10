@@ -6,6 +6,7 @@
  */
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import { augmentLlmSystemPromptWithCurrentTime } from "@/lib/llm-datetime-context";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
@@ -47,6 +48,7 @@ export async function callGemini(
   const resolved = resolveGeminiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;
@@ -61,7 +63,7 @@ export async function callGemini(
       body: JSON.stringify({
         model,
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: systemAug },
           { role: "user", content: userMessage },
         ],
         max_tokens: maxTokens,
@@ -125,6 +127,7 @@ export async function callGeminiConversation(
   const resolved = resolveGeminiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
+  const systemAug = augmentLlmSystemPromptWithCurrentTime(systemPrompt);
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;
@@ -133,7 +136,7 @@ export async function callGeminiConversation(
     | { role: "system"; content: string }
     | { role: "user"; content: string | GeminiMultimodalUserPart[] }
     | { role: "assistant"; content: string }
-  > = [{ role: "system", content: systemPrompt }];
+  > = [{ role: "system", content: systemAug }];
 
   for (const m of messages) {
     if (m.role === "assistant") {

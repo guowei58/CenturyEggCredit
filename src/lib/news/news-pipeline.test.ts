@@ -456,10 +456,13 @@ describe("aggregator resilience and extensibility", () => {
     vi.stubEnv("NEWSAPI_KEY", "x");
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        json: async () => [] as unknown,
-      })) as typeof fetch
+      vi.fn(
+        async () =>
+          ({
+            ok: true,
+            json: async () => [] as unknown,
+          }) as unknown as Response
+      ) as typeof fetch
     );
     const out = await aggregateNews({ ticker: "IBM" });
     expect(out.disabledProviders).toContain("marketaux");
