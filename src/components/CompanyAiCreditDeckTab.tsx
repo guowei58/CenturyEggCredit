@@ -9,9 +9,9 @@ import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { AiCreditDeckTemplateFileBox } from "@/components/AiCreditDeckTemplateFileBox";
 import { AI_CREDIT_DECK_PROMPT_TEMPLATE } from "@/data/ai-credit-deck-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
-import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
+import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
+import { openGeminiWithClipboard, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -100,104 +100,44 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
 
   function openInChatGPT() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openChatGptNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () => {
-          setClipboardFailed(false);
-          setStatusMessage(
-            wasShortened
-              ? "ChatGPT opened. Link text was shortened to fit; FULL prompt copied �?paste into ChatGPT, then upload your deck template and documents."
-              : "ChatGPT opened. Upload your deck template and paste documents for best results."
-          );
-        },
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            wasShortened
-              ? "ChatGPT opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
-              : "ChatGPT opened. Upload your template and paste the prompt manually."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        wasShortened
-          ? "ChatGPT opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
-          : "ChatGPT opened. Upload your template and paste the prompt manually."
-      );
-    }
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+      if (copyFailed) {
+        return wasShortened
+          ? "ChatGPT opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+          : "ChatGPT opened. Upload your template and paste the prompt manually.";
+      }
+      return wasShortened
+        ? "ChatGPT opened. The URL used a paste-first outline; FULL prompt copied — paste into ChatGPT, then upload your deck template and documents."
+        : "ChatGPT opened. Upload your deck template and paste documents for best results.";
+    });
   }
 
   function openInDeepSeek() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () => {
-          setClipboardFailed(false);
-          setStatusMessage(
-            wasShortened
-              ? "DeepSeek opened. Link text was shortened to fit; FULL prompt copied �?paste into DeepSeek, then upload your deck template and documents."
-              : "DeepSeek opened. Upload your deck template and paste documents for best results."
-          );
-        },
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            wasShortened
-              ? "DeepSeek opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
-              : "DeepSeek opened. Upload your template and paste the prompt manually."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        wasShortened
-          ? "DeepSeek opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
-          : "DeepSeek opened. Upload your template and paste the prompt manually."
-      );
-    }
+    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+      if (copyFailed) {
+        return wasShortened
+          ? "DeepSeek opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+          : "DeepSeek opened. Upload your template and paste the prompt manually.";
+      }
+      return wasShortened
+        ? "DeepSeek opened. The URL used a paste-first outline; FULL prompt copied — paste into DeepSeek, then upload your deck template and documents."
+        : "DeepSeek opened. Upload your deck template and paste documents for best results.";
+    });
   }
 
   function openInGemini() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openGeminiNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () => {
-          setClipboardFailed(false);
-          setStatusMessage(
-            wasShortened
-              ? "Gemini opened. Link text was shortened to fit; FULL prompt copied �?paste into Gemini, then upload your deck template and documents."
-              : "Gemini opened. Upload your deck template and paste documents for best results."
-          );
-        },
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            wasShortened
-              ? "Gemini opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
-              : "Gemini opened. Upload your template and paste the prompt manually."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        wasShortened
-          ? "Gemini opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
-          : "Gemini opened. Upload your template and paste the prompt manually."
-      );
-    }
+    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+      if (copyFailed) {
+        return wasShortened
+          ? "Gemini opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+          : "Gemini opened. Upload your template and paste the prompt manually.";
+      }
+      return wasShortened
+        ? "Gemini opened. The URL used a paste-first outline; FULL prompt copied — paste into Gemini, then upload your deck template and documents."
+        : "Gemini opened. Upload your deck template and paste documents for best results.";
+    });
   }
 
   if (!safeTicker) {

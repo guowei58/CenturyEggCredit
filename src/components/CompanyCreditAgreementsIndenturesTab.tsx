@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
+import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import {
   CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES,
   OPEN_IN_EXTERNAL_AI_FULL_LINE,
@@ -1055,24 +1055,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
 
   function openInChatGPT(text: string) {
     if (!text) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openChatGptNewChatWindow(text);
-    try {
-      navigator.clipboard.writeText(text).then(
-        () => {
-          setClipboardFailed(false);
-          setStatusMessage(chatGptOpenStatusMessage(wasShortened, false));
-        },
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(chatGptOpenStatusMessage(wasShortened, true));
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(chatGptOpenStatusMessage(wasShortened, true));
-    }
+    void openChatGptWithClipboard(text, setStatusMessage, setClipboardFailed);
   }
 
   function openInDeepSeek(text: string) {

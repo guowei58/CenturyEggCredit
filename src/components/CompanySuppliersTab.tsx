@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { SUPPLIERS_PROMPT_TEMPLATE } from "@/data/suppliers-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
+import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
@@ -133,30 +133,21 @@ export function CompanySuppliersTab({
 
   function openInChatGPT() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openChatGptNewChatWindow(prompt);
-    void navigator.clipboard.writeText(prompt).then(
-      () => setStatusMessage(chatGptOpenStatusMessage(wasShortened, false)),
-      () => {
-        setClipboardFailed(true);
-        setStatusMessage(chatGptOpenStatusMessage(wasShortened, true));
-      }
-    );
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInGemini() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    void openGeminiWithClipboard(prompt, (m) => setStatusMessage(m), () => setClipboardFailed(true));
+    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInDeepSeek() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    void openDeepSeekWithClipboard(prompt, (m) => setStatusMessage(m), () => setClipboardFailed(true));
+    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   if (!safeTicker) {

@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE } from "@/data/out-of-the-box-ideas-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
+import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
@@ -120,24 +120,7 @@ export function CompanyOutOfTheBoxIdeasTab({ ticker }: { ticker: string }) {
 
   function openInChatGPT() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openChatGptNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () => {
-          setClipboardFailed(false);
-          setStatusMessage(chatGptOpenStatusMessage(wasShortened, false));
-        },
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(chatGptOpenStatusMessage(wasShortened, true));
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(chatGptOpenStatusMessage(wasShortened, true));
-    }
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInDeepSeek() {

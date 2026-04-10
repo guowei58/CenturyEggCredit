@@ -12,13 +12,9 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { OrgChartExcelFileBox } from "@/components/OrgChartExcelFileBox";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import {
-  CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES,
-  geminiOpenStatusMessage,
-  openGeminiNewChatWindow,
-} from "@/lib/gemini-open-url";
-import { deepSeekOpenStatusMessage, openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
+import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
+import { CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES, openGeminiWithClipboard } from "@/lib/gemini-open-url";
+import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -111,53 +107,17 @@ export function HistoricalFinancialsAiWorkflow({
 
   function openInChatGPT() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openChatGptNewChatWindow(prompt);
-    void navigator.clipboard.writeText(prompt).then(
-      () => {
-        setClipboardFailed(false);
-        setStatusMessage(chatGptOpenStatusMessage(wasShortened, false));
-      },
-      () => {
-        setClipboardFailed(true);
-        setStatusMessage(chatGptOpenStatusMessage(wasShortened, true));
-      }
-    );
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInDeepSeek() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
-    void navigator.clipboard.writeText(prompt).then(
-      () => {
-        setClipboardFailed(false);
-        setStatusMessage(deepSeekOpenStatusMessage(wasShortened, false));
-      },
-      () => {
-        setClipboardFailed(true);
-        setStatusMessage(deepSeekOpenStatusMessage(wasShortened, true));
-      }
-    );
+    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInGemini() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openGeminiNewChatWindow(prompt);
-    void navigator.clipboard.writeText(prompt).then(
-      () => {
-        setClipboardFailed(false);
-        setStatusMessage(geminiOpenStatusMessage(wasShortened, false));
-      },
-      () => {
-        setClipboardFailed(true);
-        setStatusMessage(geminiOpenStatusMessage(wasShortened, true));
-      }
-    );
+    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   const noTickerBody = (

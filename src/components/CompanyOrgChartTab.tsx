@@ -29,9 +29,9 @@ const ORG_CHART_SAMPLE_THUMBNAILS: { path: (typeof ORG_CHART_SAMPLE_IMAGE_PATHS)
   },
 ];
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
-import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
+import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
+import { openGeminiWithClipboard, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -138,98 +138,44 @@ export function CompanyOrgChartTab({
 
   function openInChatGPT() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openChatGptNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            wasShortened
-              ? "ChatGPT opened. Link was shortened; FULL prompt copied �?paste it in, then attach all three sample images if the model supports images."
-              : "ChatGPT opened. Attach all three sample images in the chat if the model supports images."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            wasShortened
-              ? "ChatGPT opened (short link). Copy failed �?paste from OREO and attach the three sample images."
-              : "ChatGPT opened. Attach the three sample images and paste the prompt if copy failed."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        wasShortened
-          ? "ChatGPT opened (short link). Copy failed �?paste from OREO and attach the three sample images."
-          : "ChatGPT opened. Attach the three sample images and paste the prompt manually."
-      );
-    }
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+      if (copyFailed) {
+        return wasShortened
+          ? "ChatGPT opened (short link). Copy failed — paste from OREO and attach the three sample images."
+          : "ChatGPT opened. Attach the three sample images and paste the prompt if copy failed.";
+      }
+      return wasShortened
+        ? "ChatGPT opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach all three sample images if the model supports images."
+        : "ChatGPT opened. Attach all three sample images in the chat if the model supports images.";
+    });
   }
 
   function openInDeepSeek() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            wasShortened
-              ? "DeepSeek opened. Link was shortened; FULL prompt copied �?paste it in, then attach all three sample images if the model supports images."
-              : "DeepSeek opened. Attach all three sample images in the chat if the model supports images."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            wasShortened
-              ? "DeepSeek opened (short link). Copy failed �?paste from OREO and attach the three sample images."
-              : "DeepSeek opened. Attach the three sample images and paste the prompt if copy failed."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        wasShortened
-          ? "DeepSeek opened (short link). Copy failed �?paste from OREO and attach the three sample images."
-          : "DeepSeek opened. Attach the three sample images and paste the prompt manually."
-      );
-    }
+    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+      if (copyFailed) {
+        return wasShortened
+          ? "DeepSeek opened (short link). Copy failed — paste from OREO and attach the three sample images."
+          : "DeepSeek opened. Attach the three sample images and paste the prompt if copy failed.";
+      }
+      return wasShortened
+        ? "DeepSeek opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach all three sample images if the model supports images."
+        : "DeepSeek opened. Attach all three sample images in the chat if the model supports images.";
+    });
   }
 
   function openInGemini() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const { wasShortened } = openGeminiNewChatWindow(prompt);
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            wasShortened
-              ? "Gemini opened. Link was shortened; FULL prompt copied �?paste it in, then attach all three sample images if the model supports images."
-              : "Gemini opened. Attach all three sample images in the chat if the model supports images."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            wasShortened
-              ? "Gemini opened (short link). Copy failed �?paste from OREO and attach the three sample images."
-              : "Gemini opened. Attach the three sample images and paste the prompt if copy failed."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        wasShortened
-          ? "Gemini opened (short link). Copy failed �?paste from OREO and attach the three sample images."
-          : "Gemini opened. Attach the three sample images and paste the prompt manually."
-      );
-    }
+    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+      if (copyFailed) {
+        return wasShortened
+          ? "Gemini opened (short link). Copy failed — paste from OREO and attach the three sample images."
+          : "Gemini opened. Attach the three sample images and paste the prompt if copy failed.";
+      }
+      return wasShortened
+        ? "Gemini opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach all three sample images if the model supports images."
+        : "Gemini opened. Attach all three sample images in the chat if the model supports images.";
+    });
   }
 
   if (!safeTicker) {
