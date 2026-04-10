@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getRelatedSecFilersForTicker } from "@/lib/sec-related-filers";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function GET(_request: Request, { params }: { params: Promise<{ ticker: string }> }) {
   const { ticker } = await params;

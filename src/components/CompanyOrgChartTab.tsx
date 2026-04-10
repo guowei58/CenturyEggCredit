@@ -30,8 +30,8 @@ const ORG_CHART_SAMPLE_THUMBNAILS: { path: (typeof ORG_CHART_SAMPLE_IMAGE_PATHS)
 ];
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow, CHATGPT_META_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
-import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
+import { openGeminiNewChatWindow, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -146,14 +146,14 @@ export function CompanyOrgChartTab({
         () =>
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened. Link was shortened; FULL prompt copied — paste it in, then attach all three sample images if the model supports images."
+              ? "ChatGPT opened. Link was shortened; FULL prompt copied �?paste it in, then attach all three sample images if the model supports images."
               : "ChatGPT opened. Attach all three sample images in the chat if the model supports images."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened (short link). Copy failed — paste from OREO and attach the three sample images."
+              ? "ChatGPT opened (short link). Copy failed �?paste from OREO and attach the three sample images."
               : "ChatGPT opened. Attach the three sample images and paste the prompt if copy failed."
           );
         }
@@ -162,31 +162,31 @@ export function CompanyOrgChartTab({
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "ChatGPT opened (short link). Copy failed — paste from OREO and attach the three sample images."
+          ? "ChatGPT opened (short link). Copy failed �?paste from OREO and attach the three sample images."
           : "ChatGPT opened. Attach the three sample images and paste the prompt manually."
       );
     }
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    const { wasShortened } = openMetaAiNewChatWindow(prompt);
+    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
     try {
       navigator.clipboard.writeText(prompt).then(
         () =>
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened. Link was shortened; FULL prompt copied — paste it in, then attach all three sample images if the model supports images."
-              : "Meta AI opened. Attach all three sample images in the chat if the model supports images."
+              ? "DeepSeek opened. Link was shortened; FULL prompt copied �?paste it in, then attach all three sample images if the model supports images."
+              : "DeepSeek opened. Attach all three sample images in the chat if the model supports images."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened (short link). Copy failed — paste from OREO and attach the three sample images."
-              : "Meta AI opened. Attach the three sample images and paste the prompt if copy failed."
+              ? "DeepSeek opened (short link). Copy failed �?paste from OREO and attach the three sample images."
+              : "DeepSeek opened. Attach the three sample images and paste the prompt if copy failed."
           );
         }
       );
@@ -194,8 +194,8 @@ export function CompanyOrgChartTab({
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Meta AI opened (short link). Copy failed — paste from OREO and attach the three sample images."
-          : "Meta AI opened. Attach the three sample images and paste the prompt manually."
+          ? "DeepSeek opened (short link). Copy failed �?paste from OREO and attach the three sample images."
+          : "DeepSeek opened. Attach the three sample images and paste the prompt manually."
       );
     }
   }
@@ -210,14 +210,14 @@ export function CompanyOrgChartTab({
         () =>
           setStatusMessage(
             wasShortened
-              ? "Gemini opened. Link was shortened; FULL prompt copied — paste it in, then attach all three sample images if the model supports images."
+              ? "Gemini opened. Link was shortened; FULL prompt copied �?paste it in, then attach all three sample images if the model supports images."
               : "Gemini opened. Attach all three sample images in the chat if the model supports images."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Gemini opened (short link). Copy failed — paste from OREO and attach the three sample images."
+              ? "Gemini opened (short link). Copy failed �?paste from OREO and attach the three sample images."
               : "Gemini opened. Attach the three sample images and paste the prompt if copy failed."
           );
         }
@@ -226,7 +226,7 @@ export function CompanyOrgChartTab({
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Gemini opened (short link). Copy failed — paste from OREO and attach the three sample images."
+          ? "Gemini opened (short link). Copy failed �?paste from OREO and attach the three sample images."
           : "Gemini opened. Attach the three sample images and paste the prompt manually."
       );
     }
@@ -243,9 +243,9 @@ export function CompanyOrgChartTab({
   }
 
   return (
-    <Card title={`Org Chart — ${safeTicker}`}>
+    <Card title={`Org Chart �?${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Use the three reference screenshots and prompt in Claude, ChatGPT, Gemini, or Meta AI (vision). Save the model&apos;s answer below.
+          Use the three reference screenshots and prompt in Claude, ChatGPT, Gemini, or DeepSeek (vision). Save the model&apos;s answer below.
         </p>
         <div className="flex flex-col gap-6 lg:flex-row">
           {isSavedResponseCollapsed ? (
@@ -280,7 +280,7 @@ export function CompanyOrgChartTab({
                   <RichPasteTextarea
                     value={editDraft}
                     onChange={setEditDraft}
-                    placeholder="Paste your Claude, ChatGPT, Gemini, or Meta AI response here (summary, entity list, Mermaid/DOT, etc.), then click Save."
+                    placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek response here (summary, entity list, Mermaid/DOT, etc.), then click Save."
                     className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
                     style={{
                       borderColor: "var(--border2)",
@@ -377,14 +377,14 @@ export function CompanyOrgChartTab({
                 ))}
               </div>
               <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
-                Open each in a new tab to save, or right-click → Save image. Attach all three with your prompt in Claude, ChatGPT, Gemini, or Meta AI.
+                Open each in a new tab to save, or right-click �?Save image. Attach all three with your prompt in Claude, ChatGPT, Gemini, or DeepSeek.
               </p>
             </div>
 
             <div>
               <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
                 Prompt (includes numbered URLs for all samples). Open in AI; copy attaches to clipboard.{" "}
-                {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+                {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
               </p>
               <PromptTemplateBox
                 tabId="org-chart"
@@ -427,11 +427,11 @@ export function CompanyOrgChartTab({
                 </button>
                 <button
                   type="button"
-                  onClick={openInMetaAI}
+                  onClick={openInDeepSeek}
                   className="tab-prompt-ai-action-btn"
-                  style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                  style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
                 >
-                  Open in Meta AI
+                  Open in DeepSeek
                 </button>
                 <button
                   type="button"
@@ -444,11 +444,18 @@ export function CompanyOrgChartTab({
               </div>
               <TabPromptApiButtons
                 userPrompt={prompt}
-                onResult={(text) => {
-                  setEditDraft(text);
-                  setIsEditing(true);
-                  setStatusMessage("Response from API — review and click Save to store.");
+                onResult={() => {
                   setClipboardFailed(false);
+                }}
+                persistAfterResult={async (text) => {
+                  const trimmed = text.trim();
+                  if (!safeTicker) return;
+                  const ok = await saveToServer(safeTicker, "org-chart-prompt", trimmed);
+                  if (!ok) throw new Error("Could not save response.");
+                  setSavedContent(trimmed);
+                  setIsEditing(false);
+                  setEditDraft("");
+                  setStatusMessage("Response saved.");
                 }}
                 className="mt-3 border-t border-[var(--border2)] pt-3"
               />

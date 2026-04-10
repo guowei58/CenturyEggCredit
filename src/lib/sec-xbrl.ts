@@ -189,6 +189,59 @@ function isAnnualPeriod(p: XbrlPeriod): boolean {
   return p.fp === "FY" && (p.form === "10-K" || p.form === "20-F" || p.form === "40-F");
 }
 
+/** Annual filing types in SEC companyfacts (incl. amendments). */
+const ANNUAL_FILING_FORM_RE = /^(10-K|10-K\/A|20-F|20-F\/A|40-F|40-F\/A)$/;
+
+/** Roughly one fiscal year (excludes quarter / YTD rows sometimes mis-tagged fp=FY in companyfacts). */
+function durationDays(start: string | null, end: string | null): number | null {
+  if (!start || !end) return null;
+  const a = Date.parse(`${start}T12:00:00Z`);
+  const b = Date.parse(`${end}T12:00:00Z`);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+  return Math.round((b - a) / 86_400_000);
+}
+
+const FULL_YEAR_MIN_DAYS = 300;
+const FULL_YEAR_MAX_DAYS = 420;
+
+/** One full fiscal year fact as filed in companyfacts (duration + annual form). */
+function isFullYearAnnualCompanyFact(p: XbrlPeriod): boolean {
+  if (p.fp !== "FY") return false;
+  const form = (p.form ?? "").trim();
+  if (!ANNUAL_FILING_FORM_RE.test(form)) return false;
+  const d = durationDays(p.start, p.end);
+  if (d == null) return false;
+  return d >= FULL_YEAR_MIN_DAYS && d <= FULL_YEAR_MAX_DAYS;
+}
+
+/**
+ * FY + annual form for either ~12-month flows OR balance-sheet-style **instant** facts (no `start`, or 0–5 day span).
+ * Companyfacts uses duration filtering for P&amp;L; Assets/Liabilities/Debt are usually instant at fiscal year-end.
+ *
+ * Some issuers tag **year-end balance sheet** lines as `fp: "Q4"` on the 10-K instead of `FY` (e.g. CHTR for 2017-12-31
+ * while restated P&amp;L uses `FY`). We accept Q4 only when the fact is instant (not a ~90-day flow).
+ */
+function isFyAnnualSnapshotOrFullYearFact(p: XbrlPeriod): boolean {
+  const form = (p.form ?? "").trim();
+  if (!ANNUAL_FILING_FORM_RE.test(form)) return false;
+  const d = durationDays(p.start, p.end);
+  const instantOrUnknownPointInTime = d == null ? p.end.length >= 10 : d >= 0 && d <= 5;
+
+  if (p.fp === "FY") {
+    if (d == null) {
+      return p.end.length >= 10;
+    }
+    if (d >= 0 && d <= 5) return true;
+    return d >= FULL_YEAR_MIN_DAYS && d <= FULL_YEAR_MAX_DAYS;
+  }
+
+  if (p.fp === "Q4" && instantOrUnknownPointInTime) {
+    return true;
+  }
+
+  return false;
+}
+
 function isQuarterPeriod(p: XbrlPeriod): boolean {
   return (p.fp === "Q1" || p.fp === "Q2" || p.fp === "Q3" || p.fp === "Q4") && (p.form === "10-Q" || p.form === "10-K");
 }
@@ -339,6 +392,340 @@ export function normalizeCompanyFactsToStatements(params: {
     fetchedAt: new Date().toISOString(),
     annual: { periods: annualPeriodList, statements: annualOut },
     quarterly: { periods: quarterPeriodList, statements: quarterlyOut },
+  };
+}
+
+/**
+ * Full fiscal-year facts keyed by period end date (YYYY-MM-DD).
+ * SEC companyfacts often tags quarter / YTD duration rows as fp=FY; we require ~300–420 day duration
+ * and an annual form so each fiscal year maps to one comparable value (latest filed restatement wins).
+ */
+function annualBestByPeriodEnd(
+  facts: CompanyFactsJson,
+  tags: string[],
+  units: string[]
+): Map<string, { value: number; period: XbrlPeriod }> {
+  const cells: XbrlCell[] = [];
+  for (const tag of tags) {
+    for (const c of listCellsForTag(facts, "us-gaap", tag)) {
+      if (!isFullYearAnnualCompanyFact(c.period)) continue;
+      if (units.length && !units.includes(c.unit)) continue;
+      cells.push(c);
+    }
+  }
+  const byEnd = new Map<string, XbrlCell[]>();
+  for (const c of cells) {
+    const end = c.period.end;
+    const arr = byEnd.get(end) ?? [];
+    arr.push(c);
+    byEnd.set(end, arr);
+  }
+  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  for (const [end, arr] of Array.from(byEnd.entries())) {
+    const best = pickLatestFiled(arr);
+    if (best) out.set(end, { value: best.value, period: best.period });
+  }
+  return out;
+}
+
+/** Like {@link annualBestByPeriodEnd} but includes instant FY balance-sheet facts (same `end` key as duration flows). */
+function annualSnapshotBestByPeriodEnd(
+  facts: CompanyFactsJson,
+  tags: string[],
+  units: string[]
+): Map<string, { value: number; period: XbrlPeriod }> {
+  const cells: XbrlCell[] = [];
+  for (const tag of tags) {
+    for (const c of listCellsForTag(facts, "us-gaap", tag)) {
+      if (!isFyAnnualSnapshotOrFullYearFact(c.period)) continue;
+      if (units.length && !units.includes(c.unit)) continue;
+      cells.push(c);
+    }
+  }
+  const byEnd = new Map<string, XbrlCell[]>();
+  for (const c of cells) {
+    const end = c.period.end;
+    const arr = byEnd.get(end) ?? [];
+    arr.push(c);
+    byEnd.set(end, arr);
+  }
+  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  for (const [end, arr] of Array.from(byEnd.entries())) {
+    const best = pickLatestFiled(arr);
+    if (best) out.set(end, { value: best.value, period: best.period });
+  }
+  return out;
+}
+
+/** Prefer earlier tags in the list when several US-GAAP concepts exist for the same fiscal period end. */
+function annualFirstTagByPeriodEnd(
+  facts: CompanyFactsJson,
+  tagsInOrder: string[],
+  units: string[]
+): Map<string, { value: number; period: XbrlPeriod }> {
+  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  for (const tag of tagsInOrder) {
+    const m = annualBestByPeriodEnd(facts, [tag], units);
+    for (const [end, row] of Array.from(m.entries())) {
+      if (!out.has(end)) out.set(end, row);
+    }
+  }
+  return out;
+}
+
+function annualFirstTagSnapshotByPeriodEnd(
+  facts: CompanyFactsJson,
+  tagsInOrder: string[],
+  units: string[]
+): Map<string, { value: number; period: XbrlPeriod }> {
+  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  for (const tag of tagsInOrder) {
+    const m = annualSnapshotBestByPeriodEnd(facts, [tag], units);
+    for (const [end, row] of Array.from(m.entries())) {
+      if (!out.has(end)) out.set(end, row);
+    }
+  }
+  return out;
+}
+
+const IMPAIRMENT_ADDBACK_TAGS_USGAAP = [
+  "AssetImpairmentCharges",
+  "GoodwillImpairmentLoss",
+  "ImpairmentOfLongLivedAssetsHeldForUse",
+  "ImpairmentOfLongLivedAssetsToBeDisposedOf",
+] as const;
+
+function impairmentOperatingAddbackByPeriodEnd(facts: CompanyFactsJson): Map<string, number> {
+  const sums = new Map<string, number>();
+  for (const tag of IMPAIRMENT_ADDBACK_TAGS_USGAAP) {
+    const m = annualBestByPeriodEnd(facts, [tag], ["USD"]);
+    for (const [end, row] of Array.from(m.entries())) {
+      const { value } = row;
+      if (!Number.isFinite(value)) continue;
+      sums.set(end, (sums.get(end) ?? 0) + Math.abs(value));
+    }
+  }
+  return sums;
+}
+
+/** Combined debt line item if the filer uses one tag; otherwise sum common components (no double-count guard across every filer). */
+function totalDebtByPeriodEnd(facts: CompanyFactsJson): Map<string, number | null> {
+  const combined = annualFirstTagSnapshotByPeriodEnd(
+    facts,
+    [
+      "LongTermDebtAndShortTermDebt",
+      "LongTermDebtAndCapitalLeaseObligations",
+      "LongTermDebtNoncurrentAndShortTermDebtCurrent",
+    ],
+    ["USD"]
+  );
+  const shortTerm = annualSnapshotBestByPeriodEnd(facts, ["ShortTermBorrowings"], ["USD"]);
+  const currentPortion = annualSnapshotBestByPeriodEnd(facts, ["CurrentPortionOfLongTermDebt"], ["USD"]);
+  const currentPortionCapLease = annualSnapshotBestByPeriodEnd(
+    facts,
+    ["CurrentPortionOfLongTermDebtAndCapitalLeaseObligation"],
+    ["USD"]
+  );
+  const commercialPaper = annualSnapshotBestByPeriodEnd(facts, ["CommercialPaper"], ["USD"]);
+  const ltNoncurrent = annualSnapshotBestByPeriodEnd(facts, ["LongTermDebtNoncurrent"], ["USD"]);
+  const ltDebt = annualSnapshotBestByPeriodEnd(facts, ["LongTermDebt"], ["USD"]);
+  const finLeaseCur = annualSnapshotBestByPeriodEnd(facts, ["FinanceLeaseLiabilityCurrent"], ["USD"]);
+  const finLeaseNon = annualSnapshotBestByPeriodEnd(facts, ["FinanceLeaseLiabilityNoncurrent"], ["USD"]);
+
+  const allEnds = new Set<string>();
+  for (const m of [
+    combined,
+    shortTerm,
+    currentPortion,
+    currentPortionCapLease,
+    commercialPaper,
+    ltNoncurrent,
+    ltDebt,
+    finLeaseCur,
+    finLeaseNon,
+  ]) {
+    for (const end of Array.from(m.keys())) allEnds.add(end);
+  }
+
+  const out = new Map<string, number | null>();
+  for (const end of Array.from(allEnds)) {
+    const c = combined.get(end)?.value;
+    if (c != null && Number.isFinite(c)) {
+      out.set(end, c);
+      continue;
+    }
+    let sum = 0;
+    let any = false;
+    const add = (v: number | undefined) => {
+      if (v != null && Number.isFinite(v)) {
+        sum += v;
+        any = true;
+      }
+    };
+    add(shortTerm.get(end)?.value);
+    add(currentPortion.get(end)?.value);
+    add(currentPortionCapLease.get(end)?.value);
+    add(commercialPaper.get(end)?.value);
+    const ltNc = ltNoncurrent.get(end)?.value;
+    const lt = ltDebt.get(end)?.value;
+    if (ltNc != null && Number.isFinite(ltNc)) add(ltNc);
+    else if (lt != null && Number.isFinite(lt)) add(lt);
+    add(finLeaseCur.get(end)?.value);
+    add(finLeaseNon.get(end)?.value);
+    out.set(end, any ? sum : null);
+  }
+  return out;
+}
+
+/** Assets minus goodwill and intangibles (excluding goodwill); falls back to Assets − GoodwillAndIntangibleAssetsNet when not split. */
+function tangibleAssetsByPeriodEnd(facts: CompanyFactsJson): Map<string, number | null> {
+  const assetsM = annualSnapshotBestByPeriodEnd(facts, ["Assets"], ["USD"]);
+  const goodwillM = annualSnapshotBestByPeriodEnd(facts, ["Goodwill"], ["USD"]);
+  const intExM = annualSnapshotBestByPeriodEnd(facts, ["IntangibleAssetsNetExcludingGoodwill"], ["USD"]);
+  const combinedM = annualSnapshotBestByPeriodEnd(facts, ["GoodwillAndIntangibleAssetsNet"], ["USD"]);
+
+  const out = new Map<string, number | null>();
+  for (const [end, row] of Array.from(assetsM.entries())) {
+    const assets = row.value;
+    if (!Number.isFinite(assets)) {
+      out.set(end, null);
+      continue;
+    }
+    const gw = goodwillM.get(end)?.value;
+    const intEx = intExM.get(end)?.value;
+    const comb = combinedM.get(end)?.value;
+    let tangible: number;
+    if ((gw != null && Number.isFinite(gw)) || (intEx != null && Number.isFinite(intEx))) {
+      tangible = assets - (gw ?? 0) - (intEx ?? 0);
+    } else if (comb != null && Number.isFinite(comb)) {
+      tangible = assets - comb;
+    } else {
+      tangible = assets;
+    }
+    out.set(end, Number.isFinite(tangible) ? tangible : null);
+  }
+  return out;
+}
+
+const TAX_ADJ_EBIT_FACTOR = 0.74;
+
+export type TwentyYearLookbackPoint = {
+  /** Calendar year of fiscal period-end date (axis label); not always equal to SEC `fy` on comparative rows. */
+  fy: number;
+  periodEnd: string;
+  netIncome: number | null;
+  revenue: number | null;
+  shares: number | null;
+  /** Operating income (loss) plus add-backs of common impairment tags when separately disclosed. */
+  operatingIncomeExImpairment: number | null;
+  /** Net cash from operations minus capital expenditures (PPE payments); CapEx treated as absolute outflow. */
+  ocfLessCapex: number | null;
+  /** Total debt (USD); combined tag if filed, else sum of common debt/lease components. */
+  totalDebt: number | null;
+  /** ((OperatingIncomeLoss + impairment add-backs) × 0.74) / tangible assets; null if denominator ≤ 0. */
+  taxAdjustedEbitToTangibleAssets: number | null;
+};
+
+export type TwentyYearLookbackResult = {
+  ok: true;
+  ticker: string;
+  cik: string;
+  entityName: string | null;
+  fetchedAt: string;
+  points: TwentyYearLookbackPoint[];
+};
+
+/**
+ * Build up to `maxYears` fiscal years of annual US-GAAP metrics from SEC companyfacts (data.sec.gov).
+ */
+export function buildTwentyYearLookbackFromFacts(
+  ticker: string,
+  cik: string,
+  entityName: string | null,
+  facts: CompanyFactsJson,
+  maxYears = 20
+): TwentyYearLookbackResult {
+  const revenueM = annualFirstTagByPeriodEnd(
+    facts,
+    ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet"],
+    ["USD"]
+  );
+  const niM = annualBestByPeriodEnd(facts, ["NetIncomeLoss"], ["USD"]);
+  const oiM = annualBestByPeriodEnd(facts, ["OperatingIncomeLoss"], ["USD"]);
+  const cfoM = annualBestByPeriodEnd(facts, ["NetCashProvidedByUsedInOperatingActivities"], ["USD"]);
+  const capexM = annualBestByPeriodEnd(facts, ["PaymentsToAcquirePropertyPlantAndEquipment"], ["USD"]);
+  let sharesM = annualFirstTagByPeriodEnd(
+    facts,
+    [
+      "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "WeightedAverageNumberOfSharesOutstandingBasicAndDiluted",
+      "WeightedAverageNumberOfSharesOutstandingBasic",
+    ],
+    ["shares"]
+  );
+  if (sharesM.size === 0) {
+    sharesM = annualFirstTagByPeriodEnd(
+      facts,
+      [
+        "WeightedAverageNumberOfDilutedSharesOutstanding",
+        "WeightedAverageNumberOfSharesOutstandingBasicAndDiluted",
+        "WeightedAverageNumberOfSharesOutstandingBasic",
+      ],
+      []
+    );
+  }
+
+  const impAdd = impairmentOperatingAddbackByPeriodEnd(facts);
+  const totalDebtM = totalDebtByPeriodEnd(facts);
+  const tangibleM = tangibleAssetsByPeriodEnd(facts);
+
+  const allEnds = new Set<string>();
+  for (const m of [revenueM, niM, oiM, cfoM, capexM, sharesM, totalDebtM, tangibleM]) {
+    for (const end of Array.from(m.keys())) allEnds.add(end);
+  }
+  const sortedAsc = Array.from(allEnds).sort((a, b) => a.localeCompare(b));
+  const endSlice = sortedAsc.slice(-Math.max(1, maxYears));
+
+  const points: TwentyYearLookbackPoint[] = endSlice.map((end) => {
+    const axisYear = parseInt(end.slice(0, 4), 10);
+    const fy = Number.isFinite(axisYear) ? axisYear : 0;
+
+    const oi = oiM.get(end)?.value ?? null;
+    const add = impAdd.get(end) ?? 0;
+    const operatingIncomeExImpairment = oi != null ? oi + add : null;
+
+    const cfo = cfoM.get(end)?.value ?? null;
+    const capex = capexM.get(end)?.value ?? null;
+    let ocfLessCapex: number | null = null;
+    if (cfo != null && capex != null) ocfLessCapex = cfo - Math.abs(capex);
+    else if (cfo != null) ocfLessCapex = cfo;
+
+    const tangible = tangibleM.get(end) ?? null;
+    let taxAdjustedEbitToTangibleAssets: number | null = null;
+    if (operatingIncomeExImpairment != null && tangible != null && Number.isFinite(tangible) && tangible > 0) {
+      taxAdjustedEbitToTangibleAssets = (TAX_ADJ_EBIT_FACTOR * operatingIncomeExImpairment) / tangible;
+    }
+
+    return {
+      fy,
+      periodEnd: end,
+      netIncome: niM.get(end)?.value ?? null,
+      revenue: revenueM.get(end)?.value ?? null,
+      shares: sharesM.get(end)?.value ?? null,
+      operatingIncomeExImpairment,
+      ocfLessCapex,
+      totalDebt: totalDebtM.get(end) ?? null,
+      taxAdjustedEbitToTangibleAssets,
+    };
+  });
+
+  return {
+    ok: true,
+    ticker,
+    cik,
+    entityName,
+    fetchedAt: new Date().toISOString(),
+    points,
   };
 }
 

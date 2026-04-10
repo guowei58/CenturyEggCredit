@@ -4,7 +4,8 @@
  * Rate limit: 10 requests per second per IP. User-Agent required.
  */
 
-const USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
+export const SEC_EDGAR_USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
+const USER_AGENT = SEC_EDGAR_USER_AGENT;
 
 export type SecFiling = {
   form: string;
@@ -267,6 +268,9 @@ function rankNormalizedMatch(normTitle: string, normQuery: string): number {
     const idx = normTitle.indexOf(normQuery);
     return 70 - Math.min(25, idx);
   }
+  if (normTitle.length >= 8 && normQuery.includes(normTitle)) {
+    return 72 - Math.min(20, normQuery.indexOf(normTitle));
+  }
   const tokenScore = titleMatchesAllTokens(normTitle, normQuery) ? 55 : 0;
   return tokenScore;
 }
@@ -276,6 +280,8 @@ function titleMatchesQuery(title: string, rawQuery: string): { ok: boolean; norm
   const normQuery = normalizeCompanyNameForSearch(rawQuery);
   if (normQuery.length < 2) return { ok: false, normTitle, normQuery };
   if (normTitle.includes(normQuery)) return { ok: true, normTitle, normQuery };
+  /** Exhibit 21 often uses a longer string than SEC "conformed-name" (e.g. omits ", INC."). */
+  if (normTitle.length >= 8 && normQuery.includes(normTitle)) return { ok: true, normTitle, normQuery };
   if (titleMatchesAllTokens(normTitle, normQuery)) return { ok: true, normTitle, normQuery };
   return { ok: false, normTitle, normQuery };
 }

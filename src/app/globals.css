@@ -321,6 +321,32 @@
     background: rgba(255, 255, 255, 0.02);
   }
 
+  /* XBRL AI consolidation: flex parents need min-width 0 or wide tables force wrapping / clip scroll. */
+  .xbrl-ai-consolidated-output {
+    min-width: 0;
+  }
+
+  .xbrl-ai-consolidated-output .saved-rich-text {
+    min-width: 0;
+  }
+
+  /* XBRL AI consolidation markdown: keep period columns on one row; grow table width, scroll horizontally */
+  .xbrl-ai-consolidated-output .saved-rich-text-table-scroll {
+    max-width: none;
+  }
+
+  .xbrl-ai-consolidated-output .saved-rich-text-table-scroll table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+  }
+
+  .xbrl-ai-consolidated-output .saved-rich-text-table-scroll th,
+  .xbrl-ai-consolidated-output .saved-rich-text-table-scroll td {
+    white-space: nowrap;
+    max-width: none;
+  }
+
   /* Sanitized HTML pastes (no markdown table wrapper) */
   .saved-html-content table {
     width: 100%;

@@ -1,16 +1,18 @@
 /**
- * LME analysis via Claude / OpenAI / Gemini / Ollama.
+ * LME analysis via Claude / OpenAI / Gemini / DeepSeek.
  */
 
 import type { AiProvider } from "@/lib/ai-provider";
 import { LME_ANALYSIS_SYSTEM, LME_ANALYSIS_USER_SPEC } from "@/data/lme-analysis-prompt";
 import { llmCompleteSingle } from "@/lib/llm-router";
 import type { CovenantResolvedModels } from "@/lib/covenant-synthesis-claude";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 export async function synthesizeLmeAnalysisMarkdown(
   sourcesFormatted: string,
   provider: AiProvider,
-  models: CovenantResolvedModels
+  models: CovenantResolvedModels,
+  apiKeys: LlmCallApiKeys
 ): Promise<{ ok: true; markdown: string } | { ok: false; error: string }> {
   const user = `${LME_ANALYSIS_USER_SPEC}\n\n---\n\nSOURCE DOCUMENTS (use as sole factual basis for debt/capital-structure claims):\n\n${sourcesFormatted}`;
 
@@ -19,7 +21,8 @@ export async function synthesizeLmeAnalysisMarkdown(
     claudeModel: models.claudeModel,
     openaiModel: models.openaiModel,
     geminiModel: models.geminiModel,
-    ollamaModel: models.ollamaModel,
+    deepseekModel: models.deepseekModel,
+    apiKeys,
   });
 
   if (!result.ok) return { ok: false, error: result.error };

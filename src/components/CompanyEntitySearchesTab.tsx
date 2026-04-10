@@ -62,6 +62,15 @@ export function CompanyEntitySearchesTab({ ticker, companyName }: { ticker: stri
 
   return (
     <div className="space-y-4">
+      <p
+        className="rounded-md border border-dashed px-3 py-2 text-sm leading-relaxed"
+        style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+      >
+        <span className="font-medium" style={{ color: "var(--text)" }}>
+          To come…
+        </span>{" "}
+        Fraud checks / diligence in this area is not complete yet; subsidiary hints below are a starting point only.
+      </p>
       <Card title="Subsidiaries & legal entities">
         <div className="space-y-3 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
           <p className="text-xs" style={{ color: "var(--muted)" }}>

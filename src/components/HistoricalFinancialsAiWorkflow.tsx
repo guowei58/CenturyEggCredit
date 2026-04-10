@@ -14,11 +14,11 @@ import { OrgChartExcelFileBox } from "@/components/OrgChartExcelFileBox";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import {
-  CHATGPT_META_GEMINI_LONG_URL_NOTICES,
+  CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES,
   geminiOpenStatusMessage,
   openGeminiNewChatWindow,
 } from "@/lib/gemini-open-url";
-import { metaAiOpenStatusMessage, openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
+import { deepSeekOpenStatusMessage, openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -126,19 +126,19 @@ export function HistoricalFinancialsAiWorkflow({
     );
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    const { wasShortened } = openMetaAiNewChatWindow(prompt);
+    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
     void navigator.clipboard.writeText(prompt).then(
       () => {
         setClipboardFailed(false);
-        setStatusMessage(metaAiOpenStatusMessage(wasShortened, false));
+        setStatusMessage(deepSeekOpenStatusMessage(wasShortened, false));
       },
       () => {
         setClipboardFailed(true);
-        setStatusMessage(metaAiOpenStatusMessage(wasShortened, true));
+        setStatusMessage(deepSeekOpenStatusMessage(wasShortened, true));
       }
     );
   }
@@ -169,7 +169,7 @@ export function HistoricalFinancialsAiWorkflow({
   const mainBody = (
     <>
       <p className="mb-4 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
-        Use the prompt in Claude, ChatGPT, Gemini, or Meta AI to draft a filing-faithful historical model (10 annual years, 20 quarters per
+        Use the prompt in Claude, ChatGPT, Gemini, or DeepSeek to draft a filing-faithful historical model (10 annual years, 20 quarters per
         the instructions). Save notes or output below and attach the per-ticker Excel workbook. Ground numbers in original filings and your
         spreadsheet—not third-party aggregators.
       </p>
@@ -284,7 +284,7 @@ export function HistoricalFinancialsAiWorkflow({
         <div className="flex w-full flex-col lg:w-80 flex-shrink-0 gap-3">
           <div>
             <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-              Forensic extraction prompt (SEC / XBRL). Open in AI; copy attaches to clipboard. {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+              Forensic extraction prompt (SEC / XBRL). Open in AI; copy attaches to clipboard. {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
             </p>
             <div
               className="mb-2 max-h-[min(55vh,520px)] overflow-y-auto whitespace-pre-wrap rounded border p-3 text-xs"
@@ -327,11 +327,11 @@ export function HistoricalFinancialsAiWorkflow({
               </button>
               <button
                 type="button"
-                onClick={openInMetaAI}
+                onClick={openInDeepSeek}
                 className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
               >
-                Open in Meta AI
+                Open in DeepSeek
               </button>
               <button
                 type="button"
@@ -344,11 +344,18 @@ export function HistoricalFinancialsAiWorkflow({
             </div>
             <TabPromptApiButtons
               userPrompt={prompt}
-              onResult={(text) => {
-                setEditDraft(text);
-                setIsEditing(true);
-                setStatusMessage("Response from API — review and click Save to store.");
+              onResult={() => {
                 setClipboardFailed(false);
+              }}
+              persistAfterResult={async (text) => {
+                const trimmed = text.trim();
+                if (!safeTicker) return;
+                const ok = await saveToServer(safeTicker, "historical-financials-prompt", trimmed);
+                if (!ok) throw new Error("Could not save response.");
+                setSavedContent(trimmed);
+                setIsEditing(false);
+                setEditDraft("");
+                setStatusMessage("Response saved.");
               }}
               className="mt-3 border-t border-[var(--border2)] pt-3"
             />
@@ -371,7 +378,7 @@ export function HistoricalFinancialsAiWorkflow({
   if (!safeTicker) {
     if (noOuterCard) return noTickerBody;
     return (
-      <Card title="Historical Financial Statements">
+      <Card title="The Ugly �?AI historical model">
         {noTickerBody}
       </Card>
     );
@@ -381,5 +388,5 @@ export function HistoricalFinancialsAiWorkflow({
     return <div className="space-y-4">{mainBody}</div>;
   }
 
-  return <Card title={`Historical Financial Statements — ${safeTicker}`}>{mainBody}</Card>;
+  return <Card title={`The Ugly �?AI historical model �?${safeTicker}`}>{mainBody}</Card>;
 }

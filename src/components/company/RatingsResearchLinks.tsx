@@ -2,10 +2,27 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { rankResults } from "@/lib/ratings-link-search/ranker";
 import type { DiscoverRatingsLinksOutput, NormalizedRatingsLink, RatingsAgency } from "@/lib/ratings-link-search/types";
 import { Card } from "@/components/ui";
 import { RatingsResearchLinkCard } from "./RatingsResearchLinkCard";
+
+const CACHE_PREFIX = "century-egg-ratings-links:";
+
+function cacheKey(ticker: string): string {
+  return `${CACHE_PREFIX}${ticker.trim().toUpperCase()}`;
+}
+
+function parseRatingsCache(raw: string | null | undefined): DiscoverRatingsLinksOutput | null {
+  if (!raw) return null;
+  try {
+    const o = JSON.parse(raw) as DiscoverRatingsLinksOutput;
+    return o && typeof o === "object" && Array.isArray(o.results) ? o : null;
+  } catch {
+    return null;
+  }
+}
 
 type AgencyFilter = "all" | RatingsAgency;
 type TypeFilter = "all" | "issuer_rating" | "issue_rating" | "rating_action" | "research";
@@ -46,6 +63,11 @@ export function RatingsResearchLinks({
   ticker: string;
   companyName?: string;
 }) {
+  const tkProp = ticker.trim().toUpperCase();
+  const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
+  const feedCacheKey = tkProp ? cacheKey(tkProp) : "";
+  const feedCacheBlob = feedCacheKey ? preferences.feedCaches?.[feedCacheKey] : undefined;
+
   const [inputTicker, setInputTicker] = useState(ticker.toUpperCase());
   const [companyName, setCompanyName] = useState((initialCompanyName ?? "").trim());
   const [loading, setLoading] = useState(false);
@@ -63,6 +85,18 @@ export function RatingsResearchLinks({
     if (initialCompanyName?.trim()) setCompanyName(initialCompanyName.trim());
   }, [initialCompanyName]);
 
+  useEffect(() => {
+    if (!tkProp) {
+      setPayload(null);
+      setError(null);
+      return;
+    }
+    if (!prefsReady) return;
+    const cached = parseRatingsCache(feedCacheBlob);
+    setPayload(cached);
+    setError(null);
+  }, [tkProp, prefsReady, feedCacheBlob]);
+
   const runSearch = useCallback(async () => {
     const tk = inputTicker.trim().toUpperCase();
     if (!tk) {
@@ -71,7 +105,6 @@ export function RatingsResearchLinks({
     }
     setLoading(true);
     setError(null);
-    setPayload(null);
     try {
       const res = await fetch("/api/ratings-links", {
         method: "POST",
@@ -87,8 +120,14 @@ export function RatingsResearchLinks({
         return;
       }
       if ("results" in data && Array.isArray(data.results)) {
-        setPayload(data as DiscoverRatingsLinksOutput);
+        const next = data as DiscoverRatingsLinksOutput;
+        setPayload(next);
         if (data.company?.companyName) setCompanyName(data.company.companyName);
+        const k = cacheKey(tk);
+        updatePreferences((p) => ({
+          ...p,
+          feedCaches: { ...(p.feedCaches ?? {}), [k]: JSON.stringify(next) },
+        }));
       } else {
         setError("Unexpected response from server.");
       }
@@ -97,7 +136,7 @@ export function RatingsResearchLinks({
     } finally {
       setLoading(false);
     }
-  }, [inputTicker, companyName]);
+  }, [inputTicker, companyName, updatePreferences]);
 
   const baseResults = useMemo(() => payload?.results ?? [], [payload]);
 
@@ -156,7 +195,7 @@ export function RatingsResearchLinks({
               background: "rgba(0, 212, 170, 0.1)",
             }}
           >
-            {loading ? "Searching…" : "Search agency links"}
+            {loading ? "Searching…" : payload ? "Refresh" : "Search agency links"}
           </button>
         </div>
       </Card>
@@ -167,7 +206,13 @@ export function RatingsResearchLinks({
         </div>
       )}
 
-      {payload && !loading && (
+      {loading && payload && (
+        <p className="text-center text-xs" style={{ color: "var(--muted)" }}>
+          Refreshing… previous results stay visible until the new search finishes.
+        </p>
+      )}
+
+      {payload && (
         <>
           <div className="rounded-lg border p-4" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
             <div className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
@@ -187,7 +232,7 @@ export function RatingsResearchLinks({
           {baseResults.length === 0 ? (
             <div className="rounded-lg border p-6 text-center text-sm leading-relaxed" style={{ borderColor: "var(--border)", color: "var(--muted2)" }}>
               No official agency links were returned for this search. Try broader issuer names, financing entity legal names,
-              or confirm your Programmable Search / SerpApi configuration and quota.
+              or confirm your Serper (<code className="text-[10px]">SERPER_API_KEY</code>) configuration and quota.
             </div>
           ) : (
             <>
@@ -259,7 +304,10 @@ export function RatingsResearchLinks({
             <ul className="space-y-4">
               {visible.map((item) => (
                 <li key={item.id}>
-                  <RatingsResearchLinkCard item={item} />
+                  <RatingsResearchLinkCard
+                    item={item}
+                    ticker={payload.company.ticker.trim().toUpperCase() || inputTicker.trim().toUpperCase()}
+                  />
                 </li>
               ))}
             </ul>
@@ -284,9 +332,9 @@ export function RatingsResearchLinks({
 
       {!payload && !loading && !error && (
         <div className="rounded-lg border p-6 text-center text-sm" style={{ borderColor: "var(--border)", color: "var(--muted2)" }}>
-          Click <strong className="text-[var(--text)]">Search agency links</strong> to query Fitch, Moody&apos;s, and S&amp;P
-          via your configured search provider (Google Programmable Search or SerpApi). Configure{" "}
-          <code className="text-[var(--accent)]">SEARCH_PROVIDER</code> and API keys in <code>.env.local</code>.
+          No saved results for this ticker yet. Click <strong className="text-[var(--text)]">Search agency links</strong> to query
+          Fitch, Moody&apos;s, and S&amp;P via Serper. Results are kept until you refresh. Set{" "}
+          <code className="text-[var(--accent)]">SERPER_API_KEY</code> in <code>.env.local</code>.
         </div>
       )}
     </div>

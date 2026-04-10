@@ -2,8 +2,7 @@ import { getSearchProviderFromEnv } from "@/lib/ratings-link-search/provider";
 import type { BrokerResearchSearchProvider } from "../types";
 
 /**
- * Reuses Google CSE JSON API / SerpApi wiring from ratings-link-search (same env vars).
- * SEARCH_PROVIDER=google|serpapi, GOOGLE_CSE_*, SERPAPI_API_KEY
+ * Reuses Serper wiring from ratings-link-search (SERPER_API_KEY).
  */
 export function getBrokerResearchSearchProviderFromEnv():
   | { ok: true; provider: BrokerResearchSearchProvider }

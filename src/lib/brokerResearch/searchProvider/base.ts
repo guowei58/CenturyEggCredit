@@ -1,6 +1,6 @@
 /**
  * Broker research uses {@link ../searchProvider/fromEnv} which delegates to
- * `ratings-link-search` Google CSE / SerpApi clients (no HTML scraping).
+ * `ratings-link-search` Serper client (no HTML scraping).
  */
 
 export {};

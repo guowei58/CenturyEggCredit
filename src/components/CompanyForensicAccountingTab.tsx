@@ -313,7 +313,7 @@ export function CompanyForensicAccountingTab({
               <option value="claude">Claude (Anthropic)</option>
               <option value="openai">OpenAI</option>
               <option value="gemini">Gemini (Google)</option>
-              <option value="ollama">Ollama / Local Llama</option>
+              <option value="deepseek">DeepSeek</option>
             </select>
             <AiModelPicker provider={provider} className="mt-2" />
           </div>

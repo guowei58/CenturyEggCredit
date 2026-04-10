@@ -121,7 +121,7 @@ export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; co
             onChange={(e) => setName(e.target.value)}
             className="w-full rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-            placeholder="Hertz Global Holdings"
+            placeholder="Optional — override if different from overview"
           />
         </div>
 
@@ -134,7 +134,7 @@ export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; co
             onChange={(e) => setAliases(e.target.value)}
             className="w-full rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-            placeholder="Hertz, Hertz Global"
+            placeholder="Optional — former names, brands, subsidiaries (comma-separated)"
           />
         </div>
 

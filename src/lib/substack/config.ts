@@ -1,5 +1,5 @@
 export type SubstackConfig = {
-  serpApiKey?: string;
+  serperApiKey?: string;
   discoveryEnabled: boolean;
   rssIngestEnabled: boolean;
   maxDiscoveryResults: number;
@@ -24,7 +24,7 @@ function parseIntEnv(v: string | undefined, fallback: number): number {
 
 export function loadSubstackConfigFromEnv(): SubstackConfig {
   return {
-    serpApiKey: process.env.SERPAPI_API_KEY?.trim() || undefined,
+    serperApiKey: process.env.SERPER_API_KEY?.trim() || undefined,
     discoveryEnabled: parseBool(process.env.SUBSTACK_DISCOVERY_ENABLED, true),
     rssIngestEnabled: parseBool(process.env.SUBSTACK_RSS_INGEST_ENABLED, true),
     maxDiscoveryResults: Math.min(100, Math.max(5, parseIntEnv(process.env.SUBSTACK_MAX_DISCOVERY_RESULTS, 50))),

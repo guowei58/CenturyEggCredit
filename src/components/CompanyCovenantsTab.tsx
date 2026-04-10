@@ -29,8 +29,8 @@ type CovenantGetResponse = {
   anthropicConfigured: boolean;
   openaiConfigured: boolean;
   geminiConfigured?: boolean;
-  ollamaStatus?: "connected" | "disconnected" | "model_missing" | "error";
-  ollamaModel?: string;
+  deepseekConfigured?: boolean;
+  deepseekDefaultModel?: string;
 };
 
 export function CompanyCovenantsTab({ ticker }: { ticker: string }) {
@@ -130,8 +130,7 @@ export function CompanyCovenantsTab({ ticker }: { ticker: string }) {
 
   if (!data) return null;
 
-  const ollamaState = data.ollamaStatus ?? "error";
-  const ollamaModelLabel = data.ollamaModel?.trim() || "llama3.1:8b";
+  const deepseekReady = data.deepseekConfigured === true;
 
   const providerReady =
     aiProvider === "claude"
@@ -140,7 +139,7 @@ export function CompanyCovenantsTab({ ticker }: { ticker: string }) {
         ? data.openaiConfigured
         : aiProvider === "gemini"
           ? data.geminiConfigured === true
-          : ollamaState === "connected";
+          : deepseekReady;
 
   return (
     <div className="space-y-6">
@@ -149,7 +148,7 @@ export function CompanyCovenantsTab({ ticker }: { ticker: string }) {
           This page aggregates saved text from <strong>Credit Agreements &amp; Indentures</strong> (all response boxes, legacy save,
           and readable uploads: .txt / .md / .csv). It also includes <strong>Notes &amp; Thoughts</strong> and{" "}
           <strong>Capital Structure</strong> saved responses as supplemental context. Click <strong>Regenerate</strong> to have
-          Claude, ChatGPT (API), Gemini, or local Ollama synthesize the covenant package from those sources.
+          Claude, ChatGPT (API), Gemini, or DeepSeek synthesize the covenant package from those sources.
         </p>
 
         <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -184,12 +183,12 @@ export function CompanyCovenantsTab({ ticker }: { ticker: string }) {
             </button>
             <button
               type="button"
-              onClick={() => persistProvider("ollama")}
+              onClick={() => persistProvider("deepseek")}
               className="px-3 py-1.5 text-[11px] font-medium transition-colors border-l"
-              style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "ollama") }}
-              title={`Ollama — ${data.ollamaModel} (${data.ollamaStatus})`}
+              style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
+              title={`DeepSeek — ${data.deepseekDefaultModel ?? "deepseek-chat"}`}
             >
-              Ollama
+              DeepSeek
             </button>
           </div>
           <AiModelPicker provider={aiProvider} className="mt-2 w-full sm:mt-0 sm:ml-2 sm:w-auto" />
@@ -241,25 +240,10 @@ export function CompanyCovenantsTab({ ticker }: { ticker: string }) {
                 Set <span className="font-mono">GEMINI_API_KEY</span> in <span className="font-mono">.env.local</span> to synthesize with
                 Gemini, or switch to another model.
               </>
-            ) : ollamaState === "disconnected" ? (
-              <>
-                Ollama is not reachable. Run <span className="font-mono">ollama serve</span> (see{" "}
-                <span className="font-mono">docs/ollama-setup.md</span>).
-              </>
-            ) : ollamaState === "model_missing" ? (
-              <>
-                Pull the model: <span className="font-mono">ollama pull {ollamaModelLabel}</span>
-              </>
-            ) : ollamaState === "error" ? (
-              <>
-                Ollama health check failed (status: error). Confirm <span className="font-mono">OLLAMA_BASE_URL</span>{" "}
-                (default <span className="font-mono">http://localhost:11434</span>) and that{" "}
-                <span className="font-mono">ollama serve</span> is running, then click <strong>Refresh sources</strong>.
-              </>
             ) : (
               <>
-                Ollama status: <span className="font-mono">{String(ollamaState)}</span>. If this persists, restart the dev server
-                and see <span className="font-mono">docs/ollama-setup.md</span>.
+                Add a DeepSeek API key in <strong>User Settings</strong> (gear icon), or use a hosted account with{" "}
+                <span className="font-mono">DEEPSEEK_API_KEY</span> on the server.
               </>
             )}
           </p>

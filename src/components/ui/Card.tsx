@@ -5,13 +5,13 @@ export function Card({
   children,
   className = "",
 }: {
-  title?: string;
+  title?: ReactNode;
   children: ReactNode;
   className?: string;
 }) {
   return (
     <div className={`card-shell ${className}`.trim()}>
-      {title && <div className="card-header">{title}</div>}
+      {title != null && title !== "" && <div className="card-header">{title}</div>}
       {children}
     </div>
   );

@@ -8,9 +8,11 @@ import {
 } from "@/lib/covenant-sources";
 import { synthesizeCovenantsMarkdown } from "@/lib/covenant-synthesis-claude";
 import { resolveProvider } from "@/lib/ai-provider";
+import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured } from "@/lib/llm-router";
 import { resolveCovenantModels } from "@/lib/ai-model-from-request";
-import { checkOllamaHealth } from "@/lib/ollama";
+import { getDeepSeekModel } from "@/lib/deepseek";
+import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -42,7 +44,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
   const fp = sourcesFingerprint(bundled.parts);
   const meta = parseMeta(await readSavedContent(sym, "covenants-synthesis-meta", userId));
   const cached = (await readSavedContent(sym, "covenants-synthesis", userId)) ?? "";
-  const ollamaHealth = await checkOllamaHealth();
+  const llmAuth = await getAuthenticatedLlmContext();
+  const kb = llmAuth.ok ? llmAuth.ctx.bundle : {};
 
   const sourceInventory = bundled.parts.map((p) => ({
     label: p.label,
@@ -62,11 +65,11 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
     cacheStale: meta ? meta.fingerprint !== fp : true,
     cacheUpdatedAt: meta?.updatedAt ?? null,
     cachedMarkdown: cached.trim().length > 0 ? cached : null,
-    anthropicConfigured: Boolean(process.env.ANTHROPIC_API_KEY?.trim()),
-    openaiConfigured: Boolean(process.env.OPENAI_API_KEY?.trim()),
-    geminiConfigured: Boolean(process.env.GEMINI_API_KEY?.trim()),
-    ollamaStatus: ollamaHealth.status,
-    ollamaModel: ollamaHealth.model,
+    anthropicConfigured: isProviderConfigured("claude", kb),
+    openaiConfigured: isProviderConfigured("openai", kb),
+    geminiConfigured: isProviderConfigured("gemini", kb),
+    deepseekConfigured: isProviderConfigured("deepseek", kb),
+    deepseekDefaultModel: getDeepSeekModel(),
   });
 }
 
@@ -93,37 +96,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     requestedProvider = undefined;
   }
   const provider = resolveProvider(requestedProvider);
-  if (!isProviderConfigured(provider)) {
-    const hint =
-      provider === "openai"
-        ? "OPENAI_API_KEY is not set. Add it to .env.local to generate with ChatGPT."
-        : provider === "gemini"
-          ? "GEMINI_API_KEY is not set. Add it to .env.local to generate with Gemini."
-          : "ANTHROPIC_API_KEY is not set. Add it to .env.local to generate with Claude.";
-    return NextResponse.json({ error: hint }, { status: 503 });
+  const llmAuth = await getAuthenticatedLlmContext();
+  if (!llmAuth.ok) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (provider === "ollama") {
-    const health = await checkOllamaHealth();
-    if (health.status === "disconnected") {
-      return NextResponse.json(
-        { error: "Ollama is not reachable. Run `ollama serve`." },
-        { status: 503 }
-      );
-    }
-    if (health.status === "model_missing") {
-      return NextResponse.json(
-        { error: `Ollama model not installed. Run: ollama pull ${health.model}` },
-        { status: 503 }
-      );
-    }
-    if (health.status === "error") {
-      return NextResponse.json({ error: health.detail?.slice(0, 200) ?? "Ollama check failed." }, { status: 503 });
-    }
+  const { bundle, userId } = llmAuth.ctx;
+  if (!isProviderConfigured(provider, bundle)) {
+    return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
-
-  const session = await auth();
-  const userId = session?.user?.id ?? null;
-
   const bundled = await gatherCovenantSources(sym, undefined, userId);
   if (!bundled.hasSubstantiveText) {
     return NextResponse.json(
@@ -136,7 +116,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   }
 
   const userPayload = formatSourcesForClaude(sym, bundled.parts);
-  const syn = await synthesizeCovenantsMarkdown(userPayload, provider, resolveCovenantModels(modelBody));
+  const syn = await synthesizeCovenantsMarkdown(userPayload, provider, resolveCovenantModels(modelBody), bundle);
   if (!syn.ok) {
     return NextResponse.json({ error: syn.error }, { status: 502 });
   }

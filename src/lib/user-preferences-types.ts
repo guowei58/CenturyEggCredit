@@ -17,7 +17,20 @@ export type UserPreferencesData = {
     /** Reserved for future fields (timezone, org, etc.). */
   };
   aiProvider?: AiProvider;
-  aiModels?: Partial<Record<AiProvider, string>>;
+  /** Per-provider saved model ids; `ollama` is legacy (maps to DeepSeek). */
+  aiModels?: Partial<Record<AiProvider | "ollama", string>>;
+  /**
+   * Per-user LLM provider keys (stored on the server with your account).
+   * Hosted CenturyEggCredit accounts use server .env keys instead; others must fill these to use in-app API buttons.
+   */
+  userLlmApiKeys?: {
+    anthropicApiKey?: string;
+    openaiApiKey?: string;
+    geminiApiKey?: string;
+    deepseekApiKey?: string;
+  };
+  /** When true, the app may auto-open settings once to prompt for API keys (non-hosted accounts). */
+  apiKeysSetupPending?: boolean;
   /** Tab id → custom prompt template text */
   promptTemplates?: Record<string, string>;
   /** Opaque cache blobs (e.g. feed JSON), arbitrary string keys */

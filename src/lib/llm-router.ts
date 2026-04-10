@@ -1,19 +1,30 @@
 /**
- * Dispatch single or multi-turn completions to Claude, OpenAI, Gemini, or local Ollama.
+ * Dispatch single or multi-turn completions to Claude, OpenAI, Gemini, or DeepSeek.
  */
 
 import type { AiProvider } from "@/lib/ai-provider";
 import { callClaude, callClaudeConversation, type ClaudeResult } from "@/lib/anthropic";
 import type { ChatConversationTurn } from "@/lib/chat-multimodal-types";
 import { conversationHasNonTextMultimodal, conversationHasPdf } from "@/lib/chat-multimodal-types";
+import {
+  callDeepSeek,
+  callDeepSeekConversation,
+  type DeepSeekResult,
+} from "@/lib/deepseek";
 import { callGemini, callGeminiConversation, type GeminiResult } from "@/lib/gemini";
 import { callOpenAI, callOpenAIConversation, type OpenAIResult } from "@/lib/openai";
-import { callOllama, callOllamaConversation, type OllamaResult } from "@/lib/ollama";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
+import { isProviderConfiguredForKeys } from "@/lib/user-llm-keys";
 
 export type LlmResult = ClaudeResult;
 
-function toLlm(r: OpenAIResult | OllamaResult | GeminiResult): LlmResult {
-  if (r.ok) return { ok: true, text: r.text };
+function toLlm(r: OpenAIResult | DeepSeekResult | GeminiResult): LlmResult {
+  if (r.ok) {
+    if ("outputTruncated" in r && r.outputTruncated) {
+      return { ok: true, text: r.text, outputTruncated: true };
+    }
+    return { ok: true, text: r.text };
+  }
   return { ok: false, error: r.error, status: r.status };
 }
 
@@ -28,14 +39,24 @@ export async function llmCompleteSingle(
     claudeModel?: string;
     openaiModel?: string;
     geminiModel?: string;
-    ollamaModel?: string;
+    deepseekModel?: string;
     claudeTools?: ClaudeTools;
+    /** OpenAI only: max wait for HTTP response (large XBRL jobs). */
+    openaiFetchTimeoutMs?: number;
+    /**
+     * When set, cloud providers use only these keys (no env fallback).
+     * When omitted, cloud providers read from process.env (scripts / legacy).
+     */
+    apiKeys?: LlmCallApiKeys;
   } = {}
 ): Promise<LlmResult> {
+  const ak = options.apiKeys;
   if (provider === "openai") {
     const r = await callOpenAI(system, user, {
       maxTokens: options.maxTokens,
       model: options.openaiModel,
+      fetchTimeoutMs: options.openaiFetchTimeoutMs,
+      apiKeys: ak,
     });
     return toLlm(r);
   }
@@ -43,13 +64,15 @@ export async function llmCompleteSingle(
     const r = await callGemini(system, user, {
       maxTokens: options.maxTokens,
       model: options.geminiModel,
+      apiKeys: ak,
     });
     return toLlm(r);
   }
-  if (provider === "ollama") {
-    const r = await callOllama(system, user, {
+  if (provider === "deepseek") {
+    const r = await callDeepSeek(system, user, {
       maxTokens: options.maxTokens,
-      model: options.ollamaModel,
+      model: options.deepseekModel,
+      apiKeys: ak,
     });
     return toLlm(r);
   }
@@ -57,6 +80,7 @@ export async function llmCompleteSingle(
     maxTokens: options.maxTokens,
     model: options.claudeModel,
     tools: options.claudeTools,
+    apiKeys: ak,
   });
 }
 
@@ -69,7 +93,9 @@ export async function llmCompleteConversation(
     claudeModel?: string;
     openaiModel?: string;
     geminiModel?: string;
-    ollamaModel?: string;
+    deepseekModel?: string;
+    openaiFetchTimeoutMs?: number;
+    apiKeys?: LlmCallApiKeys;
   } = {}
 ): Promise<LlmResult> {
   if ((provider === "openai" || provider === "gemini") && conversationHasPdf(messages)) {
@@ -80,18 +106,21 @@ export async function llmCompleteConversation(
       status: 400,
     };
   }
-  if (provider === "ollama" && (conversationHasPdf(messages) || conversationHasNonTextMultimodal(messages))) {
+  if (provider === "deepseek" && (conversationHasPdf(messages) || conversationHasNonTextMultimodal(messages))) {
     return {
       ok: false,
       error:
-        "Local Ollama in OREO is text-only. Switch to Claude (PDF/images) or ChatGPT (images), or paste text instead.",
+        "DeepSeek in OREO is text-only. Switch to Claude (PDF/images) or ChatGPT (images), or paste text instead.",
       status: 400,
     };
   }
+  const ak = options.apiKeys;
   if (provider === "openai") {
     const r = await callOpenAIConversation(system, messages, {
       maxTokens: options.maxTokens,
       model: options.openaiModel,
+      fetchTimeoutMs: options.openaiFetchTimeoutMs,
+      apiKeys: ak,
     });
     return toLlm(r);
   }
@@ -99,25 +128,35 @@ export async function llmCompleteConversation(
     const r = await callGeminiConversation(system, messages, {
       maxTokens: options.maxTokens,
       model: options.geminiModel,
+      apiKeys: ak,
     });
     return toLlm(r);
   }
-  if (provider === "ollama") {
-    const r = await callOllamaConversation(system, messages, {
+  if (provider === "deepseek") {
+    const r = await callDeepSeekConversation(system, messages, {
       maxTokens: options.maxTokens,
-      model: options.ollamaModel,
+      model: options.deepseekModel,
+      apiKeys: ak,
     });
     return toLlm(r);
   }
   return callClaudeConversation(system, messages, {
     maxTokens: options.maxTokens,
     model: options.claudeModel,
+    apiKeys: ak,
   });
 }
 
-export function isProviderConfigured(provider: AiProvider): boolean {
-  if (provider === "openai") return Boolean(process.env.OPENAI_API_KEY?.trim());
-  if (provider === "gemini") return Boolean(process.env.GEMINI_API_KEY?.trim());
-  if (provider === "ollama") return true;
-  return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+/**
+ * When `keys` is omitted, uses environment variables only (legacy / scripts).
+ * When `keys` is provided, uses only that bundle (no env fallback for missing entries).
+ */
+export function isProviderConfigured(provider: AiProvider, keys?: LlmCallApiKeys): boolean {
+  if (keys === undefined) {
+    if (provider === "openai") return Boolean(process.env.OPENAI_API_KEY?.trim());
+    if (provider === "gemini") return Boolean(process.env.GEMINI_API_KEY?.trim());
+    if (provider === "deepseek") return Boolean(process.env.DEEPSEEK_API_KEY?.trim());
+    return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+  }
+  return isProviderConfiguredForKeys(provider, keys);
 }

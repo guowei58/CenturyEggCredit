@@ -136,6 +136,30 @@ function stripPatentNumberForUrl(num: string): string {
   return num.replace(/[^\d]/g, "");
 }
 
+/**
+ * ODP patent search uses Lucene-style syntax. Plain company names hit every token (INC, CORP, LLC match broadly).
+ * Wrap unqualified text in double quotes for a phrase query; leave field queries and already-quoted input unchanged.
+ */
+export function formatOdpPatentQueryString(raw: string): string {
+  const q = raw.trim();
+  if (!q) return q;
+  if (q.length >= 2 && q.startsWith('"') && q.endsWith('"')) return q;
+  if (/^[a-zA-Z_][a-zA-Z0-9_]*\s*:/.test(q)) return q;
+  const inner = q.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return `"${inner}"`;
+}
+
+/**
+ * PatentsView `_text_phrase` expects plain text, not Lucene-style `"..."` wrappers.
+ */
+export function unwrapOdpStylePhrase(raw: string): string {
+  const q = raw.trim();
+  if (q.length >= 2 && q.startsWith('"') && q.endsWith('"')) {
+    return q.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+  }
+  return q;
+}
+
 /** Google Patents URL when a grant number exists. */
 export function patentNumberToGooglePatentsUrl(patentNumber: string | null | undefined): string | null {
   if (!patentNumber?.trim()) return null;
@@ -185,7 +209,7 @@ export async function searchPatentsViewAssignees(
   perPage: number
 ): Promise<PatentsViewAssigneeHit[]> {
   const body = {
-    q: { _text_any: { assignee_organization: organization } },
+    q: { _text_phrase: { assignee_organization: organization } },
     f: ["assignee_id", "assignee_organization", "assignee_total_num_patents"],
     o: { per_page: Math.min(Math.max(perPage, 1), 100) },
     s: [{ assignee_total_num_patents: "desc" }],
@@ -231,7 +255,7 @@ export async function searchPatentsViewPatentsByAssignee(
   perPage: number
 ): Promise<PatentsViewPatentHit[]> {
   const body = {
-    q: { _text_any: { assignee_organization: assigneeOrganization } },
+    q: { _text_phrase: { assignee_organization: assigneeOrganization } },
     f: ["patent_id", "patent_title", "patent_date", "assignees.assignee_organization"],
     o: { per_page: Math.min(Math.max(perPage, 1), 100) },
     s: [{ patent_date: "desc" }],

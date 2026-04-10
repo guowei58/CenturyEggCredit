@@ -9,6 +9,11 @@ export const NEWSAPI_ALLOWED_DOMAINS = [
   "fortune.com",
   "nytimes.com",
   "apnews.com",
+  "ft.com",
+  "cnbc.com",
+  "finance.yahoo.com",
+  "marketwatch.com",
+  "barrons.com",
 ] as const;
 
 export type NewsApiAllowedDomain = (typeof NEWSAPI_ALLOWED_DOMAINS)[number];

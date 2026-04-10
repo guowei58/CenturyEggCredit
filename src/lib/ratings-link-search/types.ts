@@ -39,7 +39,7 @@ export interface RawSearchHit {
   publishedDate?: string | null;
 }
 
-export type SearchProviderId = "google" | "serpapi";
+export type SearchProviderId = "serper";
 
 export interface RatingsSearchProvider {
   readonly id: SearchProviderId;

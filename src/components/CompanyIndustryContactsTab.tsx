@@ -6,7 +6,7 @@ import { INDUSTRY_CONTACTS_PROMPT_TEMPLATE } from "@/data/industry-contacts-prom
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
-import { openMetaAiWithClipboard } from "@/lib/meta-ai-open-url";
+import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
@@ -132,15 +132,15 @@ export function CompanyIndustryContactsTab({
     try {
       navigator.clipboard.writeText(prompt).then(
         () =>
-          setStatusMessage("Claude opened in a new tab. Prompt copied to clipboard — paste into Claude if it didn't prefill."),
+          setStatusMessage("Claude opened in a new tab. Prompt copied to clipboard �?paste into Claude if it didn't prefill."),
         () => {
           setClipboardFailed(true);
-          setStatusMessage("Claude opened in a new tab. Prompt could not be copied — use the prompt below and paste into Claude.");
+          setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude.");
         }
       );
     } catch {
       setClipboardFailed(true);
-      setStatusMessage("Claude opened in a new tab. Prompt could not be copied — use the prompt below and paste into Claude.");
+      setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude.");
     }
   }
 
@@ -166,9 +166,9 @@ export function CompanyIndustryContactsTab({
     }
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
-    openMetaAiWithClipboard(prompt, setStatusMessage, setClipboardFailed);
+    openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInGemini() {
@@ -196,7 +196,7 @@ export function CompanyIndustryContactsTab({
     setStatusMessage(null);
     const ok = openLinkedInOutreachDraftWindow(contact.linkedinUrl, letter, contact.name);
     if (!ok) {
-      setStatusMessage("Popup blocked — allow popups for this site to open the message draft window.");
+      setStatusMessage("Popup blocked �?allow popups for this site to open the message draft window.");
     }
   }
 
@@ -204,7 +204,7 @@ export function CompanyIndustryContactsTab({
     return (
       <Card title="Industry Contacts">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          Select a company to open this prompt in Claude, ChatGPT, Gemini, or Meta AI.
+          Select a company to open this prompt in Claude, ChatGPT, Gemini, or DeepSeek.
         </p>
       </Card>
     );
@@ -363,11 +363,11 @@ export function CompanyIndustryContactsTab({
             </button>
             <button
               type="button"
-              onClick={openInMetaAI}
+              onClick={openInDeepSeek}
               className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+              style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
             >
-              Open in Meta AI
+              Open in DeepSeek
             </button>
             <button
               type="button"
@@ -380,11 +380,18 @@ export function CompanyIndustryContactsTab({
           </div>
           <TabPromptApiButtons
             userPrompt={prompt}
-            onResult={(text) => {
-              setEditDraft(stripLlmCitationArtifacts(text));
-              setIsEditing(true);
-              setStatusMessage("Response from API — review and click Save to store.");
+            onResult={() => {
               setClipboardFailed(false);
+            }}
+            persistAfterResult={async (text) => {
+              const trimmed = stripLlmCitationArtifacts(text.trim());
+              if (!safeTicker) return;
+              const ok = await saveToServer(safeTicker, "industry-contacts", trimmed);
+              if (!ok) throw new Error("Could not save response.");
+              setSavedContent(trimmed);
+              setIsEditing(false);
+              setEditDraft("");
+              setStatusMessage("Response saved.");
             }}
             className="mt-3 border-t border-[var(--border2)] pt-3"
           />

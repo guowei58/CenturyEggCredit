@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { memoJobFromRun, runMemoGeneration } from "@/lib/creditMemo/generateMemo";
 import { appendJob, getProject, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import type { AiProvider } from "@/lib/ai-provider";
 import { defaultServerProvider, normalizeAiProvider } from "@/lib/ai-provider";
-import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveCreditMemoModels } from "@/lib/ai-model-from-request";
 
 export const runtime = "nodejs";
@@ -14,9 +13,9 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const llmAuth = await getAuthenticatedLlmContext();
+  if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { userId, bundle } = llmAuth.ctx;
 
   const id = params.id?.trim();
   if (!id) return NextResponse.json({ error: "Missing project id" }, { status: 400 });
@@ -34,6 +33,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     claudeModel?: unknown;
     openaiModel?: unknown;
     geminiModel?: unknown;
+    deepseekModel?: unknown;
     ollamaModel?: unknown;
   };
   try {
@@ -75,25 +75,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     ? (await import("@/data/credit-memo-voices")).creditMemoVoiceSystemPrompt(voiceId)
     : null;
 
-  if (provider === "ollama") {
-    const health = await checkOllamaHealth();
-    if (health.status === "disconnected") {
-      return NextResponse.json({ ok: false, error: "Ollama not reachable. Run `ollama serve`." }, { status: 503 });
-    }
-    if (health.status === "model_missing") {
-      return NextResponse.json(
-        { ok: false, error: `Ollama model missing. Run: ollama pull ${health.model}` },
-        { status: 503 }
-      );
-    }
-    if (health.status === "error") {
-      return NextResponse.json(
-        { ok: false, error: health.detail?.slice(0, 200) ?? "Ollama check failed." },
-        { status: 503 }
-      );
-    }
-  }
-
   const result = await runMemoGeneration({
     userId,
     project,
@@ -103,6 +84,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     useTemplate: body.useTemplate === true,
     voiceSystemPrompt,
     models: resolveCreditMemoModels(body),
+    apiKeys: bundle,
   });
 
   if (!result.ok) {

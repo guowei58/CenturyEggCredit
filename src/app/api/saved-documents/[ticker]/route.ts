@@ -7,6 +7,7 @@ import {
   listSavedDocuments,
   reconcileSavedDocuments,
   saveDocumentFromUrl,
+  saveXbrlAsPresentedExcelToSavedDocuments,
 } from "@/lib/saved-documents";
 import { getUserSavedDocumentBody } from "@/lib/user-workspace-store";
 
@@ -48,6 +49,8 @@ function contentTypeForFilename(filename: string): string {
  * GET  ?file= — download one stored document
  * GET  ?reconcile=1 — no-op compatibility (same as list)
  * POST { url } — fetch URL, store PDF in Postgres
+ * POST multipart: action=save-xbrl-as-presented-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber — preferred (no base64 size blow-up)
+ * POST JSON: { action: "save-xbrl-as-presented-xlsx", base64, filing } — legacy / small workbooks only
  * POST { action: "import-ticker-files" } — legacy no-op; returns current list
  */
 export async function GET(
@@ -95,13 +98,94 @@ export async function POST(
   }
 
   const { ticker } = await params;
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (contentType.includes("multipart/form-data")) {
+    let fd: FormData;
+    try {
+      fd = await request.formData();
+    } catch {
+      return NextResponse.json({ error: "Invalid multipart body." }, { status: 400 });
+    }
+    const action = fd.get("action");
+    if (action === "save-xbrl-as-presented-xlsx") {
+      const rawFile = fd.get("file");
+      if (rawFile === null || typeof rawFile === "string") {
+        return NextResponse.json({ error: "Missing spreadsheet file." }, { status: 400 });
+      }
+      const blob = rawFile as Blob;
+      if (blob.size < 64) {
+        return NextResponse.json({ error: "Spreadsheet file is empty or too small." }, { status: 400 });
+      }
+      const form = String(fd.get("filingForm") ?? "").trim();
+      const filingDate = String(fd.get("filingDate") ?? "").trim();
+      const accessionNumber = String(fd.get("accessionNumber") ?? "").trim();
+      if (!form || !filingDate || !accessionNumber) {
+        return NextResponse.json(
+          { error: "Missing filing metadata (form, filing date, or accession number)." },
+          { status: 400 }
+        );
+      }
+      let buf: Buffer;
+      try {
+        buf = Buffer.from(await blob.arrayBuffer());
+      } catch {
+        return NextResponse.json({ error: "Could not read uploaded file." }, { status: 400 });
+      }
+      try {
+        const result = await saveXbrlAsPresentedExcelToSavedDocuments(userId, ticker, { form, filingDate, accessionNumber }, buf);
+        if (!result.ok) {
+          return NextResponse.json({ error: result.error }, { status: 400 });
+        }
+        return NextResponse.json({ ok: true, item: result.item });
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Save failed";
+        return NextResponse.json({ error: message }, { status: 500 });
+      }
+    }
+    return NextResponse.json({ error: "Unknown multipart action." }, { status: 400 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const b = body as { url?: unknown; action?: unknown };
+  const b = body as { url?: unknown; action?: unknown; base64?: unknown; filing?: unknown };
+
+  if (b.action === "save-xbrl-as-presented-xlsx") {
+    const b64 = typeof b.base64 === "string" ? b.base64.trim() : "";
+    const filing = b.filing as Record<string, unknown> | undefined;
+    const form = typeof filing?.form === "string" ? filing.form.trim() : "";
+    const filingDate = typeof filing?.filingDate === "string" ? filing.filingDate.trim() : "";
+    const accessionNumber = typeof filing?.accessionNumber === "string" ? filing.accessionNumber.trim() : "";
+    if (!b64 || !form || !filingDate || !accessionNumber) {
+      return NextResponse.json(
+        {
+          error:
+            "Missing spreadsheet or filing metadata. For large exports, use multipart upload (Save as Excel in the app uses that).",
+        },
+        { status: 400 }
+      );
+    }
+    let buf: Buffer;
+    try {
+      buf = Buffer.from(b64, "base64");
+    } catch {
+      return NextResponse.json({ error: "Invalid base64 payload." }, { status: 400 });
+    }
+    try {
+      const result = await saveXbrlAsPresentedExcelToSavedDocuments(userId, ticker, { form, filingDate, accessionNumber }, buf);
+      if (!result.ok) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+      return NextResponse.json({ ok: true, item: result.item });
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Save failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
 
   if (b.action === "import-ticker-files") {
     const items = await importTickerFilesIntoSavedDocuments(userId, ticker);

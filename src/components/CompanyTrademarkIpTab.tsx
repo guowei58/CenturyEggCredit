@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { Card, DataTable } from "@/components/ui";
+import { formatOdpPatentQueryString } from "@/lib/uspto-ip";
 
 type Links = {
   odpSignup: string;
@@ -130,7 +131,7 @@ export function CompanyTrademarkIpTab({
   useEffect(() => {
     if (!safeTicker) return;
     const seed = (companyName ?? "").trim() || safeTicker;
-    setQueryDraft(seed);
+    setQueryDraft(formatOdpPatentQueryString(seed));
     void runPatentSearch(undefined);
   }, [safeTicker, companyName, runPatentSearch]);
 
@@ -214,7 +215,9 @@ export function CompanyTrademarkIpTab({
             </a>
             <SaveFilingLinkButton ticker={safeTicker} url={odpSignupUrl} />
           </span>{" "}
-          (<code className="text-[10px]">USPTO_API_KEY</code>). Default text is the SEC-registered company name (or ticker). Trademark{" "}
+          (<code className="text-[10px]">USPTO_API_KEY</code>). The query box shows the string sent to ODP: plain names are wrapped in{" "}
+          <code className="text-[10px]">&quot;…&quot;</code> (phrase search) so tokens like INC., CORP., and LLC are not matched alone. Paste a Lucene{" "}
+          <code className="text-[10px]">field:value</code> query or your own quoted phrase to override. Trademark{" "}
           <em>owner</em> search is not exposed as a single USPTO REST query; use the official search site below or look up a mark by serial via TSDR.
         </p>
 
@@ -247,7 +250,7 @@ export function CompanyTrademarkIpTab({
                   title={n}
                   disabled={loading}
                   onClick={() => {
-                    setQueryDraft(n);
+                    setQueryDraft(formatOdpPatentQueryString(n));
                     void runPatentSearch(n);
                   }}
                   className="max-w-full rounded border border-[var(--border)] bg-[var(--card)] px-2 py-1 text-left text-[11px] leading-snug transition hover:bg-[var(--card2)] disabled:opacity-50"
@@ -272,8 +275,8 @@ export function CompanyTrademarkIpTab({
               type="text"
               value={queryDraft}
               onChange={(e) => setQueryDraft(e.target.value)}
-              className="rounded border border-[var(--border)] bg-[var(--card)] px-2 py-1.5 font-sans text-sm text-[var(--text)]"
-              placeholder="Company legal name or keywords"
+              className="rounded border border-[var(--border)] bg-[var(--card)] px-2 py-1.5 font-mono text-sm text-[var(--text)]"
+              placeholder='"Company Name, Inc." or assigneeNameText:...'
               disabled={loading}
             />
           </label>

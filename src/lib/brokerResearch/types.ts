@@ -97,7 +97,7 @@ export type RawSearchHit = {
   publishedDate?: string | null;
 };
 
-/** Pluggable web search (Google CSE JSON API or SerpApi — no HTML scraping). */
+/** Web search via Serper (no HTML scraping). */
 export interface BrokerResearchSearchProvider {
   readonly id: string;
   search(query: string, options?: { num?: number }): Promise<RawSearchHit[]>;

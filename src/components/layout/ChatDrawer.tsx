@@ -27,6 +27,7 @@ import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
 import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
 import { AiModelPicker } from "@/components/AiModelPicker";
+import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
 
 const CHAT_SUGGESTIONS = ["LUMN full analysis", "Peer leverage: LUMN vs T", "Covenant summary"];
 
@@ -61,8 +62,8 @@ export function ChatDrawer({
   const [anthropicConfigured, setAnthropicConfigured] = useState<boolean | null>(null);
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [geminiConfigured, setGeminiConfigured] = useState<boolean | null>(null);
-  /** Ollama health from GET /api/committee-chat; null until first fetch. */
-  const [ollamaStatus, setOllamaStatus] = useState<"connected" | "disconnected" | "model_missing" | "error" | null>(null);
+  /** DeepSeek key/config from GET /api/committee-chat; null until first fetch. */
+  const [deepseekConfigured, setDeepseekConfigured] = useState<boolean | null>(null);
   const [aiProvider, setAiProvider] = useState<AiProvider>("claude");
   /** When true and a sidebar ticker is set, POST includes saved OREO text (responses + Saved Documents .txt/.md). */
   const [includeOreoContext, setIncludeOreoContext] = useState(true);
@@ -163,22 +164,17 @@ export function ChatDrawer({
         anthropicConfigured?: boolean;
         openaiConfigured?: boolean;
         geminiConfigured?: boolean;
-        ollama?: { status?: string; model?: string };
+        deepseek?: { configured?: boolean };
       };
       setAnthropicConfigured(body.anthropicConfigured === true);
       setOpenaiConfigured(body.openaiConfigured === true);
       setGeminiConfigured(body.geminiConfigured === true);
-      const s = body.ollama?.status;
-      if (s === "connected" || s === "disconnected" || s === "model_missing" || s === "error") {
-        setOllamaStatus(s);
-      } else {
-        setOllamaStatus("error");
-      }
+      setDeepseekConfigured(body.deepseek?.configured === true);
     } catch {
       setAnthropicConfigured(false);
       setOpenaiConfigured(false);
       setGeminiConfigured(false);
-      setOllamaStatus("disconnected");
+      setDeepseekConfigured(false);
     }
   }, []);
 
@@ -215,14 +211,14 @@ export function ChatDrawer({
         ? openaiConfigured === true
         : aiProvider === "gemini"
           ? geminiConfigured === true
-          : ollamaStatus === "connected";
+          : deepseekConfigured === true;
   const assistantLabel =
     aiProvider === "openai"
       ? "ChatGPT"
       : aiProvider === "gemini"
         ? "Gemini"
-        : aiProvider === "ollama"
-          ? "Local Llama"
+        : aiProvider === "deepseek"
+          ? "DeepSeek"
           : "Claude";
 
   const patchActiveMessages = useCallback(
@@ -505,7 +501,7 @@ export function ChatDrawer({
                 {anthropicConfigured === null ||
                 openaiConfigured === null ||
                 geminiConfigured === null ||
-                ollamaStatus === null
+                deepseekConfigured === null
                   ? "Checking API…"
                   : providerReady
                     ? `Chat with ${assistantLabel} (${
@@ -513,19 +509,15 @@ export function ChatDrawer({
                           ? "OpenAI API"
                           : aiProvider === "gemini"
                             ? "Google Gemini API"
-                            : aiProvider === "ollama"
-                              ? "Ollama local"
+                            : aiProvider === "deepseek"
+                              ? "DeepSeek API"
                               : "Anthropic API"
                       })`
-                    : aiProvider === "ollama"
-                      ? ollamaStatus === "disconnected"
-                        ? "Start Ollama (`ollama serve`) or check OLLAMA_BASE_URL"
-                        : ollamaStatus === "model_missing"
-                          ? "Pull the model: ollama pull <OLLAMA_MODEL>"
-                          : "Ollama not ready — see docs/ollama-setup.md"
+                    : aiProvider === "deepseek"
+                      ? "Add your DeepSeek API key in User Settings (gear icon), or use a hosted account with DEEPSEEK_API_KEY on the server."
                       : aiProvider === "gemini"
-                        ? "Set GEMINI_API_KEY in .env.local for Gemini"
-                        : "Set the API key for the selected model in .env.local"}
+                        ? "Add your Gemini API key in User Settings (gear icon), or paste from the Gemini website."
+                        : "Add your Claude or OpenAI API key in User Settings (gear icon), or use the external AI buttons in each tab."}
               </div>
               <div className="mt-2 inline-flex flex-wrap rounded border overflow-hidden" style={{ borderColor: "var(--border2)" }}>
                 <button
@@ -555,12 +547,12 @@ export function ChatDrawer({
                 </button>
                 <button
                   type="button"
-                  onClick={() => persistProvider("ollama")}
+                  onClick={() => persistProvider("deepseek")}
                   className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "ollama") }}
-                  title="Local Ollama (OLLAMA_BASE_URL / OLLAMA_MODEL)"
+                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
+                  title="DeepSeek (DEEPSEEK_API_KEY / DEEPSEEK_MODEL or User Settings)"
                 >
-                  Ollama
+                  DeepSeek
                 </button>
               </div>
               <AiModelPicker provider={aiProvider} className="mt-2" />
@@ -603,56 +595,55 @@ export function ChatDrawer({
 
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
           {messages.length === 0 ? (
-            <div>
-              <div className="mb-1.5 text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
-                {assistantLabel}
+            providerReady || aiProvider !== "deepseek" ? (
+              <div>
+                <div className="mb-1.5 text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
+                  {assistantLabel}
+                </div>
+                <div
+                  className="rounded-lg border p-4 text-sm leading-relaxed"
+                  style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
+                >
+                  {providerReady ? (
+                    <>
+                      Ask about covenants, capital structure, peers, or trade angles — {assistantLabel} answers here
+                      {aiProvider === "deepseek" ? (
+                        <> using the <span className="font-semibold">DeepSeek</span> API (text-only in this chat; use Claude or ChatGPT for PDF/images).</>
+                      ) : (
+                        <>
+                          {" "}
+                          using the API key saved in <strong>User Settings</strong> (gear icon). Paste or drop <strong>PDFs</strong> and{" "}
+                          <strong>images</strong> into the box below (like the Claude / ChatGPT web app). <strong>PDF</strong> uploads use
+                          Claude best; ChatGPT and Gemini here support <strong>images</strong> only.
+                        </>
+                      )}
+                      {ticker?.trim() ? (
+                        <>
+                          {" "}
+                          Sidebar ticker <span className="font-mono">{ticker.trim().toUpperCase()}</span> is sent as context.
+                        </>
+                      ) : (
+                        <> Pick a ticker in the sidebar for extra context.</>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <p className="mb-2">
+                        Pick <strong>Claude</strong>, <strong>ChatGPT</strong>, <strong>Gemini</strong>, or <strong>DeepSeek</strong> in the
+                        header first.
+                      </p>
+                      <p className="mb-2 text-[12px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+                        {USER_LLM_API_KEYS_POLICY}
+                      </p>
+                      <p>
+                        For DeepSeek add <span className="font-mono">DEEPSEEK_API_KEY</span> in server env (hosted accounts) or save a key
+                        under User Settings.
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
-              <div
-                className="rounded-lg border p-4 text-sm leading-relaxed"
-                style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
-              >
-                {providerReady ? (
-                  <>
-                    Ask about covenants, capital structure, peers, or trade angles — {assistantLabel} answers here
-                    {aiProvider === "ollama" ? (
-                      <> using <span className="font-semibold">Ollama</span> on your machine (text-only; use Claude or ChatGPT for PDF/images).</>
-                    ) : (
-                      <>
-                        {" "}
-                        using your{" "}
-                        <span className="font-semibold">
-                          {aiProvider === "openai"
-                            ? "OPENAI_API_KEY"
-                            : aiProvider === "gemini"
-                              ? "GEMINI_API_KEY"
-                              : "ANTHROPIC_API_KEY"}
-                        </span>
-                        . Paste or drop <strong>PDFs</strong> and <strong>images</strong> into the box below (like the Claude / ChatGPT
-                        web app). <strong>PDF</strong> uploads use Claude best; ChatGPT and Gemini here support <strong>images</strong>{" "}
-                        only.
-                      </>
-                    )}
-                    {ticker?.trim() ? (
-                      <>
-                        {" "}
-                        Sidebar ticker <span className="font-mono">{ticker.trim().toUpperCase()}</span> is sent as context.
-                      </>
-                    ) : (
-                      <> Pick a ticker in the sidebar for extra context.</>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    Pick <strong>Claude</strong>, <strong>ChatGPT</strong>, <strong>Gemini</strong>, or <strong>Ollama</strong>. For cloud
-                    APIs add <span className="font-mono">ANTHROPIC_API_KEY</span>, <span className="font-mono">OPENAI_API_KEY</span>, or{" "}
-                    <span className="font-mono">GEMINI_API_KEY</span> to <span className="font-mono">.env.local</span> and restart. For
-                    Ollama run <span className="font-mono">ollama serve</span> and <span className="font-mono">ollama pull</span> your
-                    model; optional env <span className="font-mono">OLLAMA_BASE_URL</span>,{" "}
-                    <span className="font-mono">OLLAMA_MODEL</span>.
-                  </>
-                )}
-              </div>
-            </div>
+            ) : null
           ) : (
             <div className="flex flex-col gap-4">
               {messages.map((m, i) => {
@@ -863,9 +854,9 @@ export function ChatDrawer({
                   anthropicConfigured !== null &&
                   openaiConfigured !== null &&
                   geminiConfigured !== null &&
-                  ollamaStatus !== null
-                    ? aiProvider === "ollama"
-                      ? "Fix Ollama connection or pull model (see status line above)…"
+                  deepseekConfigured !== null
+                    ? aiProvider === "deepseek"
+                      ? "Add a DeepSeek API key (User Settings or server DEEPSEEK_API_KEY)…"
                       : "Configure API key for the selected model…"
                     : "Type a question, paste or drop PDF / images, or attach files…"
                 }

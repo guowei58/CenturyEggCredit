@@ -6,6 +6,15 @@
  */
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
+
+function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
+  const legacy = apiKeys === undefined;
+  const key = legacy ? process.env.GEMINI_API_KEY?.trim() : apiKeys.geminiApiKey?.trim();
+  if (key) return { key };
+  if (legacy) return { error: "GEMINI_API_KEY is not set" };
+  return { error: "Gemini API key not configured for this account." };
+}
 
 /** OpenAI-compatible Gemini API base (see Google Generative Language docs). */
 const GEMINI_OPENAI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
@@ -33,12 +42,11 @@ function normalizeGeminiApiError(status: number, raw: string): GeminiResult {
 export async function callGemini(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string } = {}
+  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
 ): Promise<GeminiResult> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key?.trim()) {
-    return { ok: false, error: "GEMINI_API_KEY is not set" };
-  }
+  const resolved = resolveGeminiKey(options.apiKeys);
+  if ("error" in resolved) return { ok: false, error: resolved.error };
+  const key = resolved.key;
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;
@@ -112,12 +120,11 @@ function geminiUserMessageContent(content: string | ChatUserContentPart[]): stri
 export async function callGeminiConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string } = {}
+  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
 ): Promise<GeminiResult> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key?.trim()) {
-    return { ok: false, error: "GEMINI_API_KEY is not set" };
-  }
+  const resolved = resolveGeminiKey(options.apiKeys);
+  if ("error" in resolved) return { ok: false, error: resolved.error };
+  const key = resolved.key;
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;

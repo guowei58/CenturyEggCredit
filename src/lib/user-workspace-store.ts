@@ -240,13 +240,78 @@ export async function createUserSavedDocument(
   if (data.body.length > MAX_SAVED_DOC_BYTES) {
     return { ok: false, error: "Document too large to store." };
   }
+  const fn = data.filename.trim();
+  if (!fn || fn.includes("/") || fn.includes("\\") || fn.includes("..")) {
+    return { ok: false, error: "Invalid filename" };
+  }
   try {
     await trimUserSavedDocuments(userId, sym);
     const row = await prisma.userSavedDocument.create({
       data: {
         userId,
         ticker: sym,
-        filename: data.filename,
+        filename: fn,
+        title: data.title,
+        originalUrl: data.originalUrl,
+        contentType: data.contentType,
+        body: new Uint8Array(data.body),
+        savedAtIso: data.savedAtIso,
+        bytes: data.body.length,
+        convertedToPdf: data.convertedToPdf,
+      },
+    });
+    return { ok: true, id: row.id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Save failed" };
+  }
+}
+
+/** Create or replace by (user, ticker, filename). Does not run trim when the row already exists. */
+export async function upsertUserSavedDocument(
+  userId: string,
+  ticker: string,
+  data: {
+    filename: string;
+    title: string;
+    originalUrl: string;
+    contentType: string | null;
+    body: Buffer;
+    savedAtIso: string;
+    convertedToPdf: boolean;
+  }
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  const sym = sanitizeTicker(ticker);
+  if (!sym) return { ok: false, error: "Invalid ticker" };
+  if (data.body.length > MAX_SAVED_DOC_BYTES) {
+    return { ok: false, error: "Document too large to store." };
+  }
+  const fn = data.filename.trim();
+  if (!fn || fn.includes("/") || fn.includes("\\") || fn.includes("..")) {
+    return { ok: false, error: "Invalid filename" };
+  }
+  try {
+    const existing = await prisma.userSavedDocument.findUnique({
+      where: { userId_ticker_filename: { userId, ticker: sym, filename: fn } },
+      select: { id: true },
+    });
+    if (!existing) {
+      await trimUserSavedDocuments(userId, sym);
+    }
+    const row = await prisma.userSavedDocument.upsert({
+      where: { userId_ticker_filename: { userId, ticker: sym, filename: fn } },
+      create: {
+        userId,
+        ticker: sym,
+        filename: fn,
+        title: data.title,
+        originalUrl: data.originalUrl,
+        contentType: data.contentType,
+        body: new Uint8Array(data.body),
+        savedAtIso: data.savedAtIso,
+        bytes: data.body.length,
+        convertedToPdf: data.convertedToPdf,
+      },
+      update: {
         title: data.title,
         originalUrl: data.originalUrl,
         contentType: data.contentType,

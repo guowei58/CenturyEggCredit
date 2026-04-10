@@ -1,5 +1,6 @@
 "use client";
 
+import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import type { AccessLevel, NormalizedRatingsLink, RatingsAgency, RatingsResultType } from "@/lib/ratings-link-search/types";
 
 const AGENCY_STYLES: Record<RatingsAgency, string> = {
@@ -30,7 +31,7 @@ function accessNote(level: AccessLevel): string {
   }
 }
 
-export function RatingsResearchLinkCard({ item }: { item: NormalizedRatingsLink }) {
+export function RatingsResearchLinkCard({ item, ticker }: { item: NormalizedRatingsLink; ticker: string }) {
   let host = item.sourceDomain;
   try {
     host = new URL(item.url).hostname;
@@ -95,7 +96,7 @@ export function RatingsResearchLinkCard({ item }: { item: NormalizedRatingsLink 
       <p className="mt-3 text-[11px] leading-snug italic" style={{ color: "var(--warn)" }}>
         {accessNote(item.accessLevel)}
       </p>
-      <div className="mt-3">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         <a
           href={item.url}
           target="_blank"
@@ -109,6 +110,7 @@ export function RatingsResearchLinkCard({ item }: { item: NormalizedRatingsLink 
         >
           Open official page
         </a>
+        <SaveFilingLinkButton ticker={ticker} url={item.url} mode="saved-documents" className="ml-0 px-3 py-2 normal-case" />
       </div>
     </article>
   );

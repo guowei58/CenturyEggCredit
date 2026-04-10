@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
 import { WEB_SEARCH_TOOL } from "@/lib/anthropic";
 import { getCompanyProfile } from "@/lib/sec-edgar";
+import { IR_AUTOFIND_NEEDS_CLAUDE_KEY } from "@/lib/llm-user-key-messages";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,9 +36,14 @@ export async function GET(req: Request) {
   const ticker = (url.searchParams.get("ticker") ?? "").trim().toUpperCase();
 
   if (!ticker) return NextResponse.json({ error: "ticker is required" }, { status: 400 });
-  // Per user request: always use Claude web search (this endpoint is called once and cached client-side).
-  if (!isProviderConfigured("claude")) {
-    return NextResponse.json({ error: "ANTHROPIC_API_KEY not configured" }, { status: 400 });
+
+  const llmAuth = await getAuthenticatedLlmContext();
+  if (!llmAuth.ok) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { bundle } = llmAuth.ctx;
+  if (!isProviderConfigured("claude", bundle)) {
+    return NextResponse.json({ error: IR_AUTOFIND_NEEDS_CLAUDE_KEY }, { status: 503 });
   }
 
   // Prefer company name to improve search quality, but ticker alone is acceptable.
@@ -60,6 +67,7 @@ Requirements:
   const result = await llmCompleteSingle("claude", system, user, {
     maxTokens: 900,
     claudeTools: [WEB_SEARCH_TOOL],
+    apiKeys: bundle,
   });
 
   if (!result.ok) {

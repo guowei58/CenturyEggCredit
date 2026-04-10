@@ -12,8 +12,8 @@ import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE, CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS } from "@/data/capital-structure-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow, CHATGPT_META_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
-import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
+import { openGeminiNewChatWindow, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 
 const CAPITAL_STRUCTURE_SAMPLE_THUMBNAILS: { path: (typeof CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS)[number]; label: string; alt: string }[] =
   [
@@ -26,11 +26,6 @@ const CAPITAL_STRUCTURE_SAMPLE_THUMBNAILS: { path: (typeof CAPITAL_STRUCTURE_SAM
       path: CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS[1],
       label: "Capital Structure sample 2",
       alt: "Reference capital structure table sample 2",
-    },
-    {
-      path: CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS[2],
-      label: "Capital Structure sample 3",
-      alt: "Reference capital structure table sample 3",
     },
   ];
 
@@ -164,14 +159,14 @@ export function CompanyCapitalStructureTab({
         () =>
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened. Link was shortened; FULL prompt copied — paste it in, then attach the reference templates from this tab if supported."
+              ? "ChatGPT opened. Link was shortened; FULL prompt copied �?paste it in, then attach the reference templates from this tab if supported."
               : "ChatGPT opened. Attach the reference templates from this tab if supported."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
+              ? "ChatGPT opened (short link). Copy failed �?paste the prompt from OREO and attach reference templates."
               : "ChatGPT opened. Attach the reference templates and paste the prompt manually."
           );
         }
@@ -180,31 +175,31 @@ export function CompanyCapitalStructureTab({
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "ChatGPT opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
+          ? "ChatGPT opened (short link). Copy failed �?paste the prompt from OREO and attach reference templates."
           : "ChatGPT opened. Attach the reference templates and paste the prompt manually."
       );
     }
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    const { wasShortened } = openMetaAiNewChatWindow(prompt);
+    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
     try {
       navigator.clipboard.writeText(prompt).then(
         () =>
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened. Link was shortened; FULL prompt copied — paste it in, then attach the reference templates from this tab if supported."
-              : "Meta AI opened. Attach the reference templates from this tab if supported."
+              ? "DeepSeek opened. Link was shortened; FULL prompt copied �?paste it in, then attach the reference templates from this tab if supported."
+              : "DeepSeek opened. Attach the reference templates from this tab if supported."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
-              : "Meta AI opened. Attach the reference templates and paste the prompt manually."
+              ? "DeepSeek opened (short link). Copy failed �?paste the prompt from OREO and attach reference templates."
+              : "DeepSeek opened. Attach the reference templates and paste the prompt manually."
           );
         }
       );
@@ -212,8 +207,8 @@ export function CompanyCapitalStructureTab({
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Meta AI opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
-          : "Meta AI opened. Attach the reference templates and paste the prompt manually."
+          ? "DeepSeek opened (short link). Copy failed �?paste the prompt from OREO and attach reference templates."
+          : "DeepSeek opened. Attach the reference templates and paste the prompt manually."
       );
     }
   }
@@ -228,14 +223,14 @@ export function CompanyCapitalStructureTab({
         () =>
           setStatusMessage(
             wasShortened
-              ? "Gemini opened. Link was shortened; FULL prompt copied — paste it in, then attach the reference templates from this tab if supported."
+              ? "Gemini opened. Link was shortened; FULL prompt copied �?paste it in, then attach the reference templates from this tab if supported."
               : "Gemini opened. Attach the reference templates from this tab if supported."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Gemini opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
+              ? "Gemini opened (short link). Copy failed �?paste the prompt from OREO and attach reference templates."
               : "Gemini opened. Attach the reference templates and paste the prompt manually."
           );
         }
@@ -244,7 +239,7 @@ export function CompanyCapitalStructureTab({
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Gemini opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
+          ? "Gemini opened (short link). Copy failed �?paste the prompt from OREO and attach reference templates."
           : "Gemini opened. Attach the reference templates and paste the prompt manually."
       );
     }
@@ -262,9 +257,9 @@ export function CompanyCapitalStructureTab({
 
   return (
     <div className="space-y-8">
-      <Card title={`Capital Structure — ${safeTicker}`}>
+      <Card title={`Capital Structure �?${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Use the reference templates and prompt in Claude, ChatGPT, Gemini, or Meta AI (vision). Save the model&apos;s answer below.
+          Use the reference templates and prompt in Claude, ChatGPT, Gemini, or DeepSeek (vision). Save the model&apos;s answer below.
         </p>
         <div className="flex flex-col gap-6 lg:flex-row">
           {isSavedResponseCollapsed ? (
@@ -299,7 +294,7 @@ export function CompanyCapitalStructureTab({
                   <RichPasteTextarea
                     value={editDraft}
                     onChange={setEditDraft}
-                    placeholder="Paste your Claude, ChatGPT, or Meta AI response here, then click Save."
+                    placeholder="Paste your Claude, ChatGPT, or DeepSeek response here, then click Save."
                     className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
                     style={{ borderColor: "var(--border2)", color: "var(--text)" }}
                   />
@@ -398,14 +393,14 @@ export function CompanyCapitalStructureTab({
                 ))}
               </div>
               <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
-                Open each in a new tab to save, or right-click → Save image. Attach them with your prompt if supported.
+                Open each in a new tab to save, or right-click �?Save image. Attach them with your prompt if supported.
               </p>
             </div>
 
             <div>
               <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
                 Prompt (includes numbered reference image URLs). Open in AI; copy attaches to clipboard.{" "}
-                {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+                {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
               </p>
               <PromptTemplateBox
                 tabId="capital-structure"
@@ -440,11 +435,11 @@ export function CompanyCapitalStructureTab({
                 </button>
                 <button
                   type="button"
-                  onClick={openInMetaAI}
+                  onClick={openInDeepSeek}
                   className="tab-prompt-ai-action-btn"
-                  style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                  style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
                 >
-                  Open in Meta AI
+                  Open in DeepSeek
                 </button>
                 <button
                   type="button"
@@ -457,11 +452,18 @@ export function CompanyCapitalStructureTab({
               </div>
               <TabPromptApiButtons
                 userPrompt={prompt}
-                onResult={(text) => {
-                  setEditDraft(text);
-                  setIsEditing(true);
-                  setStatusMessage("Response from API — review and click Save to store.");
+                onResult={() => {
                   setClipboardFailed(false);
+                }}
+                persistAfterResult={async (text) => {
+                  const trimmed = text.trim();
+                  if (!safeTicker) return;
+                  const ok = await saveToServer(safeTicker, "capital-structure", trimmed);
+                  if (!ok) throw new Error("Could not save response.");
+                  setSavedContent(trimmed);
+                  setIsEditing(false);
+                  setEditDraft("");
+                  setStatusMessage("Response saved.");
                 }}
                 className="mt-3 border-t border-[var(--border2)] pt-3"
               />

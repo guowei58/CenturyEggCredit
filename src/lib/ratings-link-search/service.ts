@@ -64,11 +64,16 @@ export async function discoverRatingsLinksWithProvider(
   const queries = buildRatingsSearchQueries(ctx);
   const collected: NormalizedRatingsLink[] = [];
   const delay = options?.queryDelayMs ?? 100;
+  /** ~Previously ~12 queries × 8 hits; keep a similar organic budget across fewer calls. */
+  const hitsPerQuery = Math.min(
+    100,
+    Math.max(10, Math.ceil(96 / Math.max(1, queries.length)))
+  );
 
   for (const q of queries) {
     let hits: RawSearchHit[] = [];
     try {
-      hits = await provider.search(q, { num: 8 });
+      hits = await provider.search(q, { num: hitsPerQuery });
     } catch (e) {
       console.error("[ratings-links] query failed:", q.slice(0, 80), e);
     }

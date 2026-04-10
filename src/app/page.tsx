@@ -38,6 +38,12 @@ export default function Home() {
     setCompanyTab(getFirstTabIdForTopSection("financials"));
   }, [companyTopSection]);
 
+  /** Reddit tab removed; bounce saved or bookmarked state. */
+  useEffect(() => {
+    if (companyTab !== "reddit") return;
+    setCompanyTab(getFirstTabIdForTopSection(companyTopSection));
+  }, [companyTab, companyTopSection]);
+
   return (
     <div
       className="shell"

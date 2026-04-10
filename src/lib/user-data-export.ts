@@ -70,7 +70,7 @@ const README_BODY = [
   "  saved-documents/     — Files saved under Saved Documents (PDF, Excel, etc.)",
   "  workspace/           — Excel exports, IR indexer DBs, memo/deck outputs, and other API files",
   "",
-  "The ticker folder __global__ holds account-wide workspace data (e.g. templates, Reddit registry).",
+  "The ticker folder __global__ holds account-wide workspace data (e.g. templates).",
   "",
   "This export includes server-stored data only. Local browser-only content is not included.",
 ].join("\n");

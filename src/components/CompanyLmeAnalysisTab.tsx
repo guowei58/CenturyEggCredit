@@ -29,8 +29,8 @@ type LmeGetResponse = {
   anthropicConfigured: boolean;
   openaiConfigured: boolean;
   geminiConfigured?: boolean;
-  ollamaStatus?: "connected" | "disconnected" | "model_missing" | "error";
-  ollamaModel?: string;
+  deepseekConfigured?: boolean;
+  deepseekDefaultModel?: string;
   needsSignIn?: boolean;
 };
 
@@ -131,9 +131,8 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
 
   if (!data) return null;
 
-  const ollamaState = data.ollamaStatus ?? "error";
-  const ollamaModelLabel = data.ollamaModel?.trim() || "llama3.1:8b";
   const needsSignIn = data.needsSignIn === true;
+  const deepseekReady = data.deepseekConfigured === true;
 
   const providerReady =
     aiProvider === "claude"
@@ -142,7 +141,7 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
         ? data.openaiConfigured
         : aiProvider === "gemini"
           ? data.geminiConfigured === true
-          : ollamaState === "connected";
+          : deepseekReady;
 
   return (
     <div className="space-y-6">
@@ -192,12 +191,12 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
             </button>
             <button
               type="button"
-              onClick={() => persistProvider("ollama")}
+              onClick={() => persistProvider("deepseek")}
               className="px-3 py-1.5 text-[11px] font-medium transition-colors border-l"
-              style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "ollama") }}
-              title={`Ollama — ${data.ollamaModel} (${data.ollamaStatus})`}
+              style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
+              title={`DeepSeek — ${data.deepseekDefaultModel ?? "deepseek-chat"}`}
             >
-              Ollama
+              DeepSeek
             </button>
           </div>
           <AiModelPicker provider={aiProvider} className="mt-2 w-full sm:mt-0 sm:ml-2 sm:w-auto" />
@@ -249,14 +248,11 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
                 Set <span className="font-mono">GEMINI_API_KEY</span> in <span className="font-mono">.env.local</span>, or switch
                 provider.
               </>
-            ) : ollamaState === "disconnected" ? (
-              <>Ollama is not reachable. Run <span className="font-mono">ollama serve</span>.</>
-            ) : ollamaState === "model_missing" ? (
-              <>
-                Pull the model: <span className="font-mono">ollama pull {ollamaModelLabel}</span>
-              </>
             ) : (
-              <>Ollama health check failed. See docs for Ollama setup.</>
+              <>
+                Add a DeepSeek API key in <strong>User Settings</strong>, or use a hosted account with{" "}
+                <span className="font-mono">DEEPSEEK_API_KEY</span> on the server.
+              </>
             )}
           </p>
         )}

@@ -35,6 +35,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Business Overview",
           "Management & Board",
           "Business Model",
+          "HowStuffWorks",
           "Company History",
           "Capital Allocation",
           "Credit Timeline",
@@ -49,6 +50,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "Porter's Five Forces",
+          "Industry History and Drivers",
           "Industry Value Chain",
           "Competitors",
           "Customers",
@@ -61,7 +63,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   financials: {
     groups: [
       {
-        tabs: ["SEC XBRL Financials", "Historical Financial Statements"],
+        tabs: ["SEC XBRL Financials", "20-Year Look Back", "The Good, Bad and Ugly Historical Financial Statements"],
       },
     ],
   },
@@ -80,7 +82,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Org Chart",
           "Credit Agreements & Indentures",
           "Subsidiary List",
-          "LME Analysis",
         ],
       },
     ],
@@ -141,7 +142,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Ratings Research Links",
           "Broker Research Reports",
           "The Cap Stack Rumor Mill",
-          "Reddit",
           "Twitter Sentiment",
           "Substack",
           "Industry Contacts",
@@ -156,6 +156,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "KPI",
+          "LME Analysis",
           "Recommendation",
           "AI Memo and Deck",
           "Pre-Mortem Analysis",

@@ -4,14 +4,22 @@
 
 import type { AiProvider } from "@/lib/ai-provider";
 import { sanitizeClientModelId } from "@/lib/ai-model-options";
-import { getOllamaModel } from "@/lib/ollama";
+import { getDeepSeekModel } from "@/lib/deepseek";
 
 export type ModelOverrideBody = {
   claudeModel?: unknown;
   openaiModel?: unknown;
   geminiModel?: unknown;
+  deepseekModel?: unknown;
+  /** @deprecated legacy body field when provider was Ollama */
   ollamaModel?: unknown;
 };
+
+function clientDeepseekModelId(b: ModelOverrideBody): string | undefined {
+  return (
+    sanitizeClientModelId(b.deepseekModel) || sanitizeClientModelId(b.ollamaModel)
+  );
+}
 
 export function resolveCommitteeChatModels(b: ModelOverrideBody) {
   return {
@@ -30,10 +38,10 @@ export function resolveCommitteeChatModels(b: ModelOverrideBody) {
       process.env.GEMINI_COMMITTEE_MODEL?.trim() ||
       process.env.GEMINI_MODEL?.trim() ||
       undefined,
-    ollamaModel:
-      sanitizeClientModelId(b.ollamaModel) ||
-      process.env.OLLAMA_COMMITTEE_MODEL?.trim() ||
-      getOllamaModel(),
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_COMMITTEE_MODEL?.trim() ||
+      getDeepSeekModel(),
   };
 }
 
@@ -58,11 +66,11 @@ export function resolveLmeAnalysisModels(b: ModelOverrideBody) {
       process.env.GEMINI_COVENANT_MODEL?.trim() ||
       process.env.GEMINI_MODEL?.trim() ||
       undefined,
-    ollamaModel:
-      sanitizeClientModelId(b.ollamaModel) ||
-      process.env.OLLAMA_LME_ANALYSIS_MODEL?.trim() ||
-      process.env.OLLAMA_COVENANT_MODEL?.trim() ||
-      getOllamaModel(),
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_LME_ANALYSIS_MODEL?.trim() ||
+      process.env.DEEPSEEK_COVENANT_MODEL?.trim() ||
+      getDeepSeekModel(),
   };
 }
 
@@ -83,10 +91,10 @@ export function resolveCovenantModels(b: ModelOverrideBody) {
       process.env.GEMINI_COVENANT_MODEL?.trim() ||
       process.env.GEMINI_MODEL?.trim() ||
       undefined,
-    ollamaModel:
-      sanitizeClientModelId(b.ollamaModel) ||
-      process.env.OLLAMA_COVENANT_MODEL?.trim() ||
-      getOllamaModel(),
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_COVENANT_MODEL?.trim() ||
+      getDeepSeekModel(),
   };
 }
 
@@ -107,10 +115,10 @@ export function resolveCreditMemoModels(b: ModelOverrideBody) {
       process.env.GEMINI_CREDIT_MEMO_MODEL?.trim() ||
       process.env.GEMINI_MODEL?.trim() ||
       undefined,
-    ollamaModel:
-      sanitizeClientModelId(b.ollamaModel) ||
-      process.env.OLLAMA_CREDIT_MEMO_MODEL?.trim() ||
-      getOllamaModel(),
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_CREDIT_MEMO_MODEL?.trim() ||
+      getDeepSeekModel(),
   };
 }
 
@@ -128,8 +136,8 @@ export function resolveOverviewLlmModels(provider: AiProvider, queryModel: strin
       provider === "gemini" && m
         ? m
         : process.env.GEMINI_OVERVIEW_MODEL?.trim() || process.env.GEMINI_MODEL?.trim() || undefined,
-    ollamaModel:
-      provider === "ollama" && m ? m : process.env.OLLAMA_OVERVIEW_MODEL?.trim() || getOllamaModel(),
+    deepseekModel:
+      provider === "deepseek" && m ? m : process.env.DEEPSEEK_OVERVIEW_MODEL?.trim() || getDeepSeekModel(),
   };
 }
 
@@ -148,7 +156,7 @@ export function resolvePresentationLlmModels(provider: AiProvider, queryModel: s
       provider === "gemini" && m
         ? m
         : process.env.GEMINI_PRESENTATIONS_MODEL?.trim() || process.env.GEMINI_MODEL?.trim() || undefined,
-    ollamaModel:
-      provider === "ollama" && m ? m : process.env.OLLAMA_PRESENTATIONS_MODEL?.trim() || getOllamaModel(),
+    deepseekModel:
+      provider === "deepseek" && m ? m : process.env.DEEPSEEK_PRESENTATIONS_MODEL?.trim() || getDeepSeekModel(),
   };
 }

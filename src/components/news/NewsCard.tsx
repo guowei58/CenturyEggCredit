@@ -1,8 +1,9 @@
 "use client";
 
+import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import type { NormalizedNewsArticle } from "@/lib/news/types";
 
-export function NewsCard({ article }: { article: NormalizedNewsArticle }) {
+export function NewsCard({ article, ticker }: { article: NormalizedNewsArticle; ticker: string }) {
   let host = article.sourceDomain?.trim() || "";
   if (!host) {
     try {
@@ -80,7 +81,7 @@ export function NewsCard({ article }: { article: NormalizedNewsArticle }) {
             {article.sentimentScore != null ? ` (${article.sentimentScore.toFixed(2)})` : null}
           </p>
         )}
-        <div className="mt-3">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <a
             href={article.url}
             target="_blank"
@@ -90,6 +91,7 @@ export function NewsCard({ article }: { article: NormalizedNewsArticle }) {
           >
             Open article
           </a>
+          <SaveFilingLinkButton ticker={ticker} url={article.url} mode="saved-documents" className="ml-0 px-3 py-2 normal-case" />
         </div>
       </div>
     </article>

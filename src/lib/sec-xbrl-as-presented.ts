@@ -6,9 +6,26 @@
  * - Parse presentation linkbase to get row order + hierarchy.
  * - Parse label linkbase for human-readable labels (company-provided).
  * - Parse instance for fact values and contexts to build columns.
+ * - Optional calculation linkbase widens the fact set and enables rollup checks.
+ * - **Display** values use `sec-xbrl-display-normalize`: SEC-style instance numeric + negated presentation labels only;
+ *   **raw** instance picks (before negated flip) are preserved per cell for audit.
  */
 
 import { XMLParser } from "fast-xml-parser";
+
+import {
+  type CalculationArcRow,
+  conceptsReferencedInCalculationArcs,
+  parseCalculationLinkbase,
+} from "@/lib/sec-xbrl-calculation";
+import { normalizeXbrlFactForStatementModel } from "@/lib/sec-xbrl-display-normalize";
+import {
+  runAllXbrlExportValidations,
+  type ExportValidationStatement,
+  type XbrlExportValidationIssue,
+} from "@/lib/sec-xbrl-export-validation";
+
+export type { XbrlExportValidationIssue } from "@/lib/sec-xbrl-export-validation";
 
 const USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
 
@@ -19,19 +36,29 @@ export type PresentedFiling = {
   primaryDocument: string;
 };
 
+export type PeriodNormalizationMeta = {
+  rule: string;
+  confidence: "high" | "medium" | "low";
+};
+
 export type PresentedStatementRow = {
   concept: string; // e.g. us-gaap:Revenues
   label: string;
   depth: number;
   preferredLabelRole: string | null;
-  values: Record<string, number | null>; // periodKey -> value
+  /** Statement-ready / consolidation values (analytical IS, cash-direction CF). */
+  values: Record<string, number | null>;
+  /** Exact instance fact after duplicate pick (before display normalization). */
+  rawValues: Record<string, number | null>;
+  /** Per-period normalization audit trail (aligned keys with `values`). */
+  normalizationByPeriod: Record<string, PeriodNormalizationMeta | null>;
 };
 
 export type PresentedStatement = {
   id: string;
   title: string;
   role: string;
-  periods: Array<{ key: string; label: string; end: string; start: string | null }>;
+  periods: Array<{ key: string; label: string; shortLabel?: string; end: string; start: string | null }>;
   rows: PresentedStatementRow[];
 };
 
@@ -42,6 +69,9 @@ export type PresentedStatementsPayload = {
   form: string;
   filingDate: string;
   statements: PresentedStatement[];
+  /** Structural + calculation rollup failures (empty if all checks pass within tolerance). */
+  validation: XbrlExportValidationIssue[];
+  calculationLinkbaseLoaded: boolean;
 };
 
 type IndexItem = { name?: string; type?: string; size?: string };
@@ -92,13 +122,278 @@ function periodDurationDays(p: { start: string | null; end: string }): number {
   return days > 0 ? days : 0;
 }
 
-/** Display order: latest period first (by `end`), then earlier; tie-break by interval start (later start first). */
-function sortPeriodsLatestFirst<T extends { end: string; start: string | null }>(periods: T[]): T[] {
+/** Oldest first (left-to-right time series). */
+function sortPeriodsOldestFirst<T extends { end: string; start: string | null }>(periods: T[]): T[] {
   return [...periods].sort((a, b) => {
-    if (b.end !== a.end) return b.end.localeCompare(a.end);
-    const aStart = a.start ?? a.end;
-    const bStart = b.start ?? b.end;
-    return bStart.localeCompare(aStart);
+    if (a.end !== b.end) return a.end.localeCompare(b.end);
+    const aStart = a.start ?? "";
+    const bStart = b.start ?? "";
+    return aStart.localeCompare(bStart);
+  });
+}
+
+function parseIsoDateUtc(iso: string): { y: number; m: number; d: number } | null {
+  const m = String(iso).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  const y = parseInt(m[1]!, 10);
+  const mo = parseInt(m[2]!, 10);
+  const d = parseInt(m[3]!, 10);
+  if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(d)) return null;
+  return { y, m: mo, d };
+}
+
+/** Month/day of fiscal year-end from DEI `CurrentFiscalYearEndDate` (e.g. `--09-30`). */
+type FiscalYearEndMd = { month: number; day: number };
+
+function parseDeiFiscalYearEndText(raw: string): FiscalYearEndMd | null {
+  const s = raw.trim();
+  const full = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (full) {
+    const mo = parseInt(full[2]!, 10);
+    const d = parseInt(full[3]!, 10);
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31) return { month: mo, day: d };
+    return null;
+  }
+  const md = s.match(/^--(\d{2})-(\d{2})$/);
+  if (md) {
+    const mo = parseInt(md[1]!, 10);
+    const d = parseInt(md[2]!, 10);
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31) return { month: mo, day: d };
+    return null;
+  }
+  return null;
+}
+
+function stripXmlLocalName(name: string): string {
+  const c = name.indexOf(":");
+  return c >= 0 ? name.slice(c + 1) : name;
+}
+
+function extractXmlTextContent(v: unknown): string | null {
+  if (typeof v === "string") {
+    const t = v.trim();
+    return t.length ? t : null;
+  }
+  if (v && typeof v === "object" && "#text" in (v as object)) {
+    const t = (v as { "#text"?: unknown })["#text"];
+    if (typeof t === "string" && t.trim()) return t.trim();
+  }
+  return null;
+}
+
+function extractDeiCurrentFiscalYearEndFromParsedInstance(root: unknown): string | null {
+  const seen = new Set<unknown>();
+  const walk = (node: unknown): string | null => {
+    if (node == null || typeof node !== "object") return null;
+    if (seen.has(node)) return null;
+    seen.add(node);
+    if (Array.isArray(node)) {
+      for (const x of node) {
+        const t = walk(x);
+        if (t) return t;
+      }
+      return null;
+    }
+    const o = node as Record<string, unknown>;
+    const nameAttr = o["@_name"];
+    if (typeof nameAttr === "string" && stripXmlLocalName(nameAttr) === "CurrentFiscalYearEndDate") {
+      const tx = extractXmlTextContent(o);
+      if (tx) return tx;
+    }
+    for (const [k, v] of Object.entries(o)) {
+      if (k.startsWith("@_")) continue;
+      if (stripXmlLocalName(k) === "CurrentFiscalYearEndDate") {
+        const tx = extractXmlTextContent(v);
+        if (tx) return tx;
+      }
+      const t = walk(v);
+      if (t) return t;
+    }
+    return null;
+  };
+  return walk(root);
+}
+
+function extractDeiCurrentFiscalYearEndFromRawXml(xml: string): string | null {
+  const m = xml.match(/CurrentFiscalYearEndDate[^>]{0,240}>([^<]+)</i);
+  return m?.[1]?.trim() ? m[1].trim() : null;
+}
+
+/** Subtract calendar months from an ISO date; clamp day to month length (UTC). */
+function subMonthsFromIsoEnd(ymd: string, months: number): string | null {
+  const p = parseIsoDateUtc(ymd);
+  if (!p) return null;
+  const total = p.y * 12 + (p.m - 1) - months;
+  const ny = Math.floor(total / 12);
+  const nm = total - ny * 12;
+  const last = new Date(Date.UTC(ny, nm + 1, 0)).getUTCDate();
+  const nd = Math.min(p.d, last);
+  return `${ny}-${String(nm + 1).padStart(2, "0")}-${String(nd).padStart(2, "0")}`;
+}
+
+/** Fiscal quarter-end dates for FY labeled `fyLabelYear` (the calendar year in which that FY ends). */
+function fiscalQuarterEndYmds(fyLabelYear: number, fye: FiscalYearEndMd): [string, string, string, string] {
+  const q4 = `${fyLabelYear}-${String(fye.month).padStart(2, "0")}-${String(fye.day).padStart(2, "0")}`;
+  const q3 = subMonthsFromIsoEnd(q4, 3);
+  const q2 = subMonthsFromIsoEnd(q4, 6);
+  const q1 = subMonthsFromIsoEnd(q4, 9);
+  if (!q3 || !q2 || !q1) return [q4, q4, q4, q4];
+  return [q1, q2, q3, q4];
+}
+
+function findFiscalYearLabelForPeriodEnd(endYmd: string, fye: FiscalYearEndMd): number | null {
+  const p = parseIsoDateUtc(endYmd);
+  if (!p) return null;
+  const y = p.y;
+  for (const labelY of [y - 1, y, y + 1, y + 2]) {
+    const fyEnd = `${labelY}-${String(fye.month).padStart(2, "0")}-${String(fye.day).padStart(2, "0")}`;
+    const prevFyEnd = `${labelY - 1}-${String(fye.month).padStart(2, "0")}-${String(fye.day).padStart(2, "0")}`;
+    if (endYmd > prevFyEnd && endYmd <= fyEnd) return labelY;
+  }
+  return null;
+}
+
+function isFiscalYearEndYmd(endYmd: string, fye: FiscalYearEndMd): boolean {
+  const p = parseIsoDateUtc(endYmd);
+  return p !== null && p.m === fye.month && p.d === fye.day;
+}
+
+function matchFiscalQuarterColumnLabel(endYmd: string, fye: FiscalYearEndMd): string | null {
+  const fyLabel = findFiscalYearLabelForPeriodEnd(endYmd, fye);
+  if (fyLabel == null) return null;
+  const ends = fiscalQuarterEndYmds(fyLabel, fye);
+  for (let i = 0; i < 4; i++) {
+    if (endYmd === ends[i]) {
+      const yy = String(fyLabel).slice(-2);
+      return `${i + 1}Q${yy}`;
+    }
+  }
+  return null;
+}
+
+/**
+ * Short labels using DEI fiscal year-end when available; otherwise falls back to calendar quarters.
+ */
+function inferFiscalPeriodShortLabel(
+  end: string,
+  start: string | null,
+  kind: "is" | "bs" | "cf",
+  fye: FiscalYearEndMd,
+  durationDays: number,
+  yFull: number | undefined
+): string | null {
+  if (fye.month === 12 && fye.day === 31) return null;
+
+  if (!start || start === "") {
+    if (kind === "bs") {
+      if (yFull !== undefined && isFiscalYearEndYmd(end, fye)) return `FY${String(yFull).slice(-2)}`;
+      const fq = matchFiscalQuarterColumnLabel(end, fye);
+      if (fq) return fq;
+      return null;
+    }
+    return null;
+  }
+
+  if (kind === "is" || kind === "cf") {
+    if (durationDays >= 350 && durationDays <= 380) {
+      if (yFull !== undefined && isFiscalYearEndYmd(end, fye)) return `FY${String(yFull).slice(-2)}`;
+      return null;
+    }
+    if (durationDays >= 82 && durationDays <= 98) {
+      return matchFiscalQuarterColumnLabel(end, fye);
+    }
+    if (durationDays >= 170 && durationDays <= 200) {
+      const fyLabel = findFiscalYearLabelForPeriodEnd(end, fye);
+      if (fyLabel == null) return null;
+      const [, q2e] = fiscalQuarterEndYmds(fyLabel, fye);
+      if (end === q2e) return `6M${String(fyLabel).slice(-2)}`;
+      return null;
+    }
+    if (durationDays >= 260 && durationDays <= 295) {
+      const fyLabel = findFiscalYearLabelForPeriodEnd(end, fye);
+      if (fyLabel == null) return null;
+      const [, , q3e] = fiscalQuarterEndYmds(fyLabel, fye);
+      if (end === q3e) return `9M${String(fyLabel).slice(-2)}`;
+      return null;
+    }
+  }
+
+  return null;
+}
+
+/** US-style quarter-end calendar dates (December fiscal year-end). */
+function calendarQuarterFromEndDate(end: string): { q: 1 | 2 | 3 | 4; yy: string } | null {
+  const dt = parseIsoDateUtc(end);
+  if (!dt) return null;
+  const { y, m, d } = dt;
+  if (m === 3 && d === 31) return { q: 1, yy: String(y).slice(-2) };
+  if (m === 6 && d === 30) return { q: 2, yy: String(y).slice(-2) };
+  if (m === 9 && d === 30) return { q: 3, yy: String(y).slice(-2) };
+  if (m === 12 && d === 31) return { q: 4, yy: String(y).slice(-2) };
+  return null;
+}
+
+/**
+ * Short header like 1Q24 / FY24. Uses `dei:CurrentFiscalYearEndDate` when present so non-December FY
+ * (e.g. Sep 30) maps quarter-ends correctly; otherwise calendar quarter-ends (Dec FY).
+ */
+function inferPeriodShortLabel(
+  end: string,
+  start: string | null,
+  kind: "is" | "bs" | "cf",
+  fiscalYearEnd: FiscalYearEndMd | null
+): string | null {
+  const durationDays = periodDurationDays({ start, end });
+  const cq = calendarQuarterFromEndDate(end);
+  const yFull = parseIsoDateUtc(end)?.y;
+
+  if (fiscalYearEnd) {
+    const f = inferFiscalPeriodShortLabel(end, start, kind, fiscalYearEnd, durationDays, yFull);
+    if (f !== null) return f;
+  }
+
+  if (!start || start === "") {
+    if (kind === "bs" && cq) {
+      if (cq.q === 4) return `FY${cq.yy}`;
+      return `${cq.q}Q${cq.yy}`;
+    }
+    return null;
+  }
+
+  if (kind === "is" || kind === "cf") {
+    if (durationDays >= 350 && durationDays <= 380 && yFull !== undefined) {
+      return `FY${String(yFull).slice(-2)}`;
+    }
+    if (durationDays >= 82 && durationDays <= 98 && cq) {
+      return `${cq.q}Q${cq.yy}`;
+    }
+    if (durationDays >= 170 && durationDays <= 200 && yFull !== undefined) {
+      return `6M${String(yFull).slice(-2)}`;
+    }
+    if (durationDays >= 260 && durationDays <= 295 && yFull !== undefined) {
+      return `9M${String(yFull).slice(-2)}`;
+    }
+  }
+
+  return null;
+}
+
+function assignPeriodDisplayFields(
+  periodsChrono: Array<{ key: string; end: string; start: string | null; score: number }>,
+  kind: "is" | "bs" | "cf",
+  fiscalYearEnd: FiscalYearEndMd | null
+): Array<{ key: string; label: string; shortLabel?: string; end: string; start: string | null }> {
+  const used = new Map<string, number>();
+  return periodsChrono.map((p) => {
+    const longLabel = p.start ? `${p.start} → ${p.end}` : p.end;
+    const base = inferPeriodShortLabel(p.end, p.start, kind, fiscalYearEnd);
+    if (!base) {
+      return { key: p.key, label: longLabel, end: p.end, start: p.start };
+    }
+    const n = (used.get(base) ?? 0) + 1;
+    used.set(base, n);
+    const shortLabel = n === 1 ? base : `${base} · ${p.start ?? p.end}`;
+    return { key: p.key, label: longLabel, shortLabel, end: p.end, start: p.start };
   });
 }
 
@@ -130,11 +425,31 @@ function explicitMemberCount(ctxEl: any): number {
   return asArr(em).length;
 }
 
-const MAX_PERIOD_COLUMNS = 5;
+/**
+ * Hard cap on distinct period columns per statement (pathological filings only).
+ * Normal behavior: keep every period that has ≥1 fact on the presentation (score > 0), oldest → newest.
+ */
+const MAX_STATEMENT_PERIODS = 4000;
 
 function isNilFact(item: any): boolean {
   const nilRaw = item?.["@_xsi:nil"] ?? item?.["@_nil"];
   return nilRaw === true || nilRaw === "true" || nilRaw === 1 || nilRaw === "1";
+}
+
+/**
+ * Parses `#text` on a fact element (inline or standalone). Inline XBRL may put the magnitude in `#text`
+ * and the economic sign in `@sign` — see iXBRL spec / SEC inline tagging guidance.
+ */
+function numericFromXbrlFactItem(item: any): number | null {
+  if (isNilFact(item)) return null;
+  const raw = item?.["#text"];
+  let num = typeof raw === "number" ? raw : typeof raw === "string" ? parseFloat(String(raw).replace(/,/g, "")) : NaN;
+  if (!Number.isFinite(num)) return null;
+  const signAttr = item?.["@_sign"];
+  if (signAttr === "-" || signAttr === -1 || signAttr === "-1") {
+    num = -Math.abs(num);
+  }
+  return num;
 }
 
 /** One of three primary financials, or null = skip (parenthetical, disclosure, equity, OCI, etc.). */
@@ -145,7 +460,11 @@ function primaryStatementKind(role: string): "is" | "bs" | "cf" | null {
   if (/\/role\/disclosure/i.test(role) || c.includes("disclosureoperating") || c.includes("disclosurestock") || c.includes("disclosuredebt")) return null;
   if (c.includes("documentdocument") || c.includes("documentandentity")) return null;
   if (/\/ecd\//i.test(role) || c.includes("insidertrading")) return null;
-  if (c.includes("comprehensive") && (c.includes("income") || c.includes("earnings") || c.includes("loss"))) return null;
+  /**
+   * OCI / AOCI footnote schedules (not the face consolidated statement of comprehensive income or loss).
+   * Issuers like NN only tag `CONSOLIDATEDSTATEMENTSOFCOMPREHENSIVELOSS` as the primary P&L — that must stay eligible.
+   */
+  if (c.includes("othercomprehensive") || c.includes("accumulatedothercomprehensive")) return null;
   if (
     c.includes("statementofequity") ||
     c.includes("statementsofequity") ||
@@ -155,14 +474,28 @@ function primaryStatementKind(role: string): "is" | "bs" | "cf" | null {
     return null;
   }
 
+  /**
+   * Footnote / breakout tables: role text references the main statement but URI ends in `…Details`
+   * (e.g. FICO derivative gains “…RecordedInConsolidatedStatementsOfIncomeDetails”). Those are not the primary IS/BS/CF.
+   */
+  if (c.endsWith("details") || c.endsWith("detail")) return null;
+
   if (c.includes("cashflow") || (c.includes("cash") && c.includes("flow"))) return "cf";
   if (c.includes("balancesheet") || c.includes("financialposition") || (c.includes("balance") && c.includes("sheet"))) return "bs";
+  /**
+   * Income statement: use concrete substrings. Avoid `(statement && income)` — it matches disclosure roles that
+   * contain `…StatementsOfIncome…` in the company extension URI without being the face financial.
+   */
   if (
     c.includes("incomestatement") ||
+    c.includes("statementofincome") ||
+    c.includes("statementsofincome") ||
     c.includes("statementsofoperations") ||
     c.includes("statementofoperations") ||
+    c.includes("consolidatedstatementsofcomprehensive") ||
+    c.includes("statementofcomprehensiveincome") ||
+    c.includes("statementsofcomprehensiveincome") ||
     (c.includes("statement") && c.includes("operations")) ||
-    (c.includes("statement") && c.includes("income")) ||
     (c.includes("statement") && c.includes("earnings")) ||
     (c.includes("profit") && c.includes("loss"))
   ) {
@@ -231,7 +564,12 @@ async function fetchJson(url: string): Promise<unknown> {
   return res.json();
 }
 
-function findBestXbrlFiles(names: string[]): { instance: string | null; pre: string | null; lab: string | null } {
+function findBestXbrlFiles(names: string[]): {
+  instance: string | null;
+  pre: string | null;
+  lab: string | null;
+  cal: string | null;
+} {
   const lower = names.map((n) => n.toLowerCase());
   const pick = (re: RegExp) => {
     const idx = lower.findIndex((n) => re.test(n));
@@ -240,12 +578,16 @@ function findBestXbrlFiles(names: string[]): { instance: string | null; pre: str
   // Instance: prefer *_htm.xml or *.xml that isn't linkbase
   const pre = pick(/_pre\.xml$/i);
   const lab = pick(/_lab\.xml$/i);
+  const cal = pick(/_cal\.xml$/i);
   let instance = pick(/_htm\.xml$/i);
   if (!instance) {
-    const idx = lower.findIndex((n) => n.endsWith(".xml") && !n.endsWith("_pre.xml") && !n.endsWith("_lab.xml") && !n.endsWith("_cal.xml"));
+    const idx = lower.findIndex(
+      (n) =>
+        n.endsWith(".xml") && !n.endsWith("_pre.xml") && !n.endsWith("_lab.xml") && !n.endsWith("_cal.xml")
+    );
     instance = idx >= 0 ? names[idx]! : null;
   }
-  return { instance, pre, lab };
+  return { instance, pre, lab, cal };
 }
 
 type PreParse = {
@@ -332,6 +674,8 @@ type InstanceParse = {
   contextDimCount: Map<string, number>;
   unitMeasure: Map<string, string>;
   facts: Map<string, Array<{ contextRef: string; unitRef: string | null; value: number }>>;
+  /** From `dei:CurrentFiscalYearEndDate` when present (e.g. Sep 30 FY). */
+  fiscalYearEnd: FiscalYearEndMd | null;
 };
 
 function parseInstance(instanceXml: string, conceptSet: Set<string>): InstanceParse {
@@ -377,9 +721,8 @@ function parseInstance(instanceXml: string, conceptSet: Set<string>): InstancePa
           if (isNilFact(item)) continue;
           const ctx = item?.["@_contextRef"];
           const unit = typeof item?.["@_unitRef"] === "string" ? item["@_unitRef"] : null;
-          const raw = item?.["#text"];
-          const num = typeof raw === "number" ? raw : typeof raw === "string" ? parseFloat(raw.replace(/,/g, "")) : NaN;
-          if (typeof ctx !== "string" || !Number.isFinite(num)) continue;
+          const num = numericFromXbrlFactItem(item);
+          if (typeof ctx !== "string" || num === null) continue;
           const arr = facts.get(k) ?? [];
           arr.push({ contextRef: ctx, unitRef: unit, value: num });
           facts.set(k, arr);
@@ -391,7 +734,11 @@ function parseInstance(instanceXml: string, conceptSet: Set<string>): InstancePa
   };
   walk(x);
 
-  return { contextPeriod, contextDimCount, unitMeasure, facts };
+  const fyRaw =
+    extractDeiCurrentFiscalYearEndFromParsedInstance(x) ?? extractDeiCurrentFiscalYearEndFromRawXml(instanceXml);
+  const fiscalYearEnd = fyRaw ? parseDeiFiscalYearEndText(fyRaw) : null;
+
+  return { contextPeriod, contextDimCount, unitMeasure, facts, fiscalYearEnd };
 }
 
 function scorePeriodForStatement(
@@ -414,8 +761,61 @@ function scorePeriodForStatement(
   return score;
 }
 
+/**
+ * When SEC filings expose multiple facts for the same concept + period (e.g. different contexts that still look
+ * consolidated), picking the first tie is arbitrary and often lands on the wrong magnitude. Prefer conservative
+ * choices: smaller positive for typical expense/cost tags, larger positive for revenue-like tags, median for totals/NI.
+ */
+function tieBreakDuplicateFactValues(concept: string, values: number[]): number | null {
+  const uniq = Array.from(new Set(values.filter((v) => Number.isFinite(v))));
+  if (uniq.length === 0) return null;
+  if (uniq.length === 1) return uniq[0]!;
+  const c = concept.toLowerCase();
+  const pos = uniq.filter((v) => v > 0);
+  const neg = uniq.filter((v) => v < 0);
+
+  if (/:assets$/i.test(c) || /liabilitiesandstockholdersequity$/i.test(c) || /stockholdersequity$/i.test(c)) {
+    return pos.length ? Math.max(...pos) : uniq.sort((a, b) => Math.abs(b) - Math.abs(a))[0]!;
+  }
+
+  if (
+    /netincome|profitloss$/i.test(c) ||
+    /incomelossfromcontinuingoperationsbefore/i.test(c) ||
+    /operatingincomeloss$/i.test(c) ||
+    /earningsbefore/i.test(c)
+  ) {
+    const sorted = [...uniq].sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length / 2)]!;
+  }
+
+  if (/\brevenue\b/i.test(c) || /\bsalesrevenue/i.test(c) || /\b(us-gaap:)?sales\b/i.test(c)) {
+    return pos.length ? Math.max(...pos) : Math.max(...uniq);
+  }
+
+  if (/nonoperatingincomeexpense|otherincomeexpense|othernonoperatingincome/i.test(c)) {
+    const sorted = [...uniq].sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length / 2)]!;
+  }
+
+  if (
+    /expense/i.test(c) ||
+    /cost/i.test(c) ||
+    /charge/i.test(c) ||
+    /fee/i.test(c) ||
+    /payment/i.test(c) ||
+    /depreciation/i.test(c) ||
+    /amortization/i.test(c) ||
+    /impairment/i.test(c)
+  ) {
+    return pos.length ? Math.min(...pos) : neg.length ? Math.max(...neg) : uniq.sort((a, b) => Math.abs(a) - Math.abs(b))[0]!;
+  }
+
+  return uniq.sort((a, b) => Math.abs(b) - Math.abs(a))[0]!;
+}
+
 function pickValueForPeriod(
-  candidates: Array<{ value: number; measure: string | null; dim: number }>
+  candidates: Array<{ value: number; measure: string | null; dim: number }>,
+  concept: string
 ): number | null {
   if (!candidates.length) return null;
   const sorted = [...candidates].sort((a, b) => {
@@ -425,7 +825,42 @@ function pickValueForPeriod(
     if (a.dim !== b.dim) return a.dim - b.dim;
     return 0;
   });
-  return sorted[0]!.value;
+  const best = sorted[0]!;
+  const bestUsd = best.measure?.toLowerCase().includes("usd") ? 0 : 1;
+  const pool = sorted.filter(
+    (x) =>
+      x.dim === best.dim &&
+      (x.measure?.toLowerCase().includes("usd") ? 0 : 1) === bestUsd
+  );
+  const distinct = Array.from(new Set(pool.map((p) => p.value)));
+  if (distinct.length <= 1) return pool[0]!.value;
+  return tieBreakDuplicateFactValues(concept, pool.map((p) => p.value));
+}
+
+function resolveDisplayNumericFact(
+  inst: InstanceParse,
+  concept: string,
+  targetPeriodKey: string,
+  kind: "is" | "bs" | "cf"
+): number | null {
+  const facts = inst.facts.get(concept) ?? [];
+  const candidates: Array<{ value: number; measure: string | null; dim: number }> = [];
+  for (const f of facts) {
+    const p = inst.contextPeriod.get(f.contextRef);
+    if (!p?.end) continue;
+    if (periodKey(p.end, p.start) !== targetPeriodKey) continue;
+    const measure = f.unitRef ? inst.unitMeasure.get(f.unitRef) ?? null : null;
+    const dim = inst.contextDimCount.get(f.contextRef) ?? 99;
+    candidates.push({ value: f.value, measure, dim });
+  }
+  const picked = pickValueForPeriod(candidates, concept);
+  return normalizeXbrlFactForStatementModel({
+    kind,
+    concept,
+    label: "",
+    preferredLabelRole: null,
+    raw: picked,
+  }).display;
 }
 
 function buildTree(role: PreParse["roles"][number], labels: Map<string, Map<string, string>>) {
@@ -498,14 +933,28 @@ export async function fetchAsPresentedStatements(params: {
   const labXml = await fetchText(`${base}/${picked.lab}`);
   const instanceXml = await fetchText(`${base}/${picked.instance}`);
 
+  let calculationLinkbaseLoaded = false;
+  let calcArcs: CalculationArcRow[] = [];
+  if (picked.cal) {
+    try {
+      const calXml = await fetchText(`${base}/${picked.cal}`);
+      calcArcs = parseCalculationLinkbase(calXml);
+      calculationLinkbaseLoaded = true;
+    } catch {
+      calcArcs = [];
+      calculationLinkbaseLoaded = false;
+    }
+  }
+
   const pres = parsePresentation(preXml);
   const labs = parseLabels(labXml);
 
-  // Build concept set used by any statement role.
+  // Build concept set: presentation tree ∪ calculation link (so rollups can resolve children off the face).
   const conceptSet = new Set<string>();
   for (const r of pres.roles) {
     for (const locLabel of Object.keys(r.locs)) conceptSet.add(r.locs[locLabel]!);
   }
+  conceptsReferencedInCalculationArcs(calcArcs).forEach((c) => conceptSet.add(c));
 
   const inst = parseInstance(instanceXml, conceptSet);
 
@@ -542,31 +991,30 @@ export async function fetchAsPresentedStatements(params: {
       score: scorePeriodForStatement(k, nodes, inst),
     }));
     const filtered = filterPeriodEntriesForStatementTitle(scored, statementTitle);
-
-    const chosenPeriods = filtered
-      .sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        const bd = periodDurationDays(b);
-        const ad = periodDurationDays(a);
-        if (bd !== ad) return bd - ad;
-        if (b.end !== a.end) return b.end.localeCompare(a.end);
-        return (a.start ?? "").localeCompare(b.start ?? "");
-      })
-      .slice(0, MAX_PERIOD_COLUMNS);
-
-    const periodsSorted = sortPeriodsLatestFirst(chosenPeriods);
+    const withData = filtered.filter((e) => e.score > 0);
+    const pool = withData.length > 0 ? withData : filtered;
+    const chrono = sortPeriodsOldestFirst(pool);
+    const capped =
+      chrono.length > MAX_STATEMENT_PERIODS ? chrono.slice(-MAX_STATEMENT_PERIODS) : chrono;
+    const periodsSorted = assignPeriodDisplayFields(capped, kind, inst.fiscalYearEnd);
 
     const rows: PresentedStatementRow[] = nodes.map((n) => {
       const facts = inst.facts.get(n.concept) ?? [];
-      const out: Record<string, number | null> = {};
-      for (const p of periodsSorted) out[p.key] = null;
+      const outDisplay: Record<string, number | null> = {};
+      const outRaw: Record<string, number | null> = {};
+      const outNorm: Record<string, PeriodNormalizationMeta | null> = {};
+      for (const p of periodsSorted) {
+        outDisplay[p.key] = null;
+        outRaw[p.key] = null;
+        outNorm[p.key] = null;
+      }
 
       const byPeriod = new Map<string, Array<{ value: number; measure: string | null; dim: number }>>();
       for (const f of facts) {
         const p = inst.contextPeriod.get(f.contextRef);
         if (!p?.end) continue;
         const k = periodKey(p.end, p.start);
-        if (!Object.prototype.hasOwnProperty.call(out, k)) continue;
+        if (!Object.prototype.hasOwnProperty.call(outDisplay, k)) continue;
         const measure = f.unitRef ? inst.unitMeasure.get(f.unitRef) ?? null : null;
         const dim = inst.contextDimCount.get(f.contextRef) ?? 99;
         const arr = byPeriod.get(k) ?? [];
@@ -574,7 +1022,20 @@ export async function fetchAsPresentedStatements(params: {
         byPeriod.set(k, arr);
       }
       for (const [k, arr] of Array.from(byPeriod.entries())) {
-        out[k] = pickValueForPeriod(arr);
+        const picked = pickValueForPeriod(arr, n.concept);
+        outRaw[k] = picked;
+        const norm = normalizeXbrlFactForStatementModel({
+          kind,
+          concept: n.concept,
+          label: n.label,
+          preferredLabelRole: n.preferredLabelRole,
+          raw: picked,
+        });
+        outDisplay[k] = norm.display;
+        outNorm[k] =
+          picked !== null && Number.isFinite(picked)
+            ? { rule: norm.rule, confidence: norm.confidence }
+            : null;
       }
 
       return {
@@ -582,7 +1043,9 @@ export async function fetchAsPresentedStatements(params: {
         label: n.label,
         depth: n.depth,
         preferredLabelRole: n.preferredLabelRole,
-        values: out,
+        values: outDisplay,
+        rawValues: outRaw,
+        normalizationByPeriod: outNorm,
       };
     });
 
@@ -599,7 +1062,8 @@ export async function fetchAsPresentedStatements(params: {
       role: r.role,
       periods: periodsSorted.map((p) => ({
         key: p.key,
-        label: p.start ? `${p.start} → ${p.end}` : p.end,
+        label: p.label,
+        shortLabel: p.shortLabel,
         end: p.end,
         start: p.start,
       })),
@@ -624,6 +1088,38 @@ export async function fetchAsPresentedStatements(params: {
     .map((k) => bestByKind.get(k)?.statement)
     .filter((s): s is PresentedStatement => Boolean(s));
 
+  const exportStmts: ExportValidationStatement[] = statements.map((s) => {
+    let kind: "is" | "bs" | "cf" = "is";
+    if (s.id === "primary-cf") kind = "cf";
+    else if (s.id === "primary-bs") kind = "bs";
+    return {
+      kind,
+      periods: s.periods.map((p) => ({ key: p.key, shortLabel: p.shortLabel, label: p.label })),
+      rows: s.rows.map((r) => ({ concept: r.concept, values: r.values })),
+    };
+  });
+
+  const kindByConcept = new Map<string, "is" | "bs" | "cf">();
+  for (const s of exportStmts) {
+    for (const r of s.rows) {
+      if (!kindByConcept.has(r.concept)) kindByConcept.set(r.concept, s.kind);
+    }
+  }
+
+  const resolveValue = (concept: string, periodKey: string, k: "is" | "bs" | "cf"): number | null => {
+    const rowKind = kindByConcept.get(concept) ?? k;
+    for (const s of statements) {
+      const row = s.rows.find((x) => x.concept === concept);
+      if (row) {
+        const v = row.values[periodKey];
+        if (v !== null && v !== undefined && Number.isFinite(v)) return v;
+      }
+    }
+    return resolveDisplayNumericFact(inst, concept, periodKey, rowKind);
+  };
+
+  const validation = runAllXbrlExportValidations(exportStmts, calcArcs, resolveValue);
+
   return {
     ok: true,
     cik: params.cik,
@@ -631,6 +1127,8 @@ export async function fetchAsPresentedStatements(params: {
     form: params.form,
     filingDate: params.filingDate,
     statements,
+    validation,
+    calculationLinkbaseLoaded,
   };
 }
 

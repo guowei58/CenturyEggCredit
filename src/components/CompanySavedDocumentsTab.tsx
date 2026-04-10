@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Card, DataTable } from "@/components/ui";
-
 type SavedItem = {
   id: string;
   title: string;
@@ -33,13 +32,12 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
 
   const listUrl = useMemo(() => (safeTicker ? `/api/saved-documents/${encodeURIComponent(safeTicker)}` : ""), [safeTicker]);
 
-  async function refresh(mode: "list" | "reconcile" = "list") {
+  async function refresh() {
     if (!listUrl) return;
     setLoading(true);
     setStatus(null);
     try {
-      const url = mode === "reconcile" ? `${listUrl}?reconcile=1` : listUrl;
-      const res = await fetch(url, { method: "GET" });
+      const res = await fetch(listUrl, { method: "GET" });
       const body = (await res.json()) as { items?: SavedItem[]; error?: string };
       if (!res.ok) throw new Error(body?.error ?? "Failed to load saved documents.");
       setItems(Array.isArray(body.items) ? body.items : []);
@@ -55,7 +53,7 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
     setUrlInput("");
     setItems([]);
     setStatus(null);
-    if (safeTicker) void refresh("reconcile");
+    if (safeTicker) void refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [safeTicker]);
 
@@ -75,7 +73,12 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
         throw new Error(body?.error ?? `Failed to save document (HTTP ${res.status}).`);
       }
       setUrlInput("");
-      setStatus(body.item?.convertedToPdf ? "Saved (converted to PDF)." : "Saved PDF.");
+      const ct = (body.item?.contentType ?? "").toLowerCase();
+      if (ct.includes("spreadsheet") || (body.item?.filename ?? "").toLowerCase().endsWith(".xlsx")) {
+        setStatus("Saved Excel.");
+      } else {
+        setStatus(body.item?.convertedToPdf ? "Saved (converted to PDF)." : "Saved PDF.");
+      }
       await refresh();
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "Failed to save document.");
@@ -144,25 +147,6 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
             style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
           >
             {loading ? "Saving…" : "Save URL"}
-          </button>
-          <button
-            type="button"
-            onClick={() => void refresh("list")}
-            disabled={loading}
-            className="rounded-md border px-3 py-2 text-xs font-medium disabled:opacity-50"
-            style={{ borderColor: "var(--border2)", color: "var(--text)", background: "transparent" }}
-          >
-            Refresh
-          </button>
-          <button
-            type="button"
-            onClick={() => void refresh("reconcile")}
-            disabled={loading}
-            className="rounded-md border px-3 py-2 text-xs font-medium disabled:opacity-50"
-            style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-            title="Reload list from server"
-          >
-            Reload list
           </button>
         </div>
         {status && (

@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { getCompanyProfile } from "@/lib/sec-edgar";
 import {
+  formatOdpPatentQueryString,
   patentNumberToGooglePatentsUrl,
   searchOdpPatentApplications,
   searchPatentsViewAssignees,
   searchPatentsViewPatentsByAssignee,
+  unwrapOdpStylePhrase,
 } from "@/lib/uspto-ip";
 
 export const dynamic = "force-dynamic";
@@ -41,14 +43,18 @@ export async function GET(
     companyName = null;
   }
 
-  const queryUsed = qOverride || companyName || ticker;
+  const queryRaw = qOverride || companyName || ticker;
+  /** ODP Lucene: phrase-quoted so tokens like INC./CORP don’t match every application. */
+  const queryOdp = formatOdpPatentQueryString(queryRaw);
+  /** PatentsView `_text_phrase` uses plain text (strip outer `"` if present). */
+  const queryPatentsView = unwrapOdpStylePhrase(queryRaw);
 
   if (!odpKey) {
     return NextResponse.json({
       ok: true,
       ticker,
       companyName,
-      queryUsed,
+      queryUsed: queryOdp,
       odpConfigured: false,
       patentsViewConfigured: Boolean(pvKey),
       totalOdp: 0,
@@ -69,7 +75,7 @@ export async function GET(
   }
 
   try {
-    const { total, hits } = await searchOdpPatentApplications(odpKey, queryUsed, offset, limit);
+    const { total, hits } = await searchOdpPatentApplications(odpKey, queryOdp, offset, limit);
 
     const odpPatents = hits.map((h) => ({
       ...h,
@@ -96,7 +102,7 @@ export async function GET(
     let patentsViewError: string | undefined;
     if (pvKey) {
       try {
-        assigneeCandidates = await searchPatentsViewAssignees(pvKey, queryUsed, pvTop);
+        assigneeCandidates = await searchPatentsViewAssignees(pvKey, queryPatentsView, pvTop);
         const topOrgs = assigneeCandidates
           .map((a) => a.organization)
           .filter((o): o is string => Boolean(o?.trim()))
@@ -121,7 +127,10 @@ export async function GET(
       }
     }
 
-    const notices: string[] = [];
+    const notices: string[] = [
+      "Patent search (ODP) sends plain text as a Lucene quoted phrase so common words (INC, CORP, LLC) are not searched as separate tokens.",
+      "PatentsView assignee enrichment uses phrase-style matching on the same text so short tokens do not dominate results.",
+    ];
     if (patentsViewError) {
       notices.push(`PatentsView enrichment failed (${patentsViewError}); ODP results are unchanged.`);
     } else if (!pvKey) {
@@ -132,7 +141,7 @@ export async function GET(
       ok: true,
       ticker,
       companyName,
-      queryUsed,
+      queryUsed: queryOdp,
       odpConfigured: true,
       patentsViewConfigured: Boolean(pvKey),
       patentsViewError,
@@ -160,7 +169,7 @@ export async function GET(
         error: message,
         ticker,
         companyName,
-        queryAttempted: queryUsed,
+        queryAttempted: queryOdp,
         odpSignup: ODP_URL,
       },
       { status: 502 }

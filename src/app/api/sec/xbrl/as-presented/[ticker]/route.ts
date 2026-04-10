@@ -60,6 +60,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
         accessionNumber: chosen.accessionNumber,
       },
       statements: stmt.statements,
+      validation: stmt.validation,
+      calculationLinkbaseLoaded: stmt.calculationLinkbaseLoaded,
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to load XBRL statements";

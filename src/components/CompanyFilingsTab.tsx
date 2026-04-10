@@ -151,6 +151,8 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [relatedError, setRelatedError] = useState<string | null>(null);
   const [relatedDisclaimer, setRelatedDisclaimer] = useState<string | null>(null);
+  const [eftsIndexNote, setEftsIndexNote] = useState<string | null>(null);
+  const [facetParentCik, setFacetParentCik] = useState<string | null>(null);
 
   const safeTicker = ticker?.trim() ?? "";
 
@@ -268,13 +270,18 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
     setRelatedError(null);
     setRelatedDisclaimer(null);
     setRelatedRows([]);
+    setEftsIndexNote(null);
+    setFacetParentCik(null);
     fetch(`/api/filings/related-filers/${encodeURIComponent(safeTicker)}`)
       .then(async (res) => {
         const body = (await res.json()) as
           | {
               ok: true;
+              parentCik?: string;
               related?: RelatedFilerRow[];
               disclaimer?: string;
+              eftsTotalFilings?: number;
+              eftsTruncated?: boolean;
             }
           | { ok: false; message?: string };
         if (cancelled) return;
@@ -288,6 +295,16 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
         }
         setRelatedRows(Array.isArray(body.related) ? body.related : []);
         setRelatedDisclaimer(typeof body.disclaimer === "string" ? body.disclaimer : null);
+        setFacetParentCik(typeof body.parentCik === "string" ? body.parentCik : null);
+        const tot = typeof body.eftsTotalFilings === "number" ? body.eftsTotalFilings : null;
+        const tr = body.eftsTruncated === true;
+        if (tot != null) {
+          setEftsIndexNote(
+            tr
+              ? `EFTS index: ~${tot.toLocaleString()} filings for this CIK (scan capped; counts may omit tail filings).`
+              : `EFTS index: ${tot.toLocaleString()} filing(s) for this CIK.`
+          );
+        }
       })
       .catch(() => {
         if (!cancelled) setRelatedError("Could not load related SEC registrants.");
@@ -394,14 +411,38 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
         Entity
       </p>
       <p className="text-[10px] leading-relaxed mb-2" style={{ color: "var(--muted2)" }}>
-        Filers (CIKs) that appear on filings in EDGAR’s submissions list for sidebar ticker{" "}
-        <span className="font-mono">{safeTicker}</span>, same filer CIK SEC uses in accession numbers. Click a row to load
-        that registrant’s filings; sidebar ticker is unchanged for save actions.
+        Same idea as SEC EDGAR Search (full-text index / EFTS) for sidebar ticker{" "}
+        <span className="font-mono">{safeTicker}</span>
+        {facetParentCik || data?.cik ? (
+          <>
+            {" "}
+            —{" "}
+            <a
+              href={`https://www.sec.gov/edgar/search/#/ciks=${(facetParentCik ?? data?.cik ?? "")
+                .replace(/\D/g, "")
+                .padStart(10, "0")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "var(--blue)" }}
+            >
+              open on SEC.gov
+            </a>
+          </>
+        ) : null}
+        . Rows and hit counts mirror that site’s Entity facet (subsidiaries, insiders, funds). Click a row to load that
+        CIK’s filings; sidebar
+        ticker is unchanged for save actions.
+        {eftsIndexNote ? (
+          <>
+            {" "}
+            <span style={{ color: "var(--muted)" }}>{eftsIndexNote}</span>
+          </>
+        ) : null}
       </p>
       {relatedLoading && relatedRows.length === 0 && !relatedError ? (
         <div className="flex items-center gap-2 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
           <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
-          Resolving filer names…
+          Loading EDGAR search entities…
         </div>
       ) : null}
       {relatedError ? (
@@ -411,20 +452,20 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
       ) : null}
       {!relatedLoading && !relatedError && relatedRows.length === 0 ? (
         <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-          No accession data in the submissions feed for this ticker.
+          No entities returned from the EDGAR full-text index for this CIK.
         </p>
       ) : null}
       {relatedRows.length > 0 ? (
         <ul className="mt-2 max-h-80 overflow-y-auto rounded border" style={{ borderColor: "var(--border2)" }}>
           {relatedRows.map((r) => (
             <li
-              key={r.cik}
+              key={`${r.cik}::${r.entityName}`}
               className="border-b last:border-b-0"
               style={{ borderColor: "var(--border2)" }}
             >
               <button
                 type="button"
-                title={`${r.filingCount} filing(s) in this issuer’s feed use accession numbers for CIK ${r.cik}`}
+                title={`${r.filingCount.toLocaleString()} indexed hit(s) with this entity label alongside CIK ${facetParentCik ?? data?.cik ?? ""}. Open ${r.cik}’s filings.`}
                 className="flex w-full items-start gap-2 px-2 py-2 text-left text-xs transition-colors hover:bg-white/[0.05]"
                 onClick={() => void loadFilingsByCik(r.cik)}
               >

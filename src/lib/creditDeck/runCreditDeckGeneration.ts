@@ -1,5 +1,7 @@
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
 import type { AiProvider } from "@/lib/ai-provider";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
+import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { buildEvidencePackSync, formatSourceInventoryList } from "@/lib/creditMemo/evidencePack";
 import { loadCreditMemoConfig } from "@/lib/creditMemo/config";
 import { planMemoOutline, planMemoOutlineFromTemplate } from "@/lib/creditMemo/memoPlanner";
@@ -109,22 +111,15 @@ export async function runCreditDeckGeneration(params: {
   provider: AiProvider;
   useTemplate?: boolean;
   models: CreditMemoResolvedModels;
+  apiKeys: LlmCallApiKeys;
 }): Promise<
   | { ok: true; outline: MemoOutline; buffer: Buffer; filename: string }
   | { ok: false; error: string }
 > {
   const cfg = loadCreditMemoConfig();
   const ai = params.provider;
-  if (!isProviderConfigured(ai)) {
-    return {
-      ok: false,
-      error:
-        ai === "openai"
-          ? "OPENAI_API_KEY not configured. Add to .env.local."
-          : ai === "gemini"
-            ? "GEMINI_API_KEY not configured. Add to .env.local."
-            : "ANTHROPIC_API_KEY not configured. Add to .env.local.",
-    };
+  if (!isProviderConfigured(ai, params.apiKeys)) {
+    return { ok: false, error: USER_LLM_KEY_SETTINGS_HINT };
   }
 
   if (params.project.sources.length === 0) {
@@ -148,7 +143,8 @@ export async function runCreditDeckGeneration(params: {
   }
 
   const inventory = formatSourceInventoryList(params.project.sources);
-  const PROMPT_TOKEN_LIMIT = ai === "openai" || ai === "gemini" ? 190_000 : 180_000;
+  const PROMPT_TOKEN_LIMIT =
+    ai === "openai" || ai === "gemini" || ai === "deepseek" ? 190_000 : 180_000;
   const SYSTEM_TOKEN_EST = estimateTokensFromChars(DECK_SYSTEM.length);
 
   let maxEvidenceChars = cfg.maxContextChars;
@@ -179,7 +175,7 @@ export async function runCreditDeckGeneration(params: {
     });
   }
 
-  const { claudeModel, openaiModel, geminiModel, ollamaModel } = params.models;
+  const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
 
   const deckMaxTokens = Math.min(12_000, Math.max(4_000, cfg.maxOutputTokens));
 
@@ -188,7 +184,8 @@ export async function runCreditDeckGeneration(params: {
     claudeModel,
     openaiModel,
     geminiModel,
-    ollamaModel,
+    deepseekModel,
+    apiKeys: params.apiKeys,
   });
 
   if (!result.ok) {

@@ -1,6 +1,6 @@
 /**
- * Google Gemini web app (gemini.google.com) — open with optional `?q=` prefill (undocumented; may not
- * always populate the composer). Same URL-length strategy as ChatGPT / Meta AI; full prompt is always
+ * Google Gemini web app (gemini.google.com) �?open with optional `?q=` prefill (undocumented; may not
+ * always populate the composer). Same URL-length strategy as ChatGPT / DeepSeek; full prompt is always
  * copied to the clipboard when using Open in Gemini.
  */
 
@@ -10,7 +10,7 @@ import {
   EXTERNAL_AI_URL_TRUNCATION_NOTE,
 } from "@/lib/chatgpt-open-url";
 
-/** Border/text for “Open in Gemini” / “Update all via Gemini” (yellow — distinct from Meta AI blue). */
+/** Border/text for “Open in Gemini�?/ “Update all via Gemini�?(yellow �?distinct from ChatGPT red / DeepSeek blue). */
 export const GEMINI_UI_BUTTON_COLOR = "#EAB308";
 
 export const GEMINI_NEW_CHAT_ORIGIN = "https://gemini.google.com/app";
@@ -25,22 +25,22 @@ function hrefLengthForQuery(query: string): number {
 
 export const GEMINI_LONG_URL_NOTICE = CHATGPT_LONG_URL_NOTICE;
 
-/** After intros that already say the prompt is copied (e.g. “Open in AI; copy attaches…”). */
-export const CHATGPT_META_GEMINI_LONG_URL_NOTICES = EXTERNAL_AI_URL_TRUNCATION_NOTE;
+/** After intros that already say the prompt is copied (e.g. “Open in AI; copy attaches…�?. */
+export const CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES = EXTERNAL_AI_URL_TRUNCATION_NOTE;
 
 /** Single line for tabs that previously duplicated intro + three notices. */
-export const OPEN_IN_EXTERNAL_AI_FULL_LINE = `Open in Claude, ChatGPT, Gemini, or Meta AI. ${EXTERNAL_AI_URL_BEHAVIOR_NOTE}`;
+export const OPEN_IN_EXTERNAL_AI_FULL_LINE = `Open in Claude, ChatGPT, Gemini, or DeepSeek. ${EXTERNAL_AI_URL_BEHAVIOR_NOTE}`;
 
 export function geminiOpenStatusMessage(wasShortened: boolean, copyFailed: boolean): string {
   if (copyFailed) {
     return wasShortened
-      ? "Gemini opened. Copy failed — select the prompt in OREO and paste; the tab may only show a shortened version."
-      : "Gemini opened in a new tab. Prompt could not be copied — use the prompt below and paste.";
+      ? "Gemini opened. Copy failed �?select the prompt in OREO and paste; the tab may only show a shortened version."
+      : "Gemini opened in a new tab. Prompt could not be copied �?use the prompt below and paste.";
   }
   if (wasShortened) {
-    return "Gemini opened. The link used a shortened prompt so it fits; the FULL prompt was copied — paste into Gemini for complete instructions.";
+    return "Gemini opened. The link used a shortened prompt so it fits; the FULL prompt was copied �?paste into Gemini for complete instructions.";
   }
-  return "Gemini opened in a new tab. Prompt copied to clipboard — paste if it didn't prefill.";
+  return "Gemini opened in a new tab. Prompt copied to clipboard �?paste if it didn't prefill.";
 }
 
 function extractOutlineBlock(md: string, maxChars: number): string {
@@ -53,11 +53,11 @@ function extractOutlineBlock(md: string, maxChars: number): string {
   if (block.length > maxChars) {
     block = `${block.slice(0, maxChars - 30).trim()}\n…`;
   }
-  return block || "(See full prompt in OREO — Copy prompt.)";
+  return block || "(See full prompt in OREO �?Copy prompt.)";
 }
 
 function buildShortenedTail(outline: string): string {
-  return `\n\n---\nOREO — Gemini URL length limit: text above is abbreviated. The FULL prompt was copied to your clipboard when you clicked Open — paste it into the same chat. Deliver the same work: follow every section below with full depth.\n\nOutline / section headers from the full prompt:\n${outline}`;
+  return `\n\n---\nOREO �?Gemini URL length limit: text above is abbreviated. The FULL prompt was copied to your clipboard when you clicked Open �?paste it into the same chat. Deliver the same work: follow every section below with full depth.\n\nOutline / section headers from the full prompt:\n${outline}`;
 }
 
 export function buildGeminiNewChatUrl(fullPrompt: string): { href: string; wasShortened: boolean } {
@@ -100,7 +100,7 @@ export function openGeminiNewChatWindow(fullPrompt: string): { wasShortened: boo
   return { wasShortened };
 }
 
-/** Open Gemini tab + copy full prompt (same pattern as Meta AI). */
+/** Open Gemini tab + copy full prompt (same pattern as DeepSeek web chat). */
 export function openGeminiWithClipboard(
   prompt: string,
   setStatusMessage: (s: string | null) => void,

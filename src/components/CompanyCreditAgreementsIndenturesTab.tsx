@@ -5,11 +5,11 @@ import { Card } from "@/components/ui";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import {
-  CHATGPT_META_GEMINI_LONG_URL_NOTICES,
+  CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES,
   OPEN_IN_EXTERNAL_AI_FULL_LINE,
   openGeminiWithClipboard,
 } from "@/lib/gemini-open-url";
-import { openMetaAiWithClipboard } from "@/lib/meta-ai-open-url";
+import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
@@ -175,7 +175,7 @@ Provide a structured table with these columns:
 - Filing Link
 - Notes
 
-Examples of “Security / Facility”:
+Examples of “Security / Facility�?
 - Revolving Credit Facility
 - Term Loan B
 - 6.75% Senior Notes due 2029
@@ -184,7 +184,7 @@ Examples of “Security / Facility”:
 - Convertible Notes
 - DIP Facility
 
-Examples of “Document Type”:
+Examples of “Document Type�?
 - Credit Agreement
 - Indenture
 - Supplemental Indenture
@@ -238,27 +238,7 @@ For {{TICKER}}, do the following:
 2. review the latest 10-K and 10-Q debt footnotes for all debt instruments mentioned
 3. review exhibit indexes in 10-K, 10-Q, and especially 8-Ks for agreements and amendments
 4. search specifically for:
-   - “credit agreement”
-   - “indenture”
-   - “supplemental indenture”
-   - “amendment”
-   - “amended and restated”
-   - “joinder”
-   - “guarantee”
-   - “security agreement”
-   - “pledge agreement”
-   - “intercreditor”
-   - “term loan”
-   - “revolving credit”
-   - “ABL”
-   - “note purchase agreement”
-   - “exchange offer”
-   - “consent solicitation”
-   - “tender offer”
-   - “receivables facility”
-   - “warehouse facility”
-   - “securitization”
-5. tie each document back to the relevant debt instrument
+   - “credit agreement�?   - “indenture�?   - “supplemental indenture�?   - “amendment�?   - “amended and restated�?   - “joinder�?   - “guarantee�?   - “security agreement�?   - “pledge agreement�?   - “intercreditor�?   - “term loan�?   - “revolving credit�?   - “ABL�?   - “note purchase agreement�?   - “exchange offer�?   - “consent solicitation�?   - “tender offer�?   - “receivables facility�?   - “warehouse facility�?   - “securitization�?5. tie each document back to the relevant debt instrument
 6. provide direct links to the actual exhibit whenever possible
 
 ==================================================
@@ -376,7 +356,7 @@ Analyze the security package in detail:
 - Is collateral automatically released in certain circumstances?
 - What are the release provisions for guarantees and liens?
 - Are there asset sale, threshold, or disposal-based release provisions?
-- Are there “permitted liens” that can materially dilute collateral?
+- Are there “permitted liens�?that can materially dilute collateral?
 - Are there carve-outs that make the lien package weaker than it first appears?
 
 Then summarize:
@@ -465,7 +445,7 @@ A. Definition walk-through
 - Show FX treatment
 - Show pension / litigation / casualty / transaction cost treatment
 - Show revenue synergies, if allowed
-- Show “expected to be realized” language
+- Show “expected to be realized�?language
 - Show time periods permitted for realization
 - Show caps, limits, and anti-abuse language
 
@@ -476,7 +456,7 @@ Tell me:
 - Which add-backs are uncapped
 - Which add-backs are subjective
 - Which add-backs are most likely to inflate covenant capacity
-- Whether there are “phantom EBITDA” or forward-looking adjustments
+- Whether there are “phantom EBITDA�?or forward-looking adjustments
 - Whether the definition is borrower-friendly, sponsor-friendly, or market-normal
 
 C. Covenant compliance implications
@@ -531,7 +511,7 @@ For each negative covenant:
 - Note whether baskets are free-and-clear, ratio-based, builder-based, reclassification-capable, or RP-capacity based
 - Note whether baskets can be re-used
 - Note whether there is no-default / event-of-default condition
-- Note whether there is a “pro forma compliance” condition
+- Note whether there is a “pro forma compliance�?condition
 - Note whether there is a test based on first lien leverage, secured leverage, total leverage, FCCR, etc.
 - Note whether there are starter baskets, general baskets, ratio debt baskets, local baskets, foreign baskets, non-loan-party baskets, receivables baskets, purchase-money baskets, hedging baskets, intercompany baskets, refinancing baskets, and acquisition baskets
 
@@ -566,7 +546,7 @@ Then after the table, explain:
 - Which are easiest to use
 - Which are misleadingly small or large
 - Which interact with each other in dangerous ways
-- Whether there is meaningful “trap door” capacity
+- Whether there is meaningful “trap door�?capacity
 - Whether unrestricted sub designation can unlock additional capacity
 - Whether there is hidden portability capacity in acquisition, JV, foreign sub, or non-loan-party baskets
 
@@ -677,7 +657,7 @@ Analyze whether the document facilitates or blocks:
 - Structurally senior debt
 - Liens on previously unencumbered assets
 - Inside maturity walls
-- Debt incurred under “Credit Agreement Refinancing Indebtedness,” “Permitted Refinancing,” “Incremental Equivalent Debt,” “Ratio Debt,” or similar concepts
+- Debt incurred under “Credit Agreement Refinancing Indebtedness,�?“Permitted Refinancing,�?“Incremental Equivalent Debt,�?“Ratio Debt,�?or similar concepts
 - Intercompany debt that can migrate value
 - Transfer of IP, equity interests, foreign assets, real estate, JV interests, receivables, or other crown-jewel assets outside the credit group
 
@@ -686,7 +666,7 @@ Specifically identify:
 - Potential LME loopholes
 - Whether pro rata sharing provisions are strong or weak
 - Whether open market purchase language can be abused
-- Whether “sacred rights” would stop a priming or uptier
+- Whether “sacred rights�?would stop a priming or uptier
 - Whether non-consenting lenders could be subordinated, primed, or left behind
 - Whether unrestricted sub designation is a trap door
 - Whether investment and RP baskets can be combined to move value
@@ -711,7 +691,7 @@ Explain:
 - Whether debt can travel with acquired entities
 - Whether acquired debt can remain outstanding
 - Whether acquired liens can remain outstanding
-- Whether there are “acquired company” baskets that materially expand capacity
+- Whether there are “acquired company�?baskets that materially expand capacity
 
 Then summarize:
 - How much flexibility management has to reshape the group
@@ -1061,15 +1041,15 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
     window.open(prefillUrl, "_blank", "noopener,noreferrer");
     try {
       navigator.clipboard.writeText(text).then(
-        () => setStatusMessage("Claude opened in a new tab. Prompt copied to clipboard — paste if needed."),
+        () => setStatusMessage("Claude opened in a new tab. Prompt copied to clipboard �?paste if needed."),
         () => {
           setClipboardFailed(true);
-          setStatusMessage("Claude opened in a new tab. Prompt could not be copied — use prompt below.");
+          setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use prompt below.");
         }
       );
     } catch {
       setClipboardFailed(true);
-      setStatusMessage("Claude opened in a new tab. Prompt could not be copied — use prompt below.");
+      setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use prompt below.");
     }
   }
 
@@ -1095,9 +1075,9 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
     }
   }
 
-  function openInMetaAI(text: string) {
+  function openInDeepSeek(text: string) {
     if (!text) return;
-    openMetaAiWithClipboard(text, setStatusMessage, setClipboardFailed);
+    openDeepSeekWithClipboard(text, setStatusMessage, setClipboardFailed);
   }
 
   function openInGemini(text: string) {
@@ -1109,14 +1089,14 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
     return (
       <Card title="Credit Agreements & Indentures">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          Select a company to open this prompt in Claude, ChatGPT, or Meta AI.
+          Select a company to open this prompt in Claude, ChatGPT, or DeepSeek.
         </p>
       </Card>
     );
   }
 
   return (
-    <Card title={`Credit Agreements & Indentures — ${safeTicker}`}>
+    <Card title={`Credit Agreements & Indentures �?${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="min-w-0 flex-1 space-y-4 lg:min-h-[70vh]">
           {BOXES.map((b) => (
@@ -1135,7 +1115,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
         <div className="flex w-full flex-col lg:w-[420px] flex-shrink-0 gap-4">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
-              Prompt 1 — find documents
+              Prompt 1 �?find documents
             </div>
             <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
               {OPEN_IN_EXTERNAL_AI_FULL_LINE}
@@ -1173,11 +1153,11 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
               </button>
               <button
                 type="button"
-                onClick={() => openInMetaAI(prompt)}
+                onClick={() => openInDeepSeek(prompt)}
                 className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
               >
-                Open in Meta AI
+                Open in DeepSeek
               </button>
               <button
                 type="button"
@@ -1190,13 +1170,16 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
             </div>
             <TabPromptApiButtons
               userPrompt={prompt}
-              onResult={async (text) => {
+              onResult={() => {
+                setClipboardFailed(false);
+              }}
+              persistAfterResult={async (text) => {
                 const t = text.trim();
                 if (!safeTicker || !t) return;
-                await saveToServer(safeTicker, "credit-agreements-indentures-other", t);
+                const ok = await saveToServer(safeTicker, "credit-agreements-indentures-other", t);
+                if (!ok) throw new Error("Could not save response.");
                 setSavedRefreshKey((k) => k + 1);
                 setStatusMessage("API response saved to the Document list box above.");
-                setClipboardFailed(false);
               }}
               className="mt-2 border-t border-[var(--border2)] pt-2"
             />
@@ -1204,10 +1187,10 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
 
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
-              Prompt 2 — distressed doc review
+              Prompt 2 �?distressed doc review
             </div>
             <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-              Paste the actual credit agreement / indenture text into the chat after opening. {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+              Paste the actual credit agreement / indenture text into the chat after opening. {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
             </p>
             <PromptTemplateBox
               tabId="credit-agreements-doc-review"
@@ -1242,11 +1225,11 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
               </button>
               <button
                 type="button"
-                onClick={() => openInMetaAI(docReviewPrompt)}
+                onClick={() => openInDeepSeek(docReviewPrompt)}
                 className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
               >
-                Open in Meta AI
+                Open in DeepSeek
               </button>
               <button
                 type="button"
@@ -1259,13 +1242,16 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
             </div>
             <TabPromptApiButtons
               userPrompt={docReviewPrompt}
-              onResult={async (text) => {
+              onResult={() => {
+                setClipboardFailed(false);
+              }}
+              persistAfterResult={async (text) => {
                 const t = text.trim();
                 if (!safeTicker || !t) return;
-                await saveToServer(safeTicker, "credit-agreements-indentures-credit-agreement", t);
+                const ok = await saveToServer(safeTicker, "credit-agreements-indentures-credit-agreement", t);
+                if (!ok) throw new Error("Could not save response.");
                 setSavedRefreshKey((k) => k + 1);
                 setStatusMessage("API response saved to the Credit agreement box above.");
-                setClipboardFailed(false);
               }}
               className="mt-2 border-t border-[var(--border2)] pt-2"
             />

@@ -8,6 +8,7 @@ import {
   createUserSavedDocument,
   deleteUserSavedDocument,
   listUserSavedDocumentRows,
+  upsertUserSavedDocument,
   type UserSavedDocumentListRow,
 } from "@/lib/user-workspace-store";
 
@@ -285,6 +286,62 @@ async function ensurePdfkitFontMetricsAvailable(): Promise<void> {
       // best effort; PDFKit may still succeed if it needs a different font file
     }
   }
+}
+
+/**
+ * Store a client-generated SEC XBRL as-presented Excel workbook under Saved Documents for this ticker.
+ * Filename is stable per ticker + filing (form, date, accession) so bulk or single save **replaces**
+ * the same workbook instead of creating timestamped duplicates.
+ */
+export async function saveXbrlAsPresentedExcelToSavedDocuments(
+  userId: string,
+  ticker: string,
+  filing: { form: string; filingDate: string; accessionNumber: string },
+  xlsxBuffer: Buffer
+): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> {
+  const safeTicker = sanitizeTicker(ticker);
+  if (!safeTicker) return { ok: false, error: "Invalid ticker" };
+  if (xlsxBuffer.length < 64) return { ok: false, error: "Invalid spreadsheet payload." };
+  const head = xlsxBuffer.subarray(0, 4);
+  const sig = String.fromCharCode(head[0] ?? 0, head[1] ?? 0, head[2] ?? 0, head[3] ?? 0);
+  if (sig !== "PK\u0003\u0004") {
+    return { ok: false, error: "File must be a valid .xlsx workbook." };
+  }
+
+  const now = new Date();
+  const acc = filing.accessionNumber.replace(/[^\w-]+/g, "_");
+  const form = toSafeFilename((filing.form || "FILING").trim());
+  const fdate = toSafeFilename((filing.filingDate || "nodate").trim());
+  const slug = toSafeFilename(`${safeTicker}_SEC-XBRL-financials_as-presented_${form}_${fdate}_${acc}`);
+  const filename = `${slug}.xlsx`;
+  const titleRaw = `${safeTicker} SEC XBRL financials (as-presented) · ${filing.form} ${filing.filingDate}`;
+  const title = toSafeFilename(titleRaw).slice(0, 140) || slug;
+  const originalUrl = `app:sec-xbrl-as-presented/${encodeURIComponent(safeTicker)}/${encodeURIComponent(filing.accessionNumber)}`;
+
+  const saved = await upsertUserSavedDocument(userId, safeTicker, {
+    filename,
+    title,
+    originalUrl,
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    body: xlsxBuffer,
+    savedAtIso: now.toISOString(),
+    convertedToPdf: false,
+  });
+  if (!saved.ok) return saved;
+
+  const item: SavedDocumentItem = {
+    id: saved.id,
+    ticker: safeTicker,
+    title,
+    filename,
+    relativePath: `${SUBFOLDER_NAME}/${filename}`,
+    originalUrl,
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    savedAtIso: now.toISOString(),
+    bytes: xlsxBuffer.length,
+    convertedToPdf: false,
+  };
+  return { ok: true, item };
 }
 
 export async function saveDocumentFromUrl(

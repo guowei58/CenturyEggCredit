@@ -1,5 +1,5 @@
 /**
- * When true, Meta AI and Ollama UI actions show a placeholder alert instead of running.
+ * When true, DeepSeek and Ollama UI actions show a placeholder alert instead of running.
  * Set to false to restore full behavior (opening Meta / calling Ollama APIs).
  */
 export const META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE = true;

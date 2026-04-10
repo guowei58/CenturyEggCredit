@@ -17,9 +17,12 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/adapter-pg": "^7.6.0",
+    "@prisma/client": "^7.6.0",
     "bcryptjs": "^3.0.3",
+    "cheerio": "^1.0.0",
     "docx": "^9.6.1",
     "dompurify": "^3.3.3",
+    "exceljs": "^4.4.0",
     "fast-xml-parser": "^5.5.9",
     "jszip": "^3.10.1",
     "mammoth": "^1.12.0",
@@ -30,15 +33,14 @@
     "pg": "^8.20.0",
     "playwright": "^1.58.2",
     "pptxgenjs": "^4.0.1",
+    "prisma": "^7.6.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "remark-linkify": "^1.1.0",
-    "xlsx": "^0.18.5",
-    "@prisma/client": "^7.6.0",
-    "prisma": "^7.6.0"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

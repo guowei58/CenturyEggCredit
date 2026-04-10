@@ -174,7 +174,7 @@ export function BrokerResearchFeed({
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs" style={{ color: "var(--muted2)" }}>
-          Uses your configured search provider (Google CSE or SerpApi). Keys stay on the server.
+          Uses Serper (Google search API). Set SERPER_API_KEY on the server.
         </p>
         <button
           type="button"

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { resolveProvider } from "@/lib/ai-provider";
-import { checkOllamaHealth } from "@/lib/ollama";
 import { runCreditDeckGeneration } from "@/lib/creditDeck/runCreditDeckGeneration";
 import { getProject } from "@/lib/creditMemo/store";
 import { clampMemoWordBudget } from "@/lib/creditMemo/memoPlanner";
@@ -13,9 +12,9 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 export async function POST(req: Request) {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const llmAuth = await getAuthenticatedLlmContext();
+  if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { userId, bundle } = llmAuth.ctx;
 
   let body: {
     projectId?: string;
@@ -27,6 +26,7 @@ export async function POST(req: Request) {
     claudeModel?: unknown;
     openaiModel?: unknown;
     geminiModel?: unknown;
+    deepseekModel?: unknown;
     ollamaModel?: unknown;
   };
   try {
@@ -63,22 +63,6 @@ export async function POST(req: Request) {
 
   const provider = resolveProvider(body.provider);
 
-  if (provider === "ollama") {
-    const health = await checkOllamaHealth();
-    if (health.status === "disconnected") {
-      return NextResponse.json({ error: "Ollama not reachable. Run `ollama serve`." }, { status: 503 });
-    }
-    if (health.status === "model_missing") {
-      return NextResponse.json(
-        { error: `Ollama model missing. Run: ollama pull ${health.model}` },
-        { status: 503 }
-      );
-    }
-    if (health.status === "error") {
-      return NextResponse.json({ error: health.detail?.slice(0, 200) ?? "Ollama check failed." }, { status: 503 });
-    }
-  }
-
   const result = await runCreditDeckGeneration({
     userId,
     project,
@@ -87,6 +71,7 @@ export async function POST(req: Request) {
     provider,
     useTemplate: body.useTemplate === true,
     models: resolveCreditMemoModels(body),
+    apiKeys: bundle,
   });
 
   if (!result.ok) {

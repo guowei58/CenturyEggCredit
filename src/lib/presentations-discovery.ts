@@ -1,11 +1,12 @@
 /**
- * Server-only: management presentation discovery via Claude (web search) or OpenAI / Gemini / Ollama (no live web).
+ * Server-only: management presentation discovery via Claude (web search) or OpenAI / Gemini / DeepSeek (no live web).
  * Do not import in client.
  */
 
 import type { AiProvider } from "@/lib/ai-provider";
 import { callClaude, type ClaudeResult, WEB_SEARCH_TOOL } from "@/lib/anthropic";
 import { llmCompleteSingle } from "@/lib/llm-router";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const USER_PROMPT_TEMPLATE =
   "Show me the latest 10 management presentations from [TICKER]. Use web search to find the company's investor relations page and current presentation links. Include management transcripts for each event when available, and include a ROIC.AI transcript link per event when possible (https://www.roic.ai/quote/[TICKER]/transcripts). Return only the list of results with title and link (and transcript link). No introduction, no explanation, no commentary.";
@@ -21,7 +22,8 @@ Output format only: one line per item with a short title and a full URL. No intr
  */
 export async function discoverPresentationsWithClaude(
   ticker: string,
-  claudeModel: string
+  claudeModel: string,
+  apiKeys: LlmCallApiKeys
 ): Promise<ClaudeResult> {
   const safeTicker = ticker.trim().toUpperCase();
   if (!safeTicker) return { ok: false, error: "Ticker required" };
@@ -32,6 +34,7 @@ export async function discoverPresentationsWithClaude(
     maxTokens: 4096,
     model: claudeModel,
     tools: [WEB_SEARCH_TOOL],
+    apiKeys,
   });
 }
 
@@ -39,34 +42,38 @@ export type PresentationLlmModels = {
   claudeModel: string;
   openaiModel?: string;
   geminiModel?: string;
-  ollamaModel?: string;
+  deepseekModel?: string;
 };
 
 export async function discoverPresentations(
   ticker: string,
   provider: AiProvider,
-  models: PresentationLlmModels
+  models: PresentationLlmModels,
+  apiKeys: LlmCallApiKeys
 ): Promise<ClaudeResult> {
   if (provider === "claude") {
-    return discoverPresentationsWithClaude(ticker, models.claudeModel);
+    return discoverPresentationsWithClaude(ticker, models.claudeModel, apiKeys);
   }
   const safeTicker = ticker.trim().toUpperCase();
   if (!safeTicker) return { ok: false, error: "Ticker required" };
   const userMessage = `Ticker: ${safeTicker}\n\nList up to 10 management or investor presentations (titles + working or best-known URLs). Training-data only; user will verify links.`;
-  if (provider === "ollama") {
-    return llmCompleteSingle("ollama", OPENAI_SYSTEM, userMessage, {
+  if (provider === "deepseek") {
+    return llmCompleteSingle("deepseek", OPENAI_SYSTEM, userMessage, {
       maxTokens: 4096,
-      ollamaModel: models.ollamaModel,
+      deepseekModel: models.deepseekModel,
+      apiKeys,
     });
   }
   if (provider === "gemini") {
     return llmCompleteSingle("gemini", OPENAI_SYSTEM, userMessage, {
       maxTokens: 4096,
       geminiModel: models.geminiModel,
+      apiKeys,
     });
   }
   return llmCompleteSingle("openai", OPENAI_SYSTEM, userMessage, {
     maxTokens: 4096,
     openaiModel: models.openaiModel,
+    apiKeys,
   });
 }

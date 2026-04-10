@@ -8,9 +8,9 @@ import { normalizeUrlForMatch } from "./utils";
 import { dedupeResults } from "./search/dedupe";
 
 describe("substack query builder", () => {
-  it("builds multiple queries", () => {
+  it("builds a small consolidated query set", () => {
     const q = buildDiscoveryQueries({ ticker: "TSLA", companyName: "Tesla", aliases: ["Tesla, Inc."] });
-    expect(q.length).toBeGreaterThan(2);
+    expect(q).toHaveLength(2);
   });
 });
 

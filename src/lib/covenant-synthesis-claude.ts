@@ -5,18 +5,20 @@
 import type { AiProvider } from "@/lib/ai-provider";
 import { COVENANT_SYNTHESIS_SYSTEM, COVENANT_SYNTHESIS_USER_INSTRUCTIONS } from "@/data/covenant-synthesis-prompt";
 import { llmCompleteSingle } from "@/lib/llm-router";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 export type CovenantResolvedModels = {
   claudeModel: string;
   openaiModel?: string;
   geminiModel?: string;
-  ollamaModel: string;
+  deepseekModel: string;
 };
 
 export async function synthesizeCovenantsMarkdown(
   userContent: string,
   provider: AiProvider,
-  models: CovenantResolvedModels
+  models: CovenantResolvedModels,
+  apiKeys: LlmCallApiKeys
 ): Promise<{ ok: true; markdown: string } | { ok: false; error: string }> {
   const result = await llmCompleteSingle(
     provider,
@@ -27,7 +29,8 @@ export async function synthesizeCovenantsMarkdown(
       claudeModel: models.claudeModel,
       openaiModel: models.openaiModel,
       geminiModel: models.geminiModel,
-      ollamaModel: models.ollamaModel,
+      deepseekModel: models.deepseekModel,
+      apiKeys,
     }
   );
 

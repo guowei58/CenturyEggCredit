@@ -4,14 +4,15 @@
  */
 
 import type { AiProvider } from "@/lib/ai-provider";
+import { getDeepSeekModel } from "@/lib/deepseek";
 import { llmCompleteSingle } from "@/lib/llm-router";
-import { getOllamaModel } from "@/lib/ollama";
+import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 export type OverviewLlmModels = {
   claudeModel?: string;
   openaiModel?: string;
   geminiModel?: string;
-  ollamaModel?: string;
+  deepseekModel?: string;
 };
 
 function defaultOverviewModels(): OverviewLlmModels {
@@ -19,7 +20,7 @@ function defaultOverviewModels(): OverviewLlmModels {
     claudeModel: process.env.ANTHROPIC_MODEL?.trim() || undefined,
     openaiModel: process.env.OPENAI_OVERVIEW_MODEL?.trim() || process.env.OPENAI_MODEL?.trim() || undefined,
     geminiModel: process.env.GEMINI_OVERVIEW_MODEL?.trim() || process.env.GEMINI_MODEL?.trim() || undefined,
-    ollamaModel: process.env.OLLAMA_OVERVIEW_MODEL?.trim() || getOllamaModel(),
+    deepseekModel: process.env.DEEPSEEK_OVERVIEW_MODEL?.trim() || getDeepSeekModel(),
   };
 }
 
@@ -42,7 +43,8 @@ async function llmComplete(
   system: string,
   userContent: string,
   maxTokens = 1500,
-  models?: OverviewLlmModels
+  models?: OverviewLlmModels,
+  apiKeys?: LlmCallApiKeys
 ): Promise<string> {
   const m = models ?? defaultOverviewModels();
   const result = await llmCompleteSingle(provider, system, userContent, {
@@ -50,7 +52,8 @@ async function llmComplete(
     claudeModel: m.claudeModel,
     openaiModel: m.openaiModel,
     geminiModel: m.geminiModel,
-    ollamaModel: m.ollamaModel,
+    deepseekModel: m.deepseekModel,
+    apiKeys,
   });
   if (!result.ok) throw new Error(result.error);
   return result.text.trim();
@@ -62,11 +65,12 @@ async function llmComplete(
 export async function summarizeBusinessOverview(
   item1Text: string,
   provider: AiProvider,
-  models?: OverviewLlmModels
+  models?: OverviewLlmModels,
+  apiKeys?: LlmCallApiKeys
 ): Promise<string> {
   const truncated = item1Text.length > 26000 ? item1Text.slice(0, 26000) + "\n\n[Text truncated.]" : item1Text;
   const userContent = BUSINESS_OVERVIEW_USER_PREFIX + truncated;
-  return llmComplete(provider, BUSINESS_OVERVIEW_SYSTEM, userContent, 1200, models);
+  return llmComplete(provider, BUSINESS_OVERVIEW_SYSTEM, userContent, 1200, models, apiKeys);
 }
 
 export type SegmentSummary = {
@@ -86,7 +90,8 @@ export async function summarizeBusinessLines(
   segmentRevenues: { segmentName: string; revenue: number }[] = [],
   totalRevenue: number | null = null,
   provider: AiProvider = "claude",
-  models?: OverviewLlmModels
+  models?: OverviewLlmModels,
+  apiKeys?: LlmCallApiKeys
 ): Promise<SegmentSummary[]> {
   if (segmentNames.length === 0) return [];
 
@@ -100,7 +105,7 @@ Use the following 10-K Item 1 text to write one short paragraph per segment expl
 ---
 ${truncated}`;
 
-  const raw = await llmComplete(provider, SEGMENT_SUMMARY_SYSTEM, userContent, 2000, models);
+  const raw = await llmComplete(provider, SEGMENT_SUMMARY_SYSTEM, userContent, 2000, models, apiKeys);
 
   const paragraphs = raw
     .split(/\n\s*\n+/)

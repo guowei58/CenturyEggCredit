@@ -6,7 +6,7 @@ import type {
   SubstackSearchResponse,
   SubstackSearchResult,
 } from "../types";
-import { createSerpApiDiscoveryProvider } from "../discovery/serpApi";
+import { createSerperDiscoveryProvider } from "../discovery/serperDiscovery";
 import { detectPublicationFromHit } from "../discovery/publicationDetector";
 import { matchText } from "../matching/matcher";
 import { inferFeedUrl } from "../rss/feedInference";
@@ -108,17 +108,17 @@ export async function runSubstackSearch(req: SubstackSearchRequest, userId: stri
     });
   }
 
-  // 2) Live discovery (SerpApi) in parallel
+  // 2) Live discovery (Serper) in parallel
   let live: SubstackSearchResult[] = [];
   let newPubs = 0;
   let rssIngested = 0;
 
   if (wantDiscovery && cfg.discoveryEnabled) {
-    if (!cfg.serpApiKey) {
+    if (!cfg.serperApiKey) {
       // keep DB results but annotate error
       live = [];
     } else {
-      const provider = createSerpApiDiscoveryProvider(cfg.serpApiKey, cfg.requestTimeoutMs);
+      const provider = createSerperDiscoveryProvider(cfg.serperApiKey, cfg.requestTimeoutMs);
       const discovered = await provider.discover({
         ticker,
         companyName,

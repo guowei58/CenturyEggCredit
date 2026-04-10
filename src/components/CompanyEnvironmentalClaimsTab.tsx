@@ -135,6 +135,15 @@ export function CompanyEnvironmentalClaimsTab({
 
   return (
     <div className="flex flex-col gap-3 min-h-0">
+      <p
+        className="rounded-md border border-dashed px-3 py-2 text-sm leading-relaxed"
+        style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+      >
+        <span className="font-medium" style={{ color: "var(--text)" }}>
+          To come…
+        </span>{" "}
+        Claims workflow in this area is not complete yet; content below is preliminary.
+      </p>
       <Card title="Environmental Risk">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
           <p className="text-xs" style={{ color: "var(--muted)" }}>

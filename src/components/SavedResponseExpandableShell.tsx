@@ -90,7 +90,7 @@ export function SavedResponseExpandableShell({
   const tall = fillViewportMinHeight ? "lg:min-h-[70vh]" : "";
   const frameClass = expanded
     ? "fixed inset-0 z-[300] m-0 box-border flex max-h-none min-h-0 flex-col overflow-hidden rounded-none border-2 p-4"
-    : `box-border flex max-h-none flex-col overflow-visible rounded-lg border-2 p-4 ${tall} ${className}`.trim();
+    : `box-border flex max-h-none min-w-0 flex-col overflow-visible rounded-lg border-2 p-4 ${tall} ${className}`.trim();
 
   const saveAllDisabled =
     !showSaveAllLinks || authStatus !== "authenticated" || saveAllBusy;

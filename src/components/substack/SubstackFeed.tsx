@@ -118,7 +118,7 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
 
         <label className="flex cursor-pointer items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
           <input type="checkbox" checked={liveDiscovery} onChange={(e) => setLiveDiscovery(e.target.checked)} />
-          Live discovery (SerpApi)
+          Live discovery (Serper)
         </label>
 
         <button

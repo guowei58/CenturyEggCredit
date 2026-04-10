@@ -22,7 +22,7 @@ export const CHATGPT_LONG_URL_NOTICE =
 
 /** URL-length / prefill caveat (use after text that already says the prompt was copied). */
 export const EXTERNAL_AI_URL_TRUNCATION_NOTE =
-  "ChatGPT, Meta AI, and Gemini may shorten very long URLs—use Copy prompt for the full text; paste if prefill fails.";
+  "ChatGPT, DeepSeek, and Gemini may shorten very long URLs—use Copy prompt for the full text; paste if prefill fails.";
 
 /**
  * Standalone sentence for tabs that don’t already mention the clipboard.

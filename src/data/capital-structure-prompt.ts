@@ -7,7 +7,6 @@
 export const CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS = [
   "/capital-structure-sample-1.png",
   "/capital-structure-sample-2.png",
-  "/capital-structure-sample-3.png",
 ] as const;
 
 export const CAPITAL_STRUCTURE_PROMPT_TEMPLATE = `Build a WORKING EXCEL capital structure workbook for {{TICKER}}.

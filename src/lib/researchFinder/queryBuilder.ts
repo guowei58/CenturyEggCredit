@@ -30,32 +30,27 @@ function researchClause(): string {
   return `(${RESEARCH_TERMS.map((t) => (/\s/.test(t) ? `"${t}"` : t)).join(" OR ")})`;
 }
 
+/**
+ * One consolidated query per provider (was many site×term pairs). Cuts Serper calls sharply.
+ * `maxQueries` limits how many profile `terms` enter the OR group (breadth vs query length).
+ */
 export function buildProviderQueries(providerId: ResearchProviderId, profile: ResearchProfile, maxQueries: number): string[] {
   const p = getProviderById(providerId);
   if (!p) return [];
 
   const domainQs = p.domains.map((d) => `site:${d}`);
-  const terms = profile.terms;
+  const sitesGroup = domainQs.join(" OR ");
+  const termLimit = Math.min(8, Math.max(3, maxQueries));
+  const terms = profile.terms.slice(0, termLimit);
+  const termOr = terms.join(" OR ");
   const rc = researchClause();
 
-  const templates: string[] = [];
-  for (const site of domainQs) {
-    for (const t of terms.slice(0, 6)) {
-      templates.push(`${site} ${t} ${rc}`);
-      templates.push(`${site} ${t}`);
-    }
-  }
-
-  // WSJ-specific: focus to bankruptcy path
   if (providerId === "wsj_bankruptcy") {
-    const wsjSite = "site:wsj.com";
-    for (const t of terms.slice(0, 5)) {
-      templates.push(`${wsjSite} ${t} (pro bankruptcy OR "Pro Bankruptcy") ${rc}`);
-      templates.push(`${wsjSite} ${t} (bankruptcy OR restructuring OR distressed)`);
-    }
+    const wsj = domainQs[0] ?? "site:wsj.com";
+    const q = `${wsj} (${termOr}) ((${rc}) OR ("Pro Bankruptcy" OR "pro bankruptcy") OR (bankruptcy OR restructuring OR distressed))`;
+    return [uniq([q.replace(/\s+/g, " ").trim()])[0]!];
   }
 
-  const out = uniq(templates.map((s) => s.replace(/\s+/g, " ").trim()));
-  return out.slice(0, maxQueries);
+  const q = `(${sitesGroup}) (${termOr}) ${rc}`;
+  return [q.replace(/\s+/g, " ").trim()];
 }
-

@@ -25,7 +25,7 @@ export function SubstackCoveragePanel({ data }: { data: SubstackSearchResponse |
         <li>Returned results: {data.results.length}</li>
       </ul>
       <div className="mt-2 rounded border border-dashed p-2" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-        SerpApi is used to discover new publications/posts. RSS ingestion builds a durable local index over time. No paywall bypassing.
+        Serper (Google search API) discovers new publications/posts. RSS ingestion builds a durable local index over time. No paywall bypassing.
       </div>
     </div>
   );

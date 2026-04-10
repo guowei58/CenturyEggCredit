@@ -10,8 +10,8 @@ import { AiCreditDeckTemplateFileBox } from "@/components/AiCreditDeckTemplateFi
 import { AI_CREDIT_DECK_PROMPT_TEMPLATE } from "@/data/ai-credit-deck-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow, CHATGPT_META_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
-import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
+import { openGeminiNewChatWindow, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -109,7 +109,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
           setClipboardFailed(false);
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened. Link text was shortened to fit; FULL prompt copied — paste into ChatGPT, then upload your deck template and documents."
+              ? "ChatGPT opened. Link text was shortened to fit; FULL prompt copied �?paste into ChatGPT, then upload your deck template and documents."
               : "ChatGPT opened. Upload your deck template and paste documents for best results."
           );
         },
@@ -117,7 +117,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+              ? "ChatGPT opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
               : "ChatGPT opened. Upload your template and paste the prompt manually."
           );
         }
@@ -126,33 +126,33 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "ChatGPT opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+          ? "ChatGPT opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
           : "ChatGPT opened. Upload your template and paste the prompt manually."
       );
     }
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    const { wasShortened } = openMetaAiNewChatWindow(prompt);
+    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
     try {
       navigator.clipboard.writeText(prompt).then(
         () => {
           setClipboardFailed(false);
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened. Link text was shortened to fit; FULL prompt copied — paste into Meta AI, then upload your deck template and documents."
-              : "Meta AI opened. Upload your deck template and paste documents for best results."
+              ? "DeepSeek opened. Link text was shortened to fit; FULL prompt copied �?paste into DeepSeek, then upload your deck template and documents."
+              : "DeepSeek opened. Upload your deck template and paste documents for best results."
           );
         },
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
-              : "Meta AI opened. Upload your template and paste the prompt manually."
+              ? "DeepSeek opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
+              : "DeepSeek opened. Upload your template and paste the prompt manually."
           );
         }
       );
@@ -160,8 +160,8 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Meta AI opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
-          : "Meta AI opened. Upload your template and paste the prompt manually."
+          ? "DeepSeek opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
+          : "DeepSeek opened. Upload your template and paste the prompt manually."
       );
     }
   }
@@ -177,7 +177,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
           setClipboardFailed(false);
           setStatusMessage(
             wasShortened
-              ? "Gemini opened. Link text was shortened to fit; FULL prompt copied — paste into Gemini, then upload your deck template and documents."
+              ? "Gemini opened. Link text was shortened to fit; FULL prompt copied �?paste into Gemini, then upload your deck template and documents."
               : "Gemini opened. Upload your deck template and paste documents for best results."
           );
         },
@@ -185,7 +185,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Gemini opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+              ? "Gemini opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
               : "Gemini opened. Upload your template and paste the prompt manually."
           );
         }
@@ -194,7 +194,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Gemini opened (short link). Copy failed — paste the prompt from OREO, then upload your template and documents."
+          ? "Gemini opened (short link). Copy failed �?paste the prompt from OREO, then upload your template and documents."
           : "Gemini opened. Upload your template and paste the prompt manually."
       );
     }
@@ -212,9 +212,9 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
 
   return (
     <div className="space-y-8">
-      <Card title={`AI Credit Deck — ${safeTicker}`}>
+      <Card title={`AI Credit Deck �?${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Same workflow as Org Chart: upload your template file, run the prompt in Claude, ChatGPT, Gemini, or Meta AI, and save the output here.
+          Same workflow as Org Chart: upload your template file, run the prompt in Claude, ChatGPT, Gemini, or DeepSeek, and save the output here.
         </p>
         <div className="flex flex-col gap-6 lg:flex-row">
           {isSavedResponseCollapsed ? (
@@ -314,7 +314,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
             <div>
               <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
                 Prompt for AI Credit Deck (uses your exact instructions). Open in AI; copy also goes to clipboard.{" "}
-                {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+                {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
               </p>
               <div
                 className="rounded border p-3 mb-2 text-xs max-h-[min(40vh,320px)] overflow-y-auto whitespace-pre-wrap"
@@ -349,11 +349,11 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
                 </button>
                 <button
                   type="button"
-                  onClick={openInMetaAI}
+                  onClick={openInDeepSeek}
                   className="tab-prompt-ai-action-btn"
-                  style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                  style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
                 >
-                  Open in Meta AI
+                  Open in DeepSeek
                 </button>
                 <button
                   type="button"
@@ -366,11 +366,18 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
               </div>
               <TabPromptApiButtons
                 userPrompt={prompt}
-                onResult={(text) => {
-                  setEditDraft(text);
-                  setIsEditing(true);
-                  setStatusMessage("Response from API — review and click Save to store.");
+                onResult={() => {
                   setClipboardFailed(false);
+                }}
+                persistAfterResult={async (text) => {
+                  const trimmed = text.trim();
+                  if (!safeTicker) return;
+                  const ok = await saveToServer(safeTicker, "ai-credit-deck", trimmed);
+                  if (!ok) throw new Error("Could not save response.");
+                  setSavedContent(trimmed);
+                  setIsEditing(false);
+                  setEditDraft("");
+                  setStatusMessage("Response saved.");
                 }}
                 className="mt-3 border-t border-[var(--border2)] pt-3"
               />

@@ -68,12 +68,13 @@ Components live under `src/components/news/` (`NewsFeed`, `NewsCard`, `NewsFilte
 ## Troubleshooting
 
 - **NewsAPI “Missing API key”:** Set `NEWSAPI_KEY` in `.env.local` (not `NEWS_API_KEY`) and restart the dev server. Keys are read only on the server.
+- **NewsAPI zero articles:** Results are limited to the domains in `newsApiDomains.ts`; articles only on other sites never appear. Matching uses your `q` string across article fields—if the company rarely appears in major-outlet pieces, try adding `aliases` in the request. Free plans may restrict `everything` (delay or quota); check NewsAPI’s dashboard.
 - **Marketaux “Invalid JSON” / “Non-JSON response”:** The HTTP body was not JSON—often an HTML error page (bad token, CDN/WAF, proxy) or an empty body. Confirm `MARKETAUX_API_KEY` in the Marketaux dashboard, check plan/rate limits, and read the new status + body snippet in the provider error message. A `User-Agent` header is sent to reduce CDN blocks.
 
 ## Known limitations
 
 - **Rate limits:** Alpha Vantage free tier is strict; Finnhub, Marketaux, and NewsAPI enforce their own quotas (NewsAPI free tier may restrict `everything`).
-- **NewsAPI:** Uses headline-only search (`searchIn=title`), domain allowlist, and company-centric `q` (name + optional `aliases`; ticker only as fallback). Pagination is single-page (`pageSize` ≤ 100) unless extended later.
+- **NewsAPI:** Uses the `everything` endpoint with a domain allowlist (see `newsApiDomains.ts`) and company-centric `q` (name + optional `aliases`; ticker only as fallback). `searchIn` is omitted so `q` matches title, description, and content as NewsAPI defines. Pagination is single-page (`pageSize` ≤ 100) unless extended later.
 - **Overlap:** The same story often appears from multiple vendors; dedupe reduces clutter but heuristics are imperfect.
 - **Coverage / latency:** Some tickers return sparse results; timeouts are per-provider (`NEWS_PROVIDER_*_TIMEOUT_MS`).
 

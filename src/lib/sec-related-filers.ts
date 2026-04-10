@@ -1,20 +1,18 @@
 /**
- * List EDGAR filer CIKs that appear in an issuer’s submissions history (from accession numbers),
- * similar to the SEC full-text search “Entity” facet for a company.
+ * SEC Filings tab — “Entity” list aligned with sec.gov/edgar/search full-text index (EFTS).
+ * See `sec-efts-entity-facet.ts`.
  */
 
+import { getFilingsByTicker } from "@/lib/sec-edgar";
 import {
-  getCompanyMetadataByCik,
-  getCompanyTickersEntriesCached,
-  getFilingsByTicker,
-  parseFilerCikFromAccession,
-} from "@/lib/sec-edgar";
+  EFTS_ENTITY_FACET_MAX_FILINGS_SCANNED,
+  fetchEdgarSearchEntityFacetForCik,
+} from "@/lib/sec-efts-entity-facet";
 
 export type RelatedSecFiler = {
   cik: string;
   ticker: string;
   entityName: string;
-  /** Filings in this issuer’s current submissions feed whose accession starts with this filer CIK. */
   filingCount: number;
 };
 
@@ -25,18 +23,18 @@ export type RelatedSecFilersResult =
       parentName: string;
       related: RelatedSecFiler[];
       disclaimer: string;
+      relatedSource: "edgar-fts";
+      /** Filings in the EFTS index for this CIK filter (same order of magnitude as SEC search). */
+      eftsTotalFilings: number;
+      /** True if we stopped paging before exhausting all index hits (cap ~1500). */
+      eftsTruncated: boolean;
     }
   | { ok: false; message: string };
 
+const MAX_ENTITY_ROWS = 85;
+
 const DISCLAIMER =
-  "Each row is a distinct filer CIK taken from accession numbers in this issuer’s EDGAR submissions data—the same filer CIK SEC shows in filing metadata. Counts are how often that filer CIK appears on filings listed for the sidebar ticker’s issuer (recent submissions feed), not a global full-text hit count. Insiders and other registrants appear here when they file forms in that feed.";
-
-const MAX_ENTITIES = 80;
-const MIN_GAP_MS = 120;
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
+  "Same source as SEC.gov EDGAR Search: the full-text filing index (EFTS) filtered by this issuer’s CIK. Each row is an entity label attached to those hits; the number is how often that label appears on an indexed filing. It includes reporting subsidiaries, insiders, and other co-filers—like the SEC site’s Entity list. (These counts are not the same as the simple submissions API list below.)";
 
 export async function getRelatedSecFilersForTicker(ticker: string): Promise<RelatedSecFilersResult> {
   const t = ticker?.trim();
@@ -47,67 +45,31 @@ export async function getRelatedSecFilersForTicker(ticker: string): Promise<Rela
     return { ok: false, message: "Company not found in SEC ticker list or filings unavailable." };
   }
 
-  const counts = new Map<string, number>();
-  for (const f of filings.filings) {
-    const filer = parseFilerCikFromAccession(f.accessionNumber);
-    if (!filer) continue;
-    counts.set(filer, (counts.get(filer) ?? 0) + 1);
+  const parentCik = filings.cik;
+  const parentName = filings.companyName.trim() || t.toUpperCase();
+
+  try {
+    const { rows, totalFilingsInIndex, truncated } = await fetchEdgarSearchEntityFacetForCik(parentCik);
+    const related: RelatedSecFiler[] = rows.slice(0, MAX_ENTITY_ROWS).map((r) => ({
+      cik: r.cik,
+      ticker: r.ticker,
+      entityName: r.entityName,
+      filingCount: r.filingCount,
+    }));
+
+    return {
+      ok: true,
+      parentCik,
+      parentName,
+      related,
+      disclaimer: truncated
+        ? `${DISCLAIMER} We stop after scanning about ${EFTS_ENTITY_FACET_MAX_FILINGS_SCANNED.toLocaleString()} filings; sec.gov may include additional pages, so tail entities and totals can differ slightly.`
+        : DISCLAIMER,
+      relatedSource: "edgar-fts",
+      eftsTotalFilings: totalFilingsInIndex,
+      eftsTruncated: truncated,
+    };
+  } catch {
+    return { ok: false, message: "Could not load SEC EDGAR full-text entity list." };
   }
-
-  const sorted = Array.from(counts.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, MAX_ENTITIES);
-
-  const entries = await getCompanyTickersEntriesCached();
-  const fromTickers = new Map<string, { ticker: string; title: string }>();
-  if (entries) {
-    for (const e of entries) {
-      const cik = String(e.cik_str).padStart(10, "0");
-      const tk = (e.ticker ?? "").trim().toUpperCase();
-      fromTickers.set(cik, {
-        ticker: tk || "—",
-        title: (e.title ?? "").trim() || `CIK ${cik}`,
-      });
-    }
-  }
-
-  const related: RelatedSecFiler[] = [];
-  let lastMetadataAt = 0;
-
-  async function throttledMetadata(cik: string) {
-    const now = Date.now();
-    if (lastMetadataAt > 0) {
-      const wait = MIN_GAP_MS - (now - lastMetadataAt);
-      if (wait > 0) await sleep(wait);
-    }
-    const meta = await getCompanyMetadataByCik(cik);
-    lastMetadataAt = Date.now();
-    return meta;
-  }
-
-  for (const [cik, filingCount] of sorted) {
-    const mapped = fromTickers.get(cik);
-    let entityName: string;
-    let tickerSym: string;
-
-    if (mapped?.title) {
-      entityName = mapped.title;
-      tickerSym = mapped.ticker;
-    } else {
-      const meta = await throttledMetadata(cik);
-      entityName = meta?.name?.trim() || `CIK ${cik}`;
-      const first = meta?.tickers?.[0]?.trim().toUpperCase();
-      tickerSym = first && first.length > 0 ? first : "—";
-    }
-
-    related.push({ cik, ticker: tickerSym, entityName, filingCount });
-  }
-
-  return {
-    ok: true,
-    parentCik: filings.cik,
-    parentName: filings.companyName.trim() || t.toUpperCase(),
-    related,
-    disclaimer: DISCLAIMER,
-  };
 }

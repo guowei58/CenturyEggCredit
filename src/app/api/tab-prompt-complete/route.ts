@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { normalizeAiProvider, type AiProvider } from "@/lib/ai-provider";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
+import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
-import { checkOllamaHealth } from "@/lib/ollama";
+import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+/** Align with `anthropicFetchTimeoutMs()` default (300s) so Claude can finish large tab prompts. */
+export const maxDuration = 300;
 
 const MAX_USER_CHARS = 400_000;
 const MAX_SYSTEM_CHARS = 24_000;
@@ -15,10 +17,16 @@ const DEFAULT_SYSTEM = `You are a senior credit and equity research assistant. T
 Answer thoroughly. Use Markdown (headings, lists, tables) when it improves clarity. Follow any output structure the user asked for. Do not invent facts; if information is missing, say so briefly.`;
 
 /**
- * POST { provider, userPrompt, systemPrompt?, maxTokens?, claudeModel?, openaiModel?, geminiModel?, ollamaModel? }
+ * POST { provider, userPrompt, systemPrompt?, maxTokens?, claudeModel?, openaiModel?, geminiModel?, deepseekModel? }
  * — one-shot completion for “prompt sidebar” tabs (uses server API keys).
  */
 export async function POST(request: Request) {
+  const llmAuth = await getAuthenticatedLlmContext();
+  if (!llmAuth.ok) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { bundle } = llmAuth.ctx;
+
   let body: unknown;
   try {
     body = await request.json();
@@ -34,12 +42,13 @@ export async function POST(request: Request) {
     claudeModel?: unknown;
     openaiModel?: unknown;
     geminiModel?: unknown;
+    deepseekModel?: unknown;
     ollamaModel?: unknown;
   };
 
   const provider = normalizeAiProvider(b.provider) as AiProvider | null;
   if (!provider) {
-    return NextResponse.json({ error: "provider must be claude, openai, gemini, or ollama" }, { status: 400 });
+    return NextResponse.json({ error: "provider must be claude, openai, gemini, or deepseek" }, { status: 400 });
   }
 
   const userRaw = typeof b.userPrompt === "string" ? b.userPrompt : "";
@@ -59,32 +68,8 @@ export async function POST(request: Request) {
       ? b.systemPrompt.trim().slice(0, MAX_SYSTEM_CHARS)
       : DEFAULT_SYSTEM;
 
-  if (!isProviderConfigured(provider)) {
-    const hint =
-      provider === "openai"
-        ? "OPENAI_API_KEY is not set in .env.local."
-        : provider === "gemini"
-          ? "GEMINI_API_KEY is not set in .env.local."
-          : provider === "ollama"
-            ? "Ollama is selected but local setup may be missing."
-            : "ANTHROPIC_API_KEY is not set in .env.local.";
-    return NextResponse.json({ error: hint }, { status: 503 });
-  }
-
-  if (provider === "ollama") {
-    const health = await checkOllamaHealth();
-    if (health.status === "disconnected") {
-      return NextResponse.json({ error: "Ollama is not reachable. Run `ollama serve`." }, { status: 503 });
-    }
-    if (health.status === "model_missing") {
-      return NextResponse.json(
-        { error: `Ollama model "${health.model}" is not installed. Run: ollama pull ${health.model}` },
-        { status: 503 }
-      );
-    }
-    if (health.status === "error") {
-      return NextResponse.json({ error: health.detail?.slice(0, 200) ?? "Ollama check failed." }, { status: 503 });
-    }
+  if (!isProviderConfigured(provider, bundle)) {
+    return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
 
   let maxTokens = 8192;
@@ -98,7 +83,8 @@ export async function POST(request: Request) {
     claudeModel: models.claudeModel,
     openaiModel: models.openaiModel,
     geminiModel: models.geminiModel,
-    ollamaModel: models.ollamaModel,
+    deepseekModel: models.deepseekModel,
+    apiKeys: bundle,
   });
 
   if (!result.ok) {

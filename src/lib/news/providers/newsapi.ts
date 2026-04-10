@@ -88,7 +88,7 @@ export function createNewsApiNewsProvider(): NewsProvider {
       url.searchParams.set("apiKey", key);
       url.searchParams.set("q", q);
       url.searchParams.set("domains", domains);
-      url.searchParams.set("searchIn", "title");
+      // Omit searchIn: NewsAPI defaults to matching q across article fields. title-only was too strict and often returned zero rows.
       url.searchParams.set("sortBy", "publishedAt");
       url.searchParams.set("pageSize", String(pageSize));
       url.searchParams.set("page", "1");

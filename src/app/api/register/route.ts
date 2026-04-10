@@ -7,6 +7,7 @@ import {
   sendSignupVerificationEmail,
 } from "@/lib/auth-tokens";
 import { prisma } from "@/lib/prisma";
+import { emailUsesHostedLlmKeys } from "@/lib/hosted-llm-accounts";
 import { defaultUserPreferences } from "@/lib/user-preferences-types";
 import { setUserPreferences } from "@/lib/user-preferences-store";
 
@@ -74,6 +75,7 @@ export async function POST(req: Request) {
       const prefs = {
         ...defaultUserPreferences(),
         profile: { chatDisplayId: candidate },
+        apiKeysSetupPending: !emailUsesHostedLlmKeys(emailRaw),
       };
       const saved = await setUserPreferences(user.id, prefs);
       if (saved.ok) break;

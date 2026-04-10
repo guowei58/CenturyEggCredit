@@ -6,7 +6,7 @@ import { RISK_FROM_10K_PROMPT_TEMPLATE } from "@/data/risk-from-10k-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { chatGptOpenStatusMessage, openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
-import { openMetaAiWithClipboard } from "@/lib/meta-ai-open-url";
+import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
@@ -99,19 +99,19 @@ export function CompanyRiskFrom10kTab({
       navigator.clipboard.writeText(prompt).then(
         () =>
           setStatusMessage(
-            "Claude opened in a new tab. Prompt copied to clipboard — paste into Claude if it didn't prefill."
+            "Claude opened in a new tab. Prompt copied to clipboard �?paste into Claude if it didn't prefill."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
-            "Claude opened in a new tab. Prompt could not be copied — use the prompt below and paste into Claude."
+            "Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude."
           );
         }
       );
     } catch {
       setClipboardFailed(true);
       setStatusMessage(
-        "Claude opened in a new tab. Prompt could not be copied — use the prompt below and paste into Claude."
+        "Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude."
       );
     }
   }
@@ -138,9 +138,9 @@ export function CompanyRiskFrom10kTab({
     }
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
-    openMetaAiWithClipboard(prompt, setStatusMessage, setClipboardFailed);
+    openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInGemini() {
@@ -152,14 +152,14 @@ export function CompanyRiskFrom10kTab({
     return (
       <Card title="Risk from 10-K">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          Select a company to open this prompt in Claude, ChatGPT, Gemini, or Meta AI.
+          Select a company to open this prompt in Claude, ChatGPT, Gemini, or DeepSeek.
         </p>
       </Card>
     );
   }
 
   return (
-    <Card title={`Risk from 10-K — ${safeTicker}`}>
+    <Card title={`Risk from 10-K �?${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"
@@ -171,7 +171,7 @@ export function CompanyRiskFrom10kTab({
               <RichPasteTextarea
                 value={editDraft}
                 onChange={setEditDraft}
-                placeholder="Paste your Claude, ChatGPT, Gemini, or Meta AI response here, then click Save."
+                placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek response here, then click Save."
                 className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
                 style={{
                   borderColor: "var(--border2)",
@@ -252,11 +252,11 @@ export function CompanyRiskFrom10kTab({
             </button>
             <button
               type="button"
-              onClick={openInMetaAI}
+              onClick={openInDeepSeek}
               className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+              style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
             >
-              Open in Meta AI
+              Open in DeepSeek
             </button>
             <button
               type="button"
@@ -269,11 +269,18 @@ export function CompanyRiskFrom10kTab({
           </div>
           <TabPromptApiButtons
             userPrompt={prompt}
-            onResult={(text) => {
-              setEditDraft(text);
-              setIsEditing(true);
-              setStatusMessage("Response from API — review and click Save to store.");
+            onResult={() => {
               setClipboardFailed(false);
+            }}
+            persistAfterResult={async (text) => {
+              const trimmed = text.trim();
+              if (!safeTicker) return;
+              const ok = await saveToServer(safeTicker, "risk-from-10k", trimmed);
+              if (!ok) throw new Error("Could not save response.");
+              setSavedContent(trimmed);
+              setIsEditing(false);
+              setEditDraft("");
+              setStatusMessage("Response saved.");
             }}
             className="mt-3 border-t border-[var(--border2)] pt-3"
           />

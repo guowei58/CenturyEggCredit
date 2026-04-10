@@ -11,6 +11,7 @@ import { CompanyFccFilingsTab } from "@/components/CompanyFccFilingsTab";
 import { CompanyOrgChartTab } from "@/components/CompanyOrgChartTab";
 import { CompanyCapitalStructureTab } from "@/components/CompanyCapitalStructureTab";
 import { CompanyOverviewTab } from "@/components/CompanyOverviewTab";
+import { CompanyHowStuffWorksTab } from "@/components/CompanyHowStuffWorksTab";
 import { CompanyRiskFrom10kTab } from "@/components/CompanyRiskFrom10kTab";
 import { CompanyManagementBoardTab } from "@/components/CompanyManagementBoardTab";
 import { CompanyOutOfTheBoxIdeasTab } from "@/components/CompanyOutOfTheBoxIdeasTab";
@@ -22,6 +23,7 @@ import { BusinessModelTab } from "@/components/BusinessModelTab";
 import { CompanyHistoryTab } from "@/components/CompanyHistoryTab";
 import { CompanyCapitalAllocationTab } from "@/components/CompanyCapitalAllocationTab";
 import { CompanyPortersFiveForcesTab } from "@/components/CompanyPortersFiveForcesTab";
+import { CompanyIndustryHistoryDriversTab } from "@/components/CompanyIndustryHistoryDriversTab";
 import { CompanyIndustryValueChainTab } from "@/components/CompanyIndustryValueChainTab";
 import { CompanyEnvironmentalClaimsTab } from "@/components/CompanyEnvironmentalClaimsTab";
 import { CompanyCompetitorsTab } from "@/components/CompanyCompetitorsTab";
@@ -40,7 +42,6 @@ import { CompanyCapStructureRecommendationTab } from "@/components/CompanyCapStr
 import { CompanyForensicAccountingTab } from "@/components/CompanyForensicAccountingTab";
 import { CompanyCreditTimelineTab } from "@/components/CompanyCreditTimelineTab";
 import { CompanySubstackTab } from "@/components/CompanySubstackTab";
-import { CompanyRedditTab } from "@/components/CompanyRedditTab";
 import { CompanyEntitySearchesTab } from "@/components/CompanyEntitySearchesTab";
 import { CompanyCapStackRumorMillTab } from "@/components/CompanyCapStackRumorMillTab";
 import { RatingsResearchLinks } from "@/components/company/RatingsResearchLinks";
@@ -52,6 +53,7 @@ import { CompanyDearDiaryTab } from "@/components/CompanyDearDiaryTab";
 import { CompanyFinancialsTab } from "@/components/CompanyFinancialsTab";
 import { CompanyKpiTab } from "@/components/CompanyKpiTab";
 import { CompanySecXbrlFinancialsTab } from "@/components/CompanySecXbrlFinancialsTab";
+import { CompanyTwentyYearLookbackTab } from "@/components/CompanyTwentyYearLookbackTab";
 import { CompanyRoicAiTab } from "@/components/CompanyRoicAiTab";
 import {
   CompanyRoicAiV2StatementsTab,
@@ -207,6 +209,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "business-overview") {
     return <CompanyOverviewTab ticker={ticker} companyName={companyName} />;
   }
+  if (tabId === "howstuffworks") {
+    return <CompanyHowStuffWorksTab ticker={ticker} companyName={companyName} />;
+  }
   if (tabId === "management-board") {
     return <CompanyManagementBoardTab ticker={ticker} />;
   }
@@ -222,7 +227,11 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "business-model") {
     return <BusinessModelTab ticker={ticker} companyName={companyName} />;
   }
-  if (tabId === "historical-financial-statements" || tabId === "financials") {
+  if (
+    tabId === "historical-financial-statements" ||
+    tabId === "financials" ||
+    tabId === "the-good-bad-and-ugly-historical-financial-statements"
+  ) {
     return <CompanyFinancialsTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "kpi") {
@@ -230,6 +239,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "sec-xbrl-financials") {
     return <CompanySecXbrlFinancialsTab ticker={ticker} />;
+  }
+  if (tabId === "20-year-look-back") {
+    return <CompanyTwentyYearLookbackTab ticker={ticker} />;
   }
   if (tabId === ROIC_ANNUAL_FINANCIAL_STATEMENTS_TAB_ID) {
     return <CompanyRoicAiV2StatementsTab ticker={ticker} statementPeriod="annual" title="Annual Financial Statements" />;
@@ -298,9 +310,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "substack") {
     return <CompanySubstackTab ticker={ticker} companyName={companyName} />;
   }
-  if (tabId === "reddit") {
-    return <CompanyRedditTab ticker={ticker} companyName={companyName} />;
-  }
   if (tabId === "the-cap-stack-rumor-mill") {
     return <CompanyCapStackRumorMillTab ticker={ticker} companyName={companyName} />;
   }
@@ -318,6 +327,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "porters-five-forces") {
     return <CompanyPortersFiveForcesTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "industry-history-and-drivers") {
+    return <CompanyIndustryHistoryDriversTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "industry-value-chain") {
     return <CompanyIndustryValueChainTab ticker={ticker} companyName={companyName} />;
@@ -355,6 +367,20 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "environmental-claims") {
     return <CompanyEnvironmentalClaimsTab ticker={ticker ?? ""} companyName={companyName} />;
   }
+  /** Risk → Claims / Fraud checks & diligence: not finished; show explicit copy instead of generic placeholder. */
+  const riskIncompleteTabIds = new Set([
+    "litigation-claims",
+    "laborpension-claims",
+    "tax-claims",
+    "regulatory-claims",
+    "lease-claims",
+    "tradesupply-chain-claims",
+    "liens",
+    "management-background-check",
+    "legal-searches",
+    "related-party-checks",
+  ]);
+
   const newTabPlaceholders: Record<string, string> = {
     "other-regulatory-filings": "Other Regulatory Filings",
     substack: "Substack",
@@ -383,11 +409,18 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     "subsidiary-list": "Subsidiary List",
   };
   if (newTabPlaceholders[tabId]) {
+    const phTitle = newTabPlaceholders[tabId];
+    const incomplete = riskIncompleteTabIds.has(tabId);
     return (
-      <Card title={`${newTabPlaceholders[tabId]} 鈥?${ticker}`}>
+      <Card title={`${phTitle} — ${ticker}`}>
         <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Placeholder 鈥?no content yet.
+          {incomplete ? "To come…" : "Placeholder — no content yet."}
         </p>
+        {incomplete ? (
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+            This section is not complete yet.
+          </p>
+        ) : null}
       </Card>
     );
   }

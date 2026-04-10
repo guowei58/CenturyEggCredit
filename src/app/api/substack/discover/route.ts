@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { loadSubstackConfigFromEnv } from "@/lib/substack/config";
-import { createSerpApiDiscoveryProvider } from "@/lib/substack/discovery/serpApi";
+import { createSerperDiscoveryProvider } from "@/lib/substack/discovery/serperDiscovery";
 import { detectPublicationFromHit } from "@/lib/substack/discovery/publicationDetector";
 import { inferFeedUrl } from "@/lib/substack/rss/feedInference";
 import { upsertPublications } from "@/lib/substack/registry/fileDb";
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   const cfg = loadSubstackConfigFromEnv();
   if (!cfg.discoveryEnabled) return NextResponse.json({ error: "Substack discovery disabled" }, { status: 400 });
-  if (!cfg.serpApiKey) return NextResponse.json({ error: "SERPAPI_API_KEY is not set" }, { status: 400 });
+  if (!cfg.serperApiKey) return NextResponse.json({ error: "SERPER_API_KEY is not set" }, { status: 400 });
 
   let body: Body;
   try {
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     ? body.aliases.filter((x): x is string => typeof x === "string").map((s) => s.trim()).filter(Boolean)
     : [];
 
-  const provider = createSerpApiDiscoveryProvider(cfg.serpApiKey, cfg.requestTimeoutMs);
+  const provider = createSerperDiscoveryProvider(cfg.serperApiKey, cfg.requestTimeoutMs);
   const discovered = await provider.discover({
     ticker,
     companyName: typeof body.companyName === "string" ? body.companyName.trim() : undefined,

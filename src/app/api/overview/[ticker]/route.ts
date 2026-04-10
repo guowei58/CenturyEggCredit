@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { resolveProvider } from "@/lib/ai-provider";
 import { get10KOverviewRaw } from "@/lib/sec-10k";
+import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured } from "@/lib/llm-router";
 import { summarizeBusinessOverview, summarizeBusinessLines } from "@/lib/overview-claude";
-import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveOverviewLlmModels } from "@/lib/ai-model-from-request";
+import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -36,34 +37,18 @@ export async function GET(
     return NextResponse.json({ error: "Ticker required" }, { status: 400 });
   }
 
+  const llmAuth = await getAuthenticatedLlmContext();
+  if (!llmAuth.ok) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { bundle } = llmAuth.ctx;
+
   const { searchParams } = new URL(request.url);
   const provider = resolveProvider(searchParams.get("provider"));
   const overviewModels = resolveOverviewLlmModels(provider, searchParams.get("model"));
-  if (!isProviderConfigured(provider)) {
-    const msg =
-      provider === "openai"
-        ? "OPENAI_API_KEY is not set. Add it to .env.local for OpenAI overview summaries."
-        : provider === "gemini"
-          ? "GEMINI_API_KEY is not set. Add it to .env.local for Gemini overview summaries."
-          : "ANTHROPIC_API_KEY is not set. Add it to .env.local for Claude overview summaries.";
-    return NextResponse.json({ error: msg }, { status: 503 });
+  if (!isProviderConfigured(provider, bundle)) {
+    return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
-  if (provider === "ollama") {
-    const h = await checkOllamaHealth();
-    if (h.status === "disconnected") {
-      return NextResponse.json({ error: "Ollama not reachable. Run `ollama serve`." }, { status: 503 });
-    }
-    if (h.status === "model_missing") {
-      return NextResponse.json(
-        { error: `Ollama model missing. Run: ollama pull ${h.model}` },
-        { status: 503 }
-      );
-    }
-    if (h.status === "error") {
-      return NextResponse.json({ error: h.detail?.slice(0, 200) ?? "Ollama check failed." }, { status: 503 });
-    }
-  }
-
   try {
     const raw = await get10KOverviewRaw(safeTicker);
     if (!raw) {
@@ -74,14 +59,15 @@ export async function GET(
     }
 
     const [businessOverviewSummary, segmentSummaries] = await Promise.all([
-      summarizeBusinessOverview(raw.item1Text, provider, overviewModels),
+      summarizeBusinessOverview(raw.item1Text, provider, overviewModels, bundle),
       summarizeBusinessLines(
         raw.segmentNames,
         raw.item1Text,
         raw.segmentRevenues,
         raw.totalRevenue,
         provider,
-        overviewModels
+        overviewModels,
+        bundle
       ),
     ]);
 

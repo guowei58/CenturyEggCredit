@@ -2,21 +2,21 @@ import type { DiscoveryParams, DiscoveryProvider, DiscoveryResult, RawDiscoveryH
 import { fetchWithTimeout } from "../utils";
 import { buildDiscoveryQueries } from "./queryBuilder";
 
-type SerpOrganic = {
+type SerperOrganic = {
   title?: string;
   link?: string;
   snippet?: string;
   date?: string;
 };
 
-type SerpResponse = {
-  organic_results?: SerpOrganic[];
-  error?: string;
+type SerperSearchResponse = {
+  organic?: SerperOrganic[];
+  message?: string;
 };
 
-export function createSerpApiDiscoveryProvider(apiKey: string, timeoutMs: number): DiscoveryProvider {
+export function createSerperDiscoveryProvider(apiKey: string, timeoutMs: number): DiscoveryProvider {
   return {
-    id: "serpapi",
+    id: "serper",
     async discover(params: DiscoveryParams): Promise<DiscoveryResult[]> {
       const queries = buildDiscoveryQueries({
         ticker: params.ticker,
@@ -28,16 +28,14 @@ export function createSerpApiDiscoveryProvider(apiKey: string, timeoutMs: number
 
       const settled = await Promise.allSettled(
         queries.map(async (q) => {
-          const url = new URL("https://serpapi.com/search.json");
-          url.searchParams.set("engine", "google");
-          url.searchParams.set("api_key", apiKey);
-          url.searchParams.set("q", q);
-          url.searchParams.set("num", String(perQuery));
-          const res = await fetchWithTimeout(url.toString(), timeoutMs);
-          const json = (await res.json()) as SerpResponse;
-          if (!res.ok) throw new Error(typeof json.error === "string" ? json.error : `SerpApi error ${res.status}`);
-          if (json.error) throw new Error(json.error);
-          const organic = json.organic_results ?? [];
+          const res = await fetchWithTimeout("https://google.serper.dev/search", timeoutMs, {
+            method: "POST",
+            headers: { "X-API-KEY": apiKey, "Content-Type": "application/json" },
+            body: JSON.stringify({ q, num: perQuery }),
+          });
+          const json = (await res.json()) as SerperSearchResponse;
+          if (!res.ok) throw new Error(json.message?.trim() || `Serper error ${res.status}`);
+          const organic = json.organic ?? [];
           const hits: RawDiscoveryHit[] = [];
           for (const it of organic) {
             const title = it.title?.trim() ?? "";
@@ -65,4 +63,3 @@ export function createSerpApiDiscoveryProvider(apiKey: string, timeoutMs: number
     },
   };
 }
-

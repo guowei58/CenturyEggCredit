@@ -1,5 +1,6 @@
 "use client";
 
+import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import type { BrokerAccessLevel, BrokerReportType, BrokerResearchResult } from "@/lib/brokerResearch/types";
 
 const TYPE_LABELS: Record<BrokerReportType, string> = {
@@ -100,7 +101,7 @@ export function BrokerResearchCard({ item }: { item: BrokerResearchResult }) {
           Signals: {item.supportingSignals.join(", ")}
         </p>
       )}
-      <div>
+      <div className="flex flex-wrap items-center gap-2">
         <a
           href={item.url}
           target="_blank"
@@ -110,6 +111,7 @@ export function BrokerResearchCard({ item }: { item: BrokerResearchResult }) {
         >
           Open link
         </a>
+        <SaveFilingLinkButton ticker={item.ticker ?? ""} url={item.url} mode="saved-documents" className="ml-0 px-3 py-2 normal-case" />
       </div>
     </article>
   );

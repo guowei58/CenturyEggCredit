@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ["exceljs"],
   experimental: {
     serverComponentsExternalPackages: ["pdf-parse", "pdfjs-dist", "mammoth", "jszip"],
   },

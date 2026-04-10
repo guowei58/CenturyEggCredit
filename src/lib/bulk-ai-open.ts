@@ -1,5 +1,5 @@
 /**
- * Opens every tab-style research prompt in new Claude, ChatGPT, Gemini, or Meta AI tabs from the company bar.
+ * Opens every tab-style research prompt in new Claude, ChatGPT, Gemini, or DeepSeek (web chat) tabs from the company bar.
  */
 
 import {
@@ -32,21 +32,26 @@ import { MGMT_PRESENTATIONS_PROMPT_TEMPLATE } from "@/data/mgmt-presentations-pr
 import { OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE } from "@/data/out-of-the-box-ideas-prompt";
 import { CAPITAL_ALLOCATION_PROMPT_TEMPLATE } from "@/data/capital-allocation-prompt";
 import { OVERVIEW_PROMPT_TEMPLATE } from "@/data/overview-prompt";
+import {
+  HOW_STUFF_WORKS_PROMPT_TEMPLATE,
+  fillHowStuffWorksPromptPlaceholders,
+} from "@/data/how-stuff-works-prompt";
 import { RISK_FROM_10K_PROMPT_TEMPLATE } from "@/data/risk-from-10k-prompt";
 import { ORG_CHART_PROMPT_TEMPLATE, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
+import { INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE } from "@/data/industry-history-drivers-prompt";
 import { PORTERS_FIVE_FORCES_PROMPT_TEMPLATE } from "@/data/porters-five-forces-prompt";
 import { RESEARCH_ROADMAP_PROMPT_TEMPLATE } from "@/data/research-roadmap-prompt";
 import { STARTUP_RISKS_PROMPT_TEMPLATE } from "@/data/startup-risks-prompt";
 import { SUBSIDIARY_LIST_PROMPT_TEMPLATE } from "@/data/subsidiary-list-prompt";
-import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
+import {
+  modelOverridePayloadForProvider,
+  type ModelRunChoice,
+  modelPayloadForRun,
+} from "@/lib/ai-model-prefs-client";
 import type { AiProvider } from "@/lib/ai-provider";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
 import { openGeminiNewChatWindow } from "@/lib/gemini-open-url";
-import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
-import {
-  META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE,
-  showMetaOllamaPlaceholder,
-} from "@/lib/meta-ollama-ui-placeholder";
+import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 import { saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
 
@@ -96,6 +101,11 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       label: "Business model",
       saveKey: "business-model",
       prompt: ov("business-model", BUSINESS_MODEL_PROMPT_TEMPLATE).replace("[TICKER / COMPANY NAME]", `${tk} / ${dn}`),
+    },
+    {
+      label: "HowStuffWorks",
+      saveKey: "how-stuff-works",
+      prompt: fillHowStuffWorksPromptPlaceholders(ov("how-stuff-works", HOW_STUFF_WORKS_PROMPT_TEMPLATE), dn, tk),
     },
     {
       label: "Management & board",
@@ -164,6 +174,13 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
         /\[COMPANY NAME \/ TICKER\]/g,
         labelParen
       ),
+    },
+    {
+      label: "Industry History and Drivers",
+      saveKey: "industry-history-drivers",
+      prompt: ov("industry-history-drivers", INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE)
+        .replace(/\[INSERT COMPANY NAME\]/g, dn)
+        .replace(/\[INSERT TICKER\]/g, tk),
     },
     {
       label: "Industry Value Chain",
@@ -261,8 +278,12 @@ export type BulkApiProgress = { index: number; total: number; label: string };
 export async function runBulkUpdateViaApi(
   ctx: BulkOpenContext,
   provider: AiProvider,
-  onProgress?: (p: BulkApiProgress) => void
+  onProgress?: (p: BulkApiProgress) => void,
+  /** If omitted, uses the same per-provider payload as `modelOverridePayloadForProvider` (saved prefs). */
+  modelChoice?: ModelRunChoice
 ): Promise<{ ok: number; fail: number; errors: string[] }> {
+  const modelPayload =
+    modelChoice !== undefined ? modelPayloadForRun(provider, modelChoice) : modelOverridePayloadForProvider(provider);
   const entries = collectBulkClaudePromptEntries(ctx);
   const tk = ctx.ticker.trim();
   const errors: string[] = [];
@@ -284,7 +305,7 @@ export async function runBulkUpdateViaApi(
           provider,
           userPrompt: e.prompt.trim(),
           maxTokens: 8192,
-          ...modelOverridePayloadForProvider(provider),
+          ...modelPayload,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
@@ -338,15 +359,11 @@ export function runBulkOpenChatGPT(ctx: BulkOpenContext): void {
   }
 }
 
-/** Same prompts as Claude/ChatGPT, opened in Meta AI new-chat URLs (long prompts may be shortened). */
-export function runBulkOpenMetaAi(ctx: BulkOpenContext): void {
-  if (META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
-    showMetaOllamaPlaceholder();
-    return;
-  }
+/** Same prompts as Claude/ChatGPT, opened in DeepSeek Chat new-tab URLs (long prompts may be shortened). */
+export function runBulkOpenDeepSeek(ctx: BulkOpenContext): void {
   const entries = collectBulkClaudePromptEntries(ctx);
   for (const e of entries) {
-    openMetaAiNewChatWindow(e.prompt);
+    openDeepSeekNewChatWindow(e.prompt);
   }
 }
 

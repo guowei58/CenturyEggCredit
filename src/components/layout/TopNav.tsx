@@ -14,7 +14,7 @@ import { AI_CHAT_NAV_ICON_FRAME_CLASSNAME, EggHocCommitteeMark } from "./EggHocC
 import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
 import { OreoSablePlay } from "./OreoSablePlay";
 import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
-import { UserSettingsModal } from "@/components/layout/UserSettingsModal";
+import { useUserSettingsModal } from "@/components/layout/UserSettingsModalProvider";
 
 const accent = { color: "var(--accent)" } as const;
 
@@ -68,7 +68,7 @@ export function TopNav({
   const [dogOverlay, setDogOverlay] = useState(false);
   const [browserBackReturnHint, setBrowserBackReturnHint] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { openSettings } = useUserSettingsModal();
   const closingViaDooDooRef = useRef(false);
   const dogOverlayRef = useRef(false);
 
@@ -244,7 +244,7 @@ export function TopNav({
               type="button"
               className="shrink-0 rounded border px-2 py-0.5 text-[10px] font-medium sm:text-[11px]"
               style={{ borderColor: "var(--border)", color: "var(--text)" }}
-              onClick={() => setSettingsOpen(true)}
+              onClick={() => openSettings()}
             >
               Settings
             </button>
@@ -367,7 +367,6 @@ export function TopNav({
           </div>,
           document.body
         )}
-      <UserSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </header>
   );
 }

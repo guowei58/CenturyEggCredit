@@ -12,8 +12,8 @@ import { SubsidiaryListExcelFileBox } from "@/components/SubsidiaryListExcelFile
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow, CHATGPT_META_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
-import { openMetaAiNewChatWindow } from "@/lib/meta-ai-open-url";
+import { openGeminiNewChatWindow, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 
 const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
@@ -117,14 +117,14 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
         () =>
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened. Link was shortened; FULL prompt copied — paste it in, then attach Exhibit 21 or other filings if you use them."
+              ? "ChatGPT opened. Link was shortened; FULL prompt copied �?paste it in, then attach Exhibit 21 or other filings if you use them."
               : "ChatGPT opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "ChatGPT opened (short link). Copy failed — paste from OREO; attach filing excerpts you rely on."
+              ? "ChatGPT opened (short link). Copy failed �?paste from OREO; attach filing excerpts you rely on."
               : "ChatGPT opened. Paste the prompt manually; attach any filing excerpts you rely on."
           );
         }
@@ -133,31 +133,31 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "ChatGPT opened (short link). Copy failed — paste from OREO."
+          ? "ChatGPT opened (short link). Copy failed �?paste from OREO."
           : "ChatGPT opened. Paste the prompt manually."
       );
     }
   }
 
-  function openInMetaAI() {
+  function openInDeepSeek() {
     if (!prompt) return;
     setStatusMessage(null);
     setClipboardFailed(false);
-    const { wasShortened } = openMetaAiNewChatWindow(prompt);
+    const { wasShortened } = openDeepSeekNewChatWindow(prompt);
     try {
       navigator.clipboard.writeText(prompt).then(
         () =>
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened. Link was shortened; FULL prompt copied — paste it in, then attach Exhibit 21 or other filings if you use them."
-              : "Meta AI opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them."
+              ? "DeepSeek opened. Link was shortened; FULL prompt copied �?paste it in, then attach Exhibit 21 or other filings if you use them."
+              : "DeepSeek opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Meta AI opened (short link). Copy failed — paste from OREO; attach filing excerpts you rely on."
-              : "Meta AI opened. Paste the prompt manually; attach any filing excerpts you rely on."
+              ? "DeepSeek opened (short link). Copy failed �?paste from OREO; attach filing excerpts you rely on."
+              : "DeepSeek opened. Paste the prompt manually; attach any filing excerpts you rely on."
           );
         }
       );
@@ -165,8 +165,8 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Meta AI opened (short link). Copy failed — paste from OREO."
-          : "Meta AI opened. Paste the prompt manually."
+          ? "DeepSeek opened (short link). Copy failed �?paste from OREO."
+          : "DeepSeek opened. Paste the prompt manually."
       );
     }
   }
@@ -181,14 +181,14 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
         () =>
           setStatusMessage(
             wasShortened
-              ? "Gemini opened. Link was shortened; FULL prompt copied — paste it in, then attach Exhibit 21 or other filings if you use them."
+              ? "Gemini opened. Link was shortened; FULL prompt copied �?paste it in, then attach Exhibit 21 or other filings if you use them."
               : "Gemini opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them."
           ),
         () => {
           setClipboardFailed(true);
           setStatusMessage(
             wasShortened
-              ? "Gemini opened (short link). Copy failed — paste from OREO; attach filing excerpts you rely on."
+              ? "Gemini opened (short link). Copy failed �?paste from OREO; attach filing excerpts you rely on."
               : "Gemini opened. Paste the prompt manually; attach any filing excerpts you rely on."
           );
         }
@@ -197,7 +197,7 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
       setClipboardFailed(true);
       setStatusMessage(
         wasShortened
-          ? "Gemini opened (short link). Copy failed — paste from OREO."
+          ? "Gemini opened (short link). Copy failed �?paste from OREO."
           : "Gemini opened. Paste the prompt manually."
       );
     }
@@ -215,10 +215,10 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
 
   return (
     <div className="space-y-8">
-      <Card title={`Subsidiary List — ${safeTicker}`}>
+      <Card title={`Subsidiary List �?${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
           Same layout as Org Chart: save the model&apos;s answer, upload a working subsidiary-list Excel file (.xlsx)
-          stored under this tab only, and use the prompt in Claude, ChatGPT, Gemini, or Meta AI. This tab has no fixed sample images—attach
+          stored under this tab only, and use the prompt in Claude, ChatGPT, Gemini, or DeepSeek. This tab has no fixed sample images—attach
           Exhibit 21, debt exhibits, or other files in your AI session when helpful.
         </p>
         <div className="flex flex-col gap-6 lg:flex-row">
@@ -254,7 +254,7 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
                   <RichPasteTextarea
                     value={editDraft}
                     onChange={setEditDraft}
-                    placeholder="Paste your Claude, ChatGPT, Gemini, or Meta AI response here (tables, lists, notes), then click Save."
+                    placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek response here (tables, lists, notes), then click Save."
                     className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
                     style={{
                       borderColor: "var(--border2)",
@@ -330,14 +330,14 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
                 Reference materials
               </div>
               <p className="text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-                No bundled sample images for this tab. In Claude, ChatGPT, Gemini, or Meta AI, attach the latest 10-K Exhibit 21, relevant
+                No bundled sample images for this tab. In Claude, ChatGPT, Gemini, or DeepSeek, attach the latest 10-K Exhibit 21, relevant
                 10-Q updates, debt or guarantor exhibits, or your own spreadsheets alongside the prompt when useful.
               </p>
             </div>
 
             <div>
               <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-                Prompt. Open in AI; copy also attaches to clipboard. {CHATGPT_META_GEMINI_LONG_URL_NOTICES}
+                Prompt. Open in AI; copy also attaches to clipboard. {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
               </p>
               <PromptTemplateBox
                 tabId="subsidiary-list"
@@ -376,11 +376,11 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
                 </button>
                 <button
                   type="button"
-                  onClick={openInMetaAI}
+                  onClick={openInDeepSeek}
                   className="tab-prompt-ai-action-btn"
-                  style={{ borderColor: "#0866FF", color: "#0866FF", background: "transparent" }}
+                  style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
                 >
-                  Open in Meta AI
+                  Open in DeepSeek
                 </button>
                 <button
                   type="button"
@@ -393,11 +393,18 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
               </div>
               <TabPromptApiButtons
                 userPrompt={prompt}
-                onResult={(text) => {
-                  setEditDraft(text);
-                  setIsEditing(true);
-                  setStatusMessage("Response from API — review and click Save to store.");
+                onResult={() => {
                   setClipboardFailed(false);
+                }}
+                persistAfterResult={async (text) => {
+                  const trimmed = text.trim();
+                  if (!safeTicker) return;
+                  const ok = await saveToServer(safeTicker, "subsidiary-list", trimmed);
+                  if (!ok) throw new Error("Could not save response.");
+                  setSavedContent(trimmed);
+                  setIsEditing(false);
+                  setEditDraft("");
+                  setStatusMessage("Response saved.");
                 }}
                 className="mt-3 border-t border-[var(--border2)] pt-3"
               />

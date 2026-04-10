@@ -41,14 +41,10 @@ export function AiModelPicker({
   const hydrate = useCallback(() => {
     if (!ready) return;
     const presets = presetsForProvider(provider);
-    const raw = preferences.aiModels?.[provider] ?? "";
-    const id = sanitizeClientModelId(raw) ?? "";
-
-    if (provider === "ollama") {
-      setSelectValue("");
-      setCustom(id);
-      return;
-    }
+    const models = preferences.aiModels as Partial<Record<AiProvider | "ollama", string>> | undefined;
+    const raw =
+      provider === "deepseek" ? models?.deepseek ?? models?.ollama : models?.[provider];
+    const id = sanitizeClientModelId(typeof raw === "string" ? raw : "") ?? "";
 
     if (!id) {
       setSelectValue("");
@@ -67,31 +63,6 @@ export function AiModelPicker({
   useEffect(() => {
     hydrate();
   }, [hydrate]);
-
-  if (provider === "ollama") {
-    return (
-      <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-        <span className="text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
-          Ollama model
-        </span>
-        <input
-          type="text"
-          value={custom}
-          onChange={(e) => setCustom(e.target.value)}
-          onBlur={() => {
-            const ok = sanitizeClientModelId(custom);
-            persist(ok ?? "");
-          }}
-          disabled={!ready}
-          placeholder="Empty = OLLAMA_MODEL from .env"
-          className="min-w-[160px] max-w-[240px] rounded border px-2 py-1 text-[11px]"
-          style={{ borderColor: "var(--border2)", background: "var(--card)", color: "var(--text)" }}
-          spellCheck={false}
-          aria-label="Ollama model name"
-        />
-      </div>
-    );
-  }
 
   const presets = presetsForProvider(provider);
 

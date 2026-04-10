@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   runBulkOpenChatGPT,
   runBulkOpenClaude,
   runBulkOpenGemini,
-  runBulkOpenMetaAi,
+  runBulkOpenDeepSeek,
   runBulkUpdateViaApi,
 } from "@/lib/bulk-ai-open";
-import type { AiProvider } from "@/lib/ai-provider";
+import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { CHATGPT_LONG_URL_NOTICE } from "@/lib/chatgpt-open-url";
 import { GEMINI_LONG_URL_NOTICE, GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
-import { META_AI_LONG_URL_NOTICE } from "@/lib/meta-ai-open-url";
-import {
-  META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE,
-  showMetaOllamaPlaceholder,
-} from "@/lib/meta-ollama-ui-placeholder";
+import { DEEPSEEK_LONG_URL_NOTICE } from "@/lib/deepseek-open-url";
+import type { ModelRunChoice } from "@/lib/ai-model-prefs-client";
+import { userHasCloudApiKeyForProvider } from "@/lib/user-llm-api-key-guard";
+import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { useUserSettingsModalOptional } from "@/components/layout/UserSettingsModalProvider";
+import { ApiModelChoiceModal } from "@/components/ApiModelChoiceModal";
 
-const OLLAMA_BULK_COLOR = "#2563eb";
+const DEEPSEEK_BULK_COLOR = "#2563eb";
 
 /** Bulk bar: fixed min-height so UI/API rows align; centered label; subtle fill reads calmer on dark sb. */
 const bulkBarBtnClass =
@@ -38,6 +40,20 @@ export function CompanyBar({
 }) {
   const [bulkApiBusy, setBulkApiBusy] = useState<AiProvider | null>(null);
   const [bulkApiLine, setBulkApiLine] = useState<string | null>(null);
+  const [bulkModelPick, setBulkModelPick] = useState<AiProvider | null>(null);
+  const { data: session } = useSession();
+  const { preferences } = useUserPreferences();
+  const settingsModal = useUserSettingsModalOptional();
+  const email = session?.user?.email ?? null;
+
+  /** Returns true if the bulk API action may proceed; otherwise opens settings. */
+  function bulkApiAllowedOrPrompt(provider: AiProvider): boolean {
+    if (!userHasCloudApiKeyForProvider(provider, email, preferences)) {
+      settingsModal?.openSettings({ focus: "api-keys" });
+      return false;
+    }
+    return true;
+  }
 
   function bulkCtx() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -48,12 +64,13 @@ export function CompanyBar({
     };
   }
 
-  async function startBulkApi(provider: AiProvider) {
+  function startBulkApi(provider: AiProvider) {
     if (bulkApiBusy || !data.ticker.trim()) return;
-    if (provider === "ollama" && META_AND_OLLAMA_UI_PLACEHOLDER_ACTIVE) {
-      showMetaOllamaPlaceholder();
-      return;
-    }
+    if (!bulkApiAllowedOrPrompt(provider)) return;
+    setBulkModelPick(provider);
+  }
+
+  async function continueBulkApiAfterModel(provider: AiProvider, choice: ModelRunChoice) {
     const who =
       provider === "claude"
         ? "Claude API"
@@ -61,7 +78,7 @@ export function CompanyBar({
           ? "ChatGPT API"
           : provider === "gemini"
             ? "Gemini API"
-            : "Ollama API";
+            : "DeepSeek API";
     const ok = window.confirm(
       `${who} will run all research prompts for ${data.ticker.toUpperCase()} and overwrite (save over) any existing saved answers in those tabs.\n\nContinue?`
     );
@@ -69,9 +86,14 @@ export function CompanyBar({
     setBulkApiBusy(provider);
     setBulkApiLine(null);
     try {
-      const r = await runBulkUpdateViaApi(bulkCtx(), provider, (p) => {
-        setBulkApiLine(`${who}: ${p.index}/${p.total} — ${p.label}`);
-      });
+      const r = await runBulkUpdateViaApi(
+        bulkCtx(),
+        provider,
+        (p) => {
+          setBulkApiLine(`${who}: ${p.index}/${p.total} — ${p.label}`);
+        },
+        choice
+      );
       setBulkApiLine(null);
       const head = `Bulk API finished: ${r.ok} saved, ${r.fail} failed.`;
       if (r.errors.length) {
@@ -94,6 +116,17 @@ export function CompanyBar({
       className="flex flex-shrink-0 flex-col border-b px-5 py-3.5 sm:px-6 sm:py-4"
       style={{ background: "var(--sb)", borderColor: "var(--border)" }}
     >
+      <ApiModelChoiceModal
+        open={bulkModelPick !== null}
+        provider={bulkModelPick}
+        confirmLabel="Continue"
+        onCancel={() => setBulkModelPick(null)}
+        onConfirm={(choice) => {
+          const p = bulkModelPick;
+          setBulkModelPick(null);
+          if (p) void continueBulkApiAfterModel(p, choice);
+        }}
+      />
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
         <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-3.5">
           <span
@@ -143,20 +176,32 @@ export function CompanyBar({
               <button
                 type="button"
                 className={bulkBarBtnClass}
-                style={{ borderColor: "#0866FF", color: "#0866FF" }}
-                title={`Opens many Meta AI tabs with the same prompts. ${META_AI_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
-                onClick={() => runBulkOpenMetaAi(bulkCtx())}
+                style={{ borderColor: DEEPSEEK_BULK_COLOR, color: DEEPSEEK_BULK_COLOR }}
+                title={`Opens many DeepSeek Chat tabs with the same prompts. ${DEEPSEEK_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
+                onClick={() => runBulkOpenDeepSeek(bulkCtx())}
               >
-                Update all via Meta AI
+                Update all via DeepSeek
               </button>
             </div>
-            <div className="grid w-full grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-4 md:items-stretch">
+            <div
+              className="grid w-full grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-4 md:items-stretch"
+              onPointerDownCapture={(e) => {
+                const btn = (e.target as HTMLElement).closest("button[data-bulk-api]");
+                if (!btn) return;
+                const p = normalizeAiProvider(btn.getAttribute("data-bulk-api"));
+                if (!p) return;
+                if (bulkApiAllowedOrPrompt(p)) return;
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               <button
                 type="button"
                 className={bulkBarBtnClass}
-                disabled={bulkApiBusy !== null}
+                data-bulk-api="claude"
+                disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-                title="Runs every research prompt through the Claude API and saves each answer to the matching tab (uses server API key)."
+                title="Runs every research prompt through the Claude API and saves each answer to the matching tab (your key in User Settings, or a hosted account)."
                 onClick={() => void startBulkApi("claude")}
               >
                 Update all via Claude API
@@ -164,9 +209,10 @@ export function CompanyBar({
               <button
                 type="button"
                 className={bulkBarBtnClass}
-                disabled={bulkApiBusy !== null}
+                data-bulk-api="openai"
+                disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
-                title="Runs every research prompt through the OpenAI API and saves each answer to the matching tab."
+                title="Runs every research prompt through the OpenAI API and saves each answer to the matching tab (your key in User Settings, or a hosted account)."
                 onClick={() => void startBulkApi("openai")}
               >
                 Update all via ChatGPT API
@@ -174,9 +220,10 @@ export function CompanyBar({
               <button
                 type="button"
                 className={bulkBarBtnClass}
-                disabled={bulkApiBusy !== null}
+                data-bulk-api="gemini"
+                disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR }}
-                title="Runs every research prompt through the Gemini API and saves each answer to the matching tab."
+                title="Runs every research prompt through the Gemini API and saves each answer to the matching tab (your key in User Settings, or a hosted account)."
                 onClick={() => void startBulkApi("gemini")}
               >
                 Update all via Gemini API
@@ -184,12 +231,13 @@ export function CompanyBar({
               <button
                 type="button"
                 className={bulkBarBtnClass}
-                disabled={bulkApiBusy !== null}
-                style={{ borderColor: OLLAMA_BULK_COLOR, color: OLLAMA_BULK_COLOR }}
-                title="Runs every research prompt through local Ollama (Meta AI has no API bulk path here)."
-                onClick={() => void startBulkApi("ollama")}
+                data-bulk-api="deepseek"
+                disabled={bulkApiBusy !== null || bulkModelPick !== null}
+                style={{ borderColor: DEEPSEEK_BULK_COLOR, color: DEEPSEEK_BULK_COLOR }}
+                title="Runs every research prompt through the DeepSeek API and saves each answer (your key in User Settings, or a hosted account)."
+                onClick={() => void startBulkApi("deepseek")}
               >
-                Update all via Ollama API
+                Update all via DeepSeek API
               </button>
             </div>
             {bulkApiLine ? (
