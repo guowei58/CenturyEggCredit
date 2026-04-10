@@ -19,6 +19,9 @@ function contentTypeForFilename(filename: string): string {
   switch (ext) {
     case ".pdf":
       return "application/pdf";
+    case ".html":
+    case ".htm":
+      return "text/html; charset=utf-8";
     case ".txt":
     case ".md":
     case ".log":

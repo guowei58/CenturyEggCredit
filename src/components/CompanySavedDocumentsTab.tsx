@@ -181,7 +181,14 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
                   <td className="min-w-[220px]">
                     <div className="text-sm" style={{ color: "var(--text)" }}>{it.title}</div>
                     <div className="text-[10px]" style={{ color: "var(--muted)" }}>
-                      {it.convertedToPdf ? "Converted to PDF" : it.contentType?.includes("pdf") ? "PDF" : "File"} ·{" "}
+                      {it.convertedToPdf
+                        ? "Converted to PDF"
+                        : it.contentType?.includes("pdf")
+                          ? "PDF"
+                          : it.contentType?.includes("html")
+                            ? "HTML (open in browser for SEC layout)"
+                            : "File"}{" "}
+                      ·{" "}
                       <span className="font-mono">{it.filename}</span>
                     </div>
                     <div className="mt-1">

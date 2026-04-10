@@ -2,7 +2,6 @@ import fs from "fs/promises";
 import path from "path";
 import PDFDocument from "pdfkit";
 import { PassThrough } from "stream";
-import * as cheerio from "cheerio";
 import { chromium } from "playwright";
 import { getSecEdgarUserAgent } from "@/lib/sec-edgar";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
@@ -125,60 +124,30 @@ function isSecGovHost(urlStr: string): boolean {
 }
 
 /**
- * SEC inline-XBRL `.htm` filings are mostly `<table>` rows. When Playwright is unavailable
- * (e.g. Vercel), we build line-oriented text so PDFs stay readable instead of one giant line.
+ * SEC primary-document URLs live under .../Archives/edgar/data/{cik}/{accession}/file.htm.
+ * Saving the raw HTML and setting <base> to that folder lets the browser resolve relative CSS/scripts.
  */
-function htmlToStructuredPlainTextForSecFilings(html: string): string {
+function secArchivesFolderBaseUrl(pageUrl: string): string | null {
   try {
-    const $ = cheerio.load(html);
-    $("script, style, noscript, link, meta").remove();
-
-    const lines: string[] = [];
-    $("tr").each((_, tr) => {
-      const cells = $(tr)
-        .children("td, th")
-        .map((_, cell) =>
-          $(cell)
-            .text()
-            .replace(/\s+/g, " ")
-            .trim()
-        )
-        .get()
-        .filter((t) => t.length > 0);
-      if (cells.length > 0) {
-        lines.push(cells.join(" | "));
-      }
-    });
-
-    const fromRows = lines.join("\n").trim();
-    if (fromRows.length > 800) {
-      return fromRows.slice(0, 450_000);
-    }
+    const u = new URL(pageUrl);
+    const host = u.hostname.toLowerCase();
+    if (host !== "sec.gov" && !host.endsWith(".sec.gov")) return null;
+    if (!u.pathname.includes("/Archives/edgar/data/")) return null;
+    const dirPath = u.pathname.replace(/\/[^/]*$/, "/");
+    return `${u.origin}${dirPath}`;
   } catch {
-    // fall through
+    return null;
   }
-  return stripHtmlToTextSecEnhanced(html);
 }
 
-/** More line breaks for iXBRL-ish HTML when table extraction is thin. */
-function stripHtmlToTextSecEnhanced(html: string): string {
-  const noScripts = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, " ");
-  const noStyles = noScripts.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, " ");
-  const withBreaks = noStyles
-    .replace(/<\/?(?:p|div|h[1-6]|li|caption|table|tbody|thead|colgroup|col)[^>]*>/gi, "\n")
-    .replace(/<\/?tr[^>]*>/gi, "\n")
-    .replace(/<\/?ix:[^>]+>/gi, "\n")
-    .replace(/<\/t[dh]\s*>/gi, " | ")
-    .replace(/<t[dh][^>]*>/gi, "")
-    .replace(/<br\s*\/?>/gi, "\n");
-  const noTags = withBreaks.replace(/<[^>]+>/g, " ");
-  return decodeHtmlEntities(noTags)
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n[ \t]+/g, "\n")
-    .replace(/[ \t]{2,}/g, " ")
-    .replace(/(?:\s*\|\s*){2,}/g, " | ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+function injectBaseHrefIntoSecHtml(html: string, baseHref: string): string {
+  if (/<base\s[^>]*\bhref\s*=/i.test(html)) return html;
+  const escaped = baseHref.replace(/"/g, "&quot;");
+  const baseTag = `<base href="${escaped}">`;
+  if (/<head[^>]*>/i.test(html)) {
+    return html.replace(/<head([^>]*)>/i, `<head$1>${baseTag}`);
+  }
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">${baseTag}</head><body>${html}</body></html>`;
 }
 
 function stripHtmlToText(html: string): string {
@@ -688,13 +657,42 @@ export async function saveDocumentFromUrl(
         contentType = "application/pdf";
         return persistBuffer(finalFetchedUrl, rendered, { contentType: "application/pdf", converted: true });
       } catch {
-        const rawText = isSecGovHost(finalFetchedUrl)
-          ? htmlToStructuredPlainTextForSecFilings(utf8)
-          : stripHtmlToText(utf8);
+        // Serverless cannot run Playwright; PDF-from-text destroys iXBRL layout. Store original HTML for SEC.
+        if (isSecGovHost(finalFetchedUrl)) {
+          const folderBase = secArchivesFolderBaseUrl(finalFetchedUrl);
+          const htmlBody = folderBase ? injectBaseHrefIntoSecHtml(utf8, folderBase) : utf8;
+          const htmlNameStem = toSafeFilename(safeBase.replace(/\.html?$/i, "") || "sec-filing");
+          const htmlFilename = `${stamp} - ${htmlNameStem}.html`;
+          const htmlBuf = Buffer.from(htmlBody, "utf8");
+          const created = await createUserSavedDocument(userId, safeTicker, {
+            filename: htmlFilename,
+            title: safeBase,
+            originalUrl: finalFetchedUrl,
+            contentType: "text/html; charset=utf-8",
+            body: htmlBuf,
+            savedAtIso: now.toISOString(),
+            convertedToPdf: false,
+          });
+          if (!created.ok) return created;
+          const item: SavedDocumentItem = {
+            id: created.id,
+            ticker: safeTicker,
+            title: safeBase,
+            filename: htmlFilename,
+            relativePath: `${SUBFOLDER_NAME}/${htmlFilename}`,
+            originalUrl: finalFetchedUrl,
+            contentType: "text/html; charset=utf-8",
+            savedAtIso: now.toISOString(),
+            bytes: htmlBuf.length,
+            convertedToPdf: false,
+          };
+          return { ok: true, item };
+        }
+        const rawText = stripHtmlToText(utf8);
         const pdfBuf = await pdfFromText({
           title: safeBase,
           url: finalFetchedUrl,
-          text: rawText.slice(0, isSecGovHost(finalFetchedUrl) ? 400_000 : 200_000),
+          text: rawText.slice(0, 200_000),
         });
         convertedToPdf = true;
         contentType = "application/pdf";
