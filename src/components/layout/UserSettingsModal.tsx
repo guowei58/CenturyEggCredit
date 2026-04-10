@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
-import type { UserResponseVerbosity } from "@/lib/user-preferences-types";
 
 const LLM_LINKS = {
   anthropic: "https://console.anthropic.com/settings/keys",
@@ -39,12 +38,6 @@ export function UserSettingsModal({
   const [keysSaveError, setKeysSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [savingKeys, setSavingKeys] = useState(false);
-  const [responseVerbosity, setResponseVerbosity] = useState<UserResponseVerbosity>(
-    preferences.responseVerbosity === "md" ? "md" : "analyst"
-  );
-  const [verbositySavedToast, setVerbositySavedToast] = useState(false);
-  const [verbositySaveError, setVerbositySaveError] = useState<string | null>(null);
-  const [savingVerbosity, setSavingVerbosity] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -57,10 +50,7 @@ export function UserSettingsModal({
     setKeysSavedToast(false);
     setSaveError(null);
     setKeysSaveError(null);
-    setResponseVerbosity(preferences.responseVerbosity === "md" ? "md" : "analyst");
-    setVerbositySavedToast(false);
-    setVerbositySaveError(null);
-  }, [open, initial, preferences.userLlmApiKeys, preferences.responseVerbosity]);
+  }, [open, initial, preferences.userLlmApiKeys]);
 
   useEffect(() => {
     if (!open || initialFocus !== "api-keys") return;
@@ -81,12 +71,6 @@ export function UserSettingsModal({
     const t = setTimeout(() => setKeysSavedToast(false), 1600);
     return () => clearTimeout(t);
   }, [keysSavedToast]);
-
-  useEffect(() => {
-    if (!verbositySavedToast) return;
-    const t = setTimeout(() => setVerbositySavedToast(false), 1600);
-    return () => clearTimeout(t);
-  }, [verbositySavedToast]);
 
   if (!open) return null;
 
@@ -206,93 +190,6 @@ export function UserSettingsModal({
             ) : invalidLocal ? (
               <p className="mt-2 text-[10px]" style={{ color: "var(--warn)" }}>
                 Use letters/numbers, plus &quot;.&quot;, &quot;_&quot; or &quot;-&quot;.
-              </p>
-            ) : null}
-          </section>
-
-          <section className="mt-4 rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--card2)" }}>
-            <h4 className="text-xs font-semibold" style={{ color: "var(--text)" }}>
-              AI response depth
-            </h4>
-            <p className="mt-1 text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-              Applies to AI Chat, research tab API runs, credit memos, decks, covenant/LME synthesis, and other in-app model calls. Analyst
-              matches the original OREO default (no extra brevity rules in the global system layer). MD asks for about half the prose volume
-              with the same material substance.
-            </p>
-            <div className="mt-3 space-y-2">
-              <label className="flex cursor-pointer items-start gap-2 text-[11px]" style={{ color: "var(--text)" }}>
-                <input
-                  type="radio"
-                  name="response-verbosity"
-                  className="mt-0.5"
-                  checked={responseVerbosity === "md"}
-                  onChange={() => setResponseVerbosity("md")}
-                  disabled={!canSave}
-                />
-                <span>
-                  <span className="font-semibold">MD</span>
-                  <span style={{ color: "var(--muted)" }}> — No time to chit-chat.</span>
-                  <span className="mt-0.5 block font-normal" style={{ color: "var(--muted2)" }}>
-                    Tight, scannable answers for busy readers who still need the important numbers, risks, and caveats.
-                  </span>
-                </span>
-              </label>
-              <label className="flex cursor-pointer items-start gap-2 text-[11px]" style={{ color: "var(--text)" }}>
-                <input
-                  type="radio"
-                  name="response-verbosity"
-                  className="mt-0.5"
-                  checked={responseVerbosity === "analyst"}
-                  onChange={() => setResponseVerbosity("analyst")}
-                  disabled={!canSave}
-                />
-                <span>
-                  <span className="font-semibold">Analyst</span>
-                  <span style={{ color: "var(--muted)" }}> — Don&apos;t want to miss a thing.</span>
-                  <span className="mt-0.5 block font-normal" style={{ color: "var(--muted2)" }}>
-                    Fuller write-ups, edge cases, and nuance when they add analytical value.
-                  </span>
-                </span>
-              </label>
-            </div>
-            <div className="mt-3 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                disabled={!canSave || savingVerbosity}
-                className="rounded border px-3 py-1.5 text-xs font-semibold disabled:opacity-60"
-                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-                onClick={async () => {
-                  setVerbositySaveError(null);
-                  setSavingVerbosity(true);
-                  try {
-                    const nextPrefs = { ...preferences, responseVerbosity };
-                    const res = await fetch("/api/me/preferences", {
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ preferences: nextPrefs }),
-                    });
-                    const j = (await res.json()) as { ok?: boolean; error?: string };
-                    if (!res.ok) throw new Error(j.error || "Save failed");
-                    updatePreferences(() => nextPrefs);
-                    setVerbositySavedToast(true);
-                  } catch (e) {
-                    setVerbositySaveError(e instanceof Error ? e.message : "Save failed");
-                  } finally {
-                    setSavingVerbosity(false);
-                  }
-                }}
-              >
-                {savingVerbosity ? "Saving…" : "Save depth preference"}
-              </button>
-              {verbositySavedToast ? (
-                <span className="text-[10px]" style={{ color: "var(--accent)" }}>
-                  Saved
-                </span>
-              ) : null}
-            </div>
-            {verbositySaveError ? (
-              <p className="mt-2 text-[10px]" style={{ color: "var(--warn)" }}>
-                {verbositySaveError}
               </p>
             ) : null}
           </section>

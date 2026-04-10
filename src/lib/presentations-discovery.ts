@@ -6,7 +6,6 @@
 import type { AiProvider } from "@/lib/ai-provider";
 import { callClaude, type ClaudeResult, WEB_SEARCH_TOOL } from "@/lib/anthropic";
 import { llmCompleteSingle } from "@/lib/llm-router";
-import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const USER_PROMPT_TEMPLATE =
@@ -24,8 +23,7 @@ Output format only: one line per item with a short title and a full URL. No intr
 export async function discoverPresentationsWithClaude(
   ticker: string,
   claudeModel: string,
-  apiKeys: LlmCallApiKeys,
-  responseVerbosity?: ResponseVerbosity
+  apiKeys: LlmCallApiKeys
 ): Promise<ClaudeResult> {
   const safeTicker = ticker.trim().toUpperCase();
   if (!safeTicker) return { ok: false, error: "Ticker required" };
@@ -37,7 +35,6 @@ export async function discoverPresentationsWithClaude(
     model: claudeModel,
     tools: [WEB_SEARCH_TOOL],
     apiKeys,
-    responseVerbosity,
   });
 }
 
@@ -52,11 +49,10 @@ export async function discoverPresentations(
   ticker: string,
   provider: AiProvider,
   models: PresentationLlmModels,
-  apiKeys: LlmCallApiKeys,
-  responseVerbosity?: ResponseVerbosity
+  apiKeys: LlmCallApiKeys
 ): Promise<ClaudeResult> {
   if (provider === "claude") {
-    return discoverPresentationsWithClaude(ticker, models.claudeModel, apiKeys, responseVerbosity);
+    return discoverPresentationsWithClaude(ticker, models.claudeModel, apiKeys);
   }
   const safeTicker = ticker.trim().toUpperCase();
   if (!safeTicker) return { ok: false, error: "Ticker required" };
@@ -66,7 +62,6 @@ export async function discoverPresentations(
       maxTokens: 4096,
       deepseekModel: models.deepseekModel,
       apiKeys,
-      responseVerbosity,
     });
   }
   if (provider === "gemini") {
@@ -74,13 +69,11 @@ export async function discoverPresentations(
       maxTokens: 4096,
       geminiModel: models.geminiModel,
       apiKeys,
-      responseVerbosity,
     });
   }
   return llmCompleteSingle("openai", OPENAI_SYSTEM, userMessage, {
     maxTokens: 4096,
     openaiModel: models.openaiModel,
     apiKeys,
-    responseVerbosity,
   });
 }

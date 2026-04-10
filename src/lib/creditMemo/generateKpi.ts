@@ -1,7 +1,6 @@
 import { KPI_SYSTEM_PROMPT, KPI_TASK_PROMPT } from "@/data/kpi-prompt";
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
 import type { AiProvider } from "@/lib/ai-provider";
-import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { buildEvidencePackSync, formatSourceInventoryList } from "./evidencePack";
@@ -54,7 +53,6 @@ export async function runKpiGeneration(params: {
   companyName?: string;
   models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
-  responseVerbosity?: ResponseVerbosity;
 }): Promise<{ ok: true; markdown: string; sourcePack: string } | { ok: false; error: string }> {
   const cfg = loadCreditMemoConfig();
   const ai = params.provider;
@@ -103,7 +101,6 @@ export async function runKpiGeneration(params: {
     geminiModel,
     deepseekModel,
     apiKeys: params.apiKeys,
-    responseVerbosity: params.responseVerbosity,
   });
 
   if (!result.ok) {

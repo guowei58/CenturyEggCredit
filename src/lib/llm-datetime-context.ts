@@ -1,6 +1,3 @@
-import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
-import { DEFAULT_RESPONSE_VERBOSITY, responseVerbosityInstruction } from "@/lib/llm-response-verbosity";
-
 /**
  * Consumer chat UIs (chat.deepseek.com, ChatGPT, Claude, etc.) inject the current date/time into the model
  * context. Raw provider APIs do not, so models often treat "today" as their training cutoff (e.g. mid-2024).
@@ -36,10 +33,7 @@ Accuracy and self-check (required):
 - If no search tool is available (typical for DeepSeek/OpenAI/Gemini API unless the host adds one), do not claim you browsed the web. Give your best answer and, for critical time-sensitive items, add a short "verify" line with concrete sources (e.g. SEC EDGAR, company IR, rating agency).
 `;
 
-type AugmentLlmOpts = { responseVerbosity?: ResponseVerbosity };
-
-/** Prepends current time, user verbosity preference, and rigor / verification instructions for cloud API completions. */
-export function augmentLlmFullSystemPrompt(systemPrompt: string, opts?: AugmentLlmOpts): string {
-  const v = opts?.responseVerbosity ?? DEFAULT_RESPONSE_VERBOSITY;
-  return `${augmentLlmSystemPromptWithCurrentTime(systemPrompt)}${responseVerbosityInstruction(v)}${LLM_VERIFICATION_SUFFIX}`;
+/** Prepends current time and appends rigor / verification instructions for all cloud API completions. */
+export function augmentLlmFullSystemPrompt(systemPrompt: string): string {
+  return `${augmentLlmSystemPromptWithCurrentTime(systemPrompt)}${LLM_VERIFICATION_SUFFIX}`;
 }

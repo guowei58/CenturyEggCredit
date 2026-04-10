@@ -36,7 +36,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { userId, bundle, responseVerbosity } = llmAuth.ctx;
+  const { userId, bundle } = llmAuth.ctx;
 
   const { ticker } = await params;
   const sym = sanitizeTicker(ticker ?? "");
@@ -101,7 +101,6 @@ ${pack.text}
     deepseekModel: models.deepseekModel,
     openaiFetchTimeoutMs: provider === "openai" ? openAiXbrlConsolidateFetchTimeoutMs() : undefined,
     apiKeys: bundle,
-    responseVerbosity,
   });
 
   if (!result.ok) {

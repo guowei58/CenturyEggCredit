@@ -4,7 +4,7 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { resolveProvider } from "@/lib/ai-provider";
 import { parseCommitteeChatMessages } from "@/lib/committee-chat-parse";
 import { COMMITTEE_CHAT_SYSTEM } from "@/data/committee-chat-prompt";
-import { buildCommitteeOreoContext, resolveDeepSeekCommitteeOreoCharBudget } from "@/lib/committee-ticker-context";
+import { buildCommitteeOreoContext } from "@/lib/committee-ticker-context";
 import { isProviderConfigured, llmCompleteConversation } from "@/lib/llm-router";
 import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
@@ -12,7 +12,6 @@ import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
 import { isOpenAiWebSearchEnabled } from "@/lib/openai";
 import { getUserPreferences } from "@/lib/user-preferences-store";
-import { responseVerbosityFromPreferences } from "@/lib/llm-response-verbosity";
 import {
   buildLlmApiKeyBundle,
   isProviderConfiguredForKeys,
@@ -85,15 +84,15 @@ export async function POST(request: Request) {
   const provider = resolveProvider(b.provider);
   const session = await auth();
 
-  let apiKeysForCall: ReturnType<typeof mergeLlmCallApiKeysWithProcessEnv> | undefined;
-  let responseVerbosity = responseVerbosityFromPreferences(undefined);
-  if (session?.user?.id != null) {
-    const prefs = await getUserPreferences(session.user.id);
-    responseVerbosity = responseVerbosityFromPreferences(prefs);
-    apiKeysForCall = mergeLlmCallApiKeysWithProcessEnv(
-      buildLlmApiKeyBundle(typeof session.user?.email === "string" ? session.user.email : null, prefs)
-    );
-  }
+  const apiKeysForCall =
+    session?.user?.id != null
+      ? mergeLlmCallApiKeysWithProcessEnv(
+          buildLlmApiKeyBundle(
+            typeof session.user?.email === "string" ? session.user.email : null,
+            await getUserPreferences(session.user.id)
+          )
+        )
+      : undefined;
 
   if (!isProviderConfigured(provider, apiKeysForCall)) {
     const hint =
@@ -118,9 +117,7 @@ export async function POST(request: Request) {
   if (sym != null) {
     system += `\n\nThe user currently has ticker **${sym}** selected in the sidebar (context only; they may ask about other names).`;
     if (includeOreo) {
-      const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id, {
-        maxCharBudget: provider === "deepseek" ? resolveDeepSeekCommitteeOreoCharBudget() : undefined,
-      });
+      const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id);
       if (oreoBlock) {
         system += `\n\n---\n## OREO saved workspace (ticker ${sym})\nThe following was read from this ticker's folder in OREO—saved tab responses, Credit Agreements text, and text files under Saved Documents. Use it when relevant.\n\n${oreoBlock}`;
       }
@@ -136,7 +133,6 @@ export async function POST(request: Request) {
     geminiModel,
     deepseekModel,
     apiKeys: apiKeysForCall,
-    responseVerbosity,
     claudeTools:
       provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
     openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),

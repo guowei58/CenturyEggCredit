@@ -4,7 +4,6 @@
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
-import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 
 export type OllamaResult =
   | { ok: true; text: string }
@@ -164,13 +163,13 @@ function friendlyChatError(status: number, raw: string, model: string): OllamaRe
 export async function callOllama(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string; temperature?: number; responseVerbosity?: ResponseVerbosity } = {}
+  options: { maxTokens?: number; model?: string; temperature?: number } = {}
 ): Promise<OllamaResult> {
   const baseUrl = getOllamaBaseUrl();
   const model = options.model?.trim() || getOllamaModel();
   const maxTokens = options.maxTokens ?? 4096;
   const temperature = options.temperature ?? parseOllamaTemperature();
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const body: Record<string, unknown> = {
     model,
@@ -234,13 +233,13 @@ export async function callOllama(
 export async function callOllamaConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string; temperature?: number; responseVerbosity?: ResponseVerbosity } = {}
+  options: { maxTokens?: number; model?: string; temperature?: number } = {}
 ): Promise<OllamaResult> {
   const baseUrl = getOllamaBaseUrl();
   const model = options.model?.trim() || getOllamaModel();
   const maxTokens = options.maxTokens ?? 4096;
   const temperature = options.temperature ?? parseOllamaTemperature();
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const apiMessages: Array<{ role: string; content: string }> = [{ role: "system", content: systemAug }];
 

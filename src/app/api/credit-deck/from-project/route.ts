@@ -14,7 +14,7 @@ export const maxDuration = 300;
 export async function POST(req: Request) {
   const llmAuth = await getAuthenticatedLlmContext();
   if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { userId, bundle, responseVerbosity } = llmAuth.ctx;
+  const { userId, bundle } = llmAuth.ctx;
 
   let body: {
     projectId?: string;
@@ -72,7 +72,6 @@ export async function POST(req: Request) {
     useTemplate: body.useTemplate === true,
     models: resolveCreditMemoModels(body),
     apiKeys: bundle,
-    responseVerbosity,
   });
 
   if (!result.ok) {

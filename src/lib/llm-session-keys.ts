@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { responseVerbosityFromPreferences, type ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import { getUserPreferences } from "@/lib/user-preferences-store";
 import { buildLlmApiKeyBundle, type LlmCallApiKeys } from "@/lib/user-llm-keys";
 
@@ -7,8 +6,6 @@ export type AuthenticatedLlmContext = {
   userId: string;
   email: string | null;
   bundle: LlmCallApiKeys;
-  /** User preference: MD (concise) vs Analyst (exhaustive); applied to in-app LLM system prompts. */
-  responseVerbosity: ResponseVerbosity;
 };
 
 /**
@@ -24,6 +21,5 @@ export async function getAuthenticatedLlmContext(): Promise<
   const email = typeof session.user?.email === "string" ? session.user.email : null;
   const prefs = await getUserPreferences(userId);
   const bundle = buildLlmApiKeyBundle(email, prefs);
-  const responseVerbosity = responseVerbosityFromPreferences(prefs);
-  return { ok: true, ctx: { userId, email, bundle, responseVerbosity } };
+  return { ok: true, ctx: { userId, email, bundle } };
 }

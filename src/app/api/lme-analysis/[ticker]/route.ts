@@ -121,7 +121,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Sign in to run LME analysis." }, { status: 401 });
   }
-  const { userId, bundle, responseVerbosity } = llmAuth.ctx;
+  const { userId, bundle } = llmAuth.ctx;
   if (!isProviderConfigured(provider, bundle)) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
@@ -141,8 +141,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     userPayload,
     provider,
     resolveLmeAnalysisModels(modelBody),
-    bundle,
-    responseVerbosity
+    bundle
   );
   if (!syn.ok) {
     return NextResponse.json({ error: syn.error }, { status: 502 });
