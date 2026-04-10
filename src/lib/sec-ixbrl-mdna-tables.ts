@@ -6,7 +6,7 @@
 import * as cheerio from "cheerio";
 import type { ChildNode, Element as DomElement } from "domhandler";
 
-import { SEC_EDGAR_USER_AGENT } from "@/lib/sec-edgar";
+import { getSecEdgarUserAgent } from "@/lib/sec-edgar";
 
 export type IxbrlFilingSection = "mdna" | "segment";
 
@@ -619,7 +619,7 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
   const url = `https://www.sec.gov/Archives/edgar/data/${cikNum}/${accClean}/${encodeURIComponent(doc)}`;
   let html: string;
   try {
-    const res = await fetch(url, { headers: { "User-Agent": SEC_EDGAR_USER_AGENT, Accept: "text/html,*/*" } });
+    const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent(), Accept: "text/html,*/*" } });
     if (!res.ok) return { ok: false, error: `SEC fetch failed (${res.status})` };
     html = await res.text();
   } catch (e) {

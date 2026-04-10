@@ -3,7 +3,7 @@ import path from "path";
 import PDFDocument from "pdfkit";
 import { PassThrough } from "stream";
 import { chromium } from "playwright";
-import { SEC_EDGAR_USER_AGENT } from "@/lib/sec-edgar";
+import { getSecEdgarUserAgent } from "@/lib/sec-edgar";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import {
   createUserSavedDocument,
@@ -36,8 +36,7 @@ function userAgentForRemoteSave(urlStr: string): string {
   try {
     const host = new URL(urlStr).hostname.toLowerCase();
     if (host === "sec.gov" || host.endsWith(".sec.gov")) {
-      const fromEnv = process.env.SEC_EDGAR_USER_AGENT?.trim();
-      return fromEnv && fromEnv.length > 8 ? fromEnv : SEC_EDGAR_USER_AGENT;
+      return getSecEdgarUserAgent();
     }
   } catch {
     // ignore
@@ -293,10 +292,24 @@ async function pdfFromRenderedHtmlContent(params: { url: string; html: string })
   }
 }
 
+function isServerlessReadOnlyDeploy(): boolean {
+  return Boolean(
+    process.env.VERCEL ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME ||
+      process.env.NETLIFY ||
+      process.env.FUNCTIONS_WORKER_RUNTIME
+  );
+}
+
 async function ensurePdfkitFontMetricsAvailable(): Promise<void> {
-  // If PDFKit is webpack-bundled, it resolves AFM files under `.next/server/chunks/data/` (broken __dirname).
-  // Prefer `serverComponentsExternalPackages: ['pdfkit']` in next.config.js so `__dirname` stays `.../pdfkit/js`.
-  // This copy is a dev / fallback safety net when source exists (e.g. local node_modules).
+  // Vercel/AWS Lambda: `/var/task` is read-only — never mkdir under `.next` (ENOENT on mkdir).
+  // Production relies on `serverComponentsExternalPackages: ['pdfkit']` + traced `node_modules/pdfkit/js/data`.
+  if (isServerlessReadOnlyDeploy()) {
+    return;
+  }
+
+  // If PDFKit is webpack-bundled locally, it may resolve AFM files under `.next/server/chunks/data/`.
+  // Copy from node_modules into those dirs as a dev fallback only.
   const sourceDir = path.join(process.cwd(), "node_modules", "pdfkit", "js", "data");
   const targetDirs = [
     path.join(process.cwd(), ".next", "server", "chunks", "data"),
@@ -435,9 +448,13 @@ export async function saveDocumentFromUrl(
   let lastStatus: number | null = null;
   let lastFetchError: string | null = null;
 
+  const hostLower = url.hostname.toLowerCase();
+  const fetchTimeoutMs =
+    hostLower === "sec.gov" || hostLower.endsWith(".sec.gov") ? 55_000 : 25_000;
+
   for (const headers of fetchAttempts) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25_000);
+    const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
     try {
       const attempt = await fetch(url.toString(), {
         redirect: "follow",
@@ -548,7 +565,7 @@ export async function saveDocumentFromUrl(
     if (lastStatus === 403 || lastStatus === 401) {
       return {
         ok: false,
-        error: `${baseMsg} — the host denied access from this server (common for cloud IPs vs SEC.gov). Set SEC_EDGAR_USER_AGENT on production to a descriptive value with a contact email, redeploy, and try again; or use a direct .pdf exhibit link when available.`,
+        error: `${baseMsg} — the host denied access from this server (common for cloud IPs vs SEC.gov). Set SEC_EDGAR_USER_AGENT in Vercel (app name + email; a bare email is auto-prefixed), redeploy, and try again; or use a direct .pdf exhibit link when available.`,
       };
     }
     const helpful =

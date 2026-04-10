@@ -5,7 +5,22 @@
  */
 
 export const SEC_EDGAR_USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
-const USER_AGENT = SEC_EDGAR_USER_AGENT;
+
+/**
+ * User-Agent for SEC HTTP requests. `SEC_EDGAR_USER_AGENT` env overrides the default.
+ * A bare email in env is wrapped with an app name (SEC expects a descriptive identifier, not only an address).
+ */
+export function getSecEdgarUserAgent(): string {
+  const raw = process.env.SEC_EDGAR_USER_AGENT?.trim();
+  if (!raw || raw.length < 8) {
+    return SEC_EDGAR_USER_AGENT;
+  }
+  const bareEmail = /^[^\s<>,]+@[^\s<>,]+\.[^\s@]+$/i.test(raw);
+  if (bareEmail) {
+    return `CenturyEggCredit (${raw})`;
+  }
+  return raw;
+}
 
 export type SecFiling = {
   form: string;
@@ -63,7 +78,7 @@ export type SecCompanyProfile = {
  */
 export async function getCikFromTicker(ticker: string): Promise<string | null> {
   const url = "https://www.sec.gov/files/company_tickers.json";
-  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   const data = (await res.json()) as CompanyTickersJson;
   const upper = ticker.trim().toUpperCase();
@@ -82,7 +97,7 @@ export async function getCikFromTicker(ticker: string): Promise<string | null> {
 export async function getFilingsByCik(cik: string): Promise<SecFilingsResult | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   const data = (await res.json()) as SubmissionsJson;
   const recent = data.filings?.recent;
@@ -123,7 +138,7 @@ async function fetchSubmissionsChunk(name: string): Promise<SubmissionsChunkJson
   if (!clean) return null;
   // names are like "CIK0000320193-submissions-001.json"
   const url = `https://data.sec.gov/submissions/${encodeURIComponent(clean)}`;
-  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   try {
     return (await res.json()) as SubmissionsChunkJson;
@@ -139,7 +154,7 @@ async function fetchSubmissionsChunk(name: string): Promise<SubmissionsChunkJson
 export async function getAllFilingsByCik(cik: string): Promise<SecFilingsResult | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   const data = (await res.json()) as SubmissionsJson;
 
@@ -222,7 +237,7 @@ export function parseFilerCikFromAccession(accessionNumber: string): string | nu
 export async function getCompanyMetadataByCik(cik: string): Promise<{ name: string; tickers: string[] } | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   const data = (await res.json()) as { name?: string; tickers?: string[] };
   const name = (data.name ?? "").trim();
@@ -302,7 +317,7 @@ export async function getCompanyTickersEntriesCached(): Promise<TickerJsonEntry[
   try {
     const url = "https://www.sec.gov/files/company_tickers.json";
     const res = await fetch(url, {
-      headers: { "User-Agent": USER_AGENT },
+      headers: { "User-Agent": getSecEdgarUserAgent() },
       cache: "no-store",
       next: { revalidate: 0 },
     });
@@ -388,7 +403,7 @@ export async function getCompanyProfile(ticker: string): Promise<SecCompanyProfi
   if (!cik) return null;
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   const data = (await res.json()) as SubmissionsJson;
   const recent = data.filings?.recent;
