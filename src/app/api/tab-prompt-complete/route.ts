@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { bundle } = llmAuth.ctx;
+  const { bundle, responseVerbosity } = llmAuth.ctx;
 
   let body: unknown;
   try {
@@ -94,6 +94,7 @@ export async function POST(request: Request) {
     openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
     geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
     apiKeys: bundle,
+    responseVerbosity,
   });
 
   if (!result.ok) {

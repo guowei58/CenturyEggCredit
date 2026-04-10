@@ -13,6 +13,7 @@ import {
 } from "@/lib/deepseek";
 import { callGemini, callGeminiConversation, type GeminiResult } from "@/lib/gemini";
 import { callOpenAI, callOpenAIConversation, type OpenAIResult } from "@/lib/openai";
+import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import { isProviderConfiguredForKeys } from "@/lib/user-llm-keys";
 
@@ -52,9 +53,11 @@ export async function llmCompleteSingle(
     openaiWebSearch?: boolean;
     /** Gemini native Google Search grounding (tab prompts / AI Chat when enabled server-side). */
     geminiGoogleSearch?: boolean;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<LlmResult> {
   const ak = options.apiKeys;
+  const rv = options.responseVerbosity;
   if (provider === "openai") {
     const r = await callOpenAI(system, user, {
       maxTokens: options.maxTokens,
@@ -62,6 +65,7 @@ export async function llmCompleteSingle(
       fetchTimeoutMs: options.openaiFetchTimeoutMs,
       apiKeys: ak,
       webSearch: options.openaiWebSearch === true,
+      responseVerbosity: rv,
     });
     return toLlm(r);
   }
@@ -71,6 +75,7 @@ export async function llmCompleteSingle(
       model: options.geminiModel,
       apiKeys: ak,
       googleSearch: options.geminiGoogleSearch === true,
+      responseVerbosity: rv,
     });
     return toLlm(r);
   }
@@ -79,6 +84,7 @@ export async function llmCompleteSingle(
       maxTokens: options.maxTokens,
       model: options.deepseekModel,
       apiKeys: ak,
+      responseVerbosity: rv,
     });
     return toLlm(r);
   }
@@ -87,6 +93,7 @@ export async function llmCompleteSingle(
     model: options.claudeModel,
     tools: options.claudeTools,
     apiKeys: ak,
+    responseVerbosity: rv,
   });
 }
 
@@ -105,6 +112,7 @@ export async function llmCompleteConversation(
     apiKeys?: LlmCallApiKeys;
     openaiWebSearch?: boolean;
     geminiGoogleSearch?: boolean;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<LlmResult> {
   if ((provider === "openai" || provider === "gemini") && conversationHasPdf(messages)) {
@@ -124,6 +132,7 @@ export async function llmCompleteConversation(
     };
   }
   const ak = options.apiKeys;
+  const rv = options.responseVerbosity;
   if (provider === "openai") {
     const r = await callOpenAIConversation(system, messages, {
       maxTokens: options.maxTokens,
@@ -131,6 +140,7 @@ export async function llmCompleteConversation(
       fetchTimeoutMs: options.openaiFetchTimeoutMs,
       apiKeys: ak,
       webSearch: options.openaiWebSearch === true,
+      responseVerbosity: rv,
     });
     return toLlm(r);
   }
@@ -140,6 +150,7 @@ export async function llmCompleteConversation(
       model: options.geminiModel,
       apiKeys: ak,
       googleSearch: options.geminiGoogleSearch === true,
+      responseVerbosity: rv,
     });
     return toLlm(r);
   }
@@ -148,6 +159,7 @@ export async function llmCompleteConversation(
       maxTokens: options.maxTokens,
       model: options.deepseekModel,
       apiKeys: ak,
+      responseVerbosity: rv,
     });
     return toLlm(r);
   }
@@ -156,6 +168,7 @@ export async function llmCompleteConversation(
     model: options.claudeModel,
     tools: options.claudeTools,
     apiKeys: ak,
+    responseVerbosity: rv,
   });
 }
 

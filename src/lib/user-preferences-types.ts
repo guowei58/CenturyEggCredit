@@ -2,6 +2,9 @@ import type { AiProvider } from "@/lib/ai-provider";
 
 export const USER_PREFERENCES_VERSION = 1 as const;
 
+/** Brevity vs depth for cloud LLM completions across OREO. */
+export type UserResponseVerbosity = "md" | "analyst";
+
 /** Signed-in UI state persisted in Postgres (`/api/me/preferences`). */
 export type UserPreferencesData = {
   v: typeof USER_PREFERENCES_VERSION;
@@ -43,6 +46,11 @@ export type UserPreferencesData = {
   /** Ticker (uppercase) → JSON string of credit memo draft */
   creditMemoDrafts?: Record<string, string>;
   includeOreoContext?: boolean;
+  /**
+   * How verbose in-app LLM outputs should be (AI Chat, research tabs, memos, decks, etc.).
+   * `md` = time-efficient but still substantively complete; `analyst` = maximum depth.
+   */
+  responseVerbosity?: UserResponseVerbosity;
 };
 
 export function defaultUserPreferences(): UserPreferencesData {

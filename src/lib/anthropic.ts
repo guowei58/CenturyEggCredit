@@ -5,6 +5,7 @@
 
 import { conversationHasPdf, type ChatConversationTurn, type ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -72,12 +73,13 @@ export async function callClaude(
     tools?: readonly { type: string; name: string; max_uses?: number }[];
     /** When set, uses only these keys (no env fallback). When omitted, uses ANTHROPIC_API_KEY from env. */
     apiKeys?: LlmCallApiKeys;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<ClaudeResult> {
   const resolved = resolveAnthropicKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
   const { maxTokens = 2048, model = defaultModel, tools } = options;
@@ -180,12 +182,13 @@ export async function callClaudeConversation(
     model?: string;
     tools?: readonly { type: string; name: string; max_uses?: number }[];
     apiKeys?: LlmCallApiKeys;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<ClaudeResult> {
   const resolved = resolveAnthropicKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
   const { maxTokens = 4096, model = defaultModel, tools } = options;

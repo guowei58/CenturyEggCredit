@@ -100,7 +100,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { bundle, userId } = llmAuth.ctx;
+  const { bundle, userId, responseVerbosity } = llmAuth.ctx;
   if (!isProviderConfigured(provider, bundle)) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
@@ -116,7 +116,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   }
 
   const userPayload = formatSourcesForClaude(sym, bundled.parts);
-  const syn = await synthesizeCovenantsMarkdown(userPayload, provider, resolveCovenantModels(modelBody), bundle);
+  const syn = await synthesizeCovenantsMarkdown(
+    userPayload,
+    provider,
+    resolveCovenantModels(modelBody),
+    bundle,
+    responseVerbosity
+  );
   if (!syn.ok) {
     return NextResponse.json({ error: syn.error }, { status: 502 });
   }

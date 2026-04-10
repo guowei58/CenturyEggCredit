@@ -4,6 +4,7 @@
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -187,12 +188,13 @@ export async function callOpenAI(
     apiKeys?: LlmCallApiKeys;
     /** Use OpenAI Chat Completions web search (switches to a search-capable model). */
     webSearch?: boolean;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<OpenAIResult> {
   const resolved = resolveOpenAiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const baseModel = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
   const webSearch = options.webSearch === true && isOpenAiWebSearchEnabled();
@@ -289,12 +291,13 @@ export async function callOpenAIConversation(
     fetchTimeoutMs?: number;
     apiKeys?: LlmCallApiKeys;
     webSearch?: boolean;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<OpenAIResult> {
   const resolved = resolveOpenAiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const baseModel = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
   const webSearch = options.webSearch === true && isOpenAiWebSearchEnabled();

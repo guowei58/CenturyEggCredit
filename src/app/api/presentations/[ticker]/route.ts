@@ -26,7 +26,7 @@ export async function GET(
   if (!llmAuth.ok) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
-  const { bundle } = llmAuth.ctx;
+  const { bundle, responseVerbosity } = llmAuth.ctx;
 
   const { searchParams } = new URL(request.url);
   const provider = resolveProvider(searchParams.get("provider"));
@@ -54,7 +54,7 @@ export async function GET(
     }
   }
 
-  const result = await discoverPresentations(ticker, provider, presentationModels, bundle);
+  const result = await discoverPresentations(ticker, provider, presentationModels, bundle, responseVerbosity);
   if (!result.ok) {
     const message =
       result.status === 401

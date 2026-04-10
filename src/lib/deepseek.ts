@@ -4,6 +4,7 @@
 
 import type { ChatConversationTurn } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/v1/chat/completions";
@@ -68,14 +69,14 @@ function normalizeError(status: number, raw: string): DeepSeekResult {
 export async function callDeepSeek(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
+  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys; responseVerbosity?: ResponseVerbosity } = {}
 ): Promise<DeepSeekResult> {
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const model = options.model?.trim() || getDeepSeekModel();
   const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
   const waitMs = deepSeekFetchTimeoutMs();
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   try {
     const res = await fetch(DEEPSEEK_CHAT_URL, {
@@ -116,14 +117,19 @@ export async function callDeepSeek(
 export async function callDeepSeekConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    apiKeys?: LlmCallApiKeys;
+    responseVerbosity?: ResponseVerbosity;
+  } = {}
 ): Promise<DeepSeekResult> {
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const model = options.model?.trim() || getDeepSeekModel();
   const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
   const waitMs = deepSeekFetchTimeoutMs();
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const apiMessages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
     { role: "system", content: systemAug },

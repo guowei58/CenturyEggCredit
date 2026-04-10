@@ -7,6 +7,7 @@
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
@@ -164,12 +165,13 @@ export async function callGemini(
     apiKeys?: LlmCallApiKeys;
     /** Native generateContent + Google Search grounding (not OpenAI-compatible chat). */
     googleSearch?: boolean;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;
@@ -259,12 +261,13 @@ export async function callGeminiConversation(
     model?: string;
     apiKeys?: LlmCallApiKeys;
     googleSearch?: boolean;
+    responseVerbosity?: ResponseVerbosity;
   } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const key = resolved.key;
-  const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
+  const systemAug = augmentLlmFullSystemPrompt(systemPrompt, { responseVerbosity: options.responseVerbosity });
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
   const maxTokens = options.maxTokens ?? 4096;

@@ -41,7 +41,7 @@ export async function GET(req: Request) {
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { bundle } = llmAuth.ctx;
+  const { bundle, responseVerbosity } = llmAuth.ctx;
   if (!isProviderConfigured("claude", bundle)) {
     return NextResponse.json({ error: IR_AUTOFIND_NEEDS_CLAUDE_KEY }, { status: 503 });
   }
@@ -68,6 +68,7 @@ Requirements:
     maxTokens: 900,
     claudeTools: [WEB_SEARCH_TOOL],
     apiKeys: bundle,
+    responseVerbosity,
   });
 
   if (!result.ok) {

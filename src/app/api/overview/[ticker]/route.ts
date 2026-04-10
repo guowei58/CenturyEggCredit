@@ -41,7 +41,7 @@ export async function GET(
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { bundle } = llmAuth.ctx;
+  const { bundle, responseVerbosity } = llmAuth.ctx;
 
   const { searchParams } = new URL(request.url);
   const provider = resolveProvider(searchParams.get("provider"));
@@ -59,7 +59,7 @@ export async function GET(
     }
 
     const [businessOverviewSummary, segmentSummaries] = await Promise.all([
-      summarizeBusinessOverview(raw.item1Text, provider, overviewModels, bundle),
+      summarizeBusinessOverview(raw.item1Text, provider, overviewModels, bundle, responseVerbosity),
       summarizeBusinessLines(
         raw.segmentNames,
         raw.item1Text,
@@ -67,7 +67,8 @@ export async function GET(
         raw.totalRevenue,
         provider,
         overviewModels,
-        bundle
+        bundle,
+        responseVerbosity
       ),
     ]);
 

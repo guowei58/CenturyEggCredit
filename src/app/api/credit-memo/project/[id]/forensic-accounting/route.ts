@@ -16,7 +16,7 @@ export const maxDuration = 300;
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const llmAuth = await getAuthenticatedLlmContext();
   if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { userId, bundle } = llmAuth.ctx;
+  const { userId, bundle, responseVerbosity } = llmAuth.ctx;
 
   const id = params.id?.trim();
   if (!id) return NextResponse.json({ error: "Missing project id" }, { status: 400 });
@@ -52,6 +52,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     companyName: companyName || undefined,
     models: resolveCreditMemoModels(body),
     apiKeys: bundle,
+    responseVerbosity,
   });
 
   if (!result.ok) {

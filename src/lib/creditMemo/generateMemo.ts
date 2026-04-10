@@ -1,6 +1,7 @@
 import { CREDIT_MEMO_SYSTEM_PROMPT } from "@/data/credit-memo-llm-prompt";
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
 import type { AiProvider } from "@/lib/ai-provider";
+import type { ResponseVerbosity } from "@/lib/llm-response-verbosity";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { buildEvidencePackSync, formatSourceInventoryList } from "./evidencePack";
@@ -67,6 +68,7 @@ export async function runMemoGeneration(params: {
   voiceSystemPrompt?: string | null;
   models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
+  responseVerbosity?: ResponseVerbosity;
 }): Promise<
   | { ok: true; outline: MemoOutline; markdown: string; sourcePack: string }
   | { ok: false; error: string }
@@ -148,6 +150,7 @@ export async function runMemoGeneration(params: {
     geminiModel,
     deepseekModel,
     apiKeys: params.apiKeys,
+    responseVerbosity: params.responseVerbosity,
   });
 
   if (!result.ok) {

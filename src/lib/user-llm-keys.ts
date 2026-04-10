@@ -48,3 +48,13 @@ export function isProviderConfiguredForKeys(provider: AiProvider, keys: LlmCallA
   if (provider === "gemini") return Boolean(keys.geminiApiKey?.trim());
   return Boolean(keys.anthropicApiKey?.trim());
 }
+
+/** Per-user keys win; anything missing is filled from `process.env` (logged-in AI Chat, etc.). */
+export function mergeLlmCallApiKeysWithProcessEnv(bundle: LlmCallApiKeys): LlmCallApiKeys {
+  return {
+    anthropicApiKey: bundle.anthropicApiKey?.trim() || process.env.ANTHROPIC_API_KEY?.trim(),
+    openaiApiKey: bundle.openaiApiKey?.trim() || process.env.OPENAI_API_KEY?.trim(),
+    geminiApiKey: bundle.geminiApiKey?.trim() || process.env.GEMINI_API_KEY?.trim(),
+    deepseekApiKey: bundle.deepseekApiKey?.trim() || process.env.DEEPSEEK_API_KEY?.trim(),
+  };
+}

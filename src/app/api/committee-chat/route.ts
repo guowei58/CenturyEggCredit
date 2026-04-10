@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import type { AiProvider } from "@/lib/ai-provider";
 import { resolveProvider } from "@/lib/ai-provider";
 import { parseCommitteeChatMessages } from "@/lib/committee-chat-parse";
 import { COMMITTEE_CHAT_SYSTEM } from "@/data/committee-chat-prompt";
@@ -10,6 +11,13 @@ import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
 import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
 import { isOpenAiWebSearchEnabled } from "@/lib/openai";
+import { getUserPreferences } from "@/lib/user-preferences-store";
+import { responseVerbosityFromPreferences } from "@/lib/llm-response-verbosity";
+import {
+  buildLlmApiKeyBundle,
+  isProviderConfiguredForKeys,
+  mergeLlmCallApiKeysWithProcessEnv,
+} from "@/lib/user-llm-keys";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -21,15 +29,29 @@ function sanitizeTicker(raw: unknown): string | null {
   return s;
 }
 
+function providerAvailableForUi(provider: AiProvider, userBundle: ReturnType<typeof buildLlmApiKeyBundle> | null): boolean {
+  if (isProviderConfigured(provider)) return true;
+  if (userBundle && isProviderConfiguredForKeys(provider, userBundle)) return true;
+  return false;
+}
+
 /**
- * GET — whether AI Chat can call Anthropic / OpenAI / Gemini / Ollama (for UI).
+ * GET — whether AI Chat can call each cloud provider + Ollama (for UI). Includes User Settings keys when signed in.
  */
 export async function GET() {
   const ollamaHealth = await checkOllamaHealth();
+  const session = await auth();
+  let userBundle: ReturnType<typeof buildLlmApiKeyBundle> | null = null;
+  if (session?.user?.id) {
+    const prefs = await getUserPreferences(session.user.id);
+    const email = typeof session.user.email === "string" ? session.user.email : null;
+    userBundle = buildLlmApiKeyBundle(email, prefs);
+  }
   return NextResponse.json({
-    anthropicConfigured: Boolean(process.env.ANTHROPIC_API_KEY?.trim()),
-    openaiConfigured: Boolean(process.env.OPENAI_API_KEY?.trim()),
-    geminiConfigured: Boolean(process.env.GEMINI_API_KEY?.trim()),
+    anthropicConfigured: providerAvailableForUi("claude", userBundle),
+    openaiConfigured: providerAvailableForUi("openai", userBundle),
+    geminiConfigured: providerAvailableForUi("gemini", userBundle),
+    deepseek: { configured: providerAvailableForUi("deepseek", userBundle) },
     ollama: {
       status: ollamaHealth.status,
       model: ollamaHealth.model,
@@ -61,7 +83,19 @@ export async function POST(request: Request) {
     ollamaModel?: unknown;
   };
   const provider = resolveProvider(b.provider);
-  if (!isProviderConfigured(provider)) {
+  const session = await auth();
+
+  let apiKeysForCall: ReturnType<typeof mergeLlmCallApiKeysWithProcessEnv> | undefined;
+  let responseVerbosity = responseVerbosityFromPreferences(undefined);
+  if (session?.user?.id != null) {
+    const prefs = await getUserPreferences(session.user.id);
+    responseVerbosity = responseVerbosityFromPreferences(prefs);
+    apiKeysForCall = mergeLlmCallApiKeysWithProcessEnv(
+      buildLlmApiKeyBundle(typeof session.user?.email === "string" ? session.user.email : null, prefs)
+    );
+  }
+
+  if (!isProviderConfigured(provider, apiKeysForCall)) {
     const hint =
       provider === "openai"
         ? "OPENAI_API_KEY is not set. Add it to .env.local to use ChatGPT in AI Chat."
@@ -79,8 +113,6 @@ export async function POST(request: Request) {
 
   const sym = sanitizeTicker(b.ticker);
   const includeOreo = b.includeOreoContext !== false;
-
-  const session = await auth();
 
   let system = COMMITTEE_CHAT_SYSTEM;
   if (sym != null) {
@@ -101,6 +133,8 @@ export async function POST(request: Request) {
     openaiModel,
     geminiModel,
     deepseekModel,
+    apiKeys: apiKeysForCall,
+    responseVerbosity,
     claudeTools:
       provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
     openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
