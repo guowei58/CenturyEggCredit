@@ -1,5 +1,5 @@
 /**
- * Opens every tab-style research prompt in new Claude, ChatGPT, Gemini, or DeepSeek (web chat) tabs from the company bar.
+ * Bulk research prompts via API (company bar) and shared prompt collection for those runs.
  */
 
 import {
@@ -49,13 +49,8 @@ import {
   modelPayloadForRun,
 } from "@/lib/ai-model-prefs-client";
 import type { AiProvider } from "@/lib/ai-provider";
-import { openChatGptNewChatWindow } from "@/lib/chatgpt-open-url";
-import { openGeminiNewChatWindow } from "@/lib/gemini-open-url";
-import { openDeepSeekNewChatWindow } from "@/lib/deepseek-open-url";
 import { saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
-
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 export type BulkOpenContext = {
   ticker: string;
@@ -333,44 +328,3 @@ export async function runBulkUpdateViaApi(
   return { ok, fail, errors };
 }
 
-function openClaudePrefill(prompt: string): void {
-  const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`;
-  window.open(prefillUrl, "_blank", "noopener,noreferrer");
-}
-
-/**
- * Opens one new Claude tab per prompt (~20).
- * All opens run synchronously on the click stack: browsers only treat the first
- * window.open after a setTimeout as user-initiated; staggered opens get blocked
- * on production HTTPS and in stricter browsers (e.g. Opera).
- */
-export function runBulkOpenClaude(ctx: BulkOpenContext): void {
-  const entries = collectBulkClaudePromptEntries(ctx);
-  for (const e of entries) {
-    openClaudePrefill(e.prompt);
-  }
-}
-
-/** Same prompts as Claude, opened in ChatGPT new-chat URLs (long prompts may be link-shortened). */
-export function runBulkOpenChatGPT(ctx: BulkOpenContext): void {
-  const entries = collectBulkClaudePromptEntries(ctx);
-  for (const e of entries) {
-    openChatGptNewChatWindow(e.prompt);
-  }
-}
-
-/** Same prompts as Claude/ChatGPT, opened in DeepSeek Chat new-tab URLs (long prompts may be shortened). */
-export function runBulkOpenDeepSeek(ctx: BulkOpenContext): void {
-  const entries = collectBulkClaudePromptEntries(ctx);
-  for (const e of entries) {
-    openDeepSeekNewChatWindow(e.prompt);
-  }
-}
-
-/** Same prompts as Claude/ChatGPT/Meta, opened in Gemini web URLs (long prompts may be shortened). */
-export function runBulkOpenGemini(ctx: BulkOpenContext): void {
-  const entries = collectBulkClaudePromptEntries(ctx);
-  for (const e of entries) {
-    openGeminiNewChatWindow(e.prompt);
-  }
-}

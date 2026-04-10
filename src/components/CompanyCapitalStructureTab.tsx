@@ -11,6 +11,7 @@ import { CapitalStructureExcelFileBox } from "@/components/CapitalStructureExcel
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE, CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS } from "@/data/capital-structure-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openGeminiWithClipboard, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
@@ -28,8 +29,6 @@ const CAPITAL_STRUCTURE_SAMPLE_THUMBNAILS: { path: (typeof CAPITAL_STRUCTURE_SAM
       alt: "Reference capital structure table sample 2",
     },
   ];
-
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 function linkify(text: string): ReactNode[] {
   const urlRegex = /(https?:\/\/[^\s<>"')\]\}]+)/g;
@@ -128,66 +127,41 @@ export function CompanyCapitalStructureTab({
 
   function openInClaude() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`;
-    window.open(prefillUrl, "_blank", "noopener,noreferrer");
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            "Claude opened. Attach the reference templates from this tab together with the prompt."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage("Claude opened. Attach the reference templates and paste the prompt manually.");
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage("Claude opened. Attach the reference templates and paste the prompt manually.");
-    }
+    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed, (copyFailed) => {
+      if (copyFailed) {
+        return "Claude opened. Attach the reference templates and paste the prompt manually.";
+      }
+      return "Claude opened. Prompt copied — paste into the chat, attach the reference templates from this tab, then press Enter.";
+    });
   }
 
   function openInChatGPT() {
     if (!prompt) return;
-    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
-      if (copyFailed) {
-        return wasShortened
-          ? "ChatGPT opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
-          : "ChatGPT opened. Attach the reference templates and paste the prompt manually.";
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, clearFailed) => {
+      if (clearFailed) {
+        return "ChatGPT opened. Attach the reference templates and paste the prompt manually.";
       }
-      return wasShortened
-        ? "ChatGPT opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach the reference templates from this tab if supported."
-        : "ChatGPT opened. Attach the reference templates from this tab if supported.";
+      return "ChatGPT opened. Clipboard cleared — use Copy prompt, paste, attach the reference templates if supported, then press Enter.";
     });
   }
 
   function openInDeepSeek() {
     if (!prompt) return;
-    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, copyFailed) => {
       if (copyFailed) {
-        return wasShortened
-          ? "DeepSeek opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
-          : "DeepSeek opened. Attach the reference templates and paste the prompt manually.";
+        return "DeepSeek opened. Attach the reference templates and paste the prompt manually.";
       }
-      return wasShortened
-        ? "DeepSeek opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach the reference templates from this tab if supported."
-        : "DeepSeek opened. Attach the reference templates from this tab if supported.";
+      return "DeepSeek opened. Prompt copied — paste into the chat, attach the reference templates if supported, then press Enter.";
     });
   }
 
   function openInGemini() {
     if (!prompt) return;
-    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, copyFailed) => {
       if (copyFailed) {
-        return wasShortened
-          ? "Gemini opened (short link). Copy failed — paste the prompt from OREO and attach reference templates."
-          : "Gemini opened. Attach the reference templates and paste the prompt manually.";
+        return "Gemini opened. Attach the reference templates and paste the prompt manually.";
       }
-      return wasShortened
-        ? "Gemini opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach the reference templates from this tab if supported."
-        : "Gemini opened. Attach the reference templates from this tab if supported.";
+      return "Gemini opened. Prompt copied — paste into the chat, attach the reference templates if supported, then press Enter.";
     });
   }
 

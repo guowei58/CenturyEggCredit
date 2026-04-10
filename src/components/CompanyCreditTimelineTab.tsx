@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
@@ -14,7 +15,6 @@ import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 /** Best-effort: Claude has used ?q= for prefill; not officially documented and may change. */
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 export const CREDIT_TIMELINE_PROMPT_TEMPLATE = `You are a top-tier distressed debt / special situations credit analyst. I will give you a ticker and you will build a forward-looking credit timeline for the next 24 months.
 
@@ -284,23 +284,7 @@ export function CompanyCreditTimelineTab({
 
   function openInClaude() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`;
-    window.open(prefillUrl, "_blank", "noopener,noreferrer");
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage("Claude opened in a new tab. Prompt copied to clipboard �?paste into Claude if it didn't prefill."),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude.");
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude.");
-    }
+    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInChatGPT() {

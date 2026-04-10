@@ -2,17 +2,9 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import {
-  runBulkOpenChatGPT,
-  runBulkOpenClaude,
-  runBulkOpenGemini,
-  runBulkOpenDeepSeek,
-  runBulkUpdateViaApi,
-} from "@/lib/bulk-ai-open";
+import { runBulkUpdateViaApi } from "@/lib/bulk-ai-open";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
-import { CHATGPT_LONG_URL_NOTICE } from "@/lib/chatgpt-open-url";
-import { GEMINI_LONG_URL_NOTICE, GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
-import { DEEPSEEK_LONG_URL_NOTICE } from "@/lib/deepseek-open-url";
+import { GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
 import type { ModelRunChoice } from "@/lib/ai-model-prefs-client";
 import { userHasCloudApiKeyForProvider } from "@/lib/user-llm-api-key-guard";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
@@ -145,44 +137,6 @@ export function CompanyBar({
 
         <div className="min-w-0 w-full lg:max-w-[min(100%,52rem)] lg:flex-1">
           <div className="flex flex-col gap-2">
-            <div className="grid w-full grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-4 md:items-stretch">
-              <button
-                type="button"
-                className={bulkBarBtnClass}
-                style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-                title="Opens many Claude tabs—one per research prompt. Allow pop-ups if the browser blocks some."
-                onClick={() => runBulkOpenClaude(bulkCtx())}
-              >
-                Update all via Claude
-              </button>
-              <button
-                type="button"
-                className={bulkBarBtnClass}
-                style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
-                title={`Opens many ChatGPT tabs with the same prompts. ${CHATGPT_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
-                onClick={() => runBulkOpenChatGPT(bulkCtx())}
-              >
-                Update all via ChatGPT
-              </button>
-              <button
-                type="button"
-                className={bulkBarBtnClass}
-                style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR }}
-                title={`Opens many Gemini tabs with the same prompts. ${GEMINI_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
-                onClick={() => runBulkOpenGemini(bulkCtx())}
-              >
-                Update all via Gemini
-              </button>
-              <button
-                type="button"
-                className={bulkBarBtnClass}
-                style={{ borderColor: DEEPSEEK_BULK_COLOR, color: DEEPSEEK_BULK_COLOR }}
-                title={`Opens many DeepSeek Chat tabs with the same prompts. ${DEEPSEEK_LONG_URL_NOTICE} Allow pop-ups if the browser blocks some.`}
-                onClick={() => runBulkOpenDeepSeek(bulkCtx())}
-              >
-                Update all via DeepSeek
-              </button>
-            </div>
             <div
               className="grid w-full grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-4 md:items-stretch"
               onPointerDownCapture={(e) => {

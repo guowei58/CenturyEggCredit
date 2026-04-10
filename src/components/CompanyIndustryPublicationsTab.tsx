@@ -5,6 +5,7 @@ import { Card } from "@/components/ui";
 import { INDUSTRY_PUBLICATIONS_PROMPT_TEMPLATE } from "@/data/industry-publications-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
@@ -14,7 +15,6 @@ import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 export function CompanyIndustryPublicationsTab({
   ticker,
@@ -89,31 +89,7 @@ export function CompanyIndustryPublicationsTab({
 
   function openInClaude() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-
-    const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`;
-    window.open(prefillUrl, "_blank", "noopener,noreferrer");
-
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            "Claude opened in a new tab. Prompt copied to clipboard �?paste into Claude if it didn't prefill."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            "Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        "Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude."
-      );
-    }
+    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInChatGPT() {

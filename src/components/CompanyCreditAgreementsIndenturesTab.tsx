@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import {
   CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES,
@@ -799,7 +800,6 @@ I will now paste the document below:
 
 [PASTE CREDIT AGREEMENT / INDENTURE / AMENDMENTS / NOTES HERE]`;
 
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 const SAVED_PREFIX = "century-egg-credit-agreements-indentures-";
 
 type SavedBoxKey =
@@ -1035,22 +1035,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
 
   function openInClaude(text: string) {
     if (!text) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(text)}`;
-    window.open(prefillUrl, "_blank", "noopener,noreferrer");
-    try {
-      navigator.clipboard.writeText(text).then(
-        () => setStatusMessage("Claude opened in a new tab. Prompt copied to clipboard �?paste if needed."),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use prompt below.");
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage("Claude opened in a new tab. Prompt could not be copied �?use prompt below.");
-    }
+    void openClaudeWithClipboard(text, setStatusMessage, setClipboardFailed);
   }
 
   function openInChatGPT(text: string) {

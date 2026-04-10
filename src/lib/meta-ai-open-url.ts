@@ -6,7 +6,6 @@ export {
   DEEPSEEK_CHAT_ORIGIN as META_AI_NEW_CHAT_ORIGIN,
   DEEPSEEK_LONG_URL_NOTICE as META_AI_LONG_URL_NOTICE,
   deepSeekOpenStatusMessage as deepSeekOpenStatusMessage,
-  buildDeepSeekNewChatUrl as buildMetaAiNewChatUrl,
   openDeepSeekNewChatWindow as openDeepSeekNewChatWindow,
   openDeepSeekWithClipboard as openDeepSeekWithClipboard,
 } from "@/lib/deepseek-open-url";

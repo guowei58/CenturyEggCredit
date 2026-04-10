@@ -5,6 +5,7 @@ import { Card } from "@/components/ui";
 import { INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE } from "@/data/industry-history-drivers-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
@@ -14,7 +15,6 @@ import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 function fillIndustryHistoryDriversPrompt(template: string, companyName: string, ticker: string): string {
   return template.replace(/\[INSERT COMPANY NAME\]/g, companyName).replace(/\[INSERT TICKER\]/g, ticker);
@@ -92,29 +92,7 @@ export function CompanyIndustryHistoryDriversTab({
 
   function openInClaude() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`;
-    window.open(prefillUrl, "_blank", "noopener,noreferrer");
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            "Claude opened in a new tab. Prompt copied to clipboard �?paste into Claude if it didn't prefill."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage(
-            "Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude."
-          );
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage(
-        "Claude opened in a new tab. Prompt could not be copied �?use the prompt below and paste into Claude."
-      );
-    }
+    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInChatGPT() {

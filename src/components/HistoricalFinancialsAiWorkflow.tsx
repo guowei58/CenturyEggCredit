@@ -12,11 +12,10 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { OrgChartExcelFileBox } from "@/components/OrgChartExcelFileBox";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
-
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 export function HistoricalFinancialsAiWorkflow({
   ticker,
@@ -93,16 +92,7 @@ export function HistoricalFinancialsAiWorkflow({
 
   function openInClaude() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    window.open(`${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`, "_blank", "noopener,noreferrer");
-    void navigator.clipboard.writeText(prompt).then(
-      () => setStatusMessage("Claude opened. Prompt copied to clipboard."),
-      () => {
-        setClipboardFailed(true);
-        setStatusMessage("Claude opened. Paste the prompt manually if copy failed.");
-      }
-    );
+    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   function openInChatGPT() {

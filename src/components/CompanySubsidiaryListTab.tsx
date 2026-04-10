@@ -11,11 +11,10 @@ import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { SubsidiaryListExcelFileBox } from "@/components/SubsidiaryListExcelFileBox";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
+import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openGeminiWithClipboard, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
-
-const CLAUDE_NEW_CHAT_BASE = "https://claude.ai/new";
 
 export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -86,66 +85,41 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
 
   function openInClaude() {
     if (!prompt) return;
-    setStatusMessage(null);
-    setClipboardFailed(false);
-    const prefillUrl = `${CLAUDE_NEW_CHAT_BASE}?q=${encodeURIComponent(prompt)}`;
-    window.open(prefillUrl, "_blank", "noopener,noreferrer");
-    try {
-      navigator.clipboard.writeText(prompt).then(
-        () =>
-          setStatusMessage(
-            "Claude opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings in the chat if you use them."
-          ),
-        () => {
-          setClipboardFailed(true);
-          setStatusMessage("Claude opened. Paste the prompt manually; attach any filing excerpts you rely on.");
-        }
-      );
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage("Claude opened. Paste the prompt manually.");
-    }
+    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed, (copyFailed) => {
+      if (copyFailed) {
+        return "Claude opened. Paste the prompt manually; attach any filing excerpts you rely on.";
+      }
+      return "Claude opened. Prompt copied — paste into the chat, attach Exhibit 21 or other filings if you use them, then press Enter.";
+    });
   }
 
   function openInChatGPT() {
     if (!prompt) return;
-    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
-      if (copyFailed) {
-        return wasShortened
-          ? "ChatGPT opened (short link). Copy failed — paste from OREO; attach filing excerpts you rely on."
-          : "ChatGPT opened. Paste the prompt manually; attach any filing excerpts you rely on.";
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, clearFailed) => {
+      if (clearFailed) {
+        return "ChatGPT opened. Paste the prompt manually; attach any filing excerpts you rely on.";
       }
-      return wasShortened
-        ? "ChatGPT opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach Exhibit 21 or other filings if you use them."
-        : "ChatGPT opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them.";
+      return "ChatGPT opened. Clipboard cleared — use Copy prompt, paste, attach Exhibit 21 or other filings if you use them, then press Enter.";
     });
   }
 
   function openInDeepSeek() {
     if (!prompt) return;
-    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+    void openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, copyFailed) => {
       if (copyFailed) {
-        return wasShortened
-          ? "DeepSeek opened (short link). Copy failed — paste from OREO; attach filing excerpts you rely on."
-          : "DeepSeek opened. Paste the prompt manually; attach any filing excerpts you rely on.";
+        return "DeepSeek opened. Paste the prompt manually; attach any filing excerpts you rely on.";
       }
-      return wasShortened
-        ? "DeepSeek opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach Exhibit 21 or other filings if you use them."
-        : "DeepSeek opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them.";
+      return "DeepSeek opened. Prompt copied — paste into the chat, attach Exhibit 21 or other filings if you use them, then press Enter.";
     });
   }
 
   function openInGemini() {
     if (!prompt) return;
-    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed, (wasShortened, copyFailed) => {
+    void openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, copyFailed) => {
       if (copyFailed) {
-        return wasShortened
-          ? "Gemini opened (short link). Copy failed — paste from OREO; attach filing excerpts you rely on."
-          : "Gemini opened. Paste the prompt manually; attach any filing excerpts you rely on.";
+        return "Gemini opened. Paste the prompt manually; attach any filing excerpts you rely on.";
       }
-      return wasShortened
-        ? "Gemini opened. The URL used a paste-first outline; FULL prompt copied — paste it in, then attach Exhibit 21 or other filings if you use them."
-        : "Gemini opened. Paste the prompt if it did not prefill; attach Exhibit 21 or other filings if you use them.";
+      return "Gemini opened. Prompt copied — paste into the chat, attach Exhibit 21 or other filings if you use them, then press Enter.";
     });
   }
 
