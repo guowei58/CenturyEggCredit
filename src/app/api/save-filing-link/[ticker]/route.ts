@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * POST { url } — fetch URL server-side and store PDF in Postgres (Saved Documents pipeline).
+ * POST { url } — fetch URL server-side and store native format in Postgres (Saved Documents pipeline).
  * URL host must be on the SEC/FCC/USPTO allowlist. Requires session.
  */
 export async function POST(

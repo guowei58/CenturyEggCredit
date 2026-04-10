@@ -74,10 +74,19 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
       }
       setUrlInput("");
       const ct = (body.item?.contentType ?? "").toLowerCase();
-      if (ct.includes("spreadsheet") || (body.item?.filename ?? "").toLowerCase().endsWith(".xlsx")) {
+      const fn = (body.item?.filename ?? "").toLowerCase();
+      if (ct.includes("spreadsheet") || fn.endsWith(".xlsx")) {
         setStatus("Saved Excel.");
+      } else if (ct.includes("html") || fn.endsWith(".html") || fn.endsWith(".htm")) {
+        setStatus("Saved HTML.");
+      } else if (ct.includes("pdf") || fn.endsWith(".pdf")) {
+        setStatus("Saved PDF.");
+      } else if (ct.includes("text/plain") || fn.endsWith(".txt")) {
+        setStatus("Saved text snapshot.");
+      } else if (ct.includes("xml") || fn.endsWith(".xml")) {
+        setStatus("Saved XML.");
       } else {
-        setStatus(body.item?.convertedToPdf ? "Saved (converted to PDF)." : "Saved PDF.");
+        setStatus("Saved.");
       }
       await refresh();
     } catch (e) {
@@ -182,12 +191,16 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
                     <div className="text-sm" style={{ color: "var(--text)" }}>{it.title}</div>
                     <div className="text-[10px]" style={{ color: "var(--muted)" }}>
                       {it.convertedToPdf
-                        ? "Converted to PDF"
+                        ? "Converted (legacy)"
                         : it.contentType?.includes("pdf")
                           ? "PDF"
                           : it.contentType?.includes("html")
-                            ? "HTML (open in browser for SEC layout)"
-                            : "File"}{" "}
+                            ? "HTML"
+                            : it.contentType?.includes("xml")
+                              ? "XML"
+                              : it.contentType?.includes("text/plain")
+                                ? "Text snapshot"
+                                : "File"}{" "}
                       ·{" "}
                       <span className="font-mono">{it.filename}</span>
                     </div>

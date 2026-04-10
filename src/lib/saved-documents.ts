@@ -1,8 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
-import PDFDocument from "pdfkit";
-import { PassThrough } from "stream";
-import { chromium } from "playwright";
 import { getSecEdgarUserAgent } from "@/lib/sec-edgar";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import {
@@ -114,33 +109,21 @@ function looksLikePdf(contentType: string | null, urlStr: string, head: Uint8Arr
   return false;
 }
 
-function isSecGovHost(urlStr: string): boolean {
-  try {
-    const h = new URL(urlStr).hostname.toLowerCase();
-    return h === "sec.gov" || h.endsWith(".sec.gov");
-  } catch {
-    return false;
-  }
-}
-
-/**
- * SEC primary-document URLs live under .../Archives/edgar/data/{cik}/{accession}/file.htm.
- * Saving the raw HTML and setting <base> to that folder lets the browser resolve relative CSS/scripts.
- */
-function secArchivesFolderBaseUrl(pageUrl: string): string | null {
+/** Parent directory of the document URL so saved HTML can resolve relative CSS/scripts/images. */
+function documentFolderBaseUrl(pageUrl: string): string | null {
   try {
     const u = new URL(pageUrl);
-    const host = u.hostname.toLowerCase();
-    if (host !== "sec.gov" && !host.endsWith(".sec.gov")) return null;
-    if (!u.pathname.includes("/Archives/edgar/data/")) return null;
-    const dirPath = u.pathname.replace(/\/[^/]*$/, "/");
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+    const parts = u.pathname.split("/").filter(Boolean);
+    parts.pop();
+    const dirPath = parts.length ? `/${parts.join("/")}/` : "/";
     return `${u.origin}${dirPath}`;
   } catch {
     return null;
   }
 }
 
-function injectBaseHrefIntoSecHtml(html: string, baseHref: string): string {
+function injectBaseHrefIntoHtml(html: string, baseHref: string): string {
   if (/<base\s[^>]*\bhref\s*=/i.test(html)) return html;
   const escaped = baseHref.replace(/"/g, "&quot;");
   const baseTag = `<base href="${escaped}">`;
@@ -150,41 +133,26 @@ function injectBaseHrefIntoSecHtml(html: string, baseHref: string): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8">${baseTag}</head><body>${html}</body></html>`;
 }
 
-function stripHtmlToText(html: string): string {
-  const noScripts = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, " ");
-  const noStyles = noScripts.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, " ");
-  const tableAware = noStyles
-    .replace(/<\/tr\s*>/gi, "\n")
-    .replace(/<tr[^>]*>/gi, "")
-    .replace(/<\/t[dh]\s*>/gi, " | ")
-    .replace(/<t[dh][^>]*>/gi, "")
-    .replace(/<\/h[1-6]\s*>/gi, "\n\n")
-    .replace(/<h[1-6][^>]*>/gi, "\n")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/p\s*>/gi, "\n\n")
-    .replace(/<\/div\s*>/gi, "\n")
-    .replace(/<\/li\s*>/gi, "\n")
-    .replace(/<li[^>]*>/gi, "- ");
-  const noTags = tableAware.replace(/<[^>]+>/g, " ");
-  return decodeHtmlEntities(noTags)
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n[ \t]+/g, "\n")
-    .replace(/[ \t]{2,}/g, " ")
-    .replace(/(?:\s*\|\s*){2,}/g, " | ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+function filenameStemFromSafeBase(safeBase: string): string {
+  return toSafeFilename(safeBase.replace(/\.(pdf|html?|xml|txt|json)$/i, "") || "document");
 }
 
-function decodeHtmlEntities(input: string): string {
-  return input
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, "\"")
-    .replace(/&#39;/g, "'")
-    .replace(/&#x([0-9a-f]+);/gi, (_m, hex: string) => String.fromCodePoint(parseInt(hex, 16)))
-    .replace(/&#([0-9]+);/g, (_m, dec: string) => String.fromCodePoint(parseInt(dec, 10)));
+function responseLooksLikeHtml(utf8: string, contentType: string | null, pageUrl: string): boolean {
+  const ct = (contentType || "").toLowerCase();
+  if (ct.includes("text/html") || ct.includes("application/xhtml")) return true;
+  if (/\.html?($|[?#])/i.test(pageUrl)) return true;
+  const head = utf8.slice(0, 8000).trimStart().toLowerCase();
+  if (/<!doctype\s+html/i.test(head)) return true;
+  if (/<\s*html[\s>]/.test(head)) return true;
+  return false;
+}
+
+function bufferLooksBinary(buf: Buffer, maxScan = 8192): boolean {
+  const n = Math.min(buf.length, maxScan);
+  for (let i = 0; i < n; i++) {
+    if (buf[i] === 0) return true;
+  }
+  return false;
 }
 
 function formatXml(xml: string): string {
@@ -258,135 +226,6 @@ async function fetchViaReadableMirror(urlStr: string): Promise<string | null> {
   return null;
 }
 
-async function pdfFromText(params: { title: string; url: string; text: string }): Promise<Buffer> {
-  await ensurePdfkitFontMetricsAvailable();
-  const doc = new PDFDocument({ size: "LETTER", margin: 54 });
-  const stream = new PassThrough();
-  const bufs: Buffer[] = [];
-  stream.on("data", (b) => bufs.push(b as Buffer));
-  const done = new Promise<Buffer>((resolve, reject) => {
-    stream.on("end", () => resolve(Buffer.concat(bufs)));
-    stream.on("error", reject);
-  });
-
-  doc.pipe(stream);
-  doc.fontSize(16).fillColor("#111111").text(params.title, { underline: false });
-  doc.moveDown(0.5);
-  doc.fontSize(9).fillColor("#666666").text(params.url, { link: params.url, underline: true });
-  doc.moveDown(1);
-  doc.fontSize(10).fillColor("#111111").text(params.text || "(No text could be extracted.)", {
-    lineGap: 2,
-  });
-  doc.end();
-
-  return await done;
-}
-
-async function pdfFromRenderedHtmlUrl(url: string): Promise<Buffer> {
-  const browser = await chromium.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  try {
-    const page = await browser.newPage({
-      userAgent: userAgentForRemoteSave(url),
-    });
-    await page.goto(url, { waitUntil: "networkidle", timeout: 45_000 });
-    return await page.pdf({
-      format: "Letter",
-      printBackground: true,
-      margin: { top: "0.5in", right: "0.5in", bottom: "0.5in", left: "0.5in" },
-      preferCSSPageSize: true,
-    });
-  } finally {
-    await browser.close();
-  }
-}
-
-async function pdfFromRenderedHtmlContent(params: { url: string; html: string }): Promise<Buffer> {
-  const browser = await chromium.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  try {
-    const page = await browser.newPage({
-      userAgent: userAgentForRemoteSave(params.url),
-    });
-    // Provide a base URL so relative CSS/asset paths resolve correctly.
-    const htmlWithBase = /<head[^>]*>/i.test(params.html)
-      ? params.html.replace(/<head([^>]*)>/i, `<head$1><base href="${params.url}">`)
-      : `<head><base href="${params.url}"></head>${params.html}`;
-    await page.setContent(htmlWithBase, { waitUntil: "networkidle", timeout: 45_000 });
-    return await page.pdf({
-      format: "Letter",
-      printBackground: true,
-      margin: { top: "0.5in", right: "0.5in", bottom: "0.5in", left: "0.5in" },
-      preferCSSPageSize: true,
-    });
-  } finally {
-    await browser.close();
-  }
-}
-
-function isServerlessReadOnlyDeploy(): boolean {
-  return Boolean(
-    process.env.VERCEL ||
-      process.env.AWS_LAMBDA_FUNCTION_NAME ||
-      process.env.NETLIFY ||
-      process.env.FUNCTIONS_WORKER_RUNTIME
-  );
-}
-
-async function ensurePdfkitFontMetricsAvailable(): Promise<void> {
-  // Vercel/AWS Lambda: `/var/task` is read-only — never mkdir under `.next` (ENOENT on mkdir).
-  // Production relies on `serverComponentsExternalPackages: ['pdfkit']` + traced `node_modules/pdfkit/js/data`.
-  if (isServerlessReadOnlyDeploy()) {
-    return;
-  }
-
-  // If PDFKit is webpack-bundled locally, it may resolve AFM files under `.next/server/chunks/data/`.
-  // Copy from node_modules into those dirs as a dev fallback only.
-  const sourceDir = path.join(process.cwd(), "node_modules", "pdfkit", "js", "data");
-  const targetDirs = [
-    path.join(process.cwd(), ".next", "server", "chunks", "data"),
-    path.join(process.cwd(), ".next", "server", "vendor-chunks", "data"),
-  ];
-
-  try {
-    const stat = await fs.stat(sourceDir);
-    if (!stat.isDirectory()) return;
-  } catch {
-    return;
-  }
-
-  let entries: string[] = [];
-  try {
-    entries = await fs.readdir(sourceDir);
-  } catch {
-    return;
-  }
-
-  const afmFiles = entries.filter((name) => name.toLowerCase().endsWith(".afm"));
-  for (const targetDir of targetDirs) {
-    await fs.mkdir(targetDir, { recursive: true });
-    for (const name of afmFiles) {
-      const src = path.join(sourceDir, name);
-      const dst = path.join(targetDir, name);
-      try {
-        await fs.access(dst);
-        continue;
-      } catch {
-        // missing in target, copy it
-      }
-      try {
-        await fs.copyFile(src, dst);
-      } catch {
-        // best effort
-      }
-    }
-  }
-}
-
 /**
  * Store a client-generated SEC XBRL as-presented Excel workbook under Saved Documents for this ticker.
  * Filename is stable per ticker + filing (form, date, accession) so bulk or single save **replaces**
@@ -441,6 +280,46 @@ export async function saveXbrlAsPresentedExcelToSavedDocuments(
     convertedToPdf: false,
   };
   return { ok: true, item };
+}
+
+async function persistSavedDocumentFromUrl(
+  userId: string,
+  safeTicker: string,
+  params: {
+    sourceUrl: string;
+    body: Buffer;
+    filename: string;
+    title: string;
+    contentType: string | null;
+    convertedToPdf: boolean;
+    savedAtIso: string;
+  }
+): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> {
+  const created = await createUserSavedDocument(userId, safeTicker, {
+    filename: params.filename,
+    title: params.title,
+    originalUrl: params.sourceUrl,
+    contentType: params.contentType,
+    body: params.body,
+    savedAtIso: params.savedAtIso,
+    convertedToPdf: params.convertedToPdf,
+  });
+  if (!created.ok) return created;
+  return {
+    ok: true,
+    item: {
+      id: created.id,
+      ticker: safeTicker,
+      title: params.title,
+      filename: params.filename,
+      relativePath: `${SUBFOLDER_NAME}/${params.filename}`,
+      originalUrl: params.sourceUrl,
+      contentType: params.contentType,
+      savedAtIso: params.savedAtIso,
+      bytes: params.body.length,
+      convertedToPdf: params.convertedToPdf,
+    },
+  };
 }
 
 export async function saveDocumentFromUrl(
@@ -517,84 +396,34 @@ export async function saveDocumentFromUrl(
   }
 
   const now = new Date();
-  const stamp = now.toISOString().replace(/[:.]/g, "-");
+  const savedAtIso = now.toISOString();
+  const stamp = savedAtIso.replace(/[:.]/g, "-");
   const baseTitle = guessTitleFromUrl(url.toString());
   const safeBase = toSafeFilename(baseTitle);
-  const filename = `${stamp} - ${safeBase}.pdf`;
+  const stem = filenameStemFromSafeBase(safeBase);
 
-  let convertedToPdf = false;
-  let contentType: string | null = null;
-
-  const persistBuffer = async (
-    sourceUrl: string,
-    pdfBuf: Buffer,
-    opts?: { contentType?: string | null; converted?: boolean }
-  ): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> => {
-    const ct = opts?.contentType ?? contentType;
-    const conv = opts?.converted ?? convertedToPdf;
-    const created = await createUserSavedDocument(userId, safeTicker, {
-      filename,
+  const tryMirrorReaderSnapshot = async (): Promise<
+    { ok: true; item: SavedDocumentItem } | { ok: false; error: string } | null
+  > => {
+    const mirroredText = await fetchViaReadableMirror(url.toString());
+    if (!mirroredText?.trim()) return null;
+    const header = `Source: ${url.toString()}\nSaved: ${savedAtIso}\n\n---\n\n`;
+    const body = Buffer.from(header + mirroredText.slice(0, 450_000), "utf8");
+    const txtFilename = `${stamp} - ${stem}-reader-snapshot.txt`;
+    return persistSavedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: url.toString(),
+      body,
+      filename: txtFilename,
       title: safeBase,
-      originalUrl: sourceUrl,
-      contentType: ct,
-      body: pdfBuf,
-      savedAtIso: now.toISOString(),
-      convertedToPdf: conv,
+      contentType: "text/plain; charset=utf-8",
+      convertedToPdf: false,
+      savedAtIso,
     });
-    if (!created.ok) return created;
-    const item: SavedDocumentItem = {
-      id: created.id,
-      ticker: safeTicker,
-      title: safeBase,
-      filename,
-      relativePath: `${SUBFOLDER_NAME}/${filename}`,
-      originalUrl: sourceUrl,
-      contentType: ct,
-      savedAtIso: now.toISOString(),
-      bytes: pdfBuf.length,
-      convertedToPdf: conv,
-    };
-    return { ok: true, item };
-  };
-
-  const tryRenderUrlDirectly = async (): Promise<
-    { ok: true; item: SavedDocumentItem } | { ok: false; error: string } | null
-  > => {
-    try {
-      const rendered = await pdfFromRenderedHtmlUrl(url.toString());
-      convertedToPdf = true;
-      contentType = "application/pdf";
-      return persistBuffer(url.toString(), rendered, { contentType: "application/pdf", converted: true });
-    } catch {
-      return null;
-    }
-  };
-
-  const tryReadableMirrorFallback = async (): Promise<
-    { ok: true; item: SavedDocumentItem } | { ok: false; error: string } | null
-  > => {
-    try {
-      const mirroredText = await fetchViaReadableMirror(url.toString());
-      if (!mirroredText) return null;
-      const pdfBuf = await pdfFromText({
-        title: safeBase,
-        url: url.toString(),
-        text: mirroredText.slice(0, 300_000),
-      });
-      convertedToPdf = true;
-      contentType = "application/pdf";
-      return persistBuffer(url.toString(), pdfBuf, { contentType: "application/pdf", converted: true });
-    } catch {
-      return null;
-    }
   };
 
   if (!res) {
-    // Prefer Jina Reader before Playwright: serverless hosts usually cannot run Chromium; mirror is cheap HTTP.
-    const mirrorFallback = await tryReadableMirrorFallback();
+    const mirrorFallback = await tryMirrorReaderSnapshot();
     if (mirrorFallback) return mirrorFallback;
-    const browserFallback = await tryRenderUrlDirectly();
-    if (browserFallback) return browserFallback;
     const baseMsg =
       lastFetchError ??
       (lastStatus != null ? `HTTP ${lastStatus}` : "Fetch failed");
@@ -613,10 +442,8 @@ export async function saveDocumentFromUrl(
 
   if (!res.ok) {
     if (res.status === 403 || lastStatus === 403) {
-      const browserFallback = await tryRenderUrlDirectly();
-      if (browserFallback) return browserFallback;
-      const mirrorFallback = await tryReadableMirrorFallback();
-      if (mirrorFallback) return mirrorFallback;
+      const mirror403 = await tryMirrorReaderSnapshot();
+      if (mirror403) return mirror403;
       return {
         ok: false,
         error:
@@ -626,97 +453,97 @@ export async function saveDocumentFromUrl(
     return { ok: false, error: `Fetch failed (HTTP ${res.status})` };
   }
 
-  contentType = res.headers.get("content-type");
+  const resContentType = res.headers.get("content-type");
   const arrayBuf = await res.arrayBuffer();
   const buf = Buffer.from(arrayBuf);
   const head = buf.subarray(0, 8);
-  const isPdf = looksLikePdf(contentType, url.toString(), head);
-
-  if (isPdf) {
-    return persistBuffer(res.url || url.toString(), buf, { contentType, converted: false });
-  }
-
-  const textCt = (contentType || "").toLowerCase();
-  const utf8 = buf.toString("utf8");
   const finalFetchedUrl = res.url || url.toString();
-  const looksHtml =
-    textCt.includes("text/html") ||
-    textCt.includes("application/xhtml") ||
-    /\.html?($|[?#])/i.test(finalFetchedUrl);
 
-  if (looksHtml) {
-    try {
-      const rendered = await pdfFromRenderedHtmlContent({ url: finalFetchedUrl, html: utf8 });
-      convertedToPdf = true;
-      contentType = "application/pdf";
-      return persistBuffer(finalFetchedUrl, rendered, { contentType: "application/pdf", converted: true });
-    } catch {
-      try {
-        const rendered = await pdfFromRenderedHtmlUrl(finalFetchedUrl);
-        convertedToPdf = true;
-        contentType = "application/pdf";
-        return persistBuffer(finalFetchedUrl, rendered, { contentType: "application/pdf", converted: true });
-      } catch {
-        // Serverless cannot run Playwright; PDF-from-text destroys iXBRL layout. Store original HTML for SEC.
-        if (isSecGovHost(finalFetchedUrl)) {
-          const folderBase = secArchivesFolderBaseUrl(finalFetchedUrl);
-          const htmlBody = folderBase ? injectBaseHrefIntoSecHtml(utf8, folderBase) : utf8;
-          const htmlNameStem = toSafeFilename(safeBase.replace(/\.html?$/i, "") || "sec-filing");
-          const htmlFilename = `${stamp} - ${htmlNameStem}.html`;
-          const htmlBuf = Buffer.from(htmlBody, "utf8");
-          const created = await createUserSavedDocument(userId, safeTicker, {
-            filename: htmlFilename,
-            title: safeBase,
-            originalUrl: finalFetchedUrl,
-            contentType: "text/html; charset=utf-8",
-            body: htmlBuf,
-            savedAtIso: now.toISOString(),
-            convertedToPdf: false,
-          });
-          if (!created.ok) return created;
-          const item: SavedDocumentItem = {
-            id: created.id,
-            ticker: safeTicker,
-            title: safeBase,
-            filename: htmlFilename,
-            relativePath: `${SUBFOLDER_NAME}/${htmlFilename}`,
-            originalUrl: finalFetchedUrl,
-            contentType: "text/html; charset=utf-8",
-            savedAtIso: now.toISOString(),
-            bytes: htmlBuf.length,
-            convertedToPdf: false,
-          };
-          return { ok: true, item };
-        }
-        const rawText = stripHtmlToText(utf8);
-        const pdfBuf = await pdfFromText({
-          title: safeBase,
-          url: finalFetchedUrl,
-          text: rawText.slice(0, 200_000),
-        });
-        convertedToPdf = true;
-        contentType = "application/pdf";
-        return persistBuffer(finalFetchedUrl, pdfBuf, { contentType: "application/pdf", converted: true });
-      }
-    }
+  if (looksLikePdf(resContentType, url.toString(), head)) {
+    const pdfFilename = `${stamp} - ${stem}.pdf`;
+    return persistSavedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: buf,
+      filename: pdfFilename,
+      title: safeBase,
+      contentType: resContentType?.includes("pdf") ? resContentType : "application/pdf",
+      convertedToPdf: false,
+      savedAtIso,
+    });
   }
 
-  const looksXml = textCt.includes("xml") || /^\s*<\?xml/i.test(utf8) || /^\s*<\w+[\s>]/i.test(utf8);
-  const rawText = looksXml ? formatXml(utf8) : utf8;
-  const pdfBuf = await pdfFromText({
+  const textCt = (resContentType || "").toLowerCase();
+  let utf8: string;
+  try {
+    utf8 = buf.toString("utf8");
+  } catch {
+    utf8 = "";
+  }
+
+  if (responseLooksLikeHtml(utf8, resContentType, finalFetchedUrl)) {
+    const folderBase = documentFolderBaseUrl(finalFetchedUrl);
+    const htmlBody = folderBase ? injectBaseHrefIntoHtml(utf8, folderBase) : utf8;
+    const htmlFilename = `${stamp} - ${stem}.html`;
+    const htmlBuf = Buffer.from(htmlBody, "utf8");
+    return persistSavedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: htmlBuf,
+      filename: htmlFilename,
+      title: safeBase,
+      contentType: "text/html; charset=utf-8",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  const looksXml =
+    textCt.includes("xml") ||
+    textCt.includes("text/xml") ||
+    /^\s*<\?xml/i.test(utf8);
+
+  if (looksXml && utf8.length > 0 && !bufferLooksBinary(buf)) {
+    const xmlBody = formatXml(utf8).slice(0, 2_000_000);
+    const xmlFilename = `${stamp} - ${stem}.xml`;
+    return persistSavedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: Buffer.from(xmlBody, "utf8"),
+      filename: xmlFilename,
+      title: safeBase,
+      contentType: "application/xml; charset=utf-8",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  if (bufferLooksBinary(buf)) {
+    const binFilename = `${stamp} - ${stem}.bin`;
+    return persistSavedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: buf,
+      filename: binFilename,
+      title: safeBase,
+      contentType: resContentType || "application/octet-stream",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  const txtFilename = `${stamp} - ${stem}.txt`;
+  return persistSavedDocumentFromUrl(userId, safeTicker, {
+    sourceUrl: finalFetchedUrl,
+    body: Buffer.from(utf8.slice(0, 2_000_000), "utf8"),
+    filename: txtFilename,
     title: safeBase,
-    url: url.toString(),
-    text: rawText.slice(0, 200_000),
+    contentType: "text/plain; charset=utf-8",
+    convertedToPdf: false,
+    savedAtIso,
   });
-  convertedToPdf = true;
-  contentType = "application/pdf";
-  return persistBuffer(url.toString(), pdfBuf, { contentType: "application/pdf", converted: true });
 }
 
 function looksSafeFilename(filename: string): boolean {
   if (!filename) return false;
   if (filename.includes("/") || filename.includes("\\") || filename.includes("..")) return false;
-  // Filenames generated by us are like: `${stamp} - ${baseTitle}.pdf`
+  // Filenames generated by us are like: `${stamp} - ${stem}.html` / `.pdf` / `.txt`
   if (filename.length > 220) return false;
   return true;
 }

@@ -52,7 +52,7 @@ function contentTypeForFilename(filename: string): string {
  * GET  /api/saved-documents/[ticker]  -> list saved items (Postgres, signed-in user)
  * GET  ?file= — download one stored document
  * GET  ?reconcile=1 — no-op compatibility (same as list)
- * POST { url } — fetch URL, store PDF in Postgres
+ * POST { url } — fetch URL, store native format (HTML/PDF/XML/text) in Postgres
  * POST multipart: action=save-xbrl-as-presented-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber — preferred (no base64 size blow-up)
  * POST JSON: { action: "save-xbrl-as-presented-xlsx", base64, filing } — legacy / small workbooks only
  * POST { action: "import-ticker-files" } — legacy no-op; returns current list
