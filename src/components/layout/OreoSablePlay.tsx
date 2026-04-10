@@ -34,7 +34,7 @@ function UntranslatedDialogue() {
         <span className="font-semibold" style={oreo}>
           Oreo:
         </span>{" "}
-        snff-snff… huff… ruff-ruff. snff - SQRRRL. ruff! ruff! (tail thmp-thmp)
+        snff-snff… huff… ruff-ruff. snff - SQRRRL. ruff! ruff! tail thmp-thmp
       </p>
       <p>
         <span className="font-semibold" style={sable}>

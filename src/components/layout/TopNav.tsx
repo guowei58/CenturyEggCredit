@@ -320,7 +320,7 @@ export function TopNav({
               >
                 You used the browser Back button. This screen stays open until you return the way{" "}
                 <span className="font-semibold">OREO</span> intended: pick up the <span className="font-semibold">doo doo</span>{" "}
-                in the lower area of her photo (same as before) to go back to the homepage.
+                in the lower area of her photo to go back to the homepage.
               </div>
             )}
             <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[minmax(200px,280px)_minmax(0,1fr)] lg:gap-10 lg:px-8">
