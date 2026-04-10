@@ -4,7 +4,7 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { resolveProvider } from "@/lib/ai-provider";
 import { parseCommitteeChatMessages } from "@/lib/committee-chat-parse";
 import { COMMITTEE_CHAT_SYSTEM } from "@/data/committee-chat-prompt";
-import { buildCommitteeOreoContext } from "@/lib/committee-ticker-context";
+import { buildCommitteeOreoContext, resolveDeepSeekCommitteeOreoCharBudget } from "@/lib/committee-ticker-context";
 import { isProviderConfigured, llmCompleteConversation } from "@/lib/llm-router";
 import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
@@ -118,7 +118,9 @@ export async function POST(request: Request) {
   if (sym != null) {
     system += `\n\nThe user currently has ticker **${sym}** selected in the sidebar (context only; they may ask about other names).`;
     if (includeOreo) {
-      const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id);
+      const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id, {
+        maxCharBudget: provider === "deepseek" ? resolveDeepSeekCommitteeOreoCharBudget() : undefined,
+      });
       if (oreoBlock) {
         system += `\n\n---\n## OREO saved workspace (ticker ${sym})\nThe following was read from this ticker's folder in OREO—saved tab responses, Credit Agreements text, and text files under Saved Documents. Use it when relevant.\n\n${oreoBlock}`;
       }

@@ -48,7 +48,7 @@ export type UserPreferencesData = {
   includeOreoContext?: boolean;
   /**
    * How verbose in-app LLM outputs should be (AI Chat, research tabs, memos, decks, etc.).
-   * `md` = time-efficient but still substantively complete; `analyst` = maximum depth.
+   * Omitted or `analyst` = legacy baseline (no global brevity instruction). `md` = ~half the narrative density, same material facts.
    */
   responseVerbosity?: UserResponseVerbosity;
 };

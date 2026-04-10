@@ -40,7 +40,7 @@ export function UserSettingsModal({
   const [saving, setSaving] = useState(false);
   const [savingKeys, setSavingKeys] = useState(false);
   const [responseVerbosity, setResponseVerbosity] = useState<UserResponseVerbosity>(
-    preferences.responseVerbosity === "analyst" ? "analyst" : "md"
+    preferences.responseVerbosity === "md" ? "md" : "analyst"
   );
   const [verbositySavedToast, setVerbositySavedToast] = useState(false);
   const [verbositySaveError, setVerbositySaveError] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export function UserSettingsModal({
     setKeysSavedToast(false);
     setSaveError(null);
     setKeysSaveError(null);
-    setResponseVerbosity(preferences.responseVerbosity === "analyst" ? "analyst" : "md");
+    setResponseVerbosity(preferences.responseVerbosity === "md" ? "md" : "analyst");
     setVerbositySavedToast(false);
     setVerbositySaveError(null);
   }, [open, initial, preferences.userLlmApiKeys, preferences.responseVerbosity]);
@@ -215,8 +215,9 @@ export function UserSettingsModal({
               AI response depth
             </h4>
             <p className="mt-1 text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-              Applies to AI Chat, research tab API runs, credit memos, decks, covenant/LME synthesis, and other in-app model calls. MD keeps
-              answers efficient without dropping material facts; Analyst maximizes diligence-style detail.
+              Applies to AI Chat, research tab API runs, credit memos, decks, covenant/LME synthesis, and other in-app model calls. Analyst
+              matches the original OREO default (no extra brevity rules in the global system layer). MD asks for about half the prose volume
+              with the same material substance.
             </p>
             <div className="mt-3 space-y-2">
               <label className="flex cursor-pointer items-start gap-2 text-[11px]" style={{ color: "var(--text)" }}>

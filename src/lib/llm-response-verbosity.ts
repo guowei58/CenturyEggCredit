@@ -6,10 +6,12 @@ import type { UserPreferencesData, UserResponseVerbosity } from "@/lib/user-pref
 
 export type ResponseVerbosity = UserResponseVerbosity;
 
-export const DEFAULT_RESPONSE_VERBOSITY: ResponseVerbosity = "md";
+/** When prefs omit `responseVerbosity`, behave like before the MD/Analyst feature: no extra global brevity layer. */
+export const DEFAULT_RESPONSE_VERBOSITY: ResponseVerbosity = "analyst";
 
+/** Explicit `md` only; anything else (undefined / `analyst`) = legacy full-detail baseline. */
 export function resolveResponseVerbosity(raw: unknown): ResponseVerbosity {
-  return raw === "analyst" ? "analyst" : "md";
+  return raw === "md" ? "md" : "analyst";
 }
 
 export function responseVerbosityFromPreferences(prefs: UserPreferencesData | null | undefined): ResponseVerbosity {
@@ -17,23 +19,20 @@ export function responseVerbosityFromPreferences(prefs: UserPreferencesData | nu
 }
 
 /**
- * Appended to every cloud system prompt (after the task prompt, with date/time + verification block).
+ * Appended to cloud system prompts (between date/time prefix and verification block).
+ * Analyst adds **nothing** so behavior matches pre-verbosity OREO (task prompts + verification only).
+ * MD adds explicit compression (~half the narrative volume vs a full diligence write-up).
  */
 export function responseVerbosityInstruction(v: ResponseVerbosity): string {
   if (v === "analyst") {
-    return `
-
-Response depth (user preference — Analyst: don't want to miss a thing):
-- Be thorough and comprehensive. Err on the side of including material detail, caveats, and second-order points when they help judgment.
-- Use structure (headings, bullets, tables) when it improves clarity; longer answers are fine when analytically useful.
-- Still avoid pure filler, repetition, and generic platitudes.`;
+    return "";
   }
 
   return `
 
-Response depth (user preference — MD: no time to chit-chat):
-- The user is engaged and wants to learn about the company but is time-constrained. Be direct: no small talk, long preambles, or rhetorical throat-clearing.
-- Prioritize signal over noise: lead with conclusions and material facts; use tight bullets and short sections where helpful.
-- Do **not** sacrifice substance for brevity: keep all **material** facts, figures, dates, risks, legal/credit nuances, and caveats that would change a reader's understanding. Compress via structure and precision, not by omitting important information.
-- If you must shorten, drop lower-value elaboration—not critical disclosures.`;
+Response depth (user preference — MD: time-efficient read, ~half the prose vs a full analyst-style answer):
+- Target roughly **50% of the narrative length** you would use for an unrestricted diligence draft: fewer paragraphs, shorter sentences, more bullets and subheadings—**without** dropping material facts, figures, dates, risks, or caveats.
+- Lead with the answer and key evidence; avoid throat-clearing, repetition, and long scene-setting.
+- Do **not** omit important information to save space; achieve brevity by tightening wording and structure, not by skipping disclosures the user would need.
+- If a section would normally run long, summarize the logic in 1–2 tight paragraphs plus a short bullet list of the critical points.`;
 }
