@@ -137,11 +137,11 @@ export function CompanyCapitalStructureTab({
 
   function openInChatGPT() {
     if (!prompt) return;
-    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, clearFailed) => {
-      if (clearFailed) {
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, copyFailed) => {
+      if (copyFailed) {
         return "ChatGPT opened. Attach the reference templates and paste the prompt manually.";
       }
-      return "ChatGPT opened. Clipboard cleared — use Copy prompt, paste, attach the reference templates if supported, then press Enter.";
+      return "ChatGPT opened. Prompt copied — paste into the chat, attach the reference templates if supported, then press Enter.";
     });
   }
 

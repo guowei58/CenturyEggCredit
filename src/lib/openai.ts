@@ -75,6 +75,18 @@ function usesGpt5ChatCompletionShape(model: string): boolean {
   return model.toLowerCase().startsWith("gpt-5");
 }
 
+/**
+ * `reasoning_effort` is only valid for certain Chat Completions models. In particular, OpenAI’s
+ * **search** endpoints (e.g. `gpt-5-search-api`, `*-search-preview`) reject this parameter with
+ * "Unrecognized request argument supplied: reasoning_effort".
+ */
+function openAiModelAcceptsReasoningEffort(model: string): boolean {
+  const m = model.toLowerCase();
+  if (!m.startsWith("gpt-5")) return false;
+  if (m.includes("search")) return false;
+  return true;
+}
+
 function openAiCompletionTokenCap(model: string): number {
   return usesGpt5ChatCompletionShape(model) ? OPENAI_GPT5_MAX_COMPLETION_TOKENS : OPENAI_LEGACY_MAX_COMPLETION_TOKENS;
 }
@@ -100,7 +112,9 @@ function openAiChatRequestBody(
   const body: Record<string, unknown> = { model, messages };
   if (usesGpt5ChatCompletionShape(model)) {
     body.max_completion_tokens = maxTokens;
-    body.reasoning_effort = reasoningEffortForGpt5();
+    if (openAiModelAcceptsReasoningEffort(model)) {
+      body.reasoning_effort = reasoningEffortForGpt5();
+    }
   } else {
     body.max_tokens = maxTokens;
   }

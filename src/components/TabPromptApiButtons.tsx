@@ -141,7 +141,7 @@ export function TabPromptApiButtons({
         })}
       </div>
       {error ? (
-        <p className="mt-2 text-[11px] leading-relaxed" style={{ color: "var(--danger)" }}>
+        <p className="mt-2 whitespace-pre-line text-[11px] leading-relaxed" style={{ color: "var(--danger)" }}>
           {error}
         </p>
       ) : null}

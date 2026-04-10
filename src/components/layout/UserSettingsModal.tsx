@@ -211,7 +211,7 @@ export function UserSettingsModal({
               </p>
             ) : (
               <>
-                <p className="mt-1 text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+                <p className="mt-1 whitespace-pre-line text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
                   {USER_LLM_API_KEYS_POLICY}
                 </p>
                 <p className="mt-2 text-[10px] leading-snug" style={{ color: "var(--muted)" }}>

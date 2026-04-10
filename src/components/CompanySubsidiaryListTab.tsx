@@ -95,11 +95,11 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
 
   function openInChatGPT() {
     if (!prompt) return;
-    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, clearFailed) => {
-      if (clearFailed) {
+    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed, (_ws, copyFailed) => {
+      if (copyFailed) {
         return "ChatGPT opened. Paste the prompt manually; attach any filing excerpts you rely on.";
       }
-      return "ChatGPT opened. Clipboard cleared — use Copy prompt, paste, attach Exhibit 21 or other filings if you use them, then press Enter.";
+      return "ChatGPT opened. Prompt copied — paste into the chat, attach Exhibit 21 or other filings if you use them, then press Enter.";
     });
   }
 

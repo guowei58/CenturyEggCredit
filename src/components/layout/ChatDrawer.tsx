@@ -632,7 +632,7 @@ export function ChatDrawer({
                         Pick <strong>Claude</strong>, <strong>ChatGPT</strong>, <strong>Gemini</strong>, or <strong>DeepSeek</strong> in the
                         header first.
                       </p>
-                      <p className="mb-2 text-[12px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+                      <p className="mb-2 whitespace-pre-line text-[12px] leading-relaxed" style={{ color: "var(--muted2)" }}>
                         {USER_LLM_API_KEYS_POLICY}
                       </p>
                       <p>
