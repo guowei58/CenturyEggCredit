@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import PDFDocument from "pdfkit";
 import { PassThrough } from "stream";
+import * as cheerio from "cheerio";
 import { chromium } from "playwright";
 import { getSecEdgarUserAgent } from "@/lib/sec-edgar";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
@@ -112,6 +113,72 @@ function looksLikePdf(contentType: string | null, urlStr: string, head: Uint8Arr
     if (sig === "%PDF") return true;
   }
   return false;
+}
+
+function isSecGovHost(urlStr: string): boolean {
+  try {
+    const h = new URL(urlStr).hostname.toLowerCase();
+    return h === "sec.gov" || h.endsWith(".sec.gov");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * SEC inline-XBRL `.htm` filings are mostly `<table>` rows. When Playwright is unavailable
+ * (e.g. Vercel), we build line-oriented text so PDFs stay readable instead of one giant line.
+ */
+function htmlToStructuredPlainTextForSecFilings(html: string): string {
+  try {
+    const $ = cheerio.load(html);
+    $("script, style, noscript, link, meta").remove();
+
+    const lines: string[] = [];
+    $("tr").each((_, tr) => {
+      const cells = $(tr)
+        .children("td, th")
+        .map((_, cell) =>
+          $(cell)
+            .text()
+            .replace(/\s+/g, " ")
+            .trim()
+        )
+        .get()
+        .filter((t) => t.length > 0);
+      if (cells.length > 0) {
+        lines.push(cells.join(" | "));
+      }
+    });
+
+    const fromRows = lines.join("\n").trim();
+    if (fromRows.length > 800) {
+      return fromRows.slice(0, 450_000);
+    }
+  } catch {
+    // fall through
+  }
+  return stripHtmlToTextSecEnhanced(html);
+}
+
+/** More line breaks for iXBRL-ish HTML when table extraction is thin. */
+function stripHtmlToTextSecEnhanced(html: string): string {
+  const noScripts = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, " ");
+  const noStyles = noScripts.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, " ");
+  const withBreaks = noStyles
+    .replace(/<\/?(?:p|div|h[1-6]|li|caption|table|tbody|thead|colgroup|col)[^>]*>/gi, "\n")
+    .replace(/<\/?tr[^>]*>/gi, "\n")
+    .replace(/<\/?ix:[^>]+>/gi, "\n")
+    .replace(/<\/t[dh]\s*>/gi, " | ")
+    .replace(/<t[dh][^>]*>/gi, "")
+    .replace(/<br\s*\/?>/gi, "\n");
+  const noTags = withBreaks.replace(/<[^>]+>/g, " ");
+  return decodeHtmlEntities(noTags)
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/(?:\s*\|\s*){2,}/g, " | ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function stripHtmlToText(html: string): string {
@@ -621,11 +688,13 @@ export async function saveDocumentFromUrl(
         contentType = "application/pdf";
         return persistBuffer(finalFetchedUrl, rendered, { contentType: "application/pdf", converted: true });
       } catch {
-        const rawText = stripHtmlToText(utf8);
+        const rawText = isSecGovHost(finalFetchedUrl)
+          ? htmlToStructuredPlainTextForSecFilings(utf8)
+          : stripHtmlToText(utf8);
         const pdfBuf = await pdfFromText({
           title: safeBase,
           url: finalFetchedUrl,
-          text: rawText.slice(0, 200_000),
+          text: rawText.slice(0, isSecGovHost(finalFetchedUrl) ? 400_000 : 200_000),
         });
         convertedToPdf = true;
         contentType = "application/pdf";
