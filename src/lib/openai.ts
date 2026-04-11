@@ -4,6 +4,7 @@
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import { XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS } from "@/lib/llm-xbrl-consolidate-timeouts";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -39,7 +40,10 @@ function openAiFetchTimeoutMs(): number {
  * Override OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS (30s–15m). Align with route `maxDuration` on your host.
  */
 export function openAiXbrlConsolidateFetchTimeoutMs(): number {
-  return parseOpenAiFetchTimeoutMs(process.env.OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS, 600_000);
+  return parseOpenAiFetchTimeoutMs(
+    process.env.OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS,
+    XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS
+  );
 }
 
 /** Default when no OPENAI_MODEL and no per-request override (cheap, reliable for long tab prompts). */

@@ -24,6 +24,14 @@ const GEMINI_OPENAI_CHAT_URL = `${GEMINI_OPENAI_BASE}/chat/completions`;
 /** Native generateContent (grounding, tools). @see https://ai.google.dev/gemini-api/docs/google-search */
 const GEMINI_GENERATE_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const GEMINI_GROUNDING_TIMEOUT_MS = 180_000;
+const GEMINI_OPENAI_COMPAT_TIMEOUT_DEFAULT_MS = 120_000;
+
+function geminiOpenAiCompatTimeoutMs(override?: number): number {
+  if (override != null && Number.isFinite(override)) {
+    return Math.min(600_000, Math.max(30_000, Math.round(override)));
+  }
+  return GEMINI_OPENAI_COMPAT_TIMEOUT_DEFAULT_MS;
+}
 
 /** Set OREO_GEMINI_GOOGLE_SEARCH=0 (or false/off) to skip Google Search grounding on tab prompts and AI Chat. */
 export function isGeminiGoogleSearchEnabled(): boolean {
@@ -164,6 +172,8 @@ export async function callGemini(
     apiKeys?: LlmCallApiKeys;
     /** Native generateContent + Google Search grounding (not OpenAI-compatible chat). */
     googleSearch?: boolean;
+    /** Override OpenAI-compat chat HTTP wait (ms). */
+    fetchTimeoutMs?: number;
   } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
@@ -200,7 +210,7 @@ export async function callGemini(
         ],
         max_tokens: maxTokens,
       }),
-      signal: AbortSignal.timeout(120_000),
+      signal: AbortSignal.timeout(geminiOpenAiCompatTimeoutMs(options.fetchTimeoutMs)),
     });
 
     const raw = await res.text();
@@ -259,6 +269,7 @@ export async function callGeminiConversation(
     model?: string;
     apiKeys?: LlmCallApiKeys;
     googleSearch?: boolean;
+    fetchTimeoutMs?: number;
   } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
@@ -310,7 +321,7 @@ export async function callGeminiConversation(
         messages: apiMessages,
         max_tokens: maxTokens,
       }),
-      signal: AbortSignal.timeout(120_000),
+      signal: AbortSignal.timeout(geminiOpenAiCompatTimeoutMs(options.fetchTimeoutMs)),
     });
 
     const raw = await res.text();

@@ -25,13 +25,16 @@ function resolveDeepSeekKey(apiKeys: LlmCallApiKeys | undefined): { key: string 
 const DEEPSEEK_FETCH_MS_MIN = 30_000;
 const DEEPSEEK_FETCH_MS_MAX = 900_000;
 
-function deepSeekFetchTimeoutMs(): number {
+function deepSeekFetchTimeoutMs(override?: number): number {
+  if (override != null && Number.isFinite(override)) {
+    return Math.min(DEEPSEEK_FETCH_MS_MAX, Math.max(DEEPSEEK_FETCH_MS_MIN, Math.round(override)));
+  }
   const raw = process.env.DEEPSEEK_FETCH_TIMEOUT_MS?.trim();
   if (raw) {
     const n = parseInt(raw, 10);
     if (Number.isFinite(n)) return Math.min(DEEPSEEK_FETCH_MS_MAX, Math.max(DEEPSEEK_FETCH_MS_MIN, n));
   }
-  return 300_000;
+  return 600_000;
 }
 
 function clampMaxTokens(requested: number): number {
@@ -68,13 +71,13 @@ function normalizeError(status: number, raw: string): DeepSeekResult {
 export async function callDeepSeek(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
+  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys; fetchTimeoutMs?: number } = {}
 ): Promise<DeepSeekResult> {
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const model = options.model?.trim() || getDeepSeekModel();
   const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
-  const waitMs = deepSeekFetchTimeoutMs();
+  const waitMs = deepSeekFetchTimeoutMs(options.fetchTimeoutMs);
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   try {
@@ -116,13 +119,13 @@ export async function callDeepSeek(
 export async function callDeepSeekConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys } = {}
+  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys; fetchTimeoutMs?: number } = {}
 ): Promise<DeepSeekResult> {
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const model = options.model?.trim() || getDeepSeekModel();
   const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
-  const waitMs = deepSeekFetchTimeoutMs();
+  const waitMs = deepSeekFetchTimeoutMs(options.fetchTimeoutMs);
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const apiMessages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [

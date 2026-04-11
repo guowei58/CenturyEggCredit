@@ -13,39 +13,39 @@ OBJECTIVE
 
 Build a fully consolidated historical financial model for ALL periods available from the uploaded files, including:
 
-1. Income Statement
-2. Balance Sheet
+1. Balance Sheet
+2. Income Statement
 3. Cash Flow Statement
 
-The final output must lay out the data by:
-- 1Q
-- 2Q
-- 3Q
-- 4Q
-- Full Year
+The final output must mimic a **three-statement financial spreadsheet** layout: **historical annual columns first**, then a **repeating block per fiscal year** of **quarters plus a full-year roll-up column** (like a year label spanning 1Q–4Q with a shaded FY column in Excel — in markdown, express that structure with clear headers only; do not add a separate “spacer” data column).
 
-for every year available in the source files.
+MANDATORY PERIOD COLUMN LAYOUT — SPREADSHEET STYLE
 
-MANDATORY PERIOD COLUMN GRID — NO EXCEPTIONS
+For **Income Statement**, **Balance Sheet**, and **Cash Flow**, each primary statement is **one** wide markdown table (same row set carries across the entire horizontal timeline).
 
-For **Income Statement**, **Balance Sheet**, and **Cash Flow**, each primary statement is one wide markdown table whose **period headers** MUST follow a **fixed five-column pattern for every fiscal year** that appears in the uploaded workbooks (from the **earliest** such fiscal year through the **latest**).
+**Part 1 — Historical annuals (prefix block)**  
+- Identify fiscal years for which the uploaded workbooks provide **meaningful annual / 10-K figures** but **no** usable quarterly columns for that fiscal year (typical for older history).
+- For each such year, in **chronological order** (oldest → newest), output **one** column headed **`FY####`** using **four-digit fiscal years** (e.g. `FY2016`, `FY2017`). Optional estimate suffix: **`FY2025E`** when the source clearly marks forward / estimated periods.
+- **Do not duplicate** those years inside Part 2: a year is **either** only in Part 1 **or** only in Part 2, never both.
 
-**Per fiscal year, exactly five columns, in this exact order:**
-1. **1Q** (first fiscal quarter)
+**Part 2 — Quarterly + annual block (every year with any quarterly data)**  
+Let **Y_start** = the **earliest** fiscal year that has **any** of 1Q / 2Q / 3Q / 4Q data in the uploads (standalone or derivable per these rules). Let **Y_end** = the **latest** fiscal year in the data.  
+For **every** integer fiscal year from **Y_start** through **Y_end**, output **exactly five** period columns in this order:
+1. **1Q**
 2. **2Q**
 3. **3Q**
 4. **4Q**
-5. **FY** (full fiscal year — annual / 10-K column; not optional)
+5. **FY** (full fiscal year — annual / 10-K column; visually the “annual total” column next to the quarters; **not** optional)
 
-**Header naming:** Use one consistent style everywhere (all three statements), e.g. `1Q19 | 2Q19 | 3Q19 | 4Q19 | FY19` then `1Q20 | … | FY20` … through the latest year. Do not mix `2019` and `19` styles in the same output.
+**Header naming (consistent across all three statements):** e.g. `1Q19 | 2Q19 | 3Q19 | 4Q19 | FY19` then `1Q20 | … | FY20` … through `Y_end`. Do not mix `2019` and `19` styles in the same file.
 
 **Non-negotiable rules:**
-- **Never omit** a 1Q, 2Q, 3Q, 4Q, or FY column for any fiscal year in that range — not for annual-only filings, not for sparse data, not to shorten the table, not because “only FY exists” in the CSV.
+- **Never omit** a 1Q, 2Q, 3Q, 4Q, or FY column for any year in **Y_start…Y_end** — not for annual-only filings in that range, not for sparse data, not to shorten the table.
 - If the source has **no** value for a given line × period, put **—** (em dash) or leave the cell empty — **but the column header must still exist.**
-- **FY and 4Q are always separate columns** for every year. (Balance sheet: FY and 4Q may show the same year-end figure; still output **both** headers.)
-- Do **not** replace the five-column grid with YTD-only columns (6M, 9M, etc.) as the main timeline. If you mention YTD in notes or provenance, fine — the **visible grid** for investors remains 1Q / 2Q / 3Q / 4Q / FY per year.
+- **FY and 4Q are always separate columns** for every year in Part 2. (Balance sheet: FY and 4Q may show the same period-end figure; still output **both** headers.)
+- Do **not** replace the quarterly grid with YTD-only columns (6M, 9M, etc.) as the main timeline. If you mention YTD in notes or provenance, fine — the **visible grid** remains Part 1 (FY####) as needed, then Part 2’s **1Q / 2Q / 3Q / 4Q / FY** per year.
 
-**Self-check before finalizing each primary table:** For every fiscal year Y in the header row, confirm the five consecutive columns are **1QY, 2QY, 3QY, 4QY, FYY** (same labels as the rest of the file). If any year is missing one of the five, **fix the header** before returning output.
+**Self-check before finalizing each primary table:** (1) Part 1 columns are only **`FY####`** (optional **E**) for annual-only years before **Y_start**, in order. (2) From **Y_start** through **Y_end**, each year has **1QY, 2QY, 3QY, 4QY, FYY** consecutively. If anything is missing, **fix the header row** before returning output.
 
 CORE RULES
 
@@ -58,7 +58,8 @@ CORE RULES
 - Assume all uploaded files belong to the same company unless clearly contradicted.
 - If a file appears inconsistent, flag it separately rather than contaminating the consolidated model.
 
-3. AS PRESENTED
+3. AS PRESENTED (COMPANY-SPECIFIC LINE ITEMS)
+- Line items **differ by company**; do not force a generic industry template. Conform **row labels, ordering, subtotals, and any “% of revenue” (or similar) companion rows** to **this company’s own latest filing presentation** where the XBRL exports show that structure.
 - Preserve line items as management presents them.
 - Do not summarize away important rows.
 - Do not collapse materially different rows unless they are clearly identical in meaning.
@@ -171,10 +172,11 @@ For Income Statement, Balance Sheet, and Cash Flow Statement — each must be ex
 
 - First column: line item label (same column for the entire table).
 - Second column: **Concept** — exact XBRL tag from the source CSV (e.g. `us-gaap:SellingGeneralAndAdministrativeExpense`). Required: the app repairs numeric cells and runs automated reconciliation using this column; use the header name **Concept** (case-insensitive).
-- Remaining columns: **strict chronological order** of the **mandatory five-column-per-year grid** (see **MANDATORY PERIOD COLUMN GRID** above): for each fiscal year in range, **1Q, 2Q, 3Q, 4Q, FY** in that order, then the next year’s five, from earliest year through the most recent (e.g. `1Q18 | 2Q18 | 3Q18 | 4Q18 | FY18 | 1Q19 | 2Q19 | 3Q19 | 4Q19 | FY19 | …` with no gaps).
+- Remaining columns: **strict chronological order** — first any **Part 1** **`FY####`** annual-only columns (oldest → newest), then **Part 2** for **Y_start…Y_end**: for each fiscal year, **1Q, 2Q, 3Q, 4Q, FY** (see **MANDATORY PERIOD COLUMN LAYOUT — SPREADSHEET STYLE** above).
+- Example header shape (excerpt): `Line | Concept | FY2015 | FY2016 | FY2017 | 1Q18 | 2Q18 | 3Q18 | 4Q18 | FY18 | 1Q19 | … | 4Q24 | FY24 | …`
 - Every line item appears on a single row; that row carries values across the full horizontal span from oldest to newest. Do not restart the table when the calendar year changes.
 - Do NOT break years apart: no separate "2022" table and "2023" table; no subsection per fiscal year that repeats the same line items in a new table; no vertical stack of year-sized tables for the same statement.
-- Do NOT omit **any fiscal year** in the year range, and do NOT omit **any** of the five slots (1Q–4Q–FY) for a year — include the full grid in one continuous header row (use **—** or empty body cells when a value is unknown, never by deleting the column).
+- Do NOT omit **any** required Part 2 year in **Y_start…Y_end**, and do NOT omit **any** of the five slots (1Q–4Q–FY) for those years — include the full grid in one continuous header row (use **—** or empty body cells when a value is unknown, never by deleting the column).
 - Wide tables are required even if many columns; do not substitute narrow year-by-year tables for readability.
 
 - **GFM table syntax:** In the final markdown, each table row must be one continuous physical line (no newline in the middle of a row). GitHub-Flavored Markdown only recognizes rows that start with `|` on a single line; if the model hard-wraps a row, the UI may render pipes as plain text with ugly wrapping instead of a single scrollable grid.
@@ -185,8 +187,8 @@ OUTPUT REQUIREMENTS
 
 Produce a clean consolidated model with separate sections or tabs for:
 
-A. Income Statement
-B. Balance Sheet
+A. Balance Sheet (first — typical three-statement workbook order)
+B. Income Statement
 C. Cash Flow Statement
 D. Overlap / Restatement Check
 E. Source Map / Provenance
@@ -200,10 +202,10 @@ Rows:
 - Each line item appears once in the table body (one row per line item for the full history).
 
 Columns:
-- One continuous header row: for **each** fiscal year from earliest through latest in the data, **exactly** the five columns **1Q, 2Q, 3Q, 4Q, FY** (see **MANDATORY PERIOD COLUMN GRID**). No year-based table breaks; no skipped quarters or FY.
+- One continuous header row: **Part 1** **`FY####`** columns for annual-only history (when applicable), then **Part 2** for **Y_start…Y_end**: for **each** such year, **exactly** the five columns **1Q, 2Q, 3Q, 4Q, FY** (see **MANDATORY PERIOD COLUMN LAYOUT**). No year-based table breaks; no skipped quarters or FY in Part 2.
 
-Preferred column format example (single header row — excerpt only; your table continues left-to-right for **all** years, **five columns per year always**):
-- Line | Concept | 1Q18 | 2Q18 | 3Q18 | 4Q18 | FY18 | 1Q19 | 2Q19 | 3Q19 | 4Q19 | FY19 | … | 1Q24 | 2Q24 | 3Q24 | 4Q24 | FY24 | …
+Preferred column format example (single header row — excerpt only):
+- Line | Concept | FY2015 | FY2016 | FY2017 | 1Q18 | 2Q18 | 3Q18 | 4Q18 | FY18 | 1Q19 | 2Q19 | 3Q19 | 4Q19 | FY19 | … | 1Q24 | 2Q24 | 3Q24 | 4Q24 | FY24 | …
 
 For balance sheet:
 - 1Q / 2Q / 3Q / 4Q / FY are **all required** column headers per year; values are ending balances where the source reports them, **—** otherwise.
@@ -249,7 +251,8 @@ QUALITY CONTROL / VALIDATION
 Before finalizing, perform these checks **without replacing source numbers with your own math**:
 
 PERIOD GRID (ALL THREE PRIMARY STATEMENTS)
-- For each fiscal year in the output, confirm the header contains **exactly five** period columns: **1Q, 2Q, 3Q, 4Q, FY** (with your chosen consistent year suffix). If anything is missing, **add the missing headers** and **—** in body cells until the grid is complete.
+- Confirm **Part 1** (if used) uses only **`FY####`** headers for annual-only years before **Y_start**.
+- For **each** fiscal year from **Y_start** through **Y_end**, confirm the header contains **exactly five** period columns: **1Q, 2Q, 3Q, 4Q, FY** (with your chosen consistent year suffix). If anything is missing, **add the missing headers** and **—** in body cells until the grid is complete.
 
 INCOME STATEMENT
 - Confirm subtotals and totals **match the figures printed in the source workbooks** for that period (do not recompute).
@@ -280,8 +283,8 @@ PERMITTED FINAL OUTPUT
 
 Return exactly these components:
 
-1. Consolidated Income Statement — one markdown table, all periods oldest→newest on one header row
-2. Consolidated Balance Sheet — one markdown table, same rule
+1. Consolidated Balance Sheet — one markdown table, all periods oldest→newest on one header row
+2. Consolidated Income Statement — one markdown table, same rule
 3. Consolidated Cash Flow Statement — one markdown table, same rule
 4. Overlap / Restatement Check
 5. Source Map / Provenance
@@ -301,12 +304,12 @@ IMPORTANT RESTRICTIONS
 - Do not overwrite newer filings with older numbers.
 - Do not stop because the task is long.
 - Do not split the three primary statements into multiple tables by year; use one wide table per statement from earliest through latest period.
-- Do not omit **1Q, 2Q, 3Q, 4Q, or FY** for any fiscal year in range — the **MANDATORY PERIOD COLUMN GRID** applies to every year with no exceptions.
+- Do not omit **1Q, 2Q, 3Q, 4Q, or FY** for any fiscal year in **Y_start…Y_end** — the **MANDATORY PERIOD COLUMN LAYOUT** applies with no exceptions. Do not duplicate the same fiscal year in both Part 1 and Part 2.
 - Do not calculate, re-sum, or “fix” numbers except **section 3C** (standalone quarters from YTD when the source omits that quarter — including 4Q = FY − 9M; and standalone quarterly cash flow from YTD when required). Otherwise copy from the XBRL exports only.
 
 FINAL STANDARD
 
-The goal is to create one investor-grade historical model from multiple XBRL statement files, using the latest filing for overlapping data, preserving management presentation, and showing every available quarter and full year in one continuous column layout per statement (earliest data through now on the same rows) for:
-- income statement
+The goal is to create one investor-grade historical model from multiple XBRL statement files, using the latest filing for overlapping data, preserving **each company’s** management presentation and line-item structure, and showing **annual history first where appropriate**, then **every available quarter and full year** in one continuous column layout per statement (earliest data through now on the same rows) for:
 - balance sheet
+- income statement
 - cash flow statement

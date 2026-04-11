@@ -4,9 +4,11 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { createProjectId, ingestTickerFolder } from "@/lib/creditMemo/folderIngest";
+import { mergeAiChatIntoIngestedProject } from "@/lib/creditMemo/mergeAiChatSources";
 import { isAllowedTickerResearchPath } from "@/lib/creditMemo/pathGuard";
 import { saveProject } from "@/lib/creditMemo/store";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
+import { getAiChatPayload } from "@/lib/user-workspace-store";
 import { USER_WORKSPACE_INGEST_SENTINEL } from "@/lib/user-ticker-workspace-constants";
 import {
   materializeUserWorkspaceToTempDir,
@@ -76,12 +78,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Folder not found or not accessible" }, { status: 404 });
     }
 
-    const { project, warnings } = await ingestTickerFolder({
+    const { project: folderProject, warnings } = await ingestTickerFolder({
       projectId,
       ticker: sym,
       folderAbs: abs,
     });
 
+    const chatPayload = await getAiChatPayload(userId);
+    const { project: mergedProject, extraWarnings } = mergeAiChatIntoIngestedProject(folderProject, chatPayload);
+    const project = mergedProject;
     project.folderResolutionJson = body.resolutionMeta ?? { folderPath: abs };
 
     await saveProject(userId, project);
@@ -89,7 +94,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true,
       project,
-      ingestWarnings: warnings,
+      ingestWarnings: [...warnings, ...extraWarnings],
     });
   } finally {
     if (tmpMaterialized) await rmTempWorkspaceDir(tmpMaterialized);

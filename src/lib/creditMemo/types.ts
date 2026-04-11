@@ -35,6 +35,8 @@ export type SourceCategory =
   | "news"
   | "org_legal"
   | "notes"
+  /** Sidebar AI Chat (drawer) merged at ingest — not from the research folder */
+  | "ai_chat"
   | "other";
 
 export type SourceFileRecord = {

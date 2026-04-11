@@ -3,7 +3,10 @@ import { normalizeAiProvider, type AiProvider } from "@/lib/ai-provider";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
-import { openAiXbrlConsolidateFetchTimeoutMs } from "@/lib/openai";
+import {
+  XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS,
+  XBRL_CONSOLIDATE_MAX_DURATION_SEC,
+} from "@/lib/llm-xbrl-consolidate-timeouts";
 import { buildSavedXbrlTextPack } from "@/lib/xbrl-ai-consolidation/ingestSavedXbrlPack";
 import { getXbrlAiConsolidationInstructions } from "@/lib/xbrl-ai-consolidation/loadInstructions";
 import {
@@ -19,10 +22,10 @@ import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 /**
- * Vercel caps this at 300s on Hobby (and many hosts). Keep OpenAI wait ≤ this via
- * OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS; Pro plans allow higher `maxDuration` if you raise both.
+ * 10 minutes for the full consolidate job (ingest + LLM + repair/reconcile). Keep outbound LLM
+ * waits aligned via {@link XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS}. Some hosts cap `maxDuration` below 600 — raise on Pro if needed.
  */
-export const maxDuration = 300;
+export const maxDuration = XBRL_CONSOLIDATE_MAX_DURATION_SEC;
 
 const SAVE_KEY = "xbrl-consolidated-financials-ai" as const;
 
@@ -84,7 +87,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
 
 Hard rule: do not calculate or re-sum amounts except where the system message explicitly allows standalone quarters from YTD (including 4Q = FY − 9M when needed) and standalone quarterly cash flow from YTD when needed. Otherwise transcribe numbers from the files (after Latest Filing Wins). Include every Income Statement line from the CSVs (every Concept), including equity-method / affiliate and other non-operating lines — do not drop rows.
 
-Hard rule — period columns (Income Statement, Balance Sheet, Cash Flow): For **every** fiscal year from the earliest through the latest year present in the data, output **exactly five** period columns in this order: **1Q, 2Q, 3Q, 4Q, FY** (consistent labels, e.g. 1Q19…FY19). **Never** skip a quarter or FY to save space. If the source has no figure, use **—** but **keep the column**.
+Hard rule — period columns (all three statements): Use spreadsheet-style headers per the system message: optional leading FY#### (four-digit year) columns only for annual-only fiscal years before the first year that has any quarterly data, then for every fiscal year from that first quarterly year through the latest year, output exactly five columns: 1Q, 2Q, 3Q, 4Q, FY (consistent labels, e.g. 1Q19 through FY19). Do not duplicate the same fiscal year in both the FY-prefix block and the quarterly block. Never skip a quarter or FY in the quarterly block to save space. If the source has no figure, use an em dash but keep the column.
 
 --- BEGIN DATA (${pack.fileCount} workbook(s), ${pack.sheetCount} sheet(s) total; truncated=${pack.truncated}) ---
 
@@ -99,7 +102,7 @@ ${pack.text}
     openaiModel: models.openaiModel,
     geminiModel: models.geminiModel,
     deepseekModel: models.deepseekModel,
-    openaiFetchTimeoutMs: provider === "openai" ? openAiXbrlConsolidateFetchTimeoutMs() : undefined,
+    llmHttpTimeoutMs: XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS,
     apiKeys: bundle,
   });
 

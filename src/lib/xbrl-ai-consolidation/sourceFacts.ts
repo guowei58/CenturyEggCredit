@@ -36,6 +36,15 @@ function normalizeLabel(s: string): string {
     .trim();
 }
 
+function rangeDurationDays(sourcePeriod: string): number | null {
+  const m = sourcePeriod.match(/(\d{4}-\d{2}-\d{2})\s*(?:to|→|->)\s*(\d{4}-\d{2}-\d{2})/i);
+  if (!m) return null;
+  const t0 = Date.parse(`${m[1]}T00:00:00Z`);
+  const t1 = Date.parse(`${m[2]}T00:00:00Z`);
+  if (!Number.isFinite(t0) || !Number.isFinite(t1)) return null;
+  return (t1 - t0) / 86_400_000;
+}
+
 export function periodKeysCompatible(sourcePeriod: string, mdHeader: string): boolean {
   const a = sourcePeriod.trim();
   const b = mdHeader.trim();
@@ -49,6 +58,18 @@ export function periodKeysCompatible(sourcePeriod: string, mdHeader: string): bo
   const endIso = rangeEnd ? rangeEnd[2]! : /^(\d{4}-\d{2}-\d{2})$/.test(a.trim()) ? a.trim() : null;
 
   if (endIso) {
+    const endYear = parseInt(endIso.slice(0, 4), 10);
+    /** Prefix annual columns (spreadsheet-style): FY2017 — map only to long annual flows or Dec-31 instants to avoid Q3 false positives. */
+    const fyHeader = bl.match(/\bfy\s*'?(\d{2}|\d{4})(?:\s*e)?\b/i);
+    if (fyHeader) {
+      let fyY = parseInt(fyHeader[1]!, 10);
+      if (fyY < 100) fyY += 2000;
+      if (Number.isFinite(fyY) && fyY === endYear) {
+        const span = rangeDurationDays(a);
+        if (span !== null && span >= 330) return true;
+        if (span === null && endIso.endsWith("-12-31")) return true;
+      }
+    }
     const q = bl.match(/\b(?:q([1-4])|([1-4])q)\s*'?(\d{2}|\d{4})\b/i);
     if (q) {
       const quarter = parseInt(q[1] || q[2] || "0", 10);

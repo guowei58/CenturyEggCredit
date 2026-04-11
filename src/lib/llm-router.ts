@@ -41,8 +41,10 @@ export async function llmCompleteSingle(
     geminiModel?: string;
     deepseekModel?: string;
     claudeTools?: ClaudeTools;
-    /** OpenAI only: max wait for HTTP response (large XBRL jobs). */
+    /** OpenAI: max wait when `llmHttpTimeoutMs` is not set. */
     openaiFetchTimeoutMs?: number;
+    /** When set, all providers use this outbound HTTP wait (ms), e.g. SEC XBRL AI consolidation. */
+    llmHttpTimeoutMs?: number;
     /**
      * When set, cloud providers use only these keys (no env fallback).
      * When omitted, cloud providers read from process.env (scripts / legacy).
@@ -55,11 +57,12 @@ export async function llmCompleteSingle(
   } = {}
 ): Promise<LlmResult> {
   const ak = options.apiKeys;
+  const httpMs = options.llmHttpTimeoutMs;
   if (provider === "openai") {
     const r = await callOpenAI(system, user, {
       maxTokens: options.maxTokens,
       model: options.openaiModel,
-      fetchTimeoutMs: options.openaiFetchTimeoutMs,
+      fetchTimeoutMs: httpMs ?? options.openaiFetchTimeoutMs,
       apiKeys: ak,
       webSearch: options.openaiWebSearch === true,
     });
@@ -71,6 +74,7 @@ export async function llmCompleteSingle(
       model: options.geminiModel,
       apiKeys: ak,
       googleSearch: options.geminiGoogleSearch === true,
+      fetchTimeoutMs: httpMs,
     });
     return toLlm(r);
   }
@@ -79,6 +83,7 @@ export async function llmCompleteSingle(
       maxTokens: options.maxTokens,
       model: options.deepseekModel,
       apiKeys: ak,
+      fetchTimeoutMs: httpMs,
     });
     return toLlm(r);
   }
@@ -87,6 +92,7 @@ export async function llmCompleteSingle(
     model: options.claudeModel,
     tools: options.claudeTools,
     apiKeys: ak,
+    fetchTimeoutMs: httpMs,
   });
 }
 
@@ -102,6 +108,7 @@ export async function llmCompleteConversation(
     deepseekModel?: string;
     claudeTools?: ClaudeTools;
     openaiFetchTimeoutMs?: number;
+    llmHttpTimeoutMs?: number;
     apiKeys?: LlmCallApiKeys;
     openaiWebSearch?: boolean;
     geminiGoogleSearch?: boolean;
@@ -124,11 +131,12 @@ export async function llmCompleteConversation(
     };
   }
   const ak = options.apiKeys;
+  const httpMs = options.llmHttpTimeoutMs;
   if (provider === "openai") {
     const r = await callOpenAIConversation(system, messages, {
       maxTokens: options.maxTokens,
       model: options.openaiModel,
-      fetchTimeoutMs: options.openaiFetchTimeoutMs,
+      fetchTimeoutMs: httpMs ?? options.openaiFetchTimeoutMs,
       apiKeys: ak,
       webSearch: options.openaiWebSearch === true,
     });
@@ -140,6 +148,7 @@ export async function llmCompleteConversation(
       model: options.geminiModel,
       apiKeys: ak,
       googleSearch: options.geminiGoogleSearch === true,
+      fetchTimeoutMs: httpMs,
     });
     return toLlm(r);
   }
@@ -148,6 +157,7 @@ export async function llmCompleteConversation(
       maxTokens: options.maxTokens,
       model: options.deepseekModel,
       apiKeys: ak,
+      fetchTimeoutMs: httpMs,
     });
     return toLlm(r);
   }
@@ -156,6 +166,7 @@ export async function llmCompleteConversation(
     model: options.claudeModel,
     tools: options.claudeTools,
     apiKeys: ak,
+    fetchTimeoutMs: httpMs,
   });
 }
 

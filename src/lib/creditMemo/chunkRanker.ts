@@ -125,6 +125,8 @@ function categoryBoost(category: SourceFileRecord["category"]): number {
       return 1.04;
     case "notes":
       return 1.06;
+    case "ai_chat":
+      return 1.05;
     default:
       return 1.0;
   }

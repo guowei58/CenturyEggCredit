@@ -22,9 +22,9 @@ function resolveAnthropicKey(apiKeys: LlmCallApiKeys | undefined): { key: string
 
 /**
  * Max wait for Anthropic to finish the HTTP response (headers + body).
- * Large prompts (e.g. XBRL consolidation) + high max_tokens often exceed 2 minutes; a short timeout
- * aborts the fetch client-side while the API may still complete and bill.
- * Override with ANTHROPIC_FETCH_TIMEOUT_MS (30000–600000). Align with route `maxDuration` where possible.
+ * Large prompts (e.g. XBRL consolidation) + high max_tokens can run many minutes; the client aborts
+ * after this wait while the API may still complete and bill.
+ * Override with ANTHROPIC_FETCH_TIMEOUT_MS (30000–600000). Default 10m for large tab / XBRL jobs.
  */
 function anthropicFetchTimeoutMs(): number {
   const raw = process.env.ANTHROPIC_FETCH_TIMEOUT_MS?.trim();
@@ -32,7 +32,14 @@ function anthropicFetchTimeoutMs(): number {
     const n = parseInt(raw, 10);
     if (Number.isFinite(n)) return Math.min(600_000, Math.max(30_000, n));
   }
-  return 300_000;
+  return 600_000;
+}
+
+function anthropicWaitMs(override?: number): number {
+  if (override != null && Number.isFinite(override)) {
+    return Math.min(600_000, Math.max(30_000, Math.round(override)));
+  }
+  return anthropicFetchTimeoutMs();
 }
 
 /** @deprecated Use ChatConversationTurn for multimodal; string-only turns are still valid. */
@@ -72,6 +79,8 @@ export async function callClaude(
     tools?: readonly { type: string; name: string; max_uses?: number }[];
     /** When set, uses only these keys (no env fallback). When omitted, uses ANTHROPIC_API_KEY from env. */
     apiKeys?: LlmCallApiKeys;
+    /** Override HTTP wait (ms); otherwise ANTHROPIC_FETCH_TIMEOUT_MS / default. */
+    fetchTimeoutMs?: number;
   } = {}
 ): Promise<ClaudeResult> {
   const resolved = resolveAnthropicKey(options.apiKeys);
@@ -101,7 +110,7 @@ export async function callClaude(
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(anthropicFetchTimeoutMs()),
+      signal: AbortSignal.timeout(anthropicWaitMs(options.fetchTimeoutMs)),
     });
 
     const errBody = await res.text();
@@ -180,6 +189,7 @@ export async function callClaudeConversation(
     model?: string;
     tools?: readonly { type: string; name: string; max_uses?: number }[];
     apiKeys?: LlmCallApiKeys;
+    fetchTimeoutMs?: number;
   } = {}
 ): Promise<ClaudeResult> {
   const resolved = resolveAnthropicKey(options.apiKeys);
@@ -188,7 +198,7 @@ export async function callClaudeConversation(
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
-  const { maxTokens = 4096, model = defaultModel, tools } = options;
+  const { maxTokens = 4096, model = defaultModel, tools, fetchTimeoutMs } = options;
 
   const usePdfBeta = conversationHasPdf(messages);
 
@@ -215,7 +225,7 @@ export async function callClaudeConversation(
         ...(usePdfBeta ? { "anthropic-beta": "pdfs-2024-09-25" } : {}),
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(anthropicFetchTimeoutMs()),
+      signal: AbortSignal.timeout(anthropicWaitMs(fetchTimeoutMs)),
     });
 
     const errBody = await res.text();

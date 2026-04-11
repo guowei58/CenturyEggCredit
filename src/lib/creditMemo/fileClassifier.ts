@@ -57,6 +57,8 @@ export function categoryPriority(c: SourceCategory): number {
       return 55;
     case "notes":
       return 60;
+    case "ai_chat":
+      return 58;
     default:
       return 50;
   }

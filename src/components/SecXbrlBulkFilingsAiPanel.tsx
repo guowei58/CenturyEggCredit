@@ -305,17 +305,20 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           <strong>Saved Documents</strong> for {tk} (all sheets as CSV text), then calls your selected model with a fixed
           consolidation spec: latest filing wins on overlaps, standalone quarters from YTD where needed (income / cash flow
           only), balance sheet point-in-time only, plus overlap/restatement and provenance sections. Each primary statement
-          is one wide markdown table; period headers must include <span className="font-medium">1Q, 2Q, 3Q, 4Q, and FY</span> for{" "}
-          <span className="font-medium">every</span> fiscal year (use — when a cell has no source value). Output is saved as{" "}
+          is one wide markdown table; period headers follow a <span className="font-medium">spreadsheet-style</span> timeline: optional leading{" "}
+          <span className="font-medium">FY####</span> annual-only columns, then <span className="font-medium">1Q, 2Q, 3Q, 4Q, and FY</span> for{" "}
+          <span className="font-medium">every</span> fiscal year in the quarterly range (use — when a cell has no source value). Output is saved as{" "}
           <span className="font-mono">xbrl-consolidated-financials-ai.md</span> (server-backed tab content). Large libraries
           are truncated near ~300k characters of ingested text — prefer running again after archiving very old exports if you
           hit limits.
         </p>
         <p className="text-[11px] leading-relaxed" style={{ color: "var(--warn)" }}>
-          <span className="font-medium" style={{ color: "var(--text)" }}>OpenAI:</span> XBRL consolidation waits up to <span className="font-medium">~10 minutes</span> for
-          a response (GPT-5.4 + huge prompts can be slow). If you still see a timeout, raise{" "}
-          <span className="font-mono text-[10px]">OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS</span> and your host&apos;s route limit. Older models may{" "}
-          <span className="font-medium">truncate</span> at ~16k output tokens — prefer GPT-5.4 or <span className="font-medium">Claude</span> for full tables.
+          <span className="font-medium" style={{ color: "var(--text)" }}>Timeouts:</span> the consolidate API waits up to{" "}
+          <span className="font-medium">10 minutes</span> for each provider&apos;s LLM response (huge prompts). If you still see 504, your{" "}
+          <span className="font-medium">host</span> may kill serverless functions below 600s — raise limits on Pro/self-hosted, or reduce saved workbooks.
+          Optional env (when supported): <span className="font-mono text-[10px]">ANTHROPIC_FETCH_TIMEOUT_MS</span>,{" "}
+          <span className="font-mono text-[10px]">OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS</span>,{" "}
+          <span className="font-mono text-[10px]">DEEPSEEK_FETCH_TIMEOUT_MS</span>. Older ChatGPT models may <span className="font-medium">truncate</span> around ~16k output tokens.
         </p>
         <div className="mt-3">
           <span className="text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
