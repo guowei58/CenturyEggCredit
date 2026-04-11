@@ -11,6 +11,7 @@ import { CompanyFccFilingsTab } from "@/components/CompanyFccFilingsTab";
 import { CompanyOrgChartTab } from "@/components/CompanyOrgChartTab";
 import { CompanyCapitalStructureTab } from "@/components/CompanyCapitalStructureTab";
 import { CompanyOverviewTab } from "@/components/CompanyOverviewTab";
+import { CompanyRecentEventsTab } from "@/components/CompanyRecentEventsTab";
 import { CompanyHowStuffWorksTab } from "@/components/CompanyHowStuffWorksTab";
 import { CompanyRiskFrom10kTab } from "@/components/CompanyRiskFrom10kTab";
 import { CompanyManagementBoardTab } from "@/components/CompanyManagementBoardTab";
@@ -220,6 +221,9 @@ export function CompanyAnalysis({
 function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; ticker: string; companyName?: string }) {
   if (tabId === "business-overview") {
     return <CompanyOverviewTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "recent-events") {
+    return <CompanyRecentEventsTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "howstuffworks") {
     return <CompanyHowStuffWorksTab ticker={ticker} companyName={companyName} />;

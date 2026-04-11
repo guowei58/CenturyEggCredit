@@ -64,7 +64,17 @@ function resultFromParsed(data: Parsed): DeepSeekResult {
 
 function normalizeError(status: number, raw: string): DeepSeekResult {
   if (status === 401) return { ok: false, error: "Invalid DeepSeek API key", status: 401 };
-  if (status === 429) return { ok: false, error: "DeepSeek rate limit exceeded", status: 429 };
+  if (status === 429) return { ok: false, error: "DeepSeek rate limit exceeded — wait a moment and try again.", status: 429 };
+  try {
+    const parsed = JSON.parse(raw) as { error?: { message?: string } };
+    const msg = parsed?.error?.message?.trim();
+    if (msg) {
+      if (msg.includes("maximum context length")) {
+        return { ok: false, error: `DeepSeek context limit exceeded. Your saved data + conversation is too large for this model. Try Claude or Gemini (larger context), or uncheck "Include saved OREO data."`, status };
+      }
+      return { ok: false, error: msg.slice(0, 500), status };
+    }
+  } catch { /* fall through */ }
   return { ok: false, error: raw?.slice(0, 400) || `HTTP ${status}`, status };
 }
 

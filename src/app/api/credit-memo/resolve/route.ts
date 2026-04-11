@@ -18,7 +18,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "ticker required" }, { status: 400 });
   }
 
-  const session = await auth();
-  const result = await resolveTickerFolder(ticker, session?.user?.id ?? null);
-  return NextResponse.json(result);
+  try {
+    const session = await auth();
+    const result = await resolveTickerFolder(ticker, session?.user?.id ?? null);
+    return NextResponse.json(result);
+  } catch (e) {
+    console.error("credit-memo resolve error:", e);
+    const msg = e instanceof Error ? e.message : "Internal server error during folder resolve";
+    return NextResponse.json({ ok: false, error: msg, rootSearched: "", candidates: [] }, { status: 500 });
+  }
 }

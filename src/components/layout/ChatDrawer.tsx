@@ -60,6 +60,8 @@ export function ChatDrawer({
   const chatSym = useMemo(() => sanitizeTicker(ticker ?? "") ?? "", [ticker]);
   const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
   const persistRemoteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Tracks which ticker the current `sessions` state actually belongs to (prevents cross-ticker overwrites). */
+  const hydratedForTickerRef = useRef<string | null>(null);
   const [sessionsHydrated, setSessionsHydrated] = useState(false);
   const [sessions, setSessions] = useState<AiChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -89,10 +91,12 @@ export function ChatDrawer({
   /** Always matches latest `messages` so POST body is built synchronously (not inside setState). */
   const messagesRef = useRef<AiChatMessage[]>([]);
 
-  const messages = useMemo((): AiChatMessage[] => {
-    if (!activeSessionId) return [];
-    return sessions.find((s) => s.id === activeSessionId)?.messages ?? [];
-  }, [sessions, activeSessionId]);
+  const activeSession = useMemo(
+    () => (activeSessionId ? sessions.find((s) => s.id === activeSessionId) ?? null : null),
+    [sessions, activeSessionId]
+  );
+
+  const messages = useMemo((): AiChatMessage[] => activeSession?.messages ?? [], [activeSession]);
 
   messagesRef.current = messages;
   pendingAttachmentsRef.current = pendingAttachments;
@@ -100,6 +104,21 @@ export function ChatDrawer({
   useEffect(() => {
     if (authStatus === "loading") return;
     let cancelled = false;
+    const nextSym = sanitizeTicker(ticker ?? "");
+
+    // Flush pending save for the PREVIOUS ticker before loading the new one.
+    if (persistRemoteTimerRef.current) {
+      clearTimeout(persistRemoteTimerRef.current);
+      persistRemoteTimerRef.current = null;
+    }
+    const prevSym = hydratedForTickerRef.current;
+    if (prevSym && prevSym !== nextSym && authStatus === "authenticated") {
+      void pushAiChatStateToServer(sessions, activeSessionId, prevSym);
+    }
+
+    // Mark not-yet-hydrated so the persist effect won't save stale sessions under the new ticker.
+    setSessionsHydrated(false);
+    hydratedForTickerRef.current = null;
 
     void (async () => {
       if (authStatus !== "authenticated") {
@@ -107,23 +126,24 @@ export function ChatDrawer({
         if (!cancelled) {
           setSessions([s]);
           setActiveSessionId(s.id);
+          hydratedForTickerRef.current = nextSym;
           setSessionsHydrated(true);
         }
         return;
       }
 
-      const sym = sanitizeTicker(ticker ?? "");
-      if (!sym) {
+      if (!nextSym) {
         const s = createAiChatSession();
         if (!cancelled) {
           setSessions([s]);
           setActiveSessionId(s.id);
+          hydratedForTickerRef.current = nextSym;
           setSessionsHydrated(true);
         }
         return;
       }
 
-      const remote = await fetchAiChatStateFromServer(sym);
+      const remote = await fetchAiChatStateFromServer(nextSym);
       if (cancelled) return;
       if (remote && remote.sessions.length > 0) {
         setSessions(remote.sessions);
@@ -137,18 +157,23 @@ export function ChatDrawer({
         setSessions([s]);
         setActiveSessionId(s.id);
       }
+      hydratedForTickerRef.current = nextSym;
       setSessionsHydrated(true);
     })();
 
     return () => {
       cancelled = true;
     };
+    // `sessions` and `activeSessionId` are intentionally NOT deps — we only read them for the
+    // flush of the *previous* ticker.  Adding them would re-trigger hydration on every keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authStatus, ticker]);
 
   useEffect(() => {
     if (!sessionsHydrated) return;
     if (authStatus !== "authenticated") return;
-    const sym = sanitizeTicker(ticker ?? "");
+    // Only persist if sessions actually belong to the current ticker (prevents cross-ticker overwrite).
+    const sym = hydratedForTickerRef.current;
     if (!sym) return;
     if (persistRemoteTimerRef.current) clearTimeout(persistRemoteTimerRef.current);
     persistRemoteTimerRef.current = setTimeout(() => {
@@ -157,7 +182,21 @@ export function ChatDrawer({
     return () => {
       if (persistRemoteTimerRef.current) clearTimeout(persistRemoteTimerRef.current);
     };
-  }, [sessions, activeSessionId, sessionsHydrated, authStatus, ticker]);
+  }, [sessions, activeSessionId, sessionsHydrated, authStatus]);
+
+  // Flush save immediately when the drawer closes so data isn't lost if the user switches tickers.
+  useEffect(() => {
+    if (open) return;
+    if (!sessionsHydrated || authStatus !== "authenticated") return;
+    const sym = hydratedForTickerRef.current;
+    if (!sym) return;
+    if (persistRemoteTimerRef.current) {
+      clearTimeout(persistRemoteTimerRef.current);
+      persistRemoteTimerRef.current = null;
+    }
+    void pushAiChatStateToServer(sessions, activeSessionId, sym);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   useEffect(() => {
     if (!sessionsHydrated || sessions.length === 0) return;
@@ -270,6 +309,19 @@ export function ChatDrawer({
     [activeSessionId]
   );
 
+  const markActiveOreoInjected = useCallback(
+    (injected: boolean) => {
+      setSessions((prev) => {
+        const idx = prev.findIndex((s) => s.id === activeSessionId);
+        if (idx < 0) return prev;
+        const copy = [...prev];
+        copy[idx] = { ...copy[idx], oreoInjected: injected };
+        return copy;
+      });
+    },
+    [activeSessionId]
+  );
+
   const sessionsSorted = useMemo(
     () => [...sessions].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     [sessions]
@@ -335,6 +387,11 @@ export function ChatDrawer({
     }
   }, []);
 
+  /** Force the next message to re-send full OREO data even if it was already injected. */
+  const resendOreo = useCallback(() => {
+    markActiveOreoInjected(false);
+  }, [markActiveOreoInjected]);
+
   const submitMessage = useCallback(
     async (override?: string) => {
       if (!activeSessionId) return;
@@ -354,6 +411,9 @@ export function ChatDrawer({
 
       pendingRef.current = true;
       setPending(true);
+
+      const curSession = sessions.find((s) => s.id === activeSessionId);
+      const oreoAlreadyInjected = curSession?.oreoInjected === true;
 
       const userMsg: AiChatUserMessage = {
         role: "user",
@@ -383,12 +443,21 @@ export function ChatDrawer({
             ticker: ticker?.trim() || undefined,
             provider: aiProvider,
             includeOreoContext: ticker?.trim() ? includeOreoContext : undefined,
+            ...(oreoAlreadyInjected ? { oreoAlreadyInjected: true } : {}),
             ...modelOverridePayloadForProvider(aiProvider),
           }),
         });
-        const body = (await res.json().catch(() => null)) as { ok?: boolean; text?: string; error?: string } | null;
+        const body = (await res.json().catch(() => null)) as {
+          ok?: boolean;
+          text?: string;
+          error?: string;
+          oreoInjected?: boolean;
+        } | null;
         if (!res.ok || body?.ok !== true || typeof body.text !== "string") {
           throw new Error(body?.error ?? `Request failed (${res.status})`);
+        }
+        if (body.oreoInjected) {
+          markActiveOreoInjected(true);
         }
         const assistantText = body.text;
         patchActiveMessages((m) => {
@@ -431,6 +500,8 @@ export function ChatDrawer({
       patchActiveMessages,
       activeSessionId,
       replyTarget,
+      sessions,
+      markActiveOreoInjected,
     ]
   );
 
@@ -615,22 +686,38 @@ export function ChatDrawer({
               </div>
               <AiModelPicker provider={aiProvider} className="mt-2" />
               {ticker?.trim() ? (
-                <label className="mt-2 flex cursor-pointer items-start gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
-                  <input
-                    type="checkbox"
-                    checked={includeOreoContext}
-                    onChange={(e) => {
-                      const v = e.target.checked;
-                      setIncludeOreoContext(v);
-                      updatePreferences((prev) => ({ ...prev, includeOreoContext: v }));
-                    }}
-                    className="mt-0.5"
-                  />
-                  <span>
-                    Include saved OREO data for <span className="font-mono">{ticker.trim().toUpperCase()}</span> (tab saves, credit
-                    agreement text, .txt/.md in Saved Documents). PDFs are listed but not read automatically.
-                  </span>
-                </label>
+                <div className="mt-2">
+                  <label className="flex cursor-pointer items-start gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                    <input
+                      type="checkbox"
+                      checked={includeOreoContext}
+                      onChange={(e) => {
+                        const v = e.target.checked;
+                        setIncludeOreoContext(v);
+                        updatePreferences((prev) => ({ ...prev, includeOreoContext: v }));
+                      }}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      Include saved OREO data for <span className="font-mono">{ticker.trim().toUpperCase()}</span> (tab saves, credit
+                      agreement text, .txt/.md in Saved Documents). PDFs are listed but not read automatically.
+                    </span>
+                  </label>
+                  {includeOreoContext && activeSession?.oreoInjected ? (
+                    <div className="mt-1.5 flex items-center gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                      <span style={{ color: "var(--accent)" }}>OREO data sent</span>
+                      <span>— follow-up messages are lightweight.</span>
+                      <button
+                        type="button"
+                        onClick={resendOreo}
+                        className="underline"
+                        style={{ color: "var(--muted)" }}
+                      >
+                        Re-send OREO
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
               ) : null}
             </div>
             <button

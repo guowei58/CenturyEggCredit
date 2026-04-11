@@ -96,6 +96,10 @@ export async function POST(req: Request) {
       project,
       ingestWarnings: [...warnings, ...extraWarnings],
     });
+  } catch (e) {
+    console.error("credit-memo project ingest error:", e);
+    const msg = e instanceof Error ? e.message : "Internal server error during ingest";
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   } finally {
     if (tmpMaterialized) await rmTempWorkspaceDir(tmpMaterialized);
   }

@@ -33,6 +33,8 @@ export type AiChatSession = {
   messages: AiChatMessage[];
   createdAt: string;
   updatedAt: string;
+  /** Set after the first turn successfully includes full OREO context; subsequent turns skip re-sending. */
+  oreoInjected?: boolean;
 };
 
 /** Oldest threads are dropped only after this many (per ticker, server-saved). */
@@ -172,6 +174,7 @@ function parseSessionsArray(parsed: unknown): AiChatSession[] {
       messages: messages.slice(-AI_CHAT_MAX_MESSAGES_PER_SESSION),
       createdAt: typeof o.createdAt === "string" ? o.createdAt : new Date().toISOString(),
       updatedAt: typeof o.updatedAt === "string" ? o.updatedAt : new Date().toISOString(),
+      ...(o.oreoInjected === true ? { oreoInjected: true } : {}),
     });
   }
   return pruneSessions(sessions);

@@ -33,6 +33,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "Business Overview",
+          "Recent Events",
           "Management & Board",
           "Business Model",
           "HowStuffWorks",

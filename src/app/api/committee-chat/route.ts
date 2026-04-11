@@ -59,9 +59,14 @@ export async function GET() {
 }
 
 /**
- * POST { messages, ticker?, provider?, includeOreoContext?, claudeModel?, openaiModel?, geminiModel?, ollamaModel? } — AI Chat; returns assistant text.
- * When ticker is set and includeOreoContext is not false, saved OREO text for that ticker is injected into the system prompt.
- * Multi-user rooms can be added later by persisting `messages` server-side with a room id.
+ * POST { messages, ticker?, provider?, includeOreoContext?, oreoAlreadyInjected?, claudeModel?, openaiModel?, geminiModel?, ollamaModel? } — AI Chat; returns assistant text.
+ *
+ * OREO injection strategy:
+ * - First turn of a session (`oreoAlreadyInjected` absent/false): full OREO workspace text is
+ *   loaded and injected into the system prompt.  Response includes `oreoInjected: true`.
+ * - Subsequent turns (`oreoAlreadyInjected: true`): OREO is **skipped**.  The model can still
+ *   reference it via the assistant's earlier responses in conversation history.
+ * - The client can force a re-send by omitting `oreoAlreadyInjected` (e.g. after "Re-send OREO").
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -76,6 +81,7 @@ export async function POST(request: Request) {
     ticker?: unknown;
     provider?: unknown;
     includeOreoContext?: unknown;
+    oreoAlreadyInjected?: unknown;
     claudeModel?: unknown;
     openaiModel?: unknown;
     geminiModel?: unknown;
@@ -112,21 +118,26 @@ export async function POST(request: Request) {
 
   const sym = sanitizeTicker(b.ticker);
   const includeOreo = b.includeOreoContext !== false;
+  const oreoAlreadyInjected = b.oreoAlreadyInjected === true;
 
   let system = COMMITTEE_CHAT_SYSTEM;
+  let didInjectOreo = false;
   if (sym != null) {
     system += `\n\nThe user currently has ticker **${sym}** selected in the sidebar (context only; they may ask about other names).`;
-    if (includeOreo) {
-      const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id);
+    if (includeOreo && !oreoAlreadyInjected) {
+      const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id, provider);
       if (oreoBlock) {
         system += `\n\n---\n## OREO saved workspace (ticker ${sym})\nThe following was read from this ticker's folder in OREO—saved tab responses, Credit Agreements text, and text files under Saved Documents. Use it when relevant.\n\n${oreoBlock}`;
+        didInjectOreo = true;
       }
+    } else if (includeOreo && oreoAlreadyInjected) {
+      system += `\n\nThe user's full OREO workspace data for ${sym} was provided in the first exchange of this conversation. Reference the earlier assistant response(s) for that data. If the user asks about something not covered there, let them know they can re-send the OREO data.`;
     }
   }
 
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = resolveCommitteeChatModels(b);
 
-  const result = await llmCompleteConversation(provider, system, parsed, {
+  const llmOpts = {
     maxTokens: 4096,
     claudeModel,
     openaiModel,
@@ -137,7 +148,16 @@ export async function POST(request: Request) {
       provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
     openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
     geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
-  });
+  };
+
+  const RATE_LIMIT_RETRIES = 2;
+  const RATE_LIMIT_BACKOFF_MS = [15_000, 30_000];
+  let result = await llmCompleteConversation(provider, system, parsed, llmOpts);
+
+  for (let attempt = 0; attempt < RATE_LIMIT_RETRIES && !result.ok && result.status === 429; attempt++) {
+    await new Promise((r) => setTimeout(r, RATE_LIMIT_BACKOFF_MS[attempt] ?? 30_000));
+    result = await llmCompleteConversation(provider, system, parsed, llmOpts);
+  }
 
   if (!result.ok) {
     const status =
@@ -155,5 +175,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: short }, { status: status === 400 ? 400 : status });
   }
 
-  return NextResponse.json({ ok: true, text: result.text });
+  return NextResponse.json({ ok: true, text: result.text, ...(didInjectOreo ? { oreoInjected: true } : {}) });
 }

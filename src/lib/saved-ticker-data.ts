@@ -27,6 +27,7 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "startup-risks": "startup-risks.txt",
   "risk-from-10k": "risk-from-10k.txt",
   "overview": "overview.txt",
+  "recent-events": "recent-events.txt",
   "how-stuff-works": "how-stuff-works.txt",
   "porters-five-forces": "porters-five-forces.txt",
   "industry-history-drivers": "industry-history-drivers.txt",
@@ -86,6 +87,7 @@ export const SAVED_DATA_FILES: Record<string, string> = {
  */
 export const SAVED_TAB_FILENAME_AI_PRIORITY: readonly string[] = [
   "overview.txt",
+  "recent-events.txt",
   "management-board.txt",
   "out-of-the-box-ideas.txt",
   "research-roadmap.txt",

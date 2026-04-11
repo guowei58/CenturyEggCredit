@@ -26,6 +26,7 @@ export type SavedDataKey =
   | "startup-risks"
   | "risk-from-10k"
   | "overview"
+  | "recent-events"
   | "how-stuff-works"
   | "porters-five-forces"
   | "industry-history-drivers"

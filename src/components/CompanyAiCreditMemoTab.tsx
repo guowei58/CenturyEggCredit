@@ -444,7 +444,17 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ticker: tk }),
       });
-      const data = (await res.json()) as FolderResolveResult | { error?: string };
+      const text = await res.text();
+      let data: FolderResolveResult | { error?: string };
+      try {
+        data = JSON.parse(text) as FolderResolveResult | { error?: string };
+      } catch {
+        throw new Error(
+          text.trim()
+            ? `Server returned invalid JSON (${res.status}): ${text.slice(0, 200)}`
+            : `Empty response from server (${res.status}). Check the server console for errors.`
+        );
+      }
       if (!res.ok) throw new Error((data as { error?: string }).error || "Resolve failed");
       const fr = data as FolderResolveResult;
       success = fr;
@@ -487,12 +497,22 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             resolutionMeta,
           }),
         });
-        const data = (await res.json()) as {
+        const rawText = await res.text();
+        let data: {
           ok?: boolean;
           project?: CreditMemoProject;
           error?: string;
           ingestWarnings?: string[];
         };
+        try {
+          data = JSON.parse(rawText);
+        } catch {
+          throw new Error(
+            rawText.trim()
+              ? `Server returned invalid JSON (${res.status}): ${rawText.slice(0, 200)}`
+              : `Empty response from server (${res.status}). Check the server console for errors.`
+          );
+        }
         if (!res.ok) throw new Error(data.error || "Ingest failed");
         const nextProject = data.project!;
         const prevId = project?.id;
