@@ -1132,3 +1132,100 @@ export async function fetchAsPresentedStatements(params: {
   };
 }
 
+function localConceptLower(concept: string): string {
+  const i = concept.lastIndexOf(":");
+  return (i >= 0 ? concept.slice(i + 1) : concept).replace(/_/g, "").toLowerCase();
+}
+
+function isOperatingIncomeLossRowConcept(concept: string): boolean {
+  return /(^|:)OperatingIncomeLoss$/i.test(concept);
+}
+
+/**
+ * Impairment-related captions on the income statement face (not footnotes / detail-only roles).
+ * Excludes generic restructuring lines unless "impairment" appears in the concept name.
+ */
+function isImpairmentRelatedFaceConcept(concept: string): boolean {
+  const n = localConceptLower(concept);
+  if (!n || n.includes("operatingincomeloss")) return false;
+  if (n.includes("restructuring") && !n.includes("impairment")) return false;
+  return n.includes("impairment") || n === "assetimpairmentcharges" || n === "goodwillimpairmentloss";
+}
+
+function presentationParentRowIndex(rows: PresentedStatementRow[], rowIndex: number): number | null {
+  if (rowIndex <= 0) return null;
+  const d = rows[rowIndex]!.depth;
+  for (let i = rowIndex - 1; i >= 0; i--) {
+    if (rows[i]!.depth < d) return i;
+  }
+  return null;
+}
+
+/**
+ * Map a fiscal duration (`start`..`end`) from companyfacts to the column key used in {@link PresentedStatement}.
+ */
+export function resolveIncomeStatementPeriodColumnKey(
+  incomeStatement: PresentedStatement,
+  periodEnd: string,
+  periodStart: string | null
+): string | null {
+  const start = periodStart?.trim() || null;
+  const exact = start ? `${start}..${periodEnd}` : null;
+  if (exact && incomeStatement.periods.some((p) => p.key === exact)) return exact;
+  const candidates = incomeStatement.periods.filter((p) => p.end === periodEnd);
+  if (start) {
+    const m = candidates.find((p) => (p.start ?? "").trim() === start);
+    if (m) return m.key;
+  }
+  if (candidates.length === 1) return candidates[0]!.key;
+  let best: (typeof incomeStatement.periods)[number] | null = null;
+  for (const p of candidates) {
+    const d = periodDurationDays({ start: p.start ?? null, end: p.end });
+    if (d >= 300 && d <= 400) {
+      best = p;
+      break;
+    }
+  }
+  return best?.key ?? candidates[0]?.key ?? null;
+}
+
+/**
+ * Sum impairment lines on the **face** primary income statement that appear **above**
+ * `OperatingIncomeLoss` in SEC presentation order. Skips a row when its presentation parent is also
+ * impairment-related (e.g. goodwill detail nested under total asset impairment).
+ */
+export function sumFaceImpairmentAddbacksAboveOperatingIncomeUsd(
+  payload: PresentedStatementsPayload,
+  periodStart: string | null,
+  periodEnd: string
+): number {
+  const is = payload.statements.find((s) => s.id === "primary-is");
+  if (!is) return 0;
+
+  const pk = resolveIncomeStatementPeriodColumnKey(is, periodEnd, periodStart);
+  if (!pk) return 0;
+
+  const rows = is.rows;
+  let oiIdx = -1;
+  for (let i = 0; i < rows.length; i++) {
+    if (isOperatingIncomeLossRowConcept(rows[i]!.concept)) {
+      oiIdx = i;
+      break;
+    }
+  }
+  if (oiIdx < 0) return 0;
+
+  let sum = 0;
+  for (let j = 0; j < oiIdx; j++) {
+    const row = rows[j]!;
+    if (!isImpairmentRelatedFaceConcept(row.concept)) continue;
+    const pi = presentationParentRowIndex(rows, j);
+    if (pi !== null && isImpairmentRelatedFaceConcept(rows[pi]!.concept)) continue;
+
+    const v = row.values[pk];
+    if (v == null || !Number.isFinite(v)) continue;
+    sum += Math.abs(v);
+  }
+  return sum;
+}
+

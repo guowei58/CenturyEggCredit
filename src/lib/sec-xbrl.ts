@@ -6,6 +6,7 @@
  */
 
 import { getCompanyProfile } from "@/lib/sec-edgar";
+import { fetchAsPresentedStatements, sumFaceImpairmentAddbacksAboveOperatingIncomeUsd } from "@/lib/sec-xbrl-as-presented";
 
 const USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
 
@@ -54,6 +55,14 @@ export type XbrlCell = {
   unit: string;
   tag: string;
   label?: string;
+  /** SEC companyfacts `accn` for the filing that produced this fact (when present). */
+  accessionNumber?: string | null;
+};
+
+type AnnualFactRow = {
+  value: number;
+  period: XbrlPeriod;
+  accessionNumber: string | null;
 };
 
 export type XbrlStatement = {
@@ -131,11 +140,15 @@ function listCellsForTag(
       if (typeof r?.val !== "number" || !Number.isFinite(r.val)) continue;
       const end = asIsoDate(r.end);
       if (!end) continue;
+      const accn = typeof (r as { accn?: string }).accn === "string" && (r as { accn?: string }).accn!.trim()
+        ? (r as { accn: string }).accn.trim()
+        : null;
       out.push({
         unit,
         tag,
         label,
         value: r.val,
+        accessionNumber: accn,
         period: {
           end,
           start: asIsoDate(r.start),
@@ -404,7 +417,7 @@ function annualBestByPeriodEnd(
   facts: CompanyFactsJson,
   tags: string[],
   units: string[]
-): Map<string, { value: number; period: XbrlPeriod }> {
+): Map<string, AnnualFactRow> {
   const cells: XbrlCell[] = [];
   for (const tag of tags) {
     for (const c of listCellsForTag(facts, "us-gaap", tag)) {
@@ -420,10 +433,15 @@ function annualBestByPeriodEnd(
     arr.push(c);
     byEnd.set(end, arr);
   }
-  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  const out = new Map<string, AnnualFactRow>();
   for (const [end, arr] of Array.from(byEnd.entries())) {
     const best = pickLatestFiled(arr);
-    if (best) out.set(end, { value: best.value, period: best.period });
+    if (best)
+      out.set(end, {
+        value: best.value,
+        period: best.period,
+        accessionNumber: best.accessionNumber ?? null,
+      });
   }
   return out;
 }
@@ -433,7 +451,7 @@ function annualSnapshotBestByPeriodEnd(
   facts: CompanyFactsJson,
   tags: string[],
   units: string[]
-): Map<string, { value: number; period: XbrlPeriod }> {
+): Map<string, AnnualFactRow> {
   const cells: XbrlCell[] = [];
   for (const tag of tags) {
     for (const c of listCellsForTag(facts, "us-gaap", tag)) {
@@ -449,10 +467,15 @@ function annualSnapshotBestByPeriodEnd(
     arr.push(c);
     byEnd.set(end, arr);
   }
-  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  const out = new Map<string, AnnualFactRow>();
   for (const [end, arr] of Array.from(byEnd.entries())) {
     const best = pickLatestFiled(arr);
-    if (best) out.set(end, { value: best.value, period: best.period });
+    if (best)
+      out.set(end, {
+        value: best.value,
+        period: best.period,
+        accessionNumber: best.accessionNumber ?? null,
+      });
   }
   return out;
 }
@@ -462,8 +485,8 @@ function annualFirstTagByPeriodEnd(
   facts: CompanyFactsJson,
   tagsInOrder: string[],
   units: string[]
-): Map<string, { value: number; period: XbrlPeriod }> {
-  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+): Map<string, AnnualFactRow> {
+  const out = new Map<string, AnnualFactRow>();
   for (const tag of tagsInOrder) {
     const m = annualBestByPeriodEnd(facts, [tag], units);
     for (const [end, row] of Array.from(m.entries())) {
@@ -481,8 +504,8 @@ function annualCoalesceTagsByPeriodEnd(
   facts: CompanyFactsJson,
   tagsInOrder: string[],
   units: string[]
-): Map<string, { value: number; period: XbrlPeriod }> {
-  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+): Map<string, AnnualFactRow> {
+  const out = new Map<string, AnnualFactRow>();
   for (const tag of tagsInOrder) {
     const m = annualBestByPeriodEnd(facts, [tag], units);
     for (const [end, row] of m) {
@@ -502,8 +525,8 @@ function annualFirstTagSnapshotByPeriodEnd(
   facts: CompanyFactsJson,
   tagsInOrder: string[],
   units: string[]
-): Map<string, { value: number; period: XbrlPeriod }> {
-  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+): Map<string, AnnualFactRow> {
+  const out = new Map<string, AnnualFactRow>();
   for (const tag of tagsInOrder) {
     const m = annualSnapshotBestByPeriodEnd(facts, [tag], units);
     for (const [end, row] of Array.from(m.entries())) {
@@ -511,26 +534,6 @@ function annualFirstTagSnapshotByPeriodEnd(
     }
   }
   return out;
-}
-
-const IMPAIRMENT_ADDBACK_TAGS_USGAAP = [
-  "AssetImpairmentCharges",
-  "GoodwillImpairmentLoss",
-  "ImpairmentOfLongLivedAssetsHeldForUse",
-  "ImpairmentOfLongLivedAssetsToBeDisposedOf",
-] as const;
-
-function impairmentOperatingAddbackByPeriodEnd(facts: CompanyFactsJson): Map<string, number> {
-  const sums = new Map<string, number>();
-  for (const tag of IMPAIRMENT_ADDBACK_TAGS_USGAAP) {
-    const m = annualBestByPeriodEnd(facts, [tag], ["USD"]);
-    for (const [end, row] of Array.from(m.entries())) {
-      const { value } = row;
-      if (!Number.isFinite(value)) continue;
-      sums.set(end, (sums.get(end) ?? 0) + Math.abs(value));
-    }
-  }
-  return sums;
 }
 
 /**
@@ -669,7 +672,7 @@ export type TwentyYearLookbackPoint = {
   netIncome: number | null;
   revenue: number | null;
   shares: number | null;
-  /** Operating income (loss) plus add-backs of common impairment tags when separately disclosed. */
+  /** Operating income (loss) plus impairment add-backs from the **face** income statement (presentation order). */
   operatingIncomeExImpairment: number | null;
   /** Net cash from operations minus capital expenditures (PPE payments); CapEx treated as absolute outflow. */
   ocfLessCapex: number | null;
@@ -694,16 +697,25 @@ function calendarYearFromFactEnd(end: string): number {
 }
 
 function pickFlowValueForYear(
-  m: Map<string, { value: number; period: XbrlPeriod }>,
+  m: Map<string, AnnualFactRow>,
   year: number,
   endsInYear: string[]
 ): number | null {
+  const row = pickAnnualRowForYear(m, year, endsInYear);
+  return row && Number.isFinite(row.value) ? row.value : null;
+}
+
+function pickAnnualRowForYear(
+  m: Map<string, AnnualFactRow>,
+  year: number,
+  endsInYear: string[]
+): AnnualFactRow | null {
   for (let i = endsInYear.length - 1; i >= 0; i--) {
     const row = m.get(endsInYear[i]!);
-    if (row != null && Number.isFinite(row.value)) return row.value;
+    if (row != null && Number.isFinite(row.value)) return row;
   }
   for (const [end, row] of m) {
-    if (calendarYearFromFactEnd(end) === year && Number.isFinite(row.value)) return row.value;
+    if (calendarYearFromFactEnd(end) === year && Number.isFinite(row.value)) return row;
   }
   return null;
 }
@@ -719,28 +731,52 @@ function pickNullableNumberForYear(m: Map<string, number | null>, year: number, 
   return null;
 }
 
-function pickImpairmentForYear(imp: Map<string, number>, year: number, endsInYear: string[]): number {
-  for (let i = endsInYear.length - 1; i >= 0; i--) {
-    const v = imp.get(endsInYear[i]!);
-    if (typeof v === "number" && Number.isFinite(v)) return v;
+async function prefetchPresentedByAccession(
+  cik: string,
+  accessions: Array<{ accessionNumber: string; form: string; filingDate: string }>
+): Promise<Map<string, Awaited<ReturnType<typeof fetchAsPresentedStatements>>>> {
+  const unique = new Map<string, { form: string; filingDate: string }>();
+  for (const a of accessions) {
+    const acc = a.accessionNumber.trim();
+    if (!acc) continue;
+    if (!unique.has(acc)) unique.set(acc, { form: a.form, filingDate: a.filingDate });
   }
-  let best = 0;
-  for (const [end, v] of imp) {
-    if (calendarYearFromFactEnd(end) === year && typeof v === "number" && Number.isFinite(v)) best = Math.max(best, v);
+  const out = new Map<string, Awaited<ReturnType<typeof fetchAsPresentedStatements>>>();
+  const entries = Array.from(unique.entries());
+  const chunkSize = 4;
+  for (let i = 0; i < entries.length; i += chunkSize) {
+    const chunk = entries.slice(i, i + chunkSize);
+    await Promise.all(
+      chunk.map(async ([accessionNumber, meta]) => {
+        try {
+          const payload = await fetchAsPresentedStatements({
+            cik,
+            accessionNumber,
+            form: meta.form || "10-K",
+            filingDate: meta.filingDate || "1900-01-01",
+          });
+          out.set(accessionNumber, payload);
+        } catch {
+          // Missing XBRL, amended index quirks, etc. — impairment add-back defaults to 0 for that filing.
+        }
+      })
+    );
   }
-  return best;
+  return out;
 }
 
 /**
  * Build up to `maxYears` fiscal years of annual US-GAAP metrics from SEC companyfacts (data.sec.gov).
+ * Impairment add-backs use the **primary income statement presentation** from each fiscal year's source 10-K
+ * (via `accn` on companyfacts), so nested goodwill lines under a total impairment caption are not double-counted.
  */
-export function buildTwentyYearLookbackFromFacts(
+export async function buildTwentyYearLookbackFromFacts(
   ticker: string,
   cik: string,
   entityName: string | null,
   facts: CompanyFactsJson,
   maxYears = 20
-): TwentyYearLookbackResult {
+): Promise<TwentyYearLookbackResult> {
   const revenueM = annualCoalesceTagsByPeriodEnd(
     facts,
     [
@@ -776,7 +812,6 @@ export function buildTwentyYearLookbackFromFacts(
     );
   }
 
-  const impAdd = impairmentOperatingAddbackByPeriodEnd(facts);
   const totalDebtM = totalDebtByPeriodEnd(facts);
   const tangibleM = tangibleAssetsByPeriodEnd(facts);
 
@@ -796,12 +831,33 @@ export function buildTwentyYearLookbackFromFacts(
 
   const endsForCalendarYear = (year: number): string[] => sortedAsc.filter((e) => calendarYearFromFactEnd(e) === year);
 
+  const accRequests: Array<{ accessionNumber: string; form: string; filingDate: string }> = [];
+  for (const year of yearWindow) {
+    const endsInYear = endsForCalendarYear(year);
+    const oiRow = pickAnnualRowForYear(oiM, year, endsInYear);
+    if (!oiRow) continue;
+    const acc = oiRow.accessionNumber?.trim();
+    if (!acc) continue;
+    accRequests.push({
+      accessionNumber: acc,
+      form: (oiRow.period.form ?? "").trim() || "10-K",
+      filingDate: (oiRow.period.filed ?? "").trim() || "1900-01-01",
+    });
+  }
+  const presentedByAccession = await prefetchPresentedByAccession(cik, accRequests);
+
   const points: TwentyYearLookbackPoint[] = yearWindow.map((year) => {
     const endsInYear = endsForCalendarYear(year);
     const periodEnd = endsInYear.length ? endsInYear[endsInYear.length - 1]! : `${year}-12-31`;
 
-    const oi = pickFlowValueForYear(oiM, year, endsInYear);
-    const add = pickImpairmentForYear(impAdd, year, endsInYear);
+    const oiRow = pickAnnualRowForYear(oiM, year, endsInYear);
+    const oi = oiRow && Number.isFinite(oiRow.value) ? oiRow.value : null;
+    let add = 0;
+    if (oiRow?.accessionNumber) {
+      const pres = presentedByAccession.get(oiRow.accessionNumber.trim());
+      if (pres)
+        add = sumFaceImpairmentAddbacksAboveOperatingIncomeUsd(pres, oiRow.period.start, oiRow.period.end);
+    }
     const operatingIncomeExImpairment = oi != null ? oi + add : null;
 
     const cfo = pickFlowValueForYear(cfoM, year, endsInYear);

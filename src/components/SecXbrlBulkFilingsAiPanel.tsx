@@ -5,7 +5,9 @@ import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui";
 import type { AiProvider } from "@/lib/ai-provider";
 import { AI_PROVIDER_CHIP_SELECTED } from "@/lib/ai-provider";
-import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
+import { modelPayloadForRun, type ModelRunChoice } from "@/lib/ai-model-prefs-client";
+import { presetsForProvider } from "@/lib/ai-model-options";
+import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { fetchSavedTabContent } from "@/lib/saved-data-client";
 import { downloadMarkdownConsolidationAsXlsx } from "@/lib/markdown-tables-to-xlsx";
 import {
@@ -26,12 +28,23 @@ const AI_CONSOLIDATE_LABELS: Record<AiProvider, string> = {
 
 const AI_CONSOLIDATE_PROVIDERS: AiProvider[] = ["claude", "openai", "gemini", "deepseek"];
 
+const DEFAULT_CONSOLIDATE_MODELS: Record<AiProvider, ModelRunChoice> = {
+  claude: "__saved__",
+  openai: "__saved__",
+  gemini: "__saved__",
+  deepseek: "__saved__",
+};
+
 /**
  * Bulk SEC-XBRL workbook save + AI consolidation (The Good, Bad and Ugly tab → The Bad).
  */
 export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
   const tk = (ticker ?? "").trim().toUpperCase();
   const { status: authStatus } = useSession();
+  const { ready: prefsReady, preferences } = useUserPreferences();
+  const [consolidateModelChoice, setConsolidateModelChoice] =
+    useState<Record<AiProvider, ModelRunChoice>>(DEFAULT_CONSOLIDATE_MODELS);
+  const lastModelHydrateTickerRef = useRef<string | null>(null);
   const [listData, setListData] = useState<SecXbrlAsPresentedApiResponse | null>(null);
   const [listLoading, setListLoading] = useState(false);
   const [listErr, setListErr] = useState<string | null>(null);
@@ -40,14 +53,6 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
   const tabAliveRef = useRef(true);
   const [consolidatedMd, setConsolidatedMd] = useState<string>("");
-  const [consolidationValidation, setConsolidationValidation] = useState<{
-    ok: boolean;
-    mergedFactCount: number;
-    numericChecks: number;
-    mismatches: string[];
-    conceptsMissingFromMarkdown: string[];
-    unmatchedPeriodsSample: string[];
-  } | null>(null);
   const [aiBusy, setAiBusy] = useState<AiProvider | null>(null);
   const [aiErr, setAiErr] = useState<string | null>(null);
   const [aiOkMsg, setAiOkMsg] = useState<string | null>(null);
@@ -72,6 +77,25 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
       tabAliveRef.current = false;
     };
   }, [tk]);
+
+  /** Per ticker: if User Settings pick a listed preset, mirror it in the row select (still overridable). */
+  useEffect(() => {
+    if (!prefsReady || !tk) return;
+    if (lastModelHydrateTickerRef.current === tk) return;
+    lastModelHydrateTickerRef.current = tk;
+    const models = preferences.aiModels as Partial<Record<AiProvider | "ollama", string>> | undefined;
+    setConsolidateModelChoice((prev) => {
+      const next = { ...prev };
+      for (const p of AI_CONSOLIDATE_PROVIDERS) {
+        const raw = p === "deepseek" ? models?.deepseek ?? models?.ollama : models?.[p];
+        const id = typeof raw === "string" ? raw.trim() : "";
+        if (id && presetsForProvider(p).some((opt) => opt.id === id)) {
+          next[p] = id;
+        }
+      }
+      return next;
+    });
+  }, [prefsReady, preferences.aiModels, tk]);
 
   useEffect(() => {
     if (!tk) return;
@@ -293,98 +317,116 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           <span className="font-mono text-[10px]">OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS</span> and your host&apos;s route limit. Older models may{" "}
           <span className="font-medium">truncate</span> at ~16k output tokens — prefer GPT-5.4 or <span className="font-medium">Claude</span> for full tables.
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-3">
           <span className="text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
             Run via API
           </span>
-          <div className="tab-prompt-ai-actions-grid">
+          <p className="mt-1 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+            Choose a model for each provider, then run. <span className="font-medium">Saved default</span> uses the model from User
+            Settings (or server/env fallback).
+          </p>
+          <div className="mt-2 flex flex-col gap-2">
             {AI_CONSOLIDATE_PROVIDERS.map((p) => {
               const sel = AI_PROVIDER_CHIP_SELECTED[p];
               const isPending = aiBusy === p;
               const inactive = aiBusy !== null && aiBusy !== p;
               return (
-                <button
+                <div
                   key={p}
-                  type="button"
-                  disabled={inactive || authStatus !== "authenticated"}
-                  className="tab-prompt-ai-action-btn"
-                  style={{
-                    borderColor: sel.background,
-                    color: isPending ? "#fff" : sel.background,
-                    background: isPending ? sel.background : "transparent",
-                  }}
-                  title={
-                    authStatus !== "authenticated"
-                      ? "Sign in to ingest saved workbooks and run the model."
-                      : "Ingest all saved SEC-XBRL xlsx and run consolidation"
-                  }
-                  onClick={() => {
-                    if (authStatus !== "authenticated" || aiBusy) return;
-                    setAiErr(null);
-                    setAiOkMsg(null);
-                    setConsolidationValidation(null);
-                    setAiBusy(p);
-                    void (async () => {
-                      try {
-                        const res = await fetch(`/api/sec/xbrl/ai-consolidate/${encodeURIComponent(tk)}`, {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            provider: p,
-                            maxTokens: 32768,
-                            ...modelOverridePayloadForProvider(p),
-                          }),
-                        });
-                        const j = (await res.json().catch(() => ({}))) as {
-                          ok?: boolean;
-                          text?: string;
-                          error?: string;
-                          fileCount?: number;
-                          truncated?: boolean;
-                          outputTruncated?: boolean;
-                          filenames?: string[];
-                          reconciliationMismatchCount?: number;
-                          validation?: {
-                            ok: boolean;
-                            mergedFactCount: number;
-                            numericChecks: number;
-                            mismatches: string[];
-                            conceptsMissingFromMarkdown: string[];
-                            unmatchedPeriodsSample: string[];
-                          } | null;
-                        };
-                        if (!res.ok || j.ok !== true || typeof j.text !== "string") {
-                          throw new Error(j.error || `Request failed (${res.status})`);
-                        }
-                        setConsolidatedMd(j.text);
-                        setConsolidationValidation(j.validation ?? null);
-                        const trunc = j.truncated ? " Ingest pack was truncated at size cap." : "";
-                        const outTrunc = j.outputTruncated
-                          ? " Model output hit max length — consolidated file is incomplete. Use Claude or fewer workbooks."
-                          : "";
-                        const reconN = j.reconciliationMismatchCount ?? 0;
-                        const reconHint =
-                          reconN > 0
-                            ? ` Automated statement math: ${reconN} mismatch(es) — see “Automated statement reconciliation” at the end of the saved markdown.`
-                            : "";
-                        setAiOkMsg(
-                          `Saved ${j.fileCount ?? "?"} workbook(s).${trunc}${outTrunc} Files: ${(j.filenames ?? []).slice(0, 5).join(", ")}${(j.filenames?.length ?? 0) > 5 ? "…" : ""}${reconHint}`
-                        );
-                      } catch (e) {
-                        setAiErr(e instanceof Error ? e.message : "Request failed");
-                      } finally {
-                        setAiBusy(null);
-                      }
-                    })();
-                  }}
+                  className="flex flex-wrap items-center gap-2 rounded-md border px-2 py-2"
+                  style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
                 >
-                  {isPending ? `${AI_CONSOLIDATE_LABELS[p]}…` : AI_CONSOLIDATE_LABELS[p]}
-                </button>
+                  <span
+                    className="min-w-[108px] shrink-0 text-[11px] font-semibold tracking-wide"
+                    style={{ color: sel.background }}
+                  >
+                    {AI_CONSOLIDATE_LABELS[p]}
+                  </span>
+                  <select
+                    className="min-w-0 flex-1 rounded border px-2 py-1.5 text-[11px] sm:max-w-md"
+                    style={{ borderColor: "var(--border2)", background: "var(--card)", color: "var(--text)" }}
+                    disabled={inactive || authStatus !== "authenticated" || !prefsReady}
+                    value={consolidateModelChoice[p]}
+                    aria-label={`Model for ${AI_CONSOLIDATE_LABELS[p]}`}
+                    onChange={(e) => {
+                      const v = e.target.value as ModelRunChoice;
+                      setConsolidateModelChoice((prev) => ({ ...prev, [p]: v }));
+                    }}
+                  >
+                    <option value="__saved__">Saved default (User Settings)</option>
+                    {presetsForProvider(p).map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    disabled={inactive || authStatus !== "authenticated" || !prefsReady}
+                    className="tab-prompt-ai-action-btn shrink-0 px-3 py-1.5 text-[11px]"
+                    style={{
+                      borderColor: sel.background,
+                      color: isPending ? "#fff" : sel.background,
+                      background: isPending ? sel.background : "transparent",
+                    }}
+                    title={
+                      authStatus !== "authenticated"
+                        ? "Sign in to ingest saved workbooks and run the model."
+                        : "Ingest all saved SEC-XBRL xlsx and run consolidation with the selected model"
+                    }
+                    onClick={() => {
+                      if (authStatus !== "authenticated" || aiBusy || !prefsReady) return;
+                      setAiErr(null);
+                      setAiOkMsg(null);
+                      setAiBusy(p);
+                      const choice = consolidateModelChoice[p];
+                      void (async () => {
+                        try {
+                          const res = await fetch(`/api/sec/xbrl/ai-consolidate/${encodeURIComponent(tk)}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              provider: p,
+                              maxTokens: 32768,
+                              ...modelPayloadForRun(p, choice),
+                            }),
+                          });
+                          const j = (await res.json().catch(() => ({}))) as {
+                            ok?: boolean;
+                            text?: string;
+                            error?: string;
+                            fileCount?: number;
+                            truncated?: boolean;
+                            outputTruncated?: boolean;
+                            filenames?: string[];
+                          };
+                          if (!res.ok || j.ok !== true || typeof j.text !== "string") {
+                            throw new Error(j.error || `Request failed (${res.status})`);
+                          }
+                          setConsolidatedMd(j.text);
+                          const trunc = j.truncated ? " Ingest pack was truncated at size cap." : "";
+                          const outTrunc = j.outputTruncated
+                            ? " Model output hit max length — consolidated file is incomplete. Use Claude or fewer workbooks."
+                            : "";
+                          setAiOkMsg(
+                            `Saved ${j.fileCount ?? "?"} workbook(s).${trunc}${outTrunc} Files: ${(j.filenames ?? []).slice(0, 5).join(", ")}${(j.filenames?.length ?? 0) > 5 ? "…" : ""}`
+                          );
+                        } catch (e) {
+                          setAiErr(e instanceof Error ? e.message : "Request failed");
+                        } finally {
+                          setAiBusy(null);
+                        }
+                      })();
+                    }}
+                  >
+                    {isPending ? "Running…" : "Run"}
+                  </button>
+                </div>
               );
             })}
           </div>
           {authStatus !== "authenticated" ? (
-            <span className="text-[10px]" style={{ color: "var(--muted)" }}>
+            <span className="mt-2 block text-[10px]" style={{ color: "var(--muted)" }}>
               Sign in required.
             </span>
           ) : null}
@@ -399,56 +441,6 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
             {aiOkMsg}
           </p>
         ) : null}
-        {consolidationValidation ? (
-          <div
-            className="mt-2 rounded border px-2 py-1.5 text-[10px]"
-            style={{
-              borderColor: consolidationValidation.ok ? "var(--border2)" : "var(--danger)",
-              color: "var(--muted2)",
-              background: consolidationValidation.ok ? "transparent" : "color-mix(in srgb, var(--danger) 8%, transparent)",
-            }}
-          >
-            <span className="font-medium" style={{ color: consolidationValidation.ok ? "var(--muted)" : "var(--danger)" }}>
-              XBRL reconciliation (saved workbooks vs consolidated text)
-            </span>
-            {consolidationValidation.ok ? (
-              <span className="ml-1">— no mismatches or missing concept rows detected in automated check.</span>
-            ) : (
-              <span className="ml-1">— review mismatches or missing rows below.</span>
-            )}
-            <div className="mt-1 opacity-90">
-              Spot-checks: {consolidationValidation.numericChecks} cells matched to latest-filing facts (
-              {consolidationValidation.mergedFactCount} merged fact cells from sources).
-            </div>
-            {consolidationValidation.mismatches.length > 0 ? (
-              <ul className="mt-1 list-disc pl-4 space-y-0.5" style={{ color: "var(--danger)" }}>
-                {consolidationValidation.mismatches.slice(0, 12).map((m, i) => (
-                  <li key={i}>{m}</li>
-                ))}
-                {consolidationValidation.mismatches.length > 12 ? (
-                  <li>…and {consolidationValidation.mismatches.length - 12} more</li>
-                ) : null}
-              </ul>
-            ) : null}
-            {consolidationValidation.conceptsMissingFromMarkdown.length > 0 ? (
-              <ul className="mt-1 list-disc pl-4 space-y-0.5">
-                <li className="font-medium" style={{ color: "var(--danger)" }}>
-                  Line items / concepts not clearly present in consolidated tables:
-                </li>
-                {consolidationValidation.conceptsMissingFromMarkdown.slice(0, 8).map((m, i) => (
-                  <li key={i} className="break-all">
-                    {m}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            {consolidationValidation.unmatchedPeriodsSample.length > 0 ? (
-              <p className="mt-1 opacity-80">
-                Unmatched period headers (sample): {consolidationValidation.unmatchedPeriodsSample.join("; ")}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
         <div
           className="mt-4 rounded border px-4 py-3"
           style={{ borderColor: "var(--accent)", background: "var(--card2)" }}
@@ -456,9 +448,14 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
             Consolidated financial model
           </p>
+          {consolidatedMd.trim() ? (
+            <p className="mt-2 text-sm font-medium leading-snug" style={{ color: "var(--text)" }}>
+              Consolidation is complete. You can open or download the Excel file below.
+            </p>
+          ) : null}
           <p className="mt-1 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
-            After AI consolidation finishes, download the result as an Excel file (one sheet per markdown table). The same output is saved
-            on the server as <span className="font-mono">xbrl-consolidated-financials-ai.md</span> for this ticker.
+            The consolidated tables export to one Excel file (one sheet per markdown table). The same output is saved on the server as{" "}
+            <span className="font-mono">xbrl-consolidated-financials-ai.md</span> for this ticker.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
