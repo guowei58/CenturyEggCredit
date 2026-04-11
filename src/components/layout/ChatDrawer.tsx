@@ -7,6 +7,7 @@ import {
   AI_CHAT_MAX_MESSAGES_PER_SESSION,
   type AiChatAttachment,
   type AiChatMessage,
+  type AiChatReplyRef,
   type AiChatSession,
   type AiChatUserMessage,
   aiChatMessageToWire,
@@ -28,10 +29,20 @@ import { GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
 import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
 import { AiModelPicker } from "@/components/AiModelPicker";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
-
-const CHAT_SUGGESTIONS = ["LUMN full analysis", "Peer leverage: LUMN vs T", "Covenant summary"];
+import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
 const MAX_PENDING_ATTACHMENTS = 8;
+
+function snippetForAiReplyTarget(m: AiChatMessage): string {
+  if (m.role === "assistant") {
+    return (m.content || "").replace(/\s+/g, " ").trim().slice(0, 400);
+  }
+  const u = m as AiChatUserMessage;
+  const t = (u.content || "").replace(/\s+/g, " ").trim();
+  if (t) return t.slice(0, 400);
+  if (u.attachments?.length) return `[Attached: ${u.attachments.map((a) => a.name).join(", ")}]`;
+  return "";
+}
 
 export function ChatDrawer({
   open,
@@ -42,10 +53,11 @@ export function ChatDrawer({
   open: boolean;
   onOpen: () => void;
   onClose: () => void;
-  /** Sidebar ticker for AI context (optional). */
+  /** Sidebar ticker — chat history is saved per ticker (required for signed-in server sync). */
   ticker?: string | null;
 }) {
   const { status: authStatus } = useSession();
+  const chatSym = useMemo(() => sanitizeTicker(ticker ?? "") ?? "", [ticker]);
   const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
   const persistRemoteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sessionsHydrated, setSessionsHydrated] = useState(false);
@@ -59,6 +71,8 @@ export function ChatDrawer({
   const [error, setError] = useState<string | null>(null);
   /** Which message bubble last triggered copy (`${sessionId}-${i}-${role}`). */
   const [copiedMessageKey, setCopiedMessageKey] = useState<string | null>(null);
+  /** When set, the next user message replies to that prior bubble (stored on the user message; expanded for the LLM only). */
+  const [replyTarget, setReplyTarget] = useState<AiChatReplyRef | null>(null);
   const [anthropicConfigured, setAnthropicConfigured] = useState<boolean | null>(null);
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(null);
   const [geminiConfigured, setGeminiConfigured] = useState<boolean | null>(null);
@@ -98,7 +112,18 @@ export function ChatDrawer({
         return;
       }
 
-      const remote = await fetchAiChatStateFromServer();
+      const sym = sanitizeTicker(ticker ?? "");
+      if (!sym) {
+        const s = createAiChatSession();
+        if (!cancelled) {
+          setSessions([s]);
+          setActiveSessionId(s.id);
+          setSessionsHydrated(true);
+        }
+        return;
+      }
+
+      const remote = await fetchAiChatStateFromServer(sym);
       if (cancelled) return;
       if (remote && remote.sessions.length > 0) {
         setSessions(remote.sessions);
@@ -107,31 +132,32 @@ export function ChatDrawer({
             ? remote.activeId
             : remote.sessions[0].id;
         setActiveSessionId(id);
-        setSessionsHydrated(true);
-        return;
+      } else {
+        const s = createAiChatSession();
+        setSessions([s]);
+        setActiveSessionId(s.id);
       }
-      const s = createAiChatSession();
-      setSessions([s]);
-      setActiveSessionId(s.id);
       setSessionsHydrated(true);
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [authStatus]);
+  }, [authStatus, ticker]);
 
   useEffect(() => {
     if (!sessionsHydrated) return;
     if (authStatus !== "authenticated") return;
+    const sym = sanitizeTicker(ticker ?? "");
+    if (!sym) return;
     if (persistRemoteTimerRef.current) clearTimeout(persistRemoteTimerRef.current);
     persistRemoteTimerRef.current = setTimeout(() => {
-      void pushAiChatStateToServer(sessions, activeSessionId);
+      void pushAiChatStateToServer(sessions, activeSessionId, sym);
     }, 800);
     return () => {
       if (persistRemoteTimerRef.current) clearTimeout(persistRemoteTimerRef.current);
     };
-  }, [sessions, activeSessionId, sessionsHydrated, authStatus]);
+  }, [sessions, activeSessionId, sessionsHydrated, authStatus, ticker]);
 
   useEffect(() => {
     if (!sessionsHydrated || sessions.length === 0) return;
@@ -188,8 +214,8 @@ export function ChatDrawer({
 
   useEffect(() => {
     if (!open) return;
-    markAiChatViewedNow();
-  }, [open, messages, pending]);
+    markAiChatViewedNow(chatSym || null);
+  }, [open, messages, pending, chatSym]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -318,7 +344,11 @@ export function ChatDrawer({
 
       const savedInput = input;
       const savedPending = atSnapshot;
-      if (override === undefined) setInput("");
+      const savedReply = replyTarget;
+      if (override === undefined) {
+        setInput("");
+        setReplyTarget(null);
+      }
       setPendingAttachments([]);
       setError(null);
 
@@ -328,6 +358,7 @@ export function ChatDrawer({
       const userMsg: AiChatUserMessage = {
         role: "user",
         content: text,
+        ...(savedReply?.snippet ? { replyTo: savedReply } : {}),
         ...(atSnapshot.length
           ? {
               attachments: atSnapshot.map(({ id, name, mediaType, data }) => ({
@@ -369,6 +400,7 @@ export function ChatDrawer({
             copy[ui] = {
               role: "user",
               content: `${last.content || ""}\n\n[Attached: ${names}]`.trim(),
+              ...(last.replyTo ? { replyTo: last.replyTo } : {}),
             };
           }
           copy.push({ role: "assistant", content: assistantText });
@@ -377,7 +409,10 @@ export function ChatDrawer({
       } catch (e) {
         setError(e instanceof Error ? e.message : "Something went wrong");
         patchActiveMessages((m) => m.slice(0, -1));
-        if (override === undefined) setInput(savedInput);
+        if (override === undefined) {
+          setInput(savedInput);
+          setReplyTarget(savedReply);
+        }
         setPendingAttachments(savedPending);
       } finally {
         pendingRef.current = false;
@@ -395,6 +430,7 @@ export function ChatDrawer({
       includeOreoContext,
       patchActiveMessages,
       activeSessionId,
+      replyTarget,
     ]
   );
 
@@ -405,6 +441,7 @@ export function ChatDrawer({
     setError(null);
     setInput("");
     setPendingAttachments([]);
+    setReplyTarget(null);
   }
 
   function selectSession(id: string) {
@@ -412,6 +449,7 @@ export function ChatDrawer({
     setError(null);
     setInput("");
     setPendingAttachments([]);
+    setReplyTarget(null);
   }
 
   function deleteSession(id: string, e: MouseEvent<HTMLButtonElement>) {
@@ -433,21 +471,41 @@ export function ChatDrawer({
         }}
       >
         <aside
-          className="flex w-[124px] flex-shrink-0 flex-col border-r sm:w-[148px]"
+          className="flex w-[132px] flex-shrink-0 flex-col border-r sm:w-[168px]"
           style={{ background: "var(--sb)", borderColor: "var(--border)" }}
         >
           <div
-            className="flex-shrink-0 border-b px-2 py-2.5 text-[9px] font-semibold uppercase tracking-wider"
-            style={{ color: "var(--muted2)", borderColor: "var(--border)" }}
+            className="flex-shrink-0 border-b px-2 py-2.5"
+            style={{ borderColor: "var(--border)" }}
           >
-            Chats
+            <div className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted2)" }}>
+              Chats
+            </div>
+            {authStatus === "authenticated" && chatSym ? (
+              <p className="mt-1.5 text-[9px] leading-snug" style={{ color: "var(--muted2)" }}>
+                Every thread for <span className="font-mono">{chatSym}</span> is stored on your account. Tap one below to
+                reopen it.
+              </p>
+            ) : authStatus !== "authenticated" ? (
+              <p className="mt-1.5 text-[9px] leading-snug" style={{ color: "var(--warn)" }}>
+                Sign in to save chat for each ticker and reload it later.
+              </p>
+            ) : null}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
             {sessionsSorted.map((s) => {
               const active = s.id === activeSessionId;
               const shortDate = (() => {
                 try {
-                  return new Date(s.updatedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                  const d = new Date(s.updatedAt);
+                  const now = new Date();
+                  const sameYear = d.getFullYear() === now.getFullYear();
+                  return d.toLocaleDateString(
+                    undefined,
+                    sameYear
+                      ? { month: "short", day: "numeric" }
+                      : { month: "short", day: "numeric", year: "numeric" }
+                  );
                 } catch {
                   return "";
                 }
@@ -495,7 +553,7 @@ export function ChatDrawer({
           >
             <div className="min-w-0 flex-1">
               <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
-                AI Chat
+                {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
               </div>
               <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
                 {anthropicConfigured === null ||
@@ -648,6 +706,9 @@ export function ChatDrawer({
             <div className="flex flex-col gap-4">
               {messages.map((m, i) => {
                 const bubbleKey = `${activeSessionId ?? "x"}-${i}-${m.role}`;
+                const prevTurn = i > 0 ? messages[i - 1] : null;
+                const prevUserReplyTo =
+                  prevTurn?.role === "user" ? (prevTurn as AiChatUserMessage).replyTo : undefined;
                 const u = m.role === "user" ? (m as AiChatUserMessage) : null;
                 const userCopyText =
                   u != null
@@ -663,6 +724,8 @@ export function ChatDrawer({
                 const assistantCopyText = m.role === "assistant" ? m.content : "";
                 const copyText = m.role === "user" ? userCopyText : assistantCopyText;
                 const canCopy = copyText.trim().length > 0;
+                const replySnippet = snippetForAiReplyTarget(m);
+                const canReply = replySnippet.length > 0;
 
                 return (
                   <div key={bubbleKey}>
@@ -670,21 +733,38 @@ export function ChatDrawer({
                       <div className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
                         {m.role === "user" ? "You" : assistantLabel}
                       </div>
-                      {canCopy ? (
-                        <button
-                          type="button"
-                          onClick={() => void copyMessageToClipboard(bubbleKey, copyText)}
-                          className="rounded border px-2 py-0.5 text-[9px] font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                          style={{
-                            borderColor: "var(--border2)",
-                            color: copiedMessageKey === bubbleKey ? "var(--accent)" : "var(--muted2)",
-                            background: "var(--card)",
-                          }}
-                          aria-label={m.role === "user" ? "Copy question" : "Copy answer"}
-                        >
-                          {copiedMessageKey === bubbleKey ? "Copied!" : "Copy"}
-                        </button>
-                      ) : null}
+                      <div className="flex shrink-0 gap-1">
+                        {canReply ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setReplyTarget({
+                                role: m.role === "assistant" ? "assistant" : "user",
+                                snippet: replySnippet,
+                              })
+                            }
+                            className="rounded border px-2 py-0.5 text-[9px] font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card)" }}
+                          >
+                            Reply
+                          </button>
+                        ) : null}
+                        {canCopy ? (
+                          <button
+                            type="button"
+                            onClick={() => void copyMessageToClipboard(bubbleKey, copyText)}
+                            className="rounded border px-2 py-0.5 text-[9px] font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            style={{
+                              borderColor: "var(--border2)",
+                              color: copiedMessageKey === bubbleKey ? "var(--accent)" : "var(--muted2)",
+                              background: "var(--card)",
+                            }}
+                            aria-label={m.role === "user" ? "Copy question" : "Copy answer"}
+                          >
+                            {copiedMessageKey === bubbleKey ? "Copied!" : "Copy"}
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
                     {m.role === "user" ? (
                       <div
@@ -697,6 +777,17 @@ export function ChatDrawer({
                       >
                         {u != null ? (
                           <>
+                            {u.replyTo ? (
+                              <div
+                                className="mb-2 border-l-2 pl-2 text-[11px] leading-snug"
+                                style={{ borderColor: "var(--accent)", color: "var(--muted2)" }}
+                              >
+                                <div className="font-semibold" style={{ color: "var(--muted)" }}>
+                                  Replying to {u.replyTo.role === "assistant" ? assistantLabel : "you (earlier)"}
+                                </div>
+                                <div className="line-clamp-4 whitespace-pre-wrap">{u.replyTo.snippet}</div>
+                              </div>
+                            ) : null}
                             {u.attachments && u.attachments.length > 0 ? (
                               <div className="mb-2 flex flex-wrap gap-2">
                                 {u.attachments.map((a) =>
@@ -730,6 +821,18 @@ export function ChatDrawer({
                         className="rounded-lg border p-3 text-sm leading-relaxed"
                         style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
                       >
+                        {prevUserReplyTo ? (
+                          <div
+                            className="mb-2 border-l-2 pl-2 text-[11px] leading-snug"
+                            style={{ borderColor: "var(--accent)", color: "var(--muted2)" }}
+                          >
+                            <div className="font-semibold" style={{ color: "var(--muted)" }}>
+                              Referenced in your question (
+                              {prevUserReplyTo.role === "assistant" ? assistantLabel : "your earlier message"})
+                            </div>
+                            <div className="line-clamp-4 whitespace-pre-wrap">{prevUserReplyTo.snippet}</div>
+                          </div>
+                        ) : null}
                         <SavedRichText content={m.content} />
                       </div>
                     )}
@@ -798,6 +901,29 @@ export function ChatDrawer({
                   </button>
                 </div>
               ))}
+            </div>
+          ) : null}
+          {replyTarget ? (
+            <div
+              className="flex items-start gap-2 rounded-lg border px-3 py-2 text-[11px] leading-snug"
+              style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
+            >
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold" style={{ color: "var(--muted)" }}>
+                  Replying to {replyTarget.role === "assistant" ? assistantLabel : "your message"}
+                </div>
+                <div className="line-clamp-3 whitespace-pre-wrap" style={{ color: "var(--muted2)" }}>
+                  {replyTarget.snippet}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReplyTarget(null)}
+                className="shrink-0 rounded border px-2 py-0.5 text-[9px] font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card)" }}
+              >
+                Cancel
+              </button>
             </div>
           ) : null}
           <div className="flex gap-2">
@@ -888,20 +1014,6 @@ export function ChatDrawer({
             >
               ↑
             </button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {CHAT_SUGGESTIONS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                disabled={pending || !providerReady}
-                onClick={() => void submitMessage(s)}
-                className="rounded-full border px-2.5 py-1.5 text-[10px] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-40"
-                style={{ background: "var(--card)", borderColor: "var(--border2)", color: "var(--muted2)" }}
-              >
-                {s}
-              </button>
-            ))}
           </div>
           <p className="text-[9px] leading-snug" style={{ color: "var(--muted2)" }}>
             .txt / .md / .csv paste as text. Large files are capped (~5 MB each, 8 per message). History keeps file names only, not

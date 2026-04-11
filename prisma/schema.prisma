@@ -71,7 +71,7 @@ model User {
   tickerDocuments  UserTickerDocument[]
   savedDocuments   UserSavedDocument[]
   workspaceFiles UserTickerWorkspaceFile[]
-  aiChatState      UserAiChatState?
+  aiChatStates     UserAiChatState[]
   preferences      UserPreferences?
   conversationMemberships ConversationMember[]
   eggHocMessagesSent      EggHocMessage[]       @relation("EggHocMessageSender")
@@ -222,11 +222,13 @@ model UserTickerWorkspaceFile {
 }
 
 model UserAiChatState {
-  userId    String   @id @map("user_id")
+  userId    String   @map("user_id")
+  ticker    String   @default("__GLOBAL__") @map("ticker")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   payload   String   @db.Text
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@id([userId, ticker])
   @@map("user_ai_chat_state")
 }
 

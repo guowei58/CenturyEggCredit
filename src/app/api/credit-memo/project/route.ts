@@ -84,7 +84,7 @@ export async function POST(req: Request) {
       folderAbs: abs,
     });
 
-    const chatPayload = await getAiChatPayload(userId);
+    const chatPayload = await getAiChatPayload(userId, sym);
     const { project: mergedProject, extraWarnings } = mergeAiChatIntoIngestedProject(folderProject, chatPayload);
     const project = mergedProject;
     project.folderResolutionJson = body.resolutionMeta ?? { folderPath: abs };

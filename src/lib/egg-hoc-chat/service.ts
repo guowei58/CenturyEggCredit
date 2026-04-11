@@ -429,37 +429,94 @@ export async function getConversationMessages(
     },
     orderBy: { createdAt: "desc" },
     take,
-    include: { sender: { select: userPublicSelect } },
+    include: {
+      sender: { select: userPublicSelect },
+    },
   });
 
   const chronological = [...messages].reverse();
   const nextCursor = chronological.length > 0 ? chronological[0].id : null;
 
+  /** Load parents by id so every reply carries the same quoted preview for all members (explicit `replyToMessageId` resolution, independent of the main page query shape). */
+  const replyParentIds = [
+    ...new Set(
+      messages
+        .map((m) => m.replyToMessageId)
+        .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+        .map((id) => id.trim())
+    ),
+  ];
+  const replyParents =
+    replyParentIds.length > 0
+      ? await prisma.eggHocMessage.findMany({
+          where: { conversationId, id: { in: replyParentIds } },
+          select: {
+            id: true,
+            body: true,
+            deletedAt: true,
+            sender: { select: userPublicSelect },
+          },
+        })
+      : [];
+  const replyToWireByParentId = new Map(
+    replyParents.map((p) => [
+      p.id,
+      {
+        id: p.id,
+        body: p.deletedAt ? "" : p.body,
+        deletedAt: p.deletedAt?.toISOString() ?? null,
+        sender: publicUserRowToPublicUser(p.sender),
+      },
+    ])
+  );
+
   return {
     ok: true as const,
-    messages: chronological.map((m) => ({
-      id: m.id,
-      conversationId: m.conversationId,
-      senderUserId: m.senderUserId,
-      body: m.body,
-      messageType: m.messageType,
-      editedAt: m.editedAt?.toISOString() ?? null,
-      deletedAt: m.deletedAt?.toISOString() ?? null,
-      createdAt: m.createdAt.toISOString(),
-      sender: publicUserRowToPublicUser(m.sender),
-    })),
+    messages: chronological.map((m) => {
+      const rid = typeof m.replyToMessageId === "string" ? m.replyToMessageId.trim() : "";
+      const replyTo = rid && replyToWireByParentId.has(rid) ? replyToWireByParentId.get(rid)! : null;
+      return {
+        id: m.id,
+        conversationId: m.conversationId,
+        senderUserId: m.senderUserId,
+        body: m.body,
+        messageType: m.messageType,
+        replyToMessageId: m.replyToMessageId,
+        editedAt: m.editedAt?.toISOString() ?? null,
+        deletedAt: m.deletedAt?.toISOString() ?? null,
+        createdAt: m.createdAt.toISOString(),
+        sender: publicUserRowToPublicUser(m.sender),
+        replyTo,
+      };
+    }),
     hasMore: messages.length === take,
     nextCursor,
   };
 }
 
-export async function sendMessage(conversationId: string, userId: string, body: string) {
+export async function sendMessage(
+  conversationId: string,
+  userId: string,
+  body: string,
+  replyToMessageId?: string | null
+) {
   const text = body.trim();
   if (!text) return { ok: false as const, error: "Message cannot be empty" };
   if (text.length > 20_000) return { ok: false as const, error: "Message too long" };
 
   const member = await assertMember(conversationId, userId);
   if (!member) return { ok: false as const, error: "Not a member of this conversation" };
+
+  let replyId: string | null = null;
+  const rawReply = typeof replyToMessageId === "string" ? replyToMessageId.trim() : "";
+  if (rawReply) {
+    const parent = await prisma.eggHocMessage.findFirst({
+      where: { id: rawReply, conversationId, deletedAt: null },
+      select: { id: true },
+    });
+    if (!parent) return { ok: false as const, error: "That message was not found in this chat" };
+    replyId = parent.id;
+  }
 
   const msg = await prisma.$transaction(async (tx) => {
     const m = await tx.eggHocMessage.create({
@@ -468,8 +525,19 @@ export async function sendMessage(conversationId: string, userId: string, body: 
         senderUserId: userId,
         body: text,
         messageType: EggHocMessageType.TEXT,
+        replyToMessageId: replyId,
       },
-      include: { sender: { select: userPublicSelect } },
+      include: {
+        sender: { select: userPublicSelect },
+        replyTo: {
+          select: {
+            id: true,
+            body: true,
+            deletedAt: true,
+            sender: { select: userPublicSelect },
+          },
+        },
+      },
     });
     await tx.conversation.update({
       where: { id: conversationId },
@@ -486,10 +554,19 @@ export async function sendMessage(conversationId: string, userId: string, body: 
       senderUserId: msg.senderUserId,
       body: msg.body,
       messageType: msg.messageType,
+      replyToMessageId: msg.replyToMessageId,
       editedAt: null,
       deletedAt: null,
       createdAt: msg.createdAt.toISOString(),
       sender: publicUserRowToPublicUser(msg.sender),
+      replyTo: msg.replyTo
+        ? {
+            id: msg.replyTo.id,
+            body: msg.replyTo.deletedAt ? "" : msg.replyTo.body,
+            deletedAt: msg.replyTo.deletedAt?.toISOString() ?? null,
+            sender: publicUserRowToPublicUser(msg.replyTo.sender),
+          }
+        : null,
     },
   };
 }

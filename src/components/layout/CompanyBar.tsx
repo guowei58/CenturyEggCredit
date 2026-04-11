@@ -1,7 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import {
+  aiChatShowsUnreadNavDot,
+  fetchAiChatStateFromServer,
+  getAiChatLastSeenIso,
+  OREO_AI_CHAT_WAITING_REPLY_KEY,
+} from "@/lib/ai-chat-sessions";
+import { AI_CHAT_NAV_ICON_FRAME_CLASSNAME } from "./EggHocCommitteeMark";
 import { runBulkUpdateViaApi } from "@/lib/bulk-ai-open";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
@@ -12,6 +19,8 @@ import { useUserSettingsModalOptional } from "@/components/layout/UserSettingsMo
 import { ApiModelChoiceModal } from "@/components/ApiModelChoiceModal";
 
 const DEEPSEEK_BULK_COLOR = "#2563eb";
+
+const AI_CHAT_BADGE_POLL_MS = 10_000;
 
 /** Bulk bar: fixed min-height so UI/API rows align; centered label; subtle fill reads calmer on dark sb. */
 const bulkBarBtnClass =
@@ -25,15 +34,21 @@ export type CompanyBarData = {
 export function CompanyBar({
   data,
   companyNameForPrompts,
+  aiChatOpen = false,
+  onOpenAiChat,
 }: {
   data: CompanyBarData;
   /** Resolved company name for prompt substitution (may match `data.name` or be null while loading). */
   companyNameForPrompts?: string | null;
+  /** When true, hide the unread dot for this ticker’s AI Chat. */
+  aiChatOpen?: boolean;
+  onOpenAiChat?: () => void;
 }) {
   const [bulkApiBusy, setBulkApiBusy] = useState<AiProvider | null>(null);
   const [bulkApiLine, setBulkApiLine] = useState<string | null>(null);
   const [bulkModelPick, setBulkModelPick] = useState<AiProvider | null>(null);
-  const { data: session } = useSession();
+  const [aiChatNavUnread, setAiChatNavUnread] = useState(false);
+  const { data: session, status: sessionStatus } = useSession();
   const { preferences } = useUserPreferences();
   const settingsModal = useUserSettingsModalOptional();
   const email = session?.user?.email ?? null;
@@ -46,6 +61,49 @@ export function CompanyBar({
     }
     return true;
   }
+
+  useEffect(() => {
+    if (!onOpenAiChat || sessionStatus !== "authenticated") {
+      setAiChatNavUnread(false);
+      return;
+    }
+    const tk = data.ticker.trim().toUpperCase();
+    if (!tk) {
+      setAiChatNavUnread(false);
+      return;
+    }
+
+    const refresh = async () => {
+      if (aiChatOpen) {
+        setAiChatNavUnread(false);
+        return;
+      }
+      let aiUnread = false;
+      try {
+        if (typeof sessionStorage !== "undefined" && sessionStorage.getItem(OREO_AI_CHAT_WAITING_REPLY_KEY) === "1") {
+          aiUnread = true;
+        }
+      } catch {
+        /* ignore */
+      }
+      if (!aiUnread) {
+        const st = await fetchAiChatStateFromServer(tk);
+        if (st) {
+          aiUnread = aiChatShowsUnreadNavDot(st.sessions, getAiChatLastSeenIso(tk));
+        }
+      }
+      setAiChatNavUnread(aiUnread);
+    };
+
+    void refresh();
+    const id = window.setInterval(() => void refresh(), AI_CHAT_BADGE_POLL_MS);
+    const onFocus = () => void refresh();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [sessionStatus, data.ticker, aiChatOpen, onOpenAiChat]);
 
   function bulkCtx() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -120,7 +178,7 @@ export function CompanyBar({
         }}
       />
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-        <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-3.5">
+        <div className="flex min-w-0 shrink-0 flex-wrap items-center gap-2 sm:gap-3.5">
           <span
             className="inline-flex shrink-0 items-center justify-center rounded-md px-2.5 py-1.5 font-mono text-xs font-bold tracking-wide text-black sm:text-sm"
             style={{ background: "var(--accent)" }}
@@ -133,6 +191,25 @@ export function CompanyBar({
           >
             {data.name}
           </div>
+          {onOpenAiChat ? (
+            <button
+              type="button"
+              className="btn-shell hi relative flex min-h-9 shrink-0 items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold sm:min-h-10 sm:px-4 sm:text-xs"
+              onClick={onOpenAiChat}
+              aria-label={aiChatNavUnread ? `AI Chat for ${data.ticker} (unread)` : `AI Chat for ${data.ticker}`}
+            >
+              {aiChatNavUnread ? (
+                <span
+                  className="absolute right-0.5 top-0.5 size-2 rounded-full bg-red-500 ring-2 ring-[var(--sb)]"
+                  aria-hidden
+                />
+              ) : null}
+              <span className={AI_CHAT_NAV_ICON_FRAME_CLASSNAME} aria-hidden="true">
+                <span className="select-none text-[1.05rem] leading-none sm:text-[1.2rem]">🤖</span>
+              </span>
+              <span className="hidden sm:inline">AI Chat</span>
+            </button>
+          ) : null}
         </div>
 
         <div className="min-w-0 w-full lg:max-w-[min(100%,52rem)] lg:flex-1">

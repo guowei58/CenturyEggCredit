@@ -10,10 +10,14 @@ export type AiChatAttachment = {
   data: string;
 };
 
+/** Reference to a prior bubble in the same thread (stored in JSON; expanded only when calling the LLM). */
+export type AiChatReplyRef = { role: "user" | "assistant"; snippet: string };
+
 export type AiChatUserMessage = {
   role: "user";
   content: string;
   attachments?: AiChatAttachment[];
+  replyTo?: AiChatReplyRef;
 };
 
 export type AiChatAssistantMessage = {
@@ -31,27 +35,35 @@ export type AiChatSession = {
   updatedAt: string;
 };
 
-export const AI_CHAT_MAX_SESSIONS = 80;
-export const AI_CHAT_MAX_MESSAGES_PER_SESSION = 200;
+/** Oldest threads are dropped only after this many (per ticker, server-saved). */
+export const AI_CHAT_MAX_SESSIONS = 150;
+/** Oldest turns are trimmed per thread when a session grows past this. */
+export const AI_CHAT_MAX_MESSAGES_PER_SESSION = 300;
 
-/** `localStorage`: last time the user had AI Chat open (or its messages in view). */
+/** `localStorage`: last time the user had AI Chat open for a ticker (`${key}:${TICKER}`). */
 export const OREO_AI_CHAT_LAST_SEEN_KEY = "oreo_ai_chat_last_seen_at";
 /** `sessionStorage`: set while a reply is being generated and the drawer is closed. */
 export const OREO_AI_CHAT_WAITING_REPLY_KEY = "oreo_ai_chat_waiting_reply";
 
-export function markAiChatViewedNow(): void {
+function lastSeenStorageKey(ticker: string | null | undefined): string {
+  const t = (ticker ?? "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return t ? `${OREO_AI_CHAT_LAST_SEEN_KEY}:${t}` : OREO_AI_CHAT_LAST_SEEN_KEY;
+}
+
+/** @param ticker Uppercase ticker for per-company chat; omit only for legacy callers. */
+export function markAiChatViewedNow(ticker?: string | null): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(OREO_AI_CHAT_LAST_SEEN_KEY, new Date().toISOString());
+    localStorage.setItem(lastSeenStorageKey(ticker), new Date().toISOString());
   } catch {
     /* quota / private mode */
   }
 }
 
-export function getAiChatLastSeenIso(): string | null {
+export function getAiChatLastSeenIso(ticker?: string | null): string | null {
   if (typeof window === "undefined") return null;
   try {
-    return localStorage.getItem(OREO_AI_CHAT_LAST_SEEN_KEY);
+    return localStorage.getItem(lastSeenStorageKey(ticker));
   } catch {
     return null;
   }
@@ -109,10 +121,14 @@ function stripAttachmentsFromMessages(messages: AiChatMessage[]): AiChatMessage[
   return messages.map((m) => {
     if (m.role === "assistant") return m;
     const u = m as AiChatUserMessage;
-    if (!u.attachments?.length) return m;
+    const replyTo = u.replyTo;
+    const replyPart = replyTo ? { replyTo } : {};
+    if (!u.attachments?.length) {
+      return { role: "user" as const, content: (u.content || "").trim(), ...replyPart };
+    }
     const names = u.attachments.map((a) => a.name).join(", ");
     const note = names ? `\n\n[Attached files not kept in history: ${names}]` : "";
-    return { role: "user", content: `${(u.content || "").trim()}${note}`.trim() };
+    return { role: "user" as const, content: `${(u.content || "").trim()}${note}`.trim(), ...replyPart };
   });
 }
 
@@ -136,7 +152,17 @@ function parseSessionsArray(parsed: unknown): AiChatSession[] {
         }
         if (role === "user") {
           const c = typeof content === "string" ? content : "";
-          messages.push({ role: "user", content: c });
+          const rt = (m as { replyTo?: unknown }).replyTo;
+          let replyTo: AiChatReplyRef | undefined;
+          if (rt && typeof rt === "object" && !Array.isArray(rt)) {
+            const ro = rt as Record<string, unknown>;
+            const rrole = ro.role;
+            const sn = typeof ro.snippet === "string" ? ro.snippet.trim() : "";
+            if ((rrole === "user" || rrole === "assistant") && sn) {
+              replyTo = { role: rrole, snippet: sn.slice(0, 800) };
+            }
+          }
+          messages.push(replyTo ? { role: "user", content: c, replyTo } : { role: "user", content: c });
         }
       }
     }
@@ -173,9 +199,11 @@ export function parseAiChatFromServerPayload(payload: string): { sessions: AiCha
   }
 }
 
-export async function fetchAiChatStateFromServer(): Promise<{ sessions: AiChatSession[]; activeId: string | null } | null> {
+export async function fetchAiChatStateFromServer(
+  ticker: string
+): Promise<{ sessions: AiChatSession[]; activeId: string | null } | null> {
   try {
-    const res = await fetch("/api/me/ai-chat");
+    const res = await fetch(`/api/me/ai-chat?ticker=${encodeURIComponent(ticker)}`);
     if (!res.ok) return null;
     const data = (await res.json()) as { payload?: string };
     return parseAiChatFromServerPayload(typeof data.payload === "string" ? data.payload : "");
@@ -184,17 +212,32 @@ export async function fetchAiChatStateFromServer(): Promise<{ sessions: AiChatSe
   }
 }
 
-export async function pushAiChatStateToServer(sessions: AiChatSession[], activeId: string | null): Promise<boolean> {
+export async function pushAiChatStateToServer(
+  sessions: AiChatSession[],
+  activeId: string | null,
+  ticker: string
+): Promise<boolean> {
   try {
     const res = await fetch("/api/me/ai-chat", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payload: serializeAiChatForServer(sessions, activeId) }),
+      body: JSON.stringify({
+        ticker,
+        payload: serializeAiChatForServer(sessions, activeId),
+      }),
     });
     return res.ok;
   } catch {
     return false;
   }
+}
+
+/** Injects quoted context so the model sees which prior turn is being answered (not shown as a separate API field). */
+export function formatReplyPrefixForLlm(rt: AiChatReplyRef): string {
+  const who = rt.role === "assistant" ? "assistant" : "user";
+  const excerpt = rt.snippet.replace(/\s+/g, " ").trim();
+  const clip = excerpt.length > 600 ? `${excerpt.slice(0, 600)}…` : excerpt;
+  return `[The user is replying to a prior ${who} message:]\n"${clip}"\n\n---\n\n`;
 }
 
 /** Shape for POST /api/committee-chat */
@@ -203,7 +246,9 @@ export function aiChatMessageToWire(m: AiChatMessage): Record<string, unknown> {
     return { role: "assistant", content: m.content };
   }
   const u = m as AiChatUserMessage;
-  const body: Record<string, unknown> = { role: "user", content: u.content ?? "" };
+  const base = (u.content ?? "").trim();
+  const contentForApi = u.replyTo ? `${formatReplyPrefixForLlm(u.replyTo)}${base}`.trim() : base;
+  const body: Record<string, unknown> = { role: "user", content: contentForApi };
   if (u.attachments?.length) {
     body.attachments = u.attachments.map((a) => ({
       name: a.name,

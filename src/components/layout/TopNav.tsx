@@ -3,14 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { signOut, useSession } from "next-auth/react";
-import {
-  aiChatShowsUnreadNavDot,
-  fetchAiChatStateFromServer,
-  getAiChatLastSeenIso,
-  OREO_AI_CHAT_WAITING_REPLY_KEY,
-} from "@/lib/ai-chat-sessions";
 
-import { AI_CHAT_NAV_ICON_FRAME_CLASSNAME, EggHocCommitteeMark } from "./EggHocCommitteeMark";
+import { EggHocCommitteeMark } from "./EggHocCommitteeMark";
 import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
 import { OreoSablePlay } from "./OreoSablePlay";
 import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
@@ -49,22 +43,16 @@ const NAV_BADGE_POLL_MS = 10_000;
 export function TopNav({
   mode,
   onModeChange,
-  onOpenAiChat,
   onOpenEggHocCommittee,
-  aiChatOpen = false,
 }: {
   mode: Mode;
   onModeChange: (m: Mode) => void;
-  onOpenAiChat: () => void;
   onOpenEggHocCommittee: () => void;
-  /** When true, hide AI Chat unread dot (user is already in that drawer). */
-  aiChatOpen?: boolean;
 }) {
   const { data: session, status } = useSession();
   const prefs = useUserPreferencesOptional();
   const chatDisplayId = prefs?.preferences.profile?.chatDisplayId?.trim() || "";
   const [eggHocUnreadTotal, setEggHocUnreadTotal] = useState(0);
-  const [aiChatNavUnread, setAiChatNavUnread] = useState(false);
   const [dogOverlay, setDogOverlay] = useState(false);
   const [browserBackReturnHint, setBrowserBackReturnHint] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -83,7 +71,6 @@ export function TopNav({
   useEffect(() => {
     if (status !== "authenticated") {
       setEggHocUnreadTotal(0);
-      setAiChatNavUnread(false);
       return;
     }
 
@@ -98,27 +85,6 @@ export function TopNav({
       } catch {
         /* ignore */
       }
-
-      if (aiChatOpen) {
-        setAiChatNavUnread(false);
-        return;
-      }
-
-      let aiUnread = false;
-      try {
-        if (typeof sessionStorage !== "undefined" && sessionStorage.getItem(OREO_AI_CHAT_WAITING_REPLY_KEY) === "1") {
-          aiUnread = true;
-        }
-      } catch {
-        /* ignore */
-      }
-      if (!aiUnread) {
-        const st = await fetchAiChatStateFromServer();
-        if (st) {
-          aiUnread = aiChatShowsUnreadNavDot(st.sessions, getAiChatLastSeenIso());
-        }
-      }
-      setAiChatNavUnread(aiUnread);
     };
 
     void refreshBadges();
@@ -129,7 +95,7 @@ export function TopNav({
       window.clearInterval(id);
       window.removeEventListener("focus", onFocus);
     };
-  }, [status, aiChatOpen]);
+  }, [status]);
 
   useEffect(() => {
     const onPopState = () => {
@@ -258,24 +224,7 @@ export function TopNav({
             </button>
           </div>
         )}
-        <div className="grid w-full min-w-0 max-w-[min(100%,22rem)] grid-cols-2 gap-1.5 sm:max-w-[24rem] sm:gap-2">
-          <button
-            type="button"
-            className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
-            onClick={onOpenAiChat}
-            aria-label={aiChatNavUnread ? "AI Chat (unread activity)" : "AI Chat"}
-          >
-            {aiChatNavUnread ? (
-              <span
-                className="absolute right-1 top-1 size-2 rounded-full bg-red-500 ring-2 ring-[var(--sb)]"
-                aria-hidden
-              />
-            ) : null}
-            <span className={AI_CHAT_NAV_ICON_FRAME_CLASSNAME} aria-hidden="true">
-              <span className="select-none text-[1.2rem] leading-none sm:text-[1.35rem]">🤖</span>
-            </span>
-            AI Chat
-          </button>
+        <div className="grid w-full min-w-0 max-w-[min(100%,22rem)] grid-cols-1 gap-1.5 sm:max-w-[24rem] sm:gap-2">
           <button
             type="button"
             className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"

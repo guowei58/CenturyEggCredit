@@ -56,11 +56,6 @@ export default function Home() {
       <TopNav
         mode={mode}
         onModeChange={setMode}
-        aiChatOpen={aiChatOpen}
-        onOpenAiChat={() => {
-          setEggHocOpen(false);
-          setAiChatOpen(true);
-        }}
         onOpenEggHocCommittee={() => {
           unlockEggHocNotificationAudio();
           setAiChatOpen(false);
@@ -80,6 +75,11 @@ export default function Home() {
               onTopSectionChange={(s) => {
                 setCompanyTopSection(s);
                 setCompanyTab(getFirstTabIdForTopSection(s));
+              }}
+              aiChatOpen={aiChatOpen}
+              onOpenAiChat={() => {
+                setEggHocOpen(false);
+                setAiChatOpen(true);
               }}
             />
           ) : (

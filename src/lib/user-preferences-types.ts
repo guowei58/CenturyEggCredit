@@ -43,6 +43,8 @@ export type UserPreferencesData = {
   /** Ticker (uppercase) → JSON string of credit memo draft */
   creditMemoDrafts?: Record<string, string>;
   includeOreoContext?: boolean;
+  /** When true, Egg-Hoc incoming-message barks are not played. */
+  eggHocBarkMuted?: boolean;
 };
 
 export function defaultUserPreferences(): UserPreferencesData {

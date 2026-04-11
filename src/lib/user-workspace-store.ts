@@ -90,13 +90,16 @@ export async function setWatchlistTickers(userId: string, tickers: string[]): Pr
 
 const MAX_AI_CHAT_PAYLOAD_CHARS = 2_000_000;
 
-export async function getAiChatPayload(userId: string): Promise<string | null> {
-  const row = await prisma.userAiChatState.findUnique({ where: { userId } });
+export async function getAiChatPayload(userId: string, ticker: string): Promise<string | null> {
+  const row = await prisma.userAiChatState.findUnique({
+    where: { userId_ticker: { userId, ticker } },
+  });
   return row?.payload ?? null;
 }
 
 export async function setAiChatPayload(
   userId: string,
+  ticker: string,
   payload: string
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   if (payload.length > MAX_AI_CHAT_PAYLOAD_CHARS) {
@@ -104,8 +107,8 @@ export async function setAiChatPayload(
   }
   try {
     await prisma.userAiChatState.upsert({
-      where: { userId },
-      create: { userId, payload },
+      where: { userId_ticker: { userId, ticker } },
+      create: { userId, ticker, payload },
       update: { payload },
     });
     return { ok: true };

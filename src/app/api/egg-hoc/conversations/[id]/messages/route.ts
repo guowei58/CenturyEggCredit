@@ -30,7 +30,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const id = params.id?.trim();
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-  let body: { body?: string };
+  let body: { body?: string; replyToMessageId?: string };
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -38,7 +38,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   const text = typeof body.body === "string" ? body.body : "";
-  const r = await sendMessage(id, userId, text);
+  const replyTo =
+    typeof body.replyToMessageId === "string" && body.replyToMessageId.trim() ? body.replyToMessageId.trim() : null;
+  const r = await sendMessage(id, userId, text, replyTo);
   if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
   return NextResponse.json({ ok: true, message: r.message });
 }

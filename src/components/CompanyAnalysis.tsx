@@ -79,6 +79,8 @@ export function CompanyAnalysis({
   onTickerSelect,
   topSection,
   onTopSectionChange,
+  aiChatOpen = false,
+  onOpenAiChat,
 }: {
   ticker: string | null;
   activeTab: string;
@@ -86,6 +88,9 @@ export function CompanyAnalysis({
   onTickerSelect?: (ticker: string) => void;
   topSection: CompanyTopSectionId;
   onTopSectionChange: (s: CompanyTopSectionId) => void;
+  /** When true, suppress the per-ticker AI Chat unread dot (drawer is open). */
+  aiChatOpen?: boolean;
+  onOpenAiChat?: () => void;
 }) {
   const [companyName, setCompanyName] = useState<string | null>(null);
 
@@ -124,7 +129,14 @@ export function CompanyAnalysis({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      {co && <CompanyBar data={co} companyNameForPrompts={companyName} />}
+      {co && (
+        <CompanyBar
+          data={co}
+          companyNameForPrompts={companyName}
+          aiChatOpen={aiChatOpen}
+          onOpenAiChat={onOpenAiChat}
+        />
+      )}
       {co ? (
         <>
           {/* Level 1: section tabs directly under ticker/name (primary style) */}

@@ -118,13 +118,15 @@ export async function listPlannedExportEntries(userId: string, tickerFilter: Exp
     });
   }
 
-  const ai = await prisma.userAiChatState.findUnique({ where: { userId } });
-  if (ai?.payload) {
+  const aiRows = await prisma.userAiChatState.findMany({ where: { userId } });
+  for (const ai of aiRows) {
+    if (!ai.payload?.trim()) continue;
     const snapshot = ai.payload;
     const buf = Buffer.from(snapshot, "utf8");
+    const seg = ai.ticker.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 32) || "ticker";
     out.push({
       size: buf.length,
-      zipRelPath: "account/ai-chat-state.json",
+      zipRelPath: `account/ai-chat/${seg}.json`,
       load: async () => Buffer.from(snapshot, "utf8"),
     });
   }

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { playEggHocIncomingBark, unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 type PublicUser = { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId?: string | null };
 
@@ -17,6 +18,13 @@ type ConvRow = {
   lastMessageSenderName: string | null;
 };
 
+type MsgReplyTo = {
+  id: string;
+  body: string;
+  deletedAt: string | null;
+  sender: PublicUser;
+};
+
 type MsgRow = {
   id: string;
   senderUserId: string;
@@ -25,6 +33,9 @@ type MsgRow = {
   deletedAt: string | null;
   createdAt: string;
   sender: PublicUser;
+  /** FK for replies; kept on the wire so clients can resolve quotes if a merge drops nested `replyTo`. */
+  replyToMessageId?: string | null;
+  replyTo?: MsgReplyTo | null;
 };
 
 type ConvDetail = {
@@ -76,14 +87,47 @@ function formatTime(iso: string) {
   }
 }
 
+/** Merge one row into another without dropping `replyTo` when the incoming JSON omitted it (poll vs optimistic). */
+function mergeMsgRowById(existing: MsgRow, incoming: MsgRow): MsgRow {
+  const merged: MsgRow = { ...existing, ...incoming };
+  if (!("replyTo" in incoming)) merged.replyTo = existing.replyTo;
+  else if (incoming.replyTo == null && existing.replyTo) {
+    const incRid = typeof incoming.replyToMessageId === "string" ? incoming.replyToMessageId.trim() : "";
+    if (incRid && (incRid === existing.replyTo.id || incRid === (existing.replyToMessageId ?? "").toString().trim())) {
+      merged.replyTo = existing.replyTo;
+    }
+  }
+  if (!("replyToMessageId" in incoming)) merged.replyToMessageId = existing.replyToMessageId;
+  return merged;
+}
+
 /** Union by id, chronological — keeps paginated older rows while merging latest-page poll results. */
 function mergeMessagesChronological(prev: MsgRow[], incoming: MsgRow[]): MsgRow[] {
   const map = new Map<string, MsgRow>();
   for (const m of prev) map.set(m.id, m);
-  for (const m of incoming) map.set(m.id, m);
+  for (const m of incoming) {
+    const old = map.get(m.id);
+    if (old) map.set(m.id, mergeMsgRowById(old, m));
+    else map.set(m.id, m);
+  }
   return Array.from(map.values()).sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
+}
+
+/** Prefer server `replyTo`; otherwise resolve from loaded thread (same conversation page). */
+function effectiveReplyTo(m: MsgRow, thread: MsgRow[]): MsgReplyTo | null {
+  if (m.replyTo) return m.replyTo;
+  const rid = typeof m.replyToMessageId === "string" ? m.replyToMessageId.trim() : "";
+  if (!rid) return null;
+  const parent = thread.find((x) => x.id === rid);
+  if (!parent) return null;
+  return {
+    id: parent.id,
+    body: parent.deletedAt ? "" : parent.body,
+    deletedAt: parent.deletedAt,
+    sender: parent.sender,
+  };
 }
 
 /** Server sets `chatDisplayId` from preferences (Egg-Hoc chat ID) or email slug — never from legacy `User.name`. */
@@ -93,6 +137,8 @@ function eggHocPublicUserLabel(u: PublicUser): string {
 
 export function EggHocCommitteeChat() {
   const { data: session, status } = useSession();
+  const { preferences } = useUserPreferences();
+  const eggHocBarkMuted = preferences.eggHocBarkMuted === true;
   const userId = session?.user?.id ?? null;
 
   const [conversations, setConversations] = useState<ConvRow[]>([]);
@@ -107,6 +153,8 @@ export function EggHocCommitteeChat() {
   const [loadOlderLoading, setLoadOlderLoading] = useState(false);
   const [composer, setComposer] = useState("");
   const [sending, setSending] = useState(false);
+  /** Message the user is composing a reply to (server thread / `replyToMessageId`). */
+  const [replyParent, setReplyParent] = useState<MsgRow | null>(null);
   const [inboxFilter, setInboxFilter] = useState("");
 
   const [newDmOpen, setNewDmOpen] = useState(false);
@@ -181,12 +229,12 @@ export function EggHocCommitteeChat() {
       const unreadUp = p !== undefined && c.unreadCount > p.unread;
       const newThreadUnread = p === undefined && c.unreadCount > 0;
       if (unreadUp || newThreadUnread) {
-        playEggHocIncomingBark();
+        if (!eggHocBarkMuted) playEggHocIncomingBark();
         break;
       }
     }
     inboxSnapshotRef.current = snap;
-  }, [conversations, userId, listLoading]);
+  }, [conversations, userId, listLoading, eggHocBarkMuted]);
 
   useEffect(() => {
     if (!userId || !activeId) {
@@ -206,10 +254,10 @@ export function EggHocCommitteeChat() {
         !prev.has(m.id) && m.senderUserId !== userId && !m.id.startsWith("temp-")
     );
     if (fromOthers.length > 0 && prev.size > 0) {
-      playEggHocIncomingBark();
+      if (!eggHocBarkMuted) playEggHocIncomingBark();
     }
     threadMsgIdsRef.current = new Set(messages.map((m) => m.id));
-  }, [messages, activeId, userId]);
+  }, [messages, activeId, userId, eggHocBarkMuted]);
 
   const fetchMessageBatch = useCallback(async (conversationId: string, before?: string) => {
     const qs = new URLSearchParams({ take: "40" });
@@ -280,6 +328,10 @@ export function EggHocCommitteeChat() {
   }, [activeId, userId, fetchDetail, fetchMessageBatch, fetchList]);
 
   useEffect(() => {
+    setReplyParent(null);
+  }, [activeId]);
+
+  useEffect(() => {
     if (!activeId || !userId) return;
     const t = setInterval(() => {
       void (async () => {
@@ -308,7 +360,11 @@ export function EggHocCommitteeChat() {
   const send = async () => {
     const text = composer.trim();
     if (!text || !activeId || sending) return;
+    const savedParent = replyParent;
     setSending(true);
+    setReplyParent(null);
+    const replyId =
+      savedParent && !savedParent.id.startsWith("temp-") ? savedParent.id : null;
     const optimistic: MsgRow = {
       id: `temp-${Date.now()}`,
       senderUserId: userId!,
@@ -321,7 +377,17 @@ export function EggHocCommitteeChat() {
         name: session?.user?.name ?? null,
         email: session?.user?.email ?? null,
         image: session?.user?.image ?? null,
+        chatDisplayId: preferences.profile?.chatDisplayId?.trim() || undefined,
       },
+      replyToMessageId: replyId,
+      replyTo: savedParent
+        ? {
+            id: savedParent.id,
+            body: savedParent.deletedAt ? "" : savedParent.body,
+            deletedAt: savedParent.deletedAt,
+            sender: savedParent.sender,
+          }
+        : null,
     };
     setMessages((m) => [...m, optimistic]);
     setComposer("");
@@ -329,7 +395,10 @@ export function EggHocCommitteeChat() {
       const res = await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(activeId)}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: text }),
+        body: JSON.stringify({
+          body: text,
+          ...(savedParent && !savedParent.id.startsWith("temp-") ? { replyToMessageId: savedParent.id } : {}),
+        }),
       });
       const data = await parseResponseJson<{ ok?: boolean; message?: MsgRow; error?: string }>(res);
       if (!res.ok) throw new Error(data.error || "Send failed");
@@ -339,6 +408,7 @@ export function EggHocCommitteeChat() {
     } catch {
       setMessages((m) => m.filter((x) => x.id !== optimistic.id));
       setComposer(text);
+      setReplyParent(savedParent);
     } finally {
       setSending(false);
       requestAnimationFrame(() => {
@@ -681,6 +751,7 @@ export function EggHocCommitteeChat() {
                   ) : null}
                   <div className="flex flex-col gap-2">
                     {messages.map((m) => {
+                      const replyCtx = effectiveReplyTo(m, messages);
                       const mine = m.senderUserId === userId;
                       const showSender = isGroup && !mine;
                       return (
@@ -701,6 +772,19 @@ export function EggHocCommitteeChat() {
                               color: m.deletedAt ? "var(--muted)" : "var(--text)",
                             }}
                           >
+                            {replyCtx ? (
+                              <div
+                                className="mb-2 border-l-2 pl-2 text-[11px] leading-snug"
+                                style={{ borderColor: "var(--accent)", color: "var(--muted2)" }}
+                              >
+                                <div className="font-semibold" style={{ color: "var(--muted)" }}>
+                                  Replying to {eggHocPublicUserLabel(replyCtx.sender)}
+                                </div>
+                                <div className="line-clamp-4 whitespace-pre-wrap break-words">
+                                  {replyCtx.deletedAt ? "(Original message was deleted.)" : replyCtx.body}
+                                </div>
+                              </div>
+                            ) : null}
                             {m.deletedAt ? (
                               <em className="text-xs">Message deleted</em>
                             ) : (
@@ -712,6 +796,15 @@ export function EggHocCommitteeChat() {
                             >
                               <span>{formatTime(m.createdAt)}</span>
                               {m.editedAt ? <span>(edited)</span> : null}
+                              {!m.deletedAt && !m.id.startsWith("temp-") ? (
+                                <button
+                                  type="button"
+                                  className="underline"
+                                  onClick={() => setReplyParent(m)}
+                                >
+                                  Reply
+                                </button>
+                              ) : null}
                               {mine && !m.deletedAt && !m.id.startsWith("temp-") ? (
                                 <>
                                   <button
@@ -768,6 +861,29 @@ export function EggHocCommitteeChat() {
               className="shrink-0 border-t p-3"
               style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
             >
+              {replyParent ? (
+                <div
+                  className="mb-2 flex items-start gap-2 rounded-lg border px-3 py-2 text-[11px] leading-snug"
+                  style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold" style={{ color: "var(--muted)" }}>
+                      Replying to {eggHocPublicUserLabel(replyParent.sender)}
+                    </div>
+                    <div className="line-clamp-3 whitespace-pre-wrap break-words" style={{ color: "var(--muted2)" }}>
+                      {replyParent.deletedAt ? "(Message deleted.)" : replyParent.body}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setReplyParent(null)}
+                    className="shrink-0 rounded border px-2 py-0.5 text-[9px] font-medium"
+                    style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card)" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : null}
               <div className="flex gap-2">
                 <textarea
                   ref={composerRef}

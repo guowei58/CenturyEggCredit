@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { EggHocCommitteeChat } from "@/components/egg-hoc/EggHocCommitteeChat";
+import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
 import { EggHocCommitteeMark } from "./EggHocCommitteeMark";
 import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 
@@ -19,6 +20,8 @@ export function EggHocCommitteeDrawer({
   onOpen: () => void;
   onClose: () => void;
 }) {
+  const prefsCtx = useUserPreferencesOptional();
+
   useEffect(() => {
     if (open) unlockEggHocNotificationAudio();
   }, [open]);
@@ -46,6 +49,30 @@ export function EggHocCommitteeDrawer({
               Message with <span className="font-semibold" style={{ color: "var(--accent)" }}>Pari Passu Pals</span>
             </div>
           </div>
+          {prefsCtx ? (
+            <button
+              type="button"
+              className="flex-shrink-0 rounded-md border px-2 py-1 text-[10px] font-medium transition-colors hover:bg-[var(--card)]"
+              style={{
+                borderColor: prefsCtx.preferences.eggHocBarkMuted ? "var(--border)" : "var(--accent)",
+                color: prefsCtx.preferences.eggHocBarkMuted ? "var(--muted2)" : "var(--accent)",
+              }}
+              title={
+                prefsCtx.preferences.eggHocBarkMuted
+                  ? "Turn on sounds for new Egg-Hoc messages"
+                  : "Mute dog bark sounds for new Egg-Hoc messages"
+              }
+              aria-pressed={prefsCtx.preferences.eggHocBarkMuted === true}
+              onClick={() =>
+                prefsCtx.updatePreferences((p) => ({
+                  ...p,
+                  eggHocBarkMuted: !p.eggHocBarkMuted,
+                }))
+              }
+            >
+              {prefsCtx.preferences.eggHocBarkMuted ? "🔇 Muted" : "🔊 Sounds"}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onClose}
