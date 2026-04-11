@@ -262,7 +262,28 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
   return entries.filter((e) => e.prompt.trim().length > 0);
 }
 
-const BULK_API_STAGGER_MS = 450;
+/**
+ * Wait between bulk tab calls so we stay under provider RPM/TPM (450ms was far too aggressive).
+ * ~6 calls/min sustained; rate-limit retries back off further when providers still throttle.
+ */
+const BULK_API_STAGGER_MS = 10_000;
+
+const BULK_API_RATE_LIMIT_MAX_ATTEMPTS = 5;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function isRateLimitError(httpStatus: number, message: string): boolean {
+  if (httpStatus === 429) return true;
+  const m = message.toLowerCase();
+  return (
+    m.includes("rate limit") ||
+    m.includes("too many requests") ||
+    m.includes("resource exhausted") ||
+    m.includes("quota exceeded")
+  );
+}
 
 export type BulkApiProgress = { index: number; total: number; label: string };
 
@@ -293,27 +314,39 @@ export async function runBulkUpdateViaApi(
     onProgress?.({ index: i + 1, total, label: e.label });
 
     try {
-      const res = await fetch("/api/tab-prompt-complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider,
-          userPrompt: e.prompt.trim(),
-          maxTokens: 8192,
-          ...modelPayload,
-        }),
-      });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
-      if (!res.ok || data.ok !== true || typeof data.text !== "string") {
-        throw new Error(data.error || `Request failed (${res.status})`);
-      }
-      const trimmed = data.text.trim();
-      const saved = await saveToServer(tk, e.saveKey, trimmed);
-      if (!saved) {
-        fail++;
-        errors.push(`${e.label}: model replied but save to disk failed`);
-      } else {
-        ok++;
+      let lastErr = "";
+
+      for (let attempt = 0; attempt < BULK_API_RATE_LIMIT_MAX_ATTEMPTS; attempt++) {
+        const res = await fetch("/api/tab-prompt-complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            provider,
+            userPrompt: e.prompt.trim(),
+            maxTokens: 8192,
+            ...modelPayload,
+          }),
+        });
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+        if (res.ok && data.ok === true && typeof data.text === "string") {
+          const trimmed = data.text.trim();
+          const saved = await saveToServer(tk, e.saveKey, trimmed);
+          if (!saved) {
+            fail++;
+            errors.push(`${e.label}: model replied but save to disk failed`);
+          } else {
+            ok++;
+          }
+          break;
+        }
+
+        lastErr = data.error || `Request failed (${res.status})`;
+        const rateLimited = isRateLimitError(res.status, lastErr);
+        if (rateLimited && attempt < BULK_API_RATE_LIMIT_MAX_ATTEMPTS - 1) {
+          await delay(12_000 + attempt * 10_000);
+          continue;
+        }
+        throw new Error(lastErr);
       }
     } catch (err) {
       fail++;

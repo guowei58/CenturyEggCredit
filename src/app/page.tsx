@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { pmDashboardTabIds } from "@/lib/tabs";
 import { initTickerSaveFolder } from "@/lib/saved-data-client";
 import { TopNav, LeftSidebar, ChatDrawer, EggHocCommitteeDrawer } from "@/components/layout";
 import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 import { CompanyAnalysis } from "@/components/CompanyAnalysis";
-import { PMDashboard } from "@/components/PMDashboard";
+import { Card } from "@/components/ui";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
 import { getFirstTabIdForTopSection } from "@/data/company-navigation";
 
@@ -15,7 +14,6 @@ export default function Home() {
   const [companyTopSection, setCompanyTopSection] = useState<CompanyTopSectionId>("overview");
   const [ticker, setTicker] = useState<string | null>("LUMN");
   const [companyTab, setCompanyTab] = useState<string>(getFirstTabIdForTopSection("overview"));
-  const [pmTab, setPMTab] = useState(pmDashboardTabIds[0]);
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [eggHocOpen, setEggHocOpen] = useState(false);
 
@@ -85,7 +83,13 @@ export default function Home() {
               }}
             />
           ) : (
-            <PMDashboard activeTab={pmTab} onTabChange={setPMTab} />
+            <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-auto p-6">
+              <Card title="PM Dashboard" className="max-w-lg w-full">
+                <p className="px-4 py-6 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
+                  OREO is still undergoing training. This section is closed for now—check back later.
+                </p>
+              </Card>
+            </div>
           )}
         </div>
       </div>

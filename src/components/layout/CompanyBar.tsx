@@ -155,7 +155,7 @@ export function CompanyBar({
                 data-bulk-api="claude"
                 disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-                title="Runs every research prompt through the Claude API and saves each answer to the matching tab (your key in User Settings, or a hosted account)."
+                title="Runs every research prompt through the Claude API and saves each answer to the matching tab (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("claude")}
               >
                 Update all via Claude API
@@ -166,7 +166,7 @@ export function CompanyBar({
                 data-bulk-api="openai"
                 disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
-                title="Runs every research prompt through the OpenAI API and saves each answer to the matching tab (your key in User Settings, or a hosted account)."
+                title="Runs every research prompt through the OpenAI API and saves each answer to the matching tab (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("openai")}
               >
                 Update all via ChatGPT API
@@ -177,7 +177,7 @@ export function CompanyBar({
                 data-bulk-api="gemini"
                 disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR }}
-                title="Runs every research prompt through the Gemini API and saves each answer to the matching tab (your key in User Settings, or a hosted account)."
+                title="Runs every research prompt through the Gemini API and saves each answer to the matching tab (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("gemini")}
               >
                 Update all via Gemini API
@@ -188,7 +188,7 @@ export function CompanyBar({
                 data-bulk-api="deepseek"
                 disabled={bulkApiBusy !== null || bulkModelPick !== null}
                 style={{ borderColor: DEEPSEEK_BULK_COLOR, color: DEEPSEEK_BULK_COLOR }}
-                title="Runs every research prompt through the DeepSeek API and saves each answer (your key in User Settings, or a hosted account)."
+                title="Runs every research prompt through the DeepSeek API and saves each answer (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("deepseek")}
               >
                 Update all via DeepSeek API
