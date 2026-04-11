@@ -207,9 +207,9 @@ export function CompanyTwentyYearLookbackTab({ ticker }: { ticker: string }) {
     <div className="mb-6 text-sm" style={{ color: "var(--muted2)" }}>
       {data.entityName ? <span className="font-medium" style={{ color: "var(--text)" }}>{data.entityName}</span> : null}
       {data.entityName ? " · " : null}
-      CIK {data.cik} · Up to 20 fiscal years from SEC company facts: P&L / cash flow use FY (~12-month) rows; balance sheet
-      and debt use fiscal year-end snapshots from annual reports (FY or Q4 on 10-K / 20-F / 40-F when point-in-time). Axis = calendar
-      year of period-end date.
+      CIK {data.cik} · Up to 20 calendar years from SEC company facts: P&L / cash flow use FY (~12-month) rows; balance sheet and
+      debt use fiscal year-end snapshots (FY or Q4 instant on 10-K / 20-F / 40-F). Each column is one calendar year; metrics scan every
+      period-end in that year so revenue is not dropped when it sits on a different date than debt (common after ASC 606 tag changes).
     </div>
   ) : null;
 

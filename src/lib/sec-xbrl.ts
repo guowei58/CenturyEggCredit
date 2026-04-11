@@ -473,6 +473,31 @@ function annualFirstTagByPeriodEnd(
   return out;
 }
 
+/**
+ * Merge revenue-style tags: first finite value wins per `end`, but a later tag can replace a stored
+ * zero (some filers leave legacy `Revenues` at 0 after adopting ASC 606 contract-revenue tags).
+ */
+function annualCoalesceTagsByPeriodEnd(
+  facts: CompanyFactsJson,
+  tagsInOrder: string[],
+  units: string[]
+): Map<string, { value: number; period: XbrlPeriod }> {
+  const out = new Map<string, { value: number; period: XbrlPeriod }>();
+  for (const tag of tagsInOrder) {
+    const m = annualBestByPeriodEnd(facts, [tag], units);
+    for (const [end, row] of m) {
+      if (!Number.isFinite(row.value)) continue;
+      const prev = out.get(end);
+      if (prev == null) {
+        out.set(end, row);
+      } else if (prev.value === 0 && row.value !== 0) {
+        out.set(end, row);
+      }
+    }
+  }
+  return out;
+}
+
 function annualFirstTagSnapshotByPeriodEnd(
   facts: CompanyFactsJson,
   tagsInOrder: string[],
@@ -508,18 +533,32 @@ function impairmentOperatingAddbackByPeriodEnd(facts: CompanyFactsJson): Map<str
   return sums;
 }
 
-/** Combined debt line item if the filer uses one tag; otherwise sum common components (no double-count guard across every filer). */
+/**
+ * Total debt: prefer consolidated tags that already include short + long term (and current
+ * maturities). Many cable / telecom filers (e.g. CABO) do **not** populate `ShortTermBorrowings` or
+ * `CurrentPortionOfLongTermDebt` in USD; they use `LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities`
+ * for the full carrying amount. `LongTermDebtAndCapitalLeaseObligations` alone is usually noncurrent only.
+ */
 function totalDebtByPeriodEnd(facts: CompanyFactsJson): Map<string, number | null> {
-  const combined = annualFirstTagSnapshotByPeriodEnd(
+  const combinedFull = annualFirstTagSnapshotByPeriodEnd(
     facts,
     [
       "LongTermDebtAndShortTermDebt",
-      "LongTermDebtAndCapitalLeaseObligations",
       "LongTermDebtNoncurrentAndShortTermDebtCurrent",
+      "LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities",
     ],
     ["USD"]
   );
-  const shortTerm = annualSnapshotBestByPeriodEnd(facts, ["ShortTermBorrowings"], ["USD"]);
+  const combinedLtCap = annualFirstTagSnapshotByPeriodEnd(
+    facts,
+    ["LongTermDebtAndCapitalLeaseObligations"],
+    ["USD"]
+  );
+  const shortTermLike = annualFirstTagSnapshotByPeriodEnd(
+    facts,
+    ["ShortTermBorrowings", "ShortTermDebt"],
+    ["USD"]
+  );
   const currentPortion = annualSnapshotBestByPeriodEnd(facts, ["CurrentPortionOfLongTermDebt"], ["USD"]);
   const currentPortionCapLease = annualSnapshotBestByPeriodEnd(
     facts,
@@ -527,6 +566,7 @@ function totalDebtByPeriodEnd(facts: CompanyFactsJson): Map<string, number | nul
     ["USD"]
   );
   const commercialPaper = annualSnapshotBestByPeriodEnd(facts, ["CommercialPaper"], ["USD"]);
+  const longTermDebtCurrent = annualSnapshotBestByPeriodEnd(facts, ["LongTermDebtCurrent"], ["USD"]);
   const ltNoncurrent = annualSnapshotBestByPeriodEnd(facts, ["LongTermDebtNoncurrent"], ["USD"]);
   const ltDebt = annualSnapshotBestByPeriodEnd(facts, ["LongTermDebt"], ["USD"]);
   const finLeaseCur = annualSnapshotBestByPeriodEnd(facts, ["FinanceLeaseLiabilityCurrent"], ["USD"]);
@@ -534,11 +574,13 @@ function totalDebtByPeriodEnd(facts: CompanyFactsJson): Map<string, number | nul
 
   const allEnds = new Set<string>();
   for (const m of [
-    combined,
-    shortTerm,
+    combinedFull,
+    combinedLtCap,
+    shortTermLike,
     currentPortion,
     currentPortionCapLease,
     commercialPaper,
+    longTermDebtCurrent,
     ltNoncurrent,
     ltDebt,
     finLeaseCur,
@@ -549,9 +591,9 @@ function totalDebtByPeriodEnd(facts: CompanyFactsJson): Map<string, number | nul
 
   const out = new Map<string, number | null>();
   for (const end of Array.from(allEnds)) {
-    const c = combined.get(end)?.value;
-    if (c != null && Number.isFinite(c)) {
-      out.set(end, c);
+    const full = combinedFull.get(end)?.value;
+    if (full != null && Number.isFinite(full)) {
+      out.set(end, full);
       continue;
     }
     let sum = 0;
@@ -562,16 +604,27 @@ function totalDebtByPeriodEnd(facts: CompanyFactsJson): Map<string, number | nul
         any = true;
       }
     };
-    add(shortTerm.get(end)?.value);
+
+    const ltCap = combinedLtCap.get(end)?.value;
+    if (ltCap != null && Number.isFinite(ltCap)) {
+      sum += ltCap;
+      any = true;
+    }
+
+    add(shortTermLike.get(end)?.value);
     add(currentPortion.get(end)?.value);
     add(currentPortionCapLease.get(end)?.value);
     add(commercialPaper.get(end)?.value);
-    const ltNc = ltNoncurrent.get(end)?.value;
-    const lt = ltDebt.get(end)?.value;
-    if (ltNc != null && Number.isFinite(ltNc)) add(ltNc);
-    else if (lt != null && Number.isFinite(lt)) add(lt);
+    add(longTermDebtCurrent.get(end)?.value);
     add(finLeaseCur.get(end)?.value);
-    add(finLeaseNon.get(end)?.value);
+
+    if (ltCap == null) {
+      const ltNc = ltNoncurrent.get(end)?.value;
+      const lt = ltDebt.get(end)?.value;
+      if (ltNc != null && Number.isFinite(ltNc)) add(ltNc);
+      else if (lt != null && Number.isFinite(lt)) add(lt);
+      add(finLeaseNon.get(end)?.value);
+    }
     out.set(end, any ? sum : null);
   }
   return out;
@@ -635,6 +688,49 @@ export type TwentyYearLookbackResult = {
   points: TwentyYearLookbackPoint[];
 };
 
+function calendarYearFromFactEnd(end: string): number {
+  const y = parseInt(end.slice(0, 4), 10);
+  return Number.isFinite(y) ? y : NaN;
+}
+
+function pickFlowValueForYear(
+  m: Map<string, { value: number; period: XbrlPeriod }>,
+  year: number,
+  endsInYear: string[]
+): number | null {
+  for (let i = endsInYear.length - 1; i >= 0; i--) {
+    const row = m.get(endsInYear[i]!);
+    if (row != null && Number.isFinite(row.value)) return row.value;
+  }
+  for (const [end, row] of m) {
+    if (calendarYearFromFactEnd(end) === year && Number.isFinite(row.value)) return row.value;
+  }
+  return null;
+}
+
+function pickNullableNumberForYear(m: Map<string, number | null>, year: number, endsInYear: string[]): number | null {
+  for (let i = endsInYear.length - 1; i >= 0; i--) {
+    const v = m.get(endsInYear[i]!);
+    if (v != null && Number.isFinite(v)) return v;
+  }
+  for (const [end, v] of m) {
+    if (calendarYearFromFactEnd(end) === year && v != null && Number.isFinite(v)) return v;
+  }
+  return null;
+}
+
+function pickImpairmentForYear(imp: Map<string, number>, year: number, endsInYear: string[]): number {
+  for (let i = endsInYear.length - 1; i >= 0; i--) {
+    const v = imp.get(endsInYear[i]!);
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+  }
+  let best = 0;
+  for (const [end, v] of imp) {
+    if (calendarYearFromFactEnd(end) === year && typeof v === "number" && Number.isFinite(v)) best = Math.max(best, v);
+  }
+  return best;
+}
+
 /**
  * Build up to `maxYears` fiscal years of annual US-GAAP metrics from SEC companyfacts (data.sec.gov).
  */
@@ -645,9 +741,14 @@ export function buildTwentyYearLookbackFromFacts(
   facts: CompanyFactsJson,
   maxYears = 20
 ): TwentyYearLookbackResult {
-  const revenueM = annualFirstTagByPeriodEnd(
+  const revenueM = annualCoalesceTagsByPeriodEnd(
     facts,
-    ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet"],
+    [
+      "Revenues",
+      "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "RevenueFromContractWithCustomerIncludingAssessedTax",
+      "SalesRevenueNet",
+    ],
     ["USD"]
   );
   const niM = annualBestByPeriodEnd(facts, ["NetIncomeLoss"], ["USD"]);
@@ -684,37 +785,46 @@ export function buildTwentyYearLookbackFromFacts(
     for (const end of Array.from(m.keys())) allEnds.add(end);
   }
   const sortedAsc = Array.from(allEnds).sort((a, b) => a.localeCompare(b));
-  const endSlice = sortedAsc.slice(-Math.max(1, maxYears));
 
-  const points: TwentyYearLookbackPoint[] = endSlice.map((end) => {
-    const axisYear = parseInt(end.slice(0, 4), 10);
-    const fy = Number.isFinite(axisYear) ? axisYear : 0;
+  const yearSet = new Set<number>();
+  for (const e of sortedAsc) {
+    const y = calendarYearFromFactEnd(e);
+    if (y >= 1900 && y <= 2100) yearSet.add(y);
+  }
+  const yearsSorted = Array.from(yearSet).sort((a, b) => a - b);
+  const yearWindow = yearsSorted.slice(-Math.max(1, maxYears));
 
-    const oi = oiM.get(end)?.value ?? null;
-    const add = impAdd.get(end) ?? 0;
+  const endsForCalendarYear = (year: number): string[] => sortedAsc.filter((e) => calendarYearFromFactEnd(e) === year);
+
+  const points: TwentyYearLookbackPoint[] = yearWindow.map((year) => {
+    const endsInYear = endsForCalendarYear(year);
+    const periodEnd = endsInYear.length ? endsInYear[endsInYear.length - 1]! : `${year}-12-31`;
+
+    const oi = pickFlowValueForYear(oiM, year, endsInYear);
+    const add = pickImpairmentForYear(impAdd, year, endsInYear);
     const operatingIncomeExImpairment = oi != null ? oi + add : null;
 
-    const cfo = cfoM.get(end)?.value ?? null;
-    const capex = capexM.get(end)?.value ?? null;
+    const cfo = pickFlowValueForYear(cfoM, year, endsInYear);
+    const capex = pickFlowValueForYear(capexM, year, endsInYear);
     let ocfLessCapex: number | null = null;
     if (cfo != null && capex != null) ocfLessCapex = cfo - Math.abs(capex);
     else if (cfo != null) ocfLessCapex = cfo;
 
-    const tangible = tangibleM.get(end) ?? null;
+    const tangible = pickNullableNumberForYear(tangibleM, year, endsInYear);
     let taxAdjustedEbitToTangibleAssets: number | null = null;
     if (operatingIncomeExImpairment != null && tangible != null && Number.isFinite(tangible) && tangible > 0) {
       taxAdjustedEbitToTangibleAssets = (TAX_ADJ_EBIT_FACTOR * operatingIncomeExImpairment) / tangible;
     }
 
     return {
-      fy,
-      periodEnd: end,
-      netIncome: niM.get(end)?.value ?? null,
-      revenue: revenueM.get(end)?.value ?? null,
-      shares: sharesM.get(end)?.value ?? null,
+      fy: year,
+      periodEnd,
+      netIncome: pickFlowValueForYear(niM, year, endsInYear),
+      revenue: pickFlowValueForYear(revenueM, year, endsInYear),
+      shares: pickFlowValueForYear(sharesM, year, endsInYear),
       operatingIncomeExImpairment,
       ocfLessCapex,
-      totalDebt: totalDebtM.get(end) ?? null,
+      totalDebt: pickNullableNumberForYear(totalDebtM, year, endsInYear),
       taxAdjustedEbitToTangibleAssets,
     };
   });

@@ -72,7 +72,7 @@ export function CompanyBar({
             ? "Gemini API"
             : "DeepSeek API";
     const ok = window.confirm(
-      `${who} will run all research prompts for ${data.ticker.toUpperCase()} and overwrite (save over) any existing saved answers in those tabs.\n\nContinue?`
+      `${who} will run all research prompts for ${data.ticker.toUpperCase()} and overwrite (save over) any existing saved answers in those tabs.\n\nThis usually takes a long time—about 20–30 minutes in most situations—because each tab is run separately with pauses to respect API rate limits.\n\nContinue?`
     );
     if (!ok) return;
     setBulkApiBusy(provider);
