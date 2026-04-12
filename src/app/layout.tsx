@@ -4,8 +4,12 @@ import { rootHtmlStyle } from "./root-theme";
 import { AuthSessionProvider } from "@/components/AuthSessionProvider";
 
 export const metadata: Metadata = {
-  title: "CenturyEggCredit — Corporate Credit Research",
-  description: "CenturyEggCredit dashboard",
+  title: "CenturyEggCredit - OREO Platform",
+  description: "CenturyEggCredit — Corporate Credit Research",
+  icons: {
+    icon: "/century-egg-favicon.png",
+    apple: "/century-egg-favicon.png",
+  },
 };
 
 export default function RootLayout({
