@@ -35,7 +35,9 @@ async function runPython(
       args.push("--ai-provider", "deepseek", "--ai-api-key", deepseekKey);
     }
 
-    const proc = spawn("python", args, {
+    const pythonBin = process.env.PYTHON_PATH?.trim() || process.env.PYTHON_CMD?.trim() || "python";
+
+    const proc = spawn(pythonBin, args, {
       cwd: COMPILER_DIR,
       env: { ...process.env, PYTHONPATH: COMPILER_DIR },
       timeout: 280_000,

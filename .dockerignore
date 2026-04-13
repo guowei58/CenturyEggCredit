@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.md
+.vscode
+.idea
+coverage
+.turbo
+**/.DS_Store
+terminals
+.cursor
+playwright-report
+test-results
