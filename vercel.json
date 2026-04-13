@@ -1,9 +1,3 @@
 {
-  "buildCommand": "npx prisma generate && npm run build",
-  "crons": [
-    {
-      "path": "/api/cron/daily-news",
-      "schedule": "5 * * * *"
-    }
-  ]
+  "buildCommand": "npx prisma generate && npm run build"
 }
