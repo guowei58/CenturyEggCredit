@@ -9,7 +9,7 @@ import { scoreMatch } from "./scoring";
 import { dedupeResults } from "./dedupe";
 import { hostnameOf, nowIso, normalizeUrlForMatch, stableId } from "./utils";
 import { replaceResultsForSearch, upsertSearch } from "./store/fileDb";
-import { discoveryChannels, gatherRssDiscoveryHits, mergeSearchAndDiscoveryHits } from "./rssLayer";
+import { type DiscoveryHit, discoveryChannels, gatherRssDiscoveryHits, mergeSearchAndDiscoveryHits } from "./rssLayer";
 
 const DISCLAIMER =
   "Best-effort public research discovery only. Results may be incomplete and do not represent the full research library of any provider. Some sources, including WSJ Pro Bankruptcy, may be partially or largely subscription-gated.";
@@ -35,7 +35,7 @@ export async function runResearchFinderSearch(
       profile: { ticker: "", aliases: [], terms: [] },
       queriesUsed: {} as any,
       providerStatus: {} as any,
-      summary: { candidateUrls: 0, keptResults: 0, byProvider: {} as any, confidence: { high: 0, medium: 0, low: 0 } },
+      summary: { candidateUrls: 0, keptResults: 0, rssCandidatesTotal: 0, byProvider: {} as any, confidence: { high: 0, medium: 0, low: 0 } },
       results: [],
       searchId: "",
       error: providerEnv.message,
@@ -49,7 +49,7 @@ export async function runResearchFinderSearch(
       profile,
       queriesUsed: {} as any,
       providerStatus: {} as any,
-      summary: { candidateUrls: 0, keptResults: 0, byProvider: {} as any, confidence: { high: 0, medium: 0, low: 0 } },
+      summary: { candidateUrls: 0, keptResults: 0, rssCandidatesTotal: 0, byProvider: {} as any, confidence: { high: 0, medium: 0, low: 0 } },
       results: [],
       searchId: "",
       error: "ticker is required",
@@ -99,7 +99,7 @@ export async function runResearchFinderSearch(
       searchHits.push(...s.value);
     }
 
-    let rssHits: ReturnType<typeof mergeSearchAndDiscoveryHits> = [];
+    let rssHits: DiscoveryHit[] = [];
     try {
       rssHits = await gatherRssDiscoveryHits(pid, profile, cfg);
     } catch {
@@ -203,6 +203,8 @@ export async function runResearchFinderSearch(
   const maxOut = Math.min(300, Math.max(20, Math.floor(req.maxResults ?? 120)));
   const results = deduped.slice(0, maxOut);
 
+  const rssCandidatesTotal = Object.values(providerStatus).reduce((acc, s) => acc + (s.rssCandidates ?? 0), 0);
+
   const byProvider = { octus: 0, creditsights: 0, "9fin": 0, debtwire: 0, wsj_bankruptcy: 0 } as Record<ResearchProviderId, number>;
   const confidence = { high: 0, medium: 0, low: 0 };
   for (const r of results) {
@@ -222,6 +224,7 @@ export async function runResearchFinderSearch(
     summary: {
       candidateUrls: totalCandidates,
       keptResults: results.length,
+      rssCandidatesTotal,
       byProvider,
       confidence,
     },

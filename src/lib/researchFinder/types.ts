@@ -89,6 +89,8 @@ export type ResearchFinderSearchResponse = {
   summary: {
     candidateUrls: number;
     keptResults: number;
+    /** URLs discovered via Google News RSS (before merge/dedupe with search) */
+    rssCandidatesTotal?: number;
     byProvider: Record<ResearchProviderId, number>;
     confidence: Record<ConfidenceBucket, number>;
   };

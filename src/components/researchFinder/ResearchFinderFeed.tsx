@@ -186,6 +186,7 @@ export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; co
       {summary ? (
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {badge(`Candidates: ${summary.candidateUrls}`)}
+          {typeof summary.rssCandidatesTotal === "number" ? badge(`RSS hits (pre-merge): ${summary.rssCandidatesTotal}`) : null}
           {badge(`Kept: ${summary.keptResults}`)}
           {badge(`High: ${summary.confidence.high}`)}
           {badge(`Medium: ${summary.confidence.medium}`)}
@@ -252,7 +253,7 @@ function ResultCard({ item, ticker }: { item: ResearchResult; ticker: string }) 
         <div className="mt-2 space-y-1">
           <div>Domain: {item.provider_domain}</div>
           <div>Query: {item.query_used}</div>
-          <div>Search provider: {item.search_provider_used}</div>
+          <div>Discovery: {item.search_provider_used}</div>
           {item.canonical_url ? <div>Canonical: {item.canonical_url}</div> : null}
         </div>
       </details>

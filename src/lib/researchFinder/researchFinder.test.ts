@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { buildProfile } from "./profile";
 import { buildProviderQueries } from "./queryBuilder";
+import { mergeSearchAndDiscoveryHits } from "./rssLayer";
 import { scoreMatch } from "./scoring";
 
 describe("researchFinder profile", () => {
@@ -17,6 +18,37 @@ describe("researchFinder query builder", () => {
     const p = buildProfile({ ticker: "HTZ", companyName: "Hertz", aliases: [] });
     const q = buildProviderQueries("octus", p, 5);
     expect(q[0]).toMatch(/site:/);
+  });
+});
+
+describe("researchFinder RSS merge", () => {
+  it("dedupes URLs and marks both channels when search and rss agree", () => {
+    const merged = mergeSearchAndDiscoveryHits(
+      [
+        {
+          title: "A",
+          url: "https://octus.com/a",
+          snippet: "short",
+          query: "q1",
+          publishedDate: null,
+        },
+      ],
+      [
+        {
+          title: "A",
+          url: "https://octus.com/a",
+          snippet: "longer snippet from rss",
+          query: "rss-google:q1",
+          publishedDate: "Mon, 1 Jan 2024 00:00:00 GMT",
+          fromSearch: false,
+          fromRss: true,
+        },
+      ]
+    );
+    expect(merged).toHaveLength(1);
+    expect(merged[0]!.fromSearch).toBe(true);
+    expect(merged[0]!.fromRss).toBe(true);
+    expect(merged[0]!.snippet).toContain("longer snippet");
   });
 });
 
