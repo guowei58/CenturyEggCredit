@@ -24,6 +24,79 @@ function watchlistSignature(tickers: string[]): string {
   return [...new Set(tickers.map((t) => t.trim().toUpperCase()).filter(Boolean))].sort().join("|");
 }
 
+const CORP_STOPWORDS = new Set([
+  "inc",
+  "corp",
+  "corporation",
+  "company",
+  "co",
+  "plc",
+  "ltd",
+  "limited",
+  "the",
+  "and",
+  "group",
+  "holding",
+  "holdings",
+  "llc",
+  "lp",
+  "sa",
+  "nv",
+  "ag",
+  "se",
+  "bv",
+  "group",
+]);
+
+function significantNameTokens(companyName: string): string[] {
+  const raw = companyName
+    .replace(/[.,']/g, " ")
+    .split(/\s+/)
+    .map((w) => w.toLowerCase())
+    .filter(Boolean);
+  return raw.filter((w) => w.length >= 2 && !CORP_STOPWORDS.has(w));
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Prefer matching the **company legal name** (significant tokens). Use the ticker only as a
+ * word-boundary supplement so short symbols (e.g. NN) do not match arbitrary substrings.
+ */
+function articleMatchesWatchlist(
+  textBlob: string,
+  ticker: string,
+  companyName: string,
+  mode: "company" | "industry"
+): boolean {
+  const b = textBlob.toLowerCase();
+  const tk = ticker.trim().toUpperCase();
+  const cn = companyName.trim();
+  const placeholderName = !cn || cn.toUpperCase() === tk;
+
+  if (!placeholderName) {
+    const minTok = mode === "company" ? 4 : 3;
+    const tokens = significantNameTokens(cn);
+    if (tokens.some((t) => t.length >= minTok && b.includes(t))) return true;
+    const hits3 = tokens.filter((t) => t.length >= 3 && b.includes(t));
+    if (hits3.length >= 2) return true;
+  }
+
+  if (tk.length >= 2) {
+    try {
+      if (new RegExp(`\\b${escapeRegex(tk)}\\b`, "i").test(textBlob)) return true;
+    } catch {
+      /* fall through */
+    }
+  }
+  if (tk.length > 0) {
+    return b.includes(`$${tk.toLowerCase()}`);
+  }
+  return false;
+}
+
 function filingToItem(ticker: string, companyName: string, f: SecFiling): DailyNewsItem {
   const headline = `${f.form}: ${f.description || f.primaryDocument || "Filing"}`;
   const summary = `${f.form} filed ${f.filingDate}. ${f.description ? f.description.slice(0, 280) : "See filing for details."}`;
@@ -54,7 +127,8 @@ function filingToItem(ticker: string, companyName: string, f: SecFiling): DailyN
 
 function rssToItems(
   ticker: string,
-  articles: { title: string; link: string; pubDate: string }[],
+  companyName: string,
+  articles: { title: string; link: string; pubDate: string; description?: string }[],
   windowEnd: Date,
   mode: "company" | "industry"
 ): DailyNewsItem[] {
@@ -69,16 +143,8 @@ function rssToItems(
     }
     if (!isWithinRollingHours(dateStr, windowEnd, 26)) continue;
     const { source, sourceType } = classifyOutletFromUrl(a.link);
-    const titleUp = `${a.title} ${a.link}`.toUpperCase();
-    if (mode === "company") {
-      const linkLow = a.link.toLowerCase();
-      const hit =
-        titleUp.includes(tk) ||
-        linkLow.includes("wsj.com") ||
-        linkLow.includes("bloomberg.com") ||
-        linkLow.includes("ft.com");
-      if (!hit) continue;
-    }
+    const textBlob = `${a.title}\n${a.description ?? ""}\n${a.link}`;
+    if (!articleMatchesWatchlist(textBlob, ticker, companyName, mode)) continue;
 
     out.push({
       dedupeHash: dedupeHashFor(a.title, a.link),
@@ -161,14 +227,14 @@ export async function buildDailyNewsPayload(
     const majorArts = await safeFetchGoogle(majorQ, fetchErrors, `major:${ticker}`);
     sourcesUsed.add("Google News (WSJ/FT/Bloomberg)");
 
-    const companyRss = rssToItems(ticker, majorArts, windowEnd, "company");
+    const companyRss = rssToItems(ticker, companyName, majorArts, windowEnd, "company");
 
     const industryArts: typeof majorArts = [];
     for (const tr of trades) {
       const q = `site:${tr.siteDomain} (${ticker} OR "${companyName.split(" ")[0] ?? ""}") when:1d`;
       industryArts.push(...(await safeFetchGoogle(q, fetchErrors, `trade:${tr.id}`)));
     }
-    const industryRss = rssToItems(ticker, industryArts, windowEnd, "industry");
+    const industryRss = rssToItems(ticker, companyName, industryArts, windowEnd, "industry");
 
     const companyNews = dedupeNewsItems([...companyRss]);
     const industryNews = dedupeNewsItems([...industryRss]);
