@@ -4,6 +4,12 @@
 
 import { prisma } from "@/lib/prisma";
 import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
+import {
+  assertUserStorageAllowsNetDelta,
+  getUserStorageBytesUsed,
+  USER_STORAGE_LIMIT_BYTES,
+  USER_STORAGE_QUOTA_EXCEEDED_MESSAGE,
+} from "@/lib/user-storage-quota";
 
 export async function readUserTickerDocument(
   userId: string,
@@ -28,6 +34,14 @@ export async function writeUserTickerDocument(
   if (!sym) return { ok: false, error: "Invalid ticker" };
   if (!(key in SAVED_DATA_FILES)) return { ok: false, error: "Invalid save key" };
   try {
+    const prev = await prisma.userTickerDocument.findUnique({
+      where: { userId_ticker_dataKey: { userId, ticker: sym, dataKey: key } },
+      select: { content: true },
+    });
+    const oldOctets = prev ? Buffer.byteLength(prev.content, "utf8") : 0;
+    const newOctets = Buffer.byteLength(content, "utf8");
+    const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
+    if (!quota.ok) return quota;
     await prisma.userTickerDocument.upsert({
       where: { userId_ticker_dataKey: { userId, ticker: sym, dataKey: key } },
       create: { userId, ticker: sym, dataKey: key, content },
@@ -106,6 +120,14 @@ export async function setAiChatPayload(
     return { ok: false, error: "Chat data too large to save." };
   }
   try {
+    const prevRow = await prisma.userAiChatState.findUnique({
+      where: { userId_ticker: { userId, ticker } },
+      select: { payload: true },
+    });
+    const oldOctets = prevRow ? Buffer.byteLength(prevRow.payload, "utf8") : 0;
+    const newOctets = Buffer.byteLength(payload, "utf8");
+    const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
+    if (!quota.ok) return quota;
     await prisma.userAiChatState.upsert({
       where: { userId_ticker: { userId, ticker } },
       create: { userId, ticker, payload },
@@ -249,6 +271,10 @@ export async function createUserSavedDocument(
   }
   try {
     await trimUserSavedDocuments(userId, sym);
+    const used = await getUserStorageBytesUsed(userId);
+    if (used + data.body.length > USER_STORAGE_LIMIT_BYTES) {
+      return { ok: false, error: USER_STORAGE_QUOTA_EXCEEDED_MESSAGE };
+    }
     const row = await prisma.userSavedDocument.create({
       data: {
         userId,
@@ -295,10 +321,20 @@ export async function upsertUserSavedDocument(
   try {
     const existing = await prisma.userSavedDocument.findUnique({
       where: { userId_ticker_filename: { userId, ticker: sym, filename: fn } },
-      select: { id: true },
+      select: { id: true, bytes: true },
     });
     if (!existing) {
       await trimUserSavedDocuments(userId, sym);
+    }
+    const prevBytes = existing?.bytes ?? 0;
+    if (!existing) {
+      const used = await getUserStorageBytesUsed(userId);
+      if (used + data.body.length > USER_STORAGE_LIMIT_BYTES) {
+        return { ok: false, error: USER_STORAGE_QUOTA_EXCEEDED_MESSAGE };
+      }
+    } else {
+      const quota = await assertUserStorageAllowsNetDelta(userId, data.body.length - prevBytes);
+      if (!quota.ok) return quota;
     }
     const row = await prisma.userSavedDocument.upsert({
       where: { userId_ticker_filename: { userId, ticker: sym, filename: fn } },
@@ -346,6 +382,23 @@ export async function deleteUserSavedDocument(
       where: { userId, ticker: sym, filename: fn },
     });
     return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Delete failed" };
+  }
+}
+
+/** Remove every saved document for this user and ticker (Saved Documents tab). */
+export async function deleteAllUserSavedDocumentsForTicker(
+  userId: string,
+  ticker: string
+): Promise<{ ok: true; deleted: number } | { ok: false; error: string }> {
+  const sym = sanitizeTicker(ticker);
+  if (!sym) return { ok: false, error: "Invalid ticker" };
+  try {
+    const result = await prisma.userSavedDocument.deleteMany({
+      where: { userId, ticker: sym },
+    });
+    return { ok: true, deleted: result.count };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Delete failed" };
   }

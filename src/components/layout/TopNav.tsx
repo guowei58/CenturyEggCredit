@@ -9,6 +9,7 @@ import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
 import { OreoSablePlay } from "./OreoSablePlay";
 import { useUserPreferencesOptional } from "@/components/UserPreferencesProvider";
 import { useUserSettingsModal } from "@/components/layout/UserSettingsModalProvider";
+import { DailyNewsMark } from "@/components/daily-news/DailyNewsMark";
 
 const accent = { color: "var(--accent)" } as const;
 
@@ -258,7 +259,7 @@ export function TopNav({
         <div className="grid w-full min-w-0 max-w-[min(100%,24rem)] grid-cols-2 gap-1.5 sm:max-w-[28rem] sm:gap-2">
           <button
             type="button"
-            className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1 px-1 text-[10px] sm:min-h-10 sm:gap-1.5 sm:px-2 sm:text-[11px]"
+            className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
             onClick={onOpenDailyNews}
             aria-label={dailyNewsUnread > 0 ? `Daily News (${dailyNewsUnread} unread)` : "Daily News"}
           >
@@ -270,6 +271,7 @@ export function TopNav({
                 {dailyNewsUnread > 99 ? "99+" : dailyNewsUnread}
               </span>
             ) : null}
+            <DailyNewsMark preset="nav" decorative />
             <span className="min-w-0 text-center leading-tight">Daily News</span>
           </button>
           <button

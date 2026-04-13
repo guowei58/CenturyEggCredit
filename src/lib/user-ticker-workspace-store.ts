@@ -9,6 +9,7 @@ import path from "path";
 
 import { prisma } from "@/lib/prisma";
 import { SAVED_DATA_FILES, sanitizeTicker } from "@/lib/saved-ticker-data";
+import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import { MAX_WORKSPACE_FILE_BYTES } from "@/lib/user-ticker-workspace-constants";
 import {
   listAllUserSavedDocumentsBodiesForIngest,
@@ -53,6 +54,14 @@ export async function workspaceWriteFile(
   if (body.length > MAX_WORKSPACE_FILE_BYTES) {
     return { ok: false, error: "File too large" };
   }
+  const existing = await prisma.userTickerWorkspaceFile.findUnique({
+    where: { userId_ticker_path: { userId, ticker: sym, path: np } },
+    select: { body: true },
+  });
+  const oldLen = existing?.body ? Buffer.from(existing.body).length : 0;
+  const delta = body.length - oldLen;
+  const quota = await assertUserStorageAllowsNetDelta(userId, delta);
+  if (!quota.ok) return quota;
   try {
     await prisma.userTickerWorkspaceFile.upsert({
       where: { userId_ticker_path: { userId, ticker: sym, path: np } },

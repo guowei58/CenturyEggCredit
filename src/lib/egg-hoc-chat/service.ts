@@ -5,6 +5,7 @@ import {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { makeDirectPairKey } from "@/lib/egg-hoc-chat/directPairKey";
+import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import { parseUserPreferencesPayload } from "@/lib/user-preferences-types";
 
 const userPublicSelect = {
@@ -507,6 +508,10 @@ export async function sendMessage(
   const member = await assertMember(conversationId, userId);
   if (!member) return { ok: false as const, error: "Not a member of this conversation" };
 
+  const byteLen = Buffer.byteLength(text, "utf8");
+  const quota = await assertUserStorageAllowsNetDelta(userId, byteLen);
+  if (!quota.ok) return { ok: false as const, error: quota.error };
+
   let replyId: string | null = null;
   const rawReply = typeof replyToMessageId === "string" ? replyToMessageId.trim() : "";
   if (rawReply) {
@@ -740,10 +745,16 @@ export async function editMessage(messageId: string, userId: string, body: strin
 
   const msg = await prisma.eggHocMessage.findUnique({
     where: { id: messageId },
-    select: { id: true, senderUserId: true, deletedAt: true },
+    select: { id: true, senderUserId: true, deletedAt: true, body: true },
   });
   if (!msg || msg.deletedAt) return { ok: false as const, error: "Message not found" };
   if (msg.senderUserId !== userId) return { ok: false as const, error: "You can only edit your own messages" };
+
+  const quota = await assertUserStorageAllowsNetDelta(
+    userId,
+    Buffer.byteLength(text, "utf8") - Buffer.byteLength(msg.body, "utf8"),
+  );
+  if (!quota.ok) return { ok: false as const, error: quota.error };
 
   await prisma.eggHocMessage.update({
     where: { id: messageId },

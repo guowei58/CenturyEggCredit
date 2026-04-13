@@ -3,6 +3,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import {
   defaultUserPreferences,
   parseUserPreferencesPayload,
@@ -62,6 +63,14 @@ export async function setUserPreferences(
   if (payload.length > MAX_PREFS_CHARS) {
     return { ok: false, error: "Preferences payload too large." };
   }
+  const prevRow = await prisma.userPreferences.findUnique({
+    where: { userId },
+    select: { payload: true },
+  });
+  const oldOctets = prevRow ? Buffer.byteLength(prevRow.payload, "utf8") : 0;
+  const newOctets = Buffer.byteLength(payload, "utf8");
+  const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
+  if (!quota.ok) return quota;
   try {
     await prisma.userPreferences.upsert({
       where: { userId },

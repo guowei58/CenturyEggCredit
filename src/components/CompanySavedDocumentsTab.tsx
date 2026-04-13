@@ -28,6 +28,7 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
   const [items, setItems] = useState<SavedItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletingAll, setDeletingAll] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
   const listUrl = useMemo(() => (safeTicker ? `/api/saved-documents/${encodeURIComponent(safeTicker)}` : ""), [safeTicker]);
@@ -122,6 +123,39 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
     }
   }
 
+  async function handleDeleteAll() {
+    if (!safeTicker || items.length === 0) return;
+    const n = items.length;
+    const ok = window.confirm(
+      `Delete all ${n} saved document${n === 1 ? "" : "s"} for ${safeTicker}? This cannot be undone.`
+    );
+    if (!ok) return;
+
+    setDeletingAll(true);
+    setStatus(null);
+    try {
+      const res = await fetch(`/api/saved-documents/${encodeURIComponent(safeTicker)}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+      const body = (await res.json().catch(() => null)) as { ok?: boolean; deleted?: number; error?: string } | null;
+      if (!res.ok || body?.ok !== true) {
+        throw new Error(body?.error ?? "Failed to delete saved documents.");
+      }
+      await refresh();
+      setStatus(
+        typeof body.deleted === "number"
+          ? `Removed ${body.deleted} saved document${body.deleted === 1 ? "" : "s"}.`
+          : "All saved documents removed."
+      );
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : "Failed to delete saved documents.");
+    } finally {
+      setDeletingAll(false);
+    }
+  }
+
   if (!safeTicker) {
     return (
       <Card title="Saved Documents">
@@ -165,7 +199,28 @@ export function CompanySavedDocumentsTab({ ticker }: { ticker: string }) {
         )}
       </Card>
 
-      <Card title={`Saved files (${items.length})`}>
+      <Card
+        title={
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+            <span>Saved files ({items.length})</span>
+            {items.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => void handleDeleteAll()}
+                disabled={loading || deletingAll || deletingId !== null}
+                className="shrink-0 rounded border px-3 py-1.5 text-xs font-semibold disabled:opacity-50 self-start sm:self-auto"
+                style={{
+                  borderColor: "var(--danger)",
+                  color: "var(--danger)",
+                  background: "transparent",
+                }}
+              >
+                {deletingAll ? "Deleting…" : "Delete All"}
+              </button>
+            ) : null}
+          </div>
+        }
+      >
         {items.length === 0 ? (
           <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
             No saved documents yet.

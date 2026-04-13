@@ -262,7 +262,7 @@ export async function buildDailyNewsPayload(
       secFilings[0]?.headline ||
       companyNews[0]?.headline ||
       industryNews[0]?.headline ||
-      `${ticker}: no notable automated hits in the last 24h.`;
+      `no notable automated hits in the last 24h.`;
     topBullets.push(`${ticker}: ${first}`);
   }
 

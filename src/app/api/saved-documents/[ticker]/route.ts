@@ -10,7 +10,7 @@ import {
   saveDeterministicCompilerExcelToSavedDocuments,
   saveXbrlAsPresentedExcelToSavedDocuments,
 } from "@/lib/saved-documents";
-import { getUserSavedDocumentBody } from "@/lib/user-workspace-store";
+import { deleteAllUserSavedDocumentsForTicker, getUserSavedDocumentBody } from "@/lib/user-workspace-store";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -58,6 +58,7 @@ function contentTypeForFilename(filename: string): string {
  * POST multipart: action=save-xbrl-as-presented-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber — preferred (no base64 size blow-up)
  * POST JSON: { action: "save-xbrl-as-presented-xlsx", base64, filing } — legacy / small workbooks only
  * POST { action: "import-ticker-files" } — legacy no-op; returns current list
+ * DELETE { all: true } — remove all saved documents for this ticker
  */
 export async function GET(
   request: Request,
@@ -258,7 +259,15 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const b = body as { filename?: unknown };
+  const b = body as { filename?: unknown; all?: unknown };
+  if (b.all === true) {
+    const result = await deleteAllUserSavedDocumentsForTicker(userId, ticker);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    return NextResponse.json({ ok: true, deleted: result.deleted });
+  }
+
   const filename = typeof b.filename === "string" ? b.filename : "";
   if (!filename.trim()) {
     return NextResponse.json({ error: "Missing filename" }, { status: 400 });

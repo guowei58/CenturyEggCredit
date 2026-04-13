@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { DailyNewsBatchPayload, DailyNewsTickerBlock } from "@/lib/daily-news/types";
+import { DailyNewsMark } from "@/components/daily-news/DailyNewsMark";
 
 async function readJsonResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -115,12 +116,15 @@ export function DailyNewsDrawer({
           className="flex flex-shrink-0 items-center justify-between gap-3 border-b px-4 py-3 sm:px-5"
           style={{ background: "var(--sb)", borderColor: "var(--border)" }}
         >
-          <div className="min-w-0">
-            <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
-              Daily News
-            </div>
-            <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
-              Watchlist digest · last 24h · SEC + major outlets + trade press
+          <div className="flex min-w-0 items-center gap-3">
+            <DailyNewsMark preset="drawerHeader" />
+            <div className="min-w-0">
+              <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
+                Daily News
+              </div>
+              <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
+                Watchlist digest · last 24h · SEC + major outlets + trade press
+              </div>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -147,17 +151,21 @@ export function DailyNewsDrawer({
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {loading ? (
-            <div className="p-6 text-sm" style={{ color: "var(--muted2)" }}>
-              Loading…
+            <div className="flex flex-col items-center gap-4 p-8 text-sm" style={{ color: "var(--muted2)" }}>
+              <DailyNewsMark preset="drawerHeader" />
+              <span>Loading…</span>
             </div>
           ) : err ? (
             <div className="p-6 text-sm" style={{ color: "var(--danger)" }}>
               {err}
             </div>
           ) : batches.length === 0 ? (
-            <div className="p-6 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-              No daily news yet. Add tickers to your watchlist, then use <span className="font-semibold">Refresh now</span> (or wait for the
-              morning job).
+            <div className="flex flex-col items-center gap-4 p-6 text-center text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
+              <DailyNewsMark preset="drawerHeader" />
+              <p>
+                No daily news yet. Add tickers to your watchlist, then use <span className="font-semibold">Refresh now</span> (or wait for the
+                morning job).
+              </p>
             </div>
           ) : (
             <>
@@ -311,8 +319,53 @@ function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock })
   );
 }
 
+/** Strip intro line when it duplicates the card heading (payload includes it + we render title above). */
+function topLevelSummaryBodyLines(raw: string): string[] {
+  const lines = raw.split(/\r?\n/);
+  const first = lines[0]?.trim() ?? "";
+  if (/^today'?s biggest developments across the watchlist:?$/i.test(first)) {
+    return lines.slice(1).filter((l) => l.trim().length > 0);
+  }
+  return lines.filter((l) => l.trim().length > 0);
+}
+
+/** Legacy payloads: "• TICKER: TICKER: …" → "• TICKER: …" */
+function dedupeTickerInBullet(line: string): string {
+  return line.replace(/^(\s*•\s+)([A-Z0-9._-]+):\s*\2:\s*/i, "$1$2: ");
+}
+
+function TopLevelSummaryBulletLine({ line }: { line: string }) {
+  const normalized = dedupeTickerInBullet(line);
+  const m = normalized.match(/^(\s*•\s+)([A-Z][A-Z0-9._-]*):\s*(.*)$/);
+  if (m) {
+    const [, prefix, ticker, rest] = m;
+    return (
+      <p className="m-0 leading-relaxed" style={{ color: "var(--text)" }}>
+        {prefix}
+        <span
+          className="mr-1.5 inline-block align-baseline rounded-md px-2 py-0.5 font-mono text-[0.9em] font-bold tabular-nums tracking-tight"
+          style={{
+            background: "rgba(0, 212, 170, 0.14)",
+            color: "var(--accent)",
+            border: "1px solid rgba(0, 212, 170, 0.4)",
+          }}
+        >
+          {ticker}
+        </span>
+        <span>: {rest}</span>
+      </p>
+    );
+  }
+  return (
+    <p className="m-0 whitespace-pre-wrap leading-relaxed" style={{ color: "var(--text)" }}>
+      {normalized}
+    </p>
+  );
+}
+
 function DailyNewsBody({ block }: { block: BatchRow }) {
   const p = block.payload;
+  const summaryLines = topLevelSummaryBodyLines(p.topLevelSummary);
   return (
     <div className="space-y-8">
       <div
@@ -322,9 +375,11 @@ function DailyNewsBody({ block }: { block: BatchRow }) {
         <div className="text-base font-bold sm:text-lg" style={{ color: "var(--accent)" }}>
           Today&apos;s biggest developments across the watchlist
         </div>
-        <pre className="mt-3 whitespace-pre-wrap font-sans text-sm leading-relaxed sm:text-base" style={{ color: "var(--text)" }}>
-          {p.topLevelSummary}
-        </pre>
+        <div className="mt-3 space-y-2 font-sans text-sm leading-relaxed sm:text-base">
+          {summaryLines.map((line, i) => (
+            <TopLevelSummaryBulletLine key={i} line={line} />
+          ))}
+        </div>
         <div className="mt-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
           Generated {new Date(p.generatedAt).toLocaleString()} · Sources: {p.sourcesUsed.slice(0, 6).join(", ")}
           {p.sourcesUsed.length > 6 ? "…" : ""}

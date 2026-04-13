@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import { getWatchlistTickers } from "@/lib/user-workspace-store";
 import { buildDailyNewsPayload } from "./generate-batch";
 import type { DailyNewsBatchPayload } from "./types";
@@ -49,6 +50,16 @@ export async function upsertDailyNewsBatch(
   payload: DailyNewsBatchPayload
 ) {
   const json = JSON.stringify(payload);
+  const prev = await prisma.userDailyNewsBatch.findUnique({
+    where: { userId_batchDateKey: { userId, batchDateKey } },
+    select: { payloadJson: true },
+  });
+  const oldOctets = prev ? Buffer.byteLength(prev.payloadJson, "utf8") : 0;
+  const newOctets = Buffer.byteLength(json, "utf8");
+  const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
+  if (!quota.ok) {
+    throw new Error(quota.error);
+  }
   return prisma.userDailyNewsBatch.upsert({
     where: { userId_batchDateKey: { userId, batchDateKey } },
     create: {
