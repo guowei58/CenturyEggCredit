@@ -38,4 +38,12 @@ function getPrisma(): PrismaClient {
   return client;
 }
 
-export const prisma = getPrisma();
+/**
+ * Lazy singleton: do not connect at import time. `next build` loads API route modules
+ * that import `prisma`; without DATABASE_URL in the Docker build, eager init would throw.
+ */
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getPrisma(), prop, receiver);
+  },
+});

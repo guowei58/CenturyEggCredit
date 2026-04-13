@@ -17,6 +17,10 @@ COPY prisma.config.ts ./
 RUN npm ci
 
 COPY . .
+# `next build` loads routes that import `prisma.ts`, which throws without DATABASE_URL.
+# `.env` is not in the image; use a placeholder for compile-time only. Render replaces
+# DATABASE_URL at runtime.
+ENV DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build"
 RUN npm run build
 
 # --- Runtime ---
