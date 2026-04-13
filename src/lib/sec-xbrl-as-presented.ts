@@ -219,15 +219,19 @@ function extractDeiCurrentFiscalYearEndFromRawXml(xml: string): string | null {
   return m?.[1]?.trim() ? m[1].trim() : null;
 }
 
-/** Subtract calendar months from an ISO date; clamp day to month length (UTC). */
+/** Subtract calendar months from an ISO date; use end-of-month logic so that
+ *  fiscal quarter-end dates always land on the last day of the target month
+ *  when the source date is the last day of its month (e.g. Sep 30 − 9 months
+ *  must give Dec 31, not Dec 30). */
 function subMonthsFromIsoEnd(ymd: string, months: number): string | null {
   const p = parseIsoDateUtc(ymd);
   if (!p) return null;
   const total = p.y * 12 + (p.m - 1) - months;
   const ny = Math.floor(total / 12);
   const nm = total - ny * 12;
-  const last = new Date(Date.UTC(ny, nm + 1, 0)).getUTCDate();
-  const nd = Math.min(p.d, last);
+  const lastOfTarget = new Date(Date.UTC(ny, nm + 1, 0)).getUTCDate();
+  const lastOfSource = new Date(Date.UTC(p.y, p.m, 0)).getUTCDate();
+  const nd = p.d >= lastOfSource ? lastOfTarget : Math.min(p.d, lastOfTarget);
   return `${ny}-${String(nm + 1).padStart(2, "0")}-${String(nd).padStart(2, "0")}`;
 }
 

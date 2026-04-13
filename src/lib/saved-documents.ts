@@ -282,6 +282,56 @@ export async function saveXbrlAsPresentedExcelToSavedDocuments(
   return { ok: true, item };
 }
 
+/**
+ * Store the deterministic XBRL compiler Excel export. One stable filename per ticker so each run replaces the latest compiled model.
+ */
+export async function saveDeterministicCompilerExcelToSavedDocuments(
+  userId: string,
+  ticker: string,
+  xlsxBuffer: Buffer
+): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> {
+  const safeTicker = sanitizeTicker(ticker);
+  if (!safeTicker) return { ok: false, error: "Invalid ticker" };
+  if (xlsxBuffer.length < 64) return { ok: false, error: "Invalid spreadsheet payload." };
+  const head = xlsxBuffer.subarray(0, 4);
+  const sig = String.fromCharCode(head[0] ?? 0, head[1] ?? 0, head[2] ?? 0, head[3] ?? 0);
+  if (sig !== "PK\u0003\u0004") {
+    return { ok: false, error: "File must be a valid .xlsx workbook." };
+  }
+
+  const now = new Date();
+  const slug = toSafeFilename(`${safeTicker}_XBRL-deterministic-compiled-financials`);
+  const filename = `${slug}.xlsx`;
+  const titleRaw = `${safeTicker} XBRL deterministic compiled financials`;
+  const title = toSafeFilename(titleRaw).slice(0, 140) || slug;
+  const originalUrl = `app:xbrl-deterministic-compiler/${encodeURIComponent(safeTicker)}`;
+
+  const saved = await upsertUserSavedDocument(userId, safeTicker, {
+    filename,
+    title,
+    originalUrl,
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    body: xlsxBuffer,
+    savedAtIso: now.toISOString(),
+    convertedToPdf: false,
+  });
+  if (!saved.ok) return saved;
+
+  const item: SavedDocumentItem = {
+    id: saved.id,
+    ticker: safeTicker,
+    title,
+    filename,
+    relativePath: `${SUBFOLDER_NAME}/${filename}`,
+    originalUrl,
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    savedAtIso: now.toISOString(),
+    bytes: xlsxBuffer.length,
+    convertedToPdf: false,
+  };
+  return { ok: true, item };
+}
+
 async function persistSavedDocumentFromUrl(
   userId: string,
   safeTicker: string,

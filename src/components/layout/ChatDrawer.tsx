@@ -619,123 +619,126 @@ export function ChatDrawer({
 
         <div className="flex min-w-0 flex-1 flex-col">
           <div
-            className="flex flex-shrink-0 items-center gap-3 border-b px-4 py-3 sm:px-5 sm:py-4"
+            className="flex-shrink-0 border-b px-4 py-3 sm:px-5 sm:py-4"
             style={{ background: "var(--sb)", borderColor: "var(--border)" }}
           >
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
-                {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
-              </div>
-              <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
-                {anthropicConfigured === null ||
-                openaiConfigured === null ||
-                geminiConfigured === null ||
-                deepseekConfigured === null
-                  ? "Checking API…"
-                  : providerReady
-                    ? `Chat with ${assistantLabel} (${
-                        aiProvider === "openai"
-                          ? "OpenAI API"
-                          : aiProvider === "gemini"
-                            ? "Google Gemini API"
-                            : aiProvider === "deepseek"
-                              ? "DeepSeek API"
-                              : "Anthropic API"
-                      })`
-                    : aiProvider === "deepseek"
-                      ? "Add your DeepSeek API key in User Settings (gear icon), or use a hosted account with DEEPSEEK_API_KEY on the server."
-                      : aiProvider === "gemini"
-                        ? "Add your Gemini API key in User Settings (gear icon), or paste from the Gemini website."
-                        : "Add your Claude or OpenAI API key in User Settings (gear icon), or use the external AI buttons in each tab."}
-              </div>
-              <div className="mt-2 inline-flex flex-wrap rounded border overflow-hidden" style={{ borderColor: "var(--border2)" }}>
-                <button
-                  type="button"
-                  onClick={() => persistProvider("claude")}
-                  className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide"
-                  style={aiProviderChipStyle(aiProvider, "claude")}
-                >
-                  Claude
-                </button>
-                <button
-                  type="button"
-                  onClick={() => persistProvider("openai")}
-                  className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "openai") }}
-                >
-                  ChatGPT
-                </button>
-                <button
-                  type="button"
-                  onClick={() => persistProvider("gemini")}
-                  className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "gemini") }}
-                  title="Google Gemini (GEMINI_API_KEY / GEMINI_MODEL)"
-                >
-                  Gemini
-                </button>
-                <button
-                  type="button"
-                  onClick={() => persistProvider("deepseek")}
-                  className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
-                  title="DeepSeek (DEEPSEEK_API_KEY / DEEPSEEK_MODEL or User Settings)"
-                >
-                  DeepSeek
-                </button>
-              </div>
-              <AiModelPicker provider={aiProvider} className="mt-2" />
-              {ticker?.trim() ? (
-                <div className="mt-2">
-                  <label className="flex cursor-pointer items-start gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
-                    <input
-                      type="checkbox"
-                      checked={includeOreoContext}
-                      onChange={(e) => {
-                        const v = e.target.checked;
-                        setIncludeOreoContext(v);
-                        updatePreferences((prev) => ({ ...prev, includeOreoContext: v }));
-                      }}
-                      className="mt-0.5"
-                    />
-                    <span>
-                      Include saved OREO data for <span className="font-mono">{ticker.trim().toUpperCase()}</span> (tab saves, credit
-                      agreement text, .txt/.md in Saved Documents). PDFs are listed but not read automatically.
-                    </span>
-                  </label>
-                  {includeOreoContext && activeSession?.oreoInjected ? (
-                    <div className="mt-1.5 flex items-center gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
-                      <span style={{ color: "var(--accent)" }}>OREO data sent</span>
-                      <span>— follow-up messages are lightweight.</span>
-                      <button
-                        type="button"
-                        onClick={resendOreo}
-                        className="underline"
-                        style={{ color: "var(--muted)" }}
-                      >
-                        Re-send OREO
-                      </button>
-                    </div>
-                  ) : null}
+            <div className="flex items-center gap-3">
+              <img src="/ai-chat-icon.png" alt="" className="size-8 shrink-0 rounded-md" />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
+                  {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
                 </div>
-              ) : null}
+                <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
+                  {anthropicConfigured === null ||
+                  openaiConfigured === null ||
+                  geminiConfigured === null ||
+                  deepseekConfigured === null
+                    ? "Checking API…"
+                    : providerReady
+                      ? `Chat with ${assistantLabel} (${
+                          aiProvider === "openai"
+                            ? "OpenAI API"
+                            : aiProvider === "gemini"
+                              ? "Google Gemini API"
+                              : aiProvider === "deepseek"
+                                ? "DeepSeek API"
+                                : "Anthropic API"
+                        })`
+                      : aiProvider === "deepseek"
+                        ? "Add your DeepSeek API key in User Settings (gear icon), or use a hosted account with DEEPSEEK_API_KEY on the server."
+                        : aiProvider === "gemini"
+                          ? "Add your Gemini API key in User Settings (gear icon), or paste from the Gemini website."
+                          : "Add your Claude or OpenAI API key in User Settings (gear icon), or use the external AI buttons in each tab."}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={startNewChat}
+                className="flex-shrink-0 rounded-md border px-2 py-1 text-[10px] font-medium"
+                style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+              >
+                New chat
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-shrink-0 rounded-md p-1.5 transition-colors hover:bg-[var(--card)]"
+                style={{ color: "var(--muted2)" }}
+              >
+                ✕
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={startNewChat}
-              className="flex-shrink-0 rounded-md border px-2 py-1 text-[10px] font-medium"
-              style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
-            >
-              New chat
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-shrink-0 rounded-md p-1.5 transition-colors hover:bg-[var(--card)]"
-              style={{ color: "var(--muted2)" }}
-            >
-              ✕
-            </button>
+            <div className="mt-2 inline-flex flex-wrap rounded border overflow-hidden" style={{ borderColor: "var(--border2)" }}>
+              <button
+                type="button"
+                onClick={() => persistProvider("claude")}
+                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide"
+                style={aiProviderChipStyle(aiProvider, "claude")}
+              >
+                Claude
+              </button>
+              <button
+                type="button"
+                onClick={() => persistProvider("openai")}
+                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
+                style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "openai") }}
+              >
+                ChatGPT
+              </button>
+              <button
+                type="button"
+                onClick={() => persistProvider("gemini")}
+                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
+                style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "gemini") }}
+                title="Google Gemini (GEMINI_API_KEY / GEMINI_MODEL)"
+              >
+                Gemini
+              </button>
+              <button
+                type="button"
+                onClick={() => persistProvider("deepseek")}
+                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
+                style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
+                title="DeepSeek (DEEPSEEK_API_KEY / DEEPSEEK_MODEL or User Settings)"
+              >
+                DeepSeek
+              </button>
+            </div>
+            <AiModelPicker provider={aiProvider} className="mt-2" />
+            {ticker?.trim() ? (
+              <div className="mt-2">
+                <label className="flex cursor-pointer items-start gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                  <input
+                    type="checkbox"
+                    checked={includeOreoContext}
+                    onChange={(e) => {
+                      const v = e.target.checked;
+                      setIncludeOreoContext(v);
+                      updatePreferences((prev) => ({ ...prev, includeOreoContext: v }));
+                    }}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    Include saved OREO data for <span className="font-mono">{ticker.trim().toUpperCase()}</span> (tab saves, credit
+                    agreement text, .txt/.md in Saved Documents). PDFs are listed but not read automatically.
+                  </span>
+                </label>
+                {includeOreoContext && activeSession?.oreoInjected ? (
+                  <div className="mt-1.5 flex items-center gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                    <span style={{ color: "var(--accent)" }}>OREO data sent</span>
+                    <span>— follow-up messages are lightweight.</span>
+                    <button
+                      type="button"
+                      onClick={resendOreo}
+                      className="underline"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      Re-send OREO
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-4">

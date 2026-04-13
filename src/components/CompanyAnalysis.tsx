@@ -246,9 +246,16 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (
     tabId === "historical-financial-statements" ||
     tabId === "financials" ||
-    tabId === "the-good-bad-and-ugly-historical-financial-statements"
+    tabId === "the-good-bad-and-ugly-historical-financial-statements" ||
+    tabId === "deterministic-xbrl-statement-compiler"
   ) {
-    return <CompanyFinancialsTab ticker={ticker} companyName={companyName} />;
+    return (
+      <CompanyFinancialsTab
+        ticker={ticker}
+        companyName={companyName}
+        scrollToBadSection={tabId === "deterministic-xbrl-statement-compiler"}
+      />
+    );
   }
   if (tabId === "kpi") {
     return <CompanyKpiTab ticker={ticker} companyName={companyName} />;

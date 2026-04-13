@@ -82,7 +82,10 @@ export type ResearchFinderSearchResponse = {
   disclaimer: string;
   profile: ResearchProfile;
   queriesUsed: Record<ResearchProviderId, string[]>;
-  providerStatus: Record<ResearchProviderId, { ok: boolean; error?: string; candidateUrls: number; kept: number }>;
+  providerStatus: Record<
+    ResearchProviderId,
+    { ok: boolean; error?: string; candidateUrls: number; kept: number; rssCandidates?: number }
+  >;
   summary: {
     candidateUrls: number;
     keptResults: number;

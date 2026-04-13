@@ -56,6 +56,8 @@ type SubmissionsJson = {
   sicDescription?: string;
   stateOfIncorporation?: string;
   fiscalYearEnd?: string;
+  /** Prior registered names — useful for text-based industry matching */
+  formerNames?: Array<{ name?: string } | string>;
   filings?: {
     recent?: SubmissionsRecent;
     files?: Array<{ name?: string; filingCount?: number; filingFrom?: string; filingTo?: string }>;
@@ -71,6 +73,8 @@ export type SecCompanyProfile = {
   stateOfIncorporation: string;
   fiscalYearEnd: string;
   filingsCount: number;
+  /** Prior SEC-registered legal names (submissions `formerNames`) */
+  formerNames: string[];
 };
 
 /**
@@ -410,6 +414,7 @@ export async function getCompanyProfile(ticker: string): Promise<SecCompanyProfi
   const filingsCount = Array.isArray(recent?.accessionNumber) ? recent.accessionNumber.length : 0;
   const fy = data.fiscalYearEnd?.replace(/-/g, "").trim();
   const fiscalYearEnd = fy && fy.length >= 4 ? `${fy.slice(0, 2)}/${fy.slice(2)}` : "—";
+  const formerNames = parseFormerNamesFromSubmissions(data.formerNames);
   return {
     name: data.name ?? ticker,
     ticker: ticker.trim().toUpperCase(),
@@ -419,5 +424,17 @@ export async function getCompanyProfile(ticker: string): Promise<SecCompanyProfi
     stateOfIncorporation: data.stateOfIncorporation ?? "—",
     fiscalYearEnd,
     filingsCount,
+    formerNames,
   };
+}
+
+function parseFormerNamesFromSubmissions(raw: SubmissionsJson["formerNames"]): string[] {
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  for (const entry of raw) {
+    const n = typeof entry === "string" ? entry : entry?.name;
+    const t = typeof n === "string" ? n.replace(/\s+/g, " ").trim() : "";
+    if (t.length >= 2 && t.length <= 200) out.push(t);
+  }
+  return out.slice(0, 12);
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { initTickerSaveFolder } from "@/lib/saved-data-client";
 import { TopNav, LeftSidebar, ChatDrawer, EggHocCommitteeDrawer } from "@/components/layout";
+import { DailyNewsDrawer } from "@/components/daily-news/DailyNewsDrawer";
 import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 import { CompanyAnalysis } from "@/components/CompanyAnalysis";
 import { Card } from "@/components/ui";
@@ -16,6 +17,7 @@ export default function Home() {
   const [companyTab, setCompanyTab] = useState<string>(getFirstTabIdForTopSection("overview"));
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [eggHocOpen, setEggHocOpen] = useState(false);
+  const [dailyNewsOpen, setDailyNewsOpen] = useState(false);
 
   const handleTickerSelect = useCallback((t: string) => {
     setTicker(t);
@@ -56,9 +58,15 @@ export default function Home() {
       <TopNav
         mode={mode}
         onModeChange={setMode}
+        onOpenDailyNews={() => {
+          setAiChatOpen(false);
+          setEggHocOpen(false);
+          setDailyNewsOpen(true);
+        }}
         onOpenEggHocCommittee={() => {
           unlockEggHocNotificationAudio();
           setAiChatOpen(false);
+          setDailyNewsOpen(false);
           setEggHocOpen(true);
         }}
       />
@@ -79,6 +87,7 @@ export default function Home() {
               aiChatOpen={aiChatOpen}
               onOpenAiChat={() => {
                 setEggHocOpen(false);
+                setDailyNewsOpen(false);
                 setAiChatOpen(true);
               }}
             />
@@ -97,6 +106,7 @@ export default function Home() {
         open={aiChatOpen}
         onOpen={() => {
           setEggHocOpen(false);
+          setDailyNewsOpen(false);
           setAiChatOpen(true);
         }}
         onClose={() => setAiChatOpen(false)}
@@ -106,10 +116,12 @@ export default function Home() {
         open={eggHocOpen}
         onOpen={() => {
           setAiChatOpen(false);
+          setDailyNewsOpen(false);
           setEggHocOpen(true);
         }}
         onClose={() => setEggHocOpen(false)}
       />
+      <DailyNewsDrawer open={dailyNewsOpen} onClose={() => setDailyNewsOpen(false)} />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { scoreMatch } from "./scoring";
 import { dedupeResults } from "./dedupe";
 import { hostnameOf, nowIso, normalizeUrlForMatch, stableId } from "./utils";
 import { replaceResultsForSearch, upsertSearch } from "./store/fileDb";
+import { discoveryChannels, gatherRssDiscoveryHits, mergeSearchAndDiscoveryHits } from "./rssLayer";
 
 const DISCLAIMER =
   "Best-effort public research discovery only. Results may be incomplete and do not represent the full research library of any provider. Some sources, including WSJ Pro Bankruptcy, may be partially or largely subscription-gated.";
@@ -77,7 +78,10 @@ export async function runResearchFinderSearch(
   await upsertSearch(userId, search);
 
   const queriesUsed = {} as Record<ResearchProviderId, string[]>;
-  const providerStatus = {} as Record<ResearchProviderId, { ok: boolean; error?: string; candidateUrls: number; kept: number }>;
+  const providerStatus = {} as Record<
+    ResearchProviderId,
+    { ok: boolean; error?: string; candidateUrls: number; kept: number; rssCandidates?: number }
+  >;
 
   const allResults: ResearchResult[] = [];
   let totalCandidates = 0;
@@ -86,17 +90,26 @@ export async function runResearchFinderSearch(
     const def = getProviderById(pid)!;
     const queries = buildProviderQueries(pid, profile, cfg.maxQueriesPerProvider);
     queriesUsed[pid] = queries;
-    const hits: Array<{ title: string; url: string; snippet: string; query: string; publishedDate?: string | null }> = [];
+    const searchHits: Array<{ title: string; url: string; snippet: string; query: string; publishedDate?: string | null }> = [];
 
     const settled = await Promise.allSettled(queries.map((q) => providerEnv.provider.search(q, { num: 10 })));
     for (let i = 0; i < settled.length; i++) {
       const s = settled[i]!;
       if (s.status === "rejected") continue;
-      hits.push(...s.value);
+      searchHits.push(...s.value);
     }
 
+    let rssHits: ReturnType<typeof mergeSearchAndDiscoveryHits> = [];
+    try {
+      rssHits = await gatherRssDiscoveryHits(pid, profile, cfg);
+    } catch {
+      rssHits = [];
+    }
+
+    const mergedHits = mergeSearchAndDiscoveryHits(searchHits, rssHits);
+
     const allow = new Set(def.domains.map((d) => d.toLowerCase()));
-    const candidateUrls = hits
+    const candidateUrls = mergedHits
       .map((h) => h.url)
       .map((u) => normalizeUrlForMatch(u) ?? u)
       .filter((u) => {
@@ -115,7 +128,7 @@ export async function runResearchFinderSearch(
     for (let i = 0; i < extracted.length; i++) {
       const s = extracted[i]!;
       const url = toExtract[i]!;
-      const hitMeta = hits.find((h) => (normalizeUrlForMatch(h.url) ?? h.url) === url);
+      const hitMeta = mergedHits.find((h) => (normalizeUrlForMatch(h.url) ?? h.url) === url);
       if (s.status === "rejected") continue;
       const ex = s.value;
 
@@ -140,6 +153,13 @@ export async function runResearchFinderSearch(
 
       const now = nowIso();
       const providerDomain = hostnameOf(ex.finalUrl);
+      const channels = hitMeta ? discoveryChannels(hitMeta) : ["search"];
+      const searchProviderLabel =
+        channels.includes("search") && channels.includes("rss")
+          ? `${providerEnv.provider.id}+google-news-rss`
+          : channels.includes("rss")
+            ? "google-news-rss"
+            : providerEnv.provider.id;
       allResults.push({
         id: stableId(["research_result", searchId, pid, ex.normalizedUrl]),
         search_id: searchId,
@@ -157,7 +177,7 @@ export async function runResearchFinderSearch(
         snippet: hitMeta?.snippet ?? ex.metaDescription ?? null,
         excerpt: ex.excerpt,
         query_used: hitMeta?.query ?? queries[0] ?? "",
-        search_provider_used: providerEnv.provider.id,
+        search_provider_used: searchProviderLabel,
         match_score: score.score,
         confidence_bucket: score.bucket,
         match_reasons: score.reasons,
@@ -165,13 +185,18 @@ export async function runResearchFinderSearch(
         byline: ex.byline,
         section_label: ex.sectionLabel,
         is_publicly_accessible: ex.isPubliclyAccessible,
-        metadata_json: { notes: ex.notes },
+        metadata_json: { notes: ex.notes, discoveryChannels: channels },
         created_at: now,
         updated_at: now,
       });
     }
 
-    providerStatus[pid] = { ok: true, candidateUrls: unique.length, kept };
+    providerStatus[pid] = {
+      ok: true,
+      candidateUrls: unique.length,
+      kept,
+      rssCandidates: rssHits.length,
+    };
   }
 
   const deduped = dedupeResults(allResults).sort((a, b) => b.match_score - a.match_score);

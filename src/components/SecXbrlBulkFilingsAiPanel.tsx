@@ -36,9 +36,20 @@ const DEFAULT_CONSOLIDATE_MODELS: Record<AiProvider, ModelRunChoice> = {
 };
 
 /**
- * Bulk SEC-XBRL workbook save + AI consolidation (The Good, Bad and Ugly tab → The Bad).
+ * Bulk SEC-XBRL workbook save + optional AI consolidation.
+ * On the Good/Bad/Ugly tab: bulk save is under The Bad; AI consolidation under The Ugly.
  */
-export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
+export function SecXbrlBulkFilingsAiPanel({
+  ticker,
+  showBulkSave = true,
+  showAiConsolidation = true,
+}: {
+  ticker: string;
+  /** SEC XBRL bulk save list + button. Default true. */
+  showBulkSave?: boolean;
+  /** AI consolidation card (ingests saved workbooks). Default true. */
+  showAiConsolidation?: boolean;
+}) {
   const tk = (ticker ?? "").trim().toUpperCase();
   const { status: authStatus } = useSession();
   const { ready: prefsReady, preferences } = useUserPreferences();
@@ -68,8 +79,12 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
   }, [authStatus, tk]);
 
   useEffect(() => {
+    if (!showAiConsolidation) {
+      setConsolidatedMd("");
+      return;
+    }
     void loadConsolidated();
-  }, [loadConsolidated]);
+  }, [loadConsolidated, showAiConsolidation]);
 
   useEffect(() => {
     tabAliveRef.current = true;
@@ -80,7 +95,7 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
 
   /** Per ticker: if User Settings pick a listed preset, mirror it in the row select (still overridable). */
   useEffect(() => {
-    if (!prefsReady || !tk) return;
+    if (!showAiConsolidation || !prefsReady || !tk) return;
     if (lastModelHydrateTickerRef.current === tk) return;
     lastModelHydrateTickerRef.current = tk;
     const models = preferences.aiModels as Partial<Record<AiProvider | "ollama", string>> | undefined;
@@ -95,10 +110,10 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
       }
       return next;
     });
-  }, [prefsReady, preferences.aiModels, tk]);
+  }, [prefsReady, preferences.aiModels, tk, showAiConsolidation]);
 
   useEffect(() => {
-    if (!tk) return;
+    if (!showBulkSave || !tk) return;
     let cancelled = false;
     setListLoading(true);
     setListErr(null);
@@ -117,7 +132,7 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
     return () => {
       cancelled = true;
     };
-  }, [tk]);
+  }, [tk, showBulkSave]);
 
   const filings: PresentedFiling[] = listData?.filings ?? [];
   const selectedAcc = listData?.selected?.accessionNumber ?? "";
@@ -132,6 +147,7 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
 
   return (
     <div className="space-y-4">
+      {showBulkSave ? (
       <Card title={`SEC XBRL — bulk save (${tk})`}>
         <p className="text-xs" style={{ color: "var(--muted2)" }}>
           {listData?.companyName ? <span style={{ color: "var(--text)" }}>{listData.companyName}</span> : null}
@@ -248,7 +264,7 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
                   })();
                 }}
               >
-                {bulkSaving ? "Saving…" : "Save xlsx"}
+                {bulkSaving ? "Saving…" : "Bulk Save SEC XBRL Data"}
               </button>
             </div>
             {bulkProgress && bulkSaving ? (
@@ -298,7 +314,9 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           </p>
         ) : null}
       </Card>
+      ) : null}
 
+      {showAiConsolidation ? (
       <Card title={`AI consolidation (all saved XBRL workbooks) — ${tk}`}>
         <p className="text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
           Ingests every <span className="font-mono">SEC-XBRL-financials</span> <span className="font-mono">.xlsx</span> in{" "}
@@ -311,14 +329,6 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           <span className="font-mono">xbrl-consolidated-financials-ai.md</span> (server-backed tab content). Large libraries
           are truncated near ~300k characters of ingested text — prefer running again after archiving very old exports if you
           hit limits.
-        </p>
-        <p className="text-[11px] leading-relaxed" style={{ color: "var(--warn)" }}>
-          <span className="font-medium" style={{ color: "var(--text)" }}>Timeouts:</span> the consolidate API waits up to{" "}
-          <span className="font-medium">10 minutes</span> for each provider&apos;s LLM response (huge prompts). If you still see 504, your{" "}
-          <span className="font-medium">host</span> may kill serverless functions below 600s — raise limits on Pro/self-hosted, or reduce saved workbooks.
-          Optional env (when supported): <span className="font-mono text-[10px]">ANTHROPIC_FETCH_TIMEOUT_MS</span>,{" "}
-          <span className="font-mono text-[10px]">OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS</span>,{" "}
-          <span className="font-mono text-[10px]">DEEPSEEK_FETCH_TIMEOUT_MS</span>. Older ChatGPT models may <span className="font-medium">truncate</span> around ~16k output tokens.
         </p>
         <div className="mt-3">
           <span className="text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
@@ -483,8 +493,11 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           </div>
           {!consolidatedMd.trim() ? (
             <p className="mt-2 text-xs" style={{ color: "var(--muted2)" }}>
-              No file ready yet. Save SEC-XBRL workbooks above, run an API provider, then download here (usually ready within a couple of
-              minutes after the run completes).
+              No file ready yet.{" "}
+              {showBulkSave
+                ? "Save SEC-XBRL workbooks above, run an API provider, then download here"
+                : "Save SEC-XBRL workbooks with bulk save under The Bad, run an API provider below, then download here"}{" "}
+              (usually ready within a couple of minutes after the run completes).
             </p>
           ) : null}
           {consolidatedExcelErr ? (
@@ -494,6 +507,7 @@ export function SecXbrlBulkFilingsAiPanel({ ticker }: { ticker: string }) {
           ) : null}
         </div>
       </Card>
+      ) : null}
     </div>
   );
 }

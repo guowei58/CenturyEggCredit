@@ -205,7 +205,7 @@ export function CompanyBar({
                 />
               ) : null}
               <span className={AI_CHAT_NAV_ICON_FRAME_CLASSNAME} aria-hidden="true">
-                <span className="select-none text-[1.05rem] leading-none sm:text-[1.2rem]">🤖</span>
+                <img src="/ai-chat-icon.png" alt="" className="size-5 rounded sm:size-6" />
               </span>
               <span className="hidden sm:inline">AI Chat</span>
             </button>

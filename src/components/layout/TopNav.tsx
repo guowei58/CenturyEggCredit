@@ -44,15 +44,18 @@ export function TopNav({
   mode,
   onModeChange,
   onOpenEggHocCommittee,
+  onOpenDailyNews,
 }: {
   mode: Mode;
   onModeChange: (m: Mode) => void;
   onOpenEggHocCommittee: () => void;
+  onOpenDailyNews: () => void;
 }) {
   const { data: session, status } = useSession();
   const prefs = useUserPreferencesOptional();
   const chatDisplayId = prefs?.preferences.profile?.chatDisplayId?.trim() || "";
   const [eggHocUnreadTotal, setEggHocUnreadTotal] = useState(0);
+  const [dailyNewsUnread, setDailyNewsUnread] = useState(0);
   const [dogOverlay, setDogOverlay] = useState(false);
   const [browserBackReturnHint, setBrowserBackReturnHint] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -94,6 +97,34 @@ export function TopNav({
     return () => {
       window.clearInterval(id);
       window.removeEventListener("focus", onFocus);
+    };
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      setDailyNewsUnread(0);
+      return;
+    }
+    const refreshDailyNewsBadge = async () => {
+      try {
+        const res = await fetch("/api/daily-news?lite=1");
+        const text = await res.text();
+        if (!text.trim()) return;
+        const data = JSON.parse(text) as { unreadCount?: number };
+        if (res.ok && typeof data.unreadCount === "number") {
+          setDailyNewsUnread(data.unreadCount);
+        }
+      } catch {
+        /* ignore */
+      }
+    };
+    void refreshDailyNewsBadge();
+    const id = window.setInterval(() => void refreshDailyNewsBadge(), NAV_BADGE_POLL_MS);
+    const onRead = () => void refreshDailyNewsBadge();
+    window.addEventListener("daily-news-read", onRead);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("daily-news-read", onRead);
     };
   }, [status]);
 
@@ -224,7 +255,23 @@ export function TopNav({
             </button>
           </div>
         )}
-        <div className="grid w-full min-w-0 max-w-[min(100%,22rem)] grid-cols-1 gap-1.5 sm:max-w-[24rem] sm:gap-2">
+        <div className="grid w-full min-w-0 max-w-[min(100%,24rem)] grid-cols-2 gap-1.5 sm:max-w-[28rem] sm:gap-2">
+          <button
+            type="button"
+            className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1 px-1 text-[10px] sm:min-h-10 sm:gap-1.5 sm:px-2 sm:text-[11px]"
+            onClick={onOpenDailyNews}
+            aria-label={dailyNewsUnread > 0 ? `Daily News (${dailyNewsUnread} unread)` : "Daily News"}
+          >
+            {dailyNewsUnread > 0 ? (
+              <span
+                className="absolute -right-0.5 -top-0.5 flex min-h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-bold leading-none text-white ring-2 ring-[var(--sb)]"
+                aria-hidden
+              >
+                {dailyNewsUnread > 99 ? "99+" : dailyNewsUnread}
+              </span>
+            ) : null}
+            <span className="min-w-0 text-center leading-tight">Daily News</span>
+          </button>
           <button
             type="button"
             className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"

@@ -325,18 +325,31 @@ export function HistoricalFinancialsAiWorkflow({
     </>
   );
 
+  const dumpsterFireCardTitle = (suffix: string) => (
+    <span className="inline-flex items-center gap-2 flex-wrap">
+      <span>The Dumpster Fire</span>
+      <img
+        src="/images/dumpster-fire.png"
+        alt=""
+        className="h-8 w-auto object-contain shrink-0"
+        width={112}
+        height={112}
+        aria-hidden
+      />
+      <span>{suffix}</span>
+    </span>
+  );
+
   if (!safeTicker) {
     if (noOuterCard) return noTickerBody;
-    return (
-      <Card title="The Ugly �?AI historical model">
-        {noTickerBody}
-      </Card>
-    );
+    return <Card title={dumpsterFireCardTitle("— AI historical model")}>{noTickerBody}</Card>;
   }
 
   if (noOuterCard) {
     return <div className="space-y-4">{mainBody}</div>;
   }
 
-  return <Card title={`The Ugly �?AI historical model �?${safeTicker}`}>{mainBody}</Card>;
+  return (
+    <Card title={dumpsterFireCardTitle(`— AI historical model — ${safeTicker}`)}>{mainBody}</Card>
+  );
 }

@@ -7,6 +7,7 @@ import {
   listSavedDocuments,
   reconcileSavedDocuments,
   saveDocumentFromUrl,
+  saveDeterministicCompilerExcelToSavedDocuments,
   saveXbrlAsPresentedExcelToSavedDocuments,
 } from "@/lib/saved-documents";
 import { getUserSavedDocumentBody } from "@/lib/user-workspace-store";
@@ -53,6 +54,7 @@ function contentTypeForFilename(filename: string): string {
  * GET  ?file= — download one stored document
  * GET  ?reconcile=1 — no-op compatibility (same as list)
  * POST { url } — fetch URL, store native format (HTML/PDF/XML/text) in Postgres
+ * POST multipart: action=save-xbrl-compiler-xlsx, file=(.xlsx) — deterministic compiler export (replaces prior for ticker)
  * POST multipart: action=save-xbrl-as-presented-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber — preferred (no base64 size blow-up)
  * POST JSON: { action: "save-xbrl-as-presented-xlsx", base64, filing } — legacy / small workbooks only
  * POST { action: "import-ticker-files" } — legacy no-op; returns current list
@@ -112,6 +114,32 @@ export async function POST(
       return NextResponse.json({ error: "Invalid multipart body." }, { status: 400 });
     }
     const action = fd.get("action");
+    if (action === "save-xbrl-compiler-xlsx") {
+      const rawFile = fd.get("file");
+      if (rawFile === null || typeof rawFile === "string") {
+        return NextResponse.json({ error: "Missing spreadsheet file." }, { status: 400 });
+      }
+      const blob = rawFile as Blob;
+      if (blob.size < 64) {
+        return NextResponse.json({ error: "Spreadsheet file is empty or too small." }, { status: 400 });
+      }
+      let buf: Buffer;
+      try {
+        buf = Buffer.from(await blob.arrayBuffer());
+      } catch {
+        return NextResponse.json({ error: "Could not read uploaded file." }, { status: 400 });
+      }
+      try {
+        const result = await saveDeterministicCompilerExcelToSavedDocuments(userId, ticker, buf);
+        if (!result.ok) {
+          return NextResponse.json({ error: result.error }, { status: 400 });
+        }
+        return NextResponse.json({ ok: true, item: result.item });
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Save failed";
+        return NextResponse.json({ error: message }, { status: 500 });
+      }
+    }
     if (action === "save-xbrl-as-presented-xlsx") {
       const rawFile = fd.get("file");
       if (rawFile === null || typeof rawFile === "string") {

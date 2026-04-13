@@ -28,7 +28,8 @@ function getPrisma(): PrismaClient {
   if (
     existing &&
     typeof existing.conversationMember?.findMany === "function" &&
-    typeof existing.eggHocMessage?.findMany === "function"
+    typeof existing.eggHocMessage?.findMany === "function" &&
+    typeof existing.userDailyNewsBatch?.upsert === "function"
   ) {
     return existing;
   }
