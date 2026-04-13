@@ -11,10 +11,12 @@ RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 COPY package.json package-lock.json ./
+# postinstall runs `prisma generate` — schema must exist before `npm ci`
+COPY prisma ./prisma/
+COPY prisma.config.ts ./
 RUN npm ci
 
 COPY . .
-RUN npx prisma generate
 RUN npm run build
 
 # --- Runtime ---
