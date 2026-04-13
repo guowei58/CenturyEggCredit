@@ -149,9 +149,10 @@ export function NewsFeed({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs" style={{ color: "var(--muted2)" }}>
-          Merged from configured feeds (Marketaux, Alpha Vantage, Finnhub, NewsAPI). API keys stay on the server. Results are saved
-          per ticker until you click Refresh. Relevance / recent order uses your alias box without a new fetch. NewsAPI uses the
-          domain allowlist in the news module config.
+          Merged from configured feeds (Marketaux, Alpha Vantage, Finnhub, NewsAPI, plus Major outlets RSS: Yahoo Finance headlines for
+          the symbol and Google News RSS scoped to WSJ, FT, Bloomberg, Yahoo Finance, Reuters, and AP — no extra API key). Results are
+          saved per ticker until you click Refresh. Relevance / recent order can use your alias box without a new fetch. NewsAPI uses
+          the domain allowlist in the news module config.
         </p>
         <button
           type="button"
@@ -178,7 +179,7 @@ export function NewsFeed({
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
           />
           <span className="mt-1 block text-[10px]" style={{ color: "var(--muted)" }}>
-            Used for NewsAPI on refresh and for local relevance ranking. Click Refresh to fetch with new aliases.
+            Used for NewsAPI and Major outlets RSS on refresh, and for local relevance ranking. Click Refresh to fetch with new aliases.
           </span>
         </label>
       </div>

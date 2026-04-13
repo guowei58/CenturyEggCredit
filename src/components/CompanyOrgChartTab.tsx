@@ -364,6 +364,7 @@ export function CompanyOrgChartTab({
               </div>
               <TabPromptApiButtons
                 userPrompt={prompt}
+                samplePublicPaths={ORG_CHART_SAMPLE_IMAGE_PATHS}
                 onResult={() => {
                   setClipboardFailed(false);
                 }}

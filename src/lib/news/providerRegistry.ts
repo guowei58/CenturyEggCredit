@@ -3,6 +3,7 @@ import { PRODUCTION_NEWS_PROVIDER_IDS } from "./constants";
 import { createAlphaVantageNewsProvider } from "./providers/alphaVantage";
 import { createFinnhubNewsProvider } from "./providers/finnhub";
 import { createMarketauxNewsProvider } from "./providers/marketaux";
+import { createMajorOutletRssNewsProvider } from "./providers/majorOutletRss";
 import { createNewsApiNewsProvider } from "./providers/newsapi";
 import { createMockNewsProvider, MOCK_NEWS_API_KEY } from "./providers/mockNewsProvider";
 import type { NewsProvider } from "./types";
@@ -57,6 +58,12 @@ export const NEWS_PROVIDER_REGISTRATIONS: ProviderRegistration[] = [
     displayName: "NewsAPI",
     getApiKey: () => getApiKeyEnv("newsapi"),
     create: createNewsApiNewsProvider,
+  },
+  {
+    id: "major_outlet_rss",
+    displayName: "Major outlets (RSS)",
+    getApiKey: () => getApiKeyEnv("major_outlet_rss"),
+    create: createMajorOutletRssNewsProvider,
   },
 ];
 

@@ -14,6 +14,9 @@ import { type DiscoveryHit, discoveryChannels, gatherRssDiscoveryHits, mergeSear
 const DISCLAIMER =
   "Best-effort public research discovery only. Results may be incomplete and do not represent the full research library of any provider. Some sources, including WSJ Pro Bankruptcy, may be partially or largely subscription-gated.";
 
+/** Minimum match score to show a row. A 30 cutoff dropped many plausible hits (e.g. ticker in title + paywall penalty = 29). */
+const MIN_MATCH_SCORE_TO_KEEP = 22;
+
 function defaultProviders(): ResearchProviderId[] {
   return PROVIDERS.filter((p) => p.enabledByDefault).map((p) => p.id);
 }
@@ -147,8 +150,8 @@ export async function runResearchFinderSearch(
         pageType: ex.pageType,
       });
 
-      // Precision-first cutoff: keep only meaningful matches
-      if (score.score < 30) continue;
+      // Precision-first cutoff: keep meaningful matches (see MIN_MATCH_SCORE_TO_KEEP)
+      if (score.score < MIN_MATCH_SCORE_TO_KEEP) continue;
       kept += 1;
 
       const now = nowIso();

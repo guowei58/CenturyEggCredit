@@ -24,6 +24,11 @@ type Props = {
   userPrompt: string;
   systemPrompt?: string;
   maxOutputTokens?: number;
+  /**
+   * Public paths under `/public` (e.g. `/org-chart-sample-lumen.png`) sent to the tab-prompt API
+   * so vision models receive the reference screenshots. Must match app allowlist server-side.
+   */
+  samplePublicPaths?: readonly string[];
   /** Called with model markdown/plain text when the API succeeds */
   onResult: (text: string) => void;
   /**
@@ -38,6 +43,7 @@ export function TabPromptApiButtons({
   userPrompt,
   systemPrompt,
   maxOutputTokens = 8192,
+  samplePublicPaths,
   onResult,
   persistAfterResult,
   className = "",
@@ -64,6 +70,7 @@ export function TabPromptApiButtons({
             userPrompt: trimmed,
             maxTokens: maxOutputTokens,
             ...(systemPrompt?.trim() ? { systemPrompt: systemPrompt.trim() } : {}),
+            ...(samplePublicPaths?.length ? { samplePublicPaths: [...samplePublicPaths] } : {}),
             ...modelPayloadForRun(provider, choice),
           }),
         });
@@ -81,7 +88,7 @@ export function TabPromptApiButtons({
         setPending(null);
       }
     },
-    [userPrompt, systemPrompt, maxOutputTokens, onResult, persistAfterResult]
+    [userPrompt, systemPrompt, maxOutputTokens, samplePublicPaths, onResult, persistAfterResult]
   );
 
   const beginRun = useCallback(

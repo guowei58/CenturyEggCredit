@@ -44,6 +44,8 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "historical-financials-prompt": "historical-financials-prompt.txt",
   /** AI consolidation of all saved SEC-XBRL Excel exports (Markdown). */
   "xbrl-consolidated-financials-ai": "xbrl-consolidated-financials-ai.md",
+  /** Latest deterministic XBRL compiler output JSON (restores Financial Statements tab after login / reload). */
+  "xbrl-deterministic-compiler-result": "xbrl-deterministic-compiler-result.json",
   "ai-credit-deck": "ai-credit-deck.txt",
   "employee-contacts": "employee-contacts.html",
   "industry-contacts": "industry-contacts.html",

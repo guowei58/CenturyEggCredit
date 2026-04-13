@@ -44,7 +44,9 @@ export function buildXQuery(params: {
 
   const ambiguous = isAmbiguousTicker(tk);
 
-  const entityTerms: string[] = [q(cashtag), tk];
+  // Cashtag ($TICKER) + quoted company / aliases only. Omitting the bare ticker avoids huge irrelevant
+  // match volume (short tokens match unrelated uses of the same letters).
+  const entityTerms: string[] = [q(cashtag)];
   if (name) entityTerms.push(q(name));
   for (const a of aliases) entityTerms.push(q(a));
 
@@ -53,7 +55,8 @@ export function buildXQuery(params: {
     return {
       query,
       ambiguous,
-      explanation: "Ticker not highly ambiguous; query uses cashtag, ticker, and company aliases (when provided).",
+      explanation:
+        "Ticker not highly ambiguous; query uses cashtag and company/alias phrases when provided (not the bare ticker, which adds noise).",
     };
   }
 

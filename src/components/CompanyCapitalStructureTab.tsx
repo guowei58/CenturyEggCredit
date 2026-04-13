@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
@@ -9,7 +9,11 @@ import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { CapitalStructureExcelFileBox } from "@/components/CapitalStructureExcelFileBox";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
-import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE, CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS } from "@/data/capital-structure-prompt";
+import {
+  CAPITAL_STRUCTURE_PROMPT_TEMPLATE,
+  CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS,
+  resolveCapitalStructurePrompt,
+} from "@/data/capital-structure-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
@@ -68,14 +72,30 @@ export function CompanyCapitalStructureTab({
   const [isExcelFileCollapsed, setIsExcelFileCollapsed] = useState(false);
 
   const safeTicker = ticker?.trim() ?? "";
+  const [appOrigin, setAppOrigin] = useState("");
+
+  useEffect(() => {
+    setAppOrigin(typeof window !== "undefined" ? window.location.origin : "");
+  }, []);
+
   const { template: capitalStructureTemplate } = usePromptTemplateOverride(
     "capital-structure",
     CAPITAL_STRUCTURE_PROMPT_TEMPLATE
   );
   const prompt = useMemo(() => {
     if (!safeTicker) return "";
-    return capitalStructureTemplate.replace(/\{\{TICKER\}\}/g, safeTicker);
-  }, [capitalStructureTemplate, safeTicker]);
+    return resolveCapitalStructurePrompt({
+      template: capitalStructureTemplate,
+      ticker: safeTicker,
+      appOrigin,
+    });
+  }, [capitalStructureTemplate, safeTicker, appOrigin]);
+
+  const resolvePromptPreview = useCallback(
+    (tpl: string) =>
+      safeTicker ? resolveCapitalStructurePrompt({ template: tpl, ticker: safeTicker, appOrigin }) : "",
+    [safeTicker, appOrigin]
+  );
 
   useEffect(() => {
     setStatusMessage(null);
@@ -325,7 +345,7 @@ export function CompanyCapitalStructureTab({
               <PromptTemplateBox
                 tabId="capital-structure"
                 defaultTemplate={CAPITAL_STRUCTURE_PROMPT_TEMPLATE}
-                resolve={(tpl) => (safeTicker ? tpl.replace(/\{\{TICKER\}\}/g, safeTicker) : "")}
+                resolve={resolvePromptPreview}
                 className="mb-3"
               />
               <div className="tab-prompt-ai-actions-grid mb-2">
@@ -372,6 +392,7 @@ export function CompanyCapitalStructureTab({
               </div>
               <TabPromptApiButtons
                 userPrompt={prompt}
+                samplePublicPaths={CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS}
                 onResult={() => {
                   setClipboardFailed(false);
                 }}

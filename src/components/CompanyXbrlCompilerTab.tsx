@@ -815,7 +815,14 @@ function DiagnosticsPanel({ result }: { result: Result | null }) {
 
 /* ── main component ────────────────────────────────────────────────────── */
 
-export function CompanyXbrlCompilerTab({ ticker }: { ticker: string }) {
+export function CompanyXbrlCompilerTab({
+  ticker,
+  savedDocumentsRev = 0,
+}: {
+  ticker: string;
+  /** Increment when Saved Documents gain new SEC-XBRL workbooks (e.g. after bulk save). */
+  savedDocumentsRev?: number;
+}) {
   const { data: session } = useSession();
   const [panel, setPanel] = useState<Panel>("compile");
   const [status, setStatus] = useState<Status>("idle");
@@ -852,8 +859,14 @@ export function CompanyXbrlCompilerTab({ ticker }: { ticker: string }) {
   }, [panel]);
 
   useEffect(() => {
-    if (!session?.user || !ticker || loadedRef.current === ticker) return;
-    loadedRef.current = ticker;
+    const uid = session?.user?.id;
+    if (!uid || !ticker) {
+      if (!uid) loadedRef.current = "";
+      return;
+    }
+    const slot = `${uid}:${ticker}:${savedDocumentsRev}`;
+    if (loadedRef.current === slot) return;
+    loadedRef.current = slot;
     setLoading(true);
     fetch(`/api/xbrl-compiler/${encodeURIComponent(ticker)}`)
       .then((r) => r.json())
@@ -867,10 +880,25 @@ export function CompanyXbrlCompilerTab({ ticker }: { ticker: string }) {
         }));
         setFiles(list);
         setSelected(new Set(list.filter((f) => f.isXbrl).map((f) => f.filename)));
+
+        const last = j.lastCompiledResult as Result | null | undefined;
+        // Only hydrate compiled statements from server on first load per rev cycle — not after bulk-save refetch (would jump tabs).
+        if (
+          savedDocumentsRev === 0 &&
+          last &&
+          last.ok &&
+          last.models &&
+          Object.keys(last.models).length > 0
+        ) {
+          setResult(last);
+          _resultCache.set(ticker, last);
+          setStatus("done");
+          setPanel("statements");
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [session, ticker]);
+  }, [session?.user?.id, ticker, savedDocumentsRev]);
 
   const toggle = useCallback((f: string) => {
     setSelected((prev) => {

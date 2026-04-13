@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { listSavedDocuments } from "@/lib/saved-documents";
 import { getUserSavedDocumentBody } from "@/lib/user-workspace-store";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
+import { readUserTickerDocument, writeUserTickerDocument } from "@/lib/user-workspace-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -154,7 +155,17 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
     isXbrl: XBRL_XLSX_RE.test(it.filename),
   }));
 
-  return NextResponse.json({ ticker: sym, xbrlFileCount: xbrlFiles.length, xbrlFiles, allFiles });
+  let lastCompiledResult: unknown = null;
+  const raw = await readUserTickerDocument(userId, sym, "xbrl-deterministic-compiler-result");
+  if (raw) {
+    try {
+      lastCompiledResult = JSON.parse(raw) as unknown;
+    } catch {
+      lastCompiledResult = null;
+    }
+  }
+
+  return NextResponse.json({ ticker: sym, xbrlFileCount: xbrlFiles.length, xbrlFiles, allFiles, lastCompiledResult });
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ ticker: string }> }) {
@@ -177,10 +188,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ ticker:
 
   try {
     const result = await runPython(mat.dir, outDir);
-    return NextResponse.json(
-      { ...result, inputFileCount: mat.count },
-      { status: (result as { ok?: boolean }).ok ? 200 : 500 },
-    );
+    const merged = { ...result, inputFileCount: mat.count } as Record<string, unknown>;
+    if ((result as { ok?: boolean }).ok) {
+      const saved = await writeUserTickerDocument(
+        userId,
+        sym,
+        "xbrl-deterministic-compiler-result",
+        JSON.stringify(merged),
+      );
+      if (!saved.ok) {
+        console.warn("[xbrl-compiler] Could not persist last compiled result:", saved.error);
+      }
+    }
+    return NextResponse.json(merged, { status: (result as { ok?: boolean }).ok ? 200 : 500 });
   } finally {
     await cleanup(mat.dir);
   }

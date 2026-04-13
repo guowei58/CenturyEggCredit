@@ -466,7 +466,7 @@ describe("aggregator resilience and extensibility", () => {
     );
     const out = await aggregateNews({ ticker: "IBM" });
     expect(out.disabledProviders).toContain("marketaux");
-    expect(out.activeProviders.sort()).toEqual(["alpha_vantage", "finnhub", "newsapi"]);
+    expect(out.activeProviders.sort()).toEqual(["alpha_vantage", "finnhub", "major_outlet_rss", "newsapi"]);
     vi.unstubAllGlobals();
     __resetProviderSingletonsForTests();
   });

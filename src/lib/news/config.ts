@@ -28,6 +28,7 @@ function envKey(id: KnownNewsProviderId, suffix: string): string {
     alpha_vantage: "ALPHA_VANTAGE",
     finnhub: "FINNHUB",
     newsapi: "NEWSAPI",
+    major_outlet_rss: "MAJOR_OUTLET_RSS",
   };
   return `NEWS_PROVIDER_${map[id]}_${suffix}`;
 }
@@ -41,6 +42,7 @@ export function loadProviderConfigsFromEnv(): Map<string, ProviderConfig> {
     alpha_vantage: { priority: 2 },
     finnhub: { priority: 3 },
     newsapi: { priority: 4 },
+    major_outlet_rss: { priority: 5 },
   };
 
   const out = new Map<string, ProviderConfig>();
@@ -60,8 +62,14 @@ export function getApiKeyEnv(id: KnownNewsProviderId): string | undefined {
     alpha_vantage: "ALPHA_VANTAGE_API_KEY",
     finnhub: "FINNHUB_API_KEY",
     newsapi: "NEWSAPI_KEY",
+    major_outlet_rss: "NEWS_MAJOR_OUTLET_RSS_KEY",
   };
-  return process.env[keys[id]]?.trim() || undefined;
+  const v = process.env[keys[id]]?.trim();
+  if (id === "major_outlet_rss") {
+    if (process.env.NEWS_MAJOR_OUTLET_RSS_DISABLED === "1") return undefined;
+    return v || "public";
+  }
+  return v || undefined;
 }
 
 /**

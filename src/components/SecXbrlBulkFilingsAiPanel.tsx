@@ -43,12 +43,15 @@ export function SecXbrlBulkFilingsAiPanel({
   ticker,
   showBulkSave = true,
   showAiConsolidation = true,
+  onAfterBulkSave,
 }: {
   ticker: string;
   /** SEC XBRL bulk save list + button. Default true. */
   showBulkSave?: boolean;
   /** AI consolidation card (ingests saved workbooks). Default true. */
   showAiConsolidation?: boolean;
+  /** Called when bulk save finishes (success or partial failure) so other UI can refresh Saved Documents lists. */
+  onAfterBulkSave?: () => void;
 }) {
   const tk = (ticker ?? "").trim().toUpperCase();
   const { status: authStatus } = useSession();
@@ -260,6 +263,7 @@ export function SecXbrlBulkFilingsAiPanel({
                     } finally {
                       setBulkSaving(false);
                       setBulkProgress(null);
+                      onAfterBulkSave?.();
                     }
                   })();
                 }}

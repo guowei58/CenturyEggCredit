@@ -5,6 +5,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   alpha_vantage: "Alpha Vantage",
   finnhub: "Finnhub",
   newsapi: "NewsAPI",
+  major_outlet_rss: "Major outlets (RSS)",
   mock: "Mock",
 };
 

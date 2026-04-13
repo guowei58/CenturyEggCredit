@@ -11,7 +11,7 @@ import {
 import { buildCompanyHistoryAiPrompt, PROMPT_TEMPLATE as COMPANY_HISTORY_PROMPT_TEMPLATE } from "@/components/CompanyHistoryTab";
 import { buildCreditTimelineAiPrompt, CREDIT_TIMELINE_PROMPT_TEMPLATE } from "@/components/CompanyCreditTimelineTab";
 import { BUSINESS_MODEL_PROMPT_TEMPLATE } from "@/data/business-model-prompt";
-import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE } from "@/data/capital-structure-prompt";
+import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE, resolveCapitalStructurePrompt } from "@/data/capital-structure-prompt";
 import { COMPETITORS_PROMPT_TEMPLATE } from "@/data/competitors-prompt";
 import { CUSTOMERS_PROMPT_TEMPLATE } from "@/data/customers-prompt";
 import { SUPPLIERS_PROMPT_TEMPLATE } from "@/data/suppliers-prompt";
@@ -220,7 +220,11 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
     {
       label: "Capital structure",
       saveKey: "capital-structure",
-      prompt: ov("capital-structure", CAPITAL_STRUCTURE_PROMPT_TEMPLATE).replace(/\{\{TICKER\}\}/g, tk),
+      prompt: resolveCapitalStructurePrompt({
+        template: ov("capital-structure", CAPITAL_STRUCTURE_PROMPT_TEMPLATE),
+        ticker: tk,
+        appOrigin: origin,
+      }),
     },
     {
       label: "Org chart",

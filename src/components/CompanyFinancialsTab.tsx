@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui";
 import { HistoricalFinancialsAiWorkflow } from "@/components/HistoricalFinancialsAiWorkflow";
 import { HistoricalFinancialsTemplatesPanel } from "@/components/HistoricalFinancialsTemplatesPanel";
@@ -18,6 +18,12 @@ export function CompanyFinancialsTab({
   scrollToBadSection?: boolean;
 }) {
   const safeTicker = ticker?.trim() ?? "";
+  /** Bumps after SEC XBRL bulk save so the deterministic compiler reloads Saved Documents without a full page refresh. */
+  const [savedDocumentsRev, setSavedDocumentsRev] = useState(0);
+
+  useEffect(() => {
+    setSavedDocumentsRev(0);
+  }, [safeTicker]);
 
   useEffect(() => {
     if (!scrollToBadSection) return;
@@ -51,15 +57,20 @@ export function CompanyFinancialsTab({
           <p>
             The bad is when we use Python to combine the XBRL files into a usable spreadsheet. This deterministic method gets us 95% of the
             way there. But the 5% plays hide and seek in your financial model. It&apos;s not the end of the world, but it might require you to
-            make sure everything ties out. Remember - Adam &amp; Eve trusted a python and paid the ultimate price. Always verify.
+            make sure everything ties out. Remember - Adam &amp; Eve trusted a python and paid the ultimate price. And because of that, you and I
+            have to work for a living. SMH very hard right now.
           </p>
           <p>
             Save the filing workbooks as <span className="font-mono">.xlsx</span> with bulk save below before you run the deterministic
             compiler—the compiler uses those saved files.
           </p>
         </div>
-        <SecXbrlBulkFilingsAiPanel ticker={safeTicker} showAiConsolidation={false} />
-        <CompanyXbrlCompilerTab ticker={safeTicker} />
+        <SecXbrlBulkFilingsAiPanel
+          ticker={safeTicker}
+          showAiConsolidation={false}
+          onAfterBulkSave={() => setSavedDocumentsRev((n) => n + 1)}
+        />
+        <CompanyXbrlCompilerTab ticker={safeTicker} savedDocumentsRev={savedDocumentsRev} />
       </section>
 
       <section className="space-y-4 border-t border-[var(--border2)] pt-10">
@@ -68,9 +79,9 @@ export function CompanyFinancialsTab({
         </h2>
         <div className="max-w-3xl space-y-3 text-base leading-relaxed" style={{ color: "var(--text)" }}>
           <p>
-            The ugly is when we ask AI to consolidate XBRL data into a consolidated financials report. Do you feel lucky punk?! Honestly the
-            results are not bad, and gets us 70-80% of the way there. But AI-generated model is like a box of chocolate - you never know what
-            you gonna get.
+            The ugly is when we ask AI to consolidate XBRL data into a consolidated financials report. Do you feel lucky punk?! The results are
+            very inconsistent. Quality varies a lot by model and how they feel at the time of the request. AI-generated model is like a box of
+            chocolate - you never know what you gonna get.
           </p>
         </div>
         <SecXbrlBulkFilingsAiPanel ticker={safeTicker} showBulkSave={false} />

@@ -7,11 +7,24 @@ import { runXSearch } from "./service";
 import type { NormalizedXPost } from "./types";
 
 describe("xSearch query builder", () => {
-  it("uses cashtag and lang filter", () => {
+  it("uses cashtag and lang filter (no bare ticker token)", () => {
     const q = buildXQuery({ ticker: "IBM", includeRetweets: false, language: "en" });
     expect(q.query).toContain("$IBM");
     expect(q.query).toContain("lang:en");
     expect(q.query).toContain("-is:retweet");
+    expect(q.query).not.toMatch(/\bOR\s+IBM\b/);
+  });
+
+  it("adds quoted company name alongside cashtag", () => {
+    const q = buildXQuery({
+      ticker: "CABO",
+      companyName: "Cable One, Inc.",
+      includeRetweets: false,
+      language: "en",
+    });
+    expect(q.query).toContain("$CABO");
+    expect(q.query).toContain("Cable One");
+    expect(q.query).not.toMatch(/\bOR\s+CABO\b/);
   });
 
   it("tightens query for ambiguous tickers", () => {

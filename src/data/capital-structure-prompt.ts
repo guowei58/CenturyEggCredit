@@ -476,5 +476,32 @@ IMPORTANT RULES
 - the final output must be a working Excel spreadsheet or code that creates one
 
 The final deliverable should feel like a real analyst-built capital structure workbook for {{TICKER}}, prepared for credit underwriting.
+
+==================================================
+REFERENCE SAMPLE IMAGES (attach with this prompt in vision-capable tools)
+==================================================
+[SAMPLE_IMAGE_URLS]
 `;
+
+function capitalStructureSampleImageUrlsBlock(appOrigin: string): string {
+  const origin = appOrigin.trim();
+  return !origin
+    ? CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS.map(
+        (p, i) =>
+          `${i + 1}. After you open this app in a browser, use: <your app URL>${p} (or attach from the Capital Structure tab thumbnails).`
+      ).join("\n")
+    : CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS.map((p, i) => `${i + 1}. ${origin}${p}`).join("\n");
+}
+
+/** Apply ticker and sample-image URL block (same pattern as org-chart). */
+export function resolveCapitalStructurePrompt(params: {
+  template: string;
+  ticker: string;
+  appOrigin: string;
+}): string {
+  const safeTicker = params.ticker.trim();
+  if (!safeTicker) return "";
+  const urls = capitalStructureSampleImageUrlsBlock(params.appOrigin);
+  return params.template.replace(/\{\{TICKER\}\}/g, safeTicker).replace(/\[SAMPLE_IMAGE_URLS\]/g, urls);
+}
 

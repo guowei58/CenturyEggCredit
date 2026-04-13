@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { normalizeAiProvider, type AiProvider } from "@/lib/ai-provider";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
+import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
-import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
+import { isProviderConfigured, llmCompleteConversation, llmCompleteSingle } from "@/lib/llm-router";
+import { filterAllowedSamplePublicPaths, loadPublicSampleImagesAsParts } from "@/lib/tab-prompt-sample-assets";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
@@ -22,7 +24,8 @@ Answer thoroughly. Use Markdown (headings, lists, tables) when it improves clari
 The server prepends the current date/time and adds rigor instructions (self-check; for Claude with web search—verify recent facts when needed). Treat those as binding.`;
 
 /**
- * POST { provider, userPrompt, systemPrompt?, maxTokens?, claudeModel?, openaiModel?, geminiModel?, deepseekModel? }
+ * POST { provider, userPrompt, systemPrompt?, maxTokens?, samplePublicPaths?, claudeModel?, openaiModel?, geminiModel?, deepseekModel? }
+ * Optional `samplePublicPaths` (e.g. ["/org-chart-sample-lumen.png"]) attaches those /public images for vision-capable providers; DeepSeek rejects multimodal.
  * — one-shot completion for “prompt sidebar” tabs (uses server API keys).
  */
 export async function POST(request: Request) {
@@ -44,6 +47,7 @@ export async function POST(request: Request) {
     userPrompt?: unknown;
     systemPrompt?: unknown;
     maxTokens?: unknown;
+    samplePublicPaths?: unknown;
     claudeModel?: unknown;
     openaiModel?: unknown;
     geminiModel?: unknown;
@@ -83,18 +87,54 @@ export async function POST(request: Request) {
   }
 
   const models = resolveCommitteeChatModels(b);
-  const result = await llmCompleteSingle(provider, system, user, {
-    maxTokens,
-    claudeModel: models.claudeModel,
-    openaiModel: models.openaiModel,
-    geminiModel: models.geminiModel,
-    deepseekModel: models.deepseekModel,
-    claudeTools:
-      provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
-    openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
-    geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
-    apiKeys: bundle,
-  });
+  const samplePaths = filterAllowedSamplePublicPaths(b.samplePublicPaths);
+
+  if (samplePaths.length > 0 && provider === "deepseek") {
+    return NextResponse.json(
+      {
+        error:
+          "DeepSeek in OREO is text-only. Switch to Claude or ChatGPT (or Gemini) to send reference sample images with this prompt.",
+      },
+      { status: 400 }
+    );
+  }
+
+  let messages: ChatConversationTurn[] | null = null;
+  if (samplePaths.length > 0) {
+    const loaded = await loadPublicSampleImagesAsParts(samplePaths);
+    if (!loaded.ok) {
+      return NextResponse.json({ error: loaded.error }, { status: 400 });
+    }
+    const content: ChatUserContentPart[] = [{ type: "text", text: user }, ...loaded.parts];
+    messages = [{ role: "user", content }];
+  }
+
+  const result =
+    messages !== null
+      ? await llmCompleteConversation(provider, system, messages, {
+          maxTokens,
+          claudeModel: models.claudeModel,
+          openaiModel: models.openaiModel,
+          geminiModel: models.geminiModel,
+          deepseekModel: models.deepseekModel,
+          claudeTools:
+            provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
+          openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
+          geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
+          apiKeys: bundle,
+        })
+      : await llmCompleteSingle(provider, system, user, {
+          maxTokens,
+          claudeModel: models.claudeModel,
+          openaiModel: models.openaiModel,
+          geminiModel: models.geminiModel,
+          deepseekModel: models.deepseekModel,
+          claudeTools:
+            provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
+          openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
+          geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
+          apiKeys: bundle,
+        });
 
   if (!result.ok) {
     const status = result.status && result.status >= 400 && result.status < 600 ? result.status : 502;

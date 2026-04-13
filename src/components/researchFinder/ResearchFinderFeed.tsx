@@ -194,6 +194,20 @@ export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; co
         </div>
       ) : null}
 
+      {!error && summary && summary.candidateUrls > 0 && results.length === 0 ? (
+        <div
+          className="rounded-md border border-dashed px-3 py-2 text-xs leading-relaxed"
+          style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+        >
+          We found candidate links from the selected providers, but none scored high enough after title/snippet analysis (paywalled or generic
+          pages score lower). Try adding{" "}
+          <strong className="font-semibold" style={{ color: "var(--text)" }}>
+            aliases
+          </strong>
+          , tightening the company name, or running search again later.
+        </div>
+      ) : null}
+
       <ul className="space-y-3">
         {results.map((r) => (
           <li key={r.id}>

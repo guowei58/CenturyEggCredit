@@ -31,13 +31,18 @@ export function LoginForm({
         password,
         redirect: false,
       });
-      if (!res?.ok) {
-        if (res?.code === "email_not_verified") {
+      // NextAuth v5: failed credentials often return HTTP 200 with `error` in the callback URL, so `ok` is still true.
+      if (res?.error) {
+        if (res.code === "email_not_verified") {
           setError("Confirm your email before signing in. Check your inbox for the link we sent when you registered.");
           setShowUnverifiedHelp(true);
           return;
         }
         setError("Wrong email or password.");
+        return;
+      }
+      if (!res?.ok) {
+        setError("Could not sign you in. Check your connection and try again.");
         return;
       }
       if (res?.url) {
@@ -132,7 +137,11 @@ export function LoginForm({
             </Link>
           </div>
           {error && (
-            <p className="text-sm" style={{ color: "var(--accent)" }}>
+            <p
+              role="alert"
+              className="rounded-md border px-3 py-2 text-sm font-medium"
+              style={{ color: "var(--danger)", borderColor: "rgba(239, 68, 68, 0.45)", background: "rgba(239, 68, 68, 0.08)" }}
+            >
               {error}
             </p>
           )}
