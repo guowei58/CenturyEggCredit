@@ -1,4 +1,5 @@
 "use client";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui";
@@ -69,7 +70,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
     setClipboardFailed(false);
     setStatusMessage(null);
     try {
-      await navigator.clipboard.writeText(prompt);
+      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
       setStatusMessage("Copied to clipboard.");
     } catch {
       setClipboardFailed(true);
@@ -237,7 +238,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
                 className="rounded border p-3 mb-2 text-xs max-h-[min(40vh,320px)] overflow-y-auto whitespace-pre-wrap"
                 style={{ borderColor: "var(--border2)", color: "var(--text)", background: "var(--card)" }}
               >
-                {prompt}
+                {withPromptBenchmarkNotice(prompt)}
               </div>
               <div className="tab-prompt-ai-actions-grid mb-2">
                 <button

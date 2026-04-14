@@ -6,11 +6,11 @@ import { appendJob, getProject, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import type { AiProvider } from "@/lib/ai-provider";
 import { defaultServerProvider, normalizeAiProvider } from "@/lib/ai-provider";
-import { resolveCreditMemoModels } from "@/lib/ai-model-from-request";
+import { creditMemoPrimaryModelId, resolveCreditMemoModels } from "@/lib/ai-model-from-request";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const llmAuth = await getAuthenticatedLlmContext();
@@ -75,15 +75,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     ? (await import("@/data/credit-memo-voices")).creditMemoVoiceSystemPrompt(voiceId)
     : null;
 
+  const models = resolveCreditMemoModels(body);
+  const llmModelUsed = creditMemoPrimaryModelId(provider, models);
+
   const result = await runMemoGeneration({
     userId,
     project,
     targetWords,
     memoTitle,
     provider,
-    useTemplate: body.useTemplate === true,
+    /** Default on: follow uploaded DOCX outline when present (client may send false to use generic sections). */
+    useTemplate: body.useTemplate !== false,
     voiceSystemPrompt,
-    models: resolveCreditMemoModels(body),
+    models,
     apiKeys: bundle,
   });
 
@@ -140,6 +144,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
             targetWords,
             provider,
             voice: voiceId,
+            llmModel: llmModelUsed,
             createdAt: done.createdAt,
             templateFilename: done.templateFilename ?? null,
             templateId: done.templateId ?? null,
@@ -160,5 +165,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     jobId,
     outline: result.outline,
     markdown: result.markdown,
+    llmModelUsed,
   });
 }

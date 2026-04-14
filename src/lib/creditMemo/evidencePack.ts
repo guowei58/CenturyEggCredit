@@ -8,17 +8,20 @@ import { rankChunksByRelevance } from "./chunkRanker";
  */
 export function buildEvidencePackSync(
   project: CreditMemoProject,
-  opts?: { maxChars?: number; query?: string; perFileMaxChars?: number }
+  opts?: { maxChars?: number; query?: string; perFileMaxChars?: number; sourceIds?: Set<string> }
 ): string {
   const cfg = loadCreditMemoConfig();
   let budget = Math.max(40_000, Math.round(opts?.maxChars ?? cfg.maxContextChars));
   const parts: string[] = [];
 
-  const header = `# SOURCE PACK\nTicker: ${project.ticker}\nFolder: ${project.resolvedFolderPath}\nFiles ingested: ${project.sources.length}\n\n`;
+  const sid = opts?.sourceIds;
+  const sourceCount = sid?.size ? project.sources.filter((s) => sid.has(s.id)).length : project.sources.length;
+  const header = `# SOURCE PACK\nTicker: ${project.ticker}\nFolder: ${project.resolvedFolderPath}\nFiles ingested: ${sourceCount}\n\n`;
   budget -= header.length;
   parts.push(header);
 
-  const ordered = sortSourcesForEvidence(project.sources);
+  let ordered = sortSourcesForEvidence(project.sources);
+  if (sid?.size) ordered = ordered.filter((s) => sid.has(s.id));
   const perFileMax = Math.max(2_000, Math.round(opts?.perFileMaxChars ?? 22_000));
   const query = (opts?.query ?? "").trim();
 

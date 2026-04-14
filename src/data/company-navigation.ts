@@ -41,7 +41,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Capital Allocation",
           "Credit Timeline",
           "Out-of-the-Box Ideas",
-          "IR Page Indexer",
         ],
       },
     ],
@@ -105,7 +104,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         label: "Desktop Risks",
-        tabs: ["Risk from 10K", "Forensic Accounting"],
+        tabs: ["Risk from 10K"],
       },
       {
         label: "Claims",
@@ -156,14 +155,13 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
-          "KPI",
+          "KPI Commentary",
+          "Forensic Accounting",
           "LME Analysis",
           "Recommendation",
           "AI Memo and Deck",
-          "Pre-Mortem Analysis",
           "Literary References",
           "Biblical References",
-          "Jokes",
         ],
       },
     ],

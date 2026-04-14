@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 import { Card } from "@/components/ui";
+import { AiProviderChipRow } from "@/components/credit-memo/AiProviderChipRow";
+import { SourceInventoryPanel } from "@/components/credit-memo/SourceInventoryPanel";
+import { SavedRichText } from "@/components/SavedRichText";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
-import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
-import { AiModelPicker } from "@/components/AiModelPicker";
+import { shortModelDisplayName } from "@/lib/ai-model-options";
+import { modelOverridePayloadForProvider, resolvedUserModelIdForProvider } from "@/lib/ai-model-prefs-client";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import type { CreditMemoVoiceId } from "@/data/credit-memo-voices";
 import {
@@ -29,9 +30,8 @@ import type {
 const MEMO_FIELD_CLASS =
   "w-full rounded border px-2 py-1 border-[var(--border2)] bg-[var(--card2)] text-[var(--text)] caret-[var(--accent)] shadow-sm [&::placeholder]:text-[var(--muted2)]";
 
-/** Primary, deck, and voice generators: same width; stretch to row height on wrap. */
-const MEMO_GENERATE_BTN_CLASS =
-  "inline-flex min-h-[3.5rem] w-[17.5rem] shrink-0 items-center justify-center rounded border px-3 py-2 text-center text-sm font-semibold leading-snug disabled:opacity-50";
+const MEMO_ACTION_BTN =
+  "rounded border px-4 py-2 text-sm font-medium disabled:opacity-50 min-h-[2.75rem] inline-flex items-center justify-center shrink-0";
 
 type SavedMemoVariantId =
   | "latest"
@@ -50,15 +50,16 @@ type SavedMemoVariant = {
   sourcePackKey: string;
 };
 
-type MemoWorkspacePanel = "folder" | "template" | "outline" | "memo" | "export";
+type MemoWorkspacePanel = "folder" | "template" | "memo" | "export" | "libraryDeck";
 
-/** Draft JSON may still use legacy `"sources"`; this tab folds that into the Folder step. */
+/** Draft JSON may still use legacy `"sources"` or removed `"outline"` panel. */
 function normalizeDraftPanelToWorkspace(
   markdown: string | null | undefined,
   saved: CreditMemoClientDraft["panel"]
 ): MemoWorkspacePanel {
   if (!markdown?.trim()) return "folder";
   if (saved === "sources") return "folder";
+  if (saved === "outline") return "memo";
   return saved;
 }
 
@@ -113,11 +114,6 @@ const SAVED_MEMO_VARIANTS: readonly SavedMemoVariant[] = [
   },
 ] as const;
 
-type SavedMemoLoaded = {
-  markdown: string;
-  meta: { createdAt?: string; memoTitle?: string; targetWords?: number; provider?: string; jobId?: string } | null;
-};
-
 function downloadTextFile(filename: string, text: string, mime: string) {
   const blob = new Blob([text], { type: mime });
   const url = URL.createObjectURL(blob);
@@ -133,6 +129,36 @@ function downloadTextFile(filename: string, text: string, mime: string) {
 function variantLabelForLibrary(voice: CreditMemoVoiceId | null | undefined): string {
   if (!voice) return "latest";
   return voice;
+}
+
+function libraryEntryDetailText(row: MemoDeckLibraryEntry): string {
+  if (row.kind === "memo") {
+    const bits: string[] = [];
+    if (row.variant) bits.push(`Variant: ${row.variant}`);
+    const prov = row.provider;
+    const canPreset =
+      prov === "claude" || prov === "openai" || prov === "gemini" || prov === "deepseek";
+    if (row.llmModel && canPreset) {
+      const short = shortModelDisplayName(prov, row.llmModel);
+      bits.push(short === row.llmModel ? `Model: ${short}` : `Model: ${short} (${row.llmModel})`);
+    } else if (row.llmModel) {
+      bits.push(`Model: ${row.llmModel}`);
+    } else if (row.provider) {
+      bits.push(`Model not stored — provider was ${row.provider} (re-run memo & library save to record exact model)`);
+    }
+    return bits.join(" · ") || "—";
+  }
+  const prov = row.provider;
+  const canPreset = prov === "claude" || prov === "openai" || prov === "gemini" || prov === "deepseek";
+  if (row.llmModel && canPreset) {
+    const short = shortModelDisplayName(prov, row.llmModel);
+    return short === row.llmModel
+      ? `PowerPoint · ${short}`
+      : `PowerPoint · ${short} (${row.llmModel})`;
+  }
+  if (row.llmModel) return `PowerPoint · ${row.llmModel}`;
+  if (row.provider) return `PowerPoint · model not stored (${row.provider})`;
+  return "PowerPoint";
 }
 
 function TabButton({
@@ -182,7 +208,9 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   const [ingestError, setIngestError] = useState<string | null>(null);
   const [project, setProject] = useState<CreditMemoProject | null>(null);
 
-  const [genLoading, setGenLoading] = useState(false);
+  /** Which memo action is in flight: default button vs a character voice (so loading text shows on the right control). */
+  const [memoGenPhase, setMemoGenPhase] = useState<null | "default" | CreditMemoVoiceId>(null);
+  const memoGenBusy = memoGenPhase !== null;
   const [genError, setGenError] = useState<string | null>(null);
   const [deckGenLoading, setDeckGenLoading] = useState(false);
   const [deckGenError, setDeckGenError] = useState<string | null>(null);
@@ -190,14 +218,16 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   const [outline, setOutline] = useState<MemoOutline | null>(null);
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [lastVoice, setLastVoice] = useState<CreditMemoVoiceId | null>(null);
-  const [savedMemos, setSavedMemos] = useState<Partial<Record<SavedMemoVariantId, SavedMemoLoaded>>>({});
-  const [savedMemosLoading, setSavedMemosLoading] = useState(false);
-
   const [libraryEntries, setLibraryEntries] = useState<MemoDeckLibraryEntry[]>([]);
   const [libraryLoading, setLibraryLoading] = useState(false);
   const [libraryError, setLibraryError] = useState<string | null>(null);
   const [libraryBusyId, setLibraryBusyId] = useState<string | null>(null);
+  /** Library deck row opened via View (download lives on the Deck preview card). */
+  const [libraryDeckId, setLibraryDeckId] = useState<string | null>(null);
   const [saveToLibraryBusy, setSaveToLibraryBusy] = useState(false);
+  /** Word / MD / HTML download from current preview (not stale job links). */
+  const [screenExportBusy, setScreenExportBusy] = useState<null | "docx" | "md" | "html">(null);
+  const [screenExportError, setScreenExportError] = useState<string | null>(null);
 
   /** After session draft hydrate; avoids overwriting storage before load runs. */
   const [draftReady, setDraftReady] = useState(false);
@@ -208,9 +238,18 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     if (n) setProvider(n);
   }, [prefsReady, preferences.aiProvider]);
 
+  const persistProvider = useCallback(
+    (p: AiProvider) => {
+      setProvider(p);
+      updatePreferences((prev) => ({ ...prev, aiProvider: p }));
+    },
+    [updatePreferences]
+  );
+
   /** Restore draft from user preferences, then server-saved latest memo. */
   useEffect(() => {
     setDraftReady(false);
+    setLibraryDeckId(null);
     if (!tk) {
       setDraftReady(true);
       return;
@@ -271,42 +310,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     })();
   }, [tk, prefsReady, defaultTitle]);
 
-  // Load saved memo variants (latest + voices) so they are visible/downloadable.
-  useEffect(() => {
-    if (!tk) return;
-    let cancelled = false;
-    setSavedMemosLoading(true);
-    (async () => {
-      const out: Partial<Record<SavedMemoVariantId, SavedMemoLoaded>> = {};
-      await Promise.all(
-        SAVED_MEMO_VARIANTS.map(async (v) => {
-          const md = await fetchSavedFromServer(tk, v.memoKey as any);
-          if (!md || !md.trim()) return;
-          const metaRaw = await fetchSavedFromServer(tk, v.metaKey as any);
-          let meta: SavedMemoLoaded["meta"] = null;
-          if (metaRaw && metaRaw.trim()) {
-            try {
-              meta = JSON.parse(metaRaw) as SavedMemoLoaded["meta"];
-            } catch {
-              meta = null;
-            }
-          }
-          out[v.id] = { markdown: md, meta };
-        })
-      );
-      if (!cancelled) setSavedMemos(out);
-    })()
-      .catch(() => {
-        if (!cancelled) setSavedMemos({});
-      })
-      .finally(() => {
-        if (!cancelled) setSavedMemosLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [tk]);
-
   const loadLibrary = useCallback(async () => {
     if (!tk) return;
     setLibraryError(null);
@@ -333,8 +336,12 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   }, [tk, loadLibrary]);
 
   const pushMemoToLibrary = useCallback(
-    async (markdownText: string, voice: CreditMemoVoiceId | null) => {
+    async (markdownText: string, voice: CreditMemoVoiceId | null, llmModelUsed?: string | null) => {
       if (!tk || !markdownText.trim()) return;
+      const llmModel =
+        (typeof llmModelUsed === "string" && llmModelUsed.trim() ? llmModelUsed.trim() : null) ??
+        resolvedUserModelIdForProvider(provider) ??
+        null;
       try {
         const res = await fetch(`/api/credit-memo/library/${encodeURIComponent(tk)}`, {
           method: "POST",
@@ -345,6 +352,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             markdown: markdownText,
             variant: variantLabelForLibrary(voice),
             provider,
+            llmModel,
           }),
         });
         if (!res.ok) {
@@ -359,13 +367,61 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     [tk, memoTitle, defaultTitle, provider, loadLibrary]
   );
 
+  const downloadMemoOnScreen = useCallback(
+    async (format: "docx" | "md" | "html") => {
+      if (!markdown?.trim()) return;
+      setScreenExportError(null);
+      setScreenExportBusy(format);
+      try {
+        const res = await fetch("/api/credit-memo/memo/export-from-body", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            format,
+            markdown,
+            memoTitle: memoTitle.trim() || defaultTitle,
+            ticker: tk,
+          }),
+        });
+        if (!res.ok) {
+          const j = (await res.json().catch(() => ({}))) as { error?: string };
+          throw new Error(j.error || `Export failed (${res.status})`);
+        }
+        const cd = res.headers.get("Content-Disposition") ?? "";
+        const m = /filename="([^"]+)"/i.exec(cd);
+        const filename =
+          m?.[1] ?? (format === "docx" ? "credit-memo.docx" : format === "html" ? "credit-memo.html" : "credit-memo.md");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        setScreenExportError(e instanceof Error ? e.message : "Download failed");
+      } finally {
+        setScreenExportBusy(null);
+      }
+    },
+    [markdown, memoTitle, defaultTitle, tk]
+  );
+
   const pushDeckToLibrary = useCallback(
-    async (blob: Blob, deckTitle: string) => {
+    async (
+      blob: Blob,
+      deckTitle: string,
+      meta?: { provider?: string; llmModel?: string }
+    ) => {
       if (!tk) return;
       try {
         const fd = new FormData();
         fd.set("action", "addDeck");
         fd.set("title", deckTitle);
+        if (meta?.provider) fd.set("provider", meta.provider);
+        if (meta?.llmModel) fd.set("llmModel", meta.llmModel);
         fd.set("file", blob, `${tk}-credit-deck.pptx`);
         const res = await fetch(`/api/credit-memo/library/${encodeURIComponent(tk)}`, { method: "POST", body: fd });
         if (!res.ok) {
@@ -403,7 +459,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           memoTitle,
           targetWords,
           useTemplate,
-          panel,
+          panel: panel === "libraryDeck" ? "folder" : panel,
         }),
       },
     }));
@@ -553,7 +609,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       setGenError("Run Refresh Source, Ingest & Index first.");
       return;
     }
-    setGenLoading(true);
+    setMemoGenPhase(voice ?? "default");
     setGenError(null);
     try {
       const res = await fetch(`/api/credit-memo/project/${encodeURIComponent(project.id)}/memo`, {
@@ -573,6 +629,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         jobId?: string;
         outline?: MemoOutline;
         markdown?: string;
+        llmModelUsed?: string;
         error?: string;
       };
       if (!res.ok) throw new Error(data.error || "Generation failed");
@@ -580,27 +637,10 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       setOutline(data.outline ?? null);
       setMarkdown(data.markdown ?? null);
       setLastVoice(voice ?? null);
-      setPanel(data.markdown ? "memo" : "outline");
+      setPanel(data.markdown ? "memo" : "folder");
 
-      // Update saved memos list immediately for the generated variant (server writes are best-effort).
-      const variantId: SavedMemoVariantId =
-        voice === "shakespeare"
-          ? "shakespeare"
-          : voice === "buffett"
-            ? "buffett"
-            : voice === "munger"
-              ? "munger"
-              : voice === "lynch"
-                ? "lynch"
-                : voice === "soros"
-                  ? "soros"
-                  : "latest";
       if (data.markdown && data.markdown.trim()) {
-        setSavedMemos((prev) => ({
-          ...prev,
-          [variantId]: { markdown: data.markdown!, meta: { jobId: data.jobId } },
-        }));
-        void pushMemoToLibrary(data.markdown, voice ?? null);
+        void pushMemoToLibrary(data.markdown, voice ?? null, data.llmModelUsed ?? null);
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -617,7 +657,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         setGenError("Generation failed");
       }
     } finally {
-      setGenLoading(false);
+      setMemoGenPhase(null);
     }
   }, [project, targetWords, memoTitle, defaultTitle, provider, useTemplate, pushMemoToLibrary]);
 
@@ -654,8 +694,13 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         }
         throw new Error(msg);
       }
+      const hdrModel = res.headers.get("X-Ceg-Llm-Model-Id")?.trim() || "";
+      const hdrProv = res.headers.get("X-Ceg-Llm-Provider")?.trim() || "";
       const blob = await res.blob();
-      void pushDeckToLibrary(blob, deckTitle);
+      void pushDeckToLibrary(blob, deckTitle, {
+        provider: hdrProv || provider,
+        llmModel: hdrModel || resolvedUserModelIdForProvider(provider) || "",
+      });
       const cd = res.headers.get("Content-Disposition");
       let filename = `${tk}-credit-deck-draft.pptx`;
       if (cd) {
@@ -710,16 +755,35 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     );
   }
 
+  const needsSignIn = authStatus !== "authenticated";
+  const resolveFailed = resolved && !resolved.ok ? { error: resolved.error } : null;
+  const refreshingSources = resolveLoading || ingestLoading;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Card title={`AI Memo and Deck — ${tk}`}>
-        <p className="mb-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
+        {refreshingSources && project ? (
+          <p className="text-[11px] mb-3 flex items-center gap-2" style={{ color: "var(--muted)" }}>
+            <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
+            Refreshing sources…
+          </p>
+        ) : null}
+
+        <p className="text-[11px] leading-relaxed mb-4" style={{ color: "var(--muted2)" }}>
           When you are signed in, your server-side data for this ticker (cloud workspace files, saved tab text, and Saved Documents)
           is included automatically. If <code className="text-[10px]">RESEARCH_ROOT_DIR</code> is configured, the server picks the best-matching
           research folder for this ticker. Click <strong>Refresh Source, Ingest &amp; Index</strong> to re-scan and rebuild the indexed
           source pack — the LLM only cites that pack.
           Generate credit Deck produces a first-draft PowerPoint (slide titles match the memo outline; the shaded area on each slide is for your charts).
         </p>
+
+        {needsSignIn && (
+          <p className="text-xs mb-4 rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
+            Sign in to resolve your ticker workspace, ingest sources, and generate memos and decks. Saved output is stored per account.
+          </p>
+        )}
+
+        <AiProviderChipRow aiProvider={provider} onProviderChange={persistProvider} />
 
         <div className="mb-3 flex flex-wrap gap-2">
           <TabButton active={panel === "folder"} onClick={() => setPanel("folder")}>
@@ -728,76 +792,44 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           <TabButton active={panel === "template"} onClick={() => setPanel("template")}>
             Template
           </TabButton>
-          <TabButton active={panel === "outline"} onClick={() => setPanel("outline")}>
-            Outline
-          </TabButton>
           <TabButton active={panel === "memo"} onClick={() => setPanel("memo")} disabled={!markdown}>
             Memo
           </TabButton>
           <TabButton active={panel === "export"} onClick={() => setPanel("export")} disabled={!markdown}>
             Export
           </TabButton>
+          <TabButton active={panel === "libraryDeck"} onClick={() => setPanel("libraryDeck")} disabled={!libraryDeckId}>
+            Deck
+          </TabButton>
         </div>
 
         {panel === "folder" && (
           <div className="space-y-3 text-sm">
-            <div className="flex flex-wrap items-end gap-3">
-              <div>
-                <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-                  Ticker
-                </div>
-                <input
-                  readOnly
-                  value={tk}
-                  className={`${MEMO_FIELD_CLASS} font-mono text-sm`}
-                />
-              </div>
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                disabled={resolveLoading || ingestLoading}
+                disabled={resolveLoading || ingestLoading || needsSignIn}
                 onClick={() => void runResolve()}
-                className="rounded border px-3 py-2 text-sm"
-                style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+                className="rounded border px-4 py-2 text-sm font-medium disabled:opacity-50"
+                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
               >
                 {resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh Source, Ingest & Index"}
               </button>
             </div>
 
-            {resolved && !resolved.ok ? (
-              <div className="rounded border border-dashed p-2 text-xs" style={{ borderColor: "var(--warn)", color: "var(--warn)" }}>
-                {resolved.error}
-              </div>
-            ) : null}
-
-            {ingestError ? (
-              <p className="text-xs" style={{ color: "var(--warn)" }}>
-                {ingestError}
-              </p>
-            ) : null}
-
-            {project ? (
-              <div className="max-h-[50vh] space-y-2 overflow-auto rounded border p-3 text-xs" style={{ borderColor: "var(--border2)" }}>
-                <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                  Indexed files
-                </div>
-                <p style={{ color: "var(--muted2)" }}>
-                  {project.sources.length} files — {project.chunks.length} chunks. Warnings:{" "}
-                  {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
+            <SourceInventoryPanel
+              project={project}
+              resolveFailed={resolveFailed}
+              ingestError={ingestError}
+              needsSignIn={needsSignIn}
+              listMaxHeightClass="max-h-[50vh]"
+              emptyHint={
+                <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+                  No indexed files yet. Click <strong>Refresh Source, Ingest &amp; Index</strong> after signing in, or wait for the automatic
+                  resolve on first load.
                 </p>
-                <ul className="space-y-1 font-mono text-[10px]">
-                  {project.sources.map((s) => (
-                    <li key={s.id}>
-                      {s.relPath} · {s.category} · {s.parseStatus} · {s.charExtracted}c
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <p className="text-xs" style={{ color: "var(--muted2)" }}>
-                After a successful refresh, indexed files and chunk counts appear here. On first load, this runs automatically when
-                you are signed in.
-              </p>
-            )}
+              }
+            />
           </div>
         )}
 
@@ -806,7 +838,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
                 <input type="checkbox" checked={useTemplate} onChange={(e) => setUseTemplate(e.target.checked)} />
-                Use DOCX template outline for memo structure
+                Use uploaded DOCX template outline for memo sections (recommended)
               </label>
               <button
                 type="button"
@@ -825,9 +857,14 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             ) : null}
 
             <div className="rounded border p-3" style={{ borderColor: "var(--border2)" }}>
-              <div className="mb-2 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                Current template
+              <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+                Available templates
               </div>
+              <p className="mb-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                Click a file name to download the .docx. The row marked <strong style={{ color: "var(--accent)" }}>In use</strong> is the
+                outline the model follows (use <strong>Use</strong> to switch when you have several). A{" "}
+                <strong>shared default</strong> may appear for new accounts until you upload your own.
+              </p>
               {templateLoading ? (
                 <p className="text-xs" style={{ color: "var(--muted2)" }}>Loading…</p>
               ) : templateIndex && templateIndex.templates.length > 0 ? (
@@ -859,7 +896,8 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                 </>
               ) : (
                 <p className="text-xs" style={{ color: "var(--muted2)" }}>
-                  No template uploaded yet. Upload a DOCX to control the memo outline.
+                  No memo template is available yet. Upload a DOCX to control the memo outline, or ask your admin to add the shared default
+                  file on the server.
                 </p>
               )}
             </div>
@@ -881,7 +919,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           </div>
         )}
 
-        <div className="mt-4 grid gap-3 border-t border-[var(--border)] pt-4 md:grid-cols-2">
+        <div className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
           <div>
             <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
               Target words
@@ -899,33 +937,11 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
               Total memo scale (~2.5k–120k). Section budgets are allocated from this total.
             </p>
           </div>
-          <div>
-            <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-              LLM
-            </div>
-            <select
-              value={provider}
-              onChange={(e) => {
-                const v = e.target.value as AiProvider;
-                setProvider(v);
-                if (prefsReady) {
-                  updatePreferences((p) => (p.aiProvider === v ? p : { ...p, aiProvider: v }));
-                }
-              }}
-              className={MEMO_FIELD_CLASS}
-            >
-              <option value="claude">Claude (Anthropic)</option>
-              <option value="openai">OpenAI</option>
-              <option value="gemini">Gemini (Google)</option>
-              <option value="deepseek">DeepSeek</option>
-            </select>
-            <AiModelPicker provider={provider} className="mt-2" />
-          </div>
-          <label className="md:col-span-2 mt-1 flex items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
+          <label className="flex items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
             <input type="checkbox" checked={useTemplate} onChange={(e) => setUseTemplate(e.target.checked)} />
-            Use template outline (if configured)
+            Use uploaded DOCX template outline for memo sections (if configured)
           </label>
-          <div className="md:col-span-2">
+          <div>
             <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
               Memo title
             </div>
@@ -940,19 +956,21 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         <div className="mt-4 flex flex-wrap items-stretch gap-3">
           <button
             type="button"
-            disabled={genLoading || deckGenLoading || !project}
+            disabled={memoGenBusy || deckGenLoading || !project || needsSignIn}
             onClick={() => void runGenerate()}
-            className={MEMO_GENERATE_BTN_CLASS}
-            style={{ borderColor: "var(--accent)", background: "var(--accent)", color: "var(--background,var(--text-invert,#fff))" }}
+            className={MEMO_ACTION_BTN}
+            style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
           >
-            {genLoading ? "Generating memo (may take several minutes)…" : "Generate credit memo"}
+            {memoGenPhase === "default"
+              ? "Generating memo (may take several minutes)…"
+              : "Generate credit memo"}
           </button>
           <button
             type="button"
-            disabled={genLoading || deckGenLoading || !project}
+            disabled={memoGenBusy || deckGenLoading || !project || needsSignIn}
             onClick={() => void runGenerateDeck()}
-            className={MEMO_GENERATE_BTN_CLASS}
-            style={{ borderColor: "var(--accent)", background: "var(--accent)", color: "var(--background,var(--text-invert,#fff))" }}
+            className={MEMO_ACTION_BTN}
+            style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
           >
             {deckGenLoading ? "Generating deck (may take a few minutes)…" : "Generate credit Deck"}
           </button>
@@ -960,30 +978,32 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             <button
               key={v.id}
               type="button"
-              disabled={genLoading || deckGenLoading || !project}
+              disabled={memoGenBusy || deckGenLoading || !project || needsSignIn}
               onClick={() => void runGenerate(v.voice!)}
-              className={MEMO_GENERATE_BTN_CLASS}
+              className={MEMO_ACTION_BTN}
               style={{
                 borderColor: "var(--accent)",
-                background: lastVoice === v.voice ? "rgba(0,212,170,0.14)" : "var(--accent)",
-                color: lastVoice === v.voice ? "var(--accent)" : "var(--background,var(--text-invert,#fff))",
+                color: "var(--accent)",
+                background: lastVoice === v.voice ? "rgba(0,212,170,0.14)" : "transparent",
               }}
               title="Generate memo in this voice"
             >
-              {v.label}
+              {memoGenPhase === v.voice
+                ? "Generating memo (may take several minutes)…"
+                : v.label}
             </button>
           ))}
         </div>
-        {genError ? <p className="mt-2 text-sm" style={{ color: "var(--warn)" }}>{genError}</p> : null}
-        {deckGenError ? <p className="mt-2 text-sm" style={{ color: "var(--warn)" }}>{deckGenError}</p> : null}
+        {genError ? <p className="mt-2 text-sm" style={{ color: "var(--danger)" }}>{genError}</p> : null}
+        {deckGenError ? <p className="mt-2 text-sm" style={{ color: "var(--danger)" }}>{deckGenError}</p> : null}
         {jobId ? <p className="mt-1 text-[10px] font-mono" style={{ color: "var(--muted)" }}>Job: {jobId}</p> : null}
       </Card>
 
       <Card title="Memo & deck library">
         <p className="mb-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Successful <strong>Generate credit memo</strong> and <strong>Generate credit Deck</strong> runs are stored here automatically
-          in your <strong>account</strong> (Postgres). Use <strong>Delete</strong> to remove an
-          item. The <strong>Saved memos</strong> section below still keeps one file per voice slot (Latest, Buffett, …).
+          Successful <strong>Generate credit memo</strong> and <strong>Generate credit Deck</strong> runs are archived here automatically
+          in your <strong>account</strong> (Postgres). Use <strong>Delete</strong> to remove an item. Use{" "}
+          <strong>Save current memo to library</strong> to add another copy of what is on screen.
         </p>
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <button
@@ -1013,6 +1033,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                       markdown,
                       variant: variantLabelForLibrary(lastVoice),
                       provider,
+                      llmModel: resolvedUserModelIdForProvider(provider) ?? null,
                     }),
                   });
                   const j = (await res.json().catch(() => ({}))) as { error?: string };
@@ -1068,15 +1089,8 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                     <td className="whitespace-nowrap p-2 font-mono" style={{ color: "var(--muted2)" }}>
                       {new Date(row.createdAt).toLocaleString()}
                     </td>
-                    <td className="p-2" style={{ color: "var(--muted2)" }}>
-                      {row.kind === "memo" ? (
-                        <span>
-                          {(row.variant ? `Variant: ${row.variant}` : "") +
-                            (row.provider ? `${row.variant ? " · " : ""}${row.provider}` : "")}
-                        </span>
-                      ) : (
-                        <span>PowerPoint</span>
-                      )}
+                    <td className="min-w-0 max-w-md p-2 break-words" style={{ color: "var(--muted2)" }}>
+                      <span>{libraryEntryDetailText(row)}</span>
                     </td>
                     <td className="p-2">
                       <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap">
@@ -1093,6 +1107,8 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                                   );
                                   const j = (await res.json()) as { markdown?: string };
                                   if (j.markdown) {
+                                    setLibraryDeckId(null);
+                                    setJobId(null);
                                     setMarkdown(j.markdown);
                                     setPanel("memo");
                                   }
@@ -1125,14 +1141,17 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                             </button>
                           </>
                         ) : (
-                          <a
-                            href={`/api/credit-memo/library/${encodeURIComponent(tk)}?deckId=${encodeURIComponent(row.id)}`}
-                            className="inline-block rounded border px-2 py-1 text-[10px] font-semibold no-underline"
+                          <button
+                            type="button"
+                            className="rounded border px-2 py-1 text-[10px] font-semibold"
                             style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-                            download
+                            onClick={() => {
+                              setLibraryDeckId(row.id);
+                              setPanel("libraryDeck");
+                            }}
                           >
-                            Download
-                          </a>
+                            View
+                          </button>
                         )}
                         <button
                           type="button"
@@ -1148,7 +1167,10 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                                   `/api/credit-memo/library/${encodeURIComponent(tk)}?id=${encodeURIComponent(row.id)}`,
                                   { method: "DELETE" }
                                 );
-                                if (res.ok) await loadLibrary();
+                                if (res.ok) {
+                                  if (libraryDeckId === row.id) setLibraryDeckId(null);
+                                  await loadLibrary();
+                                }
                               } finally {
                                 setLibraryBusyId(null);
                               }
@@ -1167,142 +1189,115 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         )}
       </Card>
 
-      <Card title="Saved memos">
-        {savedMemosLoading ? (
-          <p className="text-sm py-2" style={{ color: "var(--muted2)" }}>
-            Loading saved memos…
+      {panel === "libraryDeck" && libraryDeckId && (
+        <Card title={libraryEntries.find((e) => e.id === libraryDeckId)?.title ?? "Library deck"}>
+          <p className="mb-3 text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
+            PowerPoint file from your library. Download below to save the .pptx.
           </p>
-        ) : (
-          <div className="space-y-2">
-            {SAVED_MEMO_VARIANTS.map((v) => {
-              const item = savedMemos[v.id];
-              if (!item?.markdown?.trim()) return null;
-              const createdAt = item.meta?.createdAt;
-              return (
-                <div
-                  key={v.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded border p-2"
-                  style={{ borderColor: "var(--border2)", background: "var(--card)" }}
-                >
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>
-                      {v.label}
-                    </div>
-                    {createdAt ? (
-                      <div className="text-[10px] font-mono" style={{ color: "var(--muted)" }}>
-                        {createdAt}
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      className="rounded border px-3 py-2 text-sm font-semibold"
-                      style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-                      onClick={() => {
-                        setMarkdown(item.markdown);
-                        setPanel("memo");
-                        setLastVoice(v.voice);
-                      }}
-                    >
-                      View
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded border px-3 py-2 text-sm font-semibold"
-                      style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-                      onClick={() => downloadTextFile(`${tk}_${v.id}_memo.md`, item.markdown, "text/markdown; charset=utf-8")}
-                    >
-                      Download Markdown
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded border px-3 py-2 text-sm font-semibold"
-                      style={{ borderColor: "var(--border2)", color: "var(--text)", background: "transparent" }}
-                      onClick={() => {
-                        void (async () => {
-                          const sp = await fetchSavedFromServer(tk, v.sourcePackKey as any);
-                          if (!sp || !sp.trim()) return;
-                          downloadTextFile(`${tk}_${v.id}_source-pack.txt`, sp, "text/plain; charset=utf-8");
-                        })();
-                      }}
-                    >
-                      Download Source Pack
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-            {!Object.keys(savedMemos).length ? (
-              <p className="text-sm py-2" style={{ color: "var(--muted2)" }}>
-                No saved memos yet. Generate one above and it will appear here.
-              </p>
-            ) : null}
-          </div>
-        )}
-      </Card>
-
-      {panel === "outline" && (
-        <Card title="Planned outline">
-          {outline ? (
-            <ul className="list-inside list-disc space-y-1 text-sm" style={{ color: "var(--muted2)" }}>
-              {outline.sections.map((s) => (
-                <li key={s.id}>
-                  <strong style={{ color: "var(--text)" }}>{s.title}</strong> — ~{s.targetWords} words. {s.emphasis}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm" style={{ color: "var(--muted2)" }}>
-              Run generation to build outline, or it will appear here after a successful run.
-            </p>
-          )}
+          <a
+            href={`/api/credit-memo/library/${encodeURIComponent(tk)}?deckId=${encodeURIComponent(libraryDeckId)}`}
+            className="inline-block rounded border px-4 py-2 text-sm font-medium no-underline"
+            style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+            download
+          >
+            Download PowerPoint (.pptx)
+          </a>
         </Card>
       )}
 
       {panel === "memo" && markdown && (
         <Card title="Memo draft">
-          <div className="max-w-none text-sm leading-relaxed [&_h1]:mt-4 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-4 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_p]:my-2 [&_li]:my-0.5 [&_ul]:list-disc [&_ul]:pl-5 [&_a]:text-[var(--accent)] [&_a]:underline [&_table]:text-xs [&_code]:text-xs">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+          <p className="mb-3 text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
+            Preview uses Word-like typography (Times, page width). Downloads use the <strong>same memo text</strong> as this
+            preview (including library memos you opened with View).
+          </p>
+          <div className="mb-2 flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={!!screenExportBusy}
+              onClick={() => void downloadMemoOnScreen("docx")}
+              className="rounded border px-4 py-2 text-sm font-medium"
+              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+            >
+              {screenExportBusy === "docx" ? "Preparing Word…" : "Download Word (.docx)"}
+            </button>
+            <button
+              type="button"
+              disabled={!!screenExportBusy}
+              onClick={() => void downloadMemoOnScreen("md")}
+              className="rounded border px-3 py-2 text-xs font-medium"
+              style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "transparent" }}
+            >
+              {screenExportBusy === "md" ? "Preparing…" : "Markdown"}
+            </button>
+          </div>
+          {screenExportError ? (
+            <p className="mb-2 text-xs" style={{ color: "var(--danger)" }}>
+              {screenExportError}
+            </p>
+          ) : null}
+          <div className="credit-memo-word-preview max-h-[min(70vh,900px)] overflow-y-auto">
+            <SavedRichText content={markdown} ticker={tk} />
           </div>
         </Card>
       )}
 
-      {panel === "export" && jobId && markdown && (
+      {panel === "export" && markdown && (
         <Card title="Export">
           <p className="mb-2 text-sm" style={{ color: "var(--muted2)" }}>
-            Downloads use the last generated job.
+            <strong>Word (.docx)</strong>, Markdown, and HTML match the memo on screen (same as the draft preview).{" "}
+            {jobId ? (
+              <>
+                <strong>Source pack</strong> is tied to the last generate job shown below.
+              </>
+            ) : (
+              <>Generate a new memo to attach a source pack from that run.</>
+            )}
           </p>
           <div className="flex flex-wrap gap-2">
-            <a
-              href={`/api/credit-memo/memo/${encodeURIComponent(jobId)}/export?format=md`}
-              className="rounded border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+            <button
+              type="button"
+              disabled={!!screenExportBusy}
+              onClick={() => void downloadMemoOnScreen("docx")}
+              className="rounded border px-4 py-2 text-sm font-medium"
+              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
             >
-              Download Markdown
-            </a>
-            <a
-              href={`/api/credit-memo/memo/${encodeURIComponent(jobId)}/export?format=html`}
+              {screenExportBusy === "docx" ? "Preparing Word…" : "Download Word (.docx)"}
+            </button>
+            <button
+              type="button"
+              disabled={!!screenExportBusy}
+              onClick={() => void downloadMemoOnScreen("md")}
               className="rounded border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+              style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
             >
-              Download HTML
-            </a>
-            <a
-              href={`/api/credit-memo/memo/${encodeURIComponent(jobId)}/export?format=docx`}
+              {screenExportBusy === "md" ? "Preparing…" : "Markdown"}
+            </button>
+            <button
+              type="button"
+              disabled={!!screenExportBusy}
+              onClick={() => void downloadMemoOnScreen("html")}
               className="rounded border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+              style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
             >
-              Download DOCX
-            </a>
-            <a
-              href={`/api/credit-memo/memo/${encodeURIComponent(jobId)}/export?format=source-pack`}
-              className="rounded border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-            >
-              Download Source Pack
-            </a>
+              {screenExportBusy === "html" ? "Preparing…" : "HTML"}
+            </button>
+            {jobId ? (
+              <a
+                href={`/api/credit-memo/memo/${encodeURIComponent(jobId)}/export?format=source-pack`}
+                className="rounded border px-3 py-2 text-sm no-underline inline-flex items-center"
+                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+              >
+                Source pack (.txt)
+              </a>
+            ) : null}
           </div>
+          {screenExportError ? (
+            <p className="mt-2 text-xs" style={{ color: "var(--danger)" }}>
+              {screenExportError}
+            </p>
+          ) : null}
+          {jobId ? <p className="mt-2 text-[10px] font-mono" style={{ color: "var(--muted)" }}>Job (source pack): {jobId}</p> : null}
         </Card>
       )}
     </div>
@@ -1370,77 +1365,95 @@ function TemplateList({
   const [busyId, setBusyId] = useState<string | null>(null);
   const active = index.activeTemplateId;
 
-  const activeTemplate = index.templates.find((t) => t.id === active) ?? null;
-
   return (
-    <div className="space-y-3">
-      {activeTemplate ? (
-        <div className="rounded border p-2 text-xs" style={{ borderColor: "var(--border)" }}>
-          <div className="font-semibold" style={{ color: "var(--text)" }}>
-            Active template: {activeTemplate.filename}
-          </div>
-          <div style={{ color: "var(--muted)" }}>Uploaded: {activeTemplate.uploadedAt}</div>
-          <div className="mt-2 max-h-40 overflow-auto rounded border p-2 text-[11px]" style={{ borderColor: "var(--border2)" }}>
-            <ol className="list-decimal space-y-0.5 pl-5" style={{ color: "var(--muted2)" }}>
-              {activeTemplate.outlineTitles.slice(0, 30).map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      ) : null}
-
-      <div className="max-h-44 overflow-auto rounded border" style={{ borderColor: "var(--border2)" }}>
-        <table className="w-full text-left text-[11px]">
-          <thead style={{ color: "var(--muted)" }}>
-            <tr>
-              <th className="p-2">Template</th>
-              <th className="p-2">Uploaded</th>
-              <th className="p-2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {index.templates.map((t) => (
-              <tr key={t.id} className="border-t border-[var(--border)]">
-                <td className="p-2">
-                  <div style={{ color: t.id === active ? "var(--accent)" : "var(--text)" }}>
-                    {t.filename} {t.id === active ? "(active)" : ""}
+    <div className="max-h-52 overflow-auto rounded border" style={{ borderColor: "var(--border2)" }}>
+      <table className="w-full text-left text-[11px]">
+        <thead style={{ color: "var(--muted)" }}>
+          <tr>
+            <th className="p-2">Template</th>
+            <th className="p-2">Uploaded</th>
+            <th className="p-2 w-[1%] whitespace-nowrap text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {index.templates.map((t) => {
+            const isActive = t.id === active;
+            return (
+              <tr
+                key={t.id}
+                className="border-t border-[var(--border)]"
+                style={isActive ? { background: "rgba(0, 212, 170, 0.06)" } : undefined}
+              >
+                <td className="p-2 align-top">
+                  <div className="flex flex-col gap-0.5">
+                    <a
+                      href={`/api/credit-memo/template?templateId=${encodeURIComponent(t.id)}&download=1`}
+                      className="font-medium underline underline-offset-2 hover:opacity-90"
+                      style={{ color: "var(--accent)" }}
+                      download={t.filename}
+                    >
+                      {t.filename}
+                    </a>
+                    {t.isPublicDefault ? (
+                      <span className="text-[10px] font-semibold" style={{ color: "var(--muted)" }}>
+                        Shared default
+                      </span>
+                    ) : null}
                   </div>
                 </td>
-                <td className="p-2" style={{ color: "var(--muted2)" }}>
+                <td className="p-2 align-top font-mono" style={{ color: "var(--muted2)" }}>
                   {t.uploadedAt}
                 </td>
-                <td className="p-2 flex gap-2">
-                  <button
-                    type="button"
-                    className="underline"
-                    disabled={busyId === t.id}
-                    onClick={() => {
-                      setBusyId(t.id);
-                      void onSelect(t.id).finally(() => setBusyId(null));
-                    }}
-                  >
-                    Use
-                  </button>
-                  <button
-                    type="button"
-                    className="underline"
-                    style={{ color: "var(--warn)" }}
-                    disabled={busyId === t.id}
-                    onClick={() => {
-                      if (!confirm(`Delete template ${t.filename}?`)) return;
-                      setBusyId(t.id);
-                      void onDelete(t.id).finally(() => setBusyId(null));
-                    }}
-                  >
-                    Delete
-                  </button>
+                <td className="p-2 align-middle">
+                  <div className="flex flex-nowrap items-center justify-end gap-2 whitespace-nowrap">
+                    {isActive ? (
+                      <span
+                        className="inline-flex rounded border px-2 py-1 text-[10px] font-semibold"
+                        style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+                        title="This template drives memo outline for generation"
+                      >
+                        In use
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="rounded border px-2 py-1 text-[10px] font-semibold transition-colors hover:opacity-90"
+                        style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+                        disabled={busyId === t.id}
+                        onClick={() => {
+                          setBusyId(t.id);
+                          void onSelect(t.id).finally(() => setBusyId(null));
+                        }}
+                      >
+                        {busyId === t.id ? "…" : "Use"}
+                      </button>
+                    )}
+                    {t.isPublicDefault ? (
+                      <span className="text-[10px]" style={{ color: "var(--muted2)" }} title="Cannot delete the shared default">
+                        —
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="rounded border px-2 py-1 text-[10px] font-semibold"
+                        style={{ borderColor: "var(--warn)", color: "var(--warn)", background: "transparent" }}
+                        disabled={busyId === t.id}
+                        onClick={() => {
+                          if (!confirm(`Delete template ${t.filename}?`)) return;
+                          setBusyId(t.id);
+                          void onDelete(t.id).finally(() => setBusyId(null));
+                        }}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

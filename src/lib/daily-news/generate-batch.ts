@@ -20,6 +20,11 @@ const MATERIAL_FORMS = new Set([
   "424B",
 ]);
 
+/** SEC Forms 3 / 4 / 5 (+ 3/A, 4/A, 5/A) — insider beneficial ownership and transactions. */
+function isInsiderOwnershipForm(form: string): boolean {
+  return /^[345](\/A)?$/i.test(form.trim());
+}
+
 function watchlistSignature(tickers: string[]): string {
   return [...new Set(tickers.map((t) => t.trim().toUpperCase()).filter(Boolean))].sort().join("|");
 }
@@ -100,8 +105,9 @@ function articleMatchesWatchlist(
 function filingToItem(ticker: string, companyName: string, f: SecFiling): DailyNewsItem {
   const headline = `${f.form}: ${f.description || f.primaryDocument || "Filing"}`;
   const summary = `${f.form} filed ${f.filingDate}. ${f.description ? f.description.slice(0, 280) : "See filing for details."}`;
-  const why =
-    f.form === "8-K"
+  const why = isInsiderOwnershipForm(f.form)
+    ? "Insider / beneficial ownership (Form 3/4/5) — review buys, sales, grants, and timing vs. your thesis."
+    : f.form === "8-K"
       ? "Current report — often material events or updates investors should review."
       : ["10-K", "10-Q", "20-F", "6-K"].includes(f.form)
         ? "Periodic financial disclosure — compare to your model and covenants."
@@ -214,7 +220,7 @@ export async function buildDailyNewsPayload(
         const recent = filingsPack.filings.filter(
           (f) =>
             isWithinRollingHours(f.filingDate, windowEnd, 24) &&
-            (MATERIAL_FORMS.has(f.form) || f.form.startsWith("424"))
+            (MATERIAL_FORMS.has(f.form) || f.form.startsWith("424") || isInsiderOwnershipForm(f.form))
         );
         secItems = recent.map((f) => filingToItem(ticker, companyName, f));
         sourcesUsed.add("SEC EDGAR");

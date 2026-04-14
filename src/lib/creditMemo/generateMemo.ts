@@ -9,6 +9,7 @@ import { planMemoOutline, planMemoOutlineFromTemplate } from "./memoPlanner";
 import type { CreditMemoProject, MemoJob, MemoOutline } from "./types";
 import { getActiveCreditMemoTemplate } from "./templateStore";
 import { ensureAllOutlineSectionsInMarkdown } from "./memoSectionCoverage";
+import { buildTemplateDocxHintsBlock } from "./templatePromptBlocks";
 
 function estimateTokensFromChars(chars: number): number {
   // Rough heuristic: ~4 chars/token for English prose.
@@ -22,10 +23,32 @@ function buildUserPrompt(params: {
   outline: MemoOutline;
   sourceNotes: string;
   templateMetaLine: string;
+  templateHintsBlock: string;
   inventory: string;
   evidence: string;
+  /** Character voice memos: user prompt stays factual but does not assume institutional credit-memo system rules. */
+  characterVoice?: boolean;
 }): string {
-  const { memoTitle, ticker, outline, sourceNotes, templateMetaLine, inventory, evidence } = params;
+  const {
+    memoTitle,
+    ticker,
+    outline,
+    sourceNotes,
+    templateMetaLine,
+    templateHintsBlock,
+    inventory,
+    evidence,
+    characterVoice,
+  } = params;
+  const verbatimHeadings = outline.sections.map((s, i) => `${i + 1}. ${s.title}`).join("\n");
+  const templateBodyGuidance = characterVoice
+    ? "When a DOCX template is referenced above, the section list mirrors that template’s headings—**populate those sections in order** with substantive prose in your voice (not slide bullets), using the evidence pack."
+    : "When a DOCX template is referenced above, the section list below mirrors that template’s heading structure—your output must **populate those sections in order** with institutional prose (not slide bullets), filling each with analysis grounded in the evidence pack.";
+
+  const closing = characterVoice
+    ? "Write the complete memo in Markdown now. Include every required section above using the exact ## titles listed, in order—none may be omitted. Use full paragraphs where you have material; honor the per-section word budgets. For sections with no usable evidence, the section body must be only the line: [need additional information]."
+    : "Write the complete credit memo in Markdown now. Include every required section above using the exact ## titles listed, in order—none may be omitted. Write in full paragraphs and complete sentences where you have evidence; use the per-section word budgets with substantive prose. For sections with no evidence, the section body must be only the line: [need additional information]. Cite sources inline for all material facts and figures as specified in your system rules.";
+
   return `
 # MEMO REQUEST
 Title: ${memoTitle}
@@ -35,8 +58,17 @@ Ticker: ${ticker}
 Target length: ~${outline.totalWordBudget} words total (section budgets below should sum to roughly this scale).
 ${sourceNotes}
 ${templateMetaLine ? `\n${templateMetaLine}\n` : ""}
+${templateHintsBlock ? `\n${templateHintsBlock}\n` : ""}
 
-Required sections (include each as ## in this order; use only [need additional information] as the body when the EVIDENCE has nothing usable for that section):
+${templateBodyGuidance}
+
+# VERBATIM SECTION HEADINGS (required Markdown \`##\` lines)
+Your memo body must use **exactly** these section titles, **in this order**, with **no renaming, merging, or skipping**. Each heading line must be: two hash characters, one space, then the title string **character-for-character** as shown:
+${verbatimHeadings}
+
+For each section, write \`## <title>\` then a blank line then the section body.
+
+# SECTION DETAIL (word targets & emphasis)
 ${outline.sections.map((s) => `- ${s.title}: ~${s.targetWords} words — ${s.emphasis}`).join("\n")}
 
 # FILE INVENTORY
@@ -46,7 +78,7 @@ ${inventory}
 ${evidence}
 
 ---
-Write the complete credit memo in Markdown now. Include **every** required section above as \`## <exact title>\`, in order—none may be omitted. Write in **full paragraphs and complete sentences** where you have evidence; use the per-section word budgets with substantive prose. For sections with no evidence, body = only \`[need additional information]\`. Cite sources inline for all material facts and figures as specified in your system rules.
+${closing}
 `.trim();
 }
 
@@ -83,26 +115,45 @@ export async function runMemoGeneration(params: {
 
   let outline = planMemoOutline(params.targetWords, params.project.sources);
   let templateMetaLine = "";
+  let docxTemplateApplied = false;
   if (params.useTemplate) {
     const tpl = await getActiveCreditMemoTemplate(params.userId);
     if (tpl && tpl.outlineTitles.length > 0) {
+      docxTemplateApplied = true;
       outline = planMemoOutlineFromTemplate({
         targetWords: params.targetWords,
         sources: params.project.sources,
         templateTitles: tpl.outlineTitles,
+        templateSectionHints: tpl.sectionHints,
       });
       templateMetaLine = `Template outline: ${tpl.filename} (${tpl.uploadedAt})`;
     } else {
       templateMetaLine = "Template outline requested but no template is configured (using default outline).";
     }
   }
+  const templateHintsBlock = docxTemplateApplied ? buildTemplateDocxHintsBlock(outline) : "";
   const inventory = formatSourceInventoryList(params.project.sources);
+
+  const useCharacterVoice = Boolean(params.voiceSystemPrompt?.trim());
+  const templateSystemExtra = docxTemplateApplied
+    ? `
+
+## Firm DOCX template (mandatory structure)
+The user is using an uploaded Word template. The user message lists **VERBATIM SECTION HEADINGS** and may include **TEMPLATE DOC** excerpts showing what appeared under each heading in the file. You must (1) use those \`##\` titles exactly and in order, and (2) let the excerpts inform what each section should cover—while writing only facts supported by the evidence in the user message.
+`.trim()
+    : "";
+
+  /** Character voices: standalone system prompt (voice + optional template block), no institutional credit-memo system prompt. */
+  const system = (
+    (useCharacterVoice ? params.voiceSystemPrompt!.trim() : CREDIT_MEMO_SYSTEM_PROMPT) +
+    (templateSystemExtra ? `\n\n${templateSystemExtra}` : "")
+  ).trim();
 
   // Auto-fit the SOURCE PACK into the provider/model context window to avoid hard failures.
   // OpenAI errors out once the prompt exceeds its max context (seen as "prompt is too long").
   const PROMPT_TOKEN_LIMIT =
     ai === "openai" || ai === "gemini" || ai === "deepseek" ? 190_000 : 180_000;
-  const SYSTEM_TOKEN_EST = estimateTokensFromChars(CREDIT_MEMO_SYSTEM_PROMPT.length);
+  const SYSTEM_TOKEN_EST = estimateTokensFromChars(system.length);
 
   let maxEvidenceChars = cfg.maxContextChars;
   const evidenceQuery = `${params.memoTitle}\n${outline.sections.map((s) => s.title).join("\n")}\n${outline.sourceNotes}`.trim();
@@ -113,8 +164,10 @@ export async function runMemoGeneration(params: {
     outline,
     sourceNotes: outline.sourceNotes,
     templateMetaLine,
+    templateHintsBlock,
     inventory,
     evidence,
+    characterVoice: useCharacterVoice,
   });
 
   for (let i = 0; i < 8; i++) {
@@ -128,18 +181,14 @@ export async function runMemoGeneration(params: {
       outline,
       sourceNotes: outline.sourceNotes,
       templateMetaLine,
+      templateHintsBlock,
       inventory,
       evidence,
+      characterVoice: useCharacterVoice,
     });
   }
 
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
-
-  const system =
-    (params.voiceSystemPrompt && params.voiceSystemPrompt.trim()
-      ? `${CREDIT_MEMO_SYSTEM_PROMPT}\n\n# VOICE / STYLE (apply in addition to the above system rules)\n${params.voiceSystemPrompt.trim()}\n`
-      : CREDIT_MEMO_SYSTEM_PROMPT
-    ).trim();
 
   const result = await llmCompleteSingle(ai, system, user, {
     maxTokens: cfg.maxOutputTokens,

@@ -95,16 +95,22 @@ export type MemoOutline = {
   totalWordBudget: number;
   sections: MemoOutlineSection[];
   sourceNotes: string;
+  /** When the outline came from a DOCX template: text excerpt under each heading (same order as `sections`). */
+  templateSectionHints?: string[];
 };
 
 export type CreditMemoTemplate = {
   id: string;
   filename: string;
   uploadedAt: string;
-  /** Titles from DOCX heading styles (H1/H2/H3) in order */
-  headings: Array<{ level: 1 | 2 | 3; title: string }>;
+  /** Titles from DOCX heading styles (H1–H6) in document order */
+  headings: Array<{ level: 1 | 2 | 3 | 4 | 5 | 6; title: string }>;
   /** Flattened outline for memo planner */
   outlineTitles: string[];
+  /** Plain text under each outline heading in the template (same order as `outlineTitles`); optional for templates saved before this field existed */
+  sectionHints?: string[];
+  /** Shipped default outline (same file for all users); not stored in user workspace */
+  isPublicDefault?: boolean;
 };
 
 export type CreditMemoTemplateIndex = {

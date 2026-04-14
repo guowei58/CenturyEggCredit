@@ -87,9 +87,21 @@ export function planMemoOutlineFromTemplate(params: {
   targetWords: number;
   sources: SourceFileRecord[];
   templateTitles: string[];
+  /** Same indexing as templateTitles (before length filter); aligned to kept titles after filter */
+  templateSectionHints?: string[];
 }): MemoOutline {
   const totalWords = clampMemoWordBudget(params.targetWords);
-  const titles = (params.templateTitles ?? []).map((t) => t.trim()).filter((t) => t.length >= 3).slice(0, 40);
+  const rawTitles = (params.templateTitles ?? []).map((t) => t.trim());
+  const rawHints = params.templateSectionHints ?? [];
+  const titles: string[] = [];
+  const hintsKept: string[] = [];
+  for (let i = 0; i < rawTitles.length; i++) {
+    const t = rawTitles[i];
+    if (!t || t.length < 3) continue;
+    if (titles.length >= 40) break;
+    titles.push(t);
+    hintsKept.push((rawHints[i] ?? "").trim());
+  }
 
   if (titles.length === 0) {
     return planMemoOutline(totalWords, params.sources);
@@ -115,11 +127,15 @@ export function planMemoOutlineFromTemplate(params: {
 
   const sections: MemoOutlineSection[] = weights.map((x, i) => {
     const sectionWords = Math.max(140, Math.round((totalWords * x.w) / sumW));
+    const hint = hintsKept[i]?.trim();
+    const emphasis = hint
+      ? `Template-driven section — DOCX guidance: ${hint.slice(0, 280)}${hint.length > 280 ? "…" : ""}`
+      : "Template-driven section from DOCX outline.";
     return {
       id: `tpl_${i + 1}`,
       title: x.title,
       targetWords: sectionWords,
-      emphasis: "Template-driven section from DOCX outline.",
+      emphasis,
     };
   });
 
@@ -127,11 +143,14 @@ export function planMemoOutlineFromTemplate(params: {
     ? `Folder has ${params.sources.length} ingestable file(s). Template outline applied.`
     : "No sources ingested — memo must state data gaps explicitly.";
 
+  const hasHints = hintsKept.some((h) => h.length > 0);
+
   return {
     targetWords: totalWords,
     totalWordBudget: totalWords,
     sections,
     sourceNotes: richness,
+    templateSectionHints: hasHints ? hintsKept : undefined,
   };
 }
 

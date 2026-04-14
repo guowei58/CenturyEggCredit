@@ -1,4 +1,5 @@
 "use client";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
@@ -1013,7 +1014,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
     setClipboardFailed(false);
     setStatusMessage(null);
     try {
-      await navigator.clipboard.writeText(prompt);
+      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
       setStatusMessage("Copied to clipboard.");
     } catch {
       setClipboardFailed(true);
@@ -1025,7 +1026,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
     setClipboardFailed(false);
     setStatusMessage(null);
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(withPromptBenchmarkNotice(text));
       setStatusMessage("Copied to clipboard.");
     } catch {
       setClipboardFailed(true);

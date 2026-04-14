@@ -17,7 +17,6 @@ import { CompanyRiskFrom10kTab } from "@/components/CompanyRiskFrom10kTab";
 import { CompanyManagementBoardTab } from "@/components/CompanyManagementBoardTab";
 import { CompanyOutOfTheBoxIdeasTab } from "@/components/CompanyOutOfTheBoxIdeasTab";
 import { CompanyResearchRoadmapTab } from "@/components/CompanyResearchRoadmapTab";
-import { CompanyIrPageIndexerTab } from "@/components/CompanyIrPageIndexerTab";
 import { CompanyPresentationsTab } from "@/components/CompanyPresentationsTab";
 import { CompanyEarningsReleasesTab } from "@/components/CompanyEarningsReleasesTab";
 import { BusinessModelTab } from "@/components/BusinessModelTab";
@@ -40,6 +39,8 @@ import { CompanyLmeAnalysisTab } from "@/components/CompanyLmeAnalysisTab";
 import { CompanyCreditAgreementsIndenturesTab } from "@/components/CompanyCreditAgreementsIndenturesTab";
 import { CompanyAiCreditMemoTab } from "@/components/CompanyAiCreditMemoTab";
 import { CompanyCapStructureRecommendationTab } from "@/components/CompanyCapStructureRecommendationTab";
+import { CompanyLiteraryReferencesTab } from "@/components/CompanyLiteraryReferencesTab";
+import { CompanyBiblicalReferencesTab } from "@/components/CompanyBiblicalReferencesTab";
 import { CompanyForensicAccountingTab } from "@/components/CompanyForensicAccountingTab";
 import { CompanyCreditTimelineTab } from "@/components/CompanyCreditTimelineTab";
 import { CompanySubstackTab } from "@/components/CompanySubstackTab";
@@ -237,9 +238,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "research-roadmap") {
     return <CompanyResearchRoadmapTab ticker={ticker} />;
   }
-  if (tabId === "ir-page-indexer") {
-    return <CompanyIrPageIndexerTab ticker={ticker} />;
-  }
   if (tabId === "business-model") {
     return <BusinessModelTab ticker={ticker} companyName={companyName} />;
   }
@@ -257,7 +255,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
       />
     );
   }
-  if (tabId === "kpi") {
+  if (tabId === "kpi" || tabId === "kpi-commentary") {
     return <CompanyKpiTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "sec-xbrl-financials") {
@@ -378,6 +376,12 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "recommendation") {
     return <CompanyCapStructureRecommendationTab ticker={ticker} companyName={companyName} />;
   }
+  if (tabId === "literary-references") {
+    return <CompanyLiteraryReferencesTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "biblical-references") {
+    return <CompanyBiblicalReferencesTab ticker={ticker} companyName={companyName} />;
+  }
   if (tabId === "ai-memo-and-deck" || tabId === "ai-credit-memo") {
     return <CompanyAiCreditMemoTab ticker={ticker} companyName={companyName} />;
   }
@@ -409,15 +413,11 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     substack: "Substack",
     "twitter-sentiment": "Twitter Sentiment",
     "dear-diary": "Dear Diary",
-    "pre-mortem-analysis": "Pre-Mortem Analysis",
     "ai-memo-and-deck": "AI Memo and Deck",
     "broker-research-reports": "Broker Research Reports",
     "the-cap-stack-rumor-mill": "The Cap Stack Rumor Mill",
     "startup-risks": "Startup Risks",
     "competitor-operating-metrics": "Competitor Operating Metrics",
-    "literary-references": "Literary References",
-    "biblical-references": "Biblical References",
-    jokes: "Jokes",
     "litigation-claims": "Litigation Claims",
     "laborpension-claims": "Labor/Pension Claims",
     "tax-claims": "Tax Claims",

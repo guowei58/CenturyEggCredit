@@ -4,7 +4,8 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { AI_MODEL_STORAGE_KEYS, sanitizeClientModelId } from "@/lib/ai-model-options";
 import { getSyncUserPreferences } from "@/lib/user-preferences-sync-cache";
 
-function savedModelIdForProvider(p: AiProvider): string | undefined {
+/** Model id from user preferences for this provider (same value sent as `*Model` overrides on memo/deck APIs). */
+export function resolvedUserModelIdForProvider(p: AiProvider): string | undefined {
   try {
     const models = getSyncUserPreferences()?.aiModels as
       | Partial<Record<AiProvider | "ollama", string>>
@@ -26,7 +27,7 @@ export function modelOverridePayloadForProvider(p: AiProvider): {
   geminiModel?: string;
   deepseekModel?: string;
 } {
-  const id = savedModelIdForProvider(p);
+  const id = resolvedUserModelIdForProvider(p);
   if (!id) return {};
   if (p === "claude") return { claudeModel: id };
   if (p === "openai") return { openaiModel: id };

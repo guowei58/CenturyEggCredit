@@ -1,4 +1,5 @@
 "use client";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui";
@@ -82,7 +83,7 @@ export function HistoricalFinancialsAiWorkflow({
     setClipboardFailed(false);
     setStatusMessage(null);
     try {
-      await navigator.clipboard.writeText(prompt);
+      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
       setStatusMessage("Copied to clipboard.");
     } catch {
       setClipboardFailed(true);
@@ -244,7 +245,7 @@ export function HistoricalFinancialsAiWorkflow({
                 background: "var(--card)",
               }}
             >
-              {prompt}
+              {withPromptBenchmarkNotice(prompt)}
             </div>
             <div className="tab-prompt-ai-actions-grid mb-2">
               <button

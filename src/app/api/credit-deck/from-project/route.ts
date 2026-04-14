@@ -5,11 +5,11 @@ import { resolveProvider } from "@/lib/ai-provider";
 import { runCreditDeckGeneration } from "@/lib/creditDeck/runCreditDeckGeneration";
 import { getProject } from "@/lib/creditMemo/store";
 import { clampMemoWordBudget } from "@/lib/creditMemo/memoPlanner";
-import { resolveCreditMemoModels } from "@/lib/ai-model-from-request";
+import { creditMemoPrimaryModelId, resolveCreditMemoModels } from "@/lib/ai-model-from-request";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 export async function POST(req: Request) {
   const llmAuth = await getAuthenticatedLlmContext();
@@ -62,6 +62,8 @@ export async function POST(req: Request) {
       : memoTitle.replace(/\bcredit\s+memo\b/gi, "Credit Deck").replace(/\bMemo\b/, "Deck");
 
   const provider = resolveProvider(body.provider);
+  const models = resolveCreditMemoModels(body);
+  const llmModelUsed = creditMemoPrimaryModelId(provider, models);
 
   const result = await runCreditDeckGeneration({
     userId,
@@ -69,8 +71,8 @@ export async function POST(req: Request) {
     targetWords,
     deckTitle,
     provider,
-    useTemplate: body.useTemplate === true,
-    models: resolveCreditMemoModels(body),
+    useTemplate: body.useTemplate !== false,
+    models,
     apiKeys: bundle,
   });
 
@@ -84,6 +86,8 @@ export async function POST(req: Request) {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
       "Content-Disposition": `attachment; filename="${filename}"`,
+      "X-Ceg-Llm-Provider": provider,
+      "X-Ceg-Llm-Model-Id": llmModelUsed,
     },
   });
 }

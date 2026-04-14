@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 export function PromptTemplateBox({
   tabId,
@@ -22,7 +23,10 @@ export function PromptTemplateBox({
     if (!isEditing) setDraft(template);
   }, [template, isEditing]);
 
-  const preview = useMemo(() => resolve(isEditing ? draft : template), [resolve, template, draft, isEditing]);
+  const preview = useMemo(
+    () => withPromptBenchmarkNotice(resolve(isEditing ? draft : template)),
+    [resolve, template, draft, isEditing]
+  );
 
   return (
     <div className={className}>

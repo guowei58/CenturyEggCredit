@@ -1,4 +1,5 @@
 "use client";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
@@ -96,7 +97,7 @@ export function CompanyOverviewTab({
     setClipboardFailed(false);
     setStatusMessage(null);
     try {
-      await navigator.clipboard.writeText(prompt);
+      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
       setStatusMessage("Copied to clipboard.");
     } catch {
       setClipboardFailed(true);

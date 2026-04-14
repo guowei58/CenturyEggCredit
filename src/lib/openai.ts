@@ -29,10 +29,10 @@ function parseOpenAiFetchTimeoutMs(raw: string | undefined, fallback: number): n
 }
 
 /**
- * Default HTTP wait for OpenAI (AI Chat, tab prompts, etc.). Override OPENAI_FETCH_TIMEOUT_MS (30s–15m).
+ * Default HTTP wait for OpenAI (AI Chat, tab prompts, credit memo, etc.). Override OPENAI_FETCH_TIMEOUT_MS (30s–15m).
  */
 function openAiFetchTimeoutMs(): number {
-  return parseOpenAiFetchTimeoutMs(process.env.OPENAI_FETCH_TIMEOUT_MS, 300_000);
+  return parseOpenAiFetchTimeoutMs(process.env.OPENAI_FETCH_TIMEOUT_MS, 600_000);
 }
 
 /**

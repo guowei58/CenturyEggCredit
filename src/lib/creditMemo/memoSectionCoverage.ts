@@ -2,7 +2,8 @@ import type { MemoOutline } from "./types";
 
 export const MEMO_SECTION_PLACEHOLDER = "[need additional information]";
 
-function normalizeSectionTitle(s: string): string {
+/** Normalizes section titles for matching model output to outline (exported for template outline alignment). */
+export function normalizeSectionTitle(s: string): string {
   return s.replace(/\s+/g, " ").trim().toLowerCase();
 }
 

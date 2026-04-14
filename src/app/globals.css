@@ -592,4 +592,93 @@
     max-width: 100%;
     justify-self: center;
   }
+
+  /**
+   * AI Memo & Deck — on-screen preview approximates a Word page (Times, justified, memo-like margins).
+   */
+  .credit-memo-word-preview {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    line-height: 1.2;
+    max-width: 8.5in;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1in 1.15in 1.1in;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    color: var(--text);
+    text-align: justify;
+    hyphens: auto;
+  }
+  .credit-memo-word-preview .saved-rich-text h1 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 16pt;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    padding-bottom: 0.35rem;
+  }
+  .credit-memo-word-preview .saved-rich-text h2 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 14pt;
+    font-weight: 700;
+    margin: 1.25rem 0 0.5rem;
+    text-align: left;
+  }
+  .credit-memo-word-preview .saved-rich-text h3 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 1rem 0 0.35rem;
+    text-align: left;
+  }
+  .credit-memo-word-preview .saved-rich-text p {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    margin: 0 0 0.65rem;
+  }
+  .credit-memo-word-preview .saved-rich-text ul,
+  .credit-memo-word-preview .saved-rich-text ol {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    margin: 0.35rem 0 0.65rem 1.25rem;
+  }
+  .credit-memo-word-preview .saved-rich-text li {
+    margin: 0.15rem 0;
+  }
+  .credit-memo-word-preview .saved-rich-text table {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10pt;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+  }
+  .credit-memo-word-preview .saved-rich-text th,
+  .credit-memo-word-preview .saved-rich-text td {
+    border: 1px solid var(--border2);
+    padding: 0.25rem 0.4rem;
+  }
+}
+
+@keyframes daily-news-refresh-dot-flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.daily-news-refresh-dot-flash {
+  animation: daily-news-refresh-dot-flash 0.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daily-news-refresh-dot-flash {
+    animation: none;
+    opacity: 1;
+  }
 }

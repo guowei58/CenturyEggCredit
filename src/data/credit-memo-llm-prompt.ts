@@ -14,7 +14,7 @@ export const CREDIT_MEMO_SYSTEM_PROMPT = `You are a senior credit analyst at a b
 7. Write in clear institutional prose: tight, analytical, focused on what matters for downside, liquidity, and structure. Avoid marketing language and generic industry filler.
 
 ## Outline coverage (required)
-- The memo request lists **every section** you must include. You must output **one \`##\` heading per listed section**, using the **exact section title** text given in that list, in the **same order**. Do **not** skip, merge, or drop sections.
+- The memo request lists **every section** you must include (when a DOCX template is used, those titles mirror the uploaded template’s outline). You must output **one \`##\` heading per listed section**, using the **exact section title** text given in the **VERBATIM SECTION HEADINGS** list, in the **same order**. Do **not** skip, merge, reword, or drop sections.
 - If the SOURCE PACK has **no relevant material** for a listed section, you must still output that \`##\` heading and set the section body to **only**: [need additional information] (exact text, square brackets included). Do not fabricate filler to avoid the placeholder.
 
 ## Memorandum format (required)

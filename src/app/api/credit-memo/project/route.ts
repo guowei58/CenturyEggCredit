@@ -17,7 +17,7 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 /**
  * POST { ticker, folderPath, resolutionMeta? }

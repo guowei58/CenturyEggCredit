@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { createHash } from "crypto";
 
-import { extractTickerFileForAi } from "@/lib/ticker-file-text-extract";
+import { extractPdfAsPlainTextForIngest, extractTickerFileForAi } from "@/lib/ticker-file-text-extract";
 import { loadCreditMemoConfig } from "./config";
 import { classifySourceFilename } from "./fileClassifier";
 import type { CreditMemoProject, ExtractedTableRecord, SourceChunkRecord, SourceFileRecord } from "./types";
@@ -129,6 +129,25 @@ function chunkText(text: string, relPath: string): string[] {
   return chunks;
 }
 
+/** Excel / Excel-binary workbooks excluded from Work Product folder ingest (CSV and other types unchanged). */
+const WORK_PRODUCT_EXCLUDED_EXCEL_EXT = new Set([".xlsx", ".xls", ".xlsm", ".xlsb", ".xls"]);
+
+/** Workspace tree for Memo & deck library (.md / .pptx / index); not research inputs. */
+const MEMO_DECK_LIBRARY_PATH_PREFIX = "ai-memo-deck-library/";
+
+/**
+ * Generated credit memo artifacts, credit deck tab text, and memo/deck library exports.
+ * KPI, forensic accounting, cap-structure recommendation, literary/biblical, etc. stay ingested.
+ */
+function isExcludedCreditMemoOrDeckOutputPath(relPath: string): boolean {
+  const n = relPath.replace(/\\/g, "/").replace(/^\/+/, "").toLowerCase();
+  if (n.startsWith(MEMO_DECK_LIBRARY_PATH_PREFIX)) return true;
+  const base = path.basename(n);
+  if (base === "ai-credit-deck.txt") return true;
+  if (base.startsWith("ai-credit-memo-")) return true;
+  return false;
+}
+
 function detectSectionLabel(text: string): string | null {
   const lines = text.split("\n").slice(0, 12);
   for (const line of lines) {
@@ -183,6 +202,8 @@ export async function ingestTickerFolder(params: {
   const sources: SourceFileRecord[] = [];
   const chunks: SourceChunkRecord[] = [];
   const tables: ExtractedTableRecord[] = [];
+  let excludedExcelCount = 0;
+  let excludedMemoDeckOutputCount = 0;
 
   for (const f of files) {
     const ext = path.extname(f.rel).toLowerCase();
@@ -205,6 +226,56 @@ export async function ingestTickerFolder(params: {
       continue;
     }
 
+    if (WORK_PRODUCT_EXCLUDED_EXCEL_EXT.has(ext)) {
+      excludedExcelCount += 1;
+      const sid = stableId(["src", params.projectId, f.rel]);
+      let mtime: string | null = null;
+      try {
+        mtime = new Date((await fs.stat(f.abs)).mtimeMs).toISOString();
+      } catch {
+        /* */
+      }
+      sources.push({
+        id: sid,
+        relPath: f.rel,
+        absPath: f.abs,
+        size: f.size,
+        ext,
+        category,
+        modifiedAt: mtime,
+        parseStatus: "skipped",
+        charExtracted: 0,
+        parseNote:
+          "Excluded: Excel workbooks are not ingested for Work Product. Export to CSV or PDF/text if the model should see the data.",
+      });
+      continue;
+    }
+
+    if (isExcludedCreditMemoOrDeckOutputPath(f.rel)) {
+      excludedMemoDeckOutputCount += 1;
+      const sid = stableId(["src", params.projectId, f.rel]);
+      let mtime: string | null = null;
+      try {
+        mtime = new Date((await fs.stat(f.abs)).mtimeMs).toISOString();
+      } catch {
+        /* */
+      }
+      sources.push({
+        id: sid,
+        relPath: f.rel,
+        absPath: f.abs,
+        size: f.size,
+        ext,
+        category,
+        modifiedAt: mtime,
+        parseStatus: "skipped",
+        charExtracted: 0,
+        parseNote:
+          "Excluded: generated credit memo or deck output (not ingested as source). KPI, forensic, recommendations, and other tab outputs remain included.",
+      });
+      continue;
+    }
+
     let mtime: string | null = null;
     try {
       const st = await fs.stat(f.abs);
@@ -213,7 +284,10 @@ export async function ingestTickerFolder(params: {
       /* */
     }
 
-    const text = await extractTickerFileForAi(f.abs, f.rel, f.size);
+    const text =
+      ext === ".pdf"
+        ? await extractPdfAsPlainTextForIngest(f.abs, f.rel, f.size)
+        : await extractTickerFileForAi(f.abs, f.rel, f.size);
     const sid = stableId(["src", params.projectId, f.rel]);
 
     const failed = text.startsWith("[") && /failed|not parsed|too large|No extractable/i.test(text);
@@ -232,7 +306,7 @@ export async function ingestTickerFolder(params: {
     };
     sources.push(source);
 
-    if (ext === ".xlsx" || ext === ".xls" || ext === ".xlsm" || ext === ".csv") {
+    if (ext === ".csv") {
       const tid = stableId(["tbl", sid, "0"]);
       tables.push({
         id: tid,
@@ -253,6 +327,17 @@ export async function ingestTickerFolder(params: {
         sectionLabel: idx === 0 ? detectSectionLabel(p) : null,
       });
     });
+  }
+
+  if (excludedExcelCount > 0) {
+    warnings.push(
+      `Excluded ${excludedExcelCount} Excel workbook(s) (.xlsx/.xlsm/.xlsb/.xls) from Work Product ingest (not sent to the model).`
+    );
+  }
+  if (excludedMemoDeckOutputCount > 0) {
+    warnings.push(
+      `Excluded ${excludedMemoDeckOutputCount} generated credit memo / deck file(s) from ingest (other work-product outputs such as KPI or forensic are still included).`
+    );
   }
 
   const project: CreditMemoProject = {

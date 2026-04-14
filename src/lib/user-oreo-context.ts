@@ -3,11 +3,11 @@
  */
 
 import {
+  isAiChatOreoTxtOrHtmlFilename,
   SAVED_DATA_FILES,
   SAVED_TAB_FILENAME_AI_PRIORITY,
   sanitizeTicker,
 } from "@/lib/saved-ticker-data";
-import { extractBytesForAi } from "@/lib/ticker-file-text-extract";
 import {
   listUserSavedDocumentsBodiesForAi,
   listUserTickerDocuments,
@@ -44,6 +44,7 @@ function dataKeyForFilename(filename: string): string | null {
 
 /**
  * Text context from Postgres `UserTickerDocument` and `UserSavedDocument` for this user + ticker.
+ * AI Chat includes only `.txt` and `.html` / `.htm` — not `.md`, `.json`, PDFs, etc.
  */
 export async function buildUserDbOreoContext(
   userId: string,
@@ -53,10 +54,12 @@ export async function buildUserDbOreoContext(
   const sym = sanitizeTicker(ticker);
   if (!sym) return "";
 
-  const [rows, savedBodies] = await Promise.all([
+  const [rows, savedBodiesRaw] = await Promise.all([
     listUserTickerDocuments(userId, sym),
     listUserSavedDocumentsBodiesForAi(userId, sym, 24),
   ]);
+
+  const savedBodies = savedBodiesRaw.filter((s) => isAiChatOreoTxtOrHtmlFilename(s.filename));
 
   const byKey = new Map(rows.map((r) => [r.dataKey, r.content]));
 
@@ -66,6 +69,7 @@ export async function buildUserDbOreoContext(
 
   const lines: string[] = [];
   for (const fn of SAVED_TAB_FILENAME_AI_PRIORITY) {
+    if (!isAiChatOreoTxtOrHtmlFilename(fn)) continue;
     const key = dataKeyForFilename(fn);
     if (!key) continue;
     const content = byKey.get(key);
@@ -74,7 +78,7 @@ export async function buildUserDbOreoContext(
   }
 
   if (lines.length > 0) {
-    const inv = `Ticker ${sym} — ${lines.length} saved tab document(s) (user workspace)\n${lines.join("\n")}`;
+    const inv = `Ticker ${sym} — ${lines.length} saved tab document(s) (.txt / .html only)\n${lines.join("\n")}`;
     appendBlock(chunks, budget, `OREO workspace — document inventory (${sym})`, inv);
 
     const tabHeader = `\n========== OREO workspace — saved tab contents (${sym}) ==========\n`;
@@ -83,6 +87,7 @@ export async function buildUserDbOreoContext(
 
     for (const fn of SAVED_TAB_FILENAME_AI_PRIORITY) {
       if (budget.left < 300) break;
+      if (!isAiChatOreoTxtOrHtmlFilename(fn)) continue;
       const key = dataKeyForFilename(fn);
       if (!key) continue;
       const content = byKey.get(key);
@@ -99,7 +104,7 @@ export async function buildUserDbOreoContext(
 
   if (savedBodies.length > 0 && budget.left > 400) {
     const invLines = savedBodies.map((s) => `${s.filename}\t${s.body.length}`);
-    const invSaved = `Ticker ${sym} — ${savedBodies.length} saved document(s)\n${invLines.join("\n")}`;
+    const invSaved = `Ticker ${sym} — ${savedBodies.length} saved document(s) (.txt / .html only)\n${invLines.join("\n")}`;
     appendBlock(chunks, budget, `OREO workspace — Saved Documents inventory (${sym})`, invSaved);
 
     const docHeader = `\n========== OREO workspace — Saved Documents text (${sym}) ==========\n`;
@@ -108,7 +113,7 @@ export async function buildUserDbOreoContext(
 
     for (const { filename, body } of savedBodies) {
       if (budget.left < 300) break;
-      const text = await extractBytesForAi(filename, body);
+      const text = Buffer.from(body).toString("utf8");
       const head = `\n---------- Saved Documents/${filename} ----------\n`;
       const maxBody = Math.max(0, budget.left - head.length - 60);
       if (maxBody < 60) break;

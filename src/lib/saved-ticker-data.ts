@@ -80,6 +80,15 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "forensic-accounting-latest": "forensic-accounting-latest.md",
   "forensic-accounting-latest-meta": "forensic-accounting-latest-meta.json",
   "forensic-accounting-latest-source-pack": "forensic-accounting-latest-source-pack.txt",
+  "kpi-latest": "kpi-latest.md",
+  "kpi-latest-meta": "kpi-latest-meta.json",
+  "kpi-latest-source-pack": "kpi-latest-source-pack.txt",
+  "literary-references-latest": "literary-references-latest.md",
+  "literary-references-latest-meta": "literary-references-latest-meta.json",
+  "literary-references-latest-source-pack": "literary-references-latest-source-pack.txt",
+  "biblical-references-latest": "biblical-references-latest.md",
+  "biblical-references-latest-meta": "biblical-references-latest-meta.json",
+  "biblical-references-latest-source-pack": "biblical-references-latest-source-pack.txt",
 };
 
 /**
@@ -100,6 +109,12 @@ export const SAVED_TAB_FILENAME_AI_PRIORITY: readonly string[] = [
   "ai-credit-memo-latest-meta.json",
   "cs-recommendation-latest.md",
   "cs-recommendation-latest-meta.json",
+  "kpi-latest.md",
+  "kpi-latest-meta.json",
+  "literary-references-latest.md",
+  "literary-references-latest-meta.json",
+  "biblical-references-latest.md",
+  "biblical-references-latest-meta.json",
   "forensic-accounting-latest.md",
   "forensic-accounting-latest-meta.json",
   "ai-credit-memo-buffett.md",
@@ -141,10 +156,17 @@ export const SAVED_TAB_FILENAME_AI_PRIORITY: readonly string[] = [
   "ai-credit-memo-latest-source-pack.txt",
   "cs-recommendation-latest-source-pack.txt",
   "forensic-accounting-latest-source-pack.txt",
+  "kpi-latest-source-pack.txt",
 ];
 
 export function isHeavyCovenantRootFile(basename: string): boolean {
   return basename.toLowerCase().startsWith("credit-agreements-indentures");
+}
+
+/** AI Chat (OREO) context: only include plain-text and HTML files — not .md, .json, PDFs, Excel, etc. */
+export function isAiChatOreoTxtOrHtmlFilename(filename: string): boolean {
+  const f = filename.trim().toLowerCase();
+  return f.endsWith(".txt") || f.endsWith(".html") || f.endsWith(".htm");
 }
 
 export type SavedDataKey = keyof typeof SAVED_DATA_FILES;

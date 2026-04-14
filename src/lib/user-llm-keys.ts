@@ -22,11 +22,13 @@ export function buildLlmApiKeyBundle(
   prefs: UserPreferencesData
 ): LlmCallApiKeys {
   if (emailUsesHostedLlmKeys(email)) {
+    const u = prefs.userLlmApiKeys ?? {};
+    /** Env keys for hosted deploys; User Settings fills gaps so BYOK in Settings still works when .env omits a provider (e.g. DeepSeek). */
+    const a = process.env.ANTHROPIC_API_KEY?.trim() || u.anthropicApiKey?.trim();
+    const o = process.env.OPENAI_API_KEY?.trim() || u.openaiApiKey?.trim();
+    const g = process.env.GEMINI_API_KEY?.trim() || u.geminiApiKey?.trim();
+    const d = process.env.DEEPSEEK_API_KEY?.trim() || u.deepseekApiKey?.trim();
     const out: LlmCallApiKeys = {};
-    const a = process.env.ANTHROPIC_API_KEY?.trim();
-    const o = process.env.OPENAI_API_KEY?.trim();
-    const g = process.env.GEMINI_API_KEY?.trim();
-    const d = process.env.DEEPSEEK_API_KEY?.trim();
     if (a) out.anthropicApiKey = a;
     if (o) out.openaiApiKey = o;
     if (g) out.geminiApiKey = g;

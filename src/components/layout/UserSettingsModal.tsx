@@ -90,16 +90,16 @@ export function UserSettingsModal({
       }}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-xl border shadow-xl"
+        className="w-full max-w-4xl overflow-hidden rounded-xl border shadow-xl"
         style={{ background: "var(--panel)", borderColor: "var(--border)" }}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: "var(--border2)" }}>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold" style={{ color: "var(--text)" }}>
+            <h3 className="text-lg font-semibold leading-snug" style={{ color: "var(--text)" }}>
               User Settings
             </h3>
-            <p className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
+            <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
               Chat identity and BYOK LLM keys for in-app API runs (keeps hosting costs down).
             </p>
           </div>
@@ -114,21 +114,21 @@ export function UserSettingsModal({
           </button>
         </div>
 
-        <div className="max-h-[min(82vh,560px)] overflow-y-auto p-4">
-          <section className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--card2)" }}>
-            <h4 className="text-xs font-semibold" style={{ color: "var(--text)" }}>
+        <div className="max-h-[min(88vh,800px)] overflow-y-auto p-4 text-base sm:p-5">
+          <section className="rounded-lg border p-4" style={{ borderColor: "var(--border2)", background: "var(--card2)" }}>
+            <h4 className="text-base font-semibold" style={{ color: "var(--text)" }}>
               Egg-Hoc chat ID
             </h4>
-            <p className="mt-1 text-[10px]" style={{ color: "var(--muted2)" }}>
+            <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
               This changes how your name/ID appears in the app UI. (It does not change your login email.)
             </p>
-            <label className="mt-3 block text-[11px]" style={{ color: "var(--muted2)" }}>
+            <label className="mt-3 block text-sm font-medium" style={{ color: "var(--muted2)" }}>
               Display name / ID
               <input
                 value={chatDisplayId}
                 onChange={(e) => setChatDisplayId(e.target.value)}
                 placeholder="e.g. guowei58"
-                className="mt-1 w-full rounded border px-2 py-1.5 text-sm"
+                className="mt-1.5 w-full rounded border px-3 py-2 text-base"
                 style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
               />
             </label>
@@ -136,7 +136,7 @@ export function UserSettingsModal({
               <button
                 type="button"
                 disabled={!canSave || saving}
-                className="rounded border px-3 py-1.5 text-xs font-semibold disabled:opacity-60"
+                className="rounded border px-4 py-2 text-sm font-semibold disabled:opacity-60"
                 style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
                 onClick={async () => {
                   const next = chatDisplayId.trim().toLowerCase().replace(/\s+/g, "-");
@@ -174,21 +174,21 @@ export function UserSettingsModal({
                 {saving ? "Saving…" : "Save"}
               </button>
               {savedToast ? (
-                <span className="text-[10px]" style={{ color: "var(--accent)" }}>
+                <span className="text-sm" style={{ color: "var(--accent)" }}>
                   Saved
                 </span>
               ) : (
-                <span className="text-[10px]" style={{ color: "var(--muted)" }}>
+                <span className="text-sm" style={{ color: "var(--muted)" }}>
                   Saved to your account preferences
                 </span>
               )}
             </div>
             {saveError ? (
-              <p className="mt-2 text-[10px]" style={{ color: "var(--warn)" }}>
+              <p className="mt-2 text-sm" style={{ color: "var(--warn)" }}>
                 {saveError}
               </p>
             ) : invalidLocal ? (
-              <p className="mt-2 text-[10px]" style={{ color: "var(--warn)" }}>
+              <p className="mt-2 text-sm" style={{ color: "var(--warn)" }}>
                 Use letters/numbers, plus &quot;.&quot;, &quot;_&quot; or &quot;-&quot;.
               </p>
             ) : null}
@@ -198,23 +198,23 @@ export function UserSettingsModal({
             ref={(el) => {
               apiKeysSectionRef.current = el;
             }}
-            className="mt-4 rounded-lg border p-3"
+            className="mt-4 rounded-lg border p-4"
             style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
           >
-            <h4 className="text-xs font-semibold" style={{ color: "var(--text)" }}>
+            <h4 className="text-base font-semibold" style={{ color: "var(--text)" }}>
               LLM API keys
             </h4>
             {hostedLlmAccount ? (
-              <p className="mt-1 text-[10px] leading-snug" style={{ color: "var(--accent)" }}>
+              <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--accent)" }}>
                 Your account uses Century Egg Credit server API keys for Claude, ChatGPT, Gemini, and DeepSeek. You do not need to
                 paste keys here unless you want to override them with your own.
               </p>
             ) : (
               <>
-                <p className="mt-1 whitespace-pre-line text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+                <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
                   {USER_LLM_API_KEYS_POLICY}
                 </p>
-                <p className="mt-2 text-[10px] leading-snug" style={{ color: "var(--muted)" }}>
+                <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
                   Keys below are stored with your login and are not shared with other users. Use the in-app &quot;Claude API&quot;,
                   &quot;ChatGPT API&quot;, &quot;Gemini API&quot;, and &quot;DeepSeek API&quot; actions from AI Chat, research tabs,
                   credit memo tools, and elsewhere.
@@ -222,16 +222,16 @@ export function UserSettingsModal({
               </>
             )}
 
-            <div className="mt-3 grid grid-cols-1 gap-3">
+            <div className="mt-4 grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
+                <label className="block text-sm font-medium" style={{ color: "var(--muted2)" }}>
                   Anthropic (Claude) API key
                 </label>
                 <a
                   href={LLM_LINKS.anthropic}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-0.5 inline-block text-[10px] underline"
+                  className="mt-1 inline-block text-sm underline"
                   style={{ color: "var(--accent)" }}
                 >
                   Get a key at console.anthropic.com
@@ -243,19 +243,19 @@ export function UserSettingsModal({
                   placeholder="sk-ant-api03-…"
                   autoComplete="off"
                   disabled={!canSave}
-                  className="mt-1 w-full rounded border px-2 py-1.5 font-mono text-xs"
+                  className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
+                <label className="block text-sm font-medium" style={{ color: "var(--muted2)" }}>
                   OpenAI (ChatGPT) API key
                 </label>
                 <a
                   href={LLM_LINKS.openai}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-0.5 inline-block text-[10px] underline"
+                  className="mt-1 inline-block text-sm underline"
                   style={{ color: "var(--accent)" }}
                 >
                   Get a key at platform.openai.com
@@ -267,19 +267,19 @@ export function UserSettingsModal({
                   placeholder="sk-…"
                   autoComplete="off"
                   disabled={!canSave}
-                  className="mt-1 w-full rounded border px-2 py-1.5 font-mono text-xs"
+                  className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
+                <label className="block text-sm font-medium" style={{ color: "var(--muted2)" }}>
                   Google Gemini API key
                 </label>
                 <a
                   href={LLM_LINKS.gemini}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-0.5 inline-block text-[10px] underline"
+                  className="mt-1 inline-block text-sm underline"
                   style={{ color: "var(--accent)" }}
                 >
                   Get a key at Google AI Studio
@@ -291,19 +291,19 @@ export function UserSettingsModal({
                   placeholder="AIza…"
                   autoComplete="off"
                   disabled={!canSave}
-                  className="mt-1 w-full rounded border px-2 py-1.5 font-mono text-xs"
+                  className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
+                <label className="block text-sm font-medium" style={{ color: "var(--muted2)" }}>
                   DeepSeek API key
                 </label>
                 <a
                   href={LLM_LINKS.deepseek}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-0.5 inline-block text-[10px] underline"
+                  className="mt-1 inline-block text-sm underline"
                   style={{ color: "var(--accent)" }}
                 >
                   Get a key at platform.deepseek.com
@@ -315,17 +315,17 @@ export function UserSettingsModal({
                   placeholder="sk-…"
                   autoComplete="off"
                   disabled={!canSave}
-                  className="mt-1 w-full rounded border px-2 py-1.5 font-mono text-xs"
+                  className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
               </div>
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
+            <div className="mt-4 flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 disabled={!canSave || savingKeys}
-                className="rounded border px-3 py-1.5 text-xs font-semibold disabled:opacity-60"
+                className="rounded border px-4 py-2 text-sm font-semibold disabled:opacity-60"
                 style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
                 onClick={async () => {
                   setKeysSaveError(null);
@@ -359,13 +359,13 @@ export function UserSettingsModal({
                 {savingKeys ? "Saving…" : "Save API keys"}
               </button>
               {keysSavedToast ? (
-                <span className="text-[10px]" style={{ color: "var(--accent)" }}>
+                <span className="text-sm" style={{ color: "var(--accent)" }}>
                   Keys saved
                 </span>
               ) : null}
             </div>
             {keysSaveError ? (
-              <p className="mt-2 text-[10px]" style={{ color: "var(--warn)" }}>
+              <p className="mt-2 text-sm" style={{ color: "var(--warn)" }}>
                 {keysSaveError}
               </p>
             ) : null}
@@ -375,7 +375,7 @@ export function UserSettingsModal({
         <div className="flex items-center justify-end gap-2 border-t px-4 py-3" style={{ borderColor: "var(--border2)" }}>
           <button
             type="button"
-            className="rounded border px-3 py-1.5 text-xs font-semibold"
+            className="rounded border px-4 py-2 text-sm font-semibold"
             style={{ borderColor: "var(--border2)", color: "var(--text)", background: "transparent" }}
             onClick={onClose}
           >

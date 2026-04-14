@@ -44,6 +44,18 @@ export default function Home() {
     setCompanyTab(getFirstTabIdForTopSection(companyTopSection));
   }, [companyTab, companyTopSection]);
 
+  /** Forensic Accounting moved from Risk to Work Product; fix stale section for bookmarked state. */
+  useEffect(() => {
+    if (companyTab !== "forensic-accounting" || companyTopSection !== "risk") return;
+    setCompanyTopSection("work-product");
+  }, [companyTab, companyTopSection]);
+
+  /** KPI tab renamed to KPI Commentary; fix bookmarked tab id. */
+  useEffect(() => {
+    if (companyTab !== "kpi") return;
+    setCompanyTab("kpi-commentary");
+  }, [companyTab]);
+
   return (
     <div
       className="shell"

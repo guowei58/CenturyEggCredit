@@ -35,11 +35,6 @@ export type UserPreferencesData = {
   promptTemplates?: Record<string, string>;
   /** Opaque cache blobs (e.g. feed JSON), arbitrary string keys */
   feedCaches?: Record<string, string>;
-  /** Ticker (uppercase) → IR indexer hints */
-  irIndexer?: Record<
-    string,
-    { lastSourceId?: string; suggestedIrUrl?: string; suggestedIrMeta?: string }
-  >;
   /** Ticker (uppercase) → JSON string of credit memo draft */
   creditMemoDrafts?: Record<string, string>;
   includeOreoContext?: boolean;

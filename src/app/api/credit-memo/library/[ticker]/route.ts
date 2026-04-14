@@ -9,6 +9,9 @@ import {
   readLibraryIndex,
   readLibraryMemoContent,
 } from "@/lib/ai-memo-deck-library";
+import { creditMemoPrimaryModelId, resolveCreditMemoModels } from "@/lib/ai-model-from-request";
+import { sanitizeClientModelId } from "@/lib/ai-model-options";
+import { normalizeAiProvider } from "@/lib/ai-provider";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
 export const runtime = "nodejs";
@@ -21,7 +24,7 @@ function safeFilenamePart(s: string): string {
 
 /**
  * GET — list entries, or ?memoId= for markdown JSON, or ?deckId= for .pptx download.
- * POST JSON { action: "addMemo", title, markdown, variant?, provider? } — add memo.
+ * POST JSON { action: "addMemo", title, markdown, variant?, provider?, llmModel? } — add memo.
  * POST multipart: action=addDeck, title=, file=.pptx — add deck.
  * DELETE ?id= — remove entry and file.
  */
@@ -89,13 +92,25 @@ export async function POST(request: Request, { params }: { params: { ticker: str
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
     const title = String(fd.get("title") ?? "").trim() || "Credit deck";
+    const deckProviderRaw = String(fd.get("provider") ?? "").trim().slice(0, 40);
+    const deckProviderNorm = normalizeAiProvider(deckProviderRaw);
+    const deckProvider = deckProviderRaw || null;
+    let deckLlm = sanitizeClientModelId(String(fd.get("llmModel") ?? ""));
+    if (!deckLlm && deckProviderNorm) {
+      deckLlm = creditMemoPrimaryModelId(deckProviderNorm, resolveCreditMemoModels({}));
+    }
     const file = fd.get("file");
     if (!file || !(file instanceof Blob)) {
       return NextResponse.json({ error: "Missing file" }, { status: 400 });
     }
     const ab = await file.arrayBuffer();
     const pptx = Buffer.from(ab);
-    const r = await addLibraryDeck(userId, ticker, { title, pptx });
+    const r = await addLibraryDeck(userId, ticker, {
+      title,
+      pptx,
+      provider: deckProvider,
+      llmModel: deckLlm ?? null,
+    });
     if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
     return NextResponse.json({ ok: true, id: r.id });
   }
@@ -112,6 +127,7 @@ export async function POST(request: Request, { params }: { params: { ticker: str
     markdown?: string;
     variant?: string | null;
     provider?: string | null;
+    llmModel?: string | null;
   };
   if (b.action !== "addMemo") {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -123,11 +139,18 @@ export async function POST(request: Request, { params }: { params: { ticker: str
   }
   const variant = typeof b.variant === "string" ? b.variant : b.variant === null ? null : undefined;
   const provider = typeof b.provider === "string" ? b.provider : b.provider === null ? null : undefined;
+  const providerNorm = normalizeAiProvider(typeof b.provider === "string" ? b.provider.trim() : undefined);
+  let llmModel: string | undefined =
+    typeof b.llmModel === "string" && b.llmModel.trim() ? sanitizeClientModelId(b.llmModel) : undefined;
+  if (!llmModel && providerNorm) {
+    llmModel = creditMemoPrimaryModelId(providerNorm, resolveCreditMemoModels({}));
+  }
   const r = await addLibraryMemo(userId, ticker, {
     title: title || "Credit memo",
     markdown,
     variant,
     provider,
+    llmModel,
   });
   if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
   return NextResponse.json({ ok: true, id: r.id });

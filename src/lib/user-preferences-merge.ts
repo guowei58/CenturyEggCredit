@@ -31,18 +31,6 @@ export function mergeLegacyIntoServerPrefs(
   if (fc) next.feedCaches = fc;
   else delete next.feedCaches;
 
-  const irL = legacy.irIndexer ?? {};
-  const irS = server.irIndexer ?? {};
-  const irTickerUnion = Object.keys({ ...irL, ...irS });
-  if (irTickerUnion.length) {
-    const irMerged: NonNullable<UserPreferencesData["irIndexer"]> = {};
-    for (let i = 0; i < irTickerUnion.length; i++) {
-      const t = irTickerUnion[i]!;
-      irMerged[t] = { ...irL[t], ...irS[t] };
-    }
-    next.irIndexer = irMerged;
-  } else delete next.irIndexer;
-
   next.creditMemoDrafts = { ...legacy.creditMemoDrafts, ...server.creditMemoDrafts };
   if (!next.creditMemoDrafts || Object.keys(next.creditMemoDrafts).length === 0) delete next.creditMemoDrafts;
 

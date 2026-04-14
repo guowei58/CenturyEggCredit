@@ -1,5 +1,5 @@
 /**
- * All user-owned files that previously lived under data/ — IR, X, excel, credit memo state, etc.
+ * All user-owned files that previously lived under data/ — X, excel, credit memo state, etc.
  */
 
 import { randomBytes } from "crypto";
@@ -8,7 +8,7 @@ import os from "os";
 import path from "path";
 
 import { prisma } from "@/lib/prisma";
-import { SAVED_DATA_FILES, sanitizeTicker } from "@/lib/saved-ticker-data";
+import { isAiChatOreoTxtOrHtmlFilename, SAVED_DATA_FILES, sanitizeTicker } from "@/lib/saved-ticker-data";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import { MAX_WORKSPACE_FILE_BYTES } from "@/lib/user-ticker-workspace-constants";
 import {
@@ -112,6 +112,33 @@ export async function workspaceListRelativePaths(userId: string, ticker: string)
     orderBy: { path: "asc" },
   });
   return rows.map((r) => r.path);
+}
+
+/**
+ * AI Chat OREO only: `.txt` / `.html` / `.htm` workspace files (one query — avoids materializing binaries).
+ */
+export async function workspaceFetchTxtHtmlFilesForAi(
+  userId: string,
+  ticker: string
+): Promise<Array<{ path: string; text: string }>> {
+  const sym = sanitizeTicker(ticker);
+  if (!sym) return [];
+  const extPattern = String.raw`\.(txt|html|htm)$`;
+  const rows = await prisma.$queryRaw<Array<{ path: string; body: Buffer }>>`
+    SELECT path, body
+    FROM user_ticker_workspace_files
+    WHERE user_id = ${userId}
+      AND ticker = ${sym}
+      AND path ~* ${extPattern}
+    ORDER BY path ASC
+  `;
+  const out: Array<{ path: string; text: string }> = [];
+  for (const row of rows) {
+    if (!isAiChatOreoTxtOrHtmlFilename(row.path)) continue;
+    const text = Buffer.from(row.body).toString("utf8");
+    out.push({ path: row.path.replace(/\\/g, "/"), text });
+  }
+  return out;
 }
 
 export async function workspaceReadUtf8(userId: string, ticker: string, relPath: string): Promise<string | null> {

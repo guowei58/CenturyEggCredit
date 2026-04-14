@@ -12,7 +12,6 @@ export default defineConfig({
       "src/lib/xSearch/**/*.test.ts",
       "src/lib/researchFinder/**/*.test.ts",
       "src/lib/substack/**/*.test.ts",
-      "src/lib/irIndexer/**/*.test.ts",
       "src/lib/reddit/**/*.test.ts",
       "src/lib/reddit/*.test.ts",
       "src/lib/creditMemo/**/*.test.ts",

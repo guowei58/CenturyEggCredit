@@ -9,6 +9,7 @@ import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
 import { isOpenAiWebSearchEnabled } from "@/lib/openai";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 export const dynamic = "force-dynamic";
 /** Align with `anthropicFetchTimeoutMs()` default (300s) so Claude can finish large tab prompts. */
@@ -61,10 +62,18 @@ export async function POST(request: Request) {
   }
 
   const userRaw = typeof b.userPrompt === "string" ? b.userPrompt : "";
-  const user = userRaw.trim();
-  if (!user) {
+  const trimmedUser = userRaw.trim();
+  if (!trimmedUser) {
     return NextResponse.json({ error: "userPrompt is required" }, { status: 400 });
   }
+  if (trimmedUser.length > MAX_USER_CHARS) {
+    return NextResponse.json(
+      { error: `Prompt too large (max ${MAX_USER_CHARS.toLocaleString()} characters).` },
+      { status: 400 }
+    );
+  }
+
+  const user = withPromptBenchmarkNotice(trimmedUser);
   if (user.length > MAX_USER_CHARS) {
     return NextResponse.json(
       { error: `Prompt too large (max ${MAX_USER_CHARS.toLocaleString()} characters).` },

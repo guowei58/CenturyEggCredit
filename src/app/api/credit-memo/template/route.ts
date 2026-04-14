@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import {
   deleteCreditMemoTemplate,
   listCreditMemoTemplates,
+  readCreditMemoTemplateDocx,
   saveCreditMemoTemplateDocx,
   setActiveCreditMemoTemplate,
 } from "@/lib/creditMemo/templateStore";
@@ -12,10 +13,30 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const url = new URL(req.url);
+  const templateId = (url.searchParams.get("templateId") ?? url.searchParams.get("id") ?? "").trim();
+  const download = url.searchParams.get("download");
+  if (templateId && (download === "1" || download === "true")) {
+    const tplIndex = await listCreditMemoTemplates(userId);
+    const meta = tplIndex.templates.find((t) => t.id === templateId);
+    if (!meta) return NextResponse.json({ error: "Template not found" }, { status: 404 });
+    const buf = await readCreditMemoTemplateDocx(userId, templateId);
+    if (!buf?.length) return NextResponse.json({ error: "Template file missing" }, { status: 404 });
+    const safeName = meta.filename.replace(/[^\w.\- ()]+/g, "_").replace(/_+/g, "_") || "template.docx";
+    return new NextResponse(new Uint8Array(buf), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "Content-Disposition": `attachment; filename="${safeName}"`,
+      },
+    });
+  }
+
   const idx = await listCreditMemoTemplates(userId);
   return NextResponse.json({ index: idx });
 }
@@ -51,8 +72,13 @@ export async function POST(req: Request) {
     }
     const id = typeof body.templateId === "string" ? body.templateId.trim() : "";
     if (!id) return NextResponse.json({ error: "templateId required" }, { status: 400 });
-    const idx = await deleteCreditMemoTemplate(userId, id);
-    return NextResponse.json({ ok: true, index: idx });
+    try {
+      const idx = await deleteCreditMemoTemplate(userId, id);
+      return NextResponse.json({ ok: true, index: idx });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Delete failed";
+      return NextResponse.json({ error: msg }, { status: 400 });
+    }
   }
 
   let form: FormData;

@@ -149,6 +149,8 @@ model EggHocMessage {
   id               String            @id @default(cuid())
   conversationId   String            @map("conversation_id")
   senderUserId     String            @map("sender_user_id")
+  /** When set, only this user sees the row in thread, previews, and unread counts (lobby welcome, etc.). */
+  visibleOnlyToUserId String?        @map("visible_only_to_user_id")
   body             String            @db.Text
   messageType      EggHocMessageType @default(TEXT) @map("message_type")
   replyToMessageId String?           @map("reply_to_message_id")
@@ -164,6 +166,7 @@ model EggHocMessage {
   readAnchors        ConversationMember[]  @relation("MemberLastRead")
 
   @@index([conversationId, createdAt(sort: Desc)])
+  @@index([conversationId, visibleOnlyToUserId])
   @@map("egg_hoc_messages")
 }
 
@@ -225,7 +228,7 @@ model UserSavedDocument {
 }
 
 /**
- * Arbitrary per-user blobs: IR indexer DB, X posts, Excel exports, credit memo projects JSON, etc.
+ * Arbitrary per-user blobs: X posts, Excel exports, credit memo projects JSON, etc.
  * Use `ticker = "__global__"` for account-wide files (reddit, templates, …).
  */
 model UserTickerWorkspaceFile {
@@ -233,7 +236,7 @@ model UserTickerWorkspaceFile {
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   ticker    String
-  /** Relative path with / only, e.g. "IR Indexer/db.json" */
+  /** Relative path with / only, e.g. "credit-memo/projects/index.json" */
   path      String   @map("path")
   body      Bytes
   updatedAt DateTime @updatedAt @map("updated_at")

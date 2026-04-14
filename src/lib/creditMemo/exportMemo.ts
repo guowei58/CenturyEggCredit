@@ -68,6 +68,13 @@ export function downloadFilename(job: MemoJob, ext: string): string {
   return `credit-memo_${safe}_${job.id.slice(0, 8)}.${ext}`;
 }
 
+/** Filename for exports built from arbitrary on-screen markdown (not tied to a stored job). */
+export function downloadFilenameForTickerBody(ticker: string, ext: string): string {
+  const safe = (ticker || "memo").replace(/[^a-z0-9-_]/gi, "_");
+  const stamp = Date.now().toString(36).slice(-8);
+  return `credit-memo_${safe}_${stamp}.${ext}`;
+}
+
 export async function memoToDocx(markdown: string, title: string): Promise<Buffer> {
   return memoMarkdownToDocxBuffer(markdown, title);
 }

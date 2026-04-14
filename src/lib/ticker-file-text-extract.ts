@@ -213,6 +213,23 @@ async function extractFromZipByKind(buf: Buffer, kind: ZipOfficeKind): Promise<s
 }
 
 /**
+ * Credit-memo / Work Product folder ingest: PDFs are normalized to plain text only (binary PDF is never chunked).
+ * Same text pipeline as other callers; kept explicit so ingest can depend on a single “PDF → UTF-8 text” step.
+ */
+export async function extractPdfAsPlainTextForIngest(abs: string, _rel: string, size: number): Promise<string> {
+  if (size > MAX_PDF_BYTES) {
+    return `[PDF too large (${size} bytes; cap ${MAX_PDF_BYTES}). Export pages or raise cap.]`;
+  }
+  try {
+    const buf = await fs.readFile(abs);
+    const clipOut = (s: string) => clip(s, MAX_CHARS_PER_EXTRACT);
+    return clipOut(await extractPdf(buf));
+  } catch (e) {
+    return `[Read/extract failed: ${e instanceof Error ? e.message : "error"}]`;
+  }
+}
+
+/**
  * Same as `extractTickerFileForAi` but for an in-memory file (e.g. Postgres-stored Saved Documents).
  */
 export async function extractBytesForAi(rel: string, buf: Buffer): Promise<string> {

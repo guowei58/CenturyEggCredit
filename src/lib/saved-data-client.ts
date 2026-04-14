@@ -75,7 +75,13 @@ export type SavedDataKey =
   | "kpi-latest-source-pack"
   | "forensic-accounting-latest"
   | "forensic-accounting-latest-meta"
-  | "forensic-accounting-latest-source-pack";
+  | "forensic-accounting-latest-source-pack"
+  | "literary-references-latest"
+  | "literary-references-latest-meta"
+  | "literary-references-latest-source-pack"
+  | "biblical-references-latest"
+  | "biblical-references-latest-meta"
+  | "biblical-references-latest-source-pack";
 
 /** No-op compatibility POST so clients can "warm" the session before first save. */
 export async function initTickerSaveFolder(ticker: string): Promise<void> {

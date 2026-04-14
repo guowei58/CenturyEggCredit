@@ -6,7 +6,11 @@ import {
 import { prisma } from "@/lib/prisma";
 import { makeDirectPairKey } from "@/lib/egg-hoc-chat/directPairKey";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
-import { parseUserPreferencesPayload } from "@/lib/user-preferences-types";
+import {
+  parseUserPreferencesPayload,
+  serializeUserPreferencesPayload,
+  USER_PREFERENCES_VERSION,
+} from "@/lib/user-preferences-types";
 
 const userPublicSelect = {
   id: true,
@@ -103,12 +107,62 @@ export const GLOBAL_LOBBY_KEY = "global" as const;
 
 const LOBBY_TITLE = "Lobby";
 
+const OREO_LOBBY_BOT_EMAIL = "oreo-lobby-bot@noreply.centuryegg.internal";
+
+/** First Lobby line for each new member (`visibleOnlyToUserId` so others do not get unread). */
+const OREO_LOBBY_WELCOME_MESSAGE = "OREO says hi - woof woof";
+
+/** Rows the viewer may see in previews, threads, and unread (null = everyone). */
+function messageVisibleToViewerWhere(viewerUserId: string) {
+  return {
+    OR: [{ visibleOnlyToUserId: null }, { visibleOnlyToUserId: viewerUserId }],
+  };
+}
+
+async function getOrCreateOreoLobbyBotUserId(): Promise<string> {
+  const payload = serializeUserPreferencesPayload({
+    v: USER_PREFERENCES_VERSION,
+    profile: { chatDisplayId: "OREO" },
+  });
+  const row = await prisma.user.upsert({
+    where: { email: OREO_LOBBY_BOT_EMAIL },
+    create: {
+      email: OREO_LOBBY_BOT_EMAIL,
+      name: "OREO",
+      preferences: { create: { payload } },
+    },
+    update: {},
+    select: { id: true },
+  });
+  return row.id;
+}
+
+async function postOreoLobbyWelcomeMessage(conversationId: string, recipientUserId: string): Promise<void> {
+  const botId = await getOrCreateOreoLobbyBotUserId();
+  await prisma.$transaction(async (tx) => {
+    const m = await tx.eggHocMessage.create({
+      data: {
+        conversationId,
+        senderUserId: botId,
+        visibleOnlyToUserId: recipientUserId,
+        body: OREO_LOBBY_WELCOME_MESSAGE,
+        messageType: EggHocMessageType.TEXT,
+      },
+    });
+    await tx.conversation.update({
+      where: { id: conversationId },
+      data: { lastMessageId: m.id },
+    });
+  });
+}
+
 function isPrismaUniqueViolation(e: unknown): boolean {
   return typeof e === "object" && e !== null && "code" in e && (e as { code: string }).code === "P2002";
 }
 
 /**
  * Ensures the global Lobby row exists and the user is a member (lazy join for every account).
+ * New members receive a targeted Lobby welcome from OREO (unread for them only).
  */
 export async function ensureUserInGlobalLobby(userId: string): Promise<void> {
   for (let attempt = 0; attempt < 5; attempt++) {
@@ -116,7 +170,9 @@ export async function ensureUserInGlobalLobby(userId: string): Promise<void> {
       where: { lobbyKey: GLOBAL_LOBBY_KEY },
       select: { id: true },
     });
+
     if (!lobby) {
+      let createdLobbyThisAttempt = false;
       try {
         await prisma.conversation.create({
           data: {
@@ -129,6 +185,7 @@ export async function ensureUserInGlobalLobby(userId: string): Promise<void> {
             },
           },
         });
+        createdLobbyThisAttempt = true;
       } catch (e) {
         if (!isPrismaUniqueViolation(e)) throw e;
       }
@@ -136,14 +193,28 @@ export async function ensureUserInGlobalLobby(userId: string): Promise<void> {
         where: { lobbyKey: GLOBAL_LOBBY_KEY },
         select: { id: true },
       });
+      if (lobby && createdLobbyThisAttempt) {
+        await postOreoLobbyWelcomeMessage(lobby.id, userId);
+        return;
+      }
     }
+
     if (!lobby) continue;
 
-    await prisma.conversationMember.upsert({
+    const alreadyMember = await prisma.conversationMember.findUnique({
       where: { conversationId_userId: { conversationId: lobby.id, userId } },
-      create: { conversationId: lobby.id, userId, role: ConversationMemberRole.MEMBER },
-      update: {},
+      select: { id: true },
     });
+    if (alreadyMember) return;
+
+    try {
+      await prisma.conversationMember.create({
+        data: { conversationId: lobby.id, userId, role: ConversationMemberRole.MEMBER },
+      });
+      await postOreoLobbyWelcomeMessage(lobby.id, userId);
+    } catch (e) {
+      if (!isPrismaUniqueViolation(e)) throw e;
+    }
     return;
   }
 }
@@ -168,6 +239,7 @@ export async function countUnreadForMember(
     senderUserId: { not: userId },
     messageType: EggHocMessageType.TEXT,
     createdAt: { gte: memberJoinedAt },
+    ...messageVisibleToViewerWhere(userId),
   } as const;
 
   if (!lastReadMessageId) {
@@ -234,6 +306,7 @@ export async function listUserConversations(userId: string) {
           conversationId: c.id,
           deletedAt: null,
           createdAt: { gte: joinedAt },
+          ...messageVisibleToViewerWhere(userId),
         },
         orderBy: { createdAt: "desc" },
         include: { sender: { select: userPublicSelect } },
@@ -427,6 +500,7 @@ export async function getConversationMessages(
         gte: joinedAt,
         ...(cursorDate ? { lt: cursorDate } : {}),
       },
+      ...messageVisibleToViewerWhere(userId),
     },
     orderBy: { createdAt: "desc" },
     take,
@@ -450,7 +524,11 @@ export async function getConversationMessages(
   const replyParents =
     replyParentIds.length > 0
       ? await prisma.eggHocMessage.findMany({
-          where: { conversationId, id: { in: replyParentIds } },
+          where: {
+            conversationId,
+            id: { in: replyParentIds },
+            ...messageVisibleToViewerWhere(userId),
+          },
           select: {
             id: true,
             body: true,
@@ -516,7 +594,12 @@ export async function sendMessage(
   const rawReply = typeof replyToMessageId === "string" ? replyToMessageId.trim() : "";
   if (rawReply) {
     const parent = await prisma.eggHocMessage.findFirst({
-      where: { id: rawReply, conversationId, deletedAt: null },
+      where: {
+        id: rawReply,
+        conversationId,
+        deletedAt: null,
+        ...messageVisibleToViewerWhere(userId),
+      },
       select: { id: true },
     });
     if (!parent) return { ok: false as const, error: "That message was not found in this chat" };
@@ -585,7 +668,12 @@ export async function markConversationRead(conversationId: string, userId: strin
   let targetId = messageId?.trim() || null;
   if (!targetId) {
     const last = await prisma.eggHocMessage.findFirst({
-      where: { conversationId, deletedAt: null, createdAt: { gte: joinedAt } },
+      where: {
+        conversationId,
+        deletedAt: null,
+        createdAt: { gte: joinedAt },
+        ...messageVisibleToViewerWhere(userId),
+      },
       orderBy: { createdAt: "desc" },
       select: { id: true },
     });
@@ -594,7 +682,12 @@ export async function markConversationRead(conversationId: string, userId: strin
 
   if (targetId) {
     const exists = await prisma.eggHocMessage.findFirst({
-      where: { id: targetId, conversationId, createdAt: { gte: joinedAt } },
+      where: {
+        id: targetId,
+        conversationId,
+        createdAt: { gte: joinedAt },
+        ...messageVisibleToViewerWhere(userId),
+      },
       select: { id: true },
     });
     if (!exists) return { ok: false as const, error: "Message not in this conversation" };

@@ -1,14 +1,22 @@
 import { createHash } from "crypto";
-import mammoth from "mammoth";
 
+import { buildCreditMemoTemplateFromDocxBytes } from "./creditMemoTemplateDocx";
 import type { CreditMemoTemplate, CreditMemoTemplateIndex } from "./types";
 import { WORKSPACE_GLOBAL_TICKER } from "@/lib/user-ticker-workspace-constants";
 import {
+  loadPublicDefaultCreditMemoTemplate,
+  PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID,
+  readPublicDefaultCreditMemoDocxBuffer,
+} from "./publicDefaultCreditMemoTemplate";
+import {
   workspaceDeleteFile,
+  workspaceReadFile,
   workspaceReadUtf8,
   workspaceWriteFile,
   workspaceWriteUtf8,
 } from "@/lib/user-ticker-workspace-store";
+
+export { extractSectionHintsFromHtml } from "./creditMemoTemplateDocx";
 
 const INDEX_PATH = "credit-memo/templates/index.json";
 
@@ -22,41 +30,6 @@ function nowIso(): string {
 
 function stableId(parts: string[]): string {
   return createHash("sha256").update(parts.join("|")).digest("hex").slice(0, 18);
-}
-
-function stripHtmlTags(s: string): string {
-  return s
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/p>/gi, "\n")
-    .replace(/<\/h[1-6]>/gi, "\n")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function parseHeadingTags(html: string): Array<{ level: 1 | 2 | 3; title: string }> {
-  const out: Array<{ level: 1 | 2 | 3; title: string }> = [];
-  const re = /<(h[1-3])[^>]*>([\s\S]*?)<\/\1>/gi;
-  for (const m of Array.from(html.matchAll(re))) {
-    const tag = (m[1] || "").toLowerCase();
-    const raw = m[2] || "";
-    const title = stripHtmlTags(raw);
-    if (!title) continue;
-    const level = tag === "h1" ? 1 : tag === "h2" ? 2 : 3;
-    out.push({ level, title: title.slice(0, 140) });
-  }
-  return out;
-}
-
-function buildOutlineTitles(headings: Array<{ level: 1 | 2 | 3; title: string }>): string[] {
-  const titles = headings
-    .filter((h) => h.title.trim().length >= 3)
-    .map((h) => h.title.replace(/\s+/g, " ").trim());
-  const out: string[] = [];
-  for (const t of titles) {
-    if (!out.length || out[out.length - 1]!.toLowerCase() !== t.toLowerCase()) out.push(t);
-  }
-  return out;
 }
 
 function emptyIndex(): CreditMemoTemplateIndex {
@@ -83,15 +56,58 @@ async function writeIndex(userId: string, idx: CreditMemoTemplateIndex): Promise
   if (!w.ok) throw new Error(w.error);
 }
 
+function normalizeIndexWithPublic(idx: CreditMemoTemplateIndex, pub: CreditMemoTemplate | null): CreditMemoTemplateIndex {
+  const templates = pub
+    ? [pub, ...idx.templates.filter((t) => t.id !== PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID)]
+    : [...idx.templates];
+
+  let activeTemplateId = idx.activeTemplateId;
+  if (activeTemplateId && activeTemplateId !== PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID) {
+    if (!idx.templates.some((t) => t.id === activeTemplateId)) {
+      activeTemplateId = pub ? PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID : null;
+    }
+  }
+  if (activeTemplateId === null && idx.templates.length === 0 && pub) {
+    activeTemplateId = PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID;
+  }
+
+  return { activeTemplateId, templates };
+}
+
 export async function listCreditMemoTemplates(userId: string): Promise<CreditMemoTemplateIndex> {
-  return readIndex(userId);
+  const idx = await readIndex(userId);
+  const pub = await loadPublicDefaultCreditMemoTemplate();
+  return normalizeIndexWithPublic(idx, pub);
+}
+
+/** Raw .docx bytes for a template (user-owned or shared default). */
+export async function readCreditMemoTemplateDocx(userId: string, templateId: string): Promise<Buffer | null> {
+  const id = templateId.trim();
+  if (!id) return null;
+  if (id === PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID) {
+    const buf = readPublicDefaultCreditMemoDocxBuffer();
+    return buf?.length ? buf : null;
+  }
+  const idx = await readIndex(userId);
+  if (!idx.templates.some((t) => t.id === id)) return null;
+  return workspaceReadFile(userId, WORKSPACE_GLOBAL_TICKER, docxPath(id));
 }
 
 export async function getActiveCreditMemoTemplate(userId: string): Promise<CreditMemoTemplate | null> {
   const idx = await readIndex(userId);
-  const id = idx.activeTemplateId;
-  if (!id) return null;
-  return idx.templates.find((t) => t.id === id) ?? null;
+  const pub = await loadPublicDefaultCreditMemoTemplate();
+
+  if (idx.activeTemplateId === PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID) {
+    return pub;
+  }
+  if (idx.activeTemplateId) {
+    const t = idx.templates.find((x) => x.id === idx.activeTemplateId);
+    if (t) return t;
+  }
+  if (pub && idx.templates.length === 0) {
+    return pub;
+  }
+  return null;
 }
 
 export async function saveCreditMemoTemplateDocx(
@@ -101,17 +117,12 @@ export async function saveCreditMemoTemplateDocx(
     bytes: Uint8Array;
   }
 ): Promise<CreditMemoTemplate> {
-  const htmlRes = await mammoth.convertToHtml({ buffer: Buffer.from(params.bytes) });
-  const headings = parseHeadingTags(htmlRes.value || "");
-  const outlineTitles = buildOutlineTitles(headings);
-
-  const tpl: CreditMemoTemplate = {
+  const tpl = await buildCreditMemoTemplateFromDocxBytes({
+    buffer: Buffer.from(params.bytes),
     id: stableId(["cm_tpl", params.filename, String(params.bytes.length), nowIso()]),
     filename: params.filename,
     uploadedAt: nowIso(),
-    headings,
-    outlineTitles,
-  };
+  });
 
   const w = await workspaceWriteFile(userId, WORKSPACE_GLOBAL_TICKER, docxPath(tpl.id), Buffer.from(params.bytes));
   if (!w.ok) throw new Error(w.error);
@@ -131,24 +142,45 @@ export async function setActiveCreditMemoTemplate(
   userId: string,
   templateId: string
 ): Promise<CreditMemoTemplateIndex> {
+  const id = templateId.trim();
   const idx = await readIndex(userId);
-  if (!idx.templates.some((t) => t.id === templateId)) return idx;
-  const next = { ...idx, activeTemplateId: templateId };
+  const pub = await loadPublicDefaultCreditMemoTemplate();
+
+  if (id === PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID) {
+    if (!pub) return normalizeIndexWithPublic(idx, pub);
+    const next = { ...idx, activeTemplateId: PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID };
+    await writeIndex(userId, next);
+    return normalizeIndexWithPublic(next, pub);
+  }
+
+  if (!idx.templates.some((t) => t.id === id)) {
+    return normalizeIndexWithPublic(idx, pub);
+  }
+  const next = { ...idx, activeTemplateId: id };
   await writeIndex(userId, next);
-  return next;
+  return normalizeIndexWithPublic(next, pub);
 }
 
 export async function deleteCreditMemoTemplate(
   userId: string,
   templateId: string
 ): Promise<CreditMemoTemplateIndex> {
-  const idx = await readIndex(userId);
-  const nextTemplates = idx.templates.filter((t) => t.id !== templateId);
-  const nextActive = idx.activeTemplateId === templateId ? (nextTemplates[0]?.id ?? null) : idx.activeTemplateId;
+  const id = templateId.trim();
+  if (id === PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID) {
+    throw new Error("Cannot delete the shared default template");
+  }
 
-  await workspaceDeleteFile(userId, WORKSPACE_GLOBAL_TICKER, docxPath(templateId));
+  const idx = await readIndex(userId);
+  const pub = await loadPublicDefaultCreditMemoTemplate();
+  const nextTemplates = idx.templates.filter((t) => t.id !== id);
+  const nextActive =
+    idx.activeTemplateId === id
+      ? (nextTemplates[0]?.id ?? (pub ? PUBLIC_DEFAULT_CREDIT_MEMO_TEMPLATE_ID : null))
+      : idx.activeTemplateId;
+
+  await workspaceDeleteFile(userId, WORKSPACE_GLOBAL_TICKER, docxPath(id));
 
   const next: CreditMemoTemplateIndex = { activeTemplateId: nextActive, templates: nextTemplates };
   await writeIndex(userId, next);
-  return next;
+  return normalizeIndexWithPublic(next, pub);
 }

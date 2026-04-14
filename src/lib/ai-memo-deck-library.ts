@@ -23,6 +23,8 @@ export type MemoDeckLibraryMemoEntry = {
   createdAt: string;
   variant?: string | null;
   provider?: string | null;
+  /** API model id used for generation (e.g. claude-sonnet-4-20250514). */
+  llmModel?: string | null;
   memoFile: string;
 };
 
@@ -31,6 +33,8 @@ export type MemoDeckLibraryDeckEntry = {
   kind: "deck";
   title: string;
   createdAt: string;
+  provider?: string | null;
+  llmModel?: string | null;
   deckFile: string;
 };
 
@@ -69,7 +73,13 @@ async function writeLibraryIndex(
 export async function addLibraryMemo(
   userId: string,
   ticker: string,
-  opts: { title: string; markdown: string; variant?: string | null; provider?: string | null }
+  opts: {
+    title: string;
+    markdown: string;
+    variant?: string | null;
+    provider?: string | null;
+    llmModel?: string | null;
+  }
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
   const sym = sanitizeTicker(ticker);
   if (!sym) return { ok: false, error: "Invalid ticker" };
@@ -86,6 +96,7 @@ export async function addLibraryMemo(
     createdAt: new Date().toISOString(),
     variant: opts.variant ?? undefined,
     provider: opts.provider ?? undefined,
+    llmModel: opts.llmModel?.trim() ? opts.llmModel.trim().slice(0, 200) : undefined,
     memoFile: relMemoFile,
   });
   const idx = await writeLibraryIndex(userId, ticker, entries);
@@ -101,7 +112,7 @@ const MAX_DECK_BYTES = 48 * 1024 * 1024;
 export async function addLibraryDeck(
   userId: string,
   ticker: string,
-  opts: { title: string; pptx: Buffer }
+  opts: { title: string; pptx: Buffer; provider?: string | null; llmModel?: string | null }
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
   if (opts.pptx.length > MAX_DECK_BYTES) {
     return { ok: false, error: `Deck file too large (max ${MAX_DECK_BYTES / (1024 * 1024)} MB)` };
@@ -119,6 +130,8 @@ export async function addLibraryDeck(
     kind: "deck",
     title: opts.title.trim().slice(0, 500) || "Credit deck",
     createdAt: new Date().toISOString(),
+    provider: opts.provider?.trim() ? opts.provider.trim().slice(0, 40) : undefined,
+    llmModel: opts.llmModel?.trim() ? opts.llmModel.trim().slice(0, 200) : undefined,
     deckFile: relDeck,
   });
   const idx = await writeLibraryIndex(userId, ticker, entries);

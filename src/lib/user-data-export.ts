@@ -68,7 +68,7 @@ const README_BODY = [
   "tickers/<SYMBOL>/",
   "  saved-tabs/          — Research tab text stored on the server (.txt, .md, .html, .json)",
   "  saved-documents/     — Files saved under Saved Documents (PDF, Excel, etc.)",
-  "  workspace/           — Excel exports, IR indexer DBs, memo/deck outputs, and other API files",
+  "  workspace/           — Excel exports, memo/deck outputs, and other API files",
   "",
   "The ticker folder __global__ holds account-wide workspace data (e.g. templates).",
   "",

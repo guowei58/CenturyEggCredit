@@ -38,6 +38,8 @@ export function DailyNewsDrawer({
   const [err, setErr] = useState<string | null>(null);
   const [batches, setBatches] = useState<BatchRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  /** Flashing red dot on Refresh until a successful pull (each drawer open). */
+  const [showRefreshHintDot, setShowRefreshHintDot] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -62,6 +64,7 @@ export function DailyNewsDrawer({
 
   useEffect(() => {
     if (!open) return;
+    setShowRefreshHintDot(true);
     void load();
   }, [open, load]);
 
@@ -94,7 +97,9 @@ export function DailyNewsDrawer({
       const data = await readJsonResponse<{ ok?: boolean; error?: string }>(res);
       if (!res.ok) throw new Error(data.error || "Refresh failed");
       await load();
+      setShowRefreshHintDot(false);
       window.dispatchEvent(new Event("daily-news-read"));
+      window.dispatchEvent(new Event("daily-news-user-refreshed"));
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Refresh failed");
     } finally {
@@ -128,15 +133,30 @@ export function DailyNewsDrawer({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              disabled={refreshing}
-              className="rounded-md border px-2 py-1 text-[10px] font-semibold disabled:opacity-50"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-              onClick={() => void handleRefresh()}
-            >
-              {refreshing ? "Refreshing…" : "Refresh now"}
-            </button>
+            <div className="relative inline-flex">
+              <button
+                type="button"
+                disabled={refreshing}
+                className="rounded-md border px-2 py-1 text-[10px] font-semibold disabled:opacity-50"
+                style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
+                onClick={() => void handleRefresh()}
+                title={showRefreshHintDot && !refreshing ? "Pull the latest watchlist digest" : undefined}
+                aria-describedby={showRefreshHintDot && !refreshing ? "daily-news-refresh-hint" : undefined}
+              >
+                {refreshing ? "Refreshing…" : "Refresh now"}
+              </button>
+              {showRefreshHintDot && !refreshing ? (
+                <>
+                  <span id="daily-news-refresh-hint" className="sr-only">
+                    Tap Refresh now to update your digest.
+                  </span>
+                  <span
+                    className="daily-news-refresh-dot-flash pointer-events-none absolute -right-1 -top-1 flex min-h-[1.125rem] min-w-[1.125rem] shrink-0 items-center justify-center rounded-full bg-red-600 ring-2 ring-[var(--sb)]"
+                    aria-hidden
+                  />
+                </>
+              ) : null}
+            </div>
             <button
               type="button"
               onClick={onClose}

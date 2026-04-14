@@ -96,7 +96,8 @@ export function LoginForm({
         </p>
         {checkEmail && (
           <p className="mt-3 text-center text-sm leading-relaxed" style={{ color: "var(--accent)" }}>
-            Check your email for a confirmation link. You must confirm before you can sign in.
+            Check your email for a confirmation link (including your junk or spam folder). You must confirm before you
+            can sign in.
           </p>
         )}
         {resetOk && (

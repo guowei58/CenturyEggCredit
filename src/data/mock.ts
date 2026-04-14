@@ -24,7 +24,6 @@ export const mockCompanyBar = {
 
 export const companyAnalysisTabs = [
   "Business Overview",
-  "IR Page Indexer",
   "Business Model",
   "HowStuffWorks",
   "SEC XBRL Financials",
@@ -53,17 +52,16 @@ export const companyAnalysisTabs = [
 ] as const;
 
 export const companyAnalysisWorkOutputTabs = [
-  "KPI",
+  "KPI Commentary",
+  "Forensic Accounting",
   "Recommendation",
   "AI Memo and Deck",
-  "Pre-Mortem Analysis",
   "Literary References",
   "Biblical References",
-  "Jokes",
   "Dear Diary",
 ] as const;
 
-export const companyAnalysisDesktopRisksTabs = ["Risk from 10K", "Forensic Accounting"] as const;
+export const companyAnalysisDesktopRisksTabs = ["Risk from 10K"] as const;
 
 export const companyAnalysisClaimsTabs = [
   "Environmental Claims",

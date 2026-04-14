@@ -7,6 +7,7 @@ import { loadCreditMemoConfig } from "@/lib/creditMemo/config";
 import { planMemoOutline, planMemoOutlineFromTemplate } from "@/lib/creditMemo/memoPlanner";
 import type { CreditMemoProject, MemoOutline } from "@/lib/creditMemo/types";
 import { getActiveCreditMemoTemplate } from "@/lib/creditMemo/templateStore";
+import { buildTemplateDocxHintsBlock } from "@/lib/creditMemo/templatePromptBlocks";
 import type { CreditMemoResolvedModels } from "@/lib/creditMemo/generateMemo";
 import { buildCreditDeckPptxBuffer, type DeckSlideSpec } from "./pptxBuilder";
 
@@ -76,10 +77,11 @@ function buildDeckUserPrompt(params: {
   ticker: string;
   outline: MemoOutline;
   templateMetaLine: string;
+  templateHintsBlock: string;
   inventory: string;
   evidence: string;
 }): string {
-  const { deckTitle, ticker, outline, templateMetaLine, inventory, evidence } = params;
+  const { deckTitle, ticker, outline, templateMetaLine, templateHintsBlock, inventory, evidence } = params;
   const titles = outline.sections.map((s) => s.title);
   return `
 # CREDIT DECK REQUEST
@@ -90,6 +92,7 @@ Ticker: ${ticker}
 ${titles.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 
 ${templateMetaLine ? `# OUTLINE SOURCE\n${templateMetaLine}\n` : ""}
+${templateHintsBlock ? `${templateHintsBlock}\n` : ""}
 # FOLDER NOTE
 ${outline.sourceNotes}
 
@@ -128,19 +131,23 @@ export async function runCreditDeckGeneration(params: {
 
   let outline = planMemoOutline(params.targetWords, params.project.sources);
   let templateMetaLine = "";
+  let docxTemplateApplied = false;
   if (params.useTemplate) {
     const tpl = await getActiveCreditMemoTemplate(params.userId);
     if (tpl && tpl.outlineTitles.length > 0) {
+      docxTemplateApplied = true;
       outline = planMemoOutlineFromTemplate({
         targetWords: params.targetWords,
         sources: params.project.sources,
         templateTitles: tpl.outlineTitles,
+        templateSectionHints: tpl.sectionHints,
       });
       templateMetaLine = `DOCX template: ${tpl.filename} (${tpl.uploadedAt})`;
     } else {
       templateMetaLine = "Template outline requested but no template is configured (using default credit memo sections).";
     }
   }
+  const templateHintsBlock = docxTemplateApplied ? buildTemplateDocxHintsBlock(outline) : "";
 
   const inventory = formatSourceInventoryList(params.project.sources);
   const PROMPT_TOKEN_LIMIT =
@@ -156,6 +163,7 @@ export async function runCreditDeckGeneration(params: {
     ticker: params.project.ticker,
     outline,
     templateMetaLine,
+    templateHintsBlock,
     inventory,
     evidence,
   });
@@ -170,6 +178,7 @@ export async function runCreditDeckGeneration(params: {
       ticker: params.project.ticker,
       outline,
       templateMetaLine,
+      templateHintsBlock,
       inventory,
       evidence,
     });

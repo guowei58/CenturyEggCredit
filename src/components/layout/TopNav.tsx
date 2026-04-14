@@ -57,6 +57,9 @@ export function TopNav({
   const chatDisplayId = prefs?.preferences.profile?.chatDisplayId?.trim() || "";
   const [eggHocUnreadTotal, setEggHocUnreadTotal] = useState(0);
   const [dailyNewsUnread, setDailyNewsUnread] = useState(0);
+  /** Prompt to open Daily News and run Refresh now; cleared only after a successful refresh in the drawer. */
+  const [dailyNewsRefreshReminder, setDailyNewsRefreshReminder] = useState(false);
+  const prevSessionStatusRef = useRef<typeof status>("loading");
   const [dogOverlay, setDogOverlay] = useState(false);
   const [browserBackReturnHint, setBrowserBackReturnHint] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -102,6 +105,33 @@ export function TopNav({
   }, [status]);
 
   useEffect(() => {
+    const prev = prevSessionStatusRef.current;
+    prevSessionStatusRef.current = status;
+    if (status !== "authenticated") {
+      setDailyNewsRefreshReminder(false);
+    } else if (prev !== "authenticated") {
+      setDailyNewsRefreshReminder(true);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const armReminder = () => setDailyNewsRefreshReminder(true);
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") armReminder();
+    };
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) armReminder();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [status]);
+
+  useEffect(() => {
     if (status !== "authenticated") {
       setDailyNewsUnread(0);
       return;
@@ -122,10 +152,13 @@ export function TopNav({
     void refreshDailyNewsBadge();
     const id = window.setInterval(() => void refreshDailyNewsBadge(), NAV_BADGE_POLL_MS);
     const onRead = () => void refreshDailyNewsBadge();
+    const onUserRefreshed = () => setDailyNewsRefreshReminder(false);
     window.addEventListener("daily-news-read", onRead);
+    window.addEventListener("daily-news-user-refreshed", onUserRefreshed);
     return () => {
       window.clearInterval(id);
       window.removeEventListener("daily-news-read", onRead);
+      window.removeEventListener("daily-news-user-refreshed", onUserRefreshed);
     };
   }, [status]);
 
@@ -261,7 +294,18 @@ export function TopNav({
             type="button"
             className="btn-shell hi relative flex min-h-9 w-full min-w-0 items-center justify-center gap-1.5 text-[11px] sm:min-h-10 sm:text-xs"
             onClick={onOpenDailyNews}
-            aria-label={dailyNewsUnread > 0 ? `Daily News (${dailyNewsUnread} unread)` : "Daily News"}
+            title={
+              dailyNewsRefreshReminder
+                ? "Open Daily News and tap Refresh now to pull the latest digest."
+                : undefined
+            }
+            aria-label={
+              dailyNewsUnread > 0
+                ? `Daily News (${dailyNewsUnread} unread)`
+                : dailyNewsRefreshReminder
+                  ? "Daily News — refresh your digest"
+                  : "Daily News"
+            }
           >
             {dailyNewsUnread > 0 ? (
               <span
@@ -270,6 +314,11 @@ export function TopNav({
               >
                 {dailyNewsUnread > 99 ? "99+" : dailyNewsUnread}
               </span>
+            ) : dailyNewsRefreshReminder ? (
+              <span
+                className="absolute -right-0.5 -top-0.5 flex min-h-[1.125rem] min-w-[1.125rem] shrink-0 items-center justify-center rounded-full bg-red-600 ring-2 ring-[var(--sb)]"
+                aria-hidden
+              />
             ) : null}
             <DailyNewsMark preset="nav" decorative />
             <span className="min-w-0 text-center leading-tight">Daily News</span>

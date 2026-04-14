@@ -68,7 +68,6 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
       setData(body);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load");
-      setData(null);
     } finally {
       setLoading(false);
     }
@@ -108,7 +107,7 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
     );
   }
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <Card title={`LME Analysis — ${safeTicker}`}>
         <div className="flex items-center gap-2 py-8" style={{ color: "var(--muted)" }}>
@@ -146,6 +145,12 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
   return (
     <div className="space-y-6">
       <Card title={`LME Analysis — ${safeTicker}`}>
+        {loading && data ? (
+          <p className="text-[11px] mb-3 flex items-center gap-2" style={{ color: "var(--muted)" }}>
+            <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
+            Refreshing sources…
+          </p>
+        ) : null}
         <p className="text-[11px] leading-relaxed mb-4" style={{ color: "var(--muted2)" }}>
           This tab bundles everything saved under <strong>Capital Structure</strong> for this ticker: Capital Structure and Org
           Chart responses (and uploaded .xlsx workbooks), <strong>Subsidiary List</strong> (saved text and Excel), and all{" "}

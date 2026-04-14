@@ -33,6 +33,9 @@ export const CLAUDE_MODEL_PRESETS: ModelPreset[] = [
   { id: "claude-sonnet-4-6", label: "Claude Sonnet 4.6" },
   { id: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
   { id: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5 — app default" },
+  { id: "claude-3-5-sonnet-20241022", label: "Claude 3.5 Sonnet" },
+  { id: "claude-3-5-haiku-20241022", label: "Claude 3.5 Haiku" },
+  { id: "claude-3-opus-20240229", label: "Claude 3 Opus" },
 ];
 
 /** Roughly highest → lowest typical API cost (reasoning / flagship → mini). */
@@ -61,4 +64,20 @@ export function presetsForProvider(p: AiProvider): ModelPreset[] {
   if (p === "gemini") return GEMINI_MODEL_PRESETS;
   if (p === "deepseek") return DEEPSEEK_MODEL_PRESETS;
   return [];
+}
+
+/** Human label from presets when the id matches; otherwise null (caller shows raw id). */
+export function presetLabelForModelId(provider: AiProvider, modelId: string): string | null {
+  const hit = presetsForProvider(provider).find((p) => p.id === modelId);
+  return hit?.label ?? null;
+}
+
+/** Short UI name, e.g. "Claude Opus 4.6" (drops trailing " — priciest" from preset labels). */
+export function shortModelDisplayName(provider: AiProvider, modelId: string): string {
+  const label = presetLabelForModelId(provider, modelId);
+  if (label) {
+    const main = label.split(" — ")[0]?.trim();
+    return main || label;
+  }
+  return modelId;
 }

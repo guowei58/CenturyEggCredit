@@ -1,5 +1,17 @@
 export type CreditMemoVoiceId = "buffett" | "munger" | "shakespeare" | "lynch" | "soros" | "ackman";
 
+/**
+ * Prepended to every character voice. Not merged with the institutional credit-memo system prompt—
+ * voice memos use this + the character block only (see `generateMemo` when `voiceSystemPrompt` is set).
+ */
+const STANDALONE_VOICE_MEMO_TASK = `
+You are writing a single investment memo in Markdown, fully in the voice and worldview described below. Imagine you are encountering this company and these materials fresh—reason from that perspective; do not echo generic “house style” credit-memo boilerplate.
+
+The user message supplies: title/ticker, required section headings (\`##\` titles to use exactly and in order), rough word targets, a file inventory, and an evidence pack from the user’s research folder. That pack is your factual basis: do not invent figures, quotes, or legal terms that are not supported there. Where the materials are silent, say so clearly. For a section with nothing usable, the body may be only the line: [need additional information]
+
+Follow the section structure from the user message. Ground analysis in the evidence; distinguish inference from what is directly stated when it matters.
+`.trim();
+
 export function creditMemoVoiceLabel(id: CreditMemoVoiceId): string {
   switch (id) {
     case "buffett":
@@ -154,19 +166,22 @@ Avoid:
 `.trim();
 
 export function creditMemoVoiceSystemPrompt(id: CreditMemoVoiceId): string {
-  switch (id) {
-    case "buffett":
-      return BUFFETT;
-    case "munger":
-      return MUNGER;
-    case "shakespeare":
-      return SHAKESPEARE;
-    case "lynch":
-      return LYNCH;
-    case "soros":
-      return SOROS;
-    case "ackman":
-      return ACKMAN;
-  }
+  const character = ((): string => {
+    switch (id) {
+      case "buffett":
+        return BUFFETT;
+      case "munger":
+        return MUNGER;
+      case "shakespeare":
+        return SHAKESPEARE;
+      case "lynch":
+        return LYNCH;
+      case "soros":
+        return SOROS;
+      case "ackman":
+        return ACKMAN;
+    }
+  })();
+  return `${STANDALONE_VOICE_MEMO_TASK}\n\n---\n\n# Your voice and lens\n\n${character}`.trim();
 }
 

@@ -11,7 +11,7 @@ import { resolveCreditMemoModels } from "@/lib/ai-model-from-request";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const llmAuth = await getAuthenticatedLlmContext();

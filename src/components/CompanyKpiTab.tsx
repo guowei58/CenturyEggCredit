@@ -2,23 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 import { Card } from "@/components/ui";
+import { WorkProductIngestTabLayout } from "@/components/credit-memo/WorkProductIngestTabLayout";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
-import { AiModelPicker } from "@/components/AiModelPicker";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { mergeCreditMemoDraftAfterIngest, parseCreditMemoDraftJson } from "@/lib/creditMemo/clientDraftStorage";
-import { fetchSavedFromServer } from "@/lib/saved-data-client";
+import { fetchLatestGeneratedTabOutput } from "@/lib/creditMemo/fetchLatestTabOutput";
 import type { CreditMemoProject, FolderResolveResult } from "@/lib/creditMemo/types";
-
-const FIELD_CLASS =
-  "w-full rounded border px-2 py-1 border-[var(--border2)] bg-[var(--card2)] text-[var(--text)] caret-[var(--accent)] shadow-sm [&::placeholder]:text-[var(--muted2)]";
-
-const GEN_BTN_CLASS =
-  "inline-flex min-h-[3.5rem] w-[17.5rem] shrink-0 items-center justify-center rounded border px-3 py-2 text-center text-sm font-semibold leading-snug disabled:opacity-50";
 
 export function CompanyKpiTab({ ticker, companyName }: { ticker: string; companyName?: string }) {
   const tk = (ticker ?? "").trim().toUpperCase();
@@ -38,6 +30,14 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
 
   const draftHydratedRef = useRef(false);
 
+  const persistProvider = useCallback(
+    (p: AiProvider) => {
+      setProvider(p);
+      updatePreferences((prev) => ({ ...prev, aiProvider: p }));
+    },
+    [updatePreferences]
+  );
+
   useEffect(() => {
     if (!prefsReady) return;
     const n = normalizeAiProvider(preferences.aiProvider);
@@ -55,17 +55,9 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
     else setProject(null);
 
     void (async () => {
-      const saved = await fetchSavedFromServer(tk, "kpi-latest");
-      if (saved?.trim()) setMarkdown(saved);
-      const metaRaw = await fetchSavedFromServer(tk, "kpi-latest-meta");
-      if (metaRaw?.trim()) {
-        try {
-          const meta = JSON.parse(metaRaw) as { jobId?: string };
-          if (typeof meta.jobId === "string") setJobId(meta.jobId);
-        } catch {
-          /* ignore */
-        }
-      }
+      const { markdown: m, jobId: j } = await fetchLatestGeneratedTabOutput(tk, "kpi");
+      setMarkdown(m);
+      setJobId(j);
       draftHydratedRef.current = true;
     })();
   }, [tk, prefsReady, preferences.creditMemoDrafts?.[tk]]);
@@ -105,8 +97,9 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
         const prevId = project?.id;
         setProject(nextProject);
         if (prevId && nextProject.id !== prevId) {
-          setMarkdown(null);
-          setJobId(null);
+          const { markdown: m, jobId: j } = await fetchLatestGeneratedTabOutput(tk, "kpi");
+          setMarkdown(m);
+          setJobId(j);
         }
         updatePreferences((p) => ({
           ...p,
@@ -172,7 +165,7 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
 
   const runGenerate = useCallback(async () => {
     if (!project) {
-      setGenError("Run Refresh Source, Ingest & Index first.");
+      setGenError("Refresh sources first (resolve → ingest → index).");
       return;
     }
     setGenLoading(true);
@@ -210,137 +203,54 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
 
   if (!tk) {
     return (
-      <Card title="KPI">
-        <p className="text-sm" style={{ color: "var(--muted2)" }}>
-          Select a company with a ticker to generate KPIs.
+      <Card title="KPI Commentary">
+        <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
+          Select a company with a ticker to generate KPI commentary.
         </p>
       </Card>
     );
   }
 
+  const needsSignIn = authStatus !== "authenticated";
+  const refreshingSources = resolveLoading || ingestLoading;
+  const resolveFailed = resolved && !resolved.ok ? { error: resolved.error } : null;
+  const refreshLabel = resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh sources";
+
   return (
-    <div className="space-y-4">
-      <Card title={`KPI — ${tk}`}>
-        <p className="mb-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
+    <WorkProductIngestTabLayout
+      tabTitle="KPI Commentary"
+      ticker={tk}
+      description={
+        <>
           Uses the same <strong>resolve → ingest → indexed source pack</strong> pipeline as AI Memo and Deck. Output is saved as{" "}
           <code className="text-[10px]">kpi-latest.md</code>.
-        </p>
-
-        <div className="space-y-3 text-sm">
-          <div className="flex flex-wrap items-end gap-3">
-            <div>
-              <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-                Ticker
-              </div>
-              <input readOnly value={tk} className={`${FIELD_CLASS} font-mono text-sm`} />
-            </div>
-            <button
-              type="button"
-              disabled={resolveLoading || ingestLoading}
-              onClick={() => void runResolve()}
-              className="rounded border px-3 py-2 text-sm"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-            >
-              {resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh Source, Ingest & Index"}
-            </button>
-          </div>
-
-          {resolved && !resolved.ok ? (
-            <div className="rounded border border-dashed p-2 text-xs" style={{ borderColor: "var(--warn)", color: "var(--warn)" }}>
-              {resolved.error}
-            </div>
-          ) : null}
-
-          {ingestError ? (
-            <p className="text-xs" style={{ color: "var(--warn)" }}>
-              {ingestError}
-            </p>
-          ) : null}
-
-          {project ? (
-            <div className="max-h-[40vh] space-y-2 overflow-auto rounded border p-3 text-xs" style={{ borderColor: "var(--border2)" }}>
-              <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                Indexed files
-              </div>
-              <p style={{ color: "var(--muted2)" }}>
-                {project.sources.length} files — {project.chunks.length} chunks. Warnings:{" "}
-                {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
-              </p>
-              <ul className="space-y-1 font-mono text-[10px]">
-                {project.sources.map((s) => (
-                  <li key={s.id}>
-                    {s.relPath} · {s.category} · {s.parseStatus} · {s.charExtracted}c
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="text-xs" style={{ color: "var(--muted2)" }}>
-              After a successful refresh, indexed files appear here. On first load, this runs automatically when you are signed in.
-            </p>
-          )}
-        </div>
-
-        <div className="mt-4 grid gap-3 border-t border-[var(--border)] pt-4 md:grid-cols-2">
-          <div>
-            <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
-              LLM
-            </div>
-            <select
-              value={provider}
-              onChange={(e) => {
-                const v = e.target.value as AiProvider;
-                setProvider(v);
-                if (prefsReady) {
-                  updatePreferences((p) => (p.aiProvider === v ? p : { ...p, aiProvider: v }));
-                }
-              }}
-              className={FIELD_CLASS}
-            >
-              <option value="claude">Claude (Anthropic)</option>
-              <option value="openai">OpenAI</option>
-              <option value="gemini">Gemini (Google)</option>
-              <option value="deepseek">DeepSeek</option>
-            </select>
-            <AiModelPicker provider={provider} className="mt-2" />
-          </div>
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-stretch gap-3">
-          <button
-            type="button"
-            disabled={genLoading || !project}
-            onClick={() => void runGenerate()}
-            className={GEN_BTN_CLASS}
-            style={{
-              borderColor: "var(--accent)",
-              background: "var(--accent)",
-              color: "var(--background,var(--text-invert,#fff))",
-            }}
-          >
-            {genLoading ? "Generating KPIs…" : "Generate KPI list + commentary"}
-          </button>
-        </div>
-        {genError ? (
-          <p className="mt-2 text-sm" style={{ color: "var(--warn)" }}>
-            {genError}
-          </p>
-        ) : null}
-        {jobId ? (
-          <p className="mt-1 text-[10px] font-mono" style={{ color: "var(--muted)" }}>
-            Job: {jobId}
-          </p>
-        ) : null}
-      </Card>
-
-      {markdown?.trim() ? (
-        <Card title="Latest output">
-          <div className="prose prose-sm max-w-none dark:prose-invert text-sm leading-relaxed" style={{ color: "var(--text)" }}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
-          </div>
-        </Card>
-      ) : null}
-    </div>
+        </>
+      }
+      needsSignIn={needsSignIn}
+      refreshingSources={refreshingSources}
+      hasProject={Boolean(project)}
+      aiProvider={provider}
+      onProviderChange={persistProvider}
+      onRefreshSources={runResolve}
+      refreshDisabled={resolveLoading || ingestLoading}
+      refreshLabel={refreshLabel}
+      onRun={runGenerate}
+      runDisabled={genLoading || !project}
+      runBusy={genLoading}
+      runLabel="Generate KPI list + commentary"
+      runLoadingLabel="Generating KPI commentary…"
+      resolveFailed={resolveFailed}
+      ingestError={ingestError}
+      genError={genError}
+      jobId={jobId}
+      project={project}
+      outputCardTitle="KPI commentary output"
+      markdown={markdown}
+      emptyOutputMessage={
+        <>
+          No saved KPI commentary yet for this ticker. After you generate, it stays here when you switch tabs or reload.
+        </>
+      }
+    />
   );
 }
-

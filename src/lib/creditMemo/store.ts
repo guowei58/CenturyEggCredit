@@ -47,6 +47,17 @@ export async function getProject(userId: string, id: string): Promise<CreditMemo
   return db.projects.find((p) => p.id === id) ?? null;
 }
 
+/** Most recently updated ingested project for this ticker (for reference tabs when draft has no project). */
+export async function getLatestProjectForTicker(userId: string, ticker: string): Promise<CreditMemoProject | null> {
+  const sym = ticker.trim().toUpperCase();
+  if (!sym) return null;
+  const db = await readDb(userId);
+  const matches = db.projects.filter((p) => p.ticker.trim().toUpperCase() === sym);
+  if (matches.length === 0) return null;
+  matches.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  return matches[0] ?? null;
+}
+
 export async function appendJob(userId: string, job: MemoJob): Promise<void> {
   const db = await readDb(userId);
   db.jobs = db.jobs.filter((j) => j.id !== job.id);
