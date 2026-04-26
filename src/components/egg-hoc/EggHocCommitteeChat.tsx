@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { playEggHocIncomingBark, unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
@@ -176,6 +176,10 @@ export function EggHocCommitteeChat() {
   /** Last conversation id we loaded the thread for — detect switches without clearing on callback-only effect re-runs. */
   const prevThreadConvIdRef = useRef<string | null>(null);
   const lastUserForInboxRef = useRef<string | null>(null);
+  /** Latest selected thread — ignore stale `fetchDetail` / poll responses after switching conversations. */
+  const activeConversationIdRef = useRef<string | null>(null);
+
+  activeConversationIdRef.current = activeId;
 
   const fetchList = useCallback(async () => {
     if (!userId) return;
@@ -274,15 +278,18 @@ export function EggHocCommitteeChat() {
   }, []);
 
   const mergeLatestPageIntoThread = useCallback(async () => {
-    if (!activeId) return;
-    const { batch } = await fetchMessageBatch(activeId);
+    const id = activeConversationIdRef.current;
+    if (!id) return;
+    const { batch } = await fetchMessageBatch(id);
+    if (id !== activeConversationIdRef.current) return;
     setMessages((prev) => mergeMessagesChronological(prev, batch));
-  }, [activeId, fetchMessageBatch]);
+  }, [fetchMessageBatch]);
 
   const fetchDetail = useCallback(async (conversationId: string) => {
     const res = await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(conversationId)}`);
     const data = await parseResponseJson<{ ok?: boolean; conversation?: ConvDetail; error?: string }>(res);
     if (!res.ok) throw new Error(data.error || "Failed to load conversation");
+    if (conversationId !== activeConversationIdRef.current) return;
     setDetail(data.conversation ?? null);
     if (data.conversation)
       setRenameDraft(data.conversation.name ?? data.conversation.title ?? "");
@@ -298,19 +305,20 @@ export function EggHocCommitteeChat() {
     }
     const switchedConv = prevThreadConvIdRef.current !== activeId;
     prevThreadConvIdRef.current = activeId;
+    const convId = activeId;
     let cancelled = false;
     (async () => {
       setThreadLoading(true);
       setHasMoreOlder(false);
       if (switchedConv) setMessages([]);
       try {
-        await fetchDetail(activeId);
-        if (cancelled) return;
-        const { batch, hasMore } = await fetchMessageBatch(activeId);
-        if (cancelled) return;
+        await fetchDetail(convId);
+        if (cancelled || convId !== activeConversationIdRef.current) return;
+        const { batch, hasMore } = await fetchMessageBatch(convId);
+        if (cancelled || convId !== activeConversationIdRef.current) return;
         setMessages(batch);
         setHasMoreOlder(hasMore);
-        await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(activeId)}/read`, {
+        await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(convId)}/read`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: "{}",
@@ -336,9 +344,12 @@ export function EggHocCommitteeChat() {
     const t = setInterval(() => {
       void (async () => {
         try {
-          const { batch } = await fetchMessageBatch(activeId);
+          const id = activeConversationIdRef.current;
+          if (!id) return;
+          const { batch } = await fetchMessageBatch(id);
+          if (id !== activeConversationIdRef.current) return;
           setMessages((prev) => mergeMessagesChronological(prev, batch));
-          await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(activeId)}/read`, {
+          await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(id)}/read`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: "{}",
@@ -419,11 +430,13 @@ export function EggHocCommitteeChat() {
 
   const loadOlder = async () => {
     if (!activeId || !hasMoreOlder || loadOlderLoading || messages.length === 0) return;
+    const convId = activeId;
     const oldest = messages[0].id;
     if (oldest.startsWith("temp-")) return;
     setLoadOlderLoading(true);
     try {
-      const { batch, hasMore } = await fetchMessageBatch(activeId, oldest);
+      const { batch, hasMore } = await fetchMessageBatch(convId, oldest);
+      if (convId !== activeConversationIdRef.current) return;
       setMessages((prev) => {
         const ids = new Set(prev.map((m) => m.id));
         const prefix = batch.filter((m) => !ids.has(m.id));
@@ -454,6 +467,25 @@ export function EggHocCommitteeChat() {
     const t = setTimeout(() => void searchUsers(pickerQuery), 200);
     return () => clearTimeout(t);
   }, [pickerQuery, newDmOpen, newGroupOpen, manageOpen]);
+
+  const activeConvRow = useMemo(
+    () => (activeId ? conversations.find((c) => c.id === activeId) ?? null : null),
+    [activeId, conversations]
+  );
+  const detailMatchesActive = Boolean(activeId && detail?.id === activeId);
+  const isAdmin = detailMatchesActive && detail?.myRole === "ADMIN";
+  /** Inbox row is authoritative when `detail` is still loading or was cleared so the header never shows "…" / DM for the Lobby. */
+  const isLobby = detailMatchesActive
+    ? Boolean(detail?.isLobby)
+    : Boolean(activeConvRow?.isLobby);
+  const isGroup =
+    isLobby ||
+    (detailMatchesActive && detail?.type === "GROUP") ||
+    Boolean(activeConvRow?.type === "GROUP");
+  const chatTitle =
+    (detailMatchesActive && detail?.title?.trim() ? detail.title.trim() : "") ||
+    (activeConvRow?.title?.trim() ? activeConvRow.title.trim() : "") ||
+    "…";
 
   const startDm = async (target: PublicUser) => {
     const res = await fetch("/api/egg-hoc/conversations", {
@@ -573,10 +605,6 @@ export function EggHocCommitteeChat() {
       </div>
     );
   }
-
-  const isAdmin = detail?.myRole === "ADMIN";
-  const isGroup = detail?.type === "GROUP";
-  const isLobby = Boolean(detail?.isLobby);
 
   return (
     <div
@@ -698,7 +726,7 @@ export function EggHocCommitteeChat() {
             >
               <div className="min-w-0">
                 <h2 className="truncate text-sm font-semibold" style={{ color: "var(--text)" }}>
-                  {detail?.title ?? "…"}
+                  {chatTitle}
                 </h2>
                 {isLobby ? (
                   <p className="text-[10px]" style={{ color: "var(--muted)" }}>
@@ -714,7 +742,7 @@ export function EggHocCommitteeChat() {
                   </p>
                 )}
               </div>
-              {isGroup && !isLobby ? (
+              {detailMatchesActive && detail?.type === "GROUP" && !isLobby ? (
                 <button
                   type="button"
                   className="shrink-0 rounded border px-2 py-1 text-[10px] font-medium"

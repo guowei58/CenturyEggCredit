@@ -330,13 +330,13 @@ export function OreoSablePlay() {
             <span className="font-semibold" style={sable}>
               Sable:
             </span>{" "}
-            I can&apos;t make food. I&apos;m low on power.
+            I can&apos;t make food. But I can analyze credits and help you with writing credit memos.
           </p>
           <p>
             <span className="font-semibold" style={oreo}>
               Oreo:
             </span>{" "}
-            Bruh, you&apos;re useless!
+            Well, well well...why didn&apos;t you say so in the first place!
           </p>
         </div>
       ) : (

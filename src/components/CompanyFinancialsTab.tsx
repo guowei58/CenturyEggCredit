@@ -41,7 +41,7 @@ export function CompanyFinancialsTab({
             The good is when we spread the financial statements by hand ourselves. I promise that you will see the soul of the management team
             by doing this. Clint Eastwood once said &quot;In this world, there&apos;s two kinds of people, my friend: those with a hand-spread
             financial model and those who have no idea what they&apos;re talking about.&quot; Don&apos;t waste your MD&apos;s time with
-            bullshit and feelings. You need to back it up with the numbers.
+            just numbers.  You need to provide context and understanding.
           </p>
         </div>
         <Card title="Financial model templates">
@@ -84,7 +84,7 @@ export function CompanyFinancialsTab({
             of the request. AI-generated model is like a box of chocolate - you never know what you gonna get. Well, do you feel lucky punk?!
           </p>
         </div>
-        <SecXbrlBulkFilingsAiPanel ticker={safeTicker} showBulkSave={false} />
+        <SecXbrlBulkFilingsAiPanel ticker={safeTicker} showBulkSave={false} showProviderPublicLimits={false} />
       </section>
 
       <section className="space-y-4 border-t border-[var(--border2)] pt-10">

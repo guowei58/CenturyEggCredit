@@ -45,6 +45,7 @@ export function SecXbrlBulkFilingsAiPanel({
   ticker,
   showBulkSave = true,
   showAiConsolidation = true,
+  showProviderPublicLimits = true,
   onAfterBulkSave,
 }: {
   ticker: string;
@@ -52,6 +53,8 @@ export function SecXbrlBulkFilingsAiPanel({
   showBulkSave?: boolean;
   /** AI consolidation card (ingests saved workbooks). Default true. */
   showAiConsolidation?: boolean;
+  /** “Selected model — provider limits” side panel next to the run controls. Default true. */
+  showProviderPublicLimits?: boolean;
   /** Called when bulk save finishes (success or partial failure) so other UI can refresh Saved Documents lists. */
   onAfterBulkSave?: () => void;
 }) {
@@ -324,7 +327,13 @@ export function SecXbrlBulkFilingsAiPanel({
 
       {showAiConsolidation ? (
       <Card title={`AI consolidation (all saved XBRL workbooks) — ${tk}`}>
-        <div className="flex flex-col lg:flex-row lg:gap-6 lg:items-start">
+        <div
+          className={
+            showProviderPublicLimits
+              ? "flex flex-col lg:flex-row lg:gap-6 lg:items-start"
+              : "min-w-0 space-y-3"
+          }
+        >
           <div className="min-w-0 flex-1 space-y-3">
         <p className="text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
           Ingests every <span className="font-mono">SEC-XBRL-financials</span> <span className="font-mono">.xlsx</span> in{" "}
@@ -464,13 +473,15 @@ export function SecXbrlBulkFilingsAiPanel({
         ) : null}
           </div>
 
-          <ProviderPublicLimitsSidePanel
-            multi={AI_CONSOLIDATE_PROVIDERS.map((p) => ({
-              provider: p,
-              resolvedModelId: effectiveModelIdForRun(p, consolidateModelChoice[p]),
-            }))}
-            className="w-full shrink-0 lg:sticky lg:top-4 lg:w-[min(100%,320px)]"
-          />
+          {showProviderPublicLimits ? (
+            <ProviderPublicLimitsSidePanel
+              multi={AI_CONSOLIDATE_PROVIDERS.map((p) => ({
+                provider: p,
+                resolvedModelId: effectiveModelIdForRun(p, consolidateModelChoice[p]),
+              }))}
+              className="w-full shrink-0 lg:sticky lg:top-4 lg:w-[min(100%,320px)]"
+            />
+          ) : null}
         </div>
 
         <div
