@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { createProjectId, ingestTickerFolder } from "@/lib/creditMemo/folderIngest";
+import { normalizeWorkProductIngestScope } from "@/lib/creditMemo/workProductIngestScope";
 import { mergeAiChatIntoIngestedProject } from "@/lib/creditMemo/mergeAiChatSources";
 import { isAllowedTickerResearchPath } from "@/lib/creditMemo/pathGuard";
 import { saveProject } from "@/lib/creditMemo/store";
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { ticker?: string; folderPath?: string; resolutionMeta?: unknown };
+  let body: { ticker?: string; folderPath?: string; resolutionMeta?: unknown; workProductIngestScope?: unknown };
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -78,10 +79,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Folder not found or not accessible" }, { status: 404 });
     }
 
+    const workProductIngestScope = normalizeWorkProductIngestScope(body.workProductIngestScope);
+
     const { project: folderProject, warnings } = await ingestTickerFolder({
       projectId,
       ticker: sym,
       folderAbs: abs,
+      workProductIngestScope,
     });
 
     const chatPayload = await getAiChatPayload(userId, sym);

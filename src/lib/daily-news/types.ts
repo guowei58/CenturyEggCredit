@@ -1,6 +1,6 @@
 /** Stored JSON payload for `UserDailyNewsBatch.payloadJson`. */
 
-export type DailyNewsSourceType = "WSJ" | "Bloomberg" | "FT" | "trade" | "SEC" | "other";
+export type DailyNewsSourceType = "WSJ" | "Bloomberg" | "FT" | "press" | "trade" | "SEC" | "other";
 
 export type DailyNewsItem = {
   dedupeHash: string;

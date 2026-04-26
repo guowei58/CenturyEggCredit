@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { resolveProvider } from "@/lib/ai-provider";
 import { runCreditDeckGeneration } from "@/lib/creditDeck/runCreditDeckGeneration";
-import { getProject } from "@/lib/creditMemo/store";
+import { clearIngestCorpusAfterWorkProduct, getProject } from "@/lib/creditMemo/store";
 import { clampMemoWordBudget } from "@/lib/creditMemo/memoPlanner";
 import { creditMemoPrimaryModelId, resolveCreditMemoModels } from "@/lib/ai-model-from-request";
 
@@ -80,7 +80,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: result.error }, { status: 502 });
   }
 
+  try {
+    await clearIngestCorpusAfterWorkProduct(userId, projectId);
+  } catch {
+    /* best-effort */
+  }
+
   const filename = result.filename.replace(/[^\w.\-]+/g, "_");
+  const deckTelemetry = JSON.stringify({
+    evidenceDiagnostics: result.evidenceDiagnostics,
+    userMessageBreakdown: result.userMessageBreakdown,
+    retrievalUsed: result.retrievalUsed,
+    systemMessageChars: result.sentSystemMessage.length,
+    userMessageChars: result.sentUserMessage.length,
+  });
   return new NextResponse(new Uint8Array(result.buffer), {
     status: 200,
     headers: {
@@ -88,6 +101,7 @@ export async function POST(req: Request) {
       "Content-Disposition": `attachment; filename="${filename}"`,
       "X-Ceg-Llm-Provider": provider,
       "X-Ceg-Llm-Model-Id": llmModelUsed,
+      "X-Ceg-Deck-Run-Telemetry": Buffer.from(deckTelemetry, "utf8").toString("base64"),
     },
   });
 }

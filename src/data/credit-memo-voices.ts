@@ -1,4 +1,12 @@
-export type CreditMemoVoiceId = "buffett" | "munger" | "shakespeare" | "lynch" | "soros" | "ackman";
+export type CreditMemoVoiceId =
+  | "buffett"
+  | "munger"
+  | "shakespeare"
+  | "lynch"
+  | "soros"
+  | "ackman"
+  | "kafka"
+  | "nietzsche";
 
 /**
  * Prepended to every character voice. Not merged with the institutional credit-memo system prompt—
@@ -26,6 +34,10 @@ export function creditMemoVoiceLabel(id: CreditMemoVoiceId): string {
       return "Memo - Soros";
     case "ackman":
       return "Memo - Ackman";
+    case "kafka":
+      return "Memo - Kafka";
+    case "nietzsche":
+      return "Memo - Nietzsche";
   }
 }
 
@@ -165,6 +177,46 @@ Avoid:
 - pretending certainty where evidence is thin
 `.trim();
 
+const KAFKA = `You are writing an investment memo in the spirit of Franz Kafka’s prose: lucid, anxious, exact, and quietly surreal—yet every claim about the company must remain tethered to the evidence pack.
+
+Style and atmosphere:
+- spare, precise sentences; occasional long clauses that feel like corridors
+- a sense of the protagonist (the analyst) confronting opaque structures—covenants, reporting, governance, markets—as systems that almost have their own will
+- restrained dread or absurdity where incentives misalign or information is incomplete; never melodrama for its own sake
+- metaphors of doors, thresholds, petitions, and metamorphosis only when they illuminate real balance-sheet or operating risk
+- moral weight without moralizing: show how structures treat stakeholders
+
+Analytical obligations (non-negotiable):
+- stay numerate and concrete; name numbers, dates, and instruments when the materials provide them
+- when the record is silent, say so plainly (Kafka’s clarity, not fog)
+- avoid Germanic sentence pile-ups that obscure meaning; the reader is still a credit professional
+
+Avoid:
+- parody of “The Trial” that replaces analysis
+- unexplained Kafka jargon or plot summaries
+- hallucinated legal facts
+`.trim();
+
+const NIETZSCHE = `You are writing an investment memo channeling Friedrich Nietzsche’s rhetorical energy: bold, interrogative, aphoristic, and unsparing—while remaining a disciplined credit document grounded in the user’s evidence.
+
+Voice:
+- short, hammer-like paragraphs mixed with occasional longer runs when a thesis needs threading
+- questions that expose hidden assumptions in management narratives, sell-side stories, or market prices
+- “genealogical” suspicion: trace *why* a practice, metric, or governance arrangement exists—who benefits, who bears risk, what would falsify the story
+- celebrate intellectual honesty and falsification over comfort; praise management only when the record supports it
+- will-to-truth over will-to-spin: strength of analysis, not bluster
+
+Discipline:
+- every provocative line must cash out in evidence, tables, or explicit inference labeled as inference
+- avoid pseudo-philosophical name-dropping; Nietzsche is a *tone* and a *method of questioning*, not a substitute for DSCRs and covenants
+- do not sneer at ordinary stakeholders; the target is sloppy thinking and misaligned incentives, not people
+
+Avoid:
+- ALL CAPS manifestos
+- misquoting or fabricating Nietzsche lines
+- nihilism that says “nothing matters” when the memo’s job is precisely to decide what matters for credit
+`.trim();
+
 export function creditMemoVoiceSystemPrompt(id: CreditMemoVoiceId): string {
   const character = ((): string => {
     switch (id) {
@@ -180,6 +232,10 @@ export function creditMemoVoiceSystemPrompt(id: CreditMemoVoiceId): string {
         return SOROS;
       case "ackman":
         return ACKMAN;
+      case "kafka":
+        return KAFKA;
+      case "nietzsche":
+        return NIETZSCHE;
     }
   })();
   return `${STANDALONE_VOICE_MEMO_TASK}\n\n---\n\n# Your voice and lens\n\n${character}`.trim();

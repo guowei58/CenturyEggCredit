@@ -59,22 +59,23 @@ Definitions:
 - Date / Window = exact date if known; otherwise estimated month / quarter / range
 - Event = short description of the milestone, trigger, payment, deadline, or risk point
 - Category = one of:
-  - Maturity
-  - Coupon / Interest
-  - Covenant Test
-  - Reporting Deadline
-  - Liquidity
-  - Call / Redemption
-  - Mandatory Prepayment
-  - Asset Sale Deadline
-  - Borrowing Base / Collateral
-  - Amendment / Waiver
-  - LME / Restructuring Window
-  - Operational / Business
-  - Litigation / Regulatory
-  - Other
+ - Maturity
+ - Coupon / Interest
+ - Covenant Test
+ - Reporting Deadline
+ - Liquidity
+ - Call / Redemption
+ - Mandatory Prepayment
+ - Asset Sale Deadline
+ - Borrowing Base / Collateral
+ - Amendment / Waiver
+ - LME / Restructuring Window
+ - Operational / Business
+ - Litigation / Regulatory
+ - Other
 - Instrument / Document = debt tranche, facility, indenture, credit agreement, filing, or other source tied to the event
-- Hard Date or Estimated = explicitly say “Hard Date�?or “Estimated�?- Cash Impact = quantify if possible, otherwise state qualitative impact
+- Hard Date or Estimated = explicitly say "Hard Date" or "Estimated"
+- Cash Impact = quantify if possible, otherwise state qualitative impact
 - Covenant / Structural Impact = explain whether it affects leverage tests, liquidity, springing maturities, collateral, refinancing flexibility, etc.
 - Why It Matters = one concise sentence
 - Risk Level = Low / Medium / High
@@ -314,7 +315,7 @@ export function CompanyCreditTimelineTab({
   }
 
   return (
-    <Card title={`Credit Timeline �?${safeTicker}`}>
+    <Card title={`Credit Timeline - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"

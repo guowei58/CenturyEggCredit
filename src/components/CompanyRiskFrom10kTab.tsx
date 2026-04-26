@@ -119,7 +119,7 @@ export function CompanyRiskFrom10kTab({
   }
 
   return (
-    <Card title={`Risk from 10-K �?${safeTicker}`}>
+    <Card title={`Risk from 10-K - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"

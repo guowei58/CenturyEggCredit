@@ -6,12 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import {
   defaultUserPreferences,
+  formatPreferencesOversizeMessage,
+  MAX_PREFS_CHARS,
   parseUserPreferencesPayload,
   serializeUserPreferencesPayload,
   type UserPreferencesData,
 } from "@/lib/user-preferences-types";
 
-const MAX_PREFS_CHARS = 5_000_000;
+export { MAX_PREFS_CHARS };
 
 function normalizeChatDisplayId(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
@@ -61,7 +63,10 @@ export async function setUserPreferences(
 
   const payload = serializeUserPreferencesPayload(data);
   if (payload.length > MAX_PREFS_CHARS) {
-    return { ok: false, error: "Preferences payload too large." };
+    return {
+      ok: false,
+      error: formatPreferencesOversizeMessage(data, MAX_PREFS_CHARS),
+    };
   }
   const prevRow = await prisma.userPreferences.findUnique({
     where: { userId },

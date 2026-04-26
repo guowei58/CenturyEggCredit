@@ -128,7 +128,7 @@ export function CompanyResearchRoadmapTab({ ticker }: { ticker: string }) {
   }
 
   return (
-    <Card title={`Research Roadmap �?${safeTicker}`}>
+    <Card title={`Research Roadmap - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"

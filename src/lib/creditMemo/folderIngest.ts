@@ -6,11 +6,14 @@ import { createHash } from "crypto";
 import { extractPdfAsPlainTextForIngest, extractTickerFileForAi } from "@/lib/ticker-file-text-extract";
 import { loadCreditMemoConfig } from "./config";
 import { classifySourceFilename } from "./fileClassifier";
+import type { WorkProductIngestScope } from "./workProductIngestScope";
+import { isMemoDeckLibraryWorkspacePath, workspaceFileSkippedForWorkProductIngest } from "./workProductIngestScope";
 import type { CreditMemoProject, ExtractedTableRecord, SourceChunkRecord, SourceFileRecord } from "./types";
 import type { SourceCategory } from "./types";
+import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
 
-const CHUNK_CHARS = 12_000;
-const CHUNK_OVERLAP = 400;
+const CHUNK_CHARS = CREDIT_MEMO_CHUNK_MAX_CHARS;
+const CHUNK_OVERLAP = CREDIT_MEMO_CHUNK_OVERLAP_CHARS;
 
 function stableId(parts: string[]): string {
   return createHash("sha256").update(parts.join("|")).digest("hex").slice(0, 22);
@@ -115,7 +118,7 @@ function chunkText(text: string, relPath: string): string[] {
   if (t.length <= CHUNK_CHARS) return [t];
   const chunks: string[] = [];
   let i = 0;
-  while (i < t.length && chunks.length < 200) {
+  while (i < t.length) {
     const end = Math.min(i + CHUNK_CHARS, t.length);
     let slice = t.slice(i, end);
     if (end < t.length) {
@@ -131,22 +134,6 @@ function chunkText(text: string, relPath: string): string[] {
 
 /** Excel / Excel-binary workbooks excluded from Work Product folder ingest (CSV and other types unchanged). */
 const WORK_PRODUCT_EXCLUDED_EXCEL_EXT = new Set([".xlsx", ".xls", ".xlsm", ".xlsb", ".xls"]);
-
-/** Workspace tree for Memo & deck library (.md / .pptx / index); not research inputs. */
-const MEMO_DECK_LIBRARY_PATH_PREFIX = "ai-memo-deck-library/";
-
-/**
- * Generated credit memo artifacts, credit deck tab text, and memo/deck library exports.
- * KPI, forensic accounting, cap-structure recommendation, literary/biblical, etc. stay ingested.
- */
-function isExcludedCreditMemoOrDeckOutputPath(relPath: string): boolean {
-  const n = relPath.replace(/\\/g, "/").replace(/^\/+/, "").toLowerCase();
-  if (n.startsWith(MEMO_DECK_LIBRARY_PATH_PREFIX)) return true;
-  const base = path.basename(n);
-  if (base === "ai-credit-deck.txt") return true;
-  if (base.startsWith("ai-credit-memo-")) return true;
-  return false;
-}
 
 function detectSectionLabel(text: string): string | null {
   const lines = text.split("\n").slice(0, 12);
@@ -164,7 +151,10 @@ export async function ingestTickerFolder(params: {
   projectId: string;
   ticker: string;
   folderAbs: string;
+  /** Controls which generated tab outputs are skipped (self-referential). Default `memo`. */
+  workProductIngestScope?: WorkProductIngestScope;
 }): Promise<{ project: CreditMemoProject; warnings: string[] }> {
+  const ingestScope: WorkProductIngestScope = params.workProductIngestScope ?? "memo";
   const cfg = loadCreditMemoConfig();
   const warnings: string[] = [];
 
@@ -173,11 +163,15 @@ export async function ingestTickerFolder(params: {
     warnings.push(`File cap reached (${cfg.maxFilesPerIngest}); deeper paths may be omitted.`);
   }
 
+  // Do not index the memo/deck library export tree (work product) — and do not use it in cross-path deduplication
+  // (avoids "duplicate file" warnings when the same body exists in research + library).
+  const withoutMemoDeckTree = filesRaw.filter((f) => !isMemoDeckLibraryWorkspacePath(f.rel));
+
   // Dedupe by content fingerprint so copies in multiple places don't get ingested twice.
   const seen = new Map<string, string>(); // fingerprint -> first rel path
   const files: FileEntry[] = [];
   const dupRel: string[] = [];
-  for (const f of filesRaw) {
+  for (const f of withoutMemoDeckTree) {
     const fp = f.size > cfg.maxIngestFileBytes ? null : await fileFingerprint(f.abs, f.size);
     if (!fp) {
       files.push(f);
@@ -203,7 +197,7 @@ export async function ingestTickerFolder(params: {
   const chunks: SourceChunkRecord[] = [];
   const tables: ExtractedTableRecord[] = [];
   let excludedExcelCount = 0;
-  let excludedMemoDeckOutputCount = 0;
+  let excludedGeneratedWorkProductCount = 0;
 
   for (const f of files) {
     const ext = path.extname(f.rel).toLowerCase();
@@ -251,8 +245,9 @@ export async function ingestTickerFolder(params: {
       continue;
     }
 
-    if (isExcludedCreditMemoOrDeckOutputPath(f.rel)) {
-      excludedMemoDeckOutputCount += 1;
+    const wpSkip = workspaceFileSkippedForWorkProductIngest(f.rel, ingestScope);
+    if (wpSkip.skip) {
+      excludedGeneratedWorkProductCount += 1;
       const sid = stableId(["src", params.projectId, f.rel]);
       let mtime: string | null = null;
       try {
@@ -270,8 +265,7 @@ export async function ingestTickerFolder(params: {
         modifiedAt: mtime,
         parseStatus: "skipped",
         charExtracted: 0,
-        parseNote:
-          "Excluded: generated credit memo or deck output (not ingested as source). KPI, forensic, recommendations, and other tab outputs remain included.",
+        parseNote: wpSkip.parseNote ?? "Excluded: generated work product (not ingested as source for this tool).",
       });
       continue;
     }
@@ -313,7 +307,7 @@ export async function ingestTickerFolder(params: {
         sourceFileId: sid,
         title: path.basename(f.rel),
         sheetName: null,
-        previewText: text.slice(0, 24_000),
+        previewText: text,
       });
     }
 
@@ -334,9 +328,9 @@ export async function ingestTickerFolder(params: {
       `Excluded ${excludedExcelCount} Excel workbook(s) (.xlsx/.xlsm/.xlsb/.xls) from Work Product ingest (not sent to the model).`
     );
   }
-  if (excludedMemoDeckOutputCount > 0) {
+  if (excludedGeneratedWorkProductCount > 0) {
     warnings.push(
-      `Excluded ${excludedMemoDeckOutputCount} generated credit memo / deck file(s) from ingest (other work-product outputs such as KPI or forensic are still included).`
+      `Excluded ${excludedGeneratedWorkProductCount} generated work-product file(s) from ingest for this scope (${ingestScope}).`
     );
   }
 

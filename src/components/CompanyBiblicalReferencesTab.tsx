@@ -5,7 +5,12 @@ import { useSession } from "next-auth/react";
 
 import { Card } from "@/components/ui";
 import { SavedRichText } from "@/components/SavedRichText";
-import { mergeCreditMemoDraftAfterIngest, parseCreditMemoDraftJson } from "@/lib/creditMemo/clientDraftStorage";
+import {
+  fetchCreditMemoProjectClient,
+  mergeCreditMemoDraftAfterIngest,
+  parseCreditMemoDraftJson,
+  patchPreferencesCreditMemoDraftProject,
+} from "@/lib/creditMemo/clientDraftStorage";
 import { fetchLatestGeneratedTabOutput } from "@/lib/creditMemo/fetchLatestTabOutput";
 import type { CreditMemoProject, FolderResolveResult } from "@/lib/creditMemo/types";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
@@ -42,8 +47,12 @@ export function CompanyBiblicalReferencesTab({
 
     const raw = preferences.creditMemoDrafts?.[tk];
     const d = raw ? parseCreditMemoDraftJson(raw, tk) : null;
-    if (d?.project) setProject(d.project);
-    else setProject(null);
+    if (d?.project) {
+      setProject(d.project);
+      void fetchCreditMemoProjectClient(d.project.id).then((p) => {
+        if (p) setProject(p);
+      });
+    } else setProject(null);
 
     void (async () => {
       const { markdown: m } = await fetchLatestGeneratedTabOutput(tk, "biblicalReferences");
@@ -74,6 +83,7 @@ export function CompanyBiblicalReferencesTab({
             ticker: tk,
             folderPath: pathToUse,
             resolutionMeta,
+            workProductIngestScope: "biblical",
           }),
         });
         const data = (await res.json()) as {
@@ -93,7 +103,6 @@ export function CompanyBiblicalReferencesTab({
             [tk]: mergeCreditMemoDraftAfterIngest(p.creditMemoDrafts?.[tk], tk, nextProject, prevId),
           },
         }));
-        if (data.ingestWarnings?.length) setIngestError(data.ingestWarnings.join(" "));
       } catch (e) {
         setIngestError(e instanceof Error ? e.message : "Ingest failed");
       } finally {
@@ -168,12 +177,19 @@ export function CompanyBiblicalReferencesTab({
       };
       if (!res.ok) throw new Error(data.error || "Generation failed");
       setMarkdown(data.markdown ?? null);
+      if (project?.id) {
+        const np = await fetchCreditMemoProjectClient(project.id);
+        if (np) {
+          setProject(np);
+          updatePreferences((p) => patchPreferencesCreditMemoDraftProject(p, tk, np));
+        }
+      }
     } catch (e) {
       setGenError(e instanceof Error ? e.message : "Generation failed");
     } finally {
       setGenLoading(false);
     }
-  }, [project, companyName, tk]);
+  }, [project, companyName, tk, updatePreferences]);
 
   if (!tk) {
     return (
@@ -243,9 +259,7 @@ export function CompanyBiblicalReferencesTab({
         </div>
       ) : !busy ? (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
-          No output yet. Click <strong>Generate</strong> once you have a saved memo on <strong>AI Memo and Deck</strong> (default or
-          voice). Saved output stays here until you click <strong>Refresh</strong>. Add <strong>.txt</strong> files to your research
-          folder and ingest if you want extra evidence beyond the memo.
+          No output yet. Click <strong>Generate</strong> once you have a saved memo on <strong>AI Memo and Deck</strong>.
         </p>
       ) : null}
     </Card>

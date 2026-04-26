@@ -17,6 +17,8 @@ export const CREDIT_MEMO_MARKDOWN_SAVE_KEYS = [
   "ai-credit-memo-lynch",
   "ai-credit-memo-soros",
   "ai-credit-memo-ackman",
+  "ai-credit-memo-kafka",
+  "ai-credit-memo-nietzsche",
 ] as const;
 
 export type CreditMemoMarkdownSaveKey = (typeof CREDIT_MEMO_MARKDOWN_SAVE_KEYS)[number];

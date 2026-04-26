@@ -7,6 +7,7 @@
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
@@ -182,7 +183,7 @@ export async function callGemini(
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
-  const maxTokens = options.maxTokens ?? 4096;
+  const maxTokens = options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS;
   const googleSearch = options.googleSearch === true && isGeminiGoogleSearchEnabled();
 
   if (googleSearch) {
@@ -278,7 +279,7 @@ export async function callGeminiConversation(
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const model = options.model?.trim() || process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
-  const maxTokens = options.maxTokens ?? 4096;
+  const maxTokens = options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS;
 
   const googleSearch =
     options.googleSearch === true &&

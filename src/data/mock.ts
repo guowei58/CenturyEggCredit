@@ -53,7 +53,8 @@ export const companyAnalysisTabs = [
 
 export const companyAnalysisWorkOutputTabs = [
   "KPI Commentary",
-  "Forensic Accounting",
+  "Forensic Analysis",
+  "LME Analysis",
   "Recommendation",
   "AI Memo and Deck",
   "Literary References",

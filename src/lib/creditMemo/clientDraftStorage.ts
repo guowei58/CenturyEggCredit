@@ -1,4 +1,7 @@
+import type { UserPreferencesData } from "@/lib/user-preferences-types";
+
 import type { CreditMemoProject, MemoOutline } from "./types";
+import { stripCorpusFromProject } from "./types";
 
 export type CreditMemoClientDraft = {
   project: CreditMemoProject;
@@ -46,6 +49,39 @@ export function serializeCreditMemoDraft(draft: CreditMemoClientDraft): string {
   return JSON.stringify(draft);
 }
 
+/** Persist draft to user preferences: never store ingested chunks/sources/tables (only shell + UI fields). */
+export function serializeCreditMemoDraftForPreferences(draft: CreditMemoClientDraft): string {
+  const project = draft.project ? stripCorpusFromProject(draft.project) : draft.project;
+  return JSON.stringify({ ...draft, project });
+}
+
+/** Latest project from server (full or stripped after a work product). */
+export async function fetchCreditMemoProjectClient(projectId: string): Promise<CreditMemoProject | null> {
+  const res = await fetch(`/api/credit-memo/project/${encodeURIComponent(projectId)}`);
+  if (!res.ok) return null;
+  const j = (await res.json()) as { project?: CreditMemoProject };
+  return j.project ?? null;
+}
+
+/** Merge server project (often stripped after a work product) into prefs draft without duplicating corpus in JSON. */
+export function patchPreferencesCreditMemoDraftProject(
+  prev: UserPreferencesData,
+  ticker: string,
+  project: CreditMemoProject
+): UserPreferencesData {
+  const sym = ticker.trim().toUpperCase();
+  const raw = prev.creditMemoDrafts?.[sym];
+  const d = raw ? parseCreditMemoDraftJson(raw, sym) : null;
+  if (!d) return prev;
+  return {
+    ...prev,
+    creditMemoDrafts: {
+      ...(prev.creditMemoDrafts ?? {}),
+      [sym]: serializeCreditMemoDraftForPreferences({ ...d, project }),
+    },
+  };
+}
+
 /**
  * Merge a freshly ingested project into server-backed credit memo draft prefs without
  * clobbering memo fields. When the project id changes (re-ingest), memo job/outline/markdown
@@ -63,7 +99,7 @@ export function mergeCreditMemoDraftAfterIngest(
   }
   const prev = raw ? parseCreditMemoDraftJson(raw, tk) : null;
   const projectChanged = Boolean(prevProjectId && prevProjectId !== nextProject.id);
-  return serializeCreditMemoDraft({
+  return serializeCreditMemoDraftForPreferences({
     project: nextProject,
     jobId: projectChanged ? null : (prev?.jobId ?? null),
     outline: projectChanged ? null : (prev?.outline ?? null),

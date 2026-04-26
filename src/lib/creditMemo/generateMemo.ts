@@ -3,19 +3,16 @@ import { isProviderConfigured, llmCompleteSingle } from "@/lib/llm-router";
 import type { AiProvider } from "@/lib/ai-provider";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
-import { buildEvidencePackSync, formatSourceInventoryList } from "./evidencePack";
+import { buildTemplateDocxHintsBlock } from "./templatePromptBlocks";
+import { resolveCreditMemoEvidencePack, type CreditMemoEvidenceDiagnostics } from "./kpiRetrieval";
 import { loadCreditMemoConfig } from "./config";
 import { planMemoOutline, planMemoOutlineFromTemplate } from "./memoPlanner";
 import type { CreditMemoProject, MemoJob, MemoOutline } from "./types";
 import { getActiveCreditMemoTemplate } from "./templateStore";
 import { ensureAllOutlineSectionsInMarkdown } from "./memoSectionCoverage";
-import { buildTemplateDocxHintsBlock } from "./templatePromptBlocks";
-
-function estimateTokensFromChars(chars: number): number {
-  // Rough heuristic: ~4 chars/token for English prose.
-  // We use this only to avoid hard request failures; it's intentionally conservative.
-  return Math.ceil(chars / 4);
-}
+import { formatSourceInventoryList } from "./evidencePack";
+import { computeMemoUserMessageBreakdown } from "./memoRunTelemetry";
+import type { LmeUserMessageCharBreakdown } from "@/lib/lme-analysis-synthesis";
 
 function buildUserPrompt(params: {
   memoTitle: string;
@@ -100,7 +97,17 @@ export async function runMemoGeneration(params: {
   models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
 }): Promise<
-  | { ok: true; outline: MemoOutline; markdown: string; sourcePack: string }
+  | {
+      ok: true;
+      outline: MemoOutline;
+      markdown: string;
+      sourcePack: string;
+      sentSystemMessage: string;
+      sentUserMessage: string;
+      userMessageBreakdown: LmeUserMessageCharBreakdown;
+      evidenceDiagnostics: CreditMemoEvidenceDiagnostics;
+      retrievalUsed: boolean;
+    }
   | { ok: false; error: string }
 > {
   const cfg = loadCreditMemoConfig();
@@ -110,7 +117,7 @@ export async function runMemoGeneration(params: {
   }
 
   if (params.project.sources.length === 0) {
-    return { ok: false, error: "No sources ingested. Run ingest after selecting a folder with files." };
+    return { ok: false, error: 'Please click on "Refresh sources"' };
   }
 
   let outline = planMemoOutline(params.targetWords, params.project.sources);
@@ -149,16 +156,14 @@ The user is using an uploaded Word template. The user message lists **VERBATIM S
     (templateSystemExtra ? `\n\n${templateSystemExtra}` : "")
   ).trim();
 
-  // Auto-fit the SOURCE PACK into the provider/model context window to avoid hard failures.
-  // OpenAI errors out once the prompt exceeds its max context (seen as "prompt is too long").
-  const PROMPT_TOKEN_LIMIT =
-    ai === "openai" || ai === "gemini" || ai === "deepseek" ? 190_000 : 180_000;
-  const SYSTEM_TOKEN_EST = estimateTokensFromChars(system.length);
-
-  let maxEvidenceChars = cfg.maxContextChars;
   const evidenceQuery = `${params.memoTitle}\n${outline.sections.map((s) => s.title).join("\n")}\n${outline.sourceNotes}`.trim();
-  let evidence = buildEvidencePackSync(params.project, { maxChars: maxEvidenceChars, query: evidenceQuery });
-  let user = buildUserPrompt({
+  const { evidence, diagnostics } = await resolveCreditMemoEvidencePack({
+    userId: params.userId,
+    project: params.project,
+    apiKeys: params.apiKeys,
+    query: evidenceQuery,
+  });
+  const user = buildUserPrompt({
     memoTitle: params.memoTitle,
     ticker: params.project.ticker,
     outline,
@@ -169,24 +174,7 @@ The user is using an uploaded Word template. The user message lists **VERBATIM S
     evidence,
     characterVoice: useCharacterVoice,
   });
-
-  for (let i = 0; i < 8; i++) {
-    const est = SYSTEM_TOKEN_EST + estimateTokensFromChars(user.length);
-    if (est <= PROMPT_TOKEN_LIMIT) break;
-    maxEvidenceChars = Math.max(40_000, Math.floor(maxEvidenceChars * 0.8));
-    evidence = buildEvidencePackSync(params.project, { maxChars: maxEvidenceChars, query: evidenceQuery });
-    user = buildUserPrompt({
-      memoTitle: params.memoTitle,
-      ticker: params.project.ticker,
-      outline,
-      sourceNotes: outline.sourceNotes,
-      templateMetaLine,
-      templateHintsBlock,
-      inventory,
-      evidence,
-      characterVoice: useCharacterVoice,
-    });
-  }
+  const userMessageBreakdown = computeMemoUserMessageBreakdown(user, evidence);
 
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
 
@@ -204,7 +192,17 @@ The user is using an uploaded Word template. The user message lists **VERBATIM S
   }
 
   const markdown = ensureAllOutlineSectionsInMarkdown(result.text.trim(), outline);
-  return { ok: true, outline, markdown, sourcePack: evidence };
+  return {
+    ok: true,
+    outline,
+    markdown,
+    sourcePack: evidence,
+    sentSystemMessage: system,
+    sentUserMessage: user,
+    userMessageBreakdown,
+    evidenceDiagnostics: diagnostics,
+    retrievalUsed: diagnostics.mode === "retrieval",
+  };
 }
 
 export function memoJobFromRun(

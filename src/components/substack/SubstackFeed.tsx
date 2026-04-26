@@ -5,7 +5,6 @@ import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import type { SubstackSearchResponse } from "@/lib/substack/types";
 import { SubstackCoveragePanel } from "./SubstackCoveragePanel";
 import { SubstackSearchResults } from "./SubstackSearchResults";
-import { PublicationRegistryPanel } from "./PublicationRegistryPanel";
 
 const CACHE_PREFIX = "century-egg-substack:";
 
@@ -144,7 +143,6 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
         </div>
         <div className="space-y-3">
           <SubstackCoveragePanel data={data} />
-          <PublicationRegistryPanel />
         </div>
       </div>
     </div>

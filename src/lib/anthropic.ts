@@ -5,6 +5,7 @@
 
 import { conversationHasPdf, type ChatConversationTurn, type ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -89,7 +90,7 @@ export async function callClaude(
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
-  const { maxTokens = 2048, model = defaultModel, tools } = options;
+  const { maxTokens = LLM_MAX_OUTPUT_TOKENS, model = defaultModel, tools } = options;
 
   const body: Record<string, unknown> = {
     model,
@@ -198,7 +199,7 @@ export async function callClaudeConversation(
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
   const defaultModel = process.env.ANTHROPIC_MODEL?.trim() || "claude-haiku-4-5-20251001";
-  const { maxTokens = 4096, model = defaultModel, tools, fetchTimeoutMs } = options;
+  const { maxTokens = LLM_MAX_OUTPUT_TOKENS, model = defaultModel, tools, fetchTimeoutMs } = options;
 
   const usePdfBeta = conversationHasPdf(messages);
 

@@ -10,6 +10,7 @@ import { userHasCloudApiKeyForProvider } from "@/lib/user-llm-api-key-guard";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { useUserSettingsModalOptional } from "@/components/layout/UserSettingsModalProvider";
 import { ApiModelChoiceModal } from "@/components/ApiModelChoiceModal";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 
 const API_PROVIDERS: AiProvider[] = ["claude", "openai", "gemini", "deepseek"];
 
@@ -42,7 +43,7 @@ type Props = {
 export function TabPromptApiButtons({
   userPrompt,
   systemPrompt,
-  maxOutputTokens = 8192,
+  maxOutputTokens = LLM_MAX_OUTPUT_TOKENS,
   samplePublicPaths,
   onResult,
   persistAfterResult,

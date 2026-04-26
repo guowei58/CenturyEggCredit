@@ -61,9 +61,9 @@ export function NewsCard({ article, ticker }: { article: NormalizedNewsArticle; 
             {article.summary}
           </p>
         ) : null}
-        {article.providers.includes("newsapi") && article.matchedQuery ? (
-          <p className="mt-1 font-mono text-[10px] leading-snug" style={{ color: "var(--muted)" }} title="NewsAPI everything q=">
-            q: {article.matchedQuery}
+        {article.providers.some((p) => p === "newsapi" || p === "major_outlet_rss") && article.matchedQuery ? (
+          <p className="mt-1 font-mono text-[10px] leading-snug" style={{ color: "var(--muted)" }} title="Provider query / feed hint">
+            {article.matchedQuery}
           </p>
         ) : null}
         {article.tickers.length > 0 && (

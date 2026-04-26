@@ -5,17 +5,23 @@ import { useSession } from "next-auth/react";
 
 import { Card } from "@/components/ui";
 import { AiProviderChipRow } from "@/components/credit-memo/AiProviderChipRow";
+import { ProviderPublicLimitsSidePanel } from "@/components/credit-memo/ProviderPublicLimitsSidePanel";
 import { SourceInventoryPanel } from "@/components/credit-memo/SourceInventoryPanel";
+import { MemoDeckRunGuidePanel, type MemoDeckRunGuideState } from "@/components/credit-memo/MemoDeckRunGuidePanel";
 import { SavedRichText } from "@/components/SavedRichText";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { shortModelDisplayName } from "@/lib/ai-model-options";
-import { modelOverridePayloadForProvider, resolvedUserModelIdForProvider } from "@/lib/ai-model-prefs-client";
+import {
+  modelOverridePayloadForProvider,
+  resolvedUserModelIdForProvider,
+} from "@/lib/ai-model-prefs-client";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import type { CreditMemoVoiceId } from "@/data/credit-memo-voices";
 import {
   type CreditMemoClientDraft,
+  fetchCreditMemoProjectClient,
   parseCreditMemoDraftJson,
-  serializeCreditMemoDraft,
+  serializeCreditMemoDraftForPreferences,
 } from "@/lib/creditMemo/clientDraftStorage";
 import type { MemoDeckLibraryEntry } from "@/lib/ai-memo-deck-library";
 import { fetchSavedFromServer } from "@/lib/saved-data-client";
@@ -39,7 +45,9 @@ type SavedMemoVariantId =
   | "buffett"
   | "munger"
   | "lynch"
-  | "soros";
+  | "soros"
+  | "kafka"
+  | "nietzsche";
 
 type SavedMemoVariant = {
   id: SavedMemoVariantId;
@@ -50,17 +58,15 @@ type SavedMemoVariant = {
   sourcePackKey: string;
 };
 
-type MemoWorkspacePanel = "folder" | "template" | "memo" | "export" | "libraryDeck";
+type MemoWorkspacePanel = "folder" | "template";
 
-/** Draft JSON may still use legacy `"sources"` or removed `"outline"` panel. */
+/** Draft JSON may still use legacy `"sources"` or removed `"outline"` panel, or `memo` / `export` from older UI. */
 function normalizeDraftPanelToWorkspace(
-  markdown: string | null | undefined,
+  _markdown: string | null | undefined,
   saved: CreditMemoClientDraft["panel"]
 ): MemoWorkspacePanel {
-  if (!markdown?.trim()) return "folder";
-  if (saved === "sources") return "folder";
-  if (saved === "outline") return "memo";
-  return saved;
+  if (saved === "template") return "template";
+  return "folder";
 }
 
 const SAVED_MEMO_VARIANTS: readonly SavedMemoVariant[] = [
@@ -111,6 +117,22 @@ const SAVED_MEMO_VARIANTS: readonly SavedMemoVariant[] = [
     memoKey: "ai-credit-memo-soros",
     metaKey: "ai-credit-memo-soros-meta",
     sourcePackKey: "ai-credit-memo-soros-source-pack",
+  },
+  {
+    id: "kafka",
+    label: "Memo - Kafka",
+    voice: "kafka",
+    memoKey: "ai-credit-memo-kafka",
+    metaKey: "ai-credit-memo-kafka-meta",
+    sourcePackKey: "ai-credit-memo-kafka-source-pack",
+  },
+  {
+    id: "nietzsche",
+    label: "Memo - Nietzsche",
+    voice: "nietzsche",
+    memoKey: "ai-credit-memo-nietzsche",
+    metaKey: "ai-credit-memo-nietzsche-meta",
+    sourcePackKey: "ai-credit-memo-nietzsche-source-pack",
   },
 ] as const;
 
@@ -212,6 +234,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   const [memoGenPhase, setMemoGenPhase] = useState<null | "default" | CreditMemoVoiceId>(null);
   const memoGenBusy = memoGenPhase !== null;
   const [genError, setGenError] = useState<string | null>(null);
+  const [lastRunGuide, setLastRunGuide] = useState<MemoDeckRunGuideState | null>(null);
   const [deckGenLoading, setDeckGenLoading] = useState(false);
   const [deckGenError, setDeckGenError] = useState<string | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
@@ -268,6 +291,11 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       setUseTemplate(d.useTemplate);
       setPanel(normalizeDraftPanelToWorkspace(d.markdown, d.panel));
       setDraftReady(true);
+      if (d.project?.id) {
+        void fetchCreditMemoProjectClient(d.project.id).then((p) => {
+          if (p) setProject(p);
+        });
+      }
       return;
     }
 
@@ -278,7 +306,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       ]);
       if (savedMemo && savedMemo.trim()) {
         setMarkdown(savedMemo);
-        setPanel("memo");
+        setPanel("folder");
         if (savedMeta && savedMeta.trim()) {
           try {
             const meta = JSON.parse(savedMeta) as { jobId?: string; memoTitle?: string; targetWords?: number; useTemplate?: boolean };
@@ -293,13 +321,15 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         setProject(null);
         setOutline(null);
         setResolved(null);
+        setLastRunGuide(null);
         setDraftReady(true);
         return;
       }
 
-      setProject(null);
-      setMarkdown(null);
-      setJobId(null);
+        setProject(null);
+        setMarkdown(null);
+        setLastRunGuide(null);
+        setJobId(null);
       setOutline(null);
       setMemoTitle(defaultTitle);
       setTargetWords(10_000);
@@ -451,7 +481,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       ...p,
       creditMemoDrafts: {
         ...(p.creditMemoDrafts ?? {}),
-        [tk]: serializeCreditMemoDraft({
+        [tk]: serializeCreditMemoDraftForPreferences({
           project,
           jobId,
           outline,
@@ -459,7 +489,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           memoTitle,
           targetWords,
           useTemplate,
-          panel: panel === "libraryDeck" ? "folder" : panel,
+          panel: panel,
         }),
       },
     }));
@@ -551,6 +581,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             ticker: tk,
             folderPath: pathToUse,
             resolutionMeta,
+            workProductIngestScope: "memo",
           }),
         });
         const rawText = await res.text();
@@ -577,9 +608,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           setMarkdown(null);
           setOutline(null);
           setJobId(null);
-        }
-        if (data.ingestWarnings?.length) {
-          setIngestError(data.ingestWarnings.join(" "));
         }
       } catch (e) {
         setIngestError(e instanceof Error ? e.message : "Ingest failed");
@@ -631,17 +659,45 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         markdown?: string;
         llmModelUsed?: string;
         error?: string;
+        sentSystemMessage?: string;
+        sentUserMessage?: string;
+        userMessageBreakdown?: {
+          taskSpecChars: number;
+          bridgeChars: number;
+          formattedSourcesChars: number;
+          totalUserMessageChars: number;
+        };
+        evidenceDiagnostics?: MemoDeckRunGuideState["evidenceDiagnostics"];
       };
       if (!res.ok) throw new Error(data.error || "Generation failed");
       setJobId(data.jobId ?? null);
       setOutline(data.outline ?? null);
       setMarkdown(data.markdown ?? null);
       setLastVoice(voice ?? null);
-      setPanel(data.markdown ? "memo" : "folder");
+
+      if (
+        typeof data.sentSystemMessage === "string" &&
+        typeof data.sentUserMessage === "string" &&
+        data.userMessageBreakdown &&
+        data.evidenceDiagnostics
+      ) {
+        setLastRunGuide({
+          kind: "memo",
+          sentSystemMessage: data.sentSystemMessage,
+          sentUserMessage: data.sentUserMessage,
+          userBreakdown: data.userMessageBreakdown,
+          evidenceDiagnostics: data.evidenceDiagnostics,
+          systemChars: data.sentSystemMessage.length,
+        });
+      } else {
+        setLastRunGuide(null);
+      }
 
       if (data.markdown && data.markdown.trim()) {
         void pushMemoToLibrary(data.markdown, voice ?? null, data.llmModelUsed ?? null);
       }
+      const np = await fetchCreditMemoProjectClient(project.id);
+      if (np) setProject(np);
     } catch (e) {
       if (e instanceof Error) {
         const msg = e.message || "Generation failed";
@@ -694,6 +750,34 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         }
         throw new Error(msg);
       }
+      const telB64 = res.headers.get("X-Ceg-Deck-Run-Telemetry");
+      if (telB64) {
+        try {
+          const j = JSON.parse(atob(telB64)) as {
+            evidenceDiagnostics: MemoDeckRunGuideState["evidenceDiagnostics"];
+            userMessageBreakdown: {
+              taskSpecChars: number;
+              bridgeChars: number;
+              formattedSourcesChars: number;
+              totalUserMessageChars: number;
+            };
+            systemMessageChars: number;
+            userMessageChars: number;
+          };
+          setLastRunGuide({
+            kind: "deck",
+            evidenceDiagnostics: j.evidenceDiagnostics,
+            userBreakdown: j.userMessageBreakdown,
+            systemChars: j.systemMessageChars,
+            userMessageCharsOnly: j.userMessageChars,
+          });
+        } catch {
+          /* ignore parse errors */
+        }
+      }
+      const npDeck = await fetchCreditMemoProjectClient(project.id);
+      if (npDeck) setProject(npDeck);
+
       const hdrModel = res.headers.get("X-Ceg-Llm-Model-Id")?.trim() || "";
       const hdrProv = res.headers.get("X-Ceg-Llm-Provider")?.trim() || "";
       const blob = await res.blob();
@@ -769,37 +853,32 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           </p>
         ) : null}
 
-        <p className="text-[11px] leading-relaxed mb-4" style={{ color: "var(--muted2)" }}>
-          When you are signed in, your server-side data for this ticker (cloud workspace files, saved tab text, and Saved Documents)
-          is included automatically. If <code className="text-[10px]">RESEARCH_ROOT_DIR</code> is configured, the server picks the best-matching
-          research folder for this ticker. Click <strong>Refresh Source, Ingest &amp; Index</strong> to re-scan and rebuild the indexed
-          source pack — the LLM only cites that pack.
-          Generate credit Deck produces a first-draft PowerPoint (slide titles match the memo outline; the shaded area on each slide is for your charts).
-        </p>
+        <div className="flex flex-col xl:flex-row xl:gap-6 xl:items-start">
+          <div className="min-w-0 flex-1 space-y-4">
+        <ol className="list-decimal pl-4 space-y-1 text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+          <li>Click on &ldquo;Refresh Source, Ingest &amp; Index&rdquo; to pull in source documents.</li>
+          <li>Select AI model.</li>
+          <li>
+            Click on &ldquo;Generate Credit Memo&rdquo;, &ldquo;Generate Credit Deck&rdquo;, voice memos such as
+            &ldquo;Memo - Shakespeare&rdquo;, &ldquo;Memo - Kafka&rdquo;, or &ldquo;Memo - Nietzsche&rdquo;, etc. to generate
+            work product.
+          </li>
+        </ol>
 
         {needsSignIn && (
-          <p className="text-xs mb-4 rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
+          <p className="text-xs rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
             Sign in to resolve your ticker workspace, ingest sources, and generate memos and decks. Saved output is stored per account.
           </p>
         )}
 
         <AiProviderChipRow aiProvider={provider} onProviderChange={persistProvider} />
 
-        <div className="mb-3 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           <TabButton active={panel === "folder"} onClick={() => setPanel("folder")}>
             Sources
           </TabButton>
           <TabButton active={panel === "template"} onClick={() => setPanel("template")}>
             Template
-          </TabButton>
-          <TabButton active={panel === "memo"} onClick={() => setPanel("memo")} disabled={!markdown}>
-            Memo
-          </TabButton>
-          <TabButton active={panel === "export"} onClick={() => setPanel("export")} disabled={!markdown}>
-            Export
-          </TabButton>
-          <TabButton active={panel === "libraryDeck"} onClick={() => setPanel("libraryDeck")} disabled={!libraryDeckId}>
-            Deck
           </TabButton>
         </div>
 
@@ -919,7 +998,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           </div>
         )}
 
-        <div className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
+        <div className="space-y-3 border-t border-[var(--border)] pt-4">
           <div>
             <div className="mb-1 text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
               Target words
@@ -953,7 +1032,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-stretch gap-3">
+        <div className="flex flex-wrap items-stretch gap-3">
           <button
             type="button"
             disabled={memoGenBusy || deckGenLoading || !project || needsSignIn}
@@ -994,10 +1073,19 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             </button>
           ))}
         </div>
-        {genError ? <p className="mt-2 text-sm" style={{ color: "var(--danger)" }}>{genError}</p> : null}
-        {deckGenError ? <p className="mt-2 text-sm" style={{ color: "var(--danger)" }}>{deckGenError}</p> : null}
-        {jobId ? <p className="mt-1 text-[10px] font-mono" style={{ color: "var(--muted)" }}>Job: {jobId}</p> : null}
+        {genError ? <p className="text-sm" style={{ color: "var(--danger)" }}>{genError}</p> : null}
+        {deckGenError ? <p className="text-sm" style={{ color: "var(--danger)" }}>{deckGenError}</p> : null}
+          </div>
+
+          <ProviderPublicLimitsSidePanel
+            provider={provider}
+            resolvedModelId={resolvedUserModelIdForProvider(provider)}
+            className="w-full shrink-0 xl:sticky xl:top-4 xl:w-[min(100%,320px)]"
+          />
+        </div>
       </Card>
+
+      <MemoDeckRunGuidePanel run={lastRunGuide} />
 
       <Card title="Memo & deck library">
         <p className="mb-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
@@ -1110,7 +1198,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                                     setLibraryDeckId(null);
                                     setJobId(null);
                                     setMarkdown(j.markdown);
-                                    setPanel("memo");
                                   }
                                 })();
                               }}
@@ -1147,7 +1234,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
                             style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
                             onClick={() => {
                               setLibraryDeckId(row.id);
-                              setPanel("libraryDeck");
                             }}
                           >
                             View
@@ -1189,7 +1275,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         )}
       </Card>
 
-      {panel === "libraryDeck" && libraryDeckId && (
+      {libraryDeckId && (
         <Card title={libraryEntries.find((e) => e.id === libraryDeckId)?.title ?? "Library deck"}>
           <p className="mb-3 text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
             PowerPoint file from your library. Download below to save the .pptx.
@@ -1205,56 +1291,21 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         </Card>
       )}
 
-      {panel === "memo" && markdown && (
+      {markdown && (
         <Card title="Memo draft">
-          <p className="mb-3 text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
-            Preview uses Word-like typography (Times, page width). Downloads use the <strong>same memo text</strong> as this
-            preview (including library memos you opened with View).
-          </p>
-          <div className="mb-2 flex flex-wrap gap-2">
-            <button
-              type="button"
-              disabled={!!screenExportBusy}
-              onClick={() => void downloadMemoOnScreen("docx")}
-              className="rounded border px-4 py-2 text-sm font-medium"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-            >
-              {screenExportBusy === "docx" ? "Preparing Word…" : "Download Word (.docx)"}
-            </button>
-            <button
-              type="button"
-              disabled={!!screenExportBusy}
-              onClick={() => void downloadMemoOnScreen("md")}
-              className="rounded border px-3 py-2 text-xs font-medium"
-              style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "transparent" }}
-            >
-              {screenExportBusy === "md" ? "Preparing…" : "Markdown"}
-            </button>
-          </div>
-          {screenExportError ? (
-            <p className="mb-2 text-xs" style={{ color: "var(--danger)" }}>
-              {screenExportError}
-            </p>
-          ) : null}
-          <div className="credit-memo-word-preview max-h-[min(70vh,900px)] overflow-y-auto">
-            <SavedRichText content={markdown} ticker={tk} />
-          </div>
-        </Card>
-      )}
-
-      {panel === "export" && markdown && (
-        <Card title="Export">
           <p className="mb-2 text-sm" style={{ color: "var(--muted2)" }}>
-            <strong>Word (.docx)</strong>, Markdown, and HTML match the memo on screen (same as the draft preview).{" "}
+            Preview uses Word-like typography (Times, page width). <strong>Word</strong>, <strong>Markdown</strong>, and{" "}
+            <strong>HTML</strong> use the <strong>same memo text</strong> as the preview (including library memos you opened
+            with View).{" "}
             {jobId ? (
               <>
-                <strong>Source pack</strong> is tied to the last generate job shown below.
+                <strong>Source pack</strong> is tied to the last generate job.
               </>
             ) : (
               <>Generate a new memo to attach a source pack from that run.</>
             )}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="mb-2 flex flex-wrap gap-2">
             <button
               type="button"
               disabled={!!screenExportBusy}
@@ -1285,7 +1336,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             {jobId ? (
               <a
                 href={`/api/credit-memo/memo/${encodeURIComponent(jobId)}/export?format=source-pack`}
-                className="rounded border px-3 py-2 text-sm no-underline inline-flex items-center"
+                className="inline-flex items-center rounded border px-3 py-2 text-sm no-underline"
                 style={{ borderColor: "var(--border2)", color: "var(--text)" }}
               >
                 Source pack (.txt)
@@ -1293,11 +1344,14 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             ) : null}
           </div>
           {screenExportError ? (
-            <p className="mt-2 text-xs" style={{ color: "var(--danger)" }}>
+            <p className="mb-2 text-xs" style={{ color: "var(--danger)" }}>
               {screenExportError}
             </p>
           ) : null}
-          {jobId ? <p className="mt-2 text-[10px] font-mono" style={{ color: "var(--muted)" }}>Job (source pack): {jobId}</p> : null}
+          {jobId ? <p className="mb-2 text-[10px] font-mono" style={{ color: "var(--muted)" }}>Job (source pack): {jobId}</p> : null}
+          <div className="credit-memo-word-preview max-h-[min(70vh,900px)] overflow-y-auto">
+            <SavedRichText content={markdown} ticker={tk} />
+          </div>
         </Card>
       )}
     </div>

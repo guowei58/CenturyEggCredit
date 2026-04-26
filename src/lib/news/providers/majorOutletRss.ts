@@ -130,7 +130,7 @@ function mapRssToArticle(
 export function createMajorOutletRssNewsProvider(): NewsProvider {
   return {
     id: "major_outlet_rss",
-    name: "Major outlets (RSS)",
+    name: "Major outlet RSS",
     enabledByDefault: true,
     supportsTickerQuery: true,
     supportsCompanyQuery: true,

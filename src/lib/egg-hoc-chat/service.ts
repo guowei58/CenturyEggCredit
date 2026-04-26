@@ -4,6 +4,7 @@ import {
   EggHocMessageType,
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { withTransientPgRetry } from "@/lib/pg-connection-retry";
 import { makeDirectPairKey } from "@/lib/egg-hoc-chat/directPairKey";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import {
@@ -279,6 +280,10 @@ function titleForConversation(
 }
 
 export async function listUserConversations(userId: string) {
+  return withTransientPgRetry("listUserConversations", () => listUserConversationsInner(userId));
+}
+
+async function listUserConversationsInner(userId: string) {
   await ensureUserInGlobalLobby(userId);
 
   const memberships = await prisma.conversationMember.findMany({
@@ -342,6 +347,7 @@ export async function listUserConversations(userId: string) {
 
   return withUnread;
 }
+
 
 export async function getConversationDetail(conversationId: string, userId: string) {
   const lobbyRow = await prisma.conversation.findFirst({

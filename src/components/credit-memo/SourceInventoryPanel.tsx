@@ -2,16 +2,22 @@
 
 import type { ReactNode } from "react";
 
-import type { CreditMemoProject } from "@/lib/creditMemo/types";
+import type { CreditMemoProject, SourceFileRecord } from "@/lib/creditMemo/types";
+
+/** Files actually sent to the indexed source pack — excludes Excel, oversized, memo/deck outputs, etc. */
+function sourcesShownInInventory(sources: SourceFileRecord[]): SourceFileRecord[] {
+  return sources.filter((s) => s.parseStatus !== "skipped");
+}
 
 function sourceInventoryRows(project: CreditMemoProject) {
-  const rows = project.sources.map((s) => ({
+  const listed = sourcesShownInInventory(project.sources);
+  const rows = listed.map((s) => ({
     key: s.id,
     label: s.relPath,
     chars: s.charExtracted,
   }));
-  const totalChars = project.sources.reduce((acc, s) => acc + s.charExtracted, 0);
-  return { rows, totalChars };
+  const totalChars = listed.reduce((acc, s) => acc + s.charExtracted, 0);
+  return { rows, totalChars, listedCount: listed.length };
 }
 
 export type SourceInventoryPanelProps = {
@@ -21,6 +27,10 @@ export type SourceInventoryPanelProps = {
   needsSignIn: boolean;
   /** Override default empty-state copy (e.g. AI Memo names the refresh button differently). */
   emptyHint?: ReactNode;
+  /** Optional note below warnings (e.g. KPI tab explaining what is included in ingest). */
+  footnote?: ReactNode;
+  /** When a finite number, the header appends UTF-8 byte length of the system + user prompts last sent to the model. */
+  lastModelContextUtf8Bytes?: number | null;
   listMaxHeightClass?: string;
   className?: string;
 };
@@ -31,11 +41,14 @@ export function SourceInventoryPanel({
   ingestError,
   needsSignIn,
   emptyHint,
+  footnote,
+  lastModelContextUtf8Bytes,
   listMaxHeightClass = "max-h-48",
   className,
 }: SourceInventoryPanelProps) {
   const inv = project ? sourceInventoryRows(project) : null;
-  const hasSubstantiveSources = Boolean(project && project.sources.length > 0);
+  const hasScannedFiles = Boolean(project && project.sources.length > 0);
+  const hasListedFiles = Boolean(inv && inv.rows.length > 0);
 
   const defaultEmpty = (
     <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
@@ -48,12 +61,26 @@ export function SourceInventoryPanel({
       className={`rounded border text-xs ${className ?? ""}`}
       style={{ borderColor: "var(--border2)" }}
     >
-      <div className="px-3 py-2 font-semibold" style={{ background: "var(--card2)", color: "var(--muted2)" }}>
+      <div
+        className="px-3 py-2 font-semibold"
+        style={{ background: "var(--card2)", color: "var(--muted2)" }}
+        title={
+          typeof lastModelContextUtf8Bytes === "number"
+            ? "UTF-8 byte length of the system + user prompt strings last sent to the model for this tab (after building inventory and evidence)."
+            : undefined
+        }
+      >
         {inv
-          ? `Source inventory (${inv.rows.length} files, ${inv.totalChars.toLocaleString()} characters from indexed text)`
+          ? (() => {
+              const base = `Source inventory (${inv.listedCount} indexed file${inv.listedCount === 1 ? "" : "s"}, ${inv.totalChars.toLocaleString()} characters from indexed text`;
+              if (typeof lastModelContextUtf8Bytes === "number") {
+                return `${base}. Last model prompt: ${lastModelContextUtf8Bytes.toLocaleString()} UTF-8 bytes.)`;
+              }
+              return `${base})`;
+            })()
           : "Source inventory"}
       </div>
-      {inv ? (
+      {inv && hasListedFiles ? (
         <ul className={`${listMaxHeightClass} overflow-y-auto divide-y`} style={{ borderColor: "var(--border2)" }}>
           {inv.rows.map((s) => (
             <li
@@ -71,6 +98,11 @@ export function SourceInventoryPanel({
           ))}
         </ul>
       ) : null}
+      {inv && hasScannedFiles && !hasListedFiles ? (
+        <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+          No files were indexed for the model in this ingest (e.g. only excluded types such as Excel workbooks). See warnings below.
+        </p>
+      ) : null}
       {resolveFailed ? (
         <p className="px-3 py-2 text-[11px]" style={{ color: "var(--warn)" }}>
           {resolveFailed.error}
@@ -81,14 +113,19 @@ export function SourceInventoryPanel({
           {ingestError}
         </p>
       ) : null}
-      {!hasSubstantiveSources && !needsSignIn && !resolveFailed && !ingestError ? (
+      {!hasScannedFiles && !needsSignIn && !resolveFailed && !ingestError ? (
         emptyHint ?? defaultEmpty
       ) : null}
-      {project && hasSubstantiveSources ? (
+      {project && hasScannedFiles ? (
         <p className="px-3 py-2 text-[11px] border-t" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-          {project.sources.length} files — {project.chunks.length} chunks. Warnings:{" "}
+          {inv?.listedCount ?? 0} indexed file{(inv?.listedCount ?? 0) === 1 ? "" : "s"} — {project.chunks.length} chunks. Warnings:{" "}
           {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
         </p>
+      ) : null}
+      {footnote ? (
+        <div className="px-3 py-2 text-[11px] border-t leading-relaxed" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
+          {footnote}
+        </div>
       ) : null}
     </div>
   );

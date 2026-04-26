@@ -1,8 +1,34 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
+import {
+  analyzePreferencesPayloadSize,
+  formatPreferencesOversizeMessage,
+  MAX_PREFS_CHARS,
+  type UserPreferencesData,
+} from "@/lib/user-preferences-types";
+
+type MeStorageResponse = {
+  preferencesPayloadChars: number;
+  preferencesPayloadBytes: number;
+  totalBytesUsed: number;
+  limitBytes: number;
+  maxPreferencesChars: number;
+};
+
+function prefsSerializedLength(p: UserPreferencesData): number {
+  return JSON.stringify(p).length;
+}
+
+function formatBytes(n: number): string {
+  if (!Number.isFinite(n) || n < 0) return "—";
+  if (n < 1024) return `${Math.round(n)} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  if (n < 1024 * 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(2)} MB`;
+  return `${(n / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
 
 const LLM_LINKS = {
   anthropic: "https://console.anthropic.com/settings/keys",
@@ -72,6 +98,35 @@ export function UserSettingsModal({
     return () => clearTimeout(t);
   }, [keysSavedToast]);
 
+  const [storageStats, setStorageStats] = useState<MeStorageResponse | null>(null);
+  const [storageError, setStorageError] = useState<string | null>(null);
+
+  const prefsSizeHint = useMemo(() => analyzePreferencesPayloadSize(preferences), [preferences]);
+
+  const loadStorageStats = useCallback(async () => {
+    setStorageError(null);
+    try {
+      const res = await fetch("/api/me/storage", { cache: "no-store" });
+      const j = (await res.json()) as MeStorageResponse & { error?: string };
+      if (!res.ok) throw new Error(j.error || "Failed to load storage");
+      setStorageStats({
+        preferencesPayloadChars: j.preferencesPayloadChars,
+        preferencesPayloadBytes: j.preferencesPayloadBytes,
+        totalBytesUsed: j.totalBytesUsed,
+        limitBytes: j.limitBytes,
+        maxPreferencesChars: j.maxPreferencesChars,
+      });
+    } catch (e) {
+      setStorageError(e instanceof Error ? e.message : "Failed to load storage");
+      setStorageStats(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    void loadStorageStats();
+  }, [open, loadStorageStats]);
+
   if (!open) return null;
 
   const canSave = ready;
@@ -115,6 +170,63 @@ export function UserSettingsModal({
         </div>
 
         <div className="max-h-[min(88vh,800px)] overflow-y-auto p-4 text-base sm:p-5">
+          <section
+            className="mb-4 rounded-lg border px-4 py-3 text-sm"
+            style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
+          >
+            <div className="font-semibold" style={{ color: "var(--text)" }}>
+              Storage
+            </div>
+            {storageError ? (
+              <p className="mt-1.5" style={{ color: "var(--warn)" }}>
+                {storageError}
+              </p>
+            ) : storageStats ? (
+              <ul className="mt-2 list-none space-y-1.5 leading-relaxed" style={{ color: "var(--muted2)" }}>
+                <li>
+                  <span className="font-medium" style={{ color: "var(--muted)" }}>
+                    Preferences (JSON):{" "}
+                  </span>
+                  {formatBytes(storageStats.preferencesPayloadBytes)}
+                  <span className="opacity-90">
+                    {" "}
+                    ({storageStats.preferencesPayloadChars.toLocaleString()} /{" "}
+                    {storageStats.maxPreferencesChars.toLocaleString()} characters)
+                  </span>
+                </li>
+                <li>
+                  <span className="font-medium" style={{ color: "var(--muted)" }}>
+                    Total account storage:{" "}
+                  </span>
+                  {formatBytes(storageStats.totalBytesUsed)} / {formatBytes(storageStats.limitBytes)}
+                  <span className="opacity-90">
+                    {" "}
+                    ({Math.min(100, (storageStats.totalBytesUsed / storageStats.limitBytes) * 100).toFixed(1)}%)
+                  </span>
+                </li>
+              </ul>
+            ) : (
+              <p className="mt-1.5" style={{ color: "var(--muted2)" }}>
+                Loading…
+              </p>
+            )}
+            <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
+              Large credit memo drafts or prompt templates stored in preferences count toward both limits.
+            </p>
+            {prefsSizeHint.totalChars > 500_000 ? (
+              <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
+                Where the JSON size comes from (approx.): API keys ~{prefsSizeHint.apiKeyStringsChars.toLocaleString()} chars;
+                largest sections —{" "}
+                {prefsSizeHint.topLevel
+                  .filter((x) => x.key !== "v")
+                  .slice(0, 4)
+                  .map((x) => `${x.key} ~${x.chars.toLocaleString()}`)
+                  .join("; ")}
+                .
+              </p>
+            ) : null}
+          </section>
+
           <section className="rounded-lg border p-4" style={{ borderColor: "var(--border2)", background: "var(--card2)" }}>
             <h4 className="text-base font-semibold" style={{ color: "var(--text)" }}>
               Egg-Hoc chat ID
@@ -147,15 +259,17 @@ export function UserSettingsModal({
                   }
                   setSaving(true);
                   try {
+                    const merged: UserPreferencesData = {
+                      ...preferences,
+                      profile: { ...(preferences.profile ?? {}), chatDisplayId: next ? next : undefined },
+                    };
+                    if (prefsSerializedLength(merged) > MAX_PREFS_CHARS) {
+                      throw new Error(formatPreferencesOversizeMessage(merged));
+                    }
                     const res = await fetch("/api/me/preferences", {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        preferences: {
-                          ...preferences,
-                          profile: { ...(preferences.profile ?? {}), chatDisplayId: next ? next : undefined },
-                        },
-                      }),
+                      body: JSON.stringify({ preferences: merged }),
                     });
                     const j = (await res.json()) as { ok?: boolean; error?: string };
                     if (!res.ok) throw new Error(j.error || "Save failed");
@@ -164,6 +278,7 @@ export function UserSettingsModal({
                       profile: { ...(p.profile ?? {}), chatDisplayId: next ? next : undefined },
                     }));
                     setSavedToast(true);
+                    void loadStorageStats();
                   } catch (e) {
                     setSaveError(e instanceof Error ? e.message : "Save failed");
                   } finally {
@@ -243,6 +358,7 @@ export function UserSettingsModal({
                   placeholder="sk-ant-api03-…"
                   autoComplete="off"
                   disabled={!canSave}
+                  maxLength={16384}
                   className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
@@ -267,6 +383,7 @@ export function UserSettingsModal({
                   placeholder="sk-…"
                   autoComplete="off"
                   disabled={!canSave}
+                  maxLength={16384}
                   className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
@@ -291,6 +408,7 @@ export function UserSettingsModal({
                   placeholder="AIza…"
                   autoComplete="off"
                   disabled={!canSave}
+                  maxLength={16384}
                   className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
@@ -315,6 +433,7 @@ export function UserSettingsModal({
                   placeholder="sk-…"
                   autoComplete="off"
                   disabled={!canSave}
+                  maxLength={16384}
                   className="mt-1.5 w-full rounded border px-3 py-2 font-mono text-sm"
                   style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--text)" }}
                 />
@@ -336,10 +455,13 @@ export function UserSettingsModal({
                     if (openaiKey.trim()) userLlmApiKeys.openaiApiKey = openaiKey.trim();
                     if (geminiKey.trim()) userLlmApiKeys.geminiApiKey = geminiKey.trim();
                     if (deepseekKey.trim()) userLlmApiKeys.deepseekApiKey = deepseekKey.trim();
-                    const nextPrefs = {
+                    const nextPrefs: UserPreferencesData = {
                       ...preferences,
                       userLlmApiKeys: Object.keys(userLlmApiKeys).length > 0 ? userLlmApiKeys : undefined,
                     };
+                    if (prefsSerializedLength(nextPrefs) > MAX_PREFS_CHARS) {
+                      throw new Error(formatPreferencesOversizeMessage(nextPrefs));
+                    }
                     const res = await fetch("/api/me/preferences", {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
@@ -349,6 +471,7 @@ export function UserSettingsModal({
                     if (!res.ok) throw new Error(j.error || "Save failed");
                     updatePreferences(() => nextPrefs);
                     setKeysSavedToast(true);
+                    void loadStorageStats();
                   } catch (e) {
                     setKeysSaveError(e instanceof Error ? e.message : "Save failed");
                   } finally {

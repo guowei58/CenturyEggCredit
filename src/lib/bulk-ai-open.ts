@@ -50,6 +50,7 @@ import {
 } from "@/lib/ai-model-prefs-client";
 import type { AiProvider } from "@/lib/ai-provider";
 import { saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
 
 export type BulkOpenContext = {
@@ -327,7 +328,7 @@ export async function runBulkUpdateViaApi(
           body: JSON.stringify({
             provider,
             userPrompt: e.prompt.trim(),
-            maxTokens: 8192,
+            maxTokens: LLM_MAX_OUTPUT_TOKENS,
             ...modelPayload,
           }),
         });

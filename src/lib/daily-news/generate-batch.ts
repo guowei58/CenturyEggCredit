@@ -66,10 +66,42 @@ function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/** True when the article text plausibly references the issuer legal name (not ticker-only). */
+function articleMatchesCompanyLegalName(textBlob: string, companyName: string): boolean {
+  const b = textBlob.toLowerCase();
+  const cn = companyName.trim();
+  if (!cn) return false;
+  const tokens = significantNameTokens(cn);
+  if (tokens.some((t) => t.length >= 4 && b.includes(t))) return true;
+  const hits3 = tokens.filter((t) => t.length >= 3 && b.includes(t));
+  if (hits3.length >= 2) return true;
+  return false;
+}
+
 /**
- * Prefer matching the **company legal name** (significant tokens). Use the ticker only as a
- * word-boundary supplement so short symbols (e.g. NN) do not match arbitrary substrings.
+ * **Company / majors / press wires:** name-led matching. Short tickers (≤3 chars) often appear as
+ * common words — we only allow ticker hits when length ≥4 (word boundary or cashtag), unless the
+ * legal name already matched.
  */
+function articleMatchesCompanyNews(textBlob: string, ticker: string, companyName: string): boolean {
+  const cn = companyName.trim();
+  const tk = ticker.trim().toUpperCase();
+  const placeholderName = !cn || cn.toUpperCase() === tk;
+
+  if (!placeholderName && articleMatchesCompanyLegalName(textBlob, cn)) return true;
+
+  if (tk.length >= 4) {
+    try {
+      if (new RegExp(`\\b${escapeRegex(tk)}\\b`, "i").test(textBlob)) return true;
+    } catch {
+      /* fall through */
+    }
+  }
+  if (tk.length > 0 && textBlob.toLowerCase().includes(`$${tk.toLowerCase()}`)) return true;
+  return false;
+}
+
+/** **Industry ticker scan:** same token rules as before (ticker + name tokens on trade sites). */
 function articleMatchesWatchlist(
   textBlob: string,
   ticker: string,
@@ -150,7 +182,11 @@ function rssToItems(
     if (!isWithinRollingHours(dateStr, windowEnd, 26)) continue;
     const { source, sourceType } = classifyOutletFromUrl(a.link);
     const textBlob = `${a.title}\n${a.description ?? ""}\n${a.link}`;
-    if (!articleMatchesWatchlist(textBlob, ticker, companyName, mode)) continue;
+    const matches =
+      mode === "company"
+        ? articleMatchesCompanyNews(textBlob, ticker, companyName)
+        : articleMatchesWatchlist(textBlob, ticker, companyName, mode);
+    if (!matches) continue;
 
     out.push({
       dedupeHash: dedupeHashFor(a.title, a.link),
@@ -164,19 +200,90 @@ function rssToItems(
       whyItMatters:
         sourceType === "SEC"
           ? "Primary disclosure source."
-          : "Check relevance — headline match does not guarantee materiality.",
+          : sourceType === "press"
+            ? "Official distributor press release — compare to SEC filings, guidance, and your catalyst calendar."
+            : "Check relevance — headline match does not guarantee materiality.",
     });
   }
   return out;
 }
 
-async function safeFetchGoogle(q: string, errors: Array<{ source: string; message: string }>, label: string) {
+/** Top stories from a trade site (no ticker filter) — sector / market context. */
+function rssToTradeSiteHeadlines(
+  ticker: string,
+  publicationLabel: string,
+  articles: { title: string; link: string; pubDate: string; description?: string }[],
+  windowEnd: Date
+): DailyNewsItem[] {
+  const out: DailyNewsItem[] = [];
+  const tk = ticker.toUpperCase();
+  for (const a of articles) {
+    let dateStr: string;
+    try {
+      dateStr = new Date(a.pubDate).toISOString().slice(0, 10);
+    } catch {
+      continue;
+    }
+    if (!isWithinRollingHours(dateStr, windowEnd, 26)) continue;
+    const { source, sourceType } = classifyOutletFromUrl(a.link);
+    const displaySource = source !== "Web" && source !== "Google News" ? source : publicationLabel;
+    out.push({
+      dedupeHash: dedupeHashFor(a.title, a.link),
+      ticker: tk,
+      source: displaySource,
+      sourceType,
+      headline: a.title.replace(/ - .*$/, "").slice(0, 300),
+      url: a.link,
+      publishedAt: dateStr,
+      summary: a.title.slice(0, 400),
+      whyItMatters:
+        "Front-page / lead feed from a publication on your industry scan — may not mention this ticker; use for sector and liquidity context.",
+    });
+  }
+  return out;
+}
+
+async function safeFetchGoogle(
+  q: string,
+  errors: Array<{ source: string; message: string }>,
+  label: string,
+  maxResults = 12
+) {
   try {
-    return await fetchGoogleNewsSearch(q, 12);
+    return await fetchGoogleNewsSearch(q, maxResults);
   } catch (e) {
     errors.push({ source: label, message: e instanceof Error ? e.message : String(e) });
     return [];
   }
+}
+
+/** Skip placeholder / junk titles so the watchlist summary stays ticker-specific and readable. */
+function isWeakSummaryHeadline(raw: string): boolean {
+  const h = raw.replace(/\s+/g, " ").trim();
+  if (h.length < 4) return true;
+  if (/^latest news$/i.test(h)) return true;
+  if (/^news$/i.test(h)) return true;
+  if (/^[\d\s:.;,–\-]+$/u.test(h)) return true;
+  if (/^-\s*[\w.-]+\.[a-z]{2,24}\s*$/i.test(h)) return true;
+  return false;
+}
+
+function firstUsableHeadline(items: DailyNewsItem[]): string | undefined {
+  for (const it of items) {
+    if (!isWeakSummaryHeadline(it.headline)) return it.headline;
+  }
+  return undefined;
+}
+
+/** Google News `q` fragment: quoted legal name first; ticker only appended when unlikely to match random words. */
+function companySearchFragment(ticker: string, escapedLegalName: string): string {
+  const tk = ticker.trim().toUpperCase();
+  const name = escapedLegalName.trim();
+  const hasRealName = name.length > 0 && name.toUpperCase() !== tk;
+  if (hasRealName) {
+    return tk.length >= 4 ? `("${name}" OR ${tk})` : `("${name}")`;
+  }
+  return tk.length >= 4 ? `(${tk})` : `("${name || tk}")`;
 }
 
 /**
@@ -229,21 +336,38 @@ export async function buildDailyNewsPayload(
       fetchErrors.push({ source: `sec:${ticker}`, message: e instanceof Error ? e.message : String(e) });
     }
 
-    const majorQ = `(${ticker} OR "${companyName.replace(/"/g, "")}") (site:wsj.com OR site:ft.com OR site:bloomberg.com) when:1d`;
+    const escapedLegalName = companyName.replace(/"/g, "");
+    const corpQ = companySearchFragment(ticker, escapedLegalName);
+    const majorQ = `${corpQ} (site:wsj.com OR site:ft.com OR site:bloomberg.com) when:1d`;
     const majorArts = await safeFetchGoogle(majorQ, fetchErrors, `major:${ticker}`);
     sourcesUsed.add("Google News (WSJ/FT/Bloomberg)");
 
-    const companyRss = rssToItems(ticker, companyName, majorArts, windowEnd, "company");
+    /** Same Google News RSS path as majors, scoped to common PR distributors (no per-company IR RSS required). */
+    const prWireQ = `${corpQ} (site:businesswire.com OR site:prnewswire.com OR site:globenewswire.com OR site:accesswire.com OR site:newsfilecorp.com) when:1d`;
+    const prWireArts = await safeFetchGoogle(prWireQ, fetchErrors, `pr-wire:${ticker}`);
+    sourcesUsed.add("Google News (press wires)");
+
+    const companyRss = dedupeNewsItems([
+      ...rssToItems(ticker, companyName, majorArts, windowEnd, "company"),
+      ...rssToItems(ticker, companyName, prWireArts, windowEnd, "company"),
+    ]);
 
     const industryArts: typeof majorArts = [];
+    const industryBroadItems: DailyNewsItem[] = [];
     for (const tr of trades) {
       const q = `site:${tr.siteDomain} (${ticker} OR "${companyName.split(" ")[0] ?? ""}") when:1d`;
       industryArts.push(...(await safeFetchGoogle(q, fetchErrors, `trade:${tr.id}`)));
+      const broadQ = `site:${tr.siteDomain} when:1d`;
+      const broadArts = await safeFetchGoogle(broadQ, fetchErrors, `trade-front:${tr.id}`, 8);
+      industryBroadItems.push(...rssToTradeSiteHeadlines(ticker, tr.name, broadArts, windowEnd));
+    }
+    if (trades.length > 0) {
+      sourcesUsed.add("Google News (trade front pages)");
     }
     const industryRss = rssToItems(ticker, companyName, industryArts, windowEnd, "industry");
 
-    const companyNews = dedupeNewsItems([...companyRss]);
-    const industryNews = dedupeNewsItems([...industryRss]);
+    const companyNews = companyRss;
+    const industryNews = dedupeNewsItems([...industryRss, ...industryBroadItems]);
     const secFilings = dedupeNewsItems(secItems);
 
     const why =
@@ -251,7 +375,7 @@ export async function buildDailyNewsPayload(
         ? `Latest SEC activity (${secFilings.map((s) => s.headline.split(":")[0]).join(", ")}) should be reconciled to your model.`
         : companyNews.length + industryNews.length > 0
           ? "News flow present — verify materiality vs. your catalyst list and liquidity view."
-          : "No major items in the last 24h in automated sweep — confirm manually if needed.";
+          : "No major headlines, press wires, or filings in the last 24h in automated sweep — confirm manually if needed.";
 
     summaryByTicker[ticker] = {
       ticker,
@@ -264,11 +388,11 @@ export async function buildDailyNewsPayload(
       whyItMatters: why,
     };
 
+    /** Watchlist summary: SEC + company corpus only — never industry / trade front-page items. */
     const first =
-      secFilings[0]?.headline ||
-      companyNews[0]?.headline ||
-      industryNews[0]?.headline ||
-      `no notable automated hits in the last 24h.`;
+      firstUsableHeadline(secFilings) ||
+      firstUsableHeadline(companyNews) ||
+      `no notable ticker-specific items in the summary window.`;
     topBullets.push(`${ticker}: ${first}`);
   }
 
@@ -284,7 +408,7 @@ export async function buildDailyNewsPayload(
     topLevelSummary:
       topBullets.length > 0
         ? `Today's biggest developments across the watchlist:\n${topBullets.map((b) => `• ${b}`).join("\n")}`
-        : "No automated highlights for this window — check SEC and major outlets manually.",
+        : "No automated highlights for this window — check SEC, press wires, and major outlets manually.",
     summaryByTicker,
     sourcesUsed: Array.from(sourcesUsed),
     fetchErrors,

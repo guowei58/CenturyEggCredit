@@ -79,9 +79,9 @@ export function CompanyFinancialsTab({
         </h2>
         <div className="max-w-3xl space-y-3 text-base leading-relaxed" style={{ color: "var(--text)" }}>
           <p>
-            The ugly is when we ask AI to consolidate XBRL data into a consolidated financials report. Do you feel lucky punk?! The results are
-            very inconsistent. Quality varies a lot by model and how they feel at the time of the request. AI-generated model is like a box of
-            chocolate - you never know what you gonna get.
+            The ugly is when we ask AI (instead of Python) to consolidate XBRL data into a consolidated financials report. It turns out that AI
+            is less trustworthy than the snake. The results are very inconsistent. Quality varies a lot by model and how they feel at the time
+            of the request. AI-generated model is like a box of chocolate - you never know what you gonna get. Well, do you feel lucky punk?!
           </p>
         </div>
         <SecXbrlBulkFilingsAiPanel ticker={safeTicker} showBulkSave={false} />

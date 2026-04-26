@@ -1,14 +1,13 @@
 import { createHash } from "crypto";
 
 import { parseAiChatFromServerPayload, type AiChatSession } from "@/lib/ai-chat-sessions";
-import { loadCreditMemoConfig } from "./config";
 import type { CreditMemoProject, SourceChunkRecord, SourceFileRecord } from "./types";
+import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
 
 const VIRTUAL_REL = "_century_egg_research/AI_CHAT_SIDEBAR_HISTORY.md";
 
-const CHUNK_CHARS = 12_000;
-const CHUNK_OVERLAP = 400;
-const MAX_CHUNKS = 200;
+const CHUNK_CHARS = CREDIT_MEMO_CHUNK_MAX_CHARS;
+const CHUNK_OVERLAP = CREDIT_MEMO_CHUNK_OVERLAP_CHARS;
 
 function stableId(parts: string[]): string {
   return createHash("sha256").update(parts.join("|")).digest("hex").slice(0, 22);
@@ -20,7 +19,7 @@ function chunkText(text: string): string[] {
   if (t.length <= CHUNK_CHARS) return [t];
   const chunks: string[] = [];
   let i = 0;
-  while (i < t.length && chunks.length < MAX_CHUNKS) {
+  while (i < t.length) {
     const end = Math.min(i + CHUNK_CHARS, t.length);
     let slice = t.slice(i, end);
     if (end < t.length) {
@@ -102,23 +101,9 @@ export function mergeAiChatIntoIngestedProject(
     return { project, extraWarnings };
   }
 
-  const cfg = loadCreditMemoConfig();
-  const maxChars = Math.min(900_000, Math.max(120_000, cfg.maxIngestFileBytes));
-
   let body = formatSessionsMarkdown(project.ticker, sessions);
-  if (body.length > maxChars) {
-    body = `${body.slice(0, maxChars)}\n\n…[AI chat transcript truncated at ${maxChars.toLocaleString()} characters for ingest cap]`;
-    extraWarnings.push(
-      `AI Chat history was truncated to ${maxChars.toLocaleString()} characters for ingest (full saved chat is larger).`
-    );
-  }
 
   const parts = chunkText(body);
-  if (parts.length >= MAX_CHUNKS) {
-    extraWarnings.push(
-      `AI Chat history hit the ${MAX_CHUNKS}-chunk cap; oldest portion of the transcript may be omitted from chunks.`
-    );
-  }
 
   const sid = stableId(["src", project.id, VIRTUAL_REL]);
   const now = new Date().toISOString();

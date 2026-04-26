@@ -44,9 +44,16 @@ export default function Home() {
     setCompanyTab(getFirstTabIdForTopSection(companyTopSection));
   }, [companyTab, companyTopSection]);
 
+  /** Forensic Accounting tab renamed to Forensic Analysis; fix bookmarked tab id. */
+  useEffect(() => {
+    if (companyTab !== "forensic-accounting") return;
+    if (companyTopSection !== "work-product") setCompanyTopSection("work-product");
+    setCompanyTab("forensic-analysis");
+  }, [companyTab, companyTopSection]);
+
   /** Forensic Accounting moved from Risk to Work Product; fix stale section for bookmarked state. */
   useEffect(() => {
-    if (companyTab !== "forensic-accounting" || companyTopSection !== "risk") return;
+    if (companyTab !== "forensic-analysis" || companyTopSection !== "risk") return;
     setCompanyTopSection("work-product");
   }, [companyTab, companyTopSection]);
 
@@ -55,6 +62,13 @@ export default function Home() {
     if (companyTab !== "kpi") return;
     setCompanyTab("kpi-commentary");
   }, [companyTab]);
+
+  /** 20-Year Look Back tab removed; land on SEC XBRL Financials. */
+  useEffect(() => {
+    if (companyTab !== "20-year-look-back") return;
+    if (companyTopSection !== "financials") setCompanyTopSection("financials");
+    setCompanyTab("sec-xbrl-financials");
+  }, [companyTab, companyTopSection]);
 
   return (
     <div

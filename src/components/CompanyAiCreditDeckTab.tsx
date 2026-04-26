@@ -130,7 +130,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
 
   return (
     <div className="space-y-8">
-      <Card title={`AI Credit Deck �?${safeTicker}`}>
+      <Card title={`AI Credit Deck - ${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
           Same workflow as Org Chart: upload your template file, run the prompt in Claude, ChatGPT, Gemini, or DeepSeek, and save the output here.
         </p>

@@ -4,6 +4,7 @@
  */
 
 import { callClaude } from "@/lib/anthropic";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { ClaudeSelectionResult } from "./types";
 import type { PdfForRanking, RankedPdf } from "./types";
 
@@ -70,7 +71,7 @@ export async function selectWebsiteAndIr(
   const allowedUrls = new Set(candidates.map((c) => c.url));
   const list = candidates.map((c) => `${c.url} (${c.title || "no title"})`).join("\n");
   const userMessage = `Company: ${companyName}\nTicker: ${ticker}\n\nCandidate URLs:\n${list}`;
-  const claudeResult = await callClaude(SELECTION_SYSTEM, userMessage, { maxTokens: 1024 });
+  const claudeResult = await callClaude(SELECTION_SYSTEM, userMessage, { maxTokens: LLM_MAX_OUTPUT_TOKENS });
   const text = claudeResult.ok ? claudeResult.text : null;
   return parseSelection(text, allowedUrls);
 }
@@ -113,7 +114,7 @@ export async function rankPdfs(pdfs: PdfForRanking[]): Promise<RankedPdf[] | nul
   if (pdfs.length === 0) return [];
   const list = pdfs.map((p) => `${p.url}\n  title: ${p.title}\n  source: ${p.sourcePage}`).join("\n\n");
   const userMessage = `PDFs:\n${list}`;
-  const claudeResult = await callClaude(RANKING_SYSTEM, userMessage, { maxTokens: 2048 });
+  const claudeResult = await callClaude(RANKING_SYSTEM, userMessage, { maxTokens: LLM_MAX_OUTPUT_TOKENS });
   const text = claudeResult.ok ? claudeResult.text : null;
   return parseRanking(text, pdfs);
 }

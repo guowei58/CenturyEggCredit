@@ -63,7 +63,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   financials: {
     groups: [
       {
-        tabs: ["SEC XBRL Financials", "20-Year Look Back", "The Good, Bad and Ugly Historical Financial Statements"],
+        tabs: ["SEC XBRL Financials", "The Good, Bad and Ugly Historical Financial Statements"],
       },
     ],
   },
@@ -156,7 +156,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "KPI Commentary",
-          "Forensic Accounting",
+          "Forensic Analysis",
           "LME Analysis",
           "Recommendation",
           "AI Memo and Deck",

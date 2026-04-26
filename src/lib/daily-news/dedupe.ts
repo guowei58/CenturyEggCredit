@@ -23,7 +23,8 @@ const SOURCE_RANK: Record<string, number> = {
   WSJ: 1,
   Bloomberg: 2,
   FT: 3,
-  trade: 4,
+  press: 4,
+  trade: 5,
   other: 9,
 };
 

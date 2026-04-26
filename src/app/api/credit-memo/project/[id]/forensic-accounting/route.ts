@@ -7,7 +7,7 @@ import { appendJob, getProject, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import type { AiProvider } from "@/lib/ai-provider";
 import { defaultServerProvider, normalizeAiProvider } from "@/lib/ai-provider";
-import { resolveCreditMemoModels } from "@/lib/ai-model-from-request";
+import { resolveLmeAnalysisModels } from "@/lib/ai-model-from-request";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,11 +47,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const targetWords = 14_000;
 
   const result = await runForensicAccountingAnalysisGeneration({
-    project,
+    ticker: project.ticker,
     provider,
     companyName: companyName || undefined,
-    models: resolveCreditMemoModels(body),
+    models: resolveLmeAnalysisModels(body),
     apiKeys: bundle,
+    userId,
   });
 
   if (!result.ok) {
@@ -77,6 +78,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
             provider,
             createdAt: done.createdAt,
             projectId: project.id,
+            fingerprint: result.sourceFingerprint,
             companyName: companyName || undefined,
           },
           null,
@@ -93,5 +95,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     ok: true,
     jobId,
     markdown: result.markdown,
+    sentSystemMessage: result.sentSystemMessage,
+    sentUserMessage: result.sentUserMessage,
+    diagnostics: result.diagnostics,
   });
 }

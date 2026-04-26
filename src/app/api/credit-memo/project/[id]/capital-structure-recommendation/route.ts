@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { memoJobFromRun } from "@/lib/creditMemo/generateMemo";
 import { runCapitalStructureRecommendationGeneration } from "@/lib/creditMemo/generateCapitalStructureRecommendation";
-import { appendJob, getProject, newJobId } from "@/lib/creditMemo/store";
+import { appendJob, clearIngestCorpusAfterWorkProduct, getProject, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import type { AiProvider } from "@/lib/ai-provider";
 import { defaultServerProvider, normalizeAiProvider } from "@/lib/ai-provider";
@@ -87,6 +87,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
   } catch {
     /* ignore */
+  }
+
+  try {
+    await clearIngestCorpusAfterWorkProduct(userId, project.id);
+  } catch {
+    /* best-effort */
   }
 
   return NextResponse.json({

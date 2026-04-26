@@ -8,10 +8,7 @@ import type { AiProvider } from "@/lib/ai-provider";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { buildEvidencePackSync, formatSourceInventoryList } from "./evidencePack";
-import {
-  readPreferredSavedCreditMemoMarkdown,
-  REFERENCE_GEN_MIN_MEMO_CHARS,
-} from "./savedMemoForReferenceTabs";
+import { readPreferredSavedCreditMemoMarkdown } from "./savedMemoForReferenceTabs";
 import { loadCreditMemoConfig } from "./config";
 import type { CreditMemoProject } from "./types";
 
@@ -27,10 +24,6 @@ const TXT_EVIDENCE_QUERY = [
   "Management turnaround restructuring industry competitive",
   "Earnings debt maturity refinancing thesis",
 ].join("\n");
-
-function estimateTokensFromChars(chars: number): number {
-  return Math.ceil(chars / 4);
-}
 
 /** Same provider preference as Literary References (Claude → OpenAI → Gemini → DeepSeek). */
 export const pickBestConfiguredBiblicalProvider = pickBestConfiguredLiteraryProvider;
@@ -58,14 +51,11 @@ export async function runBiblicalReferencesGeneration(params: {
 
   let inventory: string;
   let materials: string;
-  let memoCap = 0;
 
   if (memoPick && memoSourceFilename) {
-    const cap = Math.min(memoRaw.length, cfg.maxContextChars - 50_000);
-    memoCap = Math.min(memoRaw.length, cap);
     materials =
       `<<<BEGIN SOURCE: ${memoSourceFilename} (saved credit memo) | synthetic>>>\n` +
-      (memoRaw.length > cap ? `${memoRaw.slice(0, cap)}\n…[truncated]` : memoRaw) +
+      memoRaw +
       `\n<<<END SOURCE: ${memoSourceFilename}>>>\n`;
     inventory = `- ${memoSourceFilename} (saved credit memo, primary — ${memoRaw.length} chars)`;
   } else if (params.project.sources.length === 0) {
@@ -90,49 +80,7 @@ export async function runBiblicalReferencesGeneration(params: {
   }
 
   const system = buildBiblicalReferencesSystemPrompt(params.project.ticker, params.companyName);
-  let user = buildBiblicalReferencesUserPrompt({ inventory, materials });
-
-  const PROMPT_TOKEN_LIMIT =
-    ai === "openai" || ai === "gemini" || ai === "deepseek" ? 190_000 : 180_000;
-  const SYSTEM_TOKEN_EST = estimateTokensFromChars(system.length);
-  let evidenceMaxChars = cfg.maxContextChars;
-
-  for (let i = 0; i < 10; i++) {
-    const est = SYSTEM_TOKEN_EST + estimateTokensFromChars(user.length);
-    if (est <= PROMPT_TOKEN_LIMIT) break;
-
-    if (memoCap > 0 && memoSourceFilename) {
-      memoCap = Math.max(REFERENCE_GEN_MIN_MEMO_CHARS, Math.floor(memoCap * 0.85));
-      const clipped = memoRaw.slice(0, memoCap);
-      materials =
-        `<<<BEGIN SOURCE: ${memoSourceFilename} (saved credit memo) | synthetic>>>\n${clipped}\n…[truncated]\n<<<END SOURCE: ${memoSourceFilename}>>>\n`;
-      user = buildBiblicalReferencesUserPrompt({ inventory, materials });
-      continue;
-    }
-
-    evidenceMaxChars = Math.max(40_000, Math.floor(evidenceMaxChars * 0.85));
-    if (txtSourceIds.size > 0) {
-      materials = buildEvidencePackSync(params.project, {
-        maxChars: evidenceMaxChars,
-        query: TXT_EVIDENCE_QUERY,
-        sourceIds: txtSourceIds,
-      });
-    } else {
-      materials = buildEvidencePackSync(params.project, {
-        maxChars: evidenceMaxChars,
-        query: TXT_EVIDENCE_QUERY,
-      });
-    }
-    user = buildBiblicalReferencesUserPrompt({ inventory, materials });
-  }
-
-  if (SYSTEM_TOKEN_EST + estimateTokensFromChars(user.length) > PROMPT_TOKEN_LIMIT) {
-    return {
-      ok: false,
-      error:
-        "Research materials are still too large for one model request. Try a shorter saved memo, fewer/lighter .txt files, or raise limits in server config.",
-    };
-  }
+  const user = buildBiblicalReferencesUserPrompt({ inventory, materials });
 
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
 

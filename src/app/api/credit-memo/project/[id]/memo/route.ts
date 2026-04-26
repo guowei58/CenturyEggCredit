@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { memoJobFromRun, runMemoGeneration } from "@/lib/creditMemo/generateMemo";
-import { appendJob, getProject, newJobId } from "@/lib/creditMemo/store";
+import { appendJob, clearIngestCorpusAfterWorkProduct, getProject, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import type { AiProvider } from "@/lib/ai-provider";
 import { defaultServerProvider, normalizeAiProvider } from "@/lib/ai-provider";
@@ -67,8 +67,18 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     voice === "shakespeare" ||
     voice === "lynch" ||
     voice === "soros" ||
-    voice === "ackman"
-      ? (voice as "buffett" | "munger" | "shakespeare" | "lynch" | "soros" | "ackman")
+    voice === "ackman" ||
+    voice === "kafka" ||
+    voice === "nietzsche"
+      ? (voice as
+          | "buffett"
+          | "munger"
+          | "shakespeare"
+          | "lynch"
+          | "soros"
+          | "ackman"
+          | "kafka"
+          | "nietzsche")
       : null;
 
   const voiceSystemPrompt = voiceId
@@ -127,7 +137,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
                   ? "ai-credit-memo-soros"
                   : voiceId === "ackman"
                     ? "ai-credit-memo-ackman"
-                    : "ai-credit-memo-latest";
+                    : voiceId === "kafka"
+                      ? "ai-credit-memo-kafka"
+                      : voiceId === "nietzsche"
+                        ? "ai-credit-memo-nietzsche"
+                        : "ai-credit-memo-latest";
 
       const metaKey = `${keyBase}-meta`;
       const packKey = `${keyBase}-source-pack`;
@@ -160,11 +174,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     /* ignore */
   }
 
+  try {
+    await clearIngestCorpusAfterWorkProduct(userId, project.id);
+  } catch {
+    /* best-effort: memo output already persisted */
+  }
+
   return NextResponse.json({
     ok: true,
     jobId,
     outline: result.outline,
     markdown: result.markdown,
     llmModelUsed,
+    sentSystemMessage: result.sentSystemMessage,
+    sentUserMessage: result.sentUserMessage,
+    userMessageBreakdown: result.userMessageBreakdown,
+    evidenceDiagnostics: result.evidenceDiagnostics,
+    retrievalUsed: result.retrievalUsed,
   });
 }

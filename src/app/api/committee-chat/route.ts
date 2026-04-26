@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { auth } from "@/auth";
 import type { AiProvider } from "@/lib/ai-provider";
 import { resolveProvider } from "@/lib/ai-provider";
@@ -138,7 +139,7 @@ export async function POST(request: Request) {
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = resolveCommitteeChatModels(b);
 
   const llmOpts = {
-    maxTokens: 4096,
+    maxTokens: LLM_MAX_OUTPUT_TOKENS,
     claudeModel,
     openaiModel,
     geminiModel,

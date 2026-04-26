@@ -3,11 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { rankArticles } from "@/lib/news/rank";
-import type { NewsAggregationResponse, NewsQueryParams, NormalizedNewsArticle } from "@/lib/news/types";
-import { PRODUCTION_NEWS_PROVIDER_IDS } from "@/lib/news/constants";
+import type { NewsAggregationResponse, NewsQueryParams } from "@/lib/news/types";
 import { NewsCard } from "./NewsCard";
 import { NewsFilters } from "./NewsFilters";
-import { ProviderStatus } from "./ProviderStatus";
 
 const CACHE_PREFIX = "century-egg-news:";
 
@@ -25,21 +23,6 @@ function parseNewsCache(raw: string | null | undefined): NewsAggregationResponse
   }
 }
 
-function filterArticles(
-  articles: NormalizedNewsArticle[],
-  providerFilter: string | "all",
-  multiSourceOnly: boolean
-): NormalizedNewsArticle[] {
-  let out = articles;
-  if (providerFilter !== "all") {
-    out = out.filter((a) => a.providers.map((p) => p.toLowerCase()).includes(providerFilter.toLowerCase()));
-  }
-  if (multiSourceOnly) {
-    out = out.filter((a) => a.providers.length >= 2);
-  }
-  return out;
-}
-
 export function NewsFeed({
   ticker,
   companyName,
@@ -53,18 +36,13 @@ export function NewsFeed({
   const feedCacheKey = tk ? cacheKey(tk) : "";
   const feedCacheBlob = feedCacheKey ? preferences.feedCaches?.[feedCacheKey] : undefined;
 
-  /** Comma-separated extra phrases for NewsAPI keyword search and relevance ranking. */
   const [aliasesText, setAliasesText] = useState("");
   const aliasesRef = useRef(aliasesText);
   aliasesRef.current = aliasesText;
   const [sortMode, setSortMode] = useState<"relevance" | "recent">("relevance");
-  const [enabledFilter, setEnabledFilter] = useState<string | "all">("all");
-  const [multiSourceOnly, setMultiSourceOnly] = useState(false);
   const [payload, setPayload] = useState<NewsAggregationResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const registeredIds = useMemo(() => [...PRODUCTION_NEWS_PROVIDER_IDS], []);
 
   useEffect(() => {
     if (!tk) {
@@ -131,14 +109,9 @@ export function NewsFeed({
     }
   }, [tk, name, updatePreferences]);
 
-  const rankedArticles = useMemo(
+  const visible = useMemo(
     () => (payload ? rankArticles(payload.articles, rankQuery, sortMode) : []),
     [payload, rankQuery, sortMode]
-  );
-
-  const visible = useMemo(
-    () => filterArticles(rankedArticles, enabledFilter, multiSourceOnly),
-    [rankedArticles, enabledFilter, multiSourceOnly]
   );
 
   if (!tk) {
@@ -148,17 +121,16 @@ export function NewsFeed({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs" style={{ color: "var(--muted2)" }}>
-          Merged from configured feeds (Marketaux, Alpha Vantage, Finnhub, NewsAPI, plus Major outlets RSS: Yahoo Finance headlines for
-          the symbol and Google News RSS scoped to WSJ, FT, Bloomberg, Yahoo Finance, Reuters, and AP — no extra API key). Results are
-          saved per ticker until you click Refresh. Relevance / recent order can use your alias box without a new fetch. NewsAPI uses
-          the domain allowlist in the news module config.
+        <p className="max-w-[52rem] text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
+          Yahoo Finance headlines for this symbol (often including company releases) plus Google News from major outlets — WSJ, FT,
+          Bloomberg, Yahoo Finance, Reuters, and AP. Results stay saved for this ticker until you refresh. Use aliases below to tune the
+          Google News search and on-page relevance; change sort without refetching.
         </p>
         <button
           type="button"
           onClick={() => void fetchNews()}
           disabled={loading}
-          className="tab-prompt-ai-action-btn"
+          className="tab-prompt-ai-action-btn shrink-0"
           style={{ borderColor: "var(--border2)", color: "var(--text)" }}
         >
           {loading ? "Loading…" : payload ? "Refresh" : "Load news"}
@@ -179,32 +151,12 @@ export function NewsFeed({
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
           />
           <span className="mt-1 block text-[10px]" style={{ color: "var(--muted)" }}>
-            Used for NewsAPI and Major outlets RSS on refresh, and for local relevance ranking. Click Refresh to fetch with new aliases.
+            Used when you refresh (Google News query) and for ranking on this page. Click Refresh to apply new aliases.
           </span>
         </label>
       </div>
 
-      <NewsFilters
-        enabledFilter={enabledFilter}
-        onEnabledFilterChange={setEnabledFilter}
-        multiSourceOnly={multiSourceOnly}
-        onMultiSourceOnlyChange={setMultiSourceOnly}
-        sortMode={sortMode}
-        onSortModeChange={setSortMode}
-        registeredIds={registeredIds}
-      />
-
-      <ProviderStatus
-        payload={
-          payload
-            ? {
-                activeProviders: payload.activeProviders,
-                disabledProviders: payload.disabledProviders,
-                providerStats: payload.providerStats,
-              }
-            : null
-        }
-      />
+      <NewsFilters sortMode={sortMode} onSortModeChange={setSortMode} />
 
       {error && (
         <p className="rounded border border-dashed p-3 text-sm" style={{ borderColor: "var(--danger)", color: "var(--danger)" }}>
@@ -230,13 +182,13 @@ export function NewsFeed({
 
       {payload && !error && (
         <p className="text-[11px]" style={{ color: "var(--muted)" }}>
-          {payload.totalAfterDedupe} unique stor{payload.totalAfterDedupe === 1 ? "y" : "ies"} (from {payload.totalBeforeDedupe} raw) · showing {visible.length} after filters
+          {payload.totalAfterDedupe} unique stor{payload.totalAfterDedupe === 1 ? "y" : "ies"} (from {payload.totalBeforeDedupe} raw)
         </p>
       )}
 
       {!loading && !error && payload && visible.length === 0 && (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
-          No articles match the current filters. Try widening the provider filter or clearing multi-source only.
+          No articles returned for this ticker.
         </p>
       )}
 

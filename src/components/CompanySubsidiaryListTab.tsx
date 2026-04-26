@@ -136,7 +136,7 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
 
   return (
     <div className="space-y-8">
-      <Card title={`Subsidiary List �?${safeTicker}`}>
+      <Card title={`Subsidiary List - ${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
           Same layout as Org Chart: save the model&apos;s answer, upload a working subsidiary-list Excel file (.xlsx)
           stored under this tab only, and use the prompt in Claude, ChatGPT, Gemini, or DeepSeek. This tab has no fixed sample images—attach

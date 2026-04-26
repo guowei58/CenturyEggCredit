@@ -41,7 +41,7 @@ import { CompanyAiCreditMemoTab } from "@/components/CompanyAiCreditMemoTab";
 import { CompanyCapStructureRecommendationTab } from "@/components/CompanyCapStructureRecommendationTab";
 import { CompanyLiteraryReferencesTab } from "@/components/CompanyLiteraryReferencesTab";
 import { CompanyBiblicalReferencesTab } from "@/components/CompanyBiblicalReferencesTab";
-import { CompanyForensicAccountingTab } from "@/components/CompanyForensicAccountingTab";
+import { CompanyForensicAnalysisTab } from "@/components/CompanyForensicAnalysisTab";
 import { CompanyCreditTimelineTab } from "@/components/CompanyCreditTimelineTab";
 import { CompanySubstackTab } from "@/components/CompanySubstackTab";
 import { CompanyEntitySearchesTab } from "@/components/CompanyEntitySearchesTab";
@@ -55,7 +55,6 @@ import { CompanyDearDiaryTab } from "@/components/CompanyDearDiaryTab";
 import { CompanyFinancialsTab } from "@/components/CompanyFinancialsTab";
 import { CompanyKpiTab } from "@/components/CompanyKpiTab";
 import { CompanySecXbrlFinancialsTab } from "@/components/CompanySecXbrlFinancialsTab";
-import { CompanyTwentyYearLookbackTab } from "@/components/CompanyTwentyYearLookbackTab";
 import { CompanyRoicAiTab } from "@/components/CompanyRoicAiTab";
 import {
   CompanyRoicAiV2StatementsTab,
@@ -124,7 +123,12 @@ export function CompanyAnalysis({
 
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
   /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
-  const resolvedTab = activeTab === "edgartools-sec" ? "sec-filings" : activeTab;
+  const resolvedTab =
+    activeTab === "edgartools-sec"
+      ? "sec-filings"
+      : activeTab === "20-year-look-back"
+        ? "sec-xbrl-financials"
+        : activeTab;
 
   const navDef = companyNav[topSection];
   const groups = navDef?.groups ?? [];
@@ -261,9 +265,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "sec-xbrl-financials") {
     return <CompanySecXbrlFinancialsTab ticker={ticker} />;
   }
-  if (tabId === "20-year-look-back") {
-    return <CompanyTwentyYearLookbackTab ticker={ticker} />;
-  }
   if (tabId === ROIC_ANNUAL_FINANCIAL_STATEMENTS_TAB_ID) {
     return <CompanyRoicAiV2StatementsTab ticker={ticker} statementPeriod="annual" title="Annual Financial Statements" />;
   }
@@ -374,7 +375,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     return <CompanyCreditTimelineTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "recommendation") {
-    return <CompanyCapStructureRecommendationTab ticker={ticker} companyName={companyName} />;
+    return <CompanyCapStructureRecommendationTab ticker={ticker} />;
   }
   if (tabId === "literary-references") {
     return <CompanyLiteraryReferencesTab ticker={ticker} companyName={companyName} />;
@@ -388,8 +389,8 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "entity-searches") {
     return <CompanyEntitySearchesTab ticker={ticker} companyName={companyName} />;
   }
-  if (tabId === "forensic-accounting") {
-    return <CompanyForensicAccountingTab ticker={ticker} companyName={companyName} />;
+  if (tabId === "forensic-analysis") {
+    return <CompanyForensicAnalysisTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "environmental-claims") {
     return <CompanyEnvironmentalClaimsTab ticker={ticker ?? ""} companyName={companyName} />;

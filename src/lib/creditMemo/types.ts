@@ -82,6 +82,18 @@ export type CreditMemoProject = {
   ingestWarnings: string[];
 };
 
+/** Remove ingested corpus from a project; keeps id/ticker/paths for UI. Work products live in saved-data / workspace. */
+export function stripCorpusFromProject(project: CreditMemoProject): CreditMemoProject {
+  return {
+    ...project,
+    sources: [],
+    chunks: [],
+    tables: [],
+    ingestWarnings: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export type MemoOutlineSection = {
   id: string;
   title: string;

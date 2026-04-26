@@ -4,6 +4,7 @@
 
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 
 export type OllamaResult =
   | { ok: true; text: string }
@@ -167,7 +168,7 @@ export async function callOllama(
 ): Promise<OllamaResult> {
   const baseUrl = getOllamaBaseUrl();
   const model = options.model?.trim() || getOllamaModel();
-  const maxTokens = options.maxTokens ?? 4096;
+  const maxTokens = options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS;
   const temperature = options.temperature ?? parseOllamaTemperature();
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
@@ -237,7 +238,7 @@ export async function callOllamaConversation(
 ): Promise<OllamaResult> {
   const baseUrl = getOllamaBaseUrl();
   const model = options.model?.trim() || getOllamaModel();
-  const maxTokens = options.maxTokens ?? 4096;
+  const maxTokens = options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS;
   const temperature = options.temperature ?? parseOllamaTemperature();
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 

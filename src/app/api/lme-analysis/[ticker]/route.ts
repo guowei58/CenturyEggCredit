@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { readSavedContent, writeSavedContent } from "@/lib/saved-content-hybrid";
-import { gatherLmeSources, formatSourcesForLme, lmeSourcesFingerprint } from "@/lib/lme-sources";
+import { gatherLmeSources, formatSourcesForLme } from "@/lib/lme-sources";
 import { synthesizeLmeAnalysisMarkdown } from "@/lib/lme-analysis-synthesis";
 import { resolveProvider } from "@/lib/ai-provider";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
@@ -54,13 +54,14 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
         deepseekConfigured: false,
         deepseekDefaultModel: "",
         needsSignIn: true,
+        retrievalUsed: false,
       },
       { status: 200 }
     );
   }
 
-  const bundled = await gatherLmeSources(sym, undefined, userId);
-  const fp = lmeSourcesFingerprint(bundled.parts);
+  const bundled = await gatherLmeSources(sym, undefined, userId, { useRetrieval: false, inventoryOnly: true });
+  const fp = bundled.sourceFingerprint;
   const meta = parseMeta(await readSavedContent(sym, "lme-analysis-meta", userId));
   const cached = (await readSavedContent(sym, "lme-analysis", userId)) ?? "";
   const llmAuth = await getAuthenticatedLlmContext();
@@ -69,15 +70,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
   const sourceInventory = bundled.parts.map((p) => ({
     label: p.label,
     key: p.key,
-    chars: p.content.length,
+    charsInitial: p.charsInitial,
     truncated: p.truncated,
     isBinaryPlaceholder: p.content.startsWith("[Binary"),
   }));
+  const totalChars = bundled.parts.reduce((s, p) => s + p.charsInitial, 0);
 
   return NextResponse.json({
     ticker: sym,
     sourceInventory,
-    totalChars: bundled.totalChars,
+    retrievalUsed: bundled.retrievalUsed,
+    totalChars,
     hasSubstantiveText: bundled.hasSubstantiveText,
     currentFingerprint: fp,
     cacheFingerprint: meta?.fingerprint ?? null,
@@ -125,7 +128,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!isProviderConfigured(provider, bundle)) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
-  const bundled = await gatherLmeSources(sym, undefined, userId);
+  const bundled = await gatherLmeSources(sym, undefined, userId, { apiKeys: bundle, useRetrieval: true });
   if (!bundled.hasSubstantiveText) {
     return NextResponse.json(
       {
@@ -147,7 +150,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     return NextResponse.json({ error: syn.error }, { status: 502 });
   }
 
-  const fp = lmeSourcesFingerprint(bundled.parts);
+  const fp = bundled.sourceFingerprint;
   const now = new Date().toISOString();
   const metaStr = JSON.stringify({ fingerprint: fp, updatedAt: now } satisfies MetaJson, null, 2);
 
@@ -161,5 +164,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     markdown: syn.markdown,
     fingerprint: fp,
     updatedAt: now,
+    retrievalUsed: bundled.retrievalUsed,
+    sentSystemMessage: syn.sentSystemMessage,
+    sentUserMessage: syn.sentUserMessage,
+    packingStats: bundled.packingStats ?? null,
+    userMessageBreakdown: syn.userMessageBreakdown,
   });
 }

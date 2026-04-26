@@ -32,7 +32,7 @@ const ORG_CHART_SAMPLE_THUMBNAILS: { path: (typeof ORG_CHART_SAMPLE_IMAGE_PATHS)
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
-import { openGeminiWithClipboard, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openGeminiWithClipboard, OPEN_IN_EXTERNAL_AI_FULL_LINE } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 
 export function CompanyOrgChartTab({
@@ -164,7 +164,7 @@ export function CompanyOrgChartTab({
   }
 
   return (
-    <Card title={`Org Chart �?${safeTicker}`}>
+    <Card title={`Org Chart - ${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
           Use the three reference screenshots and prompt in Claude, ChatGPT, Gemini, or DeepSeek (vision). Save the model&apos;s answer below.
         </p>
@@ -297,15 +297,11 @@ export function CompanyOrgChartTab({
                   </a>
                 ))}
               </div>
-              <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
-                Open each in a new tab to save, or right-click �?Save image. Attach all three with your prompt in Claude, ChatGPT, Gemini, or DeepSeek.
-              </p>
             </div>
 
             <div>
-              <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-                Prompt (includes numbered URLs for all samples). Open in AI; copy attaches to clipboard.{" "}
-                {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
+              <p className="text-xs mb-2 leading-relaxed" style={{ color: "var(--muted2)" }}>
+                {OPEN_IN_EXTERNAL_AI_FULL_LINE}
               </p>
               <PromptTemplateBox
                 tabId="org-chart"

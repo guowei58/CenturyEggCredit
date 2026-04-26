@@ -19,7 +19,8 @@ Best,
 [Email]
 [Phone]`;
 
-export const OUTREACH_STORAGE_KEY = "cec-employee-contacts-outreach-signature";
+/** Bump when signature-field defaults should reset for all users (e.g. clear legacy prefills). */
+export const OUTREACH_STORAGE_KEY = "cec-linkedin-outreach-v2";
 
 export type LinkedInOutreachState = {
   letterTemplate: string;

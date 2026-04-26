@@ -6,7 +6,7 @@ import {
   pickBestConfiguredLiteraryProvider,
   runLiteraryReferencesGeneration,
 } from "@/lib/creditMemo/generateLiteraryReferences";
-import { appendJob, getProject, newJobId } from "@/lib/creditMemo/store";
+import { appendJob, clearIngestCorpusAfterWorkProduct, getProject, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import { creditMemoPrimaryModelId, resolveLiteraryReferencesModels } from "@/lib/ai-model-from-request";
 
@@ -95,6 +95,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
   } catch {
     /* ignore */
+  }
+
+  try {
+    await clearIngestCorpusAfterWorkProduct(userId, project.id);
+  } catch {
+    /* best-effort */
   }
 
   return NextResponse.json({

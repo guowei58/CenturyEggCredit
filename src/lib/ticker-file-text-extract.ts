@@ -10,16 +10,21 @@ import JSZip from "jszip";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
+import { htmlBufferToPlainTextForIngest } from "./html-ingest-plain-text";
 import { TEXT_LIKE_EXTENSIONS } from "./text-like-extensions";
 
-export const MAX_TEXT_BYTES = 2 * 1024 * 1024;
-export const MAX_PDF_BYTES = 12 * 1024 * 1024;
-/** Whole-file read cap for ZIP-based office and similar */
-export const MAX_ARCHIVE_BYTES = 15 * 1024 * 1024;
-export const MAX_SPREADSHEET_BYTES = 15 * 1024 * 1024;
-export const MAX_PDF_PAGES = 75;
-/** Hard cap on characters returned from a single file before workspace-level clipping */
-const MAX_CHARS_PER_EXTRACT = 450_000;
+/**
+ * Ingest extract limits are intentionally relaxed (full file / full text where supported).
+ * Re-tighten via these constants or CREDIT_MEMO_* env vars on the folder side if needed.
+ */
+export const MAX_TEXT_BYTES = Number.MAX_SAFE_INTEGER;
+export const MAX_PDF_BYTES = Number.MAX_SAFE_INTEGER;
+export const MAX_ARCHIVE_BYTES = Number.MAX_SAFE_INTEGER;
+export const MAX_SPREADSHEET_BYTES = Number.MAX_SAFE_INTEGER;
+/** PDF text extraction: page window passed to pdf-parse (practical “all pages” for real documents). */
+export const MAX_PDF_PAGES = 1_000_000;
+/** Per-file character cap after extraction (disabled — was 450_000). */
+const MAX_CHARS_PER_EXTRACT = Number.MAX_SAFE_INTEGER;
 
 const PDF_EXT = new Set([".pdf"]);
 const SPREADSHEET_EXT = new Set([".xlsx", ".xls", ".xlsm", ".xlsb", ".ods"]);
@@ -154,11 +159,10 @@ async function extractOdfContentXml(buf: Buffer): Promise<string> {
 async function extractSpreadsheet(buf: Buffer): Promise<string> {
   const wb = XLSX.read(buf, { type: "buffer", cellDates: true });
   const parts: string[] = [];
-  for (const name of wb.SheetNames.slice(0, 12)) {
+  for (const name of wb.SheetNames) {
     const sheet = wb.Sheets[name];
     if (!sheet) continue;
-    let csv = XLSX.utils.sheet_to_csv(sheet, { FS: "\t" });
-    csv = clip(csv, 36_000);
+    const csv = XLSX.utils.sheet_to_csv(sheet, { FS: "\t" });
     parts.push(`--- Sheet: ${name} ---\n${csv}`);
   }
   return parts.join("\n\n").trim() || "[Spreadsheet — empty.]";
@@ -280,6 +284,9 @@ export async function extractBytesForAi(rel: string, buf: Buffer): Promise<strin
 
     if (TEXT_LIKE_EXTENSIONS.has(ext)) {
       if (size > MAX_TEXT_BYTES) return `[Text file too large (${size} bytes; cap ${MAX_TEXT_BYTES}).]`;
+      if (ext === ".html" || ext === ".htm") {
+        return clipOut(htmlBufferToPlainTextForIngest(buf));
+      }
       return clipOut(buf.toString("utf8"));
     }
 

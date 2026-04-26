@@ -1,207 +1,178 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-
 import { Card } from "@/components/ui";
-import { WorkProductIngestTabLayout } from "@/components/credit-memo/WorkProductIngestTabLayout";
-import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
-import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
+import { SavedRichText } from "@/components/SavedRichText";
+import { aiProviderChipStyle, type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
+import { modelOverridePayloadForProvider, resolvedUserModelIdForProvider } from "@/lib/ai-model-prefs-client";
+import { AiModelPicker } from "@/components/AiModelPicker";
+import { ProviderPublicLimitsSidePanel } from "@/components/credit-memo/ProviderPublicLimitsSidePanel";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
-import { mergeCreditMemoDraftAfterIngest, parseCreditMemoDraftJson } from "@/lib/creditMemo/clientDraftStorage";
-import { fetchLatestGeneratedTabOutput } from "@/lib/creditMemo/fetchLatestTabOutput";
-import type { CreditMemoProject, FolderResolveResult } from "@/lib/creditMemo/types";
+
+type SourceRow = {
+  label: string;
+  key?: string;
+  charsInitial: number;
+  truncated: boolean;
+  isBinaryPlaceholder: boolean;
+};
+
+type KpiCommentaryGetResponse = {
+  ticker: string;
+  sourceInventory: SourceRow[];
+  totalChars: number;
+  hasSubstantiveText: boolean;
+  currentFingerprint: string;
+  cacheFingerprint: string | null;
+  cacheStale: boolean;
+  cacheUpdatedAt: string | null;
+  cachedMarkdown: string | null;
+  anthropicConfigured: boolean;
+  openaiConfigured: boolean;
+  geminiConfigured?: boolean;
+  deepseekConfigured?: boolean;
+  deepseekDefaultModel?: string;
+  needsSignIn?: boolean;
+};
 
 export function CompanyKpiTab({ ticker, companyName }: { ticker: string; companyName?: string }) {
-  const tk = (ticker ?? "").trim().toUpperCase();
+  const safeTicker = (ticker ?? "").trim().toUpperCase();
   const { status: authStatus } = useSession();
   const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
+  const [data, setData] = useState<KpiCommentaryGetResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastSentMessages, setLastSentMessages] = useState<{ system: string; user: string } | null>(null);
+  type PackingStatsRow = {
+    rawSourceCharsSum: number;
+    packedPartsCharSum: number;
+    bundleCharCap: number;
+    perPartCharCap: number;
+    retrievalUsed: boolean;
+    blocksInPack: number;
+    retrievalPack?: {
+      mode: "global" | "legacy_queue";
+      task: "lme" | "kpi";
+      chunksBuilt: number;
+      chunksEmbedded: number;
+      chunkCap?: number;
+      corpusChunksWereCapped: boolean;
+      chunksInWindow: number;
+      rankingQueryLines: string[];
+      documentsInWindow: Array<{
+        docId: string;
+        label: string;
+        key?: string;
+        file?: string;
+        chunksFromDocInWindow: number;
+      }>;
+    } | null;
+  };
+  type UserMsgBreakdown = {
+    taskSpecChars: number;
+    bridgeChars: number;
+    formattedSourcesChars: number;
+    totalUserMessageChars: number;
+  };
+  const [lastRunDiagnostics, setLastRunDiagnostics] = useState<{
+    packing: PackingStatsRow;
+    userBreakdown: UserMsgBreakdown;
+    systemChars: number;
+  } | null>(null);
+  const [aiProvider, setAiProvider] = useState<AiProvider>("claude");
 
-  const [provider, setProvider] = useState<AiProvider>("claude");
-  const [resolveLoading, setResolveLoading] = useState(false);
-  const [resolved, setResolved] = useState<FolderResolveResult | null>(null);
-  const [ingestLoading, setIngestLoading] = useState(false);
-  const [ingestError, setIngestError] = useState<string | null>(null);
-  const [project, setProject] = useState<CreditMemoProject | null>(null);
-  const [genLoading, setGenLoading] = useState(false);
-  const [genError, setGenError] = useState<string | null>(null);
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [markdown, setMarkdown] = useState<string | null>(null);
-
-  const draftHydratedRef = useRef(false);
+  useEffect(() => {
+    if (!prefsReady) return;
+    const n = normalizeAiProvider(preferences.aiProvider);
+    if (n) setAiProvider(n);
+  }, [prefsReady, preferences.aiProvider]);
 
   const persistProvider = useCallback(
     (p: AiProvider) => {
-      setProvider(p);
+      setAiProvider(p);
       updatePreferences((prev) => ({ ...prev, aiProvider: p }));
     },
     [updatePreferences]
   );
 
-  useEffect(() => {
-    if (!prefsReady) return;
-    const n = normalizeAiProvider(preferences.aiProvider);
-    if (n) setProvider(n);
-  }, [prefsReady, preferences.aiProvider]);
-
-  /** Hydrate shared ingest project + saved KPI output from server. */
-  useEffect(() => {
-    draftHydratedRef.current = false;
-    if (!tk || !prefsReady) return;
-
-    const raw = preferences.creditMemoDrafts?.[tk];
-    const d = raw ? parseCreditMemoDraftJson(raw, tk) : null;
-    if (d?.project) setProject(d.project);
-    else setProject(null);
-
-    void (async () => {
-      const { markdown: m, jobId: j } = await fetchLatestGeneratedTabOutput(tk, "kpi");
-      setMarkdown(m);
-      setJobId(j);
-      draftHydratedRef.current = true;
-    })();
-  }, [tk, prefsReady, preferences.creditMemoDrafts?.[tk]]);
-
-  const runIngestRef = useRef<(pathOverride: string, resolutionMeta: FolderResolveResult | null) => Promise<void>>(
-    () => Promise.resolve()
-  );
-
-  const runIngest = useCallback(
-    async (folderPath: string, resolutionOverride?: FolderResolveResult | null) => {
-      const pathToUse = folderPath.trim();
-      const resolutionMeta = resolutionOverride ?? resolved;
-      if (!tk || !pathToUse) {
-        setIngestError("Resolve did not return a folder path.");
-        return;
-      }
-      setIngestLoading(true);
-      setIngestError(null);
-      try {
-        const res = await fetch("/api/credit-memo/project", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ticker: tk,
-            folderPath: pathToUse,
-            resolutionMeta,
-          }),
-        });
-        const data = (await res.json()) as {
-          ok?: boolean;
-          project?: CreditMemoProject;
-          error?: string;
-          ingestWarnings?: string[];
-        };
-        if (!res.ok) throw new Error(data.error || "Ingest failed");
-        const nextProject = data.project!;
-        const prevId = project?.id;
-        setProject(nextProject);
-        if (prevId && nextProject.id !== prevId) {
-          const { markdown: m, jobId: j } = await fetchLatestGeneratedTabOutput(tk, "kpi");
-          setMarkdown(m);
-          setJobId(j);
-        }
-        updatePreferences((p) => ({
-          ...p,
-          creditMemoDrafts: {
-            ...(p.creditMemoDrafts ?? {}),
-            [tk]: mergeCreditMemoDraftAfterIngest(p.creditMemoDrafts?.[tk], tk, nextProject, prevId),
-          },
-        }));
-        if (data.ingestWarnings?.length) {
-          setIngestError(data.ingestWarnings.join(" "));
-        }
-      } catch (e) {
-        setIngestError(e instanceof Error ? e.message : "Ingest failed");
-      } finally {
-        setIngestLoading(false);
-      }
-    },
-    [tk, resolved, project?.id, updatePreferences]
-  );
-
-  runIngestRef.current = (folderPath, resolutionMeta) => runIngest(folderPath, resolutionMeta);
-
-  const runResolve = useCallback(async () => {
-    if (!tk) return;
-    setResolveLoading(true);
-    setResolved(null);
-    setProject(null);
-    setIngestError(null);
-    let success: FolderResolveResult | null = null;
+  const load = useCallback(async () => {
+    if (!safeTicker) return;
+    setLoading(true);
+    setError(null);
     try {
-      const res = await fetch("/api/credit-memo/resolve", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ticker: tk }),
-      });
-      const data = (await res.json()) as FolderResolveResult | { error?: string };
-      if (!res.ok) throw new Error((data as { error?: string }).error || "Resolve failed");
-      const fr = data as FolderResolveResult;
-      success = fr;
-      setResolved(fr);
+      const res = await fetch(`/api/kpi-commentary/${encodeURIComponent(safeTicker)}`);
+      const body = (await res.json()) as KpiCommentaryGetResponse & { error?: string };
+      if (!res.ok) throw new Error(body.error ?? "Failed to load KPI commentary");
+      setData(body);
     } catch (e) {
-      setResolved({
-        ok: false,
-        rootSearched: "",
-        candidates: [],
-        error: e instanceof Error ? e.message : "Resolve failed",
-      });
+      setError(e instanceof Error ? e.message : "Failed to load");
     } finally {
-      setResolveLoading(false);
+      setLoading(false);
     }
-    if (success?.ok) {
-      await runIngestRef.current(success.chosen.path, success);
-    }
-  }, [tk]);
+  }, [safeTicker]);
 
   useEffect(() => {
-    if (!tk || !draftHydratedRef.current || authStatus !== "authenticated") return;
-    if (project) return;
-    if (resolved !== null) return;
-    if (resolveLoading || ingestLoading) return;
-    void runResolve();
-  }, [tk, authStatus, project, resolved, resolveLoading, ingestLoading, runResolve]);
+    if (!prefsReady || !safeTicker) return;
+    void load();
+  }, [prefsReady, safeTicker, load]);
 
-  const runGenerate = useCallback(async () => {
-    if (!project) {
-      setGenError("Refresh sources first (resolve → ingest → index).");
-      return;
-    }
-    setGenLoading(true);
-    setGenError(null);
+  useEffect(() => {
+    setLastSentMessages(null);
+    setLastRunDiagnostics(null);
+  }, [safeTicker]);
+
+  async function runKpiCommentary() {
+    if (!safeTicker) return;
+    setGenerating(true);
+    setError(null);
     try {
-      const res = await fetch(`/api/credit-memo/project/${encodeURIComponent(project.id)}/kpi`, {
+      const res = await fetch(`/api/kpi-commentary/${encodeURIComponent(safeTicker)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          provider,
+          provider: aiProvider,
           companyName: companyName?.trim() ?? "",
-          ...modelOverridePayloadForProvider(provider),
+          ...modelOverridePayloadForProvider(aiProvider),
         }),
       });
-      const data = (await res.json()) as { ok?: boolean; jobId?: string; markdown?: string; error?: string };
-      if (!res.ok) throw new Error(data.error || "Generation failed");
-      setJobId(data.jobId ?? null);
-      setMarkdown(data.markdown ?? null);
-    } catch (e) {
-      if (e instanceof Error) {
-        const msg = e.message || "Generation failed";
-        if (msg.toLowerCase().includes("fetch failed") || msg.toLowerCase().includes("failed to fetch")) {
-          const origin = typeof window !== "undefined" ? window.location.origin : "";
-          setGenError(`Server unreachable (network error). Make sure the dev server is running${origin ? ` (${origin})` : ""}.`);
-          return;
+      const body = (await res.json()) as {
+        ok?: boolean;
+        markdown?: string;
+        error?: string;
+        sentSystemMessage?: string;
+        sentUserMessage?: string;
+        packingStats?: PackingStatsRow | null;
+        userMessageBreakdown?: UserMsgBreakdown;
+      };
+      if (!res.ok) throw new Error(body.error ?? "Generation failed");
+      if (typeof body.sentSystemMessage === "string" && typeof body.sentUserMessage === "string") {
+        setLastSentMessages({ system: body.sentSystemMessage, user: body.sentUserMessage });
+        if (
+          body.packingStats &&
+          body.userMessageBreakdown &&
+          typeof body.userMessageBreakdown.taskSpecChars === "number"
+        ) {
+          const packing = { ...body.packingStats };
+          setLastRunDiagnostics({
+            packing,
+            userBreakdown: body.userMessageBreakdown,
+            systemChars: body.sentSystemMessage.length,
+          });
+        } else {
+          setLastRunDiagnostics(null);
         }
-        setGenError(msg);
-      } else {
-        setGenError("Generation failed");
       }
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Generation failed");
     } finally {
-      setGenLoading(false);
+      setGenerating(false);
     }
-  }, [project, provider, companyName]);
+  }
 
-  if (!tk) {
+  if (!safeTicker) {
     return (
       <Card title="KPI Commentary">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
@@ -212,45 +183,510 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
   }
 
   const needsSignIn = authStatus !== "authenticated";
-  const refreshingSources = resolveLoading || ingestLoading;
-  const resolveFailed = resolved && !resolved.ok ? { error: resolved.error } : null;
-  const refreshLabel = resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh sources";
+  const deepseekReady = data?.deepseekConfigured === true;
+
+  const providerReady = data
+    ? aiProvider === "claude"
+      ? data.anthropicConfigured
+      : aiProvider === "openai"
+        ? data.openaiConfigured
+        : aiProvider === "gemini"
+          ? data.geminiConfigured === true
+          : deepseekReady
+    : false;
 
   return (
-    <WorkProductIngestTabLayout
-      tabTitle="KPI Commentary"
-      ticker={tk}
-      description={
-        <>
-          Uses the same <strong>resolve → ingest → indexed source pack</strong> pipeline as AI Memo and Deck. Output is saved as{" "}
-          <code className="text-[10px]">kpi-latest.md</code>.
-        </>
-      }
-      needsSignIn={needsSignIn}
-      refreshingSources={refreshingSources}
-      hasProject={Boolean(project)}
-      aiProvider={provider}
-      onProviderChange={persistProvider}
-      onRefreshSources={runResolve}
-      refreshDisabled={resolveLoading || ingestLoading}
-      refreshLabel={refreshLabel}
-      onRun={runGenerate}
-      runDisabled={genLoading || !project}
-      runBusy={genLoading}
-      runLabel="Generate KPI list + commentary"
-      runLoadingLabel="Generating KPI commentary…"
-      resolveFailed={resolveFailed}
-      ingestError={ingestError}
-      genError={genError}
-      jobId={jobId}
-      project={project}
-      outputCardTitle="KPI commentary output"
-      markdown={markdown}
-      emptyOutputMessage={
-        <>
-          No saved KPI commentary yet for this ticker. After you generate, it stays here when you switch tabs or reload.
-        </>
-      }
-    />
+    <div className="space-y-6">
+      <Card title={`KPI Commentary — ${safeTicker}`}>
+        <div className="flex flex-col lg:flex-row lg:gap-6 lg:items-start">
+          <div className="min-w-0 flex-1">
+            {loading || (!prefsReady && safeTicker) ? (
+              <p className="text-[11px] mb-3 flex items-center gap-2" style={{ color: "var(--muted)" }}>
+                <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
+                {!prefsReady ? "Preparing tab…" : data ? "Refreshing sources…" : "Loading source inventory…"}
+              </p>
+            ) : null}
+            <ol
+              className="text-[11px] leading-relaxed mb-4 list-decimal space-y-1.5 pl-5"
+              style={{ color: "var(--muted2)" }}
+            >
+              <li>
+                Click <strong>Refresh sources</strong> to rescan saved tab content and documents.
+              </li>
+              <li>Pick the AI model.</li>
+              <li>
+                Click <strong>Run KPI commentary</strong> to send the request to the model via API.
+              </li>
+            </ol>
+
+            {needsSignIn && (
+              <p className="text-xs mb-4 rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
+                Sign in to load saved sources and run KPI commentary. Your saved tab content is stored per account.
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
+                Provider:
+              </span>
+              <div className="inline-flex rounded border overflow-hidden" style={{ borderColor: "var(--border2)" }}>
+                <button
+                  type="button"
+                  onClick={() => persistProvider("claude")}
+                  className="px-3 py-1.5 text-[11px] font-medium transition-colors"
+                  style={aiProviderChipStyle(aiProvider, "claude")}
+                >
+                  Claude
+                </button>
+                <button
+                  type="button"
+                  onClick={() => persistProvider("openai")}
+                  className="px-3 py-1.5 text-[11px] font-medium transition-colors border-l"
+                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "openai") }}
+                >
+                  ChatGPT
+                </button>
+                <button
+                  type="button"
+                  onClick={() => persistProvider("gemini")}
+                  className="px-3 py-1.5 text-[11px] font-medium transition-colors border-l"
+                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "gemini") }}
+                >
+                  Gemini
+                </button>
+                <button
+                  type="button"
+                  onClick={() => persistProvider("deepseek")}
+                  className="px-3 py-1.5 text-[11px] font-medium transition-colors border-l"
+                  style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
+                  title={`DeepSeek — ${data?.deepseekDefaultModel ?? "deepseek-chat"}`}
+                >
+                  DeepSeek
+                </button>
+              </div>
+              <AiModelPicker provider={aiProvider} className="mt-2 w-full sm:mt-0 sm:ml-2 sm:w-auto" />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <button
+                type="button"
+                onClick={() => void runKpiCommentary()}
+                disabled={generating || loading || !prefsReady || !data?.hasSubstantiveText || !providerReady || needsSignIn}
+                className="rounded border px-4 py-2 text-sm font-medium disabled:opacity-50"
+                style={{
+                  borderColor: "var(--accent)",
+                  color: "var(--accent)",
+                  background: "transparent",
+                }}
+              >
+                {generating ? "Generating…" : "Run KPI commentary"}
+              </button>
+              <button
+                type="button"
+                onClick={() => void load()}
+                disabled={generating || loading || !prefsReady}
+                className="rounded border px-3 py-2 text-xs font-medium disabled:opacity-50"
+                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+              >
+                Refresh sources
+              </button>
+              {data?.cacheStale && data.cachedMarkdown && (
+                <span className="text-[11px]" style={{ color: "var(--warn)" }}>
+                  Sources changed since last run — run again for updated commentary.
+                </span>
+              )}
+            </div>
+
+            {!providerReady && !needsSignIn && data && !loading && (
+              <p className="text-xs mb-3 rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
+                {aiProvider === "claude" ? (
+                  <>
+                    Set <span className="font-mono">ANTHROPIC_API_KEY</span> in <span className="font-mono">.env.local</span>, or
+                    switch provider.
+                  </>
+                ) : aiProvider === "openai" ? (
+                  <>
+                    Set <span className="font-mono">OPENAI_API_KEY</span> in <span className="font-mono">.env.local</span>, or switch
+                    provider.
+                  </>
+                ) : aiProvider === "gemini" ? (
+                  <>
+                    Set <span className="font-mono">GEMINI_API_KEY</span> in <span className="font-mono">.env.local</span>, or switch
+                    provider.
+                  </>
+                ) : (
+                  <>
+                    Add a DeepSeek API key in <strong>User Settings</strong>, or use a hosted account with{" "}
+                    <span className="font-mono">DEEPSEEK_API_KEY</span> on the server.
+                  </>
+                )}
+              </p>
+            )}
+
+            {error && (
+              <p className="text-xs mb-3" style={{ color: "var(--danger)" }}>
+                {error}
+              </p>
+            )}
+
+            <div className="rounded border mb-4 text-xs" style={{ borderColor: "var(--border2)" }}>
+              <div
+                className="px-3 py-2 font-semibold"
+                style={{ background: "var(--card2)", color: "var(--muted2)" }}
+                title="Total is the sum of each row’s Chars column (full saved or extracted length on refresh; Run applies model caps and retrieval)."
+              >
+                {data ? (
+                  <>
+                    Source inventory ({data.sourceInventory.length} blocks, {data.totalChars.toLocaleString()} characters)
+                  </>
+                ) : (
+                  <>Source inventory</>
+                )}
+              </div>
+              {!prefsReady ? (
+                <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+                  Preparing tab…
+                </p>
+              ) : error && !data ? (
+                <p className="px-3 py-2 text-sm" style={{ color: "var(--danger)" }}>
+                  {error}
+                </p>
+              ) : loading && !data ? (
+                <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+                  Scanning workspace and saved tabs…
+                </p>
+              ) : data ? (
+                <>
+                  <div
+                    className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-x-2 border-b px-3 py-1.5 text-[9px] font-semibold leading-tight sm:grid-cols-[minmax(0,1fr)_6.75rem] sm:text-[10px]"
+                    style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+                  >
+                    <span>Source</span>
+                    <span
+                      className="text-right whitespace-normal"
+                      title="Character count of saved or extracted text for this block (before per-source truncation)"
+                    >
+                      Chars
+                    </span>
+                  </div>
+                  <ul className="max-h-48 overflow-y-auto divide-y" style={{ borderColor: "var(--border2)" }}>
+                    {data.sourceInventory.map((s) => {
+                      const initial = typeof s.charsInitial === "number" ? s.charsInitial : 0;
+                      return (
+                        <li
+                          key={`${s.label}-${s.key ?? ""}-${initial}`}
+                          className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-x-2 px-3 py-1.5 sm:grid-cols-[minmax(0,1fr)_6.75rem]"
+                          style={{ color: "var(--text)" }}
+                        >
+                          <span className="min-w-0 truncate" title={s.label}>
+                            {s.label}
+                            {s.truncated ? " · truncated" : ""}
+                          </span>
+                          <span
+                            className="text-right font-mono text-[10px] tabular-nums sm:text-[11px]"
+                            style={{ color: "var(--muted)" }}
+                            title="Saved or extracted length (before per-source truncation)"
+                          >
+                            {s.isBinaryPlaceholder ? "—" : initial.toLocaleString()}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {!data.hasSubstantiveText && !needsSignIn && (
+                    <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+                  No substantive KPI pack yet. Upload files to your workspace (outside LME-only folders), save other company
+                  tabs, or add Saved Documents that are not part of the LME pack. Excel files are excluded.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+                  Source list will appear here after the first load.
+                </p>
+              )}
+            </div>
+
+            {data?.cacheUpdatedAt ? (
+              <p className="text-[10px] mb-4" style={{ color: "var(--muted)" }}>
+                Last run: {new Date(data.cacheUpdatedAt).toLocaleString()}
+              </p>
+            ) : null}
+          </div>
+          <ProviderPublicLimitsSidePanel
+            provider={aiProvider}
+            resolvedModelId={resolvedUserModelIdForProvider(aiProvider)}
+            className="w-full shrink-0 lg:sticky lg:top-4 lg:w-[min(100%,320px)]"
+          />
+        </div>
+      </Card>
+
+      {lastSentMessages ? (
+        <Card title="Last run — prompt sent to the model">
+          <details
+            className="mb-4 rounded border text-[11px] leading-snug overflow-x-auto"
+            style={{ borderColor: "var(--border2)" }}
+          >
+            <summary
+              className="cursor-pointer px-3 py-2 text-xs font-medium"
+              style={{ background: "var(--card2)" }}
+            >
+              Run guide — size diagnostics
+            </summary>
+            <div className="border-t" style={{ borderColor: "var(--border2)" }}>
+              <p className="px-3 py-2 mb-0 leading-relaxed" style={{ color: "var(--muted2)" }}>
+                From your last <strong>Run KPI commentary</strong>. The <strong>user message</strong> is: (1) the built-in KPI
+                task spec (ticker, company name if any, and output rules), then (2){" "}
+                <span className="font-mono">SOURCE DOCUMENTS</span>, your packed workspace for that run (same framing as LME
+                Analysis). Navigating away clears this panel until you run again.
+              </p>
+              {lastRunDiagnostics ? (
+                <>
+                  <div
+                    className="px-3 py-2 font-semibold border-t"
+                    style={{ background: "var(--card2)", color: "var(--muted2)", borderColor: "var(--border2)" }}
+                  >
+                    How size was computed (last run)
+                  </div>
+                  <table className="w-full min-w-[280px] text-left border-t" style={{ borderColor: "var(--border2)" }}>
+                <tbody style={{ color: "var(--text)" }}>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top w-[52%]" style={{ color: "var(--muted2)" }}>
+                      Raw sources total
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.packing.rawSourceCharsSum.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Per-source cap (each block trimmed first)
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.packing.perPartCharCap.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Bundle cap (max sum of packed block bodies)
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.packing.bundleCharCap.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Packed block bodies (after caps; {lastRunDiagnostics.packing.blocksInPack} blocks)
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.packing.packedPartsCharSum.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Embedding retrieval (chunk/rank excerpts)
+                    </th>
+                    <td className="px-3 py-1.5">
+                      {lastRunDiagnostics.packing.retrievalUsed ? (
+                        lastRunDiagnostics.packing.retrievalPack ? (
+                          <span style={{ color: "var(--accent)" }}>
+                            {lastRunDiagnostics.packing.retrievalPack.mode === "global"
+                              ? `Full-corpus ranked pack (${lastRunDiagnostics.packing.retrievalPack.task.toUpperCase()} task query)`
+                              : "Long-document queue (legacy LME fallback)"}
+                          </span>
+                        ) : (
+                          <span style={{ color: "var(--accent)" }}>Used</span>
+                        )
+                      ) : (
+                        <span style={{ color: "var(--muted)" }}>
+                          Not used (add OpenAI, Gemini, or DeepSeek embedding key in Settings)
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Formatted sources string (bodies + SOURCE headers)
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.userBreakdown.formattedSourcesChars.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Built-in KPI task spec
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.userBreakdown.taskSpecChars.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      Banner (--- + SOURCE DOCUMENTS line)
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.userBreakdown.bridgeChars.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      User message total
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums font-semibold">
+                      {lastRunDiagnostics.userBreakdown.totalUserMessageChars.toLocaleString()} chars
+                    </td>
+                  </tr>
+                  <tr>
+                    <th className="px-3 py-1.5 font-medium align-top" style={{ color: "var(--muted2)" }}>
+                      System message
+                    </th>
+                    <td className="px-3 py-1.5 font-mono tabular-nums">
+                      {lastRunDiagnostics.systemChars.toLocaleString()} chars
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {lastRunDiagnostics.packing.retrievalPack ? (
+                <div
+                  className="border-t px-3 py-2 text-[10px] leading-relaxed space-y-2"
+                  style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+                >
+                  <div className="font-semibold" style={{ color: "var(--muted2)" }}>
+                    Ranked retrieval details
+                  </div>
+                  <ul className="list-none space-y-1 pl-0" style={{ color: "var(--muted)" }}>
+                    <li>
+                      <span className="font-medium" style={{ color: "var(--text)" }}>Chunks from corpus: </span>
+                      {lastRunDiagnostics.packing.retrievalPack.corpusChunksWereCapped ? (
+                        <>
+                          {lastRunDiagnostics.packing.retrievalPack.chunksBuilt.toLocaleString()} built →{" "}
+                          {lastRunDiagnostics.packing.retrievalPack.chunksEmbedded.toLocaleString()} sent to the
+                          embedding API
+                          {lastRunDiagnostics.packing.retrievalPack.chunkCap != null
+                            ? ` (cap ${lastRunDiagnostics.packing.retrievalPack.chunkCap.toLocaleString()})`
+                            : ""}
+                        </>
+                      ) : (
+                        <>
+                          {lastRunDiagnostics.packing.retrievalPack.chunksBuilt.toLocaleString()} built and sent to the
+                          embedding API
+                        </>
+                      )}
+                    </li>
+                    <li>
+                      <span className="font-medium" style={{ color: "var(--text)" }}>
+                        Chunks packed into the final context window:{" "}
+                      </span>
+                      {lastRunDiagnostics.packing.retrievalPack.chunksInWindow.toLocaleString()} (cosine rank + per-doc
+                      diversity + bundle character budget)
+                    </li>
+                  </ul>
+                  <div>
+                    <div className="font-semibold mb-0.5" style={{ color: "var(--muted2)" }}>
+                      Phrase lines used for the ranking query (embedded as one query vector per run)
+                    </div>
+                    <ul className="list-disc pl-4 space-y-1 font-mono text-[9px] break-words opacity-95 max-h-36 overflow-y-auto">
+                      {lastRunDiagnostics.packing.retrievalPack.rankingQueryLines.map((line, i) => (
+                        <li key={`rq-${i}`}>{line}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="font-semibold mb-0.5" style={{ color: "var(--muted2)" }}>
+                      Source documents with at least one chunk in the window
+                    </div>
+                    <div className="max-h-44 overflow-y-auto rounded border" style={{ borderColor: "var(--border2)" }}>
+                      <table className="w-full min-w-[280px] text-left text-[9px]">
+                        <thead style={{ color: "var(--muted2)" }}>
+                          <tr className="border-b" style={{ borderColor: "var(--border2)" }}>
+                            <th className="px-2 py-1 font-medium w-8">#</th>
+                            <th className="px-2 py-1 font-medium">Document</th>
+                            <th className="px-2 py-1 font-medium text-right">Chunks</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {lastRunDiagnostics.packing.retrievalPack.documentsInWindow.map((d, idx) => (
+                            <tr key={d.docId} className="border-b" style={{ borderColor: "var(--border2)" }}>
+                              <td className="px-2 py-1 font-mono tabular-nums align-top" style={{ color: "var(--muted)" }}>
+                                {idx + 1}
+                              </td>
+                              <td className="px-2 py-1 align-top min-w-0">
+                                <div className="truncate" title={d.label}>
+                                  {d.label}
+                                </div>
+                                {d.file ? (
+                                  <div className="truncate font-mono opacity-80" title={d.file}>
+                                    {d.file}
+                                  </div>
+                                ) : d.key ? (
+                                  <div className="truncate font-mono opacity-80" title={d.key}>
+                                    key:{d.key}
+                                  </div>
+                                ) : null}
+                              </td>
+                              <td className="px-2 py-1 font-mono tabular-nums text-right align-top">
+                                {d.chunksFromDocInWindow.toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              <p className="px-3 py-2 text-[10px] leading-relaxed border-t" style={{ borderColor: "var(--border2)", color: "var(--muted)" }}>
+                <strong>{lastRunDiagnostics.packing.bundleCharCap.toLocaleString()}</strong> is a <em>ceiling</em> on the sum of
+                packed block bodies. Your run totalled{" "}
+                <strong>{lastRunDiagnostics.packing.packedPartsCharSum.toLocaleString()}</strong> because that is how much text
+                remained after per-source limits, retrieval (where applicable), and bundle trimming. The user message also adds the
+                KPI task spec, banner, and <code className="font-mono">SOURCE:</code> framing on top of the formatted sources
+                string.
+              </p>
+                </>
+              ) : null}
+            </div>
+          </details>
+          <details className="mb-2 rounded border" style={{ borderColor: "var(--border2)" }}>
+            <summary className="cursor-pointer px-3 py-2 text-xs font-medium" style={{ background: "var(--card2)" }}>
+              System message ({lastSentMessages.system.length.toLocaleString()} characters)
+            </summary>
+            <pre
+              className="max-h-40 overflow-auto whitespace-pre-wrap break-words px-3 py-2 text-[10px] leading-snug font-mono border-t"
+              style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+            >
+              {lastSentMessages.system}
+            </pre>
+          </details>
+          <details className="rounded border" style={{ borderColor: "var(--border2)" }}>
+            <summary className="cursor-pointer px-3 py-2 text-xs font-medium" style={{ background: "var(--card2)" }}>
+              User message — task + sources ({lastSentMessages.user.length.toLocaleString()} characters)
+            </summary>
+            <pre
+              className="max-h-[min(70vh,32rem)] overflow-auto whitespace-pre-wrap break-words px-3 py-2 text-[10px] leading-snug font-mono border-t"
+              style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+            >
+              {lastSentMessages.user}
+            </pre>
+          </details>
+        </Card>
+      ) : null}
+
+      {data?.cachedMarkdown?.trim() ? (
+        <Card title="KPI commentary output">
+          <div className="prose-covenants text-sm leading-relaxed max-w-none" style={{ color: "var(--text)" }}>
+            <SavedRichText content={data.cachedMarkdown} ticker={safeTicker} />
+          </div>
+        </Card>
+      ) : (
+        <Card title="KPI commentary output">
+          <p className="text-sm" style={{ color: "var(--muted2)" }}>
+            {data
+              ? "No commentary yet. Add workspace files or other tab saves (LME-only sources and Excel are excluded), then click Run KPI commentary."
+              : "Saved KPI commentary will appear here after you run."}
+          </p>
+        </Card>
+      )}
+    </div>
   );
 }

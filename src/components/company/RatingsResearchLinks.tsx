@@ -214,21 +214,6 @@ export function RatingsResearchLinks({
 
       {payload && (
         <>
-          <div className="rounded-lg border p-4" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <div className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-              Context
-            </div>
-            <div className="mt-1 text-sm" style={{ color: "var(--text)" }}>
-              <span className="font-mono">{payload.company.ticker}</span>
-              {payload.company.companyName ? ` · ${payload.company.companyName}` : null}
-            </div>
-            {payload.company.aliases.length > 0 && (
-              <div className="mt-2 text-[11px]" style={{ color: "var(--muted2)" }}>
-                Aliases used in queries: {payload.company.aliases.join(", ")}
-              </div>
-            )}
-          </div>
-
           {baseResults.length === 0 ? (
             <div className="rounded-lg border p-6 text-center text-sm leading-relaxed" style={{ borderColor: "var(--border)", color: "var(--muted2)" }}>
               No official agency links were returned for this search. Try broader issuer names, financing entity legal names,

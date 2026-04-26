@@ -94,11 +94,10 @@ describe("config", () => {
     vi.unstubAllEnvs();
   });
 
-  it("marks a provider disabled when NEWS_PROVIDER_*_ENABLED is false", () => {
-    vi.stubEnv("NEWS_PROVIDER_MARKETAUX_ENABLED", "false");
+  it("marks major outlet RSS disabled when NEWS_PROVIDER_MAJOR_OUTLET_RSS_ENABLED is false", () => {
+    vi.stubEnv("NEWS_PROVIDER_MAJOR_OUTLET_RSS_ENABLED", "false");
     const m = loadProviderConfigsFromEnv();
-    expect(m.get("marketaux")?.enabled).toBe(false);
-    expect(m.get("alpha_vantage")?.enabled).not.toBe(false);
+    expect(m.get("major_outlet_rss")?.enabled).toBe(false);
   });
 
   it("applies request-level allowlist on top of globally enabled providers", () => {
@@ -112,21 +111,21 @@ describe("config", () => {
         maxResults: DEFAULT_MAX_RESULTS,
       });
     }
-    const eff = resolveEffectiveConfigs(m, ["finnhub"]);
-    expect([...eff.keys()].sort()).toEqual(["finnhub"]);
+    const eff = resolveEffectiveConfigs(m, ["major_outlet_rss"]);
+    expect([...eff.keys()].sort()).toEqual(["major_outlet_rss"]);
   });
 
   it("does not re-enable a globally disabled provider via request override", () => {
     const m = new Map<string, ProviderConfig>();
-    m.set("marketaux", {
-      id: "marketaux",
+    m.set("major_outlet_rss", {
+      id: "major_outlet_rss",
       enabled: false,
       priority: 1,
       timeoutMs: DEFAULT_TIMEOUT_MS,
       maxResults: DEFAULT_MAX_RESULTS,
     });
-    const eff = resolveEffectiveConfigs(m, ["marketaux"]);
-    expect(eff.has("marketaux")).toBe(false);
+    const eff = resolveEffectiveConfigs(m, ["major_outlet_rss"]);
+    expect(eff.has("major_outlet_rss")).toBe(false);
   });
 });
 
@@ -171,10 +170,10 @@ describe("deduplication and merge", () => {
         title: t,
         url: "https://x.com/1",
         publishedAt: iso,
-        providers: ["marketaux"],
+        providers: ["p1"],
         tickers: ["IBM"],
         summary: "short",
-        providerIds: { marketaux: "m1" },
+        providerIds: { p1: "m1" },
       })
     );
     const b = attachNormalizedUrl(
@@ -182,20 +181,20 @@ describe("deduplication and merge", () => {
         title: t,
         url: "http://x.com/1",
         publishedAt: iso,
-        providers: ["finnhub"],
+        providers: ["p2"],
         tickers: ["IBM", "MSFT"],
         summary: "longer summary text for merge test",
         imageUrl: "https://img.example/i.png",
-        providerIds: { finnhub: "f9" },
+        providerIds: { p2: "f9" },
       })
     );
     const { merged } = dedupeAndMergeArticles([a, b]);
     expect(merged).toHaveLength(1);
-    expect(merged[0]!.providers.sort()).toEqual(["finnhub", "marketaux"]);
+    expect(merged[0]!.providers.sort()).toEqual(["p1", "p2"]);
     expect(merged[0]!.tickers.sort()).toEqual(["IBM", "MSFT"]);
     expect((merged[0]!.summary ?? "").length).toBeGreaterThan(10);
     expect(merged[0]!.imageUrl).toBe("https://img.example/i.png");
-    expect(merged[0]!.providerIds).toMatchObject({ marketaux: "m1", finnhub: "f9" });
+    expect(merged[0]!.providerIds).toMatchObject({ p1: "m1", p2: "f9" });
   });
 });
 
@@ -447,27 +446,12 @@ describe("aggregator resilience and extensibility", () => {
     expect(out.articles.some((a) => a.providers.includes("plugin_x"))).toBe(true);
   });
 
-  it("skips disabled providers from env without throwing", async () => {
+  it("skips disabled major outlet RSS from env without throwing", async () => {
     __resetProviderSingletonsForTests();
-    vi.stubEnv("NEWS_PROVIDER_MARKETAUX_ENABLED", "false");
-    vi.stubEnv("MARKETAUX_API_KEY", "x");
-    vi.stubEnv("ALPHA_VANTAGE_API_KEY", "x");
-    vi.stubEnv("FINNHUB_API_KEY", "x");
-    vi.stubEnv("NEWSAPI_KEY", "x");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(
-        async () =>
-          ({
-            ok: true,
-            json: async () => [] as unknown,
-          }) as unknown as Response
-      ) as typeof fetch
-    );
+    vi.stubEnv("NEWS_PROVIDER_MAJOR_OUTLET_RSS_ENABLED", "false");
     const out = await aggregateNews({ ticker: "IBM" });
-    expect(out.disabledProviders).toContain("marketaux");
-    expect(out.activeProviders.sort()).toEqual(["alpha_vantage", "finnhub", "major_outlet_rss", "newsapi"]);
-    vi.unstubAllGlobals();
+    expect(out.disabledProviders).toContain("major_outlet_rss");
+    expect(out.activeProviders).toEqual([]);
     __resetProviderSingletonsForTests();
   });
 });

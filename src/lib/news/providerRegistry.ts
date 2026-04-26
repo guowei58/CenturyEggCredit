@@ -1,10 +1,6 @@
 import { getApiKeyEnv } from "./config";
 import { PRODUCTION_NEWS_PROVIDER_IDS } from "./constants";
-import { createAlphaVantageNewsProvider } from "./providers/alphaVantage";
-import { createFinnhubNewsProvider } from "./providers/finnhub";
-import { createMarketauxNewsProvider } from "./providers/marketaux";
 import { createMajorOutletRssNewsProvider } from "./providers/majorOutletRss";
-import { createNewsApiNewsProvider } from "./providers/newsapi";
 import { createMockNewsProvider, MOCK_NEWS_API_KEY } from "./providers/mockNewsProvider";
 import type { NewsProvider } from "./types";
 
@@ -36,32 +32,8 @@ export function __resetProviderSingletonsForTests(): void {
  */
 export const NEWS_PROVIDER_REGISTRATIONS: ProviderRegistration[] = [
   {
-    id: "marketaux",
-    displayName: "Marketaux",
-    getApiKey: () => getApiKeyEnv("marketaux"),
-    create: createMarketauxNewsProvider,
-  },
-  {
-    id: "alpha_vantage",
-    displayName: "Alpha Vantage",
-    getApiKey: () => getApiKeyEnv("alpha_vantage"),
-    create: createAlphaVantageNewsProvider,
-  },
-  {
-    id: "finnhub",
-    displayName: "Finnhub",
-    getApiKey: () => getApiKeyEnv("finnhub"),
-    create: createFinnhubNewsProvider,
-  },
-  {
-    id: "newsapi",
-    displayName: "NewsAPI",
-    getApiKey: () => getApiKeyEnv("newsapi"),
-    create: createNewsApiNewsProvider,
-  },
-  {
     id: "major_outlet_rss",
-    displayName: "Major outlets (RSS)",
+    displayName: "Major outlet RSS",
     getApiKey: () => getApiKeyEnv("major_outlet_rss"),
     create: createMajorOutletRssNewsProvider,
   },

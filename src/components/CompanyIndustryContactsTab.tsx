@@ -162,7 +162,7 @@ export function CompanyIndustryContactsTab({
     setStatusMessage(null);
     const ok = openLinkedInOutreachDraftWindow(contact.linkedinUrl, letter, contact.name);
     if (!ok) {
-      setStatusMessage("Popup blocked �?allow popups for this site to open the message draft window.");
+      setStatusMessage("Popup blocked - allow popups for this site to open the message draft window.");
     }
   }
 
@@ -376,7 +376,6 @@ export function CompanyIndustryContactsTab({
 
       <LinkedInOutreachSection
         headingId="industry-contacts-outreach-heading"
-        displayName={displayName}
         outreachSig={outreachSig}
         setOutreachSig={setOutreachSig}
         tabContext="industry"

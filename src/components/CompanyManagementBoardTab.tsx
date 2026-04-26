@@ -128,7 +128,7 @@ export function CompanyManagementBoardTab({ ticker }: { ticker: string }) {
   }
 
   return (
-    <Card title={`Management & Board �?${safeTicker}`}>
+    <Card title={`Management & Board - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"

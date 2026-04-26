@@ -8,15 +8,15 @@ import {
 
 type TabContext = "employee" | "industry";
 
+const OUTREACH_FIELD_PLACEHOLDER = "Enter your information";
+
 export function LinkedInOutreachSection({
   headingId,
-  displayName,
   outreachSig,
   setOutreachSig,
   tabContext,
 }: {
   headingId: string;
-  displayName: string;
   outreachSig: LinkedInOutreachState;
   setOutreachSig: Dispatch<SetStateAction<LinkedInOutreachState>>;
   tabContext: TabContext;
@@ -118,11 +118,7 @@ export function LinkedInOutreachSection({
             type="text"
             value={outreachSig.marketLine}
             onChange={(e) => setOutreachSig((s) => ({ ...s, marketLine: e.target.value }))}
-            placeholder={
-              displayName
-                ? `${displayName} and related industry / market dynamics`
-                : "e.g. widgets sector and competitive dynamics"
-            }
+            placeholder={OUTREACH_FIELD_PLACEHOLDER}
             className="rounded border px-3 py-2 text-sm font-normal"
             style={{
               borderColor: "var(--border2)",
@@ -138,7 +134,7 @@ export function LinkedInOutreachSection({
             type="text"
             value={outreachSig.yourName}
             onChange={(e) => setOutreachSig((s) => ({ ...s, yourName: e.target.value }))}
-            placeholder="Jane Doe"
+            placeholder={OUTREACH_FIELD_PLACEHOLDER}
             className="rounded border px-3 py-2 text-sm font-normal"
             style={{
               borderColor: "var(--border2)",
@@ -153,7 +149,7 @@ export function LinkedInOutreachSection({
             type="text"
             value={outreachSig.yourTitle}
             onChange={(e) => setOutreachSig((s) => ({ ...s, yourTitle: e.target.value }))}
-            placeholder="Analyst, Example Capital"
+            placeholder={OUTREACH_FIELD_PLACEHOLDER}
             className="rounded border px-3 py-2 text-sm font-normal"
             style={{
               borderColor: "var(--border2)",
@@ -169,7 +165,7 @@ export function LinkedInOutreachSection({
             autoComplete="email"
             value={outreachSig.yourEmail}
             onChange={(e) => setOutreachSig((s) => ({ ...s, yourEmail: e.target.value }))}
-            placeholder="you@firm.com"
+            placeholder={OUTREACH_FIELD_PLACEHOLDER}
             className="rounded border px-3 py-2 text-sm font-normal"
             style={{
               borderColor: "var(--border2)",
@@ -185,7 +181,7 @@ export function LinkedInOutreachSection({
             autoComplete="tel"
             value={outreachSig.yourPhone}
             onChange={(e) => setOutreachSig((s) => ({ ...s, yourPhone: e.target.value }))}
-            placeholder="+1 …"
+            placeholder={OUTREACH_FIELD_PLACEHOLDER}
             className="rounded border px-3 py-2 text-sm font-normal"
             style={{
               borderColor: "var(--border2)",

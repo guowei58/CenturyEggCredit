@@ -43,6 +43,12 @@ export function aiModelPreferenceKeyForProvider(p: AiProvider): string {
 /** `"__saved__"` uses the model id from User Settings (same as toolbar defaults); otherwise a concrete model id for this run only. */
 export type ModelRunChoice = "__saved__" | string;
 
+/** Model id used for a run: User Settings when `__saved__`, else the chosen preset id. */
+export function effectiveModelIdForRun(provider: AiProvider, choice: ModelRunChoice): string | undefined {
+  if (choice === "__saved__") return resolvedUserModelIdForProvider(provider);
+  return sanitizeClientModelId(choice);
+}
+
 export function modelPayloadForRun(
   provider: AiProvider,
   choice: ModelRunChoice

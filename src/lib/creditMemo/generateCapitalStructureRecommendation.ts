@@ -17,10 +17,6 @@ type CreditMemoResolvedModels = {
   deepseekModel: string;
 };
 
-function estimateTokensFromChars(chars: number): number {
-  return Math.ceil(chars / 4);
-}
-
 const EVIDENCE_QUERY = [
   "Capital structure table tranches maturities coupons spreads",
   "Revolver term loan first lien second lien secured unsecured notes",
@@ -67,36 +63,18 @@ export async function runCapitalStructureRecommendationGeneration(params: {
   }
 
   if (params.project.sources.length === 0) {
-    return { ok: false, error: "No sources ingested. Run ingest after selecting a folder with files." };
+    return { ok: false, error: 'Please click on "Refresh sources"' };
   }
 
   const inventory = formatSourceInventoryList(params.project.sources);
 
-  const PROMPT_TOKEN_LIMIT =
-    ai === "openai" || ai === "gemini" || ai === "deepseek" ? 190_000 : 180_000;
-  const SYSTEM_TOKEN_EST = estimateTokensFromChars(CAP_STRUCTURE_RECOMMENDATION_SYSTEM_PROMPT.length);
-
-  let maxEvidenceChars = cfg.maxContextChars;
-  let evidence = buildEvidencePackSync(params.project, { maxChars: maxEvidenceChars, query: EVIDENCE_QUERY });
-  let user = buildUserPrompt({
+  const evidence = buildEvidencePackSync(params.project, { maxChars: cfg.maxContextChars, query: EVIDENCE_QUERY });
+  const user = buildUserPrompt({
     ticker: params.project.ticker,
     companyName: params.companyName,
     inventory,
     evidence,
   });
-
-  for (let i = 0; i < 8; i++) {
-    const est = SYSTEM_TOKEN_EST + estimateTokensFromChars(user.length);
-    if (est <= PROMPT_TOKEN_LIMIT) break;
-    maxEvidenceChars = Math.max(40_000, Math.floor(maxEvidenceChars * 0.8));
-    evidence = buildEvidencePackSync(params.project, { maxChars: maxEvidenceChars, query: EVIDENCE_QUERY });
-    user = buildUserPrompt({
-      ticker: params.project.ticker,
-      companyName: params.companyName,
-      inventory,
-      evidence,
-    });
-  }
 
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
 

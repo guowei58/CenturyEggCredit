@@ -141,7 +141,7 @@ export function CompanySuppliersTab({
   }
 
   return (
-    <Card title={`Suppliers �?${safeTicker}`}>
+    <Card title={`Suppliers - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"

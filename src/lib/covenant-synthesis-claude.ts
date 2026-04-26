@@ -2,6 +2,7 @@
  * Server-only: covenant synthesis via Claude or OpenAI.
  */
 
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { AiProvider } from "@/lib/ai-provider";
 import { COVENANT_SYNTHESIS_SYSTEM, COVENANT_SYNTHESIS_USER_INSTRUCTIONS } from "@/data/covenant-synthesis-prompt";
 import { llmCompleteSingle } from "@/lib/llm-router";
@@ -25,7 +26,7 @@ export async function synthesizeCovenantsMarkdown(
     COVENANT_SYNTHESIS_SYSTEM,
     `${COVENANT_SYNTHESIS_USER_INSTRUCTIONS}\n\n---\n\n${userContent}`,
     {
-      maxTokens: 16_000,
+      maxTokens: LLM_MAX_OUTPUT_TOKENS,
       claudeModel: models.claudeModel,
       openaiModel: models.openaiModel,
       geminiModel: models.geminiModel,

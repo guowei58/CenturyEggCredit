@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 
-import type { CreditMemoProject, MemoJob } from "./types";
+import { deleteKpiEmbeddingsFile } from "./kpiRetrieval";
+import { stripCorpusFromProject, type CreditMemoProject, type MemoJob } from "./types";
 import { WORKSPACE_GLOBAL_TICKER } from "@/lib/user-ticker-workspace-constants";
 import { workspaceReadUtf8, workspaceWriteUtf8 } from "@/lib/user-ticker-workspace-store";
 
@@ -40,6 +41,23 @@ export async function saveProject(userId: string, project: CreditMemoProject): P
   const db = await readDb(userId);
   upsertProject(db, project);
   await writeDb(userId, db);
+}
+
+/** After a work product is saved, drop ingested text from server-backed project state so it is not kept on disk. */
+export async function clearIngestCorpusAfterWorkProduct(
+  userId: string,
+  projectId: string | null | undefined
+): Promise<void> {
+  const id = typeof projectId === "string" ? projectId.trim() : "";
+  if (!id) return;
+  const p = await getProject(userId, id);
+  if (!p) return;
+  try {
+    await deleteKpiEmbeddingsFile(userId, id);
+  } catch {
+    /* best-effort */
+  }
+  await saveProject(userId, stripCorpusFromProject(p));
 }
 
 export async function getProject(userId: string, id: string): Promise<CreditMemoProject | null> {

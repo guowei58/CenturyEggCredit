@@ -18,7 +18,7 @@ import {
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
-import { openGeminiWithClipboard, CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES } from "@/lib/gemini-open-url";
+import { openGeminiWithClipboard, OPEN_IN_EXTERNAL_AI_FULL_LINE } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 
 const CAPITAL_STRUCTURE_SAMPLE_THUMBNAILS: { path: (typeof CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS)[number]; label: string; alt: string }[] =
@@ -198,7 +198,7 @@ export function CompanyCapitalStructureTab({
 
   return (
     <div className="space-y-8">
-      <Card title={`Capital Structure �?${safeTicker}`}>
+      <Card title={`Capital Structure - ${safeTicker}`}>
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
           Use the reference templates and prompt in Claude, ChatGPT, Gemini, or DeepSeek (vision). Save the model&apos;s answer below.
         </p>
@@ -333,15 +333,11 @@ export function CompanyCapitalStructureTab({
                   </a>
                 ))}
               </div>
-              <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
-                Open each in a new tab to save, or right-click �?Save image. Attach them with your prompt if supported.
-              </p>
             </div>
 
             <div>
-              <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-                Prompt (includes numbered reference image URLs). Open in AI; copy attaches to clipboard.{" "}
-                {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
+              <p className="text-xs mb-2 leading-relaxed" style={{ color: "var(--muted2)" }}>
+                {OPEN_IN_EXTERNAL_AI_FULL_LINE}
               </p>
               <PromptTemplateBox
                 tabId="capital-structure"

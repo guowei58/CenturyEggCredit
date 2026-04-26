@@ -14,21 +14,25 @@ export type CreditMemoGeneratedTabKind = keyof typeof TAB_KEYS;
 export async function fetchLatestGeneratedTabOutput(
   ticker: string,
   kind: CreditMemoGeneratedTabKind
-): Promise<{ markdown: string | null; jobId: string | null }> {
+): Promise<{ markdown: string | null; jobId: string | null; contextSentUtf8Bytes: number | null }> {
   const tk = ticker.trim().toUpperCase();
-  if (!tk) return { markdown: null, jobId: null };
+  if (!tk) return { markdown: null, jobId: null, contextSentUtf8Bytes: null };
   const { md, meta } = TAB_KEYS[kind];
   const rawMd = await fetchSavedFromServer(tk, md);
   const metaRaw = await fetchSavedFromServer(tk, meta);
   let jobId: string | null = null;
+  let contextSentUtf8Bytes: number | null = null;
   if (metaRaw?.trim()) {
     try {
-      const o = JSON.parse(metaRaw) as { jobId?: string };
+      const o = JSON.parse(metaRaw) as { jobId?: string; contextSentUtf8Bytes?: number };
       if (typeof o.jobId === "string") jobId = o.jobId;
+      if (typeof o.contextSentUtf8Bytes === "number" && Number.isFinite(o.contextSentUtf8Bytes)) {
+        contextSentUtf8Bytes = o.contextSentUtf8Bytes;
+      }
     } catch {
       /* ignore */
     }
   }
   const markdown = rawMd?.trim() ? rawMd : null;
-  return { markdown, jobId };
+  return { markdown, jobId, contextSentUtf8Bytes };
 }

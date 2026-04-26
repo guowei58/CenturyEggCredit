@@ -119,7 +119,7 @@ export function CompanyCapitalAllocationTab({
   }
 
   return (
-    <Card title={`Capital Allocation �?${safeTicker}`}>
+    <Card title={`Capital Allocation - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"

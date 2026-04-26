@@ -7,7 +7,7 @@ import {
   runBiblicalReferencesGeneration,
 } from "@/lib/creditMemo/generateBiblicalReferences";
 import { memoOnlyReferenceStubProject } from "@/lib/creditMemo/memoOnlyReferenceProject";
-import { appendJob, getLatestProjectForTicker, newJobId } from "@/lib/creditMemo/store";
+import { appendJob, clearIngestCorpusAfterWorkProduct, getLatestProjectForTicker, newJobId } from "@/lib/creditMemo/store";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import { creditMemoPrimaryModelId, resolveBiblicalReferencesModels } from "@/lib/ai-model-from-request";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
@@ -97,6 +97,12 @@ export async function POST(req: Request, { params }: { params: { ticker: string 
     }
   } catch {
     /* ignore */
+  }
+
+  try {
+    await clearIngestCorpusAfterWorkProduct(userId, project.id);
+  } catch {
+    /* best-effort */
   }
 
   return NextResponse.json({

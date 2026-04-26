@@ -17,6 +17,7 @@ import { repairConsolidatedMarkdownFromSourceFacts } from "@/lib/xbrl-ai-consoli
 import { formatReconciliationAppendix, reconcileConsolidatedMarkdown } from "@/lib/xbrl-ai-consolidation/statementReconciliation";
 import { writeUserTickerDocument } from "@/lib/user-workspace-store";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
 export const runtime = "nodejs";
@@ -77,9 +78,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     return NextResponse.json({ error: pack.error }, { status: 400 });
   }
 
-  let maxTokens = 32_768;
+  let maxTokens = LLM_MAX_OUTPUT_TOKENS;
   if (typeof b.maxTokens === "number" && Number.isFinite(b.maxTokens)) {
-    maxTokens = Math.min(32_768, Math.max(256, Math.round(b.maxTokens)));
+    maxTokens = Math.min(LLM_MAX_OUTPUT_TOKENS, Math.max(256, Math.round(b.maxTokens)));
   }
 
   const system = getXbrlAiConsolidationInstructions();

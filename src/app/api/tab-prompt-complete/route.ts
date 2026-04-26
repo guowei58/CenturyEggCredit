@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { normalizeAiProvider, type AiProvider } from "@/lib/ai-provider";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured, llmCompleteConversation, llmCompleteSingle } from "@/lib/llm-router";
 import { filterAllowedSamplePublicPaths, loadPublicSampleImagesAsParts } from "@/lib/tab-prompt-sample-assets";
@@ -90,9 +91,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
 
-  let maxTokens = 8192;
+  let maxTokens = LLM_MAX_OUTPUT_TOKENS;
   if (typeof b.maxTokens === "number" && Number.isFinite(b.maxTokens)) {
-    maxTokens = Math.min(32_768, Math.max(256, Math.round(b.maxTokens)));
+    maxTokens = Math.min(LLM_MAX_OUTPUT_TOKENS, Math.max(256, Math.round(b.maxTokens)));
   }
 
   const models = resolveCommitteeChatModels(b);

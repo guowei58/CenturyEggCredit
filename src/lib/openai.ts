@@ -5,6 +5,7 @@
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS } from "@/lib/llm-xbrl-consolidate-timeouts";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -68,10 +69,10 @@ export function openAiChatCompletionsSearchModel(requestedModel: string): string
 }
 
 /** Legacy GPT-4 class models: `max_tokens` ceiling (completion tokens). */
-const OPENAI_LEGACY_MAX_COMPLETION_TOKENS = 16_384;
+const OPENAI_LEGACY_MAX_COMPLETION_TOKENS = LLM_MAX_OUTPUT_TOKENS;
 
-/** GPT-5 family: use `max_completion_tokens`; docs cite large output budget (cap conservatively). */
-const OPENAI_GPT5_MAX_COMPLETION_TOKENS = 128_000;
+/** GPT-5 family: `max_completion_tokens`; aligned with app-wide output ceiling. */
+const OPENAI_GPT5_MAX_COMPLETION_TOKENS = LLM_MAX_OUTPUT_TOKENS;
 
 const REASONING_EFFORTS = new Set(["none", "low", "medium", "high", "xhigh"]);
 
@@ -95,9 +96,25 @@ function openAiCompletionTokenCap(model: string): number {
   return usesGpt5ChatCompletionShape(model) ? OPENAI_GPT5_MAX_COMPLETION_TOKENS : OPENAI_LEGACY_MAX_COMPLETION_TOKENS;
 }
 
+/** Map low-level Undici/Node fetch errors to actionable copy (KPI/memo can send very large bodies). */
+function openAiFetchFailureMessage(msg: string, waitMs: number): string {
+  const m = msg.toLowerCase();
+  if (
+    m.includes("connection terminated unexpectedly") ||
+    m.includes("econnreset") ||
+    m.includes("econnrefused") ||
+    (m.includes("socket") && (m.includes("closed") || m.includes("hang"))) ||
+    m.includes("und_err_socket")
+  ) {
+    const sec = Math.round(waitMs / 1000);
+    return `OpenAI closed the connection before the response completed (often transient network, VPN/firewall, or an oversized request). Retry once; if it keeps happening, lower KPI or memo evidence size (KPI_RETRIEVAL_MAX_EVIDENCE_CHARS / KPI_FALLBACK_MAX_EVIDENCE_CHARS / MEMO_RETRIEVAL_MAX_EVIDENCE_CHARS / MEMO_FALLBACK_MAX_EVIDENCE_CHARS) or raise OPENAI_FETCH_TIMEOUT_MS (current wait ${sec}s, max 900).`;
+  }
+  return msg;
+}
+
 function clampOpenAIMaxTokens(requested: number, model: string): number {
   const cap = openAiCompletionTokenCap(model);
-  if (!Number.isFinite(requested) || requested < 1) return Math.min(4096, cap);
+  if (!Number.isFinite(requested) || requested < 1) return Math.min(LLM_MAX_OUTPUT_TOKENS, cap);
   return Math.min(Math.round(requested), cap);
 }
 
@@ -215,7 +232,7 @@ export async function callOpenAI(
   const baseModel = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
   const webSearch = options.webSearch === true && isOpenAiWebSearchEnabled();
   const model = webSearch ? openAiChatCompletionsSearchModel(baseModel) : baseModel;
-  const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? 4096, model);
+  const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS, model);
   const waitMs =
     options.fetchTimeoutMs != null && Number.isFinite(options.fetchTimeoutMs)
       ? Math.min(OPENAI_FETCH_MS_MAX, Math.max(OPENAI_FETCH_MS_MIN, Math.round(options.fetchTimeoutMs)))
@@ -268,7 +285,7 @@ export async function callOpenAI(
         status: 504,
       };
     }
-    return { ok: false, error: msg };
+    return { ok: false, error: openAiFetchFailureMessage(msg, waitMs) };
   }
 }
 
@@ -317,7 +334,7 @@ export async function callOpenAIConversation(
   const baseModel = options.model?.trim() || process.env.OPENAI_MODEL?.trim() || OPENAI_DEFAULT_MODEL;
   const webSearch = options.webSearch === true && isOpenAiWebSearchEnabled();
   const model = webSearch ? openAiChatCompletionsSearchModel(baseModel) : baseModel;
-  const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? 4096, model);
+  const maxTokens = clampOpenAIMaxTokens(options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS, model);
   const waitMs =
     options.fetchTimeoutMs != null && Number.isFinite(options.fetchTimeoutMs)
       ? Math.min(OPENAI_FETCH_MS_MAX, Math.max(OPENAI_FETCH_MS_MIN, Math.round(options.fetchTimeoutMs)))
@@ -374,6 +391,6 @@ export async function callOpenAIConversation(
         status: 504,
       };
     }
-    return { ok: false, error: msg };
+    return { ok: false, error: openAiFetchFailureMessage(msg, waitMs) };
   }
 }

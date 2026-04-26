@@ -1,7 +1,7 @@
 "use client";
 
 import type { AnchorHTMLAttributes, ImgHTMLAttributes, TableHTMLAttributes } from "react";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkLinkify from "remark-linkify";
@@ -31,12 +31,26 @@ function isHttpUrl(href: string): boolean {
   return /^https?:\/\//i.test(h) && !/^javascript:/i.test(h);
 }
 
-function SavedHtmlContentWithSaveButtons({ html, ticker }: { html: string; ticker: string }) {
+function SavedHtmlContentWithSaveButtons({
+  html,
+  ticker,
+  showAnalyze,
+  onLinkAnalyzeRef,
+}: {
+  html: string;
+  ticker: string;
+  showAnalyze: boolean;
+  /** Ref so click handlers always call the latest callback without re-running the effect on every parent render. */
+  onLinkAnalyzeRef: RefObject<((url: string) => void) | undefined>;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const root = ref.current;
-    if (!root || !ticker.trim()) return;
+    if (!root) return;
+    /** Set HTML here only — not via `dangerouslySetInnerHTML` in JSX — so parent re-renders do not wipe injected Save/Analyze controls. */
+    root.innerHTML = html;
+    if (!ticker.trim()) return;
     const anchors = root.querySelectorAll("a[href]");
     anchors.forEach((node) => {
       const a = node as HTMLAnchorElement;
@@ -89,22 +103,44 @@ function SavedHtmlContentWithSaveButtons({ html, ticker }: { html: string; ticke
         })();
       });
       span.appendChild(btn);
-    });
-  }, [html, ticker]);
 
-  return <div ref={ref} className="saved-html-content" dangerouslySetInnerHTML={{ __html: html }} />;
+      if (showAnalyze) {
+        const btnAnalyze = document.createElement("button");
+        btnAnalyze.type = "button";
+        btnAnalyze.textContent = "Analyze";
+        btnAnalyze.className =
+          "ml-1 inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition";
+        btnAnalyze.style.borderColor = "var(--accent)";
+        btnAnalyze.style.color = "var(--accent)";
+        btnAnalyze.style.background = "transparent";
+        btnAnalyze.title = "Distressed doc review for this link";
+        btnAnalyze.addEventListener("click", () => {
+          onLinkAnalyzeRef.current?.(href);
+        });
+        span.appendChild(btnAnalyze);
+      }
+    });
+  }, [html, ticker, showAnalyze]);
+
+  return <div ref={ref} className="saved-html-content" />;
 }
 
 export function SavedRichText({
   content,
   ticker,
+  onLinkAnalyze,
 }: {
   content: string;
   /** When set (non-empty), shows a Save control next to each http(s) link after content is shown. */
   ticker?: string;
+  /** When set (with ticker), adds an Analyze control next to Save for each link (Credit Agreements Document list only). */
+  onLinkAnalyze?: (url: string) => void;
 }) {
   const safeTicker = ticker?.trim() ?? "";
   const showSave = safeTicker.length > 0;
+  const showAnalyze = Boolean(onLinkAnalyze) && showSave;
+  const onLinkAnalyzeRef = useRef(onLinkAnalyze);
+  onLinkAnalyzeRef.current = onLinkAnalyze;
 
   const components = useMemo(
     () => ({
@@ -128,6 +164,17 @@ export function SavedRichText({
           <span className="inline-flex flex-wrap items-center gap-x-0.5 align-baseline max-w-full">
             {link}
             <SaveFilingLinkButton ticker={safeTicker} url={h} mode="saved-documents" />
+            {showAnalyze ? (
+              <button
+                type="button"
+                onClick={() => onLinkAnalyzeRef.current?.(h)}
+                className="ml-1 inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition"
+                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+                title="Distressed doc review for this link"
+              >
+                Analyze
+              </button>
+            ) : null}
           </span>
         );
       },
@@ -159,7 +206,7 @@ export function SavedRichText({
         );
       },
     }),
-    [showSave, safeTicker]
+    [showSave, safeTicker, showAnalyze]
   );
 
   const looksLikeHtml =
@@ -173,7 +220,14 @@ export function SavedRichText({
     });
 
     if (showSave) {
-      return <SavedHtmlContentWithSaveButtons html={clean} ticker={safeTicker} />;
+      return (
+        <SavedHtmlContentWithSaveButtons
+          html={clean}
+          ticker={safeTicker}
+          showAnalyze={showAnalyze}
+          onLinkAnalyzeRef={onLinkAnalyzeRef}
+        />
+      );
     }
     return <div className="saved-html-content" dangerouslySetInnerHTML={{ __html: clean }} />;
   }

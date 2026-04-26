@@ -1,5 +1,7 @@
 import path from "path";
 
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
+
 export type CreditMemoEnvConfig = {
   researchRootDir: string | null;
   maxContextChars: number;
@@ -25,9 +27,15 @@ export function getResearchRootResolved(): string | null {
 export function loadCreditMemoConfig(): CreditMemoEnvConfig {
   return {
     researchRootDir: getResearchRootResolved(),
-    maxContextChars: parseIntEnv(process.env.CREDIT_MEMO_MAX_CONTEXT_CHARS, 280_000, 80_000, 900_000),
-    maxOutputTokens: parseIntEnv(process.env.CREDIT_MEMO_MAX_OUTPUT_TOKENS, 16_000, 4_000, 64_000),
-    maxFilesPerIngest: parseIntEnv(process.env.CREDIT_MEMO_MAX_FILES, 400, 20, 2000),
-    maxIngestFileBytes: parseIntEnv(process.env.CREDIT_MEMO_MAX_FILE_BYTES, 18 * 1024 * 1024, 1024 * 1024, 80 * 1024 * 1024),
+    // No app-level evidence cap for now (CREDIT_MEMO_MAX_CONTEXT_CHARS ignored). Model/provider limits still apply.
+    maxContextChars: Number.MAX_SAFE_INTEGER,
+    maxOutputTokens: parseIntEnv(process.env.CREDIT_MEMO_MAX_OUTPUT_TOKENS, LLM_MAX_OUTPUT_TOKENS, 4_000, LLM_MAX_OUTPUT_TOKENS),
+    maxFilesPerIngest: parseIntEnv(process.env.CREDIT_MEMO_MAX_FILES, 500_000, 20, 10_000_000),
+    maxIngestFileBytes: parseIntEnv(
+      process.env.CREDIT_MEMO_MAX_FILE_BYTES,
+      4 * 1024 * 1024 * 1024,
+      1024 * 1024,
+      16 * 1024 * 1024 * 1024
+    ),
   };
 }

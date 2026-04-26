@@ -3,6 +3,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { QuotaExceededError, withTransientPgRetry } from "@/lib/pg-connection-retry";
 import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
 import {
   assertUserStorageAllowsNetDelta,
@@ -105,9 +106,11 @@ export async function setWatchlistTickers(userId: string, tickers: string[]): Pr
 const MAX_AI_CHAT_PAYLOAD_CHARS = 2_000_000;
 
 export async function getAiChatPayload(userId: string, ticker: string): Promise<string | null> {
-  const row = await prisma.userAiChatState.findUnique({
-    where: { userId_ticker: { userId, ticker } },
-  });
+  const row = await withTransientPgRetry("getAiChatPayload", () =>
+    prisma.userAiChatState.findUnique({
+      where: { userId_ticker: { userId, ticker } },
+    })
+  );
   return row?.payload ?? null;
 }
 
@@ -120,21 +123,24 @@ export async function setAiChatPayload(
     return { ok: false, error: "Chat data too large to save." };
   }
   try {
-    const prevRow = await prisma.userAiChatState.findUnique({
-      where: { userId_ticker: { userId, ticker } },
-      select: { payload: true },
-    });
-    const oldOctets = prevRow ? Buffer.byteLength(prevRow.payload, "utf8") : 0;
-    const newOctets = Buffer.byteLength(payload, "utf8");
-    const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
-    if (!quota.ok) return quota;
-    await prisma.userAiChatState.upsert({
-      where: { userId_ticker: { userId, ticker } },
-      create: { userId, ticker, payload },
-      update: { payload },
+    await withTransientPgRetry("setAiChatPayload", async () => {
+      const prevRow = await prisma.userAiChatState.findUnique({
+        where: { userId_ticker: { userId, ticker } },
+        select: { payload: true },
+      });
+      const oldOctets = prevRow ? Buffer.byteLength(prevRow.payload, "utf8") : 0;
+      const newOctets = Buffer.byteLength(payload, "utf8");
+      const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
+      if (!quota.ok) throw new QuotaExceededError(quota.error);
+      await prisma.userAiChatState.upsert({
+        where: { userId_ticker: { userId, ticker } },
+        create: { userId, ticker, payload },
+        update: { payload },
+      });
     });
     return { ok: true };
   } catch (e) {
+    if (e instanceof QuotaExceededError) return { ok: false, error: e.message };
     return { ok: false, error: e instanceof Error ? e.message : "Save failed" };
   }
 }

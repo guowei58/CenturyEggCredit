@@ -3,6 +3,7 @@
  * Do not import in client.
  */
 
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { AiProvider } from "@/lib/ai-provider";
 import { callClaude, type ClaudeResult, WEB_SEARCH_TOOL } from "@/lib/anthropic";
 import { llmCompleteSingle } from "@/lib/llm-router";
@@ -31,7 +32,7 @@ export async function discoverPresentationsWithClaude(
   const systemPrompt =
     "Use web search to find the company's investor relations or presentations page, then list the latest 10 management events with presentation materials (earnings, investor day, conference/fireside chat, financing). For each item include: title + presentation URL, and if a transcript exists include a transcript URL. Prefer ROIC.AI for transcript links when possible: https://www.roic.ai/quote/{TICKER}/transcripts (or /transcripts/{YEAR}/{QUARTER} for a specific call). Output only the list: one line per item. No other text.";
   return callClaude(systemPrompt, userMessage, {
-    maxTokens: 4096,
+    maxTokens: LLM_MAX_OUTPUT_TOKENS,
     model: claudeModel,
     tools: [WEB_SEARCH_TOOL],
     apiKeys,
@@ -59,20 +60,20 @@ export async function discoverPresentations(
   const userMessage = `Ticker: ${safeTicker}\n\nList up to 10 management or investor presentations (titles + working or best-known URLs). Training-data only; user will verify links.`;
   if (provider === "deepseek") {
     return llmCompleteSingle("deepseek", OPENAI_SYSTEM, userMessage, {
-      maxTokens: 4096,
+      maxTokens: LLM_MAX_OUTPUT_TOKENS,
       deepseekModel: models.deepseekModel,
       apiKeys,
     });
   }
   if (provider === "gemini") {
     return llmCompleteSingle("gemini", OPENAI_SYSTEM, userMessage, {
-      maxTokens: 4096,
+      maxTokens: LLM_MAX_OUTPUT_TOKENS,
       geminiModel: models.geminiModel,
       apiKeys,
     });
   }
   return llmCompleteSingle("openai", OPENAI_SYSTEM, userMessage, {
-    maxTokens: 4096,
+    maxTokens: LLM_MAX_OUTPUT_TOKENS,
     openaiModel: models.openaiModel,
     apiKeys,
   });

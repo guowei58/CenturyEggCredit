@@ -117,20 +117,20 @@ Cover the company's full history, including but not limited to:
 
 Research requirements:
 - prioritize primary sources where possible:
-  - company filings
-  - annual reports
-  - investor presentations
-  - merger documents
-  - proxy statements
-  - bankruptcy filings
-  - court documents
-  - press releases
-  - regulatory filings
+ - company filings
+ - annual reports
+ - investor presentations
+ - merger documents
+ - proxy statements
+ - bankruptcy filings
+ - court documents
+ - press releases
+ - regulatory filings
 - use reputable news sources for context where primary sources are not enough
 - include links for every important bullet point
 - if there are conflicting accounts, mention the disagreement briefly
 - do not skip ugly or controversial periods
-- do not give a short summary �?be exhaustive
+- do not give a short summary - be exhaustive
 - if the company has gone through predecessor entities, name changes, or major reorganizations, include those too
 
 Output format:
@@ -292,9 +292,9 @@ export function CompanyHistoryTab({
   }
 
   return (
-    <Card title={`Company History �?${safeTicker}`}>
+    <Card title={`Company History - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
-        {/* Saved response �?main, prominent section */}
+        {/* Saved response - main, prominent section */}
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"
           ticker={safeTicker}
@@ -343,7 +343,7 @@ export function CompanyHistoryTab({
           )}
         </SavedResponseExpandableShell>
 
-        {/* Prompt + buttons �?compact sidebar */}
+        {/* Prompt + buttons - compact sidebar */}
         <div className="flex w-full flex-col lg:w-80 flex-shrink-0">
           <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
             {OPEN_IN_EXTERNAL_AI_FULL_LINE}

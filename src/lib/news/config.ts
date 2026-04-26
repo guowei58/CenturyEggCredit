@@ -23,14 +23,8 @@ function parseIntEnv(v: string | undefined, fallback: number): number {
 }
 
 function envKey(id: KnownNewsProviderId, suffix: string): string {
-  const map: Record<KnownNewsProviderId, string> = {
-    marketaux: "MARKETAUX",
-    alpha_vantage: "ALPHA_VANTAGE",
-    finnhub: "FINNHUB",
-    newsapi: "NEWSAPI",
-    major_outlet_rss: "MAJOR_OUTLET_RSS",
-  };
-  return `NEWS_PROVIDER_${map[id]}_${suffix}`;
+  void id;
+  return `NEWS_PROVIDER_MAJOR_OUTLET_RSS_${suffix}`;
 }
 
 /**
@@ -38,11 +32,7 @@ function envKey(id: KnownNewsProviderId, suffix: string): string {
  */
 export function loadProviderConfigsFromEnv(): Map<string, ProviderConfig> {
   const defaults: Record<KnownNewsProviderId, { priority: number }> = {
-    marketaux: { priority: 1 },
-    alpha_vantage: { priority: 2 },
-    finnhub: { priority: 3 },
-    newsapi: { priority: 4 },
-    major_outlet_rss: { priority: 5 },
+    major_outlet_rss: { priority: 1 },
   };
 
   const out = new Map<string, ProviderConfig>();
@@ -57,19 +47,10 @@ export function loadProviderConfigsFromEnv(): Map<string, ProviderConfig> {
 }
 
 export function getApiKeyEnv(id: KnownNewsProviderId): string | undefined {
-  const keys: Record<KnownNewsProviderId, string> = {
-    marketaux: "MARKETAUX_API_KEY",
-    alpha_vantage: "ALPHA_VANTAGE_API_KEY",
-    finnhub: "FINNHUB_API_KEY",
-    newsapi: "NEWSAPI_KEY",
-    major_outlet_rss: "NEWS_MAJOR_OUTLET_RSS_KEY",
-  };
-  const v = process.env[keys[id]]?.trim();
-  if (id === "major_outlet_rss") {
-    if (process.env.NEWS_MAJOR_OUTLET_RSS_DISABLED === "1") return undefined;
-    return v || "public";
-  }
-  return v || undefined;
+  if (id !== "major_outlet_rss") return undefined;
+  const v = process.env.NEWS_MAJOR_OUTLET_RSS_KEY?.trim();
+  if (process.env.NEWS_MAJOR_OUTLET_RSS_DISABLED === "1") return undefined;
+  return v || "public";
 }
 
 /**

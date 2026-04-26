@@ -2,6 +2,9 @@ import type { AiProvider } from "@/lib/ai-provider";
 
 export const USER_PREFERENCES_VERSION = 1 as const;
 
+/** Max serialized JSON length for `user_preferences.payload` (one string per account). */
+export const MAX_PREFS_CHARS = 5_000_000;
+
 /** Signed-in UI state persisted in Postgres (`/api/me/preferences`). */
 export type UserPreferencesData = {
   v: typeof USER_PREFERENCES_VERSION;
@@ -35,7 +38,7 @@ export type UserPreferencesData = {
   promptTemplates?: Record<string, string>;
   /** Opaque cache blobs (e.g. feed JSON), arbitrary string keys */
   feedCaches?: Record<string, string>;
-  /** Ticker (uppercase) → JSON string of credit memo draft */
+  /** Ticker (uppercase) → draft JSON (UI fields + project shell; ingested text is not stored here—see credit memo workspace until a work product completes). */
   creditMemoDrafts?: Record<string, string>;
   includeOreoContext?: boolean;
   /** When true, Egg-Hoc incoming-message barks are not played. */
@@ -59,6 +62,94 @@ export function parseUserPreferencesPayload(raw: string | null | undefined): Use
 
 export function serializeUserPreferencesPayload(data: UserPreferencesData): string {
   return JSON.stringify(data);
+}
+
+/** Approximate JSON footprint of each top-level field (for debugging size limits). */
+export type PreferencesPayloadSizeAnalysis = {
+  totalChars: number;
+  topLevel: { key: string; chars: number }[];
+  feedCacheEntries: { key: string; chars: number }[];
+  memoDraftEntries: { ticker: string; chars: number }[];
+  /** Raw string length of non-empty API key fields (not JSON overhead). */
+  apiKeyStringsChars: number;
+};
+
+export function analyzePreferencesPayloadSize(data: UserPreferencesData): PreferencesPayloadSizeAnalysis {
+  const totalChars = JSON.stringify(data).length;
+  const topLevel: { key: string; chars: number }[] = [];
+  for (const key of Object.keys(data) as (keyof UserPreferencesData)[]) {
+    topLevel.push({ key: String(key), chars: JSON.stringify({ [key]: data[key] }).length });
+  }
+  topLevel.sort((a, b) => b.chars - a.chars);
+
+  const feedCacheEntries =
+    data.feedCaches && typeof data.feedCaches === "object"
+      ? Object.entries(data.feedCaches)
+          .map(([k, v]) => ({ key: k, chars: JSON.stringify(v).length }))
+          .sort((a, b) => b.chars - a.chars)
+      : [];
+
+  const memoDraftEntries =
+    data.creditMemoDrafts && typeof data.creditMemoDrafts === "object"
+      ? Object.entries(data.creditMemoDrafts)
+          .map(([k, v]) => ({ ticker: k, chars: JSON.stringify(v).length }))
+          .sort((a, b) => b.chars - a.chars)
+      : [];
+
+  let apiKeyStringsChars = 0;
+  const uk = data.userLlmApiKeys;
+  if (uk && typeof uk === "object") {
+    for (const v of Object.values(uk)) {
+      if (typeof v === "string" && v.length > 0) apiKeyStringsChars += v.length;
+    }
+  }
+
+  return {
+    totalChars,
+    topLevel,
+    feedCacheEntries,
+    memoDraftEntries,
+    apiKeyStringsChars,
+  };
+}
+
+/** User-facing explanation when the serialized blob exceeds `MAX_PREFS_CHARS`. */
+export function formatPreferencesOversizeMessage(
+  data: UserPreferencesData,
+  maxChars: number = MAX_PREFS_CHARS
+): string {
+  const a = analyzePreferencesPayloadSize(data);
+  const parts: string[] = [];
+  parts.push(
+    `This save would be ${a.totalChars.toLocaleString()} characters (max ${maxChars.toLocaleString()}). The cap applies to your entire saved preferences JSON, not only API keys.`
+  );
+  parts.push(
+    `Your API key strings add up to about ${a.apiKeyStringsChars.toLocaleString()} characters—so if you are over the limit, the bulk is almost certainly cached feeds, memo drafts, or long prompt templates.`
+  );
+  const bigSections = a.topLevel
+    .filter((x) => x.key !== "v" && x.chars > 500)
+    .slice(0, 5)
+    .map((x) => `${x.key} ~${x.chars.toLocaleString()}`)
+    .join(", ");
+  if (bigSections) parts.push(`Largest top-level sections: ${bigSections}.`);
+  const topFeed = a.feedCacheEntries[0];
+  if (topFeed && topFeed.chars > 10_000) {
+    const fc = a.feedCacheEntries
+      .slice(0, 3)
+      .map((e) => `${e.key} ~${e.chars.toLocaleString()}`)
+      .join("; ");
+    parts.push(`Largest feed cache entries: ${fc}.`);
+  }
+  const topMemo = a.memoDraftEntries[0];
+  if (topMemo && topMemo.chars > 10_000) {
+    const md = a.memoDraftEntries
+      .slice(0, 3)
+      .map((e) => `${e.ticker} ~${e.chars.toLocaleString()}`)
+      .join("; ");
+    parts.push(`Largest memo drafts: ${md}.`);
+  }
+  parts.push("Clear or trim those areas if you need room.");
+  return parts.join(" ");
 }
 
 export function isPrefsEffectivelyEmpty(data: UserPreferencesData): boolean {

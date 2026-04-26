@@ -128,7 +128,7 @@ export function DailyNewsDrawer({
                 Daily News
               </div>
               <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
-                Watchlist digest · last 24h · SEC + major outlets + trade press
+                Watchlist digest · last 24h · SEC, name-led company news, trade headlines + ticker scan
               </div>
             </div>
           </div>
@@ -328,12 +328,20 @@ function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock })
       <p className="mb-5 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
         {data.whyItMatters}
       </p>
-      <ItemList title="Company-specific news" items={data.companyNews} empty="No major company headlines in the automated sweep." />
-      <ItemList title="Industry / trade press" items={data.industryNews} empty="No industry headlines in the automated sweep." />
       <ItemList
         title="SEC filings (last window)"
         items={data.secFilings}
         empty="No prioritized filings in the last 24h window."
+      />
+      <ItemList
+        title="Company news & press releases"
+        items={data.companyNews}
+        empty="No major headlines or distributor press releases in the automated sweep (matches prioritize the legal company name)."
+      />
+      <ItemList
+        title="Industry / trade press"
+        items={data.industryNews}
+        empty="No industry headlines in the automated sweep (includes each publication’s recent top stories plus ticker-scanned items)."
       />
     </section>
   );

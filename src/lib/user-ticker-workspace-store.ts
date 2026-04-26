@@ -8,6 +8,7 @@ import os from "os";
 import path from "path";
 
 import { prisma } from "@/lib/prisma";
+import { QuotaExceededError, withTransientPgRetry } from "@/lib/pg-connection-retry";
 import { isAiChatOreoTxtOrHtmlFilename, SAVED_DATA_FILES, sanitizeTicker } from "@/lib/saved-ticker-data";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import { MAX_WORKSPACE_FILE_BYTES } from "@/lib/user-ticker-workspace-constants";
@@ -35,10 +36,12 @@ export async function workspaceReadFile(
   const sym = sanitizeTicker(ticker);
   const np = normalizeWorkspaceRelPath(relPath);
   if (!sym || !np) return null;
-  const row = await prisma.userTickerWorkspaceFile.findUnique({
-    where: { userId_ticker_path: { userId, ticker: sym, path: np } },
-    select: { body: true },
-  });
+  const row = await withTransientPgRetry("workspaceReadFile", () =>
+    prisma.userTickerWorkspaceFile.findUnique({
+      where: { userId_ticker_path: { userId, ticker: sym, path: np } },
+      select: { body: true },
+    })
+  );
   return row?.body ? Buffer.from(row.body) : null;
 }
 
@@ -54,22 +57,30 @@ export async function workspaceWriteFile(
   if (body.length > MAX_WORKSPACE_FILE_BYTES) {
     return { ok: false, error: "File too large" };
   }
-  const existing = await prisma.userTickerWorkspaceFile.findUnique({
-    where: { userId_ticker_path: { userId, ticker: sym, path: np } },
-    select: { body: true },
-  });
-  const oldLen = existing?.body ? Buffer.from(existing.body).length : 0;
-  const delta = body.length - oldLen;
-  const quota = await assertUserStorageAllowsNetDelta(userId, delta);
-  if (!quota.ok) return quota;
   try {
-    await prisma.userTickerWorkspaceFile.upsert({
-      where: { userId_ticker_path: { userId, ticker: sym, path: np } },
-      create: { userId, ticker: sym, path: np, body: new Uint8Array(body) },
-      update: { body: new Uint8Array(body) },
-    });
+    /** Extra retries: long-running routes (e.g. KPI embeddings) often idle the pool for minutes before a large write. */
+    await withTransientPgRetry(
+      "workspaceWriteFile",
+      async () => {
+        const existing = await prisma.userTickerWorkspaceFile.findUnique({
+          where: { userId_ticker_path: { userId, ticker: sym, path: np } },
+          select: { body: true },
+        });
+        const oldLen = existing?.body ? Buffer.from(existing.body).length : 0;
+        const delta = body.length - oldLen;
+        const quota = await assertUserStorageAllowsNetDelta(userId, delta);
+        if (!quota.ok) throw new QuotaExceededError(quota.error);
+        await prisma.userTickerWorkspaceFile.upsert({
+          where: { userId_ticker_path: { userId, ticker: sym, path: np } },
+          create: { userId, ticker: sym, path: np, body: new Uint8Array(body) },
+          update: { body: new Uint8Array(body) },
+        });
+      },
+      { retries: 10, baseDelayMs: 500 }
+    );
     return { ok: true };
   } catch (e) {
+    if (e instanceof QuotaExceededError) return { ok: false, error: e.message };
     return { ok: false, error: e instanceof Error ? e.message : "Write failed" };
   }
 }

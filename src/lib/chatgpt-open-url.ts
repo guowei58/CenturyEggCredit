@@ -11,14 +11,14 @@ export const CHATGPT_NEW_CHAT_HREF = CHATGPT_NEW_CHAT_ORIGIN;
 
 /** @deprecated Kept for import compatibility; same idea as {@link EXTERNAL_AI_URL_TRUNCATION_NOTE}. */
 export const CHATGPT_LONG_URL_NOTICE =
-  "The prompt is copied to your clipboard—paste into the chat and press Enter (not loaded from the URL).";
+  "When you open a chat page, the prompt is already on your clipboard—paste it into the context window and press Enter (not loaded from the URL).";
 
 /** @deprecated URL prefill removed. */
 export const EXTERNAL_AI_URL_TRUNCATION_NOTE =
   "Web chat links do not include the prompt in the URL; the full text is on your clipboard when you open the chat.";
 
-export const EXTERNAL_AI_URL_BEHAVIOR_NOTE =
-  "When you open a chat page, the prompt is already on your clipboard—paste it into the context window and press Enter, then paste the results back into OREO.";
+/** Shown after “Open in Claude, ChatGPT, Gemini, or DeepSeek.” on tabs that use external web chat + paste-back. */
+export const EXTERNAL_AI_URL_BEHAVIOR_NOTE = `When you open a chat page, the prompt is already on your clipboard—paste it into the context window and press Enter. Once you get the answer, you can copy (by pressing the copy button in your chat result) and paste the results back into OREO. This will paste the results, along with all the formatting specs into OREO. Once you press "Save", the results will be formatted in the right way.`;
 
 export function chatGptOpenStatusMessage(copyFailed: boolean): string {
   if (copyFailed) {

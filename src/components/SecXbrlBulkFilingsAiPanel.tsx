@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui";
+import { ProviderPublicLimitsSidePanel } from "@/components/credit-memo/ProviderPublicLimitsSidePanel";
 import type { AiProvider } from "@/lib/ai-provider";
 import { AI_PROVIDER_CHIP_SELECTED } from "@/lib/ai-provider";
-import { modelPayloadForRun, type ModelRunChoice } from "@/lib/ai-model-prefs-client";
+import { effectiveModelIdForRun, modelPayloadForRun, type ModelRunChoice } from "@/lib/ai-model-prefs-client";
+import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { presetsForProvider } from "@/lib/ai-model-options";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { fetchSavedTabContent } from "@/lib/saved-data-client";
@@ -322,6 +324,8 @@ export function SecXbrlBulkFilingsAiPanel({
 
       {showAiConsolidation ? (
       <Card title={`AI consolidation (all saved XBRL workbooks) — ${tk}`}>
+        <div className="flex flex-col lg:flex-row lg:gap-6 lg:items-start">
+          <div className="min-w-0 flex-1 space-y-3">
         <p className="text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
           Ingests every <span className="font-mono">SEC-XBRL-financials</span> <span className="font-mono">.xlsx</span> in{" "}
           <strong>Saved Documents</strong> for {tk} (all sheets as CSV text), then calls your selected model with a fixed
@@ -334,7 +338,7 @@ export function SecXbrlBulkFilingsAiPanel({
           are truncated near ~300k characters of ingested text — prefer running again after archiving very old exports if you
           hit limits.
         </p>
-        <div className="mt-3">
+        <div>
           <span className="text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
             Run via API
           </span>
@@ -404,7 +408,7 @@ export function SecXbrlBulkFilingsAiPanel({
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                               provider: p,
-                              maxTokens: 32768,
+                              maxTokens: LLM_MAX_OUTPUT_TOKENS,
                               ...modelPayloadForRun(p, choice),
                             }),
                           });
@@ -458,6 +462,17 @@ export function SecXbrlBulkFilingsAiPanel({
             {aiOkMsg}
           </p>
         ) : null}
+          </div>
+
+          <ProviderPublicLimitsSidePanel
+            multi={AI_CONSOLIDATE_PROVIDERS.map((p) => ({
+              provider: p,
+              resolvedModelId: effectiveModelIdForRun(p, consolidateModelChoice[p]),
+            }))}
+            className="w-full shrink-0 lg:sticky lg:top-4 lg:w-[min(100%,320px)]"
+          />
+        </div>
+
         <div
           className="mt-4 rounded border px-4 py-3"
           style={{ borderColor: "var(--accent)", background: "var(--card2)" }}

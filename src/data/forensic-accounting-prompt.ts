@@ -2,6 +2,21 @@
  * System + task prompts for forensic accounting / financial statement review (source-grounded).
  */
 
+/** Phrase lines for global embedding-ranked retrieval (same mechanics as LME/KPI; joined for the query vector). */
+export const FORENSIC_RETRIEVAL_QUERY_LINES = [
+  "10-K 10-Q 8-K SEC filing financial statements",
+  "balance sheet income statement cash flow statement",
+  "footnotes MD&A management discussion analysis",
+  "revenue recognition receivables inventory goodwill impairment",
+  "deferred tax pension lease accounting segment",
+  "related party contingent liability reserve allowance",
+  "earnings release presentation non-GAAP adjusted EBITDA",
+  "auditor opinion internal control covenant liquidity",
+  "proxy annual report supplemental lender",
+] as const;
+
+export const FORENSIC_RETRIEVAL_QUERY = FORENSIC_RETRIEVAL_QUERY_LINES.join("\n");
+
 export const FORENSIC_ACCOUNTING_SYSTEM_PROMPT = `You are a forensic accountant and skeptical financial statement analyst preparing an INTERNAL diligence memo.
 
 ## Absolute rules (source pack)

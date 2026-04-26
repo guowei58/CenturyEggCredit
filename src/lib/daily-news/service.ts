@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { withTransientPgRetry } from "@/lib/pg-connection-retry";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import { getWatchlistTickers } from "@/lib/user-workspace-store";
 import { buildDailyNewsPayload } from "./generate-batch";
@@ -8,17 +9,21 @@ import { lastNDateKeysInNy } from "./dates";
 const RETENTION_DAYS = 5;
 
 export async function listDailyNewsBatches(userId: string) {
-  return prisma.userDailyNewsBatch.findMany({
-    where: { userId },
-    orderBy: { batchDateKey: "desc" },
-    take: RETENTION_DAYS,
-  });
+  return withTransientPgRetry("listDailyNewsBatches", () =>
+    prisma.userDailyNewsBatch.findMany({
+      where: { userId },
+      orderBy: { batchDateKey: "desc" },
+      take: RETENTION_DAYS,
+    })
+  );
 }
 
 export async function getUnreadDailyNewsCount(userId: string): Promise<number> {
-  return prisma.userDailyNewsBatch.count({
-    where: { userId, isRead: false },
-  });
+  return withTransientPgRetry("getUnreadDailyNewsCount", () =>
+    prisma.userDailyNewsBatch.count({
+      where: { userId, isRead: false },
+    })
+  );
 }
 
 export async function markDailyNewsBatchRead(userId: string, batchId: string) {

@@ -140,9 +140,9 @@ export function BusinessModelTab({
   }
 
   return (
-    <Card title={`Business Model �?${safeTicker}`}>
+    <Card title={`Business Model - ${safeTicker}`}>
       <div className="flex flex-col gap-6 lg:flex-row">
-        {/* Saved response �?main, prominent section */}
+        {/* Saved response - main, prominent section */}
         <SavedResponseExpandableShell
           className="min-w-0 flex-1"
           ticker={safeTicker}
@@ -191,7 +191,7 @@ export function BusinessModelTab({
           )}
         </SavedResponseExpandableShell>
 
-        {/* Prompt + buttons �?compact sidebar */}
+        {/* Prompt + buttons - compact sidebar */}
         <div className="flex w-full flex-col lg:w-80 flex-shrink-0">
           <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
             {OPEN_IN_EXTERNAL_AI_FULL_LINE}

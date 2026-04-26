@@ -4,6 +4,7 @@
 
 import type { ChatConversationTurn } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
+import { DEEPSEEK_MAX_OUTPUT_TOKENS, LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/v1/chat/completions";
@@ -38,7 +39,7 @@ function deepSeekFetchTimeoutMs(override?: number): number {
 }
 
 function clampMaxTokens(requested: number): number {
-  const cap = 8192;
+  const cap = DEEPSEEK_MAX_OUTPUT_TOKENS;
   if (!Number.isFinite(requested) || requested < 1) return Math.min(4096, cap);
   return Math.min(Math.round(requested), cap);
 }
@@ -86,7 +87,7 @@ export async function callDeepSeek(
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const model = options.model?.trim() || getDeepSeekModel();
-  const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
+  const maxTokens = clampMaxTokens(options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS);
   const waitMs = deepSeekFetchTimeoutMs(options.fetchTimeoutMs);
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
@@ -134,7 +135,7 @@ export async function callDeepSeekConversation(
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
   const model = options.model?.trim() || getDeepSeekModel();
-  const maxTokens = clampMaxTokens(options.maxTokens ?? 4096);
+  const maxTokens = clampMaxTokens(options.maxTokens ?? LLM_MAX_OUTPUT_TOKENS);
   const waitMs = deepSeekFetchTimeoutMs(options.fetchTimeoutMs);
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
