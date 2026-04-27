@@ -213,7 +213,7 @@ export function LoginForm({
               className="font-medium underline underline-offset-2"
               style={{ color: "var(--accent)" }}
             >
-              Create an account
+              Create a Free Account
             </Link>
           </p>
         </div>

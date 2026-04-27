@@ -29,6 +29,7 @@ import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
 import { AiModelPicker } from "@/components/AiModelPicker";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
+import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
 
 const MAX_PENDING_ATTACHMENTS = 8;
 
@@ -78,6 +79,7 @@ export function ChatDrawer({
   const [input, setInput] = useState("");
   const [pendingAttachments, setPendingAttachments] = useState<AiChatAttachment[]>([]);
   const [dragOverInput, setDragOverInput] = useState(false);
+  const [sessionInboxFilter, setSessionInboxFilter] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Which message bubble last triggered copy (`${sessionId}-${i}-${role}`). */
@@ -336,6 +338,12 @@ export function ChatDrawer({
     [sessions]
   );
 
+  const sessionsFiltered = useMemo(() => {
+    const q = sessionInboxFilter.trim().toLowerCase();
+    if (!q) return sessionsSorted;
+    return sessionsSorted.filter((s) => (s.title || "New chat").toLowerCase().includes(q));
+  }, [sessionsSorted, sessionInboxFilter]);
+
   const addFilesFromList = useCallback(async (files: FileList | File[]) => {
     const list = Array.from(files);
     if (!list.length) return;
@@ -543,42 +551,117 @@ export function ChatDrawer({
   return (
     <>
       <div
-        className="fixed bottom-0 right-0 z-[199] flex h-full w-[min(100vw,680px)] flex-row border-l transition-transform duration-200 ease-out"
+        className="fixed bottom-0 right-0 z-[199] flex h-full w-[min(100vw,640px)] flex-col border-l transition-transform duration-200 ease-out"
         style={{
           background: "var(--sb)",
           borderColor: "var(--border2)",
           transform: open ? "translateX(0)" : "translateX(100%)",
         }}
       >
-        <aside
-          className="flex w-[min(100%,240px)] shrink-0 flex-col border-r sm:w-[min(100%,260px)]"
+        <div
+          className="flex shrink-0 items-center gap-3 border-b px-4 py-3 sm:px-5"
+          style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
+        >
+          <div
+            className="inline-flex size-12 shrink-0 items-center justify-center overflow-hidden p-1"
+            style={LOGO_MARK_CELL_BG}
+            aria-label="AI Chat"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- /public asset */}
+            <img
+              src="/ai-chat-icon.png"
+              alt=""
+              className="h-full w-full object-contain"
+              draggable={false}
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
+              {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
+            </div>
+            <div className="mt-0.5 text-[10px] leading-snug" style={{ color: "var(--muted)" }}>
+              {anthropicConfigured === null ||
+              openaiConfigured === null ||
+              geminiConfigured === null ||
+              deepseekConfigured === null
+                ? "Checking API…"
+                : providerReady
+                  ? <>
+                      Model chat with <span className="font-semibold" style={{ color: "var(--accent)" }}>{assistantLabel}</span> (
+                      {aiProvider === "openai"
+                        ? "OpenAI API"
+                        : aiProvider === "gemini"
+                          ? "Google Gemini API"
+                          : aiProvider === "deepseek"
+                            ? "DeepSeek API"
+                            : "Anthropic API"}
+                      )
+                    </>
+                  : aiProvider === "deepseek"
+                    ? "Add your DeepSeek API key in User Settings (gear icon), or a hosted account with DEEPSEEK_API_KEY on the server."
+                    : aiProvider === "gemini"
+                      ? "Add your Gemini API key in User Settings, or paste from aistudio.google.com."
+                      : "Add your Claude or OpenAI API key in User Settings, or use external AI in each tab."}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-shrink-0 rounded-md p-1.5 transition-colors hover:bg-[var(--card)]"
+            style={{ color: "var(--muted2)" }}
+            aria-label="Close AI Chat"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="flex min-h-0 min-w-0 flex-1 flex-row">
+          <aside
+          className="flex w-[min(100%,280px)] shrink-0 flex-col border-r"
           style={{ borderColor: "var(--border2)" }}
         >
-          <div className="shrink-0 border-b p-3" style={{ borderColor: "var(--border2)" }}>
-            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-              Chats
+          <div
+            className="flex shrink-0 flex-col gap-2 border-b p-3"
+            style={{ borderColor: "var(--border2)" }}
+          >
+            <input
+              type="search"
+              placeholder="Filter threads…"
+              value={sessionInboxFilter}
+              onChange={(e) => setSessionInboxFilter(e.target.value)}
+              className="w-full rounded border px-2 py-1.5 text-xs"
+              style={{ borderColor: "var(--border2)", background: "var(--card2)", color: "var(--text)" }}
+            />
+            <div className="grid grid-cols-1 gap-1.5">
+              <button
+                type="button"
+                onClick={startNewChat}
+                className="w-full rounded border px-2 py-1.5 text-[11px] font-semibold"
+                style={{ borderColor: "var(--accent)", color: "#0a0a0a", background: "var(--accent)" }}
+              >
+                New chat
+              </button>
             </div>
             {authStatus === "authenticated" && chatSym ? (
-              <p className="mt-1.5 text-xs leading-snug" style={{ color: "var(--muted2)" }}>
-                Every thread for <span className="font-mono">{chatSym}</span> is stored on your account. Tap one below to reopen it.
+              <p className="text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                Threads for <span className="font-mono">{chatSym}</span> are saved on your account. Tap below to reopen.
               </p>
             ) : authStatus !== "authenticated" ? (
-              <p className="mt-1.5 text-xs leading-snug" style={{ color: "var(--warn)" }}>
+              <p className="text-[10px] leading-snug" style={{ color: "var(--warn)" }}>
                 Sign in to save chat for each ticker and reload it later.
               </p>
             ) : null}
-            <button
-              type="button"
-              onClick={startNewChat}
-              className="mt-2.5 w-full rounded border px-2 py-1.5 text-[11px] font-semibold"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-            >
-              New chat
-            </button>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
+            {sessionsFiltered.length === 0 ? (
+              <p className="p-4 text-xs" style={{ color: "var(--muted2)" }}>
+                {sessionsSorted.length === 0
+                  ? "No threads yet — start with New chat."
+                  : "No matching threads. Try another filter, or start a new chat."}
+              </p>
+            ) : (
             <ul className="divide-y" style={{ borderColor: "var(--border2)" }}>
-              {sessionsSorted.map((s) => {
+              {sessionsFiltered.map((s) => {
                 const active = s.id === activeSessionId;
                 const shortDate = (() => {
                   try {
@@ -631,52 +714,12 @@ export function ChatDrawer({
                 );
               })}
             </ul>
+            )}
           </div>
         </aside>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div
-            className="flex shrink-0 items-center justify-between gap-2 border-b px-4 py-3"
-            style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
-          >
-            <div className="min-w-0">
-              <h2 className="truncate text-sm font-semibold" style={{ color: "var(--text)" }}>
-                {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
-              </h2>
-              <p className="mt-0.5 text-[10px] leading-snug" style={{ color: "var(--muted)" }}>
-                {anthropicConfigured === null ||
-                openaiConfigured === null ||
-                geminiConfigured === null ||
-                deepseekConfigured === null
-                  ? "Checking API…"
-                  : providerReady
-                    ? `Chat with ${assistantLabel} (${
-                        aiProvider === "openai"
-                          ? "OpenAI API"
-                          : aiProvider === "gemini"
-                            ? "Google Gemini API"
-                            : aiProvider === "deepseek"
-                              ? "DeepSeek API"
-                              : "Anthropic API"
-                      })`
-                    : aiProvider === "deepseek"
-                      ? "Add your DeepSeek API key in User Settings (gear icon), or use a hosted account with DEEPSEEK_API_KEY on the server."
-                      : aiProvider === "gemini"
-                        ? "Add your Gemini API key in User Settings (gear icon), or paste from the Gemini website."
-                        : "Add your Claude or OpenAI API key in User Settings (gear icon), or use the external AI buttons in each tab."}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="shrink-0 rounded border px-2 py-1 text-[10px] font-medium"
-              style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card2)" }}
-              aria-label="Close AI Chat"
-            >
-              Close
-            </button>
-          </div>
-          <div className="shrink-0 space-y-2 border-b px-4 py-3" style={{ borderColor: "var(--border2)", background: "var(--sb)" }}>
+          <div className="shrink-0 space-y-2 border-b px-5 py-3" style={{ borderColor: "var(--border2)", background: "var(--sb)" }}>
             <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
@@ -750,7 +793,7 @@ export function ChatDrawer({
             ) : null}
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-2">
           {messages.length === 0 ? (
             providerReady || aiProvider !== "deepseek" ? (
               <div>
@@ -787,7 +830,7 @@ export function ChatDrawer({
                     <>
                       <p className="mb-2">
                         Pick <strong>Claude</strong>, <strong>ChatGPT</strong>, <strong>Gemini</strong>, or <strong>DeepSeek</strong> in the
-                        header first.
+                        bar above first.
                       </p>
                       <p className="mb-2 whitespace-pre-line text-[12px] leading-relaxed" style={{ color: "var(--muted2)" }}>
                         {USER_LLM_API_KEYS_POLICY}
@@ -954,7 +997,7 @@ export function ChatDrawer({
         </div>
 
         <div
-          className="flex shrink-0 flex-col gap-3 border-t p-3"
+          className="flex shrink-0 flex-col gap-3 border-t p-5"
           style={{ background: "var(--sb)", borderColor: "var(--border2)" }}
         >
           <input
@@ -1107,7 +1150,7 @@ export function ChatDrawer({
               disabled={pending || (!input.trim() && pendingAttachments.length === 0) || !providerReady}
               onClick={() => void submitMessage()}
               className="flex-shrink-0 self-end rounded-lg border px-4 py-2 text-sm font-semibold disabled:opacity-50"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+              style={{ borderColor: "var(--accent)", background: "var(--accent)", color: "#0a0a0a" }}
             >
               Send
             </button>
@@ -1116,6 +1159,7 @@ export function ChatDrawer({
             .txt / .md / .csv paste as text. Large files are capped (~5 MB each, 8 per message). History keeps file names only, not
             full files. For peer chat, open <strong>Egg-Hoc Committee Chat</strong> (Pari Passu Pals).
           </p>
+        </div>
         </div>
         </div>
       </div>

@@ -40,6 +40,7 @@ import { RISK_FROM_10K_PROMPT_TEMPLATE } from "@/data/risk-from-10k-prompt";
 import { ORG_CHART_PROMPT_TEMPLATE, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
 import { INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE } from "@/data/industry-history-drivers-prompt";
 import { PORTERS_FIVE_FORCES_PROMPT_TEMPLATE } from "@/data/porters-five-forces-prompt";
+import { RECENT_EVENTS_PROMPT_TEMPLATE } from "@/data/recent-events-prompt";
 import { RESEARCH_ROADMAP_PROMPT_TEMPLATE } from "@/data/research-roadmap-prompt";
 import { STARTUP_RISKS_PROMPT_TEMPLATE } from "@/data/startup-risks-prompt";
 import { SUBSIDIARY_LIST_PROMPT_TEMPLATE } from "@/data/subsidiary-list-prompt";
@@ -92,6 +93,13 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       label: "Business overview",
       saveKey: "overview",
       prompt: ov("business-overview", OVERVIEW_PROMPT_TEMPLATE).replace(/\[COMPANY NAME\]/g, dn).replace(/\[TICKER\]/g, tk),
+    },
+    {
+      label: "Recent events",
+      saveKey: "recent-events",
+      prompt: ov("recent-events", RECENT_EVENTS_PROMPT_TEMPLATE)
+        .replace(/\[COMPANY NAME\]/g, dn)
+        .replace(/\[TICKER\]/g, tk),
     },
     {
       label: "Business model",
@@ -273,7 +281,11 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
  */
 const BULK_API_STAGGER_MS = 10_000;
 
-const BULK_API_RATE_LIMIT_MAX_ATTEMPTS = 5;
+/** Retries for each tab: rate limits, 5xx, timeouts, and flaky network. */
+const BULK_API_MAX_ATTEMPTS = 5;
+
+const SAVE_RETRIES = 3;
+const SAVE_RETRY_BASE_MS = 1_200;
 
 function delay(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
@@ -288,6 +300,54 @@ function isRateLimitError(httpStatus: number, message: string): boolean {
     m.includes("resource exhausted") ||
     m.includes("quota exceeded")
   );
+}
+
+/** True when a failed attempt is worth retrying (transient / overloaded). */
+function isRetryableBulkError(httpStatus: number, message: string): boolean {
+  if (isRateLimitError(httpStatus, message)) return true;
+  if (httpStatus === 502 || httpStatus === 503 || httpStatus === 504) return true;
+  if (httpStatus >= 500 && httpStatus <= 599) return true;
+  const m = message.toLowerCase();
+  return (
+    m.includes("timeout") ||
+    m.includes("timed out") ||
+    m.includes("econnreset") ||
+    m.includes("socket") ||
+    m.includes("fetch failed") ||
+    m.includes("failed to fetch") ||
+    m.includes("network") ||
+    m.includes("bad gateway") ||
+    m.includes("service unavailable") ||
+    m.includes("gateway time-out") ||
+    m.includes("overloaded") ||
+    m.includes("try again")
+  );
+}
+
+function isNonRetryableHttpStatus(status: number): boolean {
+  return status === 400 || status === 401 || status === 403 || status === 404 || status === 413;
+}
+
+function bulkAttemptBackoffMs(attemptIndex: number): number {
+  return 12_000 + attemptIndex * 10_000;
+}
+
+/**
+ * `saveToServer` can fail briefly (DB connection, host blip) while the model output is valid — retry a few times.
+ */
+async function saveToServerWithRetries(
+  ticker: string,
+  key: Parameters<typeof saveToServer>[1],
+  content: string
+): Promise<boolean> {
+  for (let s = 0; s < SAVE_RETRIES; s++) {
+    const ok = await saveToServer(ticker, key, content);
+    if (ok) return true;
+    if (s < SAVE_RETRIES - 1) {
+      await delay(SAVE_RETRY_BASE_MS * (s + 1));
+    }
+  }
+  return false;
 }
 
 export type BulkApiProgress = { index: number; total: number; label: string };
@@ -321,24 +381,39 @@ export async function runBulkUpdateViaApi(
     try {
       let lastErr = "";
 
-      for (let attempt = 0; attempt < BULK_API_RATE_LIMIT_MAX_ATTEMPTS; attempt++) {
-        const res = await fetch("/api/tab-prompt-complete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            provider,
-            userPrompt: e.prompt.trim(),
-            maxTokens: LLM_MAX_OUTPUT_TOKENS,
-            ...modelPayload,
-          }),
-        });
-        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+      for (let attempt = 0; attempt < BULK_API_MAX_ATTEMPTS; attempt++) {
+        let res: Response;
+        let data: { ok?: boolean; text?: string; error?: string };
+        try {
+          res = await fetch("/api/tab-prompt-complete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              provider,
+              userPrompt: e.prompt.trim(),
+              maxTokens: LLM_MAX_OUTPUT_TOKENS,
+              ...modelPayload,
+            }),
+          });
+          data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+        } catch (netErr) {
+          lastErr = netErr instanceof Error ? netErr.message : String(netErr);
+          const retryNet =
+            attempt < BULK_API_MAX_ATTEMPTS - 1 &&
+            isRetryableBulkError(0, lastErr);
+          if (retryNet) {
+            await delay(bulkAttemptBackoffMs(attempt));
+            continue;
+          }
+          throw new Error(lastErr);
+        }
+
         if (res.ok && data.ok === true && typeof data.text === "string") {
           const trimmed = data.text.trim();
-          const saved = await saveToServer(tk, e.saveKey, trimmed);
+          const saved = await saveToServerWithRetries(tk, e.saveKey, trimmed);
           if (!saved) {
             fail++;
-            errors.push(`${e.label}: model replied but save to disk failed`);
+            errors.push(`${e.label}: model replied but save failed after retries`);
           } else {
             ok++;
           }
@@ -346,9 +421,12 @@ export async function runBulkUpdateViaApi(
         }
 
         lastErr = data.error || `Request failed (${res.status})`;
-        const rateLimited = isRateLimitError(res.status, lastErr);
-        if (rateLimited && attempt < BULK_API_RATE_LIMIT_MAX_ATTEMPTS - 1) {
-          await delay(12_000 + attempt * 10_000);
+        if (isNonRetryableHttpStatus(res.status)) {
+          throw new Error(lastErr);
+        }
+        const retryable = isRetryableBulkError(res.status, lastErr);
+        if (retryable && attempt < BULK_API_MAX_ATTEMPTS - 1) {
+          await delay(bulkAttemptBackoffMs(attempt));
           continue;
         }
         throw new Error(lastErr);
