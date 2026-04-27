@@ -19,7 +19,7 @@ function pickText(v: unknown): string {
   return "";
 }
 
-/** Google News RSS often wraps the publisher URL on `<source url="...">`. */
+/** Google News `<source url="...">` is often the outlet homepage, not the story. Prefer item `<link>`. */
 function sourceHrefFromItem(row: Record<string, unknown>): string {
   const s = row.source;
   if (!s || typeof s !== "object") return "";
@@ -37,9 +37,9 @@ function normalizeItems(channel: unknown): RssArticle[] {
     const row = it as Record<string, unknown>;
     const title = pickText(row.title);
     const fromSource = sourceHrefFromItem(row);
-    const rawLink = pickText(row.link);
-    const link =
-      fromSource && !/news\.google\./i.test(fromSource) && !/google\.com\/url\?/i.test(fromSource) ? fromSource : rawLink;
+    const rawLink = pickText(row.link).trim();
+    /** Per-article URL lives on `<link>` (often news.google.com → publisher). Do not use `<source url>` for href — it is regularly the site root. */
+    const link = rawLink || fromSource;
     const pubDate = pickText(row.pubDate) || pickText(row["dc:date"]) || new Date().toISOString();
     const description =
       pickText(row.description) ||
@@ -66,10 +66,23 @@ export async function fetchRssFeed(url: string, max = 25): Promise<RssArticle[]>
 }
 
 /** Google News RSS search (public; rate-limit friendly). `when` e.g. `1d`, `7d`, `90d`. */
-export async function fetchGoogleNewsRssSearch(query: string, max = 15, when: string = "1d"): Promise<RssArticle[]> {
+export async function fetchGoogleNewsRssSearch(
+  query: string,
+  max = 15,
+  when: string = "1d",
+  /** When true, follow Google News redirect URLs to the publisher story (daily digest links). */
+  resolveArticleUrls = false
+): Promise<RssArticle[]> {
   const q = query.includes("when:") ? query : `${query} when:${when}`;
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`;
-  return fetchRssFeed(url, max);
+  const items = await fetchRssFeed(url, max);
+  if (!resolveArticleUrls) return items;
+  return Promise.all(
+    items.map(async (a) => ({
+      ...a,
+      link: await resolvePublisherUrlFromGoogleNewsRss(a.link),
+    }))
+  );
 }
 
 /**
@@ -91,7 +104,7 @@ export async function resolvePublisherUrlFromGoogleNewsRss(link: string, timeout
   return link;
 }
 
-/** @deprecated Use fetchGoogleNewsRssSearch — kept for daily-news callers using last-24h window */
+/** Daily news batch: same RSS as `fetchGoogleNewsRssSearch`, plus resolve story URLs out of Google News redirects. */
 export async function fetchGoogleNewsSearch(query: string, max = 15): Promise<RssArticle[]> {
-  return fetchGoogleNewsRssSearch(query, max, "1d");
+  return fetchGoogleNewsRssSearch(query, max, "1d", true);
 }
