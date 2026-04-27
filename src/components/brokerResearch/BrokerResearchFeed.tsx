@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
 import { PRODUCTION_BROKER_IDS } from "@/lib/brokerResearch/constants";
 import type {
   BrokerAccessLevel,
@@ -166,54 +167,53 @@ export function BrokerResearchFeed({
   if (!tk) return null;
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="rounded border border-dashed p-3 text-xs leading-relaxed" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-        This feature surfaces discoverable broker research links and metadata from public web search. Full report access may
-        require broker or client entitlements. No paywalled bodies are fetched or reproduced.
-      </p>
-
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs" style={{ color: "var(--muted2)" }}>
-          Uses Serper (Google search API). Set SERPER_API_KEY on the server.
-        </p>
-        <button
-          type="button"
-          onClick={() => void runSearch()}
-          disabled={loading}
-          className="tab-prompt-ai-action-btn"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          {loading ? "Searching…" : "Refresh"}
-        </button>
-      </div>
-
-      <BrokerResearchFilters
-        brokerFilter={brokerFilter}
-        onBrokerFilterChange={setBrokerFilter}
-        typeFilter={typeFilter}
-        onTypeFilterChange={setTypeFilter}
-        accessFilter={accessFilter}
-        onAccessFilterChange={setAccessFilter}
-        sortMode={sortMode}
-        onSortModeChange={setSortMode}
-        timelineMode={timelineMode}
-        onTimelineModeChange={setTimelineMode}
-        brokerIds={brokerIds}
-      />
-
-      <BrokerResearchStats data={data} />
-
-      {error && (
-        <p className="text-sm" style={{ color: "var(--danger)" }}>
-          {error}
-        </p>
-      )}
-
-      {!loading && data && visible.length === 0 && !error && (
+    <CompanyFeedTabShell
+      description={
+        <>
+          Discoverable broker research links and metadata from public web search. Full report access may require broker or client
+          entitlements. No paywalled bodies are fetched or reproduced. Uses Serper (Google search API) — set{" "}
+          <code className="text-[10px]" style={{ color: "var(--accent)" }}>
+            SERPER_API_KEY
+          </code>{" "}
+          on the server.
+        </>
+      }
+      onRefresh={() => void runSearch()}
+      refreshBusy={loading}
+      hasPayload={Boolean(data)}
+      sortValue={sortMode}
+      onSortChange={(v) => setSortMode(v as "relevance" | "recent")}
+      sortOptions={[
+        { value: "relevance", label: "Relevance" },
+        { value: "recent", label: "Date (most recent)" },
+      ]}
+      error={error}
+      filterSection={
+        <div className="space-y-4">
+          <BrokerResearchFilters
+            brokerFilter={brokerFilter}
+            onBrokerFilterChange={setBrokerFilter}
+            typeFilter={typeFilter}
+            onTypeFilterChange={setTypeFilter}
+            accessFilter={accessFilter}
+            onAccessFilterChange={setAccessFilter}
+            sortMode={sortMode}
+            onSortModeChange={setSortMode}
+            timelineMode={timelineMode}
+            onTimelineModeChange={setTimelineMode}
+            brokerIds={brokerIds}
+            omitSort
+          />
+          <BrokerResearchStats data={data} />
+        </div>
+      }
+      filterSectionTitle="Filters & display"
+    >
+      {!loading && data && visible.length === 0 && !error ? (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
           No results match the current filters.
         </p>
-      )}
+      ) : null}
 
       {timelineMode ? (
         <div className="flex flex-col gap-6">
@@ -241,6 +241,6 @@ export function BrokerResearchFeed({
           ))}
         </ul>
       )}
-    </div>
+    </CompanyFeedTabShell>
   );
 }

@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
 import type { SubstackSearchResponse } from "@/lib/substack/types";
+import { rankResults, type SortMode } from "@/lib/substack/search/rank";
 import { SubstackCoveragePanel } from "./SubstackCoveragePanel";
 import { SubstackSearchResults } from "./SubstackSearchResults";
 
@@ -31,7 +33,7 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<SubstackSearchResponse | null>(null);
-  const [sortMode, setSortMode] = useState<"relevance" | "recent" | "publication">("relevance");
+  const [sortMode, setSortMode] = useState<SortMode>("relevance");
   const [filterMode, setFilterMode] = useState<"all" | "indexed_only" | "live_only" | "high_confidence">("all");
   const [liveDiscovery, setLiveDiscovery] = useState(true);
 
@@ -78,74 +80,72 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
   }, [tk, name, liveDiscovery, sortMode, filterMode, updatePreferences]);
 
   const results = useMemo(() => data?.results ?? [], [data]);
+  const displayResults = useMemo(() => rankResults([...results], sortMode), [results, sortMode]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
-        <div>
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-            Sort
-          </div>
-          <select
-            value={sortMode}
-            onChange={(e) => setSortMode(e.target.value as typeof sortMode)}
-            className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
-            style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+    <CompanyFeedTabShell
+      description="Coverage-first discovery of public Substack posts mentioning this ticker. Indexed registry plus optional live Serper discovery. Results are saved per ticker until you refresh."
+      onRefresh={run}
+      refreshBusy={loading}
+      refreshDisabled={!tk}
+      hasPayload={Boolean(data)}
+      sortValue={sortMode}
+      onSortChange={(v) => setSortMode(v as SortMode)}
+      sortOptions={[
+        { value: "relevance", label: "Relevance" },
+        { value: "recent", label: "Date (most recent)" },
+        { value: "publication", label: "Publication (A–Z)" },
+      ]}
+      error={error}
+      showRefreshingBanner={Boolean(loading && data)}
+      emptyState={
+        !data && !loading && !error ? (
+          <p
+            className="rounded-md border border-dashed px-3 py-3 text-center text-sm leading-relaxed"
+            style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
           >
-            <option value="relevance">Relevance</option>
-            <option value="recent">Most recent</option>
-            <option value="publication">Publication</option>
-          </select>
-        </div>
-
-        <div>
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-            Filter
+            No saved Substack run for this ticker yet. Open <strong style={{ color: "var(--text)" }}>Search options & filters</strong> if
+            needed, then click <strong style={{ color: "var(--text)" }}>Load</strong>.
+          </p>
+        ) : undefined
+      }
+      filterSection={
+        <div className="space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <div>
+              <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+                Result filter
+              </div>
+              <select
+                value={filterMode}
+                onChange={(e) => setFilterMode(e.target.value as typeof filterMode)}
+                className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
+                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+              >
+                <option value="all">All results</option>
+                <option value="indexed_only">Indexed only</option>
+                <option value="live_only">Live discovery only</option>
+                <option value="high_confidence">High confidence only</option>
+              </select>
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
+              <input type="checkbox" checked={liveDiscovery} onChange={(e) => setLiveDiscovery(e.target.checked)} />
+              Live discovery (Serper)
+            </label>
           </div>
-          <select
-            value={filterMode}
-            onChange={(e) => setFilterMode(e.target.value as typeof filterMode)}
-            className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
-            style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-          >
-            <option value="all">All results</option>
-            <option value="indexed_only">Indexed only</option>
-            <option value="live_only">Live discovery only</option>
-            <option value="high_confidence">High confidence only</option>
-          </select>
+          <details className="rounded-md border px-3 py-2" style={{ borderColor: "var(--border2)" }}>
+            <summary className="cursor-pointer text-xs font-semibold" style={{ color: "var(--muted2)" }}>
+              Coverage & index
+            </summary>
+            <div className="mt-3">
+              <SubstackCoveragePanel data={data} />
+            </div>
+          </details>
         </div>
-
-        <label className="flex cursor-pointer items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
-          <input type="checkbox" checked={liveDiscovery} onChange={(e) => setLiveDiscovery(e.target.checked)} />
-          Live discovery (Serper)
-        </label>
-
-        <button
-          type="button"
-          onClick={run}
-          disabled={loading || !tk}
-          className="rounded border px-4 py-2 text-sm font-medium disabled:opacity-60"
-          style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-        >
-          Refresh
-        </button>
-      </div>
-
-      {error ? (
-        <div className="rounded border border-dashed p-2 text-xs" style={{ borderColor: "var(--warn)", color: "var(--warn)" }}>
-          {error}
-        </div>
-      ) : null}
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <SubstackSearchResults items={results} ticker={tk} />
-        </div>
-        <div className="space-y-3">
-          <SubstackCoveragePanel data={data} />
-        </div>
-      </div>
-    </div>
+      }
+      filterSectionTitle="Search options & filters"
+    >
+      <SubstackSearchResults items={displayResults} ticker={tk} />
+    </CompanyFeedTabShell>
   );
 }
-

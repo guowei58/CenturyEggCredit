@@ -33,6 +33,7 @@ export function BrokerResearchFilters({
   timelineMode,
   onTimelineModeChange,
   brokerIds,
+  omitSort = false,
 }: {
   brokerFilter: string | "all";
   onBrokerFilterChange: (v: string | "all") => void;
@@ -45,6 +46,8 @@ export function BrokerResearchFilters({
   timelineMode: boolean;
   onTimelineModeChange: (v: boolean) => void;
   brokerIds: string[];
+  /** When true, hide the Sort control (parent shell owns sort). */
+  omitSort?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
@@ -102,20 +105,22 @@ export function BrokerResearchFilters({
           ))}
         </select>
       </div>
-      <div>
-        <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-          Sort
+      {!omitSort ? (
+        <div>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+            Sort
+          </div>
+          <select
+            value={sortMode}
+            onChange={(e) => onSortModeChange(e.target.value as "relevance" | "recent")}
+            className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
+            style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+          >
+            <option value="relevance">Relevance</option>
+            <option value="recent">Most recent</option>
+          </select>
         </div>
-        <select
-          value={sortMode}
-          onChange={(e) => onSortModeChange(e.target.value as "relevance" | "recent")}
-          className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          <option value="relevance">Relevance</option>
-          <option value="recent">Most recent</option>
-        </select>
-      </div>
+      ) : null}
       <label className="flex cursor-pointer items-center gap-2 text-sm" style={{ color: "var(--muted2)" }}>
         <input type="checkbox" checked={timelineMode} onChange={(e) => onTimelineModeChange(e.target.checked)} />
         Group by date (timeline)

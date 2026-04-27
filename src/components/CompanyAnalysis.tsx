@@ -306,7 +306,12 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     return <CompanyLmeAnalysisTab ticker={ticker ?? ""} />;
   }
   if (tabId === "ratings-research-links") {
-    return <RatingsResearchLinks ticker={ticker} companyName={companyName} />;
+    const sym = ticker?.trim().toUpperCase() ?? "";
+    return (
+      <Card title={sym ? `Ratings Research Links — ${sym}` : "Ratings Research Links"}>
+        <RatingsResearchLinks ticker={ticker} companyName={companyName} />
+      </Card>
+    );
   }
   if (tabId === "broker-research-reports") {
     return <CompanyBrokerResearchTab ticker={ticker} companyName={companyName} />;

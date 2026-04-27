@@ -23,15 +23,24 @@ import {
   prepareFileForAiChat,
   readTextFileForAppend,
 } from "@/lib/ai-chat-attachments-client";
-import { aiProviderChipStyle, type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
+import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
-import { GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
 import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
 import { AiModelPicker } from "@/components/AiModelPicker";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
 const MAX_PENDING_ATTACHMENTS = 8;
+
+/** Match Egg-Hoc Committee Chat provider / secondary buttons (outline, accent when selected). */
+function eggHocOutlineChip(active: AiProvider, chip: AiProvider) {
+  const on = active === chip;
+  return {
+    borderColor: on ? "var(--accent)" : "var(--border2)",
+    color: on ? "var(--accent)" : "var(--muted2)",
+    background: on ? "rgba(0,212,170,0.08)" : "var(--card2)",
+  } as const;
+}
 
 function snippetForAiReplyTarget(m: AiChatMessage): string {
   if (m.role === "assistant") {
@@ -534,162 +543,162 @@ export function ChatDrawer({
   return (
     <>
       <div
-        className="fixed bottom-0 right-0 z-[199] flex h-full w-[min(100vw,580px)] flex-row border-l transition-transform duration-200 ease-out"
+        className="fixed bottom-0 right-0 z-[199] flex h-full w-[min(100vw,680px)] flex-row border-l transition-transform duration-200 ease-out"
         style={{
-          background: "var(--panel)",
-          borderColor: "var(--border)",
+          background: "var(--sb)",
+          borderColor: "var(--border2)",
           transform: open ? "translateX(0)" : "translateX(100%)",
         }}
       >
         <aside
-          className="flex w-[132px] flex-shrink-0 flex-col border-r sm:w-[168px]"
-          style={{ background: "var(--sb)", borderColor: "var(--border)" }}
+          className="flex w-[min(100%,240px)] shrink-0 flex-col border-r sm:w-[min(100%,260px)]"
+          style={{ borderColor: "var(--border2)" }}
         >
-          <div
-            className="flex-shrink-0 border-b px-2 py-2.5"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <div className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted2)" }}>
+          <div className="shrink-0 border-b p-3" style={{ borderColor: "var(--border2)" }}>
+            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
               Chats
             </div>
             {authStatus === "authenticated" && chatSym ? (
-              <p className="mt-1.5 text-[9px] leading-snug" style={{ color: "var(--muted2)" }}>
-                Every thread for <span className="font-mono">{chatSym}</span> is stored on your account. Tap one below to
-                reopen it.
+              <p className="mt-1.5 text-xs leading-snug" style={{ color: "var(--muted2)" }}>
+                Every thread for <span className="font-mono">{chatSym}</span> is stored on your account. Tap one below to reopen it.
               </p>
             ) : authStatus !== "authenticated" ? (
-              <p className="mt-1.5 text-[9px] leading-snug" style={{ color: "var(--warn)" }}>
+              <p className="mt-1.5 text-xs leading-snug" style={{ color: "var(--warn)" }}>
                 Sign in to save chat for each ticker and reload it later.
               </p>
             ) : null}
+            <button
+              type="button"
+              onClick={startNewChat}
+              className="mt-2.5 w-full rounded border px-2 py-1.5 text-[11px] font-semibold"
+              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+            >
+              New chat
+            </button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
-            {sessionsSorted.map((s) => {
-              const active = s.id === activeSessionId;
-              const shortDate = (() => {
-                try {
-                  const d = new Date(s.updatedAt);
-                  const now = new Date();
-                  const sameYear = d.getFullYear() === now.getFullYear();
-                  return d.toLocaleDateString(
-                    undefined,
-                    sameYear
-                      ? { month: "short", day: "numeric" }
-                      : { month: "short", day: "numeric", year: "numeric" }
-                  );
-                } catch {
-                  return "";
-                }
-              })();
-              return (
-                <div key={s.id} className="group relative mb-1">
-                  <button
-                    type="button"
-                    onClick={() => selectSession(s.id)}
-                    className="w-full rounded border px-1.5 py-1.5 text-left text-[11px] leading-snug transition-colors"
-                    style={{
-                      borderColor: active ? "var(--accent)" : "var(--border2)",
-                      background: active ? "rgba(0,212,170,0.12)" : "var(--card)",
-                      color: "var(--text)",
-                      fontWeight: active ? 600 : 400,
-                    }}
-                  >
-                    <span className="line-clamp-2">{s.title || "New chat"}</span>
-                    {shortDate ? (
-                      <span className="mt-0.5 block text-[9px] font-normal" style={{ color: "var(--muted)" }}>
-                        {shortDate}
-                      </span>
-                    ) : null}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => deleteSession(s.id, e)}
-                    className="absolute right-0.5 top-0.5 rounded px-1 text-[10px] opacity-0 transition-opacity group-hover:opacity-100 hover:bg-[var(--danger)] hover:text-white"
-                    style={{ color: "var(--muted2)" }}
-                    aria-label="Delete chat"
-                    title="Delete"
-                  >
-                    ×
-                  </button>
-                </div>
-              );
-            })}
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <ul className="divide-y" style={{ borderColor: "var(--border2)" }}>
+              {sessionsSorted.map((s) => {
+                const active = s.id === activeSessionId;
+                const shortDate = (() => {
+                  try {
+                    const d = new Date(s.updatedAt);
+                    const now = new Date();
+                    const sameYear = d.getFullYear() === now.getFullYear();
+                    return d.toLocaleDateString(
+                      undefined,
+                      sameYear
+                        ? { month: "short", day: "numeric" }
+                        : { month: "short", day: "numeric", year: "numeric" }
+                    );
+                  } catch {
+                    return "";
+                  }
+                })();
+                return (
+                  <li key={s.id} className="group relative">
+                    <button
+                      type="button"
+                      onClick={() => selectSession(s.id)}
+                      className="w-full px-3 py-2.5 text-left transition-colors hover:bg-[var(--card)]"
+                      style={{
+                        background: active ? "var(--card2)" : undefined,
+                        borderLeft: active ? "3px solid var(--accent)" : "3px solid transparent",
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="line-clamp-2 text-xs font-semibold" style={{ color: "var(--text)" }}>
+                          {s.title || "New chat"}
+                        </span>
+                      </div>
+                      {shortDate ? (
+                        <p className="mt-0.5 text-[9px]" style={{ color: "var(--muted)" }}>
+                          {shortDate}
+                        </p>
+                      ) : null}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => deleteSession(s.id, e)}
+                      className="absolute right-1 top-1 rounded px-1 text-[10px] opacity-0 transition-opacity group-hover:opacity-100 hover:bg-[var(--danger)] hover:text-white"
+                      style={{ color: "var(--muted2)" }}
+                      aria-label="Delete chat"
+                      title="Delete"
+                    >
+                      ×
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div
-            className="flex-shrink-0 border-b px-4 py-3 sm:px-5 sm:py-4"
-            style={{ background: "var(--sb)", borderColor: "var(--border)" }}
+            className="flex shrink-0 items-center justify-between gap-2 border-b px-4 py-3"
+            style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
           >
-            <div className="flex items-center gap-3">
-              <img src="/ai-chat-icon.png" alt="" className="size-8 shrink-0 rounded-md" />
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold tracking-tight" style={{ color: "var(--text)" }}>
-                  {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
-                </div>
-                <div className="mt-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
-                  {anthropicConfigured === null ||
-                  openaiConfigured === null ||
-                  geminiConfigured === null ||
-                  deepseekConfigured === null
-                    ? "Checking API…"
-                    : providerReady
-                      ? `Chat with ${assistantLabel} (${
-                          aiProvider === "openai"
-                            ? "OpenAI API"
-                            : aiProvider === "gemini"
-                              ? "Google Gemini API"
-                              : aiProvider === "deepseek"
-                                ? "DeepSeek API"
-                                : "Anthropic API"
-                        })`
-                      : aiProvider === "deepseek"
-                        ? "Add your DeepSeek API key in User Settings (gear icon), or use a hosted account with DEEPSEEK_API_KEY on the server."
-                        : aiProvider === "gemini"
-                          ? "Add your Gemini API key in User Settings (gear icon), or paste from the Gemini website."
-                          : "Add your Claude or OpenAI API key in User Settings (gear icon), or use the external AI buttons in each tab."}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={startNewChat}
-                className="flex-shrink-0 rounded-md border px-2 py-1 text-[10px] font-medium"
-                style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
-              >
-                New chat
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-shrink-0 rounded-md p-1.5 transition-colors hover:bg-[var(--card)]"
-                style={{ color: "var(--muted2)" }}
-              >
-                ✕
-              </button>
+            <div className="min-w-0">
+              <h2 className="truncate text-sm font-semibold" style={{ color: "var(--text)" }}>
+                {chatSym ? `AI Chat — ${chatSym}` : "AI Chat"}
+              </h2>
+              <p className="mt-0.5 text-[10px] leading-snug" style={{ color: "var(--muted)" }}>
+                {anthropicConfigured === null ||
+                openaiConfigured === null ||
+                geminiConfigured === null ||
+                deepseekConfigured === null
+                  ? "Checking API…"
+                  : providerReady
+                    ? `Chat with ${assistantLabel} (${
+                        aiProvider === "openai"
+                          ? "OpenAI API"
+                          : aiProvider === "gemini"
+                            ? "Google Gemini API"
+                            : aiProvider === "deepseek"
+                              ? "DeepSeek API"
+                              : "Anthropic API"
+                      })`
+                    : aiProvider === "deepseek"
+                      ? "Add your DeepSeek API key in User Settings (gear icon), or use a hosted account with DEEPSEEK_API_KEY on the server."
+                      : aiProvider === "gemini"
+                        ? "Add your Gemini API key in User Settings (gear icon), or paste from the Gemini website."
+                        : "Add your Claude or OpenAI API key in User Settings (gear icon), or use the external AI buttons in each tab."}
+              </p>
             </div>
-            <div className="mt-2 inline-flex flex-wrap rounded border overflow-hidden" style={{ borderColor: "var(--border2)" }}>
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 rounded border px-2 py-1 text-[10px] font-medium"
+              style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card2)" }}
+              aria-label="Close AI Chat"
+            >
+              Close
+            </button>
+          </div>
+          <div className="shrink-0 space-y-2 border-b px-4 py-3" style={{ borderColor: "var(--border2)", background: "var(--sb)" }}>
+            <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
                 onClick={() => persistProvider("claude")}
-                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide"
-                style={aiProviderChipStyle(aiProvider, "claude")}
+                className="rounded border px-2 py-1.5 text-[11px] font-semibold"
+                style={eggHocOutlineChip(aiProvider, "claude")}
               >
                 Claude
               </button>
               <button
                 type="button"
                 onClick={() => persistProvider("openai")}
-                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "openai") }}
+                className="rounded border px-2 py-1.5 text-[11px] font-semibold"
+                style={eggHocOutlineChip(aiProvider, "openai")}
               >
                 ChatGPT
               </button>
               <button
                 type="button"
                 onClick={() => persistProvider("gemini")}
-                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "gemini") }}
+                className="rounded border px-2 py-1.5 text-[11px] font-semibold"
+                style={eggHocOutlineChip(aiProvider, "gemini")}
                 title="Google Gemini (GEMINI_API_KEY / GEMINI_MODEL)"
               >
                 Gemini
@@ -697,14 +706,14 @@ export function ChatDrawer({
               <button
                 type="button"
                 onClick={() => persistProvider("deepseek")}
-                className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wide border-l"
-                style={{ borderColor: "var(--border2)", ...aiProviderChipStyle(aiProvider, "deepseek") }}
+                className="rounded border px-2 py-1.5 text-[11px] font-semibold"
+                style={eggHocOutlineChip(aiProvider, "deepseek")}
                 title="DeepSeek (DEEPSEEK_API_KEY / DEEPSEEK_MODEL or User Settings)"
               >
                 DeepSeek
               </button>
             </div>
-            <AiModelPicker provider={aiProvider} className="mt-2" />
+            <AiModelPicker provider={aiProvider} className="block" />
             {ticker?.trim() ? (
               <div className="mt-2">
                 <label className="flex cursor-pointer items-start gap-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
@@ -741,16 +750,16 @@ export function ChatDrawer({
             ) : null}
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
           {messages.length === 0 ? (
             providerReady || aiProvider !== "deepseek" ? (
               <div>
-                <div className="mb-1.5 text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
+                <span className="px-1 text-[10px] font-medium" style={{ color: "var(--muted)" }}>
                   {assistantLabel}
-                </div>
+                </span>
                 <div
-                  className="rounded-lg border p-4 text-sm leading-relaxed"
-                  style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
+                  className="mt-0.5 max-w-[min(100%,340px)] rounded-lg border px-3 py-2 text-sm leading-relaxed"
+                  style={{ background: "var(--card2)", borderColor: "var(--border2)", color: "var(--text)" }}
                 >
                   {providerReady ? (
                     <>
@@ -793,7 +802,7 @@ export function ChatDrawer({
               </div>
             ) : null
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               {messages.map((m, i) => {
                 const bubbleKey = `${activeSessionId ?? "x"}-${i}-${m.role}`;
                 const prevTurn = i > 0 ? messages[i - 1] : null;
@@ -816,51 +825,21 @@ export function ChatDrawer({
                 const canCopy = copyText.trim().length > 0;
                 const replySnippet = snippetForAiReplyTarget(m);
                 const canReply = replySnippet.length > 0;
+                const mine = m.role === "user";
 
                 return (
-                  <div key={bubbleKey}>
-                    <div className="mb-1.5 flex items-center justify-between gap-2">
-                      <div className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
-                        {m.role === "user" ? "You" : assistantLabel}
-                      </div>
-                      <div className="flex shrink-0 gap-1">
-                        {canReply ? (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setReplyTarget({
-                                role: m.role === "assistant" ? "assistant" : "user",
-                                snippet: replySnippet,
-                              })
-                            }
-                            className="rounded border px-2 py-0.5 text-[9px] font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                            style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card)" }}
-                          >
-                            Reply
-                          </button>
-                        ) : null}
-                        {canCopy ? (
-                          <button
-                            type="button"
-                            onClick={() => void copyMessageToClipboard(bubbleKey, copyText)}
-                            className="rounded border px-2 py-0.5 text-[9px] font-medium transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                            style={{
-                              borderColor: "var(--border2)",
-                              color: copiedMessageKey === bubbleKey ? "var(--accent)" : "var(--muted2)",
-                              background: "var(--card)",
-                            }}
-                            aria-label={m.role === "user" ? "Copy question" : "Copy answer"}
-                          >
-                            {copiedMessageKey === bubbleKey ? "Copied!" : "Copy"}
-                          </button>
-                        ) : null}
-                      </div>
-                    </div>
+                  <div
+                    key={bubbleKey}
+                    className={`flex flex-col gap-0.5 ${mine ? "items-end" : "items-start"}`}
+                  >
+                    <span className="px-1 text-[10px] font-medium" style={{ color: "var(--muted)" }}>
+                      {mine ? "You" : assistantLabel}
+                    </span>
                     {m.role === "user" ? (
                       <div
-                        className="rounded-lg border p-3 text-sm leading-relaxed"
+                        className="max-w-[min(100%,340px)] rounded-lg border px-3 py-2 text-sm leading-relaxed"
                         style={{
-                          background: "var(--card2)",
+                          background: "rgba(0,212,170,0.08)",
                           borderColor: "var(--accent)",
                           color: "var(--text)",
                         }}
@@ -875,7 +854,7 @@ export function ChatDrawer({
                                 <div className="font-semibold" style={{ color: "var(--muted)" }}>
                                   Replying to {u.replyTo.role === "assistant" ? assistantLabel : "you (earlier)"}
                                 </div>
-                                <div className="line-clamp-4 whitespace-pre-wrap">{u.replyTo.snippet}</div>
+                                <div className="line-clamp-4 whitespace-pre-wrap break-words">{u.replyTo.snippet}</div>
                               </div>
                             ) : null}
                             {u.attachments && u.attachments.length > 0 ? (
@@ -902,14 +881,14 @@ export function ChatDrawer({
                                 )}
                               </div>
                             ) : null}
-                            {u.content ? <div className="whitespace-pre-wrap">{u.content}</div> : null}
+                            {u.content ? <div className="whitespace-pre-wrap break-words">{u.content}</div> : null}
                           </>
                         ) : null}
                       </div>
                     ) : (
                       <div
-                        className="rounded-lg border p-3 text-sm leading-relaxed"
-                        style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
+                        className="max-w-[min(100%,340px)] rounded-lg border px-3 py-2 text-sm leading-relaxed"
+                        style={{ background: "var(--card2)", borderColor: "var(--border2)", color: "var(--text)" }}
                       >
                         {prevUserReplyTo ? (
                           <div
@@ -920,12 +899,42 @@ export function ChatDrawer({
                               Referenced in your question (
                               {prevUserReplyTo.role === "assistant" ? assistantLabel : "your earlier message"})
                             </div>
-                            <div className="line-clamp-4 whitespace-pre-wrap">{prevUserReplyTo.snippet}</div>
+                            <div className="line-clamp-4 whitespace-pre-wrap break-words">{prevUserReplyTo.snippet}</div>
                           </div>
                         ) : null}
                         <SavedRichText content={m.content} />
                       </div>
                     )}
+                    <div
+                      className="mt-1 flex max-w-[min(100%,340px)] flex-wrap items-center gap-x-2 text-[9px]"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      {canReply ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setReplyTarget({
+                              role: m.role === "assistant" ? "assistant" : "user",
+                              snippet: replySnippet,
+                            })
+                          }
+                          className="underline"
+                        >
+                          Reply
+                        </button>
+                      ) : null}
+                      {canCopy ? (
+                        <button
+                          type="button"
+                          onClick={() => void copyMessageToClipboard(bubbleKey, copyText)}
+                          className="underline"
+                          style={{ color: copiedMessageKey === bubbleKey ? "var(--accent)" : undefined }}
+                          aria-label={m.role === "user" ? "Copy question" : "Copy answer"}
+                        >
+                          {copiedMessageKey === bubbleKey ? "Copied!" : "Copy"}
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
                 );
               })}
@@ -945,8 +954,8 @@ export function ChatDrawer({
         </div>
 
         <div
-          className="flex flex-shrink-0 flex-col gap-3 border-t p-4"
-          style={{ background: "var(--sb)", borderColor: "var(--border)" }}
+          className="flex shrink-0 flex-col gap-3 border-t p-3"
+          style={{ background: "var(--sb)", borderColor: "var(--border2)" }}
         >
           <input
             ref={fileInputRef}
@@ -1078,8 +1087,8 @@ export function ChatDrawer({
                 }
                 rows={2}
                 disabled={pending || !providerReady}
-                className="min-h-[44px] max-h-[120px] w-full resize-y rounded-lg border bg-[var(--card)] px-3 py-2.5 pr-10 text-sm leading-snug text-[var(--text)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
-                style={{ borderColor: dragOverInput ? "var(--accent)" : "var(--border)" }}
+                className="min-h-[44px] max-h-[120px] w-full resize-y rounded-lg border bg-[var(--card)] px-3 py-2 pr-10 text-sm leading-snug text-[var(--text)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
+                style={{ borderColor: dragOverInput ? "var(--accent)" : "var(--border2)" }}
               />
               <button
                 type="button"
@@ -1097,12 +1106,10 @@ export function ChatDrawer({
               type="button"
               disabled={pending || (!input.trim() && pendingAttachments.length === 0) || !providerReady}
               onClick={() => void submitMessage()}
-              className="flex-shrink-0 self-end rounded-lg px-3 py-2.5 text-sm font-semibold text-black hover:opacity-90 disabled:opacity-40"
-              style={{
-                background: aiProvider === "gemini" ? GEMINI_UI_BUTTON_COLOR : "var(--accent)",
-              }}
+              className="flex-shrink-0 self-end rounded-lg border px-4 py-2 text-sm font-semibold disabled:opacity-50"
+              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
             >
-              ↑
+              Send
             </button>
           </div>
           <p className="text-[9px] leading-snug" style={{ color: "var(--muted2)" }}>

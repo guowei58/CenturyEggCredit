@@ -7,6 +7,7 @@ export function XSearchFilters({
   onLanguageChange,
   sortMode,
   onSortModeChange,
+  omitSort = false,
 }: {
   includeRetweets: boolean;
   onIncludeRetweetsChange: (v: boolean) => void;
@@ -14,6 +15,7 @@ export function XSearchFilters({
   onLanguageChange: (v: string) => void;
   sortMode: "relevance" | "recent" | "engagement";
   onSortModeChange: (v: "relevance" | "recent" | "engagement") => void;
+  omitSort?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
@@ -33,21 +35,23 @@ export function XSearchFilters({
           placeholder="en"
         />
       </div>
-      <div>
-        <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-          Sort
+      {!omitSort ? (
+        <div>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+            Sort
+          </div>
+          <select
+            value={sortMode}
+            onChange={(e) => onSortModeChange(e.target.value as typeof sortMode)}
+            className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
+            style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+          >
+            <option value="relevance">Relevance</option>
+            <option value="recent">Most recent</option>
+            <option value="engagement">Highest engagement</option>
+          </select>
         </div>
-        <select
-          value={sortMode}
-          onChange={(e) => onSortModeChange(e.target.value as typeof sortMode)}
-          className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          <option value="relevance">Relevance</option>
-          <option value="recent">Most recent</option>
-          <option value="engagement">Highest engagement</option>
-        </select>
-      </div>
+      ) : null}
     </div>
   );
 }

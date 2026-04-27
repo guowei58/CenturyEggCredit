@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
 import type { NormalizedXPost, XSearchResponse } from "@/lib/xSearch/types";
 import { XSearchCard } from "./XSearchCard";
 import { XSearchFilters } from "./XSearchFilters";
@@ -124,12 +125,20 @@ export function XSearchFeed({ ticker, companyName }: { ticker: string; companyNa
   if (!tk) return null;
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="rounded border border-dashed p-3 text-xs leading-relaxed" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-        Uses the official X API (no scraping). Last refresh per ticker is remembered on your account for quick reload.
-      </p>
-
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <CompanyFeedTabShell
+      description="Uses the official X API (no scraping). Last refresh per ticker is remembered on your account for quick reload."
+      onRefresh={() => void run()}
+      refreshBusy={loading}
+      hasPayload={Boolean(data)}
+      sortValue={sortMode}
+      onSortChange={(v) => setSortMode(v as typeof sortMode)}
+      sortOptions={[
+        { value: "relevance", label: "Relevance" },
+        { value: "recent", label: "Date (most recent)" },
+        { value: "engagement", label: "Engagement" },
+      ]}
+      error={error}
+      filterSection={
         <XSearchFilters
           includeRetweets={includeRetweets}
           onIncludeRetweetsChange={setIncludeRetweets}
@@ -137,32 +146,17 @@ export function XSearchFeed({ ticker, companyName }: { ticker: string; companyNa
           onLanguageChange={setLanguage}
           sortMode={sortMode}
           onSortModeChange={setSortMode}
+          omitSort
         />
-        <button
-          type="button"
-          onClick={() => void run()}
-          disabled={loading}
-          className="tab-prompt-ai-action-btn"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          {loading ? "Searching…" : "Refresh"}
-        </button>
-      </div>
-
-      <XSearchStats data={data} />
-
-      {error && (
-        <p className="rounded border border-dashed p-3 text-sm" style={{ borderColor: "var(--danger)", color: "var(--danger)" }}>
-          {error}
-        </p>
-      )}
-
-      {!loading && !error && data && posts.length === 0 && (
+      }
+      filterSectionTitle="Post filters"
+      statsSection={<XSearchStats data={data} />}
+    >
+      {!loading && !error && data && posts.length === 0 ? (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
-          No posts returned. Try including retweets or changing language.
+          No posts returned. Try including retweets or changing language in filters.
         </p>
-      )}
-
+      ) : null}
       <ul className="flex flex-col gap-3">
         {posts.map((p) => (
           <li key={p.id}>
@@ -170,7 +164,7 @@ export function XSearchFeed({ ticker, companyName }: { ticker: string; companyNa
           </li>
         ))}
       </ul>
-    </div>
+    </CompanyFeedTabShell>
   );
 }
 

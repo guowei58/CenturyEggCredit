@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
 import { rankArticles } from "@/lib/news/rank";
 import type { NewsAggregationResponse, NewsQueryParams } from "@/lib/news/types";
 import { NewsCard } from "./NewsCard";
-import { NewsFilters } from "./NewsFilters";
 
 const CACHE_PREFIX = "century-egg-news:";
 
@@ -119,25 +119,38 @@ export function NewsFeed({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="max-w-[52rem] text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
+    <CompanyFeedTabShell
+      description={
+        <>
           Yahoo Finance headlines for this symbol (often including company releases) plus Google News from major outlets — WSJ, FT,
-          Bloomberg, Yahoo Finance, Reuters, and AP. Results stay saved for this ticker until you refresh. Use aliases below to tune the
-          Google News search and on-page relevance; change sort without refetching.
-        </p>
-        <button
-          type="button"
-          onClick={() => void fetchNews()}
-          disabled={loading}
-          className="tab-prompt-ai-action-btn shrink-0"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          {loading ? "Loading…" : payload ? "Refresh" : "Load news"}
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-2">
+          Bloomberg, Yahoo Finance, Reuters, and AP. Results stay saved for this ticker until you refresh. Use optional aliases (below) to
+          tune the Google News query and on-page relevance; you can change sort without refetching.
+        </>
+      }
+      onRefresh={() => void fetchNews()}
+      refreshBusy={loading}
+      hasPayload={Boolean(payload)}
+      refreshLabel={payload ? "Refresh" : "Load news"}
+      sortValue={sortMode}
+      onSortChange={(v) => setSortMode(v as "relevance" | "recent")}
+      sortOptions={[
+        { value: "relevance", label: "Relevance" },
+        { value: "recent", label: "Date (most recent)" },
+      ]}
+      error={error}
+      showRefreshingBanner={Boolean(loading && payload)}
+      emptyState={
+        !payload && !loading && !error ? (
+          <p
+            className="rounded-md border border-dashed px-3 py-3 text-center text-sm leading-relaxed"
+            style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+          >
+            No saved news for this ticker yet. Click <strong style={{ color: "var(--text)" }}>Load news</strong> to fetch; results stay
+            here until you refresh.
+          </p>
+        ) : undefined
+      }
+      filterSection={
         <label className="text-[11px]" style={{ color: "var(--muted2)" }}>
           <span className="mb-1 block font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
             Search aliases (optional)
@@ -146,52 +159,28 @@ export function NewsFeed({
             type="text"
             value={aliasesText}
             onChange={(e) => setAliasesText(e.target.value)}
-            placeholder='e.g. "Lumen Technologies", CenturyLink, subsidiary names — comma-separated'
+            placeholder='e.g. "Lumen Technologies", CenturyLink — comma-separated'
             className="w-full rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
           />
           <span className="mt-1 block text-[10px]" style={{ color: "var(--muted)" }}>
-            Used when you refresh (Google News query) and for ranking on this page. Click Refresh to apply new aliases.
+            Applied when you click Refresh (Google News query) and for ranking on this page.
           </span>
         </label>
-      </div>
-
-      <NewsFilters sortMode={sortMode} onSortModeChange={setSortMode} />
-
-      {error && (
-        <p className="rounded border border-dashed p-3 text-sm" style={{ borderColor: "var(--danger)", color: "var(--danger)" }}>
-          {error}
-        </p>
-      )}
-
-      {loading && payload && (
-        <p className="text-center text-xs" style={{ color: "var(--muted)" }}>
-          Refreshing… previous articles stay visible until the new fetch finishes.
-        </p>
-      )}
-
-      {!payload && !loading && !error && (
-        <p
-          className="rounded border border-dashed p-4 text-center text-sm leading-relaxed"
-          style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
-        >
-          No saved news for this ticker yet. Click <strong style={{ color: "var(--text)" }}>Load news</strong> to fetch; results stay
-          here until you refresh.
-        </p>
-      )}
-
-      {payload && !error && (
-        <p className="text-[11px]" style={{ color: "var(--muted)" }}>
-          {payload.totalAfterDedupe} unique stor{payload.totalAfterDedupe === 1 ? "y" : "ies"} (from {payload.totalBeforeDedupe} raw)
-        </p>
-      )}
-
-      {!loading && !error && payload && visible.length === 0 && (
+      }
+      statsSection={
+        payload && !error ? (
+          <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+            {payload.totalAfterDedupe} unique stor{payload.totalAfterDedupe === 1 ? "y" : "ies"} (from {payload.totalBeforeDedupe} raw)
+          </p>
+        ) : null
+      }
+    >
+      {!loading && !error && payload && visible.length === 0 ? (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
           No articles returned for this ticker.
         </p>
-      )}
-
+      ) : null}
       <ul className="flex flex-col gap-3">
         {visible.map((article) => (
           <li key={article.id}>
@@ -199,6 +188,6 @@ export function NewsFeed({
           </li>
         ))}
       </ul>
-    </div>
+    </CompanyFeedTabShell>
   );
 }
