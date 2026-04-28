@@ -896,30 +896,32 @@ export async function softDeleteMessage(messageId: string, userId: string) {
 }
 
 export async function searchUsers(query: string, excludeUserId: string, take = 20) {
-  const q = query.trim();
-  const lim = Math.min(take, 50);
+  const q = query.trim().toLowerCase();
+  const lim = Number.isFinite(take) && take > 0 ? Math.min(take, 5000) : 5000;
 
-  if (q.length < 2) {
-    const users = await prisma.user.findMany({
-      where: { id: { not: excludeUserId } },
-      select: userPublicSelect,
-      take: lim,
-      orderBy: [{ name: "asc" }, { email: "asc" }],
-    });
-    return users.map(publicUserRowToPublicUser);
-  }
-
-  const users = await prisma.user.findMany({
-    where: {
-      id: { not: excludeUserId },
-      OR: [
-        { email: { contains: q, mode: "insensitive" } },
-        { name: { contains: q, mode: "insensitive" } },
-      ],
-    },
+  const rows = await prisma.user.findMany({
+    where: { id: { not: excludeUserId } },
     select: userPublicSelect,
     take: lim,
-    orderBy: { email: "asc" },
+    orderBy: [{ email: "asc" }, { name: "asc" }, { id: "asc" }],
   });
-  return users.map(publicUserRowToPublicUser);
+
+  const users = rows.map(publicUserRowToPublicUser);
+  const filtered =
+    q.length < 1
+      ? users
+      : users.filter((u) => {
+          const haystacks = [u.chatDisplayId, u.email, u.name, u.id]
+            .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+            .map((value) => value.toLowerCase());
+          return haystacks.some((value) => value.includes(q));
+        });
+
+  return filtered.sort((a, b) => {
+    const byChatId = a.chatDisplayId.localeCompare(b.chatDisplayId, undefined, { sensitivity: "base" });
+    if (byChatId !== 0) return byChatId;
+    const byEmail = (a.email ?? "").localeCompare(b.email ?? "", undefined, { sensitivity: "base" });
+    if (byEmail !== 0) return byEmail;
+    return a.id.localeCompare(b.id, undefined, { sensitivity: "base" });
+  });
 }

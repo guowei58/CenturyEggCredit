@@ -450,7 +450,7 @@ export function EggHocCommitteeChat() {
 
   const searchUsers = async (q: string) => {
     try {
-      const res = await fetch(`/api/egg-hoc/users?q=${encodeURIComponent(q)}&take=15`);
+      const res = await fetch(`/api/egg-hoc/users?q=${encodeURIComponent(q)}`);
       const data = await parseResponseJson<{ ok?: boolean; users?: PublicUser[]; error?: string }>(res);
       if (!res.ok) {
         setPickerResults([]);

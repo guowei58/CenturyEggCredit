@@ -13,9 +13,9 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const q = url.searchParams.get("q") ?? "";
     const takeRaw = url.searchParams.get("take");
-    const take = takeRaw ? parseInt(takeRaw, 10) : 20;
+    const take = takeRaw ? parseInt(takeRaw, 10) : 5000;
 
-    const users = await searchUsers(q, userId, Number.isFinite(take) ? take : 20);
+    const users = await searchUsers(q, userId, Number.isFinite(take) ? take : 5000);
     return NextResponse.json({ ok: true, users });
   } catch (e) {
     console.error("[egg-hoc/users GET]", e);
