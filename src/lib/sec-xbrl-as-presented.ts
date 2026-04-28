@@ -235,6 +235,15 @@ function subMonthsFromIsoEnd(ymd: string, months: number): string | null {
   return `${ny}-${String(nm + 1).padStart(2, "0")}-${String(nd).padStart(2, "0")}`;
 }
 
+/** True when ISO dates match or are within a few calendar days (SEC / week-based quarters, weekends). */
+function isoEndDatesEquivalent(a: string, b: string, maxDaysApart: number): boolean {
+  if (a === b) return true;
+  const ta = Date.parse(`${a}T12:00:00Z`);
+  const tb = Date.parse(`${b}T12:00:00Z`);
+  if (!Number.isFinite(ta) || !Number.isFinite(tb)) return false;
+  return Math.abs(ta - tb) <= maxDaysApart * 86400000;
+}
+
 /** Fiscal quarter-end dates for FY labeled `fyLabelYear` (the calendar year in which that FY ends). */
 function fiscalQuarterEndYmds(fyLabelYear: number, fye: FiscalYearEndMd): [string, string, string, string] {
   const q4 = `${fyLabelYear}-${String(fye.month).padStart(2, "0")}-${String(fye.day).padStart(2, "0")}`;
@@ -259,18 +268,35 @@ function findFiscalYearLabelForPeriodEnd(endYmd: string, fye: FiscalYearEndMd): 
 
 function isFiscalYearEndYmd(endYmd: string, fye: FiscalYearEndMd): boolean {
   const p = parseIsoDateUtc(endYmd);
-  return p !== null && p.m === fye.month && p.d === fye.day;
+  if (p === null) return false;
+  if (p.m === fye.month && p.d === fye.day) return true;
+  for (const y of [p.y - 1, p.y, p.y + 1]) {
+    const candidate = `${y}-${String(fye.month).padStart(2, "0")}-${String(fye.day).padStart(2, "0")}`;
+    if (isoEndDatesEquivalent(endYmd, candidate, 2)) return true;
+  }
+  return false;
 }
 
 function matchFiscalQuarterColumnLabel(endYmd: string, fye: FiscalYearEndMd): string | null {
+  const TOL = 4;
   const fyLabel = findFiscalYearLabelForPeriodEnd(endYmd, fye);
   if (fyLabel == null) return null;
-  const ends = fiscalQuarterEndYmds(fyLabel, fye);
-  for (let i = 0; i < 4; i++) {
-    if (endYmd === ends[i]) {
-      const yy = String(fyLabel).slice(-2);
-      return `${i + 1}Q${yy}`;
+  const tryLabel = (label: number): string | null => {
+    if (label < 1990 || label > 2100) return null;
+    const ends = fiscalQuarterEndYmds(label, fye);
+    for (let i = 0; i < 4; i++) {
+      if (isoEndDatesEquivalent(endYmd, ends[i]!, TOL)) {
+        const yy = String(label).slice(-2);
+        return `${i + 1}Q${yy}`;
+      }
     }
+    return null;
+  };
+  const primary = tryLabel(fyLabel);
+  if (primary) return primary;
+  for (const adj of [fyLabel - 1, fyLabel + 1]) {
+    const s = tryLabel(adj);
+    if (s) return s;
   }
   return null;
 }
@@ -299,26 +325,35 @@ function inferFiscalPeriodShortLabel(
   }
 
   if (kind === "is" || kind === "cf") {
-    if (durationDays >= 350 && durationDays <= 380) {
+    /* Week-based quarters and leap-year FY can fall slightly outside narrow bands. */
+    if (durationDays >= 340 && durationDays <= 400) {
       if (yFull !== undefined && isFiscalYearEndYmd(end, fye)) return `FY${String(yFull).slice(-2)}`;
       return null;
     }
-    if (durationDays >= 82 && durationDays <= 98) {
+    if (durationDays >= 70 && durationDays <= 105) {
       return matchFiscalQuarterColumnLabel(end, fye);
     }
-    if (durationDays >= 170 && durationDays <= 200) {
+    if (durationDays >= 150 && durationDays <= 215) {
       const fyLabel = findFiscalYearLabelForPeriodEnd(end, fye);
       if (fyLabel == null) return null;
       const [, q2e] = fiscalQuarterEndYmds(fyLabel, fye);
-      if (end === q2e) return `6M${String(fyLabel).slice(-2)}`;
+      if (isoEndDatesEquivalent(end, q2e, 4)) return `6M${String(fyLabel).slice(-2)}`;
       return null;
     }
-    if (durationDays >= 260 && durationDays <= 295) {
+    if (durationDays >= 235 && durationDays <= 325) {
       const fyLabel = findFiscalYearLabelForPeriodEnd(end, fye);
       if (fyLabel == null) return null;
       const [, , q3e] = fiscalQuarterEndYmds(fyLabel, fye);
-      if (end === q3e) return `9M${String(fyLabel).slice(-2)}`;
+      if (isoEndDatesEquivalent(end, q3e, 4)) return `9M${String(fyLabel).slice(-2)}`;
       return null;
+    }
+  }
+
+  /* End-date matches fiscal quarter but duration fell outside bands (reporting / odd fiscal calendars). */
+  if ((kind === "is" || kind === "cf") && start) {
+    const qByEnd = matchFiscalQuarterColumnLabel(end, fye);
+    if (qByEnd && durationDays >= 28 && durationDays <= 125) {
+      return qByEnd;
     }
   }
 

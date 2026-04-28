@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { playEggHocIncomingBark, unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
@@ -166,7 +166,8 @@ export function EggHocCommitteeChat() {
   const [manageOpen, setManageOpen] = useState(false);
   const [renameDraft, setRenameDraft] = useState("");
 
-  const bottomRef = useRef<HTMLDivElement>(null);
+  /** Scrollable message column — scroll this element; `scrollIntoView` on children often scrolls the wrong ancestor. */
+  const threadScrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const listAbortRef = useRef<AbortController | null>(null);
   const inboxSnapshotRef = useRef<Map<string, { unread: number }>>(new Map());
@@ -363,10 +364,18 @@ export function EggHocCommitteeChat() {
     return () => clearInterval(t);
   }, [activeId, userId, fetchMessageBatch, fetchList]);
 
-  useEffect(() => {
+  const scrollThreadToBottom = useCallback((behavior: ScrollBehavior = "auto") => {
+    const el = threadScrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior });
+  }, []);
+
+  /** After switching chats or finishing the initial fetch, pin the viewport to the latest messages. */
+  useLayoutEffect(() => {
     if (!activeId || threadLoading) return;
-    bottomRef.current?.scrollIntoView({ behavior: "auto" });
-  }, [activeId, threadLoading]);
+    scrollThreadToBottom("auto");
+    requestAnimationFrame(() => scrollThreadToBottom("auto"));
+  }, [activeId, threadLoading, scrollThreadToBottom]);
 
   const send = async () => {
     const text = composer.trim();
@@ -415,7 +424,9 @@ export function EggHocCommitteeChat() {
       if (!res.ok) throw new Error(data.error || "Send failed");
       setMessages((m) => m.filter((x) => x.id !== optimistic.id).concat(data.message!));
       void fetchList();
-      requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => scrollThreadToBottom("smooth"));
+      });
     } catch {
       setMessages((m) => m.filter((x) => x.id !== optimistic.id));
       setComposer(text);
@@ -759,7 +770,7 @@ export function EggHocCommitteeChat() {
               ) : null}
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
+            <div ref={threadScrollRef} className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
               {threadLoading && messages.length === 0 ? (
                 <p className="text-xs" style={{ color: "var(--muted2)" }}>
                   Loading messages…
@@ -880,7 +891,6 @@ export function EggHocCommitteeChat() {
                       );
                     })}
                   </div>
-                  <div ref={bottomRef} />
                 </>
               )}
             </div>
