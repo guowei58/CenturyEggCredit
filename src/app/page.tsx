@@ -70,6 +70,13 @@ export default function Home() {
     setCompanyTab("sec-xbrl-financials");
   }, [companyTab, companyTopSection]);
 
+  /** State & Local Public Records tab hidden; land on Saved Documents. */
+  useEffect(() => {
+    if (companyTab !== "state-local-public-records") return;
+    if (companyTopSection !== "documents") setCompanyTopSection("documents");
+    setCompanyTab("saved-documents");
+  }, [companyTab, companyTopSection]);
+
   return (
     <div
       className="shell"

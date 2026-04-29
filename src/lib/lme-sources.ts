@@ -79,7 +79,7 @@ const DEFAULT_MAX_PART_CHARS = LME_DEFAULT_PER_PART_CHAR_CAP;
  * Max sum of packed `part.content` lengths sent into `formatSourcesForLme` (server-side LME context budget).
  * Framing lines (`==========`, SOURCE: …) add a little on top; the fixed LME task spec is separate in the user message.
  */
-export const LME_DEFAULT_BUNDLE_CHAR_CAP = 520_000;
+export const LME_DEFAULT_BUNDLE_CHAR_CAP = 400_000;
 const DEFAULT_MAX_TOTAL_CHARS = LME_DEFAULT_BUNDLE_CHAR_CAP;
 const MAX_RAW_CHARS_FOR_RETRIEVAL = 600_000;
 

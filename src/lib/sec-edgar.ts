@@ -78,18 +78,57 @@ export type SecCompanyProfile = {
 };
 
 /**
+ * Variants to try when mapping a user symbol to `company_tickers.json`.
+ * SEC uses hyphens for class tickers (e.g. BRK-B) while many data vendors use dots (BRK.B).
+ */
+export function secCompanyTickerLookupCandidates(raw: string): string[] {
+  const base = raw.trim().toUpperCase();
+  if (!base) return [];
+  const out: string[] = [];
+  const add = (s: string) => {
+    const t = s.trim().toUpperCase();
+    if (t && !out.includes(t)) out.push(t);
+  };
+  add(base);
+  if (base.includes(".")) add(base.replace(/\./g, "-"));
+  const nospace = base.replace(/\s+/g, "");
+  if (nospace !== base) add(nospace);
+  const spacedToHyphen = base.replace(/\s+/g, "-");
+  if (spacedToHyphen !== base && spacedToHyphen !== nospace) add(spacedToHyphen);
+  return out;
+}
+
+/** True if `raw` should be treated as a numeric SEC CIK (not a ticker symbol). */
+function looksLikeNumericCikInput(raw: string): boolean {
+  const t = raw.trim();
+  if (!t || !/^\d+$/.test(t)) return false;
+  return t.length >= 6 && t.length <= 10;
+}
+
+/**
  * Fetch the SEC company tickers JSON and resolve ticker -> CIK (10-digit string).
+ * Accepts optional numeric CIK (6–10 digits). Maps broker-style class symbols (BRK.B → BRK-B).
  */
 export async function getCikFromTicker(ticker: string): Promise<string | null> {
+  const trimmed = ticker.trim();
+  if (!trimmed) return null;
+
+  if (looksLikeNumericCikInput(trimmed)) {
+    return trimmed.padStart(10, "0");
+  }
+
   const url = "https://www.sec.gov/files/company_tickers.json";
   const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!res.ok) return null;
   const data = (await res.json()) as CompanyTickersJson;
-  const upper = ticker.trim().toUpperCase();
-  for (const key of Object.keys(data)) {
-    const entry = data[key];
-    if (entry.ticker && entry.ticker.toUpperCase() === upper) {
-      return String(entry.cik_str).padStart(10, "0");
+
+  const candidates = secCompanyTickerLookupCandidates(trimmed);
+  for (const upper of candidates) {
+    for (const key of Object.keys(data)) {
+      const entry = data[key];
+      if (entry.ticker && entry.ticker.toUpperCase() === upper) {
+        return String(entry.cik_str).padStart(10, "0");
+      }
     }
   }
   return null;

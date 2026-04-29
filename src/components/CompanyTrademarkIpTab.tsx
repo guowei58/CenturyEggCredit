@@ -8,8 +8,6 @@ import { formatOdpPatentQueryString } from "@/lib/uspto-ip";
 type Links = {
   odpSignup: string;
   patentsViewSignup: string;
-  tsdrSignup: string;
-  trademarkSearchUi: string;
   patentCenter: string;
 };
 
@@ -35,7 +33,12 @@ type ApiOk = {
   totalOdp: number;
   odpOffset?: number;
   odpLimit?: number;
+  totalTrademarkOdp: number;
+  odpTrademarkOffset?: number;
+  odpTrademarkLimit?: number;
   odpPatents: OdpPatentRow[];
+  /** Present on API responses; unused while trademark UI is hidden. */
+  odpTrademarks?: unknown[];
   assigneeCandidates: Array<{
     assigneeId: string | null;
     organization: string | null;
@@ -63,12 +66,11 @@ type ApiErr = {
   odpSignup?: string;
 };
 
-type TsdrOk = { ok: true; trademark: Record<string, string | null> };
-type TsdrErr = { ok: false; error: string; tsdrSignup?: string };
-
 type SubsidiaryHintsApi =
   | { ok: true; companyName: string; names: string[]; sources: string[]; disclaimer: string }
   | { ok: false; message: string };
+
+const ODP_PAGE_LIMIT = 50;
 
 function ellipsize(s: string, max: number): string {
   const t = s.replace(/\s+/g, " ").trim();
@@ -87,13 +89,13 @@ export function CompanyTrademarkIpTab({
   const [queryDraft, setQueryDraft] = useState("");
   const [activeQuery, setActiveQuery] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMoreOdp, setLoadingMoreOdp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payload, setPayload] = useState<ApiOk | null>(null);
-
-  const [tmSerial, setTmSerial] = useState("");
-  const [tmLoading, setTmLoading] = useState(false);
-  const [tmError, setTmError] = useState<string | null>(null);
-  const [tmResult, setTmResult] = useState<Record<string, string | null> | null>(null);
+  /** Rows accumulated across ODP pages (Load more). Replaced on each new Search. */
+  const [odpPatentRows, setOdpPatentRows] = useState<OdpPatentRow[]>([]);
+  /** Raw `q` sent to the API for the current result set (`null` = server uses company name / ticker). */
+  const [pagingQ, setPagingQ] = useState<string | null>(null);
 
   const [hintsPayload, setHintsPayload] = useState<Extract<SubsidiaryHintsApi, { ok: true }> | null>(null);
   const [hintsLoading, setHintsLoading] = useState(false);
@@ -107,19 +109,27 @@ export function CompanyTrademarkIpTab({
       try {
         const u = new URL(`/api/uspto-ip/${encodeURIComponent(safeTicker)}`, window.location.origin);
         if (qParam?.trim()) u.searchParams.set("q", qParam.trim());
+        u.searchParams.set("offset", "0");
+        u.searchParams.set("limit", String(ODP_PAGE_LIMIT));
         const res = await fetch(u.toString());
         const body = (await res.json()) as ApiOk | ApiErr;
         if (!res.ok || body.ok !== true) {
           const e = body as ApiErr;
           setPayload(null);
+          setOdpPatentRows([]);
+          setPagingQ(null);
           setError(e.error || `Request failed (HTTP ${res.status}).`);
           return;
         }
         setPayload(body);
+        setOdpPatentRows(body.odpPatents);
+        setPagingQ(qParam?.trim() ? qParam.trim() : null);
         setQueryDraft(body.queryUsed);
         setActiveQuery(body.queryUsed);
       } catch (e) {
         setPayload(null);
+        setOdpPatentRows([]);
+        setPagingQ(null);
         setError(e instanceof Error ? e.message : "Failed to load USPTO data.");
       } finally {
         setLoading(false);
@@ -127,6 +137,30 @@ export function CompanyTrademarkIpTab({
     },
     [safeTicker]
   );
+
+  const loadMoreOdp = useCallback(async () => {
+    if (!safeTicker || !payload?.odpConfigured) return;
+    if (odpPatentRows.length >= payload.totalOdp) return;
+    setLoadingMoreOdp(true);
+    try {
+      const u = new URL(`/api/uspto-ip/${encodeURIComponent(safeTicker)}`, window.location.origin);
+      if (pagingQ) u.searchParams.set("q", pagingQ);
+      u.searchParams.set("offset", String(odpPatentRows.length));
+      u.searchParams.set("limit", String(ODP_PAGE_LIMIT));
+      const res = await fetch(u.toString());
+      const body = (await res.json()) as ApiOk | ApiErr;
+      if (!res.ok || body.ok !== true) {
+        const e = body as ApiErr;
+        setError(e.error || `Request failed (HTTP ${res.status}).`);
+        return;
+      }
+      setOdpPatentRows((prev) => [...prev, ...body.odpPatents]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load more.");
+    } finally {
+      setLoadingMoreOdp(false);
+    }
+  }, [safeTicker, payload?.odpConfigured, payload?.totalOdp, pagingQ, odpPatentRows.length]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -167,60 +201,17 @@ export function CompanyTrademarkIpTab({
     };
   }, [safeTicker]);
 
-  const runTsdr = useCallback(async () => {
-    setTmLoading(true);
-    setTmError(null);
-    setTmResult(null);
-    try {
-      const res = await fetch("/api/uspto-ip/tsdr", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serial: tmSerial.trim() }),
-      });
-      const body = (await res.json()) as TsdrOk | TsdrErr;
-      if (!res.ok || body.ok !== true) {
-        const e = body as TsdrErr;
-        setTmError(e.error || `TSDR failed (${res.status}).`);
-        return;
-      }
-      setTmResult(body.trademark as Record<string, string | null>);
-    } catch (e) {
-      setTmError(e instanceof Error ? e.message : "TSDR request failed.");
-    } finally {
-      setTmLoading(false);
-    }
-  }, [tmSerial]);
-
   if (!safeTicker) {
     return (
       <p className="text-sm" style={{ color: "var(--muted)" }}>
-        Select a company to search USPTO patent and trademark records.
+        Select a company to search USPTO patent applications.
       </p>
     );
   }
 
-  const links = payload?.links;
-  const odpSignupUrl = links?.odpSignup ?? "https://data.uspto.gov/apis/getting-started";
-  const trademarkSearchUrl = links?.trademarkSearchUi ?? "https://www.uspto.gov/trademarks/search";
-  const tsdrSignupUrl = links?.tsdrSignup ?? "https://developer.uspto.gov";
-
   return (
     <div className="space-y-6">
       <Card title="Search query">
-        <p className="mb-3 text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
-          Patent applications use the{" "}
-          <span className="inline-flex flex-wrap items-center gap-x-0.5 align-middle">
-            <a href={odpSignupUrl} className="underline" target="_blank" rel="noreferrer">
-              USPTO Open Data Portal
-            </a>
-            <SaveFilingLinkButton ticker={safeTicker} url={odpSignupUrl} />
-          </span>{" "}
-          (<code className="text-[10px]">USPTO_API_KEY</code>). The query box shows the string sent to ODP: plain names are wrapped in{" "}
-          <code className="text-[10px]">&quot;…&quot;</code> (phrase search) so tokens like INC., CORP., and LLC are not matched alone. Paste a Lucene{" "}
-          <code className="text-[10px]">field:value</code> query or your own quoted phrase to override. Trademark{" "}
-          <em>owner</em> search is not exposed as a single USPTO REST query; use the official search site below or look up a mark by serial via TSDR.
-        </p>
-
         {hintsLoading && (
           <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
             Loading registrant / subsidiary name ideas from SEC filings and your saved Subsidiary List…
@@ -248,7 +239,7 @@ export function CompanyTrademarkIpTab({
                   key={n}
                   type="button"
                   title={n}
-                  disabled={loading}
+                  disabled={loading || loadingMoreOdp}
                   onClick={() => {
                     setQueryDraft(formatOdpPatentQueryString(n));
                     void runPatentSearch(n);
@@ -277,13 +268,13 @@ export function CompanyTrademarkIpTab({
               onChange={(e) => setQueryDraft(e.target.value)}
               className="rounded border border-[var(--border)] bg-[var(--card)] px-2 py-1.5 font-mono text-sm text-[var(--text)]"
               placeholder='"Company Name, Inc." or assigneeNameText:...'
-              disabled={loading}
+              disabled={loading || loadingMoreOdp}
             />
           </label>
           <button
             type="button"
             onClick={() => void runPatentSearch(queryDraft)}
-            disabled={loading}
+            disabled={loading || loadingMoreOdp}
             className="rounded bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-[var(--accent-fg)] disabled:opacity-50"
           >
             {loading ? "Searching…" : "Search USPTO"}
@@ -336,8 +327,18 @@ export function CompanyTrademarkIpTab({
       )}
 
       {payload?.odpConfigured && (
-        <Card title={`Patent applications (ODP) — ${payload.totalOdp} reported match(es)`}>
-          {payload.odpPatents.length === 0 ? (
+        <Card
+          title={`Patent applications (ODP) — ${payload.totalOdp.toLocaleString()} match(es) in index`}
+        >
+          <p className="mb-2 text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
+            The Open Data Portal returns at most {ODP_PAGE_LIMIT} rows per request; the title is the total hit count in the
+            index, not how many rows are shown below. Load more appends the next page so you can scroll through everything.
+          </p>
+          <p className="mb-3 text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
+            Showing {odpPatentRows.length.toLocaleString()} row(s) loaded
+            {payload.totalOdp > 0 ? ` of ${payload.totalOdp.toLocaleString()} reported.` : "."}
+          </p>
+          {odpPatentRows.length === 0 ? (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
               No application rows returned for this query. Try the full legal name, a subsidiary, or a distinct keyword.
             </p>
@@ -354,8 +355,8 @@ export function CompanyTrademarkIpTab({
                 </tr>
               </thead>
               <tbody>
-                {payload.odpPatents.map((r, i) => (
-                  <tr key={`${r.applicationNumberText ?? i}-${i}`}>
+                {odpPatentRows.map((r, i) => (
+                  <tr key={`${r.applicationNumberText ?? "row"}-${i}`}>
                     <td className="align-top font-mono text-[11px]" style={{ color: "var(--muted2)" }}>
                       {r.applicationNumberText ?? "—"}
                     </td>
@@ -389,6 +390,20 @@ export function CompanyTrademarkIpTab({
                 ))}
               </tbody>
             </DataTable>
+          )}
+          {odpPatentRows.length > 0 && odpPatentRows.length < payload.totalOdp && (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={() => void loadMoreOdp()}
+                disabled={loading || loadingMoreOdp}
+                className="rounded border border-[var(--border)] bg-[var(--card2)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] disabled:opacity-50"
+              >
+                {loadingMoreOdp
+                  ? "Loading…"
+                  : `Load more (${odpPatentRows.length.toLocaleString()} of ${payload.totalOdp.toLocaleString()} loaded)`}
+              </button>
+            </div>
           )}
           <p className="mt-3 text-[10px]" style={{ color: "var(--muted)" }}>
             Prosecution and file history:{" "}
@@ -472,78 +487,6 @@ export function CompanyTrademarkIpTab({
         </Card>
       ))}
 
-      <Card title="Trademarks">
-        <p className="mb-3 text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
-          USPTO{" "}
-          <span className="inline-flex flex-wrap items-center gap-x-0.5 align-middle">
-            <a href={trademarkSearchUrl} className="underline" target="_blank" rel="noreferrer">
-              Trademark search (TESS / replacement tools)
-            </a>
-            <SaveFilingLinkButton ticker={safeTicker} url={trademarkSearchUrl} />
-          </span>{" "}
-          is the supported way to search by owner or word mark. For a known serial number, TSDR returns structured status (
-          <code className="text-[10px]">USPTO_TSDR_API_KEY</code> —{" "}
-          <span className="inline-flex flex-wrap items-center gap-x-0.5 align-middle">
-            <a href={tsdrSignupUrl} className="underline" target="_blank" rel="noreferrer">
-              developer.uspto.gov
-            </a>
-            <SaveFilingLinkButton ticker={safeTicker} url={tsdrSignupUrl} />
-          </span>
-          ).
-        </p>
-        <div className="flex flex-wrap items-end gap-2">
-          <label className="flex min-w-[180px] flex-col gap-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
-            Serial number
-            <input
-              type="text"
-              value={tmSerial}
-              onChange={(e) => setTmSerial(e.target.value)}
-              className="rounded border border-[var(--border)] bg-[var(--card)] px-2 py-1.5 font-mono text-sm text-[var(--text)]"
-              placeholder="e.g. 97123456"
-              disabled={tmLoading}
-            />
-          </label>
-          <button
-            type="button"
-            onClick={() => void runTsdr()}
-            disabled={tmLoading || !tmSerial.trim()}
-            className="rounded border border-[var(--border)] bg-[var(--card2)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] disabled:opacity-50"
-          >
-            {tmLoading ? "Looking up…" : "TSDR lookup"}
-          </button>
-        </div>
-        {tmError && (
-          <p className="mt-2 text-sm" style={{ color: "var(--danger)" }}>
-            {tmError}
-          </p>
-        )}
-        {tmResult && (
-          <dl className="mt-3 grid gap-2 text-[11px] sm:grid-cols-2">
-            {(
-              [
-                ["Serial", tmResult.serialNumber],
-                ["Registration", tmResult.registrationNumber],
-                ["Mark", tmResult.mark],
-                ["Status", tmResult.status],
-                ["Status date", tmResult.statusDate],
-                ["Filing date", tmResult.filingDate],
-                ["Registration date", tmResult.registrationDate],
-                ["Owner", tmResult.owner],
-                ["Goods & services", tmResult.goodsAndServices],
-              ] as const
-            ).map(([label, v]) => (
-              <div key={label} className="rounded bg-[var(--card2)]/50 px-2 py-1.5">
-                <dt className="font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
-                  {label}
-                </dt>
-                <dd className="mt-0.5 max-h-40 overflow-y-auto whitespace-pre-wrap" style={{ color: "var(--text)" }}>
-                  {v && String(v).trim() ? String(v) : "—"}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
-      </Card>
     </div>
   );
 }

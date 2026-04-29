@@ -55,43 +55,58 @@ enum ConversationMemberRole {
 enum EggHocMessageType {
   TEXT
   SYSTEM
+  IMAGE
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  /** Bcrypt hash for email+password accounts; null for OAuth-only users */
-  passwordHash  String?   @map("password_hash")
-  accounts      Account[]
-  sessions      Session[]
-  watchlistEntries UserWatchlistEntry[]
-  tickerDocuments  UserTickerDocument[]
-  savedDocuments   UserSavedDocument[]
-  workspaceFiles UserTickerWorkspaceFile[]
-  aiChatStates     UserAiChatState[]
-  preferences      UserPreferences?
-  conversationMemberships ConversationMember[]
-  eggHocMessagesSent      EggHocMessage[]       @relation("EggHocMessageSender")
-  conversationsCreated    Conversation[]        @relation("ConversationCreatedBy")
-  dailyNewsBatches        UserDailyNewsBatch[]
+  id                          String                       @id @default(cuid())
+  name                        String?
+  email                       String?                      @unique
+  emailVerified               DateTime?                    @map("email_verified")
+  image                       String?
+  /**
+   * Bcrypt hash for email+password accounts; null for OAuth-only users
+   */
+  passwordHash                String?                      @map("password_hash")
+  accounts                    Account[]
+  sessions                    Session[]
+  watchlistEntries            UserWatchlistEntry[]
+  tickerDocuments             UserTickerDocument[]
+  savedDocuments              UserSavedDocument[]
+  workspaceFiles              UserTickerWorkspaceFile[]
+  aiChatStates                UserAiChatState[]
+  preferences                 UserPreferences?
+  conversationMemberships     ConversationMember[]
+  eggHocMessagesSent          EggHocMessage[]              @relation("EggHocMessageSender")
+  conversationsCreated        Conversation[]               @relation("ConversationCreatedBy")
+  dailyNewsBatches            UserDailyNewsBatch[]
+  publicRecordsProfiles       PublicRecordsProfile[]
+  userPublicRecordSources     UserPublicRecordSource[]
+  publicRecords               PublicRecord[]
+  publicRecordsSearchRuns     PublicRecordsSearchRun[]
+  publicRecordsChecklistItems PublicRecordsChecklistItem[]
+  publicRecordsDocuments      PublicRecordsDocument[]
 
   @@map("users")
 }
 
-/** One generated daily digest per user per calendar day (America/New_York). */
+/**
+ * One generated daily digest per user per calendar day (America/New_York).
+ */
 model UserDailyNewsBatch {
   id                 String    @id @default(cuid())
   userId             String    @map("user_id")
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  /** YYYY-MM-DD in America/New_York */
+  /**
+   * YYYY-MM-DD in America/New_York
+   */
   batchDateKey       String    @map("batch_date_key")
   generatedAt        DateTime  @map("generated_at")
-  /** Sorted tickers joined (e.g. AAPL|MSFT) when generated */
+  /**
+   * Sorted tickers joined (e.g. AAPL|MSFT) when generated
+   */
   watchlistSignature String    @map("watchlist_signature")
-  payloadJson        String    @db.Text @map("payload_json")
+  payloadJson        String    @map("payload_json") @db.Text
   isRead             Boolean   @default(false) @map("is_read")
   readAt             DateTime? @map("read_at")
   createdAt          DateTime  @default(now()) @map("created_at")
@@ -102,25 +117,33 @@ model UserDailyNewsBatch {
   @@map("user_daily_news_batches")
 }
 
-/** User-to-user and group messaging (Egg-Hoc Committee). */
+/**
+ * User-to-user and group messaging (Egg-Hoc Committee).
+ */
 model Conversation {
   id              String           @id @default(cuid())
   type            ConversationType
-  /** Group title; null for DMs (UI shows other participant). */
+  /**
+   * Group title; null for DMs (UI shows other participant).
+   */
   name            String?
-  /** Deterministic key for DIRECT: sorted user ids joined by "::". Null for GROUP. */
+  /**
+   * Deterministic key for DIRECT: sorted user ids joined by "::". Null for GROUP.
+   */
   directPairKey   String?          @unique @map("direct_pair_key")
   createdByUserId String           @map("created_by_user_id")
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
   lastMessageId   String?          @unique @map("last_message_id")
-  /** When set (e.g. `global`), this is the app-wide Lobby — all users are auto-joined. */
+  /**
+   * When set (e.g. `global`), this is the app-wide Lobby — all users are auto-joined.
+   */
   lobbyKey        String?          @unique @map("lobby_key")
 
-  createdBy User                 @relation("ConversationCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
-  members   ConversationMember[]
-  messages  EggHocMessage[]
-  lastMessage EggHocMessage?     @relation("ConversationLastMessage", fields: [lastMessageId], references: [id], onDelete: SetNull)
+  createdBy   User                 @relation("ConversationCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  members     ConversationMember[]
+  messages    EggHocMessage[]
+  lastMessage EggHocMessage?       @relation("ConversationLastMessage", fields: [lastMessageId], references: [id], onDelete: SetNull)
 
   @@index([updatedAt(sort: Desc)])
   @@map("conversations")
@@ -130,13 +153,13 @@ model ConversationMember {
   id                String                 @id @default(cuid())
   conversationId    String                 @map("conversation_id")
   userId            String                 @map("user_id")
-  role              ConversationMemberRole   @default(MEMBER)
+  role              ConversationMemberRole @default(MEMBER)
   joinedAt          DateTime               @default(now()) @map("joined_at")
   lastReadMessageId String?                @map("last_read_message_id")
   lastReadAt        DateTime?              @map("last_read_at")
 
-  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation    Conversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   lastReadMessage EggHocMessage? @relation("MemberLastRead", fields: [lastReadMessageId], references: [id], onDelete: SetNull)
 
   @@unique([conversationId, userId])
@@ -146,31 +169,38 @@ model ConversationMember {
 }
 
 model EggHocMessage {
-  id               String            @id @default(cuid())
-  conversationId   String            @map("conversation_id")
-  senderUserId     String            @map("sender_user_id")
-  /** When set, only this user sees the row in thread, previews, and unread counts (lobby welcome, etc.). */
-  visibleOnlyToUserId String?        @map("visible_only_to_user_id")
-  body             String            @db.Text
-  messageType      EggHocMessageType @default(TEXT) @map("message_type")
-  replyToMessageId String?           @map("reply_to_message_id")
-  editedAt         DateTime?         @map("edited_at")
-  deletedAt        DateTime?         @map("deleted_at")
-  createdAt        DateTime          @default(now()) @map("created_at")
+  id                  String            @id @default(cuid())
+  conversationId      String            @map("conversation_id")
+  senderUserId        String            @map("sender_user_id")
+  /**
+   * When set, only this user sees the row in thread, previews, and unread counts (lobby welcome, etc.).
+   */
+  visibleOnlyToUserId String?           @map("visible_only_to_user_id")
+  body                String            @db.Text
+  /** Populated when {@link EggHocMessageType.IMAGE}; caption lives in {@link EggHocMessage#body}. */
+  imageMimeType       String?           @map("image_mime_type") @db.VarChar(120)
+  imageBytes          Bytes?            @map("image_bytes")
+  messageType         EggHocMessageType @default(TEXT) @map("message_type")
+  replyToMessageId    String?           @map("reply_to_message_id")
+  editedAt            DateTime?         @map("edited_at")
+  deletedAt           DateTime?         @map("deleted_at")
+  createdAt           DateTime          @default(now()) @map("created_at")
 
-  conversation       Conversation          @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender             User                  @relation("EggHocMessageSender", fields: [senderUserId], references: [id], onDelete: Restrict)
-  replyTo            EggHocMessage?        @relation("EggHocMessageReply", fields: [replyToMessageId], references: [id], onDelete: SetNull)
-  replies            EggHocMessage[]       @relation("EggHocMessageReply")
+  conversation        Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender              User                 @relation("EggHocMessageSender", fields: [senderUserId], references: [id], onDelete: Restrict)
+  replyTo             EggHocMessage?       @relation("EggHocMessageReply", fields: [replyToMessageId], references: [id], onDelete: SetNull)
+  replies             EggHocMessage[]      @relation("EggHocMessageReply")
   lastForConversation Conversation?        @relation("ConversationLastMessage")
-  readAnchors        ConversationMember[]  @relation("MemberLastRead")
+  readAnchors         ConversationMember[] @relation("MemberLastRead")
 
   @@index([conversationId, createdAt(sort: Desc)])
   @@index([conversationId, visibleOnlyToUserId])
   @@map("egg_hoc_messages")
 }
 
-/** JSON blob: UI prefs, feed caches, prompt overrides, credit memo drafts, etc. */
+/**
+ * JSON blob: UI prefs, feed caches, prompt overrides, credit memo drafts, etc.
+ */
 model UserPreferences {
   userId    String   @id @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -206,7 +236,9 @@ model UserTickerDocument {
   @@map("user_ticker_documents")
 }
 
-/** User-scoped Saved Documents (PDFs etc.) — Postgres blob, not local disk. */
+/**
+ * User-scoped Saved Documents (PDFs etc.) — Postgres blob, not local disk.
+ */
 model UserSavedDocument {
   id             String   @id @default(cuid())
   userId         String   @map("user_id")
@@ -236,7 +268,9 @@ model UserTickerWorkspaceFile {
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   ticker    String
-  /** Relative path with / only, e.g. "credit-memo/projects/index.json" */
+  /**
+   * Relative path with / only, e.g. "credit-memo/projects/index.json"
+   */
   path      String   @map("path")
   body      Bytes
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -264,4 +298,272 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+// --- State & Local Public Records (per-user, per-ticker diligence workspace) ---
+
+enum PublicRecordCategory {
+  entity_sos
+  ucc_secured_debt
+  tax_liens_releases
+  real_estate_recorder
+  property_tax_assessor
+  permits_zoning_co
+  environmental_compliance
+  courts_judgments
+  licenses_regulatory
+  economic_incentives
+  procurement_contracts
+  gis_facility_mapping
+  other
+}
+
+enum PublicRecordJurisdictionType {
+  state
+  county
+  city
+  court
+  agency
+  regional
+  other
+}
+
+enum PublicRecordChecklistStatus {
+  not_started
+  searched_no_result
+  potential_match
+  confirmed_result
+  needs_follow_up
+  blocked_login_required
+  blocked_fee_required
+  not_applicable
+}
+
+enum PublicRecordFindingStatus {
+  active
+  inactive
+  open
+  released
+  terminated
+  expired
+  resolved
+  pending
+  dismissed
+  unknown
+  no_result
+}
+
+enum PublicRecordRelatedRole {
+  parent
+  issuer
+  borrower
+  guarantor
+  subsidiary
+  former_name
+  dba
+  property_owner
+  vendor
+  unknown
+}
+
+enum PublicRecordRiskLevel {
+  low
+  medium
+  high
+  critical
+  unknown
+}
+
+enum PublicRecordConfidenceLevel {
+  high
+  medium
+  low
+}
+
+enum PublicRecordsCoverageQuality {
+  high
+  medium
+  low
+}
+
+model PublicRecordsProfile {
+  id                              String   @id @default(cuid())
+  userId                          String   @map("user_id")
+  user                            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                          String
+  companyName                     String?  @map("company_name")
+  legalNames                      String[] @default([]) @map("legal_names")
+  formerNames                     String[] @default([]) @map("former_names")
+  dbaNames                        String[] @default([]) @map("dba_names")
+  subsidiaryNames                 String[] @default([]) @map("subsidiary_names")
+  borrowerNames                   String[] @default([]) @map("borrower_names")
+  guarantorNames                  String[] @default([]) @map("guarantor_names")
+  issuerNames                     String[] @default([]) @map("issuer_names")
+  restrictedSubsidiaryNames       String[] @default([]) @map("restricted_subsidiary_names")
+  unrestrictedSubsidiaryNames     String[] @default([]) @map("unrestricted_subsidiary_names")
+  parentCompanyNames              String[] @default([]) @map("parent_company_names")
+  operatingCompanyNames           String[] @default([]) @map("operating_company_names")
+  hqState                         String?  @map("hq_state")
+  hqCounty                        String?  @map("hq_county")
+  hqCity                          String?  @map("hq_city")
+  principalExecutiveOfficeAddress String?  @map("principal_executive_office_address") @db.Text
+  stateOfIncorporation            String?  @map("state_of_incorporation")
+  majorFacilityLocations          Json?    @map("major_facility_locations")
+  knownPropertyLocations          Json?    @map("known_property_locations")
+  knownPermitJurisdictions        Json?    @map("known_permit_jurisdictions")
+  knownRegulatoryJurisdictions    Json?    @map("known_regulatory_jurisdictions")
+  notes                           String?  @db.Text
+  createdAt                       DateTime @default(now()) @map("created_at")
+  updatedAt                       DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker])
+  @@index([userId, ticker])
+  @@map("public_records_profiles")
+}
+
+model UserPublicRecordSource {
+  id                       String                       @id @default(cuid())
+  userId                   String                       @map("user_id")
+  user                     User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  category                 PublicRecordCategory
+  jurisdictionType         PublicRecordJurisdictionType @map("jurisdiction_type")
+  jurisdictionName         String?                      @map("jurisdiction_name")
+  state                    String?
+  county                   String?
+  city                     String?
+  agencyName               String?                      @map("agency_name")
+  sourceName               String                       @map("source_name")
+  sourceUrl                String                       @map("source_url") @db.Text
+  searchInstructions       String?                      @map("search_instructions") @db.Text
+  searchUseCase            String?                      @map("search_use_case") @db.Text
+  requiresLogin            Boolean                      @default(false) @map("requires_login")
+  hasFees                  Boolean                      @default(false) @map("has_fees")
+  supportsNameSearch       Boolean                      @default(true) @map("supports_name_search")
+  supportsAddressSearch    Boolean                      @default(false) @map("supports_address_search")
+  supportsParcelSearch     Boolean                      @default(false) @map("supports_parcel_search")
+  supportsInstrumentSearch Boolean                      @default(false) @map("supports_instrument_search")
+  supportsPdfDownload      Boolean                      @default(false) @map("supports_pdf_download")
+  notes                    String?                      @db.Text
+  lastCheckedAt            DateTime?                    @map("last_checked_at")
+  createdAt                DateTime                     @default(now()) @map("created_at")
+  updatedAt                DateTime                     @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@map("user_public_record_sources")
+}
+
+model PublicRecord {
+  id                 String                      @id @default(cuid())
+  userId             String                      @map("user_id")
+  user               User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker             String
+  category           PublicRecordCategory
+  /**
+   * registry:<id> or user:<userSourceId>
+   */
+  sourceKey          String?                     @map("source_key")
+  recordType         String?                     @map("record_type")
+  status             PublicRecordFindingStatus   @default(unknown)
+  searchedEntityName String?                     @map("searched_entity_name")
+  matchedEntityName  String?                     @map("matched_entity_name")
+  relatedEntityRole  PublicRecordRelatedRole     @default(unknown) @map("related_entity_role")
+  filingDate         DateTime?                   @map("filing_date")
+  effectiveDate      DateTime?                   @map("effective_date")
+  expirationDate     DateTime?                   @map("expiration_date")
+  releaseDate        DateTime?                   @map("release_date")
+  recordingNumber    String?                     @map("recording_number")
+  instrumentNumber   String?                     @map("instrument_number")
+  caseNumber         String?                     @map("case_number")
+  permitNumber       String?                     @map("permit_number")
+  licenseNumber      String?                     @map("license_number")
+  parcelNumber       String?                     @map("parcel_number")
+  accountNumber      String?                     @map("account_number")
+  contractNumber     String?                     @map("contract_number")
+  amount             String?
+  taxPeriod          String?                     @map("tax_period")
+  creditorOrAgency   String?                     @map("creditor_or_agency")
+  securedParty       String?                     @map("secured_party")
+  counterparty       String?
+  propertyAddress    String?                     @map("property_address") @db.Text
+  jurisdictionState  String?                     @map("jurisdiction_state")
+  jurisdictionCounty String?                     @map("jurisdiction_county")
+  jurisdictionCity   String?                     @map("jurisdiction_city")
+  documentTitle      String?                     @map("document_title") @db.Text
+  documentUrl        String?                     @map("document_url") @db.Text
+  localFileUrl       String?                     @map("local_file_url") @db.Text
+  sourceUrl          String?                     @map("source_url") @db.Text
+  extractedText      String?                     @map("extracted_text") @db.Text
+  summary            String?                     @db.Text
+  notes              String?                     @db.Text
+  riskLevel          PublicRecordRiskLevel       @default(unknown) @map("risk_level")
+  confidence         PublicRecordConfidenceLevel @default(medium)
+  createdAt          DateTime                    @default(now()) @map("created_at")
+  updatedAt          DateTime                    @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, category])
+  @@map("public_records")
+}
+
+model PublicRecordsSearchRun {
+  id                   String                       @id @default(cuid())
+  userId               String                       @map("user_id")
+  user                 User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker               String
+  runDate              DateTime                     @default(now()) @map("run_date")
+  searchedBy           String?                      @map("searched_by")
+  categoriesIncluded   String[]                     @default([]) @map("categories_included")
+  searchScope          Json?                        @map("search_scope")
+  searchTermsUsed      String[]                     @default([]) @map("search_terms_used")
+  sourcesChecked       Json?                        @map("sources_checked")
+  summary              String?                      @db.Text
+  openItemsCount       Int                          @default(0) @map("open_items_count")
+  highRiskItemsCount   Int                          @default(0) @map("high_risk_items_count")
+  unresolvedItemsCount Int                          @default(0) @map("unresolved_items_count")
+  noResultItemsCount   Int                          @default(0) @map("no_result_items_count")
+  coverageQuality      PublicRecordsCoverageQuality @default(low) @map("coverage_quality")
+  createdAt            DateTime                     @default(now()) @map("created_at")
+  updatedAt            DateTime                     @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@map("public_records_search_runs")
+}
+
+model PublicRecordsChecklistItem {
+  id               String                      @id @default(cuid())
+  userId           String                      @map("user_id")
+  user             User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker           String
+  category         PublicRecordCategory
+  /**
+   * registry:<registryId> or user:<userSourceId>
+   */
+  sourceKey        String                      @map("source_key")
+  entityName       String?                     @map("entity_name")
+  jurisdictionName String?                     @map("jurisdiction_name")
+  status           PublicRecordChecklistStatus @default(not_started)
+  notes            String?                     @db.Text
+  checkedAt        DateTime?                   @map("checked_at")
+  createdAt        DateTime                    @default(now()) @map("created_at")
+  updatedAt        DateTime                    @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker, sourceKey])
+  @@index([userId, ticker])
+  @@map("public_records_checklist_items")
+}
+
+model PublicRecordsDocument {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker        String
+  filename      String
+  contentType   String?  @map("content_type")
+  body          Bytes
+  extractedText String?  @map("extracted_text") @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([userId, ticker])
+  @@map("public_records_documents")
 }

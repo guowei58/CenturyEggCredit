@@ -128,7 +128,9 @@ export function CompanyAnalysis({
       ? "sec-filings"
       : activeTab === "20-year-look-back"
         ? "sec-xbrl-financials"
-        : activeTab;
+        : activeTab === "state-local-public-records"
+          ? "saved-documents"
+          : activeTab;
 
   const navDef = companyNav[topSection];
   const groups = navDef?.groups ?? [];
@@ -293,7 +295,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "saved-documents") {
     return <CompanySavedDocumentsTab ticker={ticker} />;
   }
-  if (tabId === "trademark-ip-filings") {
+  if (tabId === "patent-ip-filings") {
     return <CompanyTrademarkIpTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "subsidiary-list") {

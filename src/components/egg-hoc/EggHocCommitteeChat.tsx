@@ -4,6 +4,9 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useSession } from "next-auth/react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { playEggHocIncomingBark, unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
+import { getClipboardOrDropFiles } from "@/lib/ai-chat-attachments-client";
+
+const EGGHOC_IMAGE_MAX_BYTES = Math.floor(2.5 * 1024 * 1024);
 type PublicUser = { id: string; name: string | null; email: string | null; image: string | null; chatDisplayId?: string | null };
 
 type ConvRow = {
@@ -32,6 +35,9 @@ type MsgRow = {
   editedAt: string | null;
   deletedAt: string | null;
   createdAt: string;
+  messageType?: string;
+  hasImage?: boolean;
+  imageUrl?: string | null;
   sender: PublicUser;
   /** FK for replies; kept on the wire so clients can resolve quotes if a merge drops nested `replyTo`. */
   replyToMessageId?: string | null;
@@ -152,6 +158,9 @@ export function EggHocCommitteeChat() {
   const [hasMoreOlder, setHasMoreOlder] = useState(false);
   const [loadOlderLoading, setLoadOlderLoading] = useState(false);
   const [composer, setComposer] = useState("");
+  /** First pasted/dropped image for the next send (multipart). */
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [pendingPreviewUrl, setPendingPreviewUrl] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   /** Message the user is composing a reply to (server thread / `replyToMessageId`). */
   const [replyParent, setReplyParent] = useState<MsgRow | null>(null);
@@ -181,6 +190,21 @@ export function EggHocCommitteeChat() {
   const activeConversationIdRef = useRef<string | null>(null);
 
   activeConversationIdRef.current = activeId;
+
+  useEffect(() => {
+    if (!pendingImage) {
+      setPendingPreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+      return;
+    }
+    const u = URL.createObjectURL(pendingImage);
+    setPendingPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return u;
+    });
+  }, [pendingImage]);
 
   const fetchList = useCallback(async () => {
     if (!userId) return;
@@ -379,12 +403,13 @@ export function EggHocCommitteeChat() {
 
   const send = async () => {
     const text = composer.trim();
-    if (!text || !activeId || sending) return;
+    if ((!text && !pendingImage) || !activeId || sending) return;
     const savedParent = replyParent;
     setSending(true);
     setReplyParent(null);
     const replyId =
       savedParent && !savedParent.id.startsWith("temp-") ? savedParent.id : null;
+
     const optimistic: MsgRow = {
       id: `temp-${Date.now()}`,
       senderUserId: userId!,
@@ -392,6 +417,8 @@ export function EggHocCommitteeChat() {
       editedAt: null,
       deletedAt: null,
       createdAt: new Date().toISOString(),
+      hasImage: Boolean(pendingImage),
+      imageUrl: pendingImage ? pendingPreviewUrl : null,
       sender: {
         id: userId!,
         name: session?.user?.name ?? null,
@@ -411,18 +438,33 @@ export function EggHocCommitteeChat() {
     };
     setMessages((m) => [...m, optimistic]);
     setComposer("");
+    const savedImage = pendingImage;
+    setPendingImage(null);
     try {
-      const res = await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(activeId)}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          body: text,
-          ...(savedParent && !savedParent.id.startsWith("temp-") ? { replyToMessageId: savedParent.id } : {}),
-        }),
-      });
+      let res: Response;
+      if (savedImage) {
+        const fd = new FormData();
+        fd.set("body", text);
+        if (replyId) fd.set("replyToMessageId", replyId);
+        fd.set("image", savedImage, savedImage.name || "pasted.png");
+        res = await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(activeId)}/messages`, {
+          method: "POST",
+          body: fd,
+        });
+      } else {
+        res = await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(activeId)}/messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            body: text,
+            ...(savedParent && !savedParent.id.startsWith("temp-") ? { replyToMessageId: savedParent.id } : {}),
+          }),
+        });
+      }
       const data = await parseResponseJson<{ ok?: boolean; message?: MsgRow; error?: string }>(res);
       if (!res.ok) throw new Error(data.error || "Send failed");
       setMessages((m) => m.filter((x) => x.id !== optimistic.id).concat(data.message!));
+      setPendingImage(null);
       void fetchList();
       requestAnimationFrame(() => {
         requestAnimationFrame(() => scrollThreadToBottom("smooth"));
@@ -430,6 +472,7 @@ export function EggHocCommitteeChat() {
     } catch {
       setMessages((m) => m.filter((x) => x.id !== optimistic.id));
       setComposer(text);
+      setPendingImage(savedImage);
       setReplyParent(savedParent);
     } finally {
       setSending(false);
@@ -827,7 +870,20 @@ export function EggHocCommitteeChat() {
                             {m.deletedAt ? (
                               <em className="text-xs">Message deleted</em>
                             ) : (
-                              <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                              <>
+                                {m.hasImage && m.imageUrl ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={m.imageUrl}
+                                    alt=""
+                                    className="mb-2 max-h-64 max-w-full rounded object-contain"
+                                    style={{ border: "1px solid var(--border2)" }}
+                                  />
+                                ) : null}
+                                {m.body.trim() ? (
+                                  <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                                ) : null}
+                              </>
                             )}
                             <div
                               className="mt-1 flex flex-wrap items-center gap-x-2 text-[9px]"
@@ -909,7 +965,13 @@ export function EggHocCommitteeChat() {
                       Replying to {eggHocPublicUserLabel(replyParent.sender)}
                     </div>
                     <div className="line-clamp-3 whitespace-pre-wrap break-words" style={{ color: "var(--muted2)" }}>
-                      {replyParent.deletedAt ? "(Message deleted.)" : replyParent.body}
+                      {replyParent.deletedAt
+                        ? "(Message deleted.)"
+                        : replyParent.hasImage
+                          ? replyParent.body.trim()
+                            ? `[Image] ${replyParent.body}`
+                            : "[Image]"
+                          : replyParent.body}
                     </div>
                   </div>
                   <button
@@ -922,19 +984,68 @@ export function EggHocCommitteeChat() {
                   </button>
                 </div>
               ) : null}
-              <div className="flex gap-2">
+              {pendingImage && pendingPreviewUrl ? (
+                <div
+                  className="mb-2 flex items-center gap-2 rounded-lg border px-2 py-1.5 text-[10px]"
+                  style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={pendingPreviewUrl}
+                    alt=""
+                    className="h-14 w-14 shrink-0 rounded object-cover"
+                  />
+                  <span className="min-w-0 flex-1 truncate" style={{ color: "var(--muted2)" }}>
+                    {pendingImage.name || "Image"}
+                  </span>
+                  <button
+                    type="button"
+                    className="shrink-0 rounded px-2 py-0.5 font-medium"
+                    style={{ color: "var(--danger)" }}
+                    onClick={() => setPendingImage(null)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : null}
+              <div
+                className="flex gap-2"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const files = getClipboardOrDropFiles(e.dataTransfer);
+                  const img = files.find((f) => f.type.startsWith("image/"));
+                  if (!img || img.size > EGGHOC_IMAGE_MAX_BYTES) return;
+                  setPendingImage(img);
+                }}
+              >
                 <textarea
                   ref={composerRef}
                   rows={2}
                   value={composer}
                   onChange={(e) => setComposer(e.target.value)}
+                  onPaste={(e) => {
+                    const files = getClipboardOrDropFiles(e.clipboardData);
+                    const img = files.find((f) => f.type.startsWith("image/"));
+                    if (!img) return;
+                    if (img.size > EGGHOC_IMAGE_MAX_BYTES) {
+                      e.preventDefault();
+                      return;
+                    }
+                    e.preventDefault();
+                    setPendingImage(img);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       void send();
                     }
                   }}
-                  placeholder="Message… (Enter to send, Shift+Enter for newline)"
+                  placeholder="Message… paste screenshot (Ctrl+V), drop image, or type (Enter sends)"
                   className="min-h-[44px] flex-1 resize-y rounded-lg border px-3 py-2 text-sm"
                   style={{
                     borderColor: "var(--border2)",
@@ -946,7 +1057,7 @@ export function EggHocCommitteeChat() {
                 <button
                   type="button"
                   onClick={() => void send()}
-                  disabled={sending || !composer.trim()}
+                  disabled={sending || (!composer.trim() && !pendingImage)}
                   className="self-end rounded-lg border px-4 py-2 text-sm font-semibold disabled:opacity-50"
                   style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
                 >

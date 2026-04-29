@@ -17,6 +17,16 @@ export type OdpPatentHit = {
   inventorNames: string[];
 };
 
+/** Trademark application row from ODP search (`/api/v1/trademark/applications/search`). */
+export type OdpTrademarkHit = {
+  serialNumber: string | null;
+  registrationNumber: string | null;
+  markText: string | null;
+  statusLabel: string | null;
+  filingDate: string | null;
+  ownerName: string | null;
+};
+
 export type PatentsViewPatentHit = {
   patentId: string | null;
   title: string | null;
@@ -120,6 +130,68 @@ function normalizeOdpSearchRow(row: unknown): OdpPatentHit {
   };
 }
 
+function extractTrademarkSearchRows(data: Record<string, unknown>): unknown[] {
+  const keys = [
+    "trademarkFileWrapperDataBag",
+    "trademarkFileWrapperSearchResults",
+    "trademarkApplicationBag",
+    "trademarkSearchResults",
+  ];
+  for (const k of keys) {
+    const bag = data[k];
+    if (Array.isArray(bag)) return bag;
+  }
+  return [];
+}
+
+function normalizeOdpTrademarkRow(row: unknown): OdpTrademarkHit {
+  const empty: OdpTrademarkHit = {
+    serialNumber: null,
+    registrationNumber: null,
+    markText: null,
+    statusLabel: null,
+    filingDate: null,
+    ownerName: null,
+  };
+  if (!isRecord(row)) return empty;
+
+  const meta = isRecord(row.applicationMetaData) ? row.applicationMetaData : undefined;
+
+  const serial =
+    pickStr(row, "serialNumber") ??
+    pickStr(meta, "serialNumber") ??
+    pickStr(row, "applicationNumberText") ??
+    pickStr(meta, "applicationNumberText");
+
+  return {
+    serialNumber: serial,
+    registrationNumber: pickStr(meta, "registrationNumber") ?? pickStr(row, "registrationNumber"),
+    markText:
+      pickStr(meta, "markIdentification") ??
+      pickStr(row, "markIdentification") ??
+      pickStr(meta, "markText") ??
+      pickStr(row, "markText"),
+    statusLabel:
+      pickStr(meta, "applicationStatusDescriptionText") ??
+      pickStr(meta, "statusDescriptionText") ??
+      pickStr(row, "applicationStatusDescriptionText") ??
+      pickStr(row, "statusLabel"),
+    filingDate: pickStr(meta, "filingDate") ?? pickStr(row, "filingDate"),
+    ownerName:
+      pickStr(meta, "applicantName") ??
+      pickStr(meta, "ownerName") ??
+      pickStr(meta, "partyName") ??
+      pickStr(row, "ownerName"),
+  };
+}
+
+/** Deep link to TSDR status for a trademark serial (digits only). */
+export function trademarkSerialToTsdrUrl(serial: string | null | undefined): string | null {
+  const digits = String(serial ?? "").replace(/\D/g, "");
+  if (!digits) return null;
+  return `https://tsdr.uspto.gov/#caseNumber=${digits}&caseType=SERIAL_NO&searchType=statusSearch`;
+}
+
 function extractOdpSearchRows(data: Record<string, unknown>): unknown[] {
   const bag = data.patentFileWrapperDataBag ?? data.patentFileWrapperSearchResults;
   if (Array.isArray(bag)) return bag;
@@ -193,12 +265,59 @@ export async function searchOdpPatentApplications(
 
   if (!res.ok) {
     const t = await res.text().catch(() => "");
+    /** ODP returns HTTP 404 with a JSON body when the query matches no applications — not a transport error. */
+    if (res.status === 404 && /no matching record/i.test(t)) {
+      return { total: 0, hits: [] };
+    }
     throw new Error(`USPTO ODP patent search failed (${res.status}): ${t.slice(0, 280)}`);
   }
 
   const data = (await res.json()) as Record<string, unknown>;
   const rows = extractOdpSearchRows(data);
   const hits: OdpPatentHit[] = rows.map(normalizeOdpSearchRow);
+
+  return { total: extractOdpTotalCount(data, hits.length), hits };
+}
+
+/**
+ * ODP trademark application full-text search — **not operational**: POST to
+ * `api.uspto.gov/api/v1/trademark/applications/search` returns HTTP 403 `Missing Authentication Token`
+ * (API Gateway has no matching resource). Retained for documentation / if USPTO ships this route later.
+ * @deprecated Do not call until USPTO documents a live trademark search endpoint on api.uspto.gov.
+ */
+export async function searchOdpTrademarkApplications(
+  apiKey: string,
+  query: string,
+  offset: number,
+  limit: number
+): Promise<{ total: number; hits: OdpTrademarkHit[] }> {
+  const capped = Math.min(Math.max(limit, 1), 50);
+  const res = await fetch("https://api.uspto.gov/api/v1/trademark/applications/search", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-API-Key": apiKey,
+      "User-Agent": USER_AGENT,
+    },
+    body: JSON.stringify({
+      q: query,
+      pagination: { offset: Math.max(0, offset), limit: capped },
+    }),
+    signal: AbortSignal.timeout(45_000),
+  });
+
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    if (res.status === 404 && /no matching record/i.test(t)) {
+      return { total: 0, hits: [] };
+    }
+    throw new Error(`USPTO ODP trademark search failed (${res.status}): ${t.slice(0, 280)}`);
+  }
+
+  const data = (await res.json()) as Record<string, unknown>;
+  const rows = extractTrademarkSearchRows(data);
+  const hits: OdpTrademarkHit[] = rows.map(normalizeOdpTrademarkRow);
 
   return { total: extractOdpTotalCount(data, hits.length), hits };
 }

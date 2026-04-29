@@ -89,12 +89,12 @@ export function isMemoRetrievalEnabled(): boolean {
 
 /** Ranked chunk body budget for memo/deck when retrieval succeeds (framing lines add a little on top). */
 export function memoRetrievalMaxEvidenceChars(): number {
-  return parseEnvInt("MEMO_RETRIEVAL_MAX_EVIDENCE_CHARS", 520_000, 20_000, 2_000_000);
+  return parseEnvInt("MEMO_RETRIEVAL_MAX_EVIDENCE_CHARS", 400_000, 20_000, 2_000_000);
 }
 
 /** Sequential evidence cap when retrieval is off, disabled, or fails (aligns with LME-style bundle scale). */
 export function memoFallbackMaxEvidenceChars(): number {
-  return parseEnvInt("MEMO_FALLBACK_MAX_EVIDENCE_CHARS", 520_000, 40_000, 2_000_000);
+  return parseEnvInt("MEMO_FALLBACK_MAX_EVIDENCE_CHARS", 400_000, 40_000, 2_000_000);
 }
 
 function l2normalize(v: number[]): number[] {

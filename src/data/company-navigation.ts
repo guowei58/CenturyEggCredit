@@ -90,13 +90,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         // "EdgarTools SEC" intentionally omitted from nav for now; CompanyEdgarToolsTab + /api/edgartools/* remain.
-        tabs: [
-          "Saved Documents",
-          "SEC Filings",
-          "FCC Filings",
-          "Trademark IP Filings",
-          "Other Regulatory Filings",
-        ],
+        tabs: ["Saved Documents", "SEC Filings", "FCC Filings", "Patent IP Filings", "Other Regulatory Filings"],
       },
     ],
   },

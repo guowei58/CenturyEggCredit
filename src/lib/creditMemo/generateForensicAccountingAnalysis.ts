@@ -22,7 +22,7 @@ function formatSourcesForForensicAnalysis(ticker: string, parts: LmeSourcePart[]
     `Ticker: ${sym}\n` +
     `The blocks below are packed from your ticker workspace, saved tabs, and Saved Documents, excluding sources that already feed **LME Analysis** (same paths and tab keys as the LME tab, plus Saved Documents that pass the LME include gate). ` +
     `Excel spreadsheets, generated work products, and embedding caches are also excluded. ` +
-    `When retrieval is enabled, you receive embedding-ranked context under the same 520k default bundle ceiling as LME/KPI. ` +
+    `When retrieval is enabled, you receive embedding-ranked context under the same 400k default bundle ceiling as LME/KPI. ` +
     `Use them as the primary factual basis for forensic claims.\n\n`;
   const blocks = parts.map(
     (p) =>

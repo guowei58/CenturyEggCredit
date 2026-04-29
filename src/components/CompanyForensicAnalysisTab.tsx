@@ -646,7 +646,7 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
                 sum of packed block bodies. Your run totalled{" "}
                 <strong>{lastRunDiagnostics.packing.packedPartsCharSum.toLocaleString()}</strong> because that is how
                 much text remained after per-source limits, retrieval (where applicable), and bundle trimming—not
-                because the system “shrinks” to 520k by default. The user message also adds the task spec, file inventory, and{" "}
+                because the system “shrinks” to 400k by default. The user message also adds the task spec, file inventory, and{" "}
                 <code className="font-mono">SOURCE:</code> framing on top of the formatted sources string.
               </p>
                 </>

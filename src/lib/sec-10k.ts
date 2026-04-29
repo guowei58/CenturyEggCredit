@@ -1,6 +1,6 @@
 "use server";
 
-import { getFilingsByTicker, type SecFiling } from "@/lib/sec-edgar";
+import { getFilingsByTicker, getAllFilingsByTicker, type SecFiling, type SecFilingsResult } from "@/lib/sec-edgar";
 
 const USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
 
@@ -64,15 +64,56 @@ function stripHtml(html: string): string {
   return normalizeWhitespace(decodeHtmlEntities(text));
 }
 
+/**
+ * Annual report forms in the 10-K family (SEC EDGAR).
+ * Excludes "NT 10-K" (late filing notices) — those are not substantive annual reports.
+ */
+function isAnnualTenKForm(formRaw: string): boolean {
+  const raw = (formRaw ?? "").trim().replace(/\u00a0/g, " ");
+  if (!raw) return false;
+  const compact = raw.replace(/\s+/g, " ").trim();
+  if (/\bNT\s*10-K\b/i.test(compact)) return false;
+  const u = compact.toUpperCase();
+  if (u === "10-K" || u === "10-K/A") return true;
+  if (u === "10-KT" || u === "10-KT/A") return true;
+  if (/^10-K\d/i.test(u.replace(/\s/g, ""))) return true;
+  return false;
+}
+
 function pickLatest10K(filings: SecFiling[]): SecFiling | null {
   const candidates = filings
-    .filter((f) => typeof f.form === "string" && /^10-k(\/a)?$/i.test(f.form.trim()))
+    .filter((f) => typeof f.form === "string" && isAnnualTenKForm(f.form))
     .sort((a, b) => (b.filingDate || "").localeCompare(a.filingDate || ""));
   if (candidates.length === 0) return null;
 
   // Prefer plain 10-K over 10-K/A if same date range.
-  const plain = candidates.find((c) => c.form.trim().toUpperCase() === "10-K");
+  const plain = candidates.find((c) => c.form.trim().toUpperCase().replace(/\s+/g, "") === "10-K");
   return plain ?? candidates[0];
+}
+
+async function findLatestTenKFilingForTicker(ticker: string): Promise<{ filing: SecFiling; companyName: string } | null> {
+  const sym = ticker.trim().toUpperCase();
+  const nameFrom = (p: SecFilingsResult | null) => (p?.companyName?.trim() ? p.companyName.trim() : sym);
+
+  const recent = await getFilingsByTicker(sym);
+  if (!recent) return null;
+
+  let companyName = nameFrom(recent);
+  let filing = pickLatest10K(recent.filings);
+  if (filing) return { filing, companyName };
+
+  const full = await getAllFilingsByTicker(sym);
+  if (!full) return null;
+  companyName = nameFrom(full);
+  filing = pickLatest10K(full.filings);
+  if (!filing) return null;
+  return { filing, companyName };
+}
+
+/** Latest 10-K-class filing, searching full submission history if needed (recent feed is capped). */
+export async function resolveLatest10KFiling(ticker: string): Promise<SecFiling | null> {
+  const hit = await findLatestTenKFilingForTicker(ticker);
+  return hit?.filing ?? null;
 }
 
 function findItemSection(text: string): { item1: string | null; confidence: "high" | "medium" | "low"; note?: string } {
@@ -230,11 +271,10 @@ function extractSegmentRevenuesFromText(
 
 export async function get10KOverviewRaw(ticker: string): Promise<TenKOverviewRaw | null> {
   const safeTicker = ticker.trim().toUpperCase();
-  const res = await getFilingsByTicker(safeTicker);
-  if (!res) return null;
+  const hit = await findLatestTenKFilingForTicker(safeTicker);
+  if (!hit) return null;
 
-  const tenk = pickLatest10K(res.filings);
-  if (!tenk) return null;
+  const { filing: tenk, companyName } = hit;
 
   const docRes = await fetch(tenk.docUrl, { headers: { "User-Agent": USER_AGENT } });
   if (!docRes.ok) return null;
@@ -249,7 +289,7 @@ export async function get10KOverviewRaw(ticker: string): Promise<TenKOverviewRaw
   const segmentRevenueUnclear = segmentRevenues.length === 0 && segmentNames.length > 1;
 
   return {
-    companyName: res.companyName || safeTicker,
+    companyName: companyName || safeTicker,
     source: {
       filingDate: tenk.filingDate,
       form: tenk.form,
@@ -266,11 +306,10 @@ export async function get10KOverviewRaw(ticker: string): Promise<TenKOverviewRaw
 
 export async function getLatest10KBusinessProfile(ticker: string): Promise<TenKBusinessProfile | null> {
   const safeTicker = ticker.trim().toUpperCase();
-  const res = await getFilingsByTicker(safeTicker);
-  if (!res) return null;
+  const hit = await findLatestTenKFilingForTicker(safeTicker);
+  if (!hit) return null;
 
-  const tenk = pickLatest10K(res.filings);
-  if (!tenk) return null;
+  const { filing: tenk, companyName } = hit;
 
   const docRes = await fetch(tenk.docUrl, { headers: { "User-Agent": USER_AGENT } });
   if (!docRes.ok) return null;
@@ -284,7 +323,7 @@ export async function getLatest10KBusinessProfile(ticker: string): Promise<TenKB
 
   return {
     ticker: safeTicker,
-    companyName: res.companyName || safeTicker,
+    companyName: companyName || safeTicker,
     source: {
       filingDate: tenk.filingDate,
       form: tenk.form,
@@ -297,6 +336,18 @@ export async function getLatest10KBusinessProfile(ticker: string): Promise<TenKB
       note,
     },
     businessLines: lines,
+  };
+}
+
+/** Latest 10-K primary document URL + filing meta for linking (SEC EDGAR). */
+export async function getLatest10KFilingMeta(ticker: string): Promise<TenKSource | null> {
+  const tenk = await resolveLatest10KFiling(ticker.trim().toUpperCase());
+  if (!tenk) return null;
+  return {
+    filingDate: tenk.filingDate,
+    form: tenk.form,
+    accessionNumber: tenk.accessionNumber,
+    docUrl: tenk.docUrl,
   };
 }
 

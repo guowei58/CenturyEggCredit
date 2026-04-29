@@ -68,6 +68,28 @@ export function isLikelyTextFile(file: File): boolean {
   return TEXT_EXT.has(ext);
 }
 
+/**
+ * Files from a paste or drop event. Screenshots on Windows/macOS often appear under
+ * {@link DataTransferItem} (`kind === "file"`) while {@link DataTransfer#files} stays empty.
+ */
+export function getClipboardOrDropFiles(dt: DataTransfer | null | undefined): File[] {
+  if (!dt) return [];
+  if (dt.files && dt.files.length > 0) {
+    return Array.from(dt.files);
+  }
+  const items = dt.items;
+  if (!items?.length) return [];
+  const out: File[] = [];
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.kind === "file") {
+      const f = it.getAsFile();
+      if (f) out.push(f);
+    }
+  }
+  return out;
+}
+
 export function readTextFileForAppend(file: File): Promise<string | null> {
   return new Promise((resolve) => {
     if (!isLikelyTextFile(file)) {

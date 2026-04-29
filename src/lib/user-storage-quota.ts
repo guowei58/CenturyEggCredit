@@ -22,7 +22,7 @@ export async function getUserStorageBytesUsed(userId: string): Promise<number> {
       COALESCE((SELECT (octet_length(payload))::bigint FROM user_preferences WHERE user_id = ${userId}), 0) +
       COALESCE((SELECT SUM(octet_length(payload))::bigint FROM user_ai_chat_state WHERE user_id = ${userId}), 0) +
       COALESCE((SELECT SUM(octet_length(payload_json))::bigint FROM user_daily_news_batches WHERE user_id = ${userId}), 0) +
-      COALESCE((SELECT SUM(octet_length(body))::bigint FROM egg_hoc_messages WHERE sender_user_id = ${userId}), 0)
+      COALESCE((SELECT SUM(octet_length(body) + COALESCE(octet_length(image_bytes), 0))::bigint FROM egg_hoc_messages WHERE sender_user_id = ${userId}), 0)
     )::bigint AS total
   `;
   const total = rows[0]?.total ?? BigInt(0);

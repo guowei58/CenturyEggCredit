@@ -104,37 +104,6 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
   return (
     <div className="space-y-6">
       <Card title={`FCC Filings (ECFS) — ${safeTicker}`}>
-        <p className="text-xs mb-3 leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Searches the{" "}
-          <span className="inline-flex flex-wrap items-center gap-x-0.5 align-middle">
-            <a
-              href="https://www.fcc.gov/ecfs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-              style={{ color: "var(--accent)" }}
-            >
-              FCC Electronic Comment Filing System (ECFS)
-            </a>
-            <SaveFilingLinkButton ticker={safeTicker} url="https://www.fcc.gov/ecfs" />
-          </span>{" "}
-          via the official public API (
-          <span className="inline-flex flex-wrap items-center gap-x-0.5 align-middle">
-            <a
-              href="https://www.fcc.gov/ecfs/help/public_api"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-              style={{ color: "var(--accent)" }}
-            >
-              documentation
-            </a>
-            <SaveFilingLinkButton ticker={safeTicker} url="https://www.fcc.gov/ecfs/help/public_api" />
-          </span>
-          ). By default the search uses the SEC-registered company name for this ticker. You can override the search
-          string below (e.g. a subsidiary or prior legal name).
-        </p>
-
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="min-w-0 flex-1">
             <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>

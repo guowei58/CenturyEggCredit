@@ -113,6 +113,28 @@ const OREO_LOBBY_BOT_EMAIL = "oreo-lobby-bot@noreply.centuryegg.internal";
 /** First Lobby line for each new member (`visibleOnlyToUserId` so others do not get unread). */
 const OREO_LOBBY_WELCOME_MESSAGE = "OREO says hi - woof woof";
 
+/** Max image size for Egg-Hoc pasted screenshots (multipart upload). */
+export const EGGHOC_MAX_IMAGE_BYTES = Math.floor(2.5 * 1024 * 1024);
+
+const EGGHOC_IMAGE_MIMES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
+
+function quoteSnippetForReply(body: string, messageType: EggHocMessageType): string {
+  if (messageType === EggHocMessageType.IMAGE) {
+    const t = body.trim();
+    return t ? `[Image] ${t.slice(0, 160)}${t.length > 160 ? "…" : ""}` : "[Image]";
+  }
+  return body;
+}
+
+function inboxPreviewFromMessage(body: string, messageType: EggHocMessageType, max = 140): string {
+  if (messageType === EggHocMessageType.IMAGE) {
+    const t = body.trim();
+    const base = t ? `[Image] ${t}` : "[Image]";
+    return base.slice(0, max) + (base.length > max ? "…" : "");
+  }
+  return body.slice(0, max) + (body.length > max ? "…" : "");
+}
+
 /** Rows the viewer may see in previews, threads, and unread (null = everyone). */
 function messageVisibleToViewerWhere(viewerUserId: string) {
   return {
@@ -318,7 +340,7 @@ async function listUserConversationsInner(userId: string) {
       });
 
       const preview = lastVisible
-        ? lastVisible.body.slice(0, 140) + (lastVisible.body.length > 140 ? "…" : "")
+        ? inboxPreviewFromMessage(lastVisible.body, lastVisible.messageType)
         : "";
       const isLobby = c.lobbyKey === GLOBAL_LOBBY_KEY;
       const senderRow = lastVisible?.sender;
@@ -539,6 +561,7 @@ export async function getConversationMessages(
             id: true,
             body: true,
             deletedAt: true,
+            messageType: true,
             sender: { select: userPublicSelect },
           },
         })
@@ -548,7 +571,7 @@ export async function getConversationMessages(
       p.id,
       {
         id: p.id,
-        body: p.deletedAt ? "" : p.body,
+        body: p.deletedAt ? "" : quoteSnippetForReply(p.body, p.messageType),
         deletedAt: p.deletedAt?.toISOString() ?? null,
         sender: publicUserRowToPublicUser(p.sender),
       },
@@ -566,6 +589,8 @@ export async function getConversationMessages(
         senderUserId: m.senderUserId,
         body: m.body,
         messageType: m.messageType,
+        hasImage: m.messageType === EggHocMessageType.IMAGE,
+        imageUrl: m.messageType === EggHocMessageType.IMAGE ? `/api/egg-hoc/messages/${m.id}/image` : null,
         replyToMessageId: m.replyToMessageId,
         editedAt: m.editedAt?.toISOString() ?? null,
         deletedAt: m.deletedAt?.toISOString() ?? null,
@@ -583,16 +608,32 @@ export async function sendMessage(
   conversationId: string,
   userId: string,
   body: string,
-  replyToMessageId?: string | null
+  replyToMessageId?: string | null,
+  image?: { mime: string; buffer: Buffer } | null
 ) {
   const text = body.trim();
-  if (!text) return { ok: false as const, error: "Message cannot be empty" };
+  const imgBuf = image && image.buffer.length > 0 ? image.buffer : null;
+  const imgMime = imgBuf ? (image!.mime || "").toLowerCase().trim() : "";
+  const hasImage = Boolean(imgBuf && imgBuf.length > 0);
+
+  if (!hasImage && !text) return { ok: false as const, error: "Message cannot be empty" };
+  if (hasImage && imgBuf) {
+    if (!EGGHOC_IMAGE_MIMES.has(imgMime)) {
+      return { ok: false as const, error: "Image must be JPEG, PNG, GIF, or WebP" };
+    }
+    if (imgBuf.length > EGGHOC_MAX_IMAGE_BYTES) {
+      return {
+        ok: false as const,
+        error: `Image must be ${Math.round((EGGHOC_MAX_IMAGE_BYTES / (1024 * 1024)) * 10) / 10} MB or smaller`,
+      };
+    }
+  }
   if (text.length > 20_000) return { ok: false as const, error: "Message too long" };
 
   const member = await assertMember(conversationId, userId);
   if (!member) return { ok: false as const, error: "Not a member of this conversation" };
 
-  const byteLen = Buffer.byteLength(text, "utf8");
+  const byteLen = Buffer.byteLength(text, "utf8") + (hasImage && imgBuf ? imgBuf.length : 0);
   const quota = await assertUserStorageAllowsNetDelta(userId, byteLen);
   if (!quota.ok) return { ok: false as const, error: quota.error };
 
@@ -618,7 +659,9 @@ export async function sendMessage(
         conversationId,
         senderUserId: userId,
         body: text,
-        messageType: EggHocMessageType.TEXT,
+        messageType: hasImage ? EggHocMessageType.IMAGE : EggHocMessageType.TEXT,
+        imageMimeType: hasImage && imgBuf ? imgMime : null,
+        imageBytes: hasImage && imgBuf ? new Uint8Array(imgBuf) : null,
         replyToMessageId: replyId,
       },
       include: {
@@ -628,6 +671,7 @@ export async function sendMessage(
             id: true,
             body: true,
             deletedAt: true,
+            messageType: true,
             sender: { select: userPublicSelect },
           },
         },
@@ -648,6 +692,9 @@ export async function sendMessage(
       senderUserId: msg.senderUserId,
       body: msg.body,
       messageType: msg.messageType,
+      hasImage: msg.messageType === EggHocMessageType.IMAGE,
+      imageUrl:
+        msg.messageType === EggHocMessageType.IMAGE ? `/api/egg-hoc/messages/${msg.id}/image` : null,
       replyToMessageId: msg.replyToMessageId,
       editedAt: null,
       deletedAt: null,
@@ -656,7 +703,7 @@ export async function sendMessage(
       replyTo: msg.replyTo
         ? {
             id: msg.replyTo.id,
-            body: msg.replyTo.deletedAt ? "" : msg.replyTo.body,
+            body: msg.replyTo.deletedAt ? "" : quoteSnippetForReply(msg.replyTo.body, msg.replyTo.messageType),
             deletedAt: msg.replyTo.deletedAt?.toISOString() ?? null,
             sender: publicUserRowToPublicUser(msg.replyTo.sender),
           }
@@ -838,16 +885,59 @@ export async function removeGroupMember(conversationId: string, actorUserId: str
   return { ok: true as const };
 }
 
+export async function getEggHocMessageImageForViewer(
+  messageId: string,
+  viewerUserId: string
+): Promise<
+  { ok: true; mime: string; bytes: Buffer } | { ok: false; error: string; status: 403 | 404 }
+> {
+  const msg = await prisma.eggHocMessage.findUnique({
+    where: { id: messageId },
+    select: {
+      conversationId: true,
+      messageType: true,
+      imageMimeType: true,
+      imageBytes: true,
+      deletedAt: true,
+    },
+  });
+  if (!msg || msg.deletedAt) return { ok: false, error: "Not found", status: 404 };
+  if (msg.messageType !== EggHocMessageType.IMAGE || !msg.imageBytes || msg.imageBytes.length === 0) {
+    return { ok: false, error: "Not found", status: 404 };
+  }
+  const member = await assertMember(msg.conversationId, viewerUserId);
+  if (!member) return { ok: false, error: "Forbidden", status: 403 };
+  const raw = msg.imageBytes;
+  return {
+    ok: true,
+    mime: msg.imageMimeType?.trim() || "image/png",
+    bytes: Buffer.isBuffer(raw) ? raw : Buffer.from(raw),
+  };
+}
+
 export async function editMessage(messageId: string, userId: string, body: string) {
   const text = body.trim();
-  if (!text) return { ok: false as const, error: "Message cannot be empty" };
 
   const msg = await prisma.eggHocMessage.findUnique({
     where: { id: messageId },
-    select: { id: true, senderUserId: true, deletedAt: true, body: true },
+    select: {
+      id: true,
+      senderUserId: true,
+      deletedAt: true,
+      body: true,
+      messageType: true,
+      imageBytes: true,
+    },
   });
   if (!msg || msg.deletedAt) return { ok: false as const, error: "Message not found" };
   if (msg.senderUserId !== userId) return { ok: false as const, error: "You can only edit your own messages" };
+  if (msg.messageType === EggHocMessageType.IMAGE) {
+    if (!msg.imageBytes || msg.imageBytes.length === 0) {
+      return { ok: false as const, error: "Message not found" };
+    }
+  } else if (!text) {
+    return { ok: false as const, error: "Message cannot be empty" };
+  }
 
   const quota = await assertUserStorageAllowsNetDelta(
     userId,
@@ -873,7 +963,7 @@ export async function softDeleteMessage(messageId: string, userId: string) {
 
   await prisma.eggHocMessage.update({
     where: { id: messageId },
-    data: { deletedAt: new Date(), body: "" },
+    data: { deletedAt: new Date(), body: "", imageBytes: null, imageMimeType: null },
   });
 
   const conv = await prisma.conversation.findUnique({

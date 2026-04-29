@@ -22,6 +22,7 @@ import {
 import {
   prepareFileForAiChat,
   readTextFileForAppend,
+  getClipboardOrDropFiles,
 } from "@/lib/ai-chat-attachments-client";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
@@ -1105,8 +1106,8 @@ export function ChatDrawer({
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onPaste={(e) => {
-                  const files = e.clipboardData?.files;
-                  if (files && files.length > 0) {
+                  const files = getClipboardOrDropFiles(e.clipboardData);
+                  if (files.length > 0) {
                     e.preventDefault();
                     void addFilesFromList(files);
                   }

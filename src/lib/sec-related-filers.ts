@@ -5,7 +5,6 @@
 
 import { getFilingsByTicker } from "@/lib/sec-edgar";
 import {
-  EFTS_ENTITY_FACET_MAX_FILINGS_SCANNED,
   fetchEdgarSearchEntityFacetForCik,
 } from "@/lib/sec-efts-entity-facet";
 
@@ -33,9 +32,6 @@ export type RelatedSecFilersResult =
 
 const MAX_ENTITY_ROWS = 85;
 
-const DISCLAIMER =
-  "Same source as SEC.gov EDGAR Search: the full-text filing index (EFTS) filtered by this issuer’s CIK. Each row is an entity label attached to those hits; the number is how often that label appears on an indexed filing. It includes reporting subsidiaries, insiders, and other co-filers—like the SEC site’s Entity list. (These counts are not the same as the simple submissions API list below.)";
-
 export async function getRelatedSecFilersForTicker(ticker: string): Promise<RelatedSecFilersResult> {
   const t = ticker?.trim();
   if (!t) return { ok: false, message: "Ticker required" };
@@ -62,9 +58,7 @@ export async function getRelatedSecFilersForTicker(ticker: string): Promise<Rela
       parentCik,
       parentName,
       related,
-      disclaimer: truncated
-        ? `${DISCLAIMER} We stop after scanning about ${EFTS_ENTITY_FACET_MAX_FILINGS_SCANNED.toLocaleString()} filings; sec.gov may include additional pages, so tail entities and totals can differ slightly.`
-        : DISCLAIMER,
+      disclaimer: "",
       relatedSource: "edgar-fts",
       eftsTotalFilings: totalFilingsInIndex,
       eftsTruncated: truncated,

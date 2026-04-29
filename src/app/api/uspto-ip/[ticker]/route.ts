@@ -28,7 +28,7 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const qOverride = searchParams.get("q")?.trim() || "";
   const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0", 10) || 0);
-  const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? "25", 10) || 25));
+  const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? "50", 10) || 50));
   const pvTop = Math.min(15, Math.max(1, parseInt(searchParams.get("pvTop") ?? "5", 10) || 5));
   const pvPatentsPer = Math.min(25, Math.max(5, parseInt(searchParams.get("pvPer") ?? "15", 10) || 15));
 
@@ -71,6 +71,10 @@ export async function GET(
       notices: [
         `Add USPTO_API_KEY to .env.local (free key: ${ODP_URL}) to search patent applications via the USPTO Open Data Portal.`,
       ],
+      totalTrademarkOdp: 0,
+      odpTrademarkOffset: 0,
+      odpTrademarkLimit: limit,
+      odpTrademarks: [],
     });
   }
 
@@ -127,14 +131,21 @@ export async function GET(
       }
     }
 
-    const notices: string[] = [
-      "Patent search (ODP) sends plain text as a Lucene quoted phrase so common words (INC, CORP, LLC) are not searched as separate tokens.",
-      "PatentsView assignee enrichment uses phrase-style matching on the same text so short tokens do not dominate results.",
-    ];
+    /** Same ODP key as patents; USPTO does not publish a working `.../trademark/.../search` route on api.uspto.gov. */
+    const totalTrademarkOdp = 0;
+    const odpTrademarks: Array<{
+      serialNumber: string | null;
+      registrationNumber: string | null;
+      markText: string | null;
+      statusLabel: string | null;
+      filingDate: string | null;
+      ownerName: string | null;
+      tsdrUrl: string | null;
+    }> = [];
+
+    const notices: string[] = [];
     if (patentsViewError) {
       notices.push(`PatentsView enrichment failed (${patentsViewError}); ODP results are unchanged.`);
-    } else if (!pvKey) {
-      notices.push(`Optional: USPTO_PATENTSVIEW_API_KEY (${PV_URL}) adds granted-patent rows matched by assignee name.`);
     }
 
     return NextResponse.json({
@@ -148,6 +159,10 @@ export async function GET(
       totalOdp: total,
       odpOffset: offset,
       odpLimit: limit,
+      totalTrademarkOdp,
+      odpTrademarkOffset: offset,
+      odpTrademarkLimit: limit,
+      odpTrademarks,
       odpPatents,
       assigneeCandidates,
       patentsViewBlocks,

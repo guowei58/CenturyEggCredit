@@ -16,6 +16,7 @@ export default defineConfig({
       "src/lib/reddit/*.test.ts",
       "src/lib/creditMemo/**/*.test.ts",
       "src/lib/xbrl-saved-history/**/*.test.ts",
+      "src/lib/sec-edgar.test.ts",
     ],
   },
   resolve: {
