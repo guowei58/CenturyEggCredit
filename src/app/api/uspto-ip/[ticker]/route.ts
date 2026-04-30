@@ -11,6 +11,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store, max-age=0" };
+
 const ODP_URL = "https://data.uspto.gov/apis/getting-started";
 const PV_URL = "https://patentsview.org/apis/purpose";
 const TSDR_URL = "https://developer.uspto.gov";
@@ -22,7 +24,7 @@ export async function GET(
   const { ticker: raw } = await params;
   const ticker = raw?.trim() ?? "";
   if (!ticker) {
-    return NextResponse.json({ ok: false, error: "Ticker required" }, { status: 400 });
+    return NextResponse.json({ ok: false, error: "Ticker required" }, { status: 400, headers: NO_STORE_HEADERS });
   }
 
   const { searchParams } = new URL(request.url);
@@ -50,32 +52,35 @@ export async function GET(
   const queryPatentsView = unwrapOdpStylePhrase(queryRaw);
 
   if (!odpKey) {
-    return NextResponse.json({
-      ok: true,
-      ticker,
-      companyName,
-      queryUsed: queryOdp,
-      odpConfigured: false,
-      patentsViewConfigured: Boolean(pvKey),
-      totalOdp: 0,
-      odpPatents: [],
-      assigneeCandidates: [],
-      patentsViewBlocks: [],
-      links: {
-        odpSignup: ODP_URL,
-        patentsViewSignup: PV_URL,
-        tsdrSignup: TSDR_URL,
-        trademarkSearchUi: "https://www.uspto.gov/trademarks/search",
-        patentCenter: "https://patentcenter.uspto.gov/",
+    return NextResponse.json(
+      {
+        ok: true,
+        ticker,
+        companyName,
+        queryUsed: queryOdp,
+        odpConfigured: false,
+        patentsViewConfigured: Boolean(pvKey),
+        totalOdp: 0,
+        odpPatents: [],
+        assigneeCandidates: [],
+        patentsViewBlocks: [],
+        links: {
+          odpSignup: ODP_URL,
+          patentsViewSignup: PV_URL,
+          tsdrSignup: TSDR_URL,
+          trademarkSearchUi: "https://www.uspto.gov/trademarks/search",
+          patentCenter: "https://patentcenter.uspto.gov/",
+        },
+        notices: [
+          `Add USPTO_API_KEY to .env.local (free key: ${ODP_URL}) to search patent applications via the USPTO Open Data Portal.`,
+        ],
+        totalTrademarkOdp: 0,
+        odpTrademarkOffset: 0,
+        odpTrademarkLimit: limit,
+        odpTrademarks: [],
       },
-      notices: [
-        `Add USPTO_API_KEY to .env.local (free key: ${ODP_URL}) to search patent applications via the USPTO Open Data Portal.`,
-      ],
-      totalTrademarkOdp: 0,
-      odpTrademarkOffset: 0,
-      odpTrademarkLimit: limit,
-      odpTrademarks: [],
-    });
+      { headers: NO_STORE_HEADERS }
+    );
   }
 
   try {
@@ -148,33 +153,36 @@ export async function GET(
       notices.push(`PatentsView enrichment failed (${patentsViewError}); ODP results are unchanged.`);
     }
 
-    return NextResponse.json({
-      ok: true,
-      ticker,
-      companyName,
-      queryUsed: queryOdp,
-      odpConfigured: true,
-      patentsViewConfigured: Boolean(pvKey),
-      patentsViewError,
-      totalOdp: total,
-      odpOffset: offset,
-      odpLimit: limit,
-      totalTrademarkOdp,
-      odpTrademarkOffset: offset,
-      odpTrademarkLimit: limit,
-      odpTrademarks,
-      odpPatents,
-      assigneeCandidates,
-      patentsViewBlocks,
-      links: {
-        odpSignup: ODP_URL,
-        patentsViewSignup: PV_URL,
-        tsdrSignup: TSDR_URL,
-        trademarkSearchUi: "https://www.uspto.gov/trademarks/search",
-        patentCenter: "https://patentcenter.uspto.gov/",
+    return NextResponse.json(
+      {
+        ok: true,
+        ticker,
+        companyName,
+        queryUsed: queryOdp,
+        odpConfigured: true,
+        patentsViewConfigured: Boolean(pvKey),
+        patentsViewError,
+        totalOdp: total,
+        odpOffset: offset,
+        odpLimit: limit,
+        totalTrademarkOdp,
+        odpTrademarkOffset: offset,
+        odpTrademarkLimit: limit,
+        odpTrademarks,
+        odpPatents,
+        assigneeCandidates,
+        patentsViewBlocks,
+        links: {
+          odpSignup: ODP_URL,
+          patentsViewSignup: PV_URL,
+          tsdrSignup: TSDR_URL,
+          trademarkSearchUi: "https://www.uspto.gov/trademarks/search",
+          patentCenter: "https://patentcenter.uspto.gov/",
+        },
+        notices,
       },
-      notices,
-    });
+      { headers: NO_STORE_HEADERS }
+    );
   } catch (e) {
     console.error("USPTO IP search error:", e);
     const message = e instanceof Error ? e.message : "USPTO search failed.";
@@ -187,7 +195,7 @@ export async function GET(
         queryAttempted: queryOdp,
         odpSignup: ODP_URL,
       },
-      { status: 502 }
+      { status: 502, headers: NO_STORE_HEADERS }
     );
   }
 }

@@ -27,6 +27,12 @@ export type GeneratedPublicRecordSearchTerms = {
   allTermsFlat: string[];
 };
 
+/** Profile lines may be "Legal Name — domicile" (em dash); search variants use the legal-name portion. */
+function stripExhibit21DomicileSuffix(line: string): string {
+  const idx = line.search(/\s+—\s+/);
+  return idx >= 0 ? line.slice(0, idx).trim() : line.trim();
+}
+
 function dedupeOrdered(items: string[]): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
@@ -65,7 +71,7 @@ function collectNames(input: SearchTermProfileInput): string[] {
     ...(input.legalNames ?? []),
     ...(input.formerNames ?? []),
     ...(input.dbaNames ?? []),
-    ...(input.subsidiaryNames ?? []),
+    ...(input.subsidiaryNames ?? []).map((s) => stripExhibit21DomicileSuffix(s)),
     ...(input.borrowerNames ?? []),
     ...(input.guarantorNames ?? []),
     ...(input.issuerNames ?? []),

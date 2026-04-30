@@ -168,13 +168,25 @@ export function TopNav({
       }
     };
 
+    const onInboxUpdated = (e: Event) => {
+      const d = (e as CustomEvent<{ totalUnread?: number }>).detail;
+      if (typeof d?.totalUnread === "number") setEggHocUnreadTotal(d.totalUnread);
+    };
+
     void refreshBadges();
     const id = window.setInterval(() => void refreshBadges(), NAV_BADGE_POLL_MS);
     const onFocus = () => void refreshBadges();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") void refreshBadges();
+    };
     window.addEventListener("focus", onFocus);
+    window.addEventListener("egg-hoc-inbox-updated", onInboxUpdated);
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
       window.clearInterval(id);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("egg-hoc-inbox-updated", onInboxUpdated);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [status]);
 

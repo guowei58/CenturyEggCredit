@@ -145,7 +145,9 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
     setData(null);
     setViaLookup(true);
     try {
-      const res = await fetch(`/api/filings/by-cik/${encodeURIComponent(cikPadded)}`);
+      const res = await fetch(`/api/filings/by-cik/${encodeURIComponent(cikPadded)}`, {
+        cache: "no-store",
+      });
       const body = (await res.json()) as SecFilingsResult & { error?: string };
       if (!res.ok) {
         throw new Error(body.error ?? "Could not load filings for this CIK");
@@ -172,7 +174,7 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
     setViaLookup(false);
     setQuickFilter("all");
     setSearchQuery("");
-    fetch(`/api/filings/${encodeURIComponent(safeTicker)}`)
+    fetch(`/api/filings/${encodeURIComponent(safeTicker)}`, { cache: "no-store" })
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) return res.json().then((b) => { throw new Error(b.error ?? "Company not found"); });

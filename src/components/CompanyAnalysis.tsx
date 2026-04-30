@@ -31,6 +31,7 @@ import { CompanyCustomersTab } from "@/components/CompanyCustomersTab";
 import { CompanySuppliersTab } from "@/components/CompanySuppliersTab";
 import { CompanyStartupRisksTab } from "@/components/CompanyStartupRisksTab";
 import { CompanySavedDocumentsTab } from "@/components/CompanySavedDocumentsTab";
+import { PublicRecordsTab } from "@/components/PublicRecordsTab";
 import { CompanyTrademarkIpTab } from "@/components/CompanyTrademarkIpTab";
 import { CompanyNewsEventsTab } from "@/components/CompanyNewsEventsTab";
 import { CompanyIndustryPublicationsTab } from "@/components/CompanyIndustryPublicationsTab";
@@ -121,16 +122,25 @@ export function CompanyAnalysis({
     }
   }, [activeTab, onTabChange]);
 
+  /** State & Local Public Records hidden from Documents nav; migrate saved tab ids. */
+  useEffect(() => {
+    if (activeTab === "state-local-public-records") {
+      onTabChange(tabLabelToId("Saved Documents"));
+    }
+  }, [activeTab, onTabChange]);
+
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
   /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
   const resolvedTab =
     activeTab === "edgartools-sec"
       ? "sec-filings"
-      : activeTab === "20-year-look-back"
-        ? "sec-xbrl-financials"
+      : activeTab === "entity-mapper"
+        ? tabLabelToId("Public Records Profile")
         : activeTab === "state-local-public-records"
-          ? "saved-documents"
-          : activeTab;
+          ? tabLabelToId("Saved Documents")
+          : activeTab === "20-year-look-back"
+            ? "sec-xbrl-financials"
+            : activeTab;
 
   const navDef = companyNav[topSection];
   const groups = navDef?.groups ?? [];
@@ -226,6 +236,9 @@ export function CompanyAnalysis({
 }
 
 function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; ticker: string; companyName?: string }) {
+  if (tabId === "public-records-profile") {
+    return <PublicRecordsTab ticker={ticker} companyName={companyName} profileOnly />;
+  }
   if (tabId === "business-overview") {
     return <CompanyOverviewTab ticker={ticker} companyName={companyName} />;
   }
@@ -297,6 +310,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "patent-ip-filings") {
     return <CompanyTrademarkIpTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "state-local-public-records") {
+    return <PublicRecordsTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "subsidiary-list") {
     return <CompanySubsidiaryListTab ticker={ticker ?? ""} />;

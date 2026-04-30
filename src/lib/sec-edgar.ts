@@ -22,6 +22,15 @@ export function getSecEdgarUserAgent(): string {
   return raw;
 }
 
+/** Submissions feeds must bypass Next.js/Data cache so new filings appear the same day. */
+export function secRemoteFetchInit(): RequestInit {
+  return {
+    headers: { "User-Agent": getSecEdgarUserAgent() },
+    cache: "no-store",
+    next: { revalidate: 0 },
+  };
+}
+
 export type SecFiling = {
   form: string;
   filingDate: string;
@@ -58,6 +67,23 @@ type SubmissionsJson = {
   fiscalYearEnd?: string;
   /** Prior registered names — useful for text-based industry matching */
   formerNames?: Array<{ name?: string } | string>;
+  /** Principal place of business / mailing — SEC submissions (`data.sec.gov/submissions`) */
+  addresses?: {
+    business?: {
+      street1?: string;
+      street2?: string;
+      city?: string;
+      stateOrCountry?: string;
+      zip?: string;
+    };
+    mailing?: {
+      street1?: string;
+      street2?: string;
+      city?: string;
+      stateOrCountry?: string;
+      zip?: string;
+    };
+  };
   filings?: {
     recent?: SubmissionsRecent;
     files?: Array<{ name?: string; filingCount?: number; filingFrom?: string; filingTo?: string }>;
@@ -118,7 +144,7 @@ export async function getCikFromTicker(ticker: string): Promise<string | null> {
   }
 
   const url = "https://www.sec.gov/files/company_tickers.json";
-  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
+  const res = await fetch(url, secRemoteFetchInit());
   if (!res.ok) return null;
   const data = (await res.json()) as CompanyTickersJson;
 
@@ -140,7 +166,7 @@ export async function getCikFromTicker(ticker: string): Promise<string | null> {
 export async function getFilingsByCik(cik: string): Promise<SecFilingsResult | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
+  const res = await fetch(url, secRemoteFetchInit());
   if (!res.ok) return null;
   const data = (await res.json()) as SubmissionsJson;
   const recent = data.filings?.recent;
@@ -181,7 +207,7 @@ async function fetchSubmissionsChunk(name: string): Promise<SubmissionsChunkJson
   if (!clean) return null;
   // names are like "CIK0000320193-submissions-001.json"
   const url = `https://data.sec.gov/submissions/${encodeURIComponent(clean)}`;
-  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
+  const res = await fetch(url, secRemoteFetchInit());
   if (!res.ok) return null;
   try {
     return (await res.json()) as SubmissionsChunkJson;
@@ -197,7 +223,7 @@ async function fetchSubmissionsChunk(name: string): Promise<SubmissionsChunkJson
 export async function getAllFilingsByCik(cik: string): Promise<SecFilingsResult | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
+  const res = await fetch(url, secRemoteFetchInit());
   if (!res.ok) return null;
   const data = (await res.json()) as SubmissionsJson;
 
@@ -280,7 +306,7 @@ export function parseFilerCikFromAccession(accessionNumber: string): string | nu
 export async function getCompanyMetadataByCik(cik: string): Promise<{ name: string; tickers: string[] } | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
+  const res = await fetch(url, secRemoteFetchInit());
   if (!res.ok) return null;
   const data = (await res.json()) as { name?: string; tickers?: string[] };
   const name = (data.name ?? "").trim();
@@ -359,11 +385,7 @@ export async function getCompanyTickersEntriesCached(): Promise<TickerJsonEntry[
   }
   try {
     const url = "https://www.sec.gov/files/company_tickers.json";
-    const res = await fetch(url, {
-      headers: { "User-Agent": getSecEdgarUserAgent() },
-      cache: "no-store",
-      next: { revalidate: 0 },
-    });
+    const res = await fetch(url, secRemoteFetchInit());
     if (!res.ok) return null;
     const raw = (await res.json()) as CompanyTickersJson | TickerJsonEntry[];
     const entries = listCompanyTickersEntries(raw);
@@ -430,6 +452,100 @@ export async function searchSecCompaniesByName(query: string, limit = 50): Promi
   return matchSecCompaniesByNameScored(query, entries, limit).map((s) => s.hit);
 }
 
+/** Parsed from SEC submissions `addresses.business` — reliable HQ vs 10-K HTML scraping. */
+export type SecPrincipalBusinessAddress = {
+  /** Multi-line block for profile textarea */
+  formatted: string;
+  city: string | null;
+  /** USPS-style state when `stateOrCountry` is a 2-letter US code */
+  state: string | null;
+  /** 5-digit USPS ZIP from submissions ZIP field */
+  zip: string | null;
+};
+
+function zipFiveDigits(raw: string | undefined | null): string | null {
+  const d = String(raw ?? "").replace(/\D/g, "");
+  return d.length >= 5 ? d.slice(0, 5) : null;
+}
+
+/**
+ * Prefer business office; falls back to mailing when business is absent (still SEC-provided).
+ */
+export function extractPrincipalBusinessAddressFromSubmissions(data: SubmissionsJson): SecPrincipalBusinessAddress | null {
+  const b = data.addresses?.business ?? data.addresses?.mailing;
+  if (!b) return null;
+  const street1 = typeof b.street1 === "string" ? b.street1.replace(/\s+/g, " ").trim() : "";
+  const street2 = typeof b.street2 === "string" ? b.street2.replace(/\s+/g, " ").trim() : "";
+  const city = typeof b.city === "string" ? b.city.replace(/\s+/g, " ").trim() : "";
+  const stateRaw = typeof b.stateOrCountry === "string" ? b.stateOrCountry.trim() : "";
+  const zipRaw = typeof b.zip === "string" ? b.zip.trim() : "";
+
+  const zip = zipFiveDigits(zipRaw);
+  let state: string | null = null;
+  if (/^[A-Za-z]{2}$/.test(stateRaw)) state = stateRaw.toUpperCase();
+
+  const lines: string[] = [];
+  if (street1) lines.push(street1);
+  if (street2) lines.push(street2);
+  let cityLine = "";
+  if (city && state && zip) cityLine = `${city}, ${state} ${zip}`;
+  else if (city && state) cityLine = `${city}, ${state}`;
+  else if (city || state || zipRaw) cityLine = [city, state, zipRaw].filter(Boolean).join(" ");
+  if (cityLine) lines.push(cityLine);
+
+  const formatted = lines.join("\n").trim();
+  if (formatted.length < 8) return null;
+  return {
+    formatted,
+    city: city || null,
+    state,
+    zip,
+  };
+}
+
+async function fetchSubmissionsJsonForTicker(ticker: string): Promise<{ paddedCik: string; data: SubmissionsJson } | null> {
+  const cik = await getCikFromTicker(ticker);
+  if (!cik) return null;
+  const padded = cik.replace(/\D/g, "").padStart(10, "0");
+  const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
+  const res = await fetch(url, secRemoteFetchInit());
+  if (!res.ok) return null;
+  const data = (await res.json()) as SubmissionsJson;
+  return { paddedCik: padded, data };
+}
+
+function buildSecCompanyProfile(data: SubmissionsJson, ticker: string, paddedCik: string): SecCompanyProfile {
+  const recent = data.filings?.recent;
+  const filingsCount = Array.isArray(recent?.accessionNumber) ? recent.accessionNumber.length : 0;
+  const fy = data.fiscalYearEnd?.replace(/-/g, "").trim();
+  const fiscalYearEnd = fy && fy.length >= 4 ? `${fy.slice(0, 2)}/${fy.slice(2)}` : "—";
+  const formerNames = parseFormerNamesFromSubmissions(data.formerNames);
+  return {
+    name: data.name ?? ticker,
+    ticker: ticker.trim().toUpperCase(),
+    cik: paddedCik,
+    sic: data.sic ?? "—",
+    sicDescription: data.sicDescription ?? "—",
+    stateOfIncorporation: data.stateOfIncorporation ?? "—",
+    fiscalYearEnd,
+    filingsCount,
+    formerNames,
+  };
+}
+
+/**
+ * Single submissions fetch — profile plus structured principal business address for HQ geography.
+ */
+export async function getCompanyProfileAndPrincipalBusinessAddress(
+  ticker: string
+): Promise<{ profile: SecCompanyProfile; principalBusiness: SecPrincipalBusinessAddress | null } | null> {
+  const hit = await fetchSubmissionsJsonForTicker(ticker);
+  if (!hit) return null;
+  const profile = buildSecCompanyProfile(hit.data, ticker, hit.paddedCik);
+  const principalBusiness = extractPrincipalBusinessAddressFromSubmissions(hit.data);
+  return { profile, principalBusiness };
+}
+
 /** Normalize user CIK input to 10-digit string or null. */
 export function normalizeCikInput(raw: string): string | null {
   const digits = raw.replace(/\D/g, "");
@@ -442,29 +558,9 @@ export function normalizeCikInput(raw: string): string | null {
  * No business description or financials — those would require 10-K parsing or other sources.
  */
 export async function getCompanyProfile(ticker: string): Promise<SecCompanyProfile | null> {
-  const cik = await getCikFromTicker(ticker);
-  if (!cik) return null;
-  const padded = cik.replace(/\D/g, "").padStart(10, "0");
-  const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
-  const res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
-  if (!res.ok) return null;
-  const data = (await res.json()) as SubmissionsJson;
-  const recent = data.filings?.recent;
-  const filingsCount = Array.isArray(recent?.accessionNumber) ? recent.accessionNumber.length : 0;
-  const fy = data.fiscalYearEnd?.replace(/-/g, "").trim();
-  const fiscalYearEnd = fy && fy.length >= 4 ? `${fy.slice(0, 2)}/${fy.slice(2)}` : "—";
-  const formerNames = parseFormerNamesFromSubmissions(data.formerNames);
-  return {
-    name: data.name ?? ticker,
-    ticker: ticker.trim().toUpperCase(),
-    cik: padded,
-    sic: data.sic ?? "—",
-    sicDescription: data.sicDescription ?? "—",
-    stateOfIncorporation: data.stateOfIncorporation ?? "—",
-    fiscalYearEnd,
-    filingsCount,
-    formerNames,
-  };
+  const hit = await fetchSubmissionsJsonForTicker(ticker);
+  if (!hit) return null;
+  return buildSecCompanyProfile(hit.data, ticker, hit.paddedCik);
 }
 
 function parseFormerNamesFromSubmissions(raw: SubmissionsJson["formerNames"]): string[] {

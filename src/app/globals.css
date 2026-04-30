@@ -12,6 +12,8 @@
     --border: #1c2a3a;
     --border2: #253649;
     --accent: #00d4aa;
+    /* Text on solid accent buttons / chips (contrast on --accent) */
+    --accent-fg: #050a0c;
     --blue: #3b82f6;
     --purple: #8b5cf6;
     --warn: #f59e0b;

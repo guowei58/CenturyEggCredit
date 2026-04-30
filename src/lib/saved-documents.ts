@@ -372,6 +372,46 @@ async function persistSavedDocumentFromUrl(
   };
 }
 
+async function persistUpsertedDocumentFromUrl(
+  userId: string,
+  safeTicker: string,
+  params: {
+    sourceUrl: string;
+    body: Buffer;
+    filename: string;
+    title: string;
+    contentType: string | null;
+    convertedToPdf: boolean;
+    savedAtIso: string;
+  }
+): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> {
+  const saved = await upsertUserSavedDocument(userId, safeTicker, {
+    filename: params.filename,
+    title: params.title,
+    originalUrl: params.sourceUrl,
+    contentType: params.contentType,
+    body: params.body,
+    savedAtIso: params.savedAtIso,
+    convertedToPdf: params.convertedToPdf,
+  });
+  if (!saved.ok) return saved;
+  return {
+    ok: true,
+    item: {
+      id: saved.id,
+      ticker: safeTicker,
+      title: params.title,
+      filename: params.filename,
+      relativePath: `${SUBFOLDER_NAME}/${params.filename}`,
+      originalUrl: params.sourceUrl,
+      contentType: params.contentType,
+      savedAtIso: params.savedAtIso,
+      bytes: params.body.length,
+      convertedToPdf: params.convertedToPdf,
+    },
+  };
+}
+
 export async function saveDocumentFromUrl(
   userId: string,
   ticker: string,
@@ -580,6 +620,225 @@ export async function saveDocumentFromUrl(
 
   const txtFilename = `${stamp} - ${stem}.txt`;
   return persistSavedDocumentFromUrl(userId, safeTicker, {
+    sourceUrl: finalFetchedUrl,
+    body: Buffer.from(utf8.slice(0, 2_000_000), "utf8"),
+    filename: txtFilename,
+    title: safeBase,
+    contentType: "text/plain; charset=utf-8",
+    convertedToPdf: false,
+    savedAtIso,
+  });
+}
+
+/** Stable filenames under Saved Documents so SEC ingest can replace the same logical filing on refresh. */
+export const SEC_SAVED_DOC_PRIMARY_BASE = "SEC-latest-annual-primary";
+export const SEC_SAVED_DOC_EXHIBIT21_BASE = "SEC-Exhibit-21-subsidiaries";
+
+/**
+ * Like {@link saveDocumentFromUrl} but upserts `filenameBase` + extension so repeat saves replace one row.
+ */
+export async function upsertDocumentFromUrl(
+  userId: string,
+  ticker: string,
+  urlStr: string,
+  filenameBase: string
+): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> {
+  const safeTicker = sanitizeTicker(ticker);
+  if (!safeTicker) return { ok: false, error: "Invalid ticker" };
+
+  let url: URL;
+  try {
+    url = new URL(urlStr.trim());
+  } catch {
+    return { ok: false, error: "Invalid URL" };
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return { ok: false, error: "URL must be http(s)" };
+  }
+
+  const saveUa = userAgentForRemoteSave(url.toString());
+  const fetchAttempts: HeadersInit[] = [
+    {
+      "User-Agent": saveUa,
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,application/pdf;q=0.9,*/*;q=0.8",
+      "Accept-Language": "en-US,en;q=0.9",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      "Upgrade-Insecure-Requests": "1",
+    },
+    { "User-Agent": saveUa },
+  ];
+
+  let res: Response | null = null;
+  let lastStatus: number | null = null;
+  let lastFetchError: string | null = null;
+
+  const hostLower = url.hostname.toLowerCase();
+  const fetchTimeoutMs =
+    hostLower === "sec.gov" || hostLower.endsWith(".sec.gov") ? 55_000 : 25_000;
+
+  for (const headers of fetchAttempts) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+    try {
+      const attempt = await fetch(url.toString(), {
+        redirect: "follow",
+        signal: controller.signal,
+        headers,
+      });
+
+      if (attempt.ok) {
+        res = attempt;
+        break;
+      }
+      lastStatus = attempt.status;
+
+      if (![401, 403, 406, 429].includes(attempt.status)) {
+        res = attempt;
+        break;
+      }
+    } catch (e) {
+      lastFetchError = e instanceof Error ? e.message : "Fetch failed";
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  const now = new Date();
+  const savedAtIso = now.toISOString();
+  const fb = toSafeFilename(filenameBase.trim());
+  const safeBase = fb.length > 0 ? fb : "document";
+  const stem = filenameStemFromSafeBase(safeBase);
+
+  const tryMirrorReaderSnapshot = async (): Promise<
+    { ok: true; item: SavedDocumentItem } | { ok: false; error: string } | null
+  > => {
+    const mirroredText = await fetchViaReadableMirror(url.toString());
+    if (!mirroredText?.trim()) return null;
+    const header = `Source: ${url.toString()}\nSaved: ${savedAtIso}\n\n---\n\n`;
+    const body = Buffer.from(header + mirroredText.slice(0, 450_000), "utf8");
+    const txtFilename = `${stem}-reader-snapshot.txt`;
+    return persistUpsertedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: url.toString(),
+      body,
+      filename: txtFilename,
+      title: safeBase,
+      contentType: "text/plain; charset=utf-8",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  };
+
+  if (!res) {
+    const mirrorFallback = await tryMirrorReaderSnapshot();
+    if (mirrorFallback) return mirrorFallback;
+    const baseMsg =
+      lastFetchError ??
+      (lastStatus != null ? `HTTP ${lastStatus}` : "Fetch failed");
+    if (lastStatus === 403 || lastStatus === 401) {
+      return {
+        ok: false,
+        error: `${baseMsg} — the host denied access from this server (common for cloud IPs vs SEC.gov). Set SEC_EDGAR_USER_AGENT in Vercel (app name + email; a bare email is auto-prefixed), redeploy, and try again; or use a direct .pdf exhibit link when available.`,
+      };
+    }
+    const helpful =
+      baseMsg.toLowerCase().includes("fetch failed") || baseMsg.toLowerCase().includes("network")
+        ? `${baseMsg} — the server could not download the URL. This host may block automated requests. Try a direct SEC exhibit/PDF URL or another public source URL.`
+        : baseMsg;
+    return { ok: false, error: helpful };
+  }
+
+  if (!res.ok) {
+    if (res.status === 403 || lastStatus === 403) {
+      const mirror403 = await tryMirrorReaderSnapshot();
+      if (mirror403) return mirror403;
+      return {
+        ok: false,
+        error:
+          "Fetch failed (HTTP 403) — this site likely blocks automated/server requests. Try a direct SEC exhibit/PDF link or another public source URL.",
+      };
+    }
+    return { ok: false, error: `Fetch failed (HTTP ${res.status})` };
+  }
+
+  const resContentType = res.headers.get("content-type");
+  const arrayBuf = await res.arrayBuffer();
+  const buf = Buffer.from(arrayBuf);
+  const head = buf.subarray(0, 8);
+  const finalFetchedUrl = res.url || url.toString();
+
+  if (looksLikePdf(resContentType, url.toString(), head)) {
+    const pdfFilename = `${stem}.pdf`;
+    return persistUpsertedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: buf,
+      filename: pdfFilename,
+      title: safeBase,
+      contentType: resContentType?.includes("pdf") ? resContentType : "application/pdf",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  const textCt = (resContentType || "").toLowerCase();
+  let utf8: string;
+  try {
+    utf8 = buf.toString("utf8");
+  } catch {
+    utf8 = "";
+  }
+
+  if (responseLooksLikeHtml(utf8, resContentType, finalFetchedUrl)) {
+    const folderBase = documentFolderBaseUrl(finalFetchedUrl);
+    const htmlBody = folderBase ? injectBaseHrefIntoHtml(utf8, folderBase) : utf8;
+    const htmlFilename = `${stem}.html`;
+    const htmlBuf = Buffer.from(htmlBody, "utf8");
+    return persistUpsertedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: htmlBuf,
+      filename: htmlFilename,
+      title: safeBase,
+      contentType: "text/html; charset=utf-8",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  const looksXml =
+    textCt.includes("xml") ||
+    textCt.includes("text/xml") ||
+    /^\s*<\?xml/i.test(utf8);
+
+  if (looksXml && utf8.length > 0 && !bufferLooksBinary(buf)) {
+    const xmlBody = formatXml(utf8).slice(0, 2_000_000);
+    const xmlFilename = `${stem}.xml`;
+    return persistUpsertedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: Buffer.from(xmlBody, "utf8"),
+      filename: xmlFilename,
+      title: safeBase,
+      contentType: "application/xml; charset=utf-8",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  if (bufferLooksBinary(buf)) {
+    const binFilename = `${stem}.bin`;
+    return persistUpsertedDocumentFromUrl(userId, safeTicker, {
+      sourceUrl: finalFetchedUrl,
+      body: buf,
+      filename: binFilename,
+      title: safeBase,
+      contentType: resContentType || "application/octet-stream",
+      convertedToPdf: false,
+      savedAtIso,
+    });
+  }
+
+  const txtFilename = `${stem}.txt`;
+  return persistUpsertedDocumentFromUrl(userId, safeTicker, {
     sourceUrl: finalFetchedUrl,
     body: Buffer.from(utf8.slice(0, 2_000_000), "utf8"),
     filename: txtFilename,

@@ -62,7 +62,7 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
       try {
         const u = new URL(`/api/fcc-ecfs/${encodeURIComponent(safeTicker)}`, window.location.origin);
         if (qParam && qParam.trim()) u.searchParams.set("q", qParam.trim());
-        const res = await fetch(u.toString());
+        const res = await fetch(u.toString(), { cache: "no-store" });
         const body = (await res.json()) as ApiOk | ApiErr;
         if (!res.ok || body.ok !== true) {
           const e = body as ApiErr;

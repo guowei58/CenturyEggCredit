@@ -20,7 +20,11 @@ export async function GET(
         { status: 404 }
       );
     }
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: {
+        "Cache-Control": "private, no-store, max-age=0",
+      },
+    });
   } catch (e) {
     console.error("SEC filings by CIK error:", e);
     return NextResponse.json({ error: "Failed to fetch SEC filings" }, { status: 500 });

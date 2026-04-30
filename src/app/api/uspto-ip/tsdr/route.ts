@@ -3,6 +3,8 @@ import { fetchTsdrBySerial } from "@/lib/uspto-ip";
 
 export const dynamic = "force-dynamic";
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store, max-age=0" };
+
 const TSDR_URL = "https://developer.uspto.gov";
 
 /** POST JSON { "serial": "97123456" } — USPTO TSDR (trademark status by serial). */
@@ -15,7 +17,7 @@ export async function POST(request: Request) {
         error: "USPTO_TSDR_API_KEY is not set.",
         tsdrSignup: TSDR_URL,
       },
-      { status: 400 }
+      { status: 400, headers: NO_STORE_HEADERS }
     );
   }
 
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ ok: false, error: "Invalid JSON body." }, { status: 400, headers: NO_STORE_HEADERS });
   }
 
   const serial =
@@ -32,14 +34,14 @@ export async function POST(request: Request) {
       : "";
 
   if (!serial) {
-    return NextResponse.json({ ok: false, error: 'Body must include { "serial": "…" }.' }, { status: 400 });
+    return NextResponse.json({ ok: false, error: 'Body must include { "serial": "…" }.' }, { status: 400, headers: NO_STORE_HEADERS });
   }
 
   try {
     const tm = await fetchTsdrBySerial(key, serial);
-    return NextResponse.json({ ok: true, trademark: tm });
+    return NextResponse.json({ ok: true, trademark: tm }, { headers: NO_STORE_HEADERS });
   } catch (e) {
     const message = e instanceof Error ? e.message : "TSDR lookup failed.";
-    return NextResponse.json({ ok: false, error: message }, { status: 502 });
+    return NextResponse.json({ ok: false, error: message }, { status: 502, headers: NO_STORE_HEADERS });
   }
 }

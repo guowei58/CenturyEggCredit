@@ -57,6 +57,13 @@ type ConvDetail = {
 const POLL_LIST_MS = 8000;
 const POLL_THREAD_MS = 5000;
 
+/** Mark server read-receipt only when the Egg-Hoc drawer is open and the tab/window is visible. */
+function eggHocSurfaceAllowsMarkRead(panelOpen: boolean): boolean {
+  if (!panelOpen) return false;
+  if (typeof document === "undefined") return false;
+  return document.visibilityState === "visible";
+}
+
 /** Avoid `res.json()` on empty/HTML bodies (shows a clear error instead of JSON parse failure). */
 async function parseResponseJson<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -141,7 +148,7 @@ function eggHocPublicUserLabel(u: PublicUser): string {
   return u.chatDisplayId?.trim() || "Pari Passu Pal";
 }
 
-export function EggHocCommitteeChat() {
+export function EggHocCommitteeChat({ panelOpen }: { panelOpen: boolean }) {
   const { data: session, status } = useSession();
   const { preferences } = useUserPreferences();
   const eggHocBarkMuted = preferences.eggHocBarkMuted === true;
@@ -175,6 +182,9 @@ export function EggHocCommitteeChat() {
   const [manageOpen, setManageOpen] = useState(false);
   const [renameDraft, setRenameDraft] = useState("");
 
+  /** When true, next thread layout pass skips scroll-to-bottom (user prepended older messages). */
+  const skipAutoScrollRef = useRef(false);
+
   /** Scrollable message column — scroll this element; `scrollIntoView` on children often scrolls the wrong ancestor. */
   const threadScrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
@@ -182,7 +192,10 @@ export function EggHocCommitteeChat() {
   const inboxSnapshotRef = useRef<Map<string, { unread: number }>>(new Map());
   const inboxPrimedRef = useRef(false);
   const threadMsgIdsRef = useRef<Set<string>>(new Set());
-  const threadActiveIdRef = useRef<string | null>(null);
+  /** After switching threads or prepending history, next snapshot seeds ids without barking. */
+  const needsInitialThreadSnapshotRef = useRef(true);
+  /** True until thread fetch finishes for the current `activeId` — avoids seeding ids from a stale prior chat. */
+  const awaitingThreadLoadForBarkRef = useRef(false);
   /** Last conversation id we loaded the thread for — detect switches without clearing on callback-only effect re-runs. */
   const prevThreadConvIdRef = useRef<string | null>(null);
   const lastUserForInboxRef = useRef<string | null>(null);
@@ -190,6 +203,16 @@ export function EggHocCommitteeChat() {
   const activeConversationIdRef = useRef<string | null>(null);
 
   activeConversationIdRef.current = activeId;
+
+  const panelOpenRef = useRef(panelOpen);
+  panelOpenRef.current = panelOpen;
+
+  /** Switching chats (or clearing selection): clear seen-message ids; next loaded thread snapshots without woof. */
+  useEffect(() => {
+    needsInitialThreadSnapshotRef.current = true;
+    threadMsgIdsRef.current = new Set();
+    awaitingThreadLoadForBarkRef.current = Boolean(activeId);
+  }, [activeId]);
 
   useEffect(() => {
     if (!pendingImage) {
@@ -215,8 +238,18 @@ export function EggHocCommitteeChat() {
       const res = await fetch("/api/egg-hoc/conversations", { signal: ac.signal });
       const data = await parseResponseJson<{ ok?: boolean; conversations?: ConvRow[]; error?: string }>(res);
       if (!res.ok) throw new Error(data.error || "Failed to load conversations");
-      setConversations(data.conversations ?? []);
+      const list = data.conversations ?? [];
+      setConversations(list);
       setListError(null);
+      const totalUnread = list.reduce(
+        (acc, c) => acc + (typeof c.unreadCount === "number" ? c.unreadCount : 0),
+        0
+      );
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("egg-hoc-inbox-updated", { detail: { totalUnread } })
+        );
+      }
     } catch (e) {
       if ((e as Error).name === "AbortError") return;
       setListError(e instanceof Error ? e.message : "Failed to load");
@@ -224,6 +257,22 @@ export function EggHocCommitteeChat() {
       setListLoading(false);
     }
   }, [userId]);
+
+  const markActiveThreadReadIfViewing = useCallback(async () => {
+    if (!eggHocSurfaceAllowsMarkRead(panelOpenRef.current)) return;
+    const id = activeConversationIdRef.current;
+    if (!id) return;
+    try {
+      await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(id)}/read`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      void fetchList();
+    } catch {
+      /* ignore */
+    }
+  }, [fetchList]);
 
   useEffect(() => {
     if (!userId) return;
@@ -254,6 +303,7 @@ export function EggHocCommitteeChat() {
     }
     const prev = inboxSnapshotRef.current;
     for (const c of conversations) {
+      if (c.id === activeId) continue;
       const p = prev.get(c.id);
       const unreadUp = p !== undefined && c.unreadCount > p.unread;
       const newThreadUnread = p === undefined && c.unreadCount > 0;
@@ -263,19 +313,29 @@ export function EggHocCommitteeChat() {
       }
     }
     inboxSnapshotRef.current = snap;
-  }, [conversations, userId, listLoading, eggHocBarkMuted]);
+  }, [conversations, userId, listLoading, eggHocBarkMuted, activeId]);
 
   useEffect(() => {
-    if (!userId || !activeId) {
-      threadActiveIdRef.current = null;
-      threadMsgIdsRef.current = new Set();
+    if (!userId || !activeId) return;
+
+    if (messages.length === 0) {
+      if (
+        needsInitialThreadSnapshotRef.current &&
+        !threadLoading &&
+        !awaitingThreadLoadForBarkRef.current
+      ) {
+        threadMsgIdsRef.current = new Set();
+        needsInitialThreadSnapshotRef.current = false;
+      }
       return;
     }
-    if (threadActiveIdRef.current !== activeId) {
-      threadActiveIdRef.current = activeId;
-      threadMsgIdsRef.current = new Set();
+
+    if (needsInitialThreadSnapshotRef.current) {
+      if (threadLoading || awaitingThreadLoadForBarkRef.current) return;
+      threadMsgIdsRef.current = new Set(messages.map((m) => m.id));
+      needsInitialThreadSnapshotRef.current = false;
+      return;
     }
-    if (messages.length === 0) return;
 
     const prev = threadMsgIdsRef.current;
     const fromOthers = messages.filter(
@@ -286,7 +346,7 @@ export function EggHocCommitteeChat() {
       if (!eggHocBarkMuted) playEggHocIncomingBark();
     }
     threadMsgIdsRef.current = new Set(messages.map((m) => m.id));
-  }, [messages, activeId, userId, eggHocBarkMuted]);
+  }, [messages, activeId, userId, threadLoading, eggHocBarkMuted]);
 
   const fetchMessageBatch = useCallback(async (conversationId: string, before?: string) => {
     const qs = new URLSearchParams({ take: "40" });
@@ -343,29 +403,27 @@ export function EggHocCommitteeChat() {
         if (cancelled || convId !== activeConversationIdRef.current) return;
         setMessages(batch);
         setHasMoreOlder(hasMore);
-        await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(convId)}/read`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: "{}",
-        });
-        void fetchList();
+        await markActiveThreadReadIfViewing();
       } catch (e) {
         if (!cancelled) setListError(e instanceof Error ? e.message : "Thread error");
       } finally {
-        if (!cancelled) setThreadLoading(false);
+        if (!cancelled) {
+          awaitingThreadLoadForBarkRef.current = false;
+          setThreadLoading(false);
+        }
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [activeId, userId, fetchDetail, fetchMessageBatch, fetchList]);
+  }, [activeId, userId, fetchDetail, fetchMessageBatch, markActiveThreadReadIfViewing]);
 
   useEffect(() => {
     setReplyParent(null);
   }, [activeId]);
 
   useEffect(() => {
-    if (!activeId || !userId) return;
+    if (!activeId || !userId || !panelOpen) return;
     const t = setInterval(() => {
       void (async () => {
         try {
@@ -374,19 +432,39 @@ export function EggHocCommitteeChat() {
           const { batch } = await fetchMessageBatch(id);
           if (id !== activeConversationIdRef.current) return;
           setMessages((prev) => mergeMessagesChronological(prev, batch));
-          await fetch(`/api/egg-hoc/conversations/${encodeURIComponent(id)}/read`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: "{}",
-          });
-          void fetchList();
+          await markActiveThreadReadIfViewing();
         } catch {
           /* ignore poll errors */
         }
       })();
     }, POLL_THREAD_MS);
     return () => clearInterval(t);
-  }, [activeId, userId, fetchMessageBatch, fetchList]);
+  }, [activeId, userId, panelOpen, fetchMessageBatch, markActiveThreadReadIfViewing]);
+
+  /** When the drawer opens or the tab becomes visible, sync thread + read-receipt (poll is paused while drawer closed). */
+  const prevPanelOpenRef = useRef(panelOpen);
+  useEffect(() => {
+    const wasOpen = prevPanelOpenRef.current;
+    prevPanelOpenRef.current = panelOpen;
+    if (!activeId || !userId) return;
+    if (!panelOpen) return;
+    const justOpenedDrawer = !wasOpen && panelOpen;
+    if (!justOpenedDrawer) return;
+    void (async () => {
+      await mergeLatestPageIntoThread();
+      await markActiveThreadReadIfViewing();
+    })();
+  }, [panelOpen, activeId, userId, mergeLatestPageIntoThread, markActiveThreadReadIfViewing]);
+
+  useEffect(() => {
+    if (!panelOpen || !activeId || !userId) return;
+    const onVisibility = () => {
+      if (document.visibilityState !== "visible") return;
+      void markActiveThreadReadIfViewing();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [panelOpen, activeId, userId, markActiveThreadReadIfViewing]);
 
   const scrollThreadToBottom = useCallback((behavior: ScrollBehavior = "auto") => {
     const el = threadScrollRef.current;
@@ -394,12 +472,26 @@ export function EggHocCommitteeChat() {
     el.scrollTo({ top: el.scrollHeight, behavior });
   }, []);
 
-  /** After switching chats or finishing the initial fetch, pin the viewport to the latest messages. */
+  /** Stable tail of thread — last message id + count — drives scroll when poll adds rows without threadLoading flip. */
+  const threadTailKey =
+    messages.length === 0 ? "" : `${messages.length}:${messages[messages.length - 1]!.id}`;
+
+  /** After switching chats, finishing load, or new messages at bottom — pin viewport to latest; skip after prepending older history. */
   useLayoutEffect(() => {
     if (!activeId || threadLoading) return;
+    if (skipAutoScrollRef.current) {
+      skipAutoScrollRef.current = false;
+      return;
+    }
     scrollThreadToBottom("auto");
-    requestAnimationFrame(() => scrollThreadToBottom("auto"));
-  }, [activeId, threadLoading, scrollThreadToBottom]);
+    requestAnimationFrame(() => {
+      scrollThreadToBottom("auto");
+      requestAnimationFrame(() => {
+        scrollThreadToBottom("auto");
+        window.setTimeout(() => scrollThreadToBottom("auto"), 0);
+      });
+    });
+  }, [activeId, threadLoading, threadTailKey, scrollThreadToBottom]);
 
   const send = async () => {
     const text = composer.trim();
@@ -488,6 +580,7 @@ export function EggHocCommitteeChat() {
     const oldest = messages[0].id;
     if (oldest.startsWith("temp-")) return;
     setLoadOlderLoading(true);
+    skipAutoScrollRef.current = true;
     try {
       const { batch, hasMore } = await fetchMessageBatch(convId, oldest);
       if (convId !== activeConversationIdRef.current) return;
@@ -496,6 +589,7 @@ export function EggHocCommitteeChat() {
         const prefix = batch.filter((m) => !ids.has(m.id));
         return [...prefix, ...prev];
       });
+      needsInitialThreadSnapshotRef.current = true;
       setHasMoreOlder(hasMore);
     } finally {
       setLoadOlderLoading(false);

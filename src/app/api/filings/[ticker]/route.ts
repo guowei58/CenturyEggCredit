@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getFilingsByTicker } from "@/lib/sec-edgar";
 
+/** Live SEC data — do not static-cache the route or CDN responses. */
+export const dynamic = "force-dynamic";
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ ticker: string }> }
@@ -17,7 +20,11 @@ export async function GET(
         { status: 404 }
       );
     }
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: {
+        "Cache-Control": "private, no-store, max-age=0",
+      },
+    });
   } catch (e) {
     console.error("SEC filings error:", e);
     return NextResponse.json(

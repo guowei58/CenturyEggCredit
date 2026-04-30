@@ -86,6 +86,15 @@ model User {
   publicRecordsSearchRuns     PublicRecordsSearchRun[]
   publicRecordsChecklistItems PublicRecordsChecklistItem[]
   publicRecordsDocuments      PublicRecordsDocument[]
+  debtIssuerMapJobs                   DebtIssuerMapJob[]
+  entityIntelligenceProfiles         EntityIntelligenceProfile[]
+  knownEntityInputs                  KnownEntityInput[]
+  verifiedEntityRecords              VerifiedEntityRecord[]
+  candidateAffiliateEntities          CandidateAffiliateEntity[]
+  entityRelationships               EntityRelationship[]
+  entityFilingEvents                EntityFilingEvent[]
+  entityDiligenceIssues             EntityDiligenceIssue[]
+  entitySearchTasks                 EntitySearchTask[]
 
   @@map("users")
 }
@@ -396,6 +405,9 @@ model PublicRecordsProfile {
   formerNames                     String[] @default([]) @map("former_names")
   dbaNames                        String[] @default([]) @map("dba_names")
   subsidiaryNames                 String[] @default([]) @map("subsidiary_names")
+  subsidiaryDomiciles             String[] @default([]) @map("subsidiary_domiciles")
+  /** Exhibit 21 full HTML/text table snapshot (columns as filed). */
+  subsidiaryExhibit21Snapshot    Json?    @map("subsidiary_exhibit21_snapshot")
   borrowerNames                   String[] @default([]) @map("borrower_names")
   guarantorNames                  String[] @default([]) @map("guarantor_names")
   issuerNames                     String[] @default([]) @map("issuer_names")
@@ -408,6 +420,11 @@ model PublicRecordsProfile {
   hqCity                          String?  @map("hq_city")
   principalExecutiveOfficeAddress String?  @map("principal_executive_office_address") @db.Text
   stateOfIncorporation            String?  @map("state_of_incorporation")
+  /** SEC CIK — 10 digits */
+  cik                             String?
+  /** US IRS Employer Identification Number, typically XX-XXXXXXX */
+  irsEmployerIdentificationNumber String?  @map("irs_ein")
+  fiscalYearEnd                   String?  @map("fiscal_year_end")
   majorFacilityLocations          Json?    @map("major_facility_locations")
   knownPropertyLocations          Json?    @map("known_property_locations")
   knownPermitJurisdictions        Json?    @map("known_permit_jurisdictions")
@@ -566,4 +583,715 @@ model PublicRecordsDocument {
 
   @@index([userId, ticker])
   @@map("public_records_documents")
+}
+
+// --- Debt issuer / obligor entity mapper (SEC EDGAR–backed) ---
+
+enum DebtIssuerMapJobStatus {
+  pending
+  resolving_company
+  fetching_sec_filings
+  extracting_documents
+  parsing_debt_docs
+  reconciling
+  complete
+  failed
+}
+
+enum DebtMapSourceType {
+  SEC_FILING
+  SEC_EXHIBIT
+  COMPANY_IR
+  RATING_AGENCY
+  FINRA
+  UCC
+  OTHER
+}
+
+enum DebtMapParsedStatus {
+  pending
+  parsed
+  failed
+  skipped
+}
+
+enum DebtLegalEntityKind {
+  public_parent
+  issuer
+  co_issuer
+  borrower
+  guarantor
+  collateral_grantor
+  restricted_subsidiary
+  unrestricted_subsidiary
+  excluded_subsidiary
+  finance_subsidiary
+  receivables_entity
+  securitization_entity
+  unknown
+}
+
+enum DebtInstrumentEntityRoleKind {
+  issuer
+  co_issuer
+  borrower
+  parent_guarantor
+  subsidiary_guarantor
+  collateral_grantor
+  pledgor
+  restricted_subsidiary
+  unrestricted_subsidiary
+  excluded_subsidiary
+  agent
+  trustee
+  administrative_agent
+  collateral_agent
+}
+
+enum DebtMapRedFlagSeverity {
+  low
+  medium
+  high
+}
+
+enum DebtMapRedFlagCategory {
+  missing_document
+  structural_subordination
+  guarantor_gap
+  collateral_gap
+  unrestricted_subsidiary
+  excluded_subsidiary
+  stale_document
+  conflicting_sources
+  financing_subsidiary
+  receivables_or_spv
+  reconciliation_gap
+  other
+}
+
+model DebtIssuerMapJob {
+  id                       String                 @id @default(cuid())
+  userId                   String                 @map("user_id")
+  user                     User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyInput             String                 @map("company_input") @db.Text
+  ticker                   String?
+  cik                      String?
+  companyName              String?                @map("company_name") @db.Text
+  status                   DebtIssuerMapJobStatus @default(pending)
+  errorMessage             String?                @map("error_message") @db.Text
+  lookbackYears            Int                    @default(10) @map("lookback_years")
+  /** JSON: { include8KExhibits, includeRegistration, includeExhibit21, includeExhibit22, includeOlderIfMissing } */
+  optionsJson              Json?                  @map("options_json")
+  filingsScannedCount      Int                    @default(0) @map("filings_scanned_count")
+  documentsDownloadedCount Int                    @default(0) @map("documents_downloaded_count")
+  candidateDebtDocsCount   Int                    @default(0) @map("candidate_debt_docs_count")
+  instrumentsCount         Int                    @default(0) @map("instruments_count")
+  legalEntitiesCount       Int                    @default(0) @map("legal_entities_count")
+  redFlagsCount            Int                    @default(0) @map("red_flags_count")
+  reconciliationConfidence Float?                 @map("reconciliation_confidence")
+  createdAt                DateTime               @default(now()) @map("created_at")
+  updatedAt                DateTime               @updatedAt @map("updated_at")
+  completedAt              DateTime?              @map("completed_at")
+
+  sourceDocuments DebtMapSourceDocument[]
+  legalEntities   DebtLegalEntity[]
+  instruments     DebtInstrument[]
+  roles           DebtInstrumentEntityRole[]
+  footnoteItems   DebtFootnoteItem[]
+  redFlags        DebtMapRedFlag[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("debt_issuer_map_jobs")
+}
+
+model DebtMapSourceDocument {
+  id                  String             @id @default(cuid())
+  jobId               String             @map("job_id")
+  job                 DebtIssuerMapJob   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  sourceType          DebtMapSourceType  @map("source_type")
+  filingType          String?            @map("filing_type")
+  accessionNumber     String?            @map("accession_number")
+  filingDate          String?            @map("filing_date")
+  exhibitType         String?            @map("exhibit_type")
+  documentName        String?            @map("document_name") @db.Text
+  documentDescription String?            @map("document_description") @db.Text
+  sourceUrl           String             @map("source_url") @db.Text
+  localTextPath       String?            @map("local_text_path")
+  rawText             String?            @map("raw_text") @db.Text
+  /** classification label e.g. indenture, credit_agreement, exhibit_21 */
+  classifiedAs        String?            @map("classified_as")
+  parsedStatus        DebtMapParsedStatus @default(pending) @map("parsed_status")
+  whyIncluded         String?            @map("why_included") @db.Text
+  createdAt           DateTime           @default(now()) @map("created_at")
+
+  legalEntities DebtLegalEntity[]
+  instruments   DebtInstrument[]
+  roles         DebtInstrumentEntityRole[]
+  footnoteItems DebtFootnoteItem[]
+  redFlags      DebtMapRedFlag[]
+
+  @@index([jobId])
+  @@map("debt_map_source_documents")
+}
+
+model DebtLegalEntity {
+  id                String              @id @default(cuid())
+  jobId             String              @map("job_id")
+  job               DebtIssuerMapJob      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  legalName         String              @map("legal_name") @db.Text
+  normalizedName    String              @map("normalized_name")
+  entityType        DebtLegalEntityKind @map("entity_type")
+  jurisdiction      String?             @db.Text
+  sourceDocumentId  String?             @map("source_document_id")
+  sourceDocument    DebtMapSourceDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  sourceSnippet     String?             @map("source_snippet") @db.Text
+  confidenceScore   Float               @map("confidence_score")
+  notes             String?             @db.Text
+  createdAt         DateTime            @default(now()) @map("created_at")
+
+  rolesAsEntity     DebtInstrumentEntityRole[] @relation("DebtEntityRoles")
+  redFlagReferences DebtMapRedFlag[]         @relation("DebtRedFlagRelatedEntity")
+
+  @@index([jobId])
+  @@map("debt_legal_entities")
+}
+
+model DebtInstrument {
+  id                  String               @id @default(cuid())
+  jobId               String               @map("job_id")
+  job                 DebtIssuerMapJob     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  instrumentName      String               @map("instrument_name") @db.Text
+  instrumentType      String               @map("instrument_type")
+  principalAmount     String?              @map("principal_amount")
+  currency            String               @default("USD")
+  couponOrRate        String?              @map("coupon_or_rate")
+  maturityDate        String?              @map("maturity_date")
+  securedStatus       String?              @map("secured_status")
+  ranking             String?
+  issueDate           String?              @map("issue_date")
+  sourceDocumentId    String               @map("source_document_id")
+  sourceDocument      DebtMapSourceDocument @relation(fields: [sourceDocumentId], references: [id], onDelete: Cascade)
+  sourceSnippet       String?              @map("source_snippet") @db.Text
+  confidenceScore     Float                @map("confidence_score")
+  extractionNotes     String?              @map("extraction_notes") @db.Text
+  createdAt           DateTime             @default(now()) @map("created_at")
+
+  roles              DebtInstrumentEntityRole[]
+  matchedFootnotes   DebtFootnoteItem[]       @relation("FootnoteMatchedInstrument")
+  redFlags           DebtMapRedFlag[]
+
+  @@index([jobId])
+  @@map("debt_instruments")
+}
+
+model DebtInstrumentEntityRole {
+  id               String                      @id @default(cuid())
+  jobId            String                      @map("job_id")
+  job              DebtIssuerMapJob            @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  debtInstrumentId String                      @map("debt_instrument_id")
+  debtInstrument   DebtInstrument              @relation(fields: [debtInstrumentId], references: [id], onDelete: Cascade)
+  legalEntityId    String                      @map("legal_entity_id")
+  legalEntity      DebtLegalEntity             @relation("DebtEntityRoles", fields: [legalEntityId], references: [id], onDelete: Cascade)
+  role             DebtInstrumentEntityRoleKind
+  sourceDocumentId String?                     @map("source_document_id")
+  sourceDocument   DebtMapSourceDocument?      @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  sourceSnippet    String?                     @map("source_snippet") @db.Text
+  confidenceScore  Float                       @map("confidence_score")
+  createdAt        DateTime                    @default(now()) @map("created_at")
+
+  @@index([jobId])
+  @@index([debtInstrumentId])
+  @@map("debt_instrument_entity_roles")
+}
+
+model DebtFootnoteItem {
+  id                      String                @id @default(cuid())
+  jobId                   String                @map("job_id")
+  job                     DebtIssuerMapJob      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  description             String                @db.Text
+  principalAmount         String?               @map("principal_amount")
+  carryingValue           String?               @map("carrying_value")
+  maturityDate            String?               @map("maturity_date")
+  rate                    String?
+  sourceDocumentId        String?               @map("source_document_id")
+  sourceDocument          DebtMapSourceDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  matchedDebtInstrumentId String?               @map("matched_debt_instrument_id")
+  matchedInstrument       DebtInstrument?       @relation("FootnoteMatchedInstrument", fields: [matchedDebtInstrumentId], references: [id], onDelete: SetNull)
+  confidenceScore         Float                 @map("confidence_score")
+  notes                   String?               @db.Text
+  createdAt               DateTime              @default(now()) @map("created_at")
+
+  @@index([jobId])
+  @@map("debt_footnote_items")
+}
+
+model DebtMapRedFlag {
+  id                 String                 @id @default(cuid())
+  jobId              String                 @map("job_id")
+  job                DebtIssuerMapJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  severity           DebtMapRedFlagSeverity
+  category           DebtMapRedFlagCategory
+  title              String
+  description        String                 @db.Text
+  relatedInstrumentId String?               @map("related_instrument_id")
+  relatedInstrument  DebtInstrument?      @relation(fields: [relatedInstrumentId], references: [id], onDelete: SetNull)
+  relatedEntityId    String?                @map("related_entity_id")
+  relatedEntity      DebtLegalEntity?       @relation("DebtRedFlagRelatedEntity", fields: [relatedEntityId], references: [id], onDelete: SetNull)
+  sourceDocumentId   String?                @map("source_document_id")
+  sourceDocument     DebtMapSourceDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  sourceSnippet      String?                @map("source_snippet") @db.Text
+  manualFollowUp     String?                @map("manual_follow_up") @db.Text
+  createdAt          DateTime               @default(now()) @map("created_at")
+
+  @@index([jobId])
+  @@map("debt_map_red_flags")
+}
+
+// --- Entity Verification & Affiliate Discovery (manual diligence; per user + ticker) ---
+
+enum KnownEntitySourceType {
+  exhibit_21
+  ten_k
+  ten_q
+  credit_agreement
+  indenture
+  guarantee_agreement
+  security_agreement
+  securitization_doc
+  company_website
+  user_input
+  prior_research
+  other
+}
+
+enum KnownEntityRole {
+  public_parent
+  issuer
+  co_issuer
+  borrower
+  guarantor
+  subsidiary
+  material_subsidiary
+  restricted_subsidiary
+  unrestricted_subsidiary
+  excluded_subsidiary
+  finance_sub
+  receivables_sub
+  securitization_vehicle
+  collateral_owner
+  operating_company
+  holding_company
+  joint_venture
+  dba
+  former_name
+  unknown
+}
+
+enum VerifiedDomesticOrForeign {
+  domestic
+  foreign
+  unknown
+}
+
+enum VerifiedBusinessEntityStatus {
+  active
+  good_standing
+  inactive
+  dissolved
+  forfeited
+  withdrawn
+  merged
+  converted
+  cancelled
+  revoked
+  expired
+  unknown
+}
+
+enum EntityVerificationOutcome {
+  verified_exact_match
+  verified_probable_match
+  potential_match
+  no_match_found
+  blocked_login_required
+  blocked_fee_required
+  unresolved
+}
+
+enum EntityConfidenceLevel {
+  high
+  medium
+  low
+}
+
+enum CandidateDiscoveryMethod {
+  name_similarity
+  shared_address
+  shared_officer
+  shared_manager
+  shared_director
+  shared_non_generic_registered_agent
+  shared_property_address
+  shared_permit_address
+  credit_doc_reference
+  sec_filing_reference
+  ucc_reference
+  tax_lien_reference
+  county_record_reference
+  court_record_reference
+  public_web_reference
+  user_added
+  other
+}
+
+enum CandidateAffiliateReviewStatus {
+  unreviewed
+  confirmed_affiliate
+  likely_affiliate
+  possible_affiliate
+  rejected
+  needs_follow_up
+}
+
+enum EntityRelationshipType {
+  parent_subsidiary
+  issuer_guarantor
+  borrower_guarantor
+  holding_company_operating_company
+  finance_sub
+  receivables_sub
+  securitization_vehicle
+  collateral_owner
+  joint_venture
+  dba
+  former_name
+  successor
+  predecessor
+  merger_target
+  possible_affiliate
+  same_address
+  same_officer
+  unknown
+}
+
+enum EntityFilingEventType {
+  formation
+  foreign_registration
+  name_change
+  merger
+  conversion
+  amendment
+  reinstatement
+  forfeiture
+  dissolution
+  withdrawal
+  cancellation
+  registered_agent_change
+  address_change
+  annual_report
+  assumed_name
+  other
+}
+
+enum EntityDiligenceIssueKind {
+  known_entity_not_verified
+  official_name_mismatch
+  inactive_entity
+  dissolved_entity
+  forfeited_entity
+  withdrawn_entity
+  borrower_or_guarantor_inactive
+  entity_in_credit_docs_not_in_exhibit_21
+  entity_in_sos_not_in_exhibit_21
+  possible_unlisted_affiliate
+  shared_address_candidate
+  shared_officer_candidate
+  unexplained_finance_sub
+  unexplained_receivables_sub
+  unexplained_securitization_vehicle
+  unexplained_ip_holding_entity
+  unexplained_real_estate_holding_entity
+  recent_merger_or_conversion
+  recent_name_change
+  foreign_registration_gap
+  multiple_similar_names
+  inconsistent_jurisdiction
+  missing_registered_agent
+  other
+}
+
+enum EntityDiligenceSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+enum EntityDiligenceWorkflowStatus {
+  open
+  resolved
+  dismissed
+  needs_follow_up
+}
+
+enum EntitySearchTaskReason {
+  state_of_incorporation
+  hq_state
+  exhibit_21_entity
+  credit_party
+  borrower
+  issuer
+  guarantor
+  dba
+  former_name
+  address_cluster
+  candidate_affiliate
+  user_added
+  other
+}
+
+enum EntitySearchTaskWorkflowStatus {
+  not_started
+  searched_no_result
+  potential_match
+  confirmed_match
+  blocked_login_required
+  blocked_fee_required
+  needs_follow_up
+  not_applicable
+}
+
+model EntityIntelligenceProfile {
+  id                                 String    @id @default(cuid())
+  userId                             String    @map("user_id")
+  user                               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                             String
+  companyName                        String?   @map("company_name") @db.Text
+  /** Registrant / parent legal name as filed */
+  publicRegistrantName               String?   @map("public_registrant_name") @db.Text
+  stateOfIncorporation               String?   @map("state_of_incorporation")
+  hqAddress                          String?   @map("hq_address") @db.Text
+  hqCity                             String?   @map("hq_city")
+  hqState                            String?   @map("hq_state")
+  hqZip                              String?   @map("hq_zip")
+  principalExecutiveOfficeAddress    String?   @map("principal_executive_office_address") @db.Text
+  majorOperatingStates               String[]  @default([]) @map("major_operating_states")
+  majorFacilityAddresses             String[]  @default([]) @map("major_facility_addresses")
+  source10KUrl                       String?   @map("source_10k_url") @db.Text
+  source10KDate                      DateTime? @map("source_10k_date")
+  /** Extra SOS / chartering sources keyed by registry (JSON array). */
+  customSourceRegistryEntries        Json?     @map("custom_source_registry_entries")
+  genericRegisteredAgentOverrides    String[]  @default([]) @map("generic_registered_agent_overrides")
+  notes                              String?   @db.Text
+  createdAt                          DateTime  @default(now()) @map("created_at")
+  updatedAt                          DateTime  @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker])
+  @@index([userId, ticker])
+  @@map("entity_intelligence_profiles")
+}
+
+model KnownEntityInput {
+  id                       String               @id @default(cuid())
+  userId                   String               @map("user_id")
+  user                     User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  entityName               String               @map("entity_name") @db.Text
+  normalizedEntityName     String               @map("normalized_entity_name")
+  sourceType               KnownEntitySourceType @map("source_type")
+  sourceDocumentTitle      String?              @map("source_document_title") @db.Text
+  sourceDocumentUrl        String?              @map("source_document_url") @db.Text
+  sourceDate               DateTime?            @map("source_date") @db.Date
+  entityRole               KnownEntityRole      @map("entity_role")
+  jurisdictionHint         String?              @map("jurisdiction_hint")
+  addressHint              String?              @map("address_hint") @db.Text
+  notes                    String?              @db.Text
+  createdAt                DateTime             @default(now()) @map("created_at")
+  updatedAt                DateTime             @updatedAt @map("updated_at")
+
+  verifiedRecords          VerifiedEntityRecord[]
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedEntityName])
+  @@map("known_entity_inputs")
+}
+
+model VerifiedEntityRecord {
+  id                               String                     @id @default(cuid())
+  userId                           String                     @map("user_id")
+  user                             User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                           String
+  knownEntityInputId               String?                    @map("known_entity_input_id")
+  knownEntityInput                 KnownEntityInput?          @relation(fields: [knownEntityInputId], references: [id], onDelete: SetNull)
+  searchedName                     String                     @map("searched_name") @db.Text
+  officialEntityName               String                     @map("official_entity_name") @db.Text
+  normalizedOfficialEntityName     String                     @map("normalized_official_entity_name")
+  state                            String
+  jurisdiction                     String                     @default("")
+  entityId                         String?                    @map("entity_id")
+  entityType                       String?                    @map("entity_type")
+  domesticOrForeign                VerifiedDomesticOrForeign  @default(unknown) @map("domestic_or_foreign")
+  status                           VerifiedBusinessEntityStatus @default(unknown)
+  formationDate                    DateTime?                  @map("formation_date") @db.Date
+  registrationDate                 DateTime?                  @map("registration_date") @db.Date
+  dissolutionDate                  DateTime?                  @map("dissolution_date") @db.Date
+  withdrawalDate                   DateTime?                  @map("withdrawal_date") @db.Date
+  forfeitureDate                   DateTime?                  @map("forfeiture_date") @db.Date
+  reinstatementDate                DateTime?                  @map("reinstatement_date") @db.Date
+  registeredAgentName              String?                    @map("registered_agent_name") @db.Text
+  registeredAgentAddress           String?                    @map("registered_agent_address") @db.Text
+  principalOfficeAddress           String?                    @map("principal_office_address") @db.Text
+  mailingAddress                   String?                    @map("mailing_address") @db.Text
+  officersDirectorsManagersJson    Json?                      @map("officers_directors_managers_json")
+  sourceName                       String                     @map("source_name") @db.Text
+  sourceUrl                        String                     @map("source_url") @db.Text
+  documentUrl                      String?                    @map("document_url") @db.Text
+  documentsAvailable               Boolean                    @default(false) @map("documents_available")
+  lastVerifiedAt                   DateTime?                  @map("last_verified_at")
+  verificationStatus               EntityVerificationOutcome  @default(unresolved) @map("verification_status")
+  confidence                       EntityConfidenceLevel      @default(medium)
+  notes                            String?                    @db.Text
+  createdAt                        DateTime                   @default(now()) @map("created_at")
+  updatedAt                        DateTime                   @updatedAt @map("updated_at")
+
+  filingEvents                     EntityFilingEvent[]        @relation("FilingVerifiedEntity")
+  searchTaskResults                EntitySearchTask[]         @relation("SearchTaskVerifiedResult")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedOfficialEntityName])
+  @@map("verified_entity_records")
+}
+
+model CandidateAffiliateEntity {
+  id                               String                         @id @default(cuid())
+  userId                           String                         @map("user_id")
+  user                             User                           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                           String
+  candidateEntityName              String                         @map("candidate_entity_name") @db.Text
+  normalizedCandidateEntityName    String                         @map("normalized_candidate_entity_name")
+  state                            String                         @default("")
+  jurisdiction                     String                         @default("")
+  entityId                         String?                        @map("entity_id")
+  entityType                       String?                        @map("entity_type")
+  status                           VerifiedBusinessEntityStatus   @default(unknown)
+  formationDate                    DateTime?                      @map("formation_date") @db.Date
+  registeredAgentName              String?                        @map("registered_agent_name") @db.Text
+  registeredAgentAddress           String?                        @map("registered_agent_address") @db.Text
+  principalOfficeAddress           String?                        @map("principal_office_address") @db.Text
+  mailingAddress                   String?                        @map("mailing_address") @db.Text
+  officersDirectorsManagersJson    Json?                          @map("officers_directors_managers_json")
+  discoveryMethod                  CandidateDiscoveryMethod       @map("discovery_method")
+  evidenceJson                     Json?                          @map("evidence_json")
+  affiliationScore                 Float                          @default(0) @map("affiliation_score")
+  confidence                       EntityConfidenceLevel          @default(low)
+  reviewStatus                     CandidateAffiliateReviewStatus @default(unreviewed) @map("review_status")
+  reasonForFlag                    String?                        @map("reason_for_flag") @db.Text
+  sourceName                       String?                        @map("source_name") @db.Text
+  sourceUrl                        String?                        @map("source_url") @db.Text
+  documentUrl                      String?                        @map("document_url") @db.Text
+  notes                            String?                        @db.Text
+  createdAt                        DateTime                       @default(now()) @map("created_at")
+  updatedAt                        DateTime                       @updatedAt @map("updated_at")
+
+  filingEvents                     EntityFilingEvent[]           @relation("FilingCandidateEntity")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedCandidateEntityName])
+  @@map("candidate_affiliate_entities")
+}
+
+model EntityRelationship {
+  id                  String               @id @default(cuid())
+  userId              String               @map("user_id")
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker              String
+  parentVerifiedId    String?              @map("parent_verified_id")
+  childVerifiedId     String?              @map("child_verified_id")
+  parentEntityName    String               @map("parent_entity_name") @db.Text
+  childEntityName     String               @map("child_entity_name") @db.Text
+  relationshipType    EntityRelationshipType @map("relationship_type")
+  evidenceSource      String?              @map("evidence_source") @db.Text
+  evidenceUrl         String?              @map("evidence_url") @db.Text
+  confidence          EntityConfidenceLevel @default(medium)
+  notes               String?              @db.Text
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@map("entity_relationships")
+}
+
+model EntityFilingEvent {
+  id                      String                     @id @default(cuid())
+  userId                  String                     @map("user_id")
+  user                    User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                  String
+  entityRecordId          String?                    @map("entity_record_id")
+  entityRecord            VerifiedEntityRecord?      @relation("FilingVerifiedEntity", fields: [entityRecordId], references: [id], onDelete: SetNull)
+  candidateAffiliateEntityId String?                  @map("candidate_affiliate_entity_id")
+  candidateAffiliate      CandidateAffiliateEntity? @relation("FilingCandidateEntity", fields: [candidateAffiliateEntityId], references: [id], onDelete: SetNull)
+  entityName              String                     @map("entity_name") @db.Text
+  eventType               EntityFilingEventType      @map("event_type")
+  eventDate               DateTime?                  @map("event_date") @db.Date
+  filingNumber            String?                    @map("filing_number")
+  documentTitle           String?                    @map("document_title") @db.Text
+  documentUrl             String?                    @map("document_url") @db.Text
+  summary                 String?                    @db.Text
+  riskFlag                Boolean                    @default(false) @map("risk_flag")
+  notes                   String?                    @db.Text
+  createdAt               DateTime                   @default(now()) @map("created_at")
+  updatedAt               DateTime                   @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([entityRecordId])
+  @@map("entity_filing_events")
+}
+
+model EntityDiligenceIssue {
+  id                  String                         @id @default(cuid())
+  userId              String                         @map("user_id")
+  user                User                           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker              String
+  issueType           EntityDiligenceIssueKind       @map("issue_type")
+  issueTitle          String                         @map("issue_title") @db.Text
+  issueDescription    String                         @map("issue_description") @db.Text
+  relatedEntityName   String?                        @map("related_entity_name") @db.Text
+  relatedEntityId     String?                        @map("related_entity_id")
+  relatedCandidateId  String?                        @map("related_candidate_id")
+  severity            EntityDiligenceSeverity
+  status              EntityDiligenceWorkflowStatus  @default(open)
+  evidenceJson        Json?                          @map("evidence_json")
+  sourceUrl           String?                        @map("source_url") @db.Text
+  notes               String?                        @db.Text
+  isSystemGenerated   Boolean                        @default(false) @map("is_system_generated")
+  createdAt           DateTime                       @default(now()) @map("created_at")
+  updatedAt           DateTime                       @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, severity])
+  @@map("entity_diligence_issues")
+}
+
+model EntitySearchTask {
+  id                     String                         @id @default(cuid())
+  userId                 String                         @map("user_id")
+  user                   User                           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                 String
+  entityName             String                         @map("entity_name") @db.Text
+  normalizedEntityName   String                         @map("normalized_entity_name")
+  state                  String
+  sourceName             String                         @map("source_name") @db.Text
+  sourceUrl              String                         @map("source_url") @db.Text
+  searchReason           EntitySearchTaskReason          @map("search_reason")
+  searchStatus           EntitySearchTaskWorkflowStatus  @default(not_started) @map("search_status")
+  resultEntityRecordId   String?                         @map("result_entity_record_id")
+  resultEntityRecord     VerifiedEntityRecord?          @relation("SearchTaskVerifiedResult", fields: [resultEntityRecordId], references: [id], onDelete: SetNull)
+  notes                  String?                        @db.Text
+  checkedAt              DateTime?                       @map("checked_at")
+  createdAt              DateTime                        @default(now()) @map("created_at")
+  updatedAt              DateTime                        @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, state, normalizedEntityName])
+  @@map("entity_search_tasks")
 }

@@ -1,14 +1,16 @@
 "use server";
 
-import { getFilingsByTicker, getAllFilingsByTicker, type SecFiling, type SecFilingsResult } from "@/lib/sec-edgar";
-
-const USER_AGENT = "CenturyEggCredit research app (mailto:support@example.com)";
+import { resolveExhibit21AcrossAnnualFilings, resolveExhibit21DocumentUrl } from "@/lib/sec-filing-exhibits";
+import { pickLatestAnnualReport } from "@/lib/secAnnualReportForms";
+import { getFilingsByTicker, getAllFilingsByTicker, getSecEdgarUserAgent, type SecFiling, type SecFilingsResult } from "@/lib/sec-edgar";
 
 export type TenKSource = {
   filingDate: string;
   form: string;
   accessionNumber: string;
   docUrl: string;
+  /** Archives attachment when discoverable (index.json or links from primary HTML). */
+  exhibit21DocUrl?: string | null;
 };
 
 export type BusinessLine = {
@@ -64,34 +66,9 @@ function stripHtml(html: string): string {
   return normalizeWhitespace(decodeHtmlEntities(text));
 }
 
-/**
- * Annual report forms in the 10-K family (SEC EDGAR).
- * Excludes "NT 10-K" (late filing notices) — those are not substantive annual reports.
- */
-function isAnnualTenKForm(formRaw: string): boolean {
-  const raw = (formRaw ?? "").trim().replace(/\u00a0/g, " ");
-  if (!raw) return false;
-  const compact = raw.replace(/\s+/g, " ").trim();
-  if (/\bNT\s*10-K\b/i.test(compact)) return false;
-  const u = compact.toUpperCase();
-  if (u === "10-K" || u === "10-K/A") return true;
-  if (u === "10-KT" || u === "10-KT/A") return true;
-  if (/^10-K\d/i.test(u.replace(/\s/g, ""))) return true;
-  return false;
-}
-
-function pickLatest10K(filings: SecFiling[]): SecFiling | null {
-  const candidates = filings
-    .filter((f) => typeof f.form === "string" && isAnnualTenKForm(f.form))
-    .sort((a, b) => (b.filingDate || "").localeCompare(a.filingDate || ""));
-  if (candidates.length === 0) return null;
-
-  // Prefer plain 10-K over 10-K/A if same date range.
-  const plain = candidates.find((c) => c.form.trim().toUpperCase().replace(/\s+/g, "") === "10-K");
-  return plain ?? candidates[0];
-}
-
-async function findLatestTenKFilingForTicker(ticker: string): Promise<{ filing: SecFiling; companyName: string } | null> {
+async function findLatestTenKFilingForTicker(
+  ticker: string
+): Promise<{ filing: SecFiling; cik: string; companyName: string } | null> {
   const sym = ticker.trim().toUpperCase();
   const nameFrom = (p: SecFilingsResult | null) => (p?.companyName?.trim() ? p.companyName.trim() : sym);
 
@@ -99,18 +76,25 @@ async function findLatestTenKFilingForTicker(ticker: string): Promise<{ filing: 
   if (!recent) return null;
 
   let companyName = nameFrom(recent);
-  let filing = pickLatest10K(recent.filings);
-  if (filing) return { filing, companyName };
+  let filing = pickLatestAnnualReport(recent.filings);
+  if (filing) return { filing, companyName, cik: recent.cik };
 
   const full = await getAllFilingsByTicker(sym);
   if (!full) return null;
   companyName = nameFrom(full);
-  filing = pickLatest10K(full.filings);
+  filing = pickLatestAnnualReport(full.filings);
   if (!filing) return null;
-  return { filing, companyName };
+  return { filing, companyName, cik: full.cik };
 }
 
-/** Latest 10-K-class filing, searching full submission history if needed (recent feed is capped). */
+/** Latest annual filing (10-K family or 20-F) + CIK + name; searches full history if recent feed has no match. */
+export async function resolveLatest10KFilingWithMeta(
+  ticker: string
+): Promise<{ filing: SecFiling; cik: string; companyName: string } | null> {
+  return findLatestTenKFilingForTicker(ticker);
+}
+
+/** Latest annual filing, searching full submission history if needed (recent feed is capped). */
 export async function resolveLatest10KFiling(ticker: string): Promise<SecFiling | null> {
   const hit = await findLatestTenKFilingForTicker(ticker);
   return hit?.filing ?? null;
@@ -276,7 +260,7 @@ export async function get10KOverviewRaw(ticker: string): Promise<TenKOverviewRaw
 
   const { filing: tenk, companyName } = hit;
 
-  const docRes = await fetch(tenk.docUrl, { headers: { "User-Agent": USER_AGENT } });
+  const docRes = await fetch(tenk.docUrl, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!docRes.ok) return null;
   const html = await docRes.text();
   const text = stripHtml(html);
@@ -311,7 +295,7 @@ export async function getLatest10KBusinessProfile(ticker: string): Promise<TenKB
 
   const { filing: tenk, companyName } = hit;
 
-  const docRes = await fetch(tenk.docUrl, { headers: { "User-Agent": USER_AGENT } });
+  const docRes = await fetch(tenk.docUrl, { headers: { "User-Agent": getSecEdgarUserAgent() } });
   if (!docRes.ok) return null;
   const html = await docRes.text();
   const text = stripHtml(html);
@@ -339,15 +323,22 @@ export async function getLatest10KBusinessProfile(ticker: string): Promise<TenKB
   };
 }
 
-/** Latest 10-K primary document URL + filing meta for linking (SEC EDGAR). */
+/** Latest annual filing primary document + meta; discovers Exhibit 21 via Archives index and primary-HTML link fallbacks. */
 export async function getLatest10KFilingMeta(ticker: string): Promise<TenKSource | null> {
-  const tenk = await resolveLatest10KFiling(ticker.trim().toUpperCase());
-  if (!tenk) return null;
+  const sym = ticker.trim().toUpperCase();
+  const hit = await findLatestTenKFilingForTicker(sym);
+  if (!hit) return null;
+  const all = await getAllFilingsByTicker(sym);
+  const exhibit21DocUrl =
+    all?.filings?.length ?
+      (await resolveExhibit21AcrossAnnualFilings(hit.cik, all.filings, 14)).exhibit21Url
+    : await resolveExhibit21DocumentUrl(hit.cik, hit.filing.accessionNumber, hit.filing.docUrl);
   return {
-    filingDate: tenk.filingDate,
-    form: tenk.form,
-    accessionNumber: tenk.accessionNumber,
-    docUrl: tenk.docUrl,
+    filingDate: hit.filing.filingDate,
+    form: hit.filing.form,
+    accessionNumber: hit.filing.accessionNumber,
+    docUrl: hit.filing.docUrl,
+    exhibit21DocUrl,
   };
 }
 

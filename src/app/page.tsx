@@ -70,11 +70,11 @@ export default function Home() {
     setCompanyTab("sec-xbrl-financials");
   }, [companyTab, companyTopSection]);
 
-  /** State & Local Public Records tab hidden; land on Saved Documents. */
+  /** Entity Mapper tab removed; land on Public Records Profile (Overview). */
   useEffect(() => {
-    if (companyTab !== "state-local-public-records") return;
-    if (companyTopSection !== "documents") setCompanyTopSection("documents");
-    setCompanyTab("saved-documents");
+    if (companyTab !== "entity-mapper") return;
+    if (companyTopSection !== "overview") setCompanyTopSection("overview");
+    setCompanyTab("public-records-profile");
   }, [companyTab, companyTopSection]);
 
   return (

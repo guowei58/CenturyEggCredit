@@ -1,7 +1,7 @@
 import type { PublicRecordCategory } from "@/generated/prisma/client";
 
 export const PUBLIC_RECORD_CATEGORY_LABELS: Record<PublicRecordCategory, string> = {
-  entity_sos: "Entity / Secretary of State",
+  entity_sos: "Entity Verification & Affiliate Discovery",
   ucc_secured_debt: "UCC / Secured Debt",
   tax_liens_releases: "Tax Liens & Releases",
   real_estate_recorder: "Real Estate / County Recorder",

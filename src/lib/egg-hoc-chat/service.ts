@@ -260,10 +260,11 @@ export async function countUnreadForMember(
     conversationId,
     deletedAt: null,
     senderUserId: { not: userId },
-    messageType: EggHocMessageType.TEXT,
+    /** TEXT + IMAGE both count; IMAGE-only filter previously hid screenshot DM unread from receivers. */
+    messageType: { in: [EggHocMessageType.TEXT, EggHocMessageType.IMAGE] },
     createdAt: { gte: memberJoinedAt },
     ...messageVisibleToViewerWhere(userId),
-  } as const;
+  };
 
   if (!lastReadMessageId) {
     return prisma.eggHocMessage.count({ where: base });

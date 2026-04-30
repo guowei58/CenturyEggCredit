@@ -7,6 +7,9 @@
 
 const USER_AGENT = "CenturyEggCredit/1.0 (credit-research; +https://github.com/)";
 
+/** Next.js caches server `fetch` by default; patent/trademark APIs must stay live. */
+const NO_STORE_REMOTE = { cache: "no-store" as const, next: { revalidate: 0 } };
+
 export type OdpPatentHit = {
   applicationNumberText: string | null;
   inventionTitle: string | null;
@@ -261,6 +264,7 @@ export async function searchOdpPatentApplications(
       pagination: { offset: Math.max(0, offset), limit: capped },
     }),
     signal: AbortSignal.timeout(45_000),
+    ...NO_STORE_REMOTE,
   });
 
   if (!res.ok) {
@@ -305,6 +309,7 @@ export async function searchOdpTrademarkApplications(
       pagination: { offset: Math.max(0, offset), limit: capped },
     }),
     signal: AbortSignal.timeout(45_000),
+    ...NO_STORE_REMOTE,
   });
 
   if (!res.ok) {
@@ -346,6 +351,7 @@ export async function searchPatentsViewAssignees(
     headers,
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(45_000),
+    ...NO_STORE_REMOTE,
   });
 
   if (!res.ok) {
@@ -392,6 +398,7 @@ export async function searchPatentsViewPatentsByAssignee(
     headers,
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(45_000),
+    ...NO_STORE_REMOTE,
   });
 
   if (!res.ok) {
@@ -431,6 +438,7 @@ export async function fetchTsdrBySerial(
       "User-Agent": USER_AGENT,
     },
     signal: AbortSignal.timeout(30_000),
+    ...NO_STORE_REMOTE,
   });
 
   if (!res.ok) {

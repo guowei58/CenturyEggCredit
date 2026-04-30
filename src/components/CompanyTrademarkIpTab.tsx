@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { Card, DataTable } from "@/components/ui";
+import { subsidiaryChipNamesFromSavedProfile } from "@/lib/publicRecordsSubsidiaryRows";
 import { formatOdpPatentQueryString } from "@/lib/uspto-ip";
 
 type Links = {
@@ -66,11 +67,30 @@ type ApiErr = {
   odpSignup?: string;
 };
 
-type SubsidiaryHintsApi =
-  | { ok: true; companyName: string; names: string[]; sources: string[]; disclaimer: string }
+type PublicRecordsProfileResp = {
+  profile: {
+    companyName?: string | null;
+    legalNames?: string[];
+    subsidiaryNames?: string[];
+    subsidiaryDomiciles?: string[];
+    /** When set, mirrors the Exhibit 21 grid shown on Public Records Profile (may be populated while subsidiaryNames is empty). */
+    subsidiaryExhibit21Snapshot?: unknown;
+    updatedAt?: string;
+  };
+};
+
+type QueryNameHints =
+  | { ok: true; names: string[]; sources: string[]; disclaimer: string }
   | { ok: false; message: string };
 
 const ODP_PAGE_LIMIT = 50;
+
+const QUERY_HINTS_DISCLAIMER =
+  "Subsidiaries from your saved Public Records profile: the Exhibit 21 grid when you have one, otherwise the name + domicile table (State & Local → Overview / Public Records Profile). Verify matches on USPTO.";
+
+function buildNamesFromPublicRecordsProfile(p: PublicRecordsProfileResp["profile"]): string[] {
+  return subsidiaryChipNamesFromSavedProfile(p.subsidiaryExhibit21Snapshot, p.subsidiaryNames, p.subsidiaryDomiciles);
+}
 
 function ellipsize(s: string, max: number): string {
   const t = s.replace(/\s+/g, " ").trim();
@@ -97,7 +117,7 @@ export function CompanyTrademarkIpTab({
   /** Raw `q` sent to the API for the current result set (`null` = server uses company name / ticker). */
   const [pagingQ, setPagingQ] = useState<string | null>(null);
 
-  const [hintsPayload, setHintsPayload] = useState<Extract<SubsidiaryHintsApi, { ok: true }> | null>(null);
+  const [hintsPayload, setHintsPayload] = useState<Extract<QueryNameHints, { ok: true }> | null>(null);
   const [hintsLoading, setHintsLoading] = useState(false);
   const [hintsMessage, setHintsMessage] = useState<string | null>(null);
 
@@ -111,7 +131,7 @@ export function CompanyTrademarkIpTab({
         if (qParam?.trim()) u.searchParams.set("q", qParam.trim());
         u.searchParams.set("offset", "0");
         u.searchParams.set("limit", String(ODP_PAGE_LIMIT));
-        const res = await fetch(u.toString());
+        const res = await fetch(u.toString(), { cache: "no-store" });
         const body = (await res.json()) as ApiOk | ApiErr;
         if (!res.ok || body.ok !== true) {
           const e = body as ApiErr;
@@ -147,7 +167,7 @@ export function CompanyTrademarkIpTab({
       if (pagingQ) u.searchParams.set("q", pagingQ);
       u.searchParams.set("offset", String(odpPatentRows.length));
       u.searchParams.set("limit", String(ODP_PAGE_LIMIT));
-      const res = await fetch(u.toString());
+      const res = await fetch(u.toString(), { cache: "no-store" });
       const body = (await res.json()) as ApiOk | ApiErr;
       if (!res.ok || body.ok !== true) {
         const e = body as ApiErr;
@@ -175,22 +195,55 @@ export function CompanyTrademarkIpTab({
     setHintsLoading(true);
     setHintsMessage(null);
     setHintsPayload(null);
-    fetch(`/api/subsidiary-hints/${encodeURIComponent(safeTicker)}`)
-      .then((res) => res.json() as Promise<SubsidiaryHintsApi>)
-      .then((body) => {
+
+    const u = `/api/companies/${encodeURIComponent(safeTicker)}/public-records/profile?companyName=${encodeURIComponent((companyName ?? "").trim())}`;
+
+    fetch(u, { credentials: "same-origin", cache: "no-store" })
+      .then(async (res) => {
         if (cancelled) return;
-        if (body.ok) {
-          setHintsPayload(body);
-          setHintsMessage(null);
-        } else {
+
+        if (res.status === 401) {
           setHintsPayload(null);
-          setHintsMessage(body.message);
+          setHintsMessage("Sign in to load subsidiaries from your Public Records profile.");
+          return;
         }
+
+        if (!res.ok) {
+          setHintsPayload(null);
+          setHintsMessage("Could not load Public Records profile for this ticker.");
+          return;
+        }
+
+        const body = (await res.json()) as PublicRecordsProfileResp;
+        const p = body.profile;
+        const names = buildNamesFromPublicRecordsProfile(p);
+
+        const sources = [
+          `Public Records Profile — subsidiary names (${names.length})`,
+          p.updatedAt ? `Profile updated ${typeof p.updatedAt === "string" ? p.updatedAt.slice(0, 10) : ""}` : "",
+        ].filter(Boolean);
+
+        if (names.length === 0) {
+          setHintsPayload(null);
+          setHintsMessage(
+            "No subsidiaries we could derive from your Public Records profile yet. Ensure the Exhibit 21 grid has entity names visible, or add rows under the subsidiary name/domicile table (State & Local → Overview / Public Records Profile), or ingest from SEC there.",
+          );
+          return;
+        }
+
+
+        setHintsPayload({
+          ok: true,
+          names,
+          sources,
+          disclaimer: QUERY_HINTS_DISCLAIMER,
+        });
+        setHintsMessage(null);
       })
       .catch(() => {
         if (!cancelled) {
           setHintsPayload(null);
-          setHintsMessage("Could not load subsidiary name ideas.");
+          setHintsMessage("Could not load Public Records profile.");
         }
       })
       .finally(() => {
@@ -199,7 +252,7 @@ export function CompanyTrademarkIpTab({
     return () => {
       cancelled = true;
     };
-  }, [safeTicker]);
+  }, [safeTicker, companyName]);
 
   if (!safeTicker) {
     return (
@@ -214,14 +267,14 @@ export function CompanyTrademarkIpTab({
       <Card title="Search query">
         {hintsLoading && (
           <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
-            Loading registrant / subsidiary name ideas from SEC filings and your saved Subsidiary List…
+            Loading subsidiaries from your Public Records profile…
           </p>
         )}
         {hintsMessage && !hintsLoading && (
           <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
             {hintsMessage}{" "}
             <span style={{ color: "var(--muted2)" }}>
-              (Tip: run the Subsidiary List tab and save a response—those names will appear here.)
+              (Tip: Overview → State & Local Public Records → Public Records Profile, or ingest 10-K / Exhibit 21 there.)
             </span>
           </p>
         )}
@@ -234,9 +287,9 @@ export function CompanyTrademarkIpTab({
               {hintsPayload.disclaimer}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {hintsPayload.names.map((n) => (
+              {hintsPayload.names.map((n, idx) => (
                 <button
-                  key={n}
+                  key={`${n}-${idx}`}
                   type="button"
                   title={n}
                   disabled={loading || loadingMoreOdp}

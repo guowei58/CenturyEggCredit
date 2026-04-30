@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function reorderList<T>(list: T[], fromIndex: number, toIndex: number): T[] {
   if (fromIndex === toIndex) return list;
@@ -48,28 +48,30 @@ export function LeftSidebar({
   const [names, setNames] = useState<Record<string, string>>({});
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
-  const hydratedRef = useRef(false);
 
   const persistWatchlist = useCallback(async (list: string[]) => {
     await persistWatchlistServer(list);
   }, []);
 
+  /** Load server watchlist when session becomes available. Do not change the active ticker here—async completion used to race user clicks and reset the wrong company. */
   useEffect(() => {
     if (status === "loading") return;
-    if (hydratedRef.current) return;
 
+    if (status !== "authenticated") {
+      setWatchlist([]);
+      return;
+    }
+
+    let cancelled = false;
     void (async () => {
-      if (status !== "authenticated") {
-        setWatchlist([]);
-        hydratedRef.current = true;
-        return;
-      }
       const list = (await fetchWatchlistServer()) ?? [];
-      setWatchlist(list);
-      if (list.length > 0) onTickerSelect(list[0]);
-      hydratedRef.current = true;
+      if (!cancelled) setWatchlist(list);
     })();
-  }, [status, onTickerSelect]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
 
   useEffect(() => {
     if (watchlist.length === 0) {

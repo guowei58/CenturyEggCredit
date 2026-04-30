@@ -4,7 +4,7 @@ import { getLatest10KFilingMeta } from "@/lib/sec-10k";
 
 export const dynamic = "force-dynamic";
 
-/** Latest Form 10-K from SEC EDGAR Data API (`data.sec.gov` submissions + Archives links)—not from user Saved Documents. */
+/** Latest annual report (Form 10-K / 10-K family or Form 20-F) — primary doc URL + Exhibit 21 when discoverable (SEC EDGAR). */
 export async function GET(_request: Request, { params }: { params: Promise<{ ticker: string }> }) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

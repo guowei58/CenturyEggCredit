@@ -124,6 +124,7 @@ export async function searchEcfsFilings(params: {
     res = await fetch(url.toString(), {
       headers: { Accept: "application/json" },
       cache: "no-store",
+      next: { revalidate: 0 },
     });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Network error calling FCC ECFS API." };

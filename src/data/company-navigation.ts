@@ -32,6 +32,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
+          "Public Records Profile",
           "Business Overview",
           "Recent Events",
           "Management & Board",
@@ -90,7 +91,15 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         // "EdgarTools SEC" intentionally omitted from nav for now; CompanyEdgarToolsTab + /api/edgartools/* remain.
-        tabs: ["Saved Documents", "SEC Filings", "FCC Filings", "Patent IP Filings", "Other Regulatory Filings"],
+        tabs: [
+          "Saved Documents",
+          "SEC Filings",
+          "FCC Filings",
+          "Patent IP Filings",
+          // Hidden from nav — full `PublicRecordsTab` diligence UI still reachable via routing if needed:
+          // "State & Local Public Records",
+          "Other Regulatory Filings",
+        ],
       },
     ],
   },
@@ -168,6 +177,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
 
 export function getFirstTabIdForTopSection(topSection: CompanyTopSectionId): string {
   const firstLabel = companyNav[topSection]?.groups?.[0]?.tabs?.[0];
-  return firstLabel ? tabLabelToId(firstLabel) : tabLabelToId("Business Overview");
+  return firstLabel ? tabLabelToId(firstLabel) : tabLabelToId("Public Records Profile");
 }
 

@@ -17,6 +17,11 @@ export default defineConfig({
       "src/lib/creditMemo/**/*.test.ts",
       "src/lib/xbrl-saved-history/**/*.test.ts",
       "src/lib/sec-edgar.test.ts",
+      "src/lib/sec-filing-exhibits.test.ts",
+      "src/lib/exhibit21GridExtract.test.ts",
+      "src/lib/buildPublicRecordsProfileFromSec.test.ts",
+      "src/lib/subsidiary-name-hints.test.ts",
+      "src/lib/debt-map/**/*.test.ts",
     ],
   },
   resolve: {
