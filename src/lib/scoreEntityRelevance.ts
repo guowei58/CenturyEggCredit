@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { CreditDocumentPartyRole } from "@/generated/prisma/client";
 import type { AddressClusterAddressKind } from "@/generated/prisma/client";
 
