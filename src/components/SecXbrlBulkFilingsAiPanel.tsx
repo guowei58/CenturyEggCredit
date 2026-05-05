@@ -39,7 +39,7 @@ const DEFAULT_CONSOLIDATE_MODELS: Record<AiProvider, ModelRunChoice> = {
 
 /**
  * Bulk SEC-XBRL workbook save + optional AI consolidation.
- * On the Good/Bad/Ugly tab: bulk save is under The Bad; AI consolidation under The Ugly.
+ * On the Historical Financial Statements tab: bulk save and compiler live in one place (AI consolidation UI may be toggled).
  */
 export function SecXbrlBulkFilingsAiPanel({
   ticker,
@@ -156,23 +156,19 @@ export function SecXbrlBulkFilingsAiPanel({
   return (
     <div className="space-y-4">
       {showBulkSave ? (
-      <Card title={`SEC XBRL — bulk save (${tk})`}>
-        <p className="text-xs" style={{ color: "var(--muted2)" }}>
-          {listData?.companyName ? <span style={{ color: "var(--text)" }}>{listData.companyName}</span> : null}
-          {listData?.cik ? <> · CIK {listData.cik}</> : null}
-        </p>
+      <Card>
         {listLoading ? (
-          <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
+          <p className="text-sm" style={{ color: "var(--muted2)" }}>
             Loading filings…
           </p>
         ) : listErr ? (
-          <p className="mt-3 text-sm" style={{ color: "var(--warn)" }}>
+          <p className="text-sm" style={{ color: "var(--warn)" }}>
             {listErr}
           </p>
         ) : null}
 
         {!listLoading && !listErr && filings.length > 0 ? (
-          <div className="mt-4 border-t pt-3" style={{ borderColor: "var(--border2)" }}>
+          <div className="pt-0.5">
             <div className="flex flex-wrap items-end justify-between gap-2">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
@@ -180,9 +176,8 @@ export function SecXbrlBulkFilingsAiPanel({
                 </p>
                 <p className="mt-0.5 text-[11px]" style={{ color: "var(--muted2)" }}>
                   {filings.length} filing{filings.length === 1 ? "" : "s"} in the last ~20 years. Each saved workbook matches
-                  single-filing exports: Meta, display + raw sheets, Validation, very sparse period columns omitted (~5%
-                  line fill), zero-only rows
-                  omitted — same as &quot;Save as Excel&quot; on the SEC XBRL Financials tab.
+                  the as-presented view: Meta, display + raw sheets, Validation, very sparse period columns omitted (~5% line
+                  fill), zero-only rows omitted.
                 </p>
               </div>
               <button

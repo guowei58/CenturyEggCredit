@@ -82,7 +82,7 @@ export function isPlausibleExhibit21NameCell(cell: string): boolean {
 }
 
 /** True when cell looks like a domicile / jurisdiction token (often column after an entity-name column shifted right). */
-function looksLikeDomCodeOrRegion(cell: string): boolean {
+export function looksLikeDomCodeOrRegion(cell: string): boolean {
   const t = cell.replace(/\s+/g, " ").trim().replace(/\.$/, "");
   if (t.length < 2 || t.length > 40) return false;
   /** Two-letter filings (Delaware DE, Nevada NV, Cayman KY false positive — Exhibit 21 table context). */
@@ -200,6 +200,61 @@ export function pickSubsidiaryNameFromGridBodyRow(row: string[], nameCol: number
     return cell;
   }
   return null;
+}
+
+/**
+ * One row per grid body row: legal name + jurisdiction when the Exhibit 21 grid exposes those columns.
+ */
+export function deriveSubsidiaryTableRowsFromGrid(s: Exhibit21GridSnapshotV1): { name: string; jurisdiction: string }[] {
+  const sn = normalizeExhibit21MisalignedEntityColumn(s);
+  if (sn.rows.length === 0) return [];
+  const headers = sn.hasHeaderRow ? ((sn.rows[0] ?? []) as string[]) : [];
+  const { nameCol, body } = resolveSubsidiaryNameColumnIndex(sn.hasHeaderRow, sn.rows);
+
+  let jurCol = -1;
+  if (headers.length > 0) {
+    jurCol = headers.findIndex((h) =>
+      /\bdomicile\b|\bjurisdiction\b|\b(?:state|country)\s+(?:of\s+)?(?:incorporat|\w+)/i.test(h.trim())
+    );
+    if (
+      jurCol < 0 &&
+      nameCol >= 0 &&
+      nameCol + 1 < headers.length &&
+      !/\b(?:name|subsidiary|entity|company|legal)\b/i.test((headers[nameCol + 1] ?? "").trim())
+    ) {
+      jurCol = nameCol + 1;
+    }
+  }
+
+  const out: { name: string; jurisdiction: string }[] = [];
+  const seen = new Set<string>();
+  const safeNameCol = nameCol >= 0 ? nameCol : 0;
+
+  for (const row of body) {
+    const picked = pickSubsidiaryNameFromGridBodyRow(row, safeNameCol < row.length ? safeNameCol : 0);
+    if (!picked) continue;
+    const k = picked.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+
+    let jurisdiction = "";
+    if (jurCol >= 0 && jurCol < row.length) jurisdiction = (row[jurCol] ?? "").replace(/\s+/g, " ").trim();
+    if (!jurisdiction) {
+      for (let i = 0; i < row.length; i++) {
+        if (i === safeNameCol) continue;
+        const c = (row[i] ?? "").replace(/\s+/g, " ").trim();
+        if (c === picked.trim()) continue;
+        if (looksLikeDomCodeOrRegion(c)) {
+          jurisdiction = c;
+          break;
+        }
+      }
+    }
+
+    out.push({ name: picked.replace(/\s+/g, " ").trim(), jurisdiction });
+  }
+
+  return out;
 }
 
 /** Search-term hints — one name per grid body row whenever possible (not only rows with data in entity column). */

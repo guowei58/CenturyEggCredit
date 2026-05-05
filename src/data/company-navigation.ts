@@ -64,7 +64,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   financials: {
     groups: [
       {
-        tabs: ["SEC XBRL Financials", "The Good, Bad and Ugly Historical Financial Statements"],
+        tabs: ["SEC XBRL Financials", "Historical Financial Statements"],
       },
     ],
   },
@@ -79,10 +79,11 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
+          "Debt Footnote From 10K/Q",
           "Capital Structure",
           "Org Chart",
           "Credit Agreements & Indentures",
-          "Subsidiary List",
+          "Entity Mapper",
         ],
       },
     ],
@@ -96,8 +97,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "SEC Filings",
           "FCC Filings",
           "Patent IP Filings",
-          // Hidden from nav — full `PublicRecordsTab` diligence UI still reachable via routing if needed:
-          // "State & Local Public Records",
           "Other Regulatory Filings",
         ],
       },

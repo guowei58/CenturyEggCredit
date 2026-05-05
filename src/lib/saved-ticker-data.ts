@@ -83,6 +83,12 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "cs-recommendation-latest": "cs-recommendation-latest.md",
   "cs-recommendation-latest-meta": "cs-recommendation-latest-meta.json",
   "cs-recommendation-latest-source-pack": "cs-recommendation-latest-source-pack.txt",
+  "entity-mapper-latest": "entity-mapper-latest.md",
+  "entity-mapper-latest-meta": "entity-mapper-latest-meta.json",
+  /** Structured Exhibit 21 × financing-role matrices (JSON). */
+  "entity-mapper-v2-snapshot": "entity-mapper-v2-snapshot.json",
+  /** Programmatic SEC EDGAR debt exhibit index (Archives links) for Entity Mapper / research. */
+  "entity-mapper-sec-debt-index": "entity-mapper-sec-debt-index.md",
   "forensic-accounting-latest": "forensic-accounting-latest.md",
   "forensic-accounting-latest-meta": "forensic-accounting-latest-meta.json",
   "forensic-accounting-latest-source-pack": "forensic-accounting-latest-source-pack.txt",
@@ -115,6 +121,10 @@ export const SAVED_TAB_FILENAME_AI_PRIORITY: readonly string[] = [
   "ai-credit-memo-latest-meta.json",
   "cs-recommendation-latest.md",
   "cs-recommendation-latest-meta.json",
+  "entity-mapper-latest.md",
+  "entity-mapper-latest-meta.json",
+  "entity-mapper-v2-snapshot.json",
+  "entity-mapper-sec-debt-index.md",
   "kpi-latest.md",
   "kpi-latest-meta.json",
   "literary-references-latest.md",

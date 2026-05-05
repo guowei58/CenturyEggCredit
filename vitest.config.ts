@@ -22,6 +22,11 @@ export default defineConfig({
       "src/lib/buildPublicRecordsProfileFromSec.test.ts",
       "src/lib/subsidiary-name-hints.test.ts",
       "src/lib/debt-map/**/*.test.ts",
+      "src/lib/secDebtFootnoteExtract.test.ts",
+      "src/lib/secDebtFootnote/**/*.test.ts",
+      "src/lib/sec-ixbrl-mdna-boundaries.test.ts",
+      "src/lib/sec-ixbrl-mdna-tables.test.ts",
+      "src/lib/sec-xbrl-as-presented.test.ts",
     ],
   },
   resolve: {

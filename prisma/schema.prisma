@@ -95,6 +95,19 @@ model User {
   entityFilingEvents                EntityFilingEvent[]
   entityDiligenceIssues             EntityDiligenceIssue[]
   entitySearchTasks                 EntitySearchTask[]
+  exhibit21Subsidiaries             Exhibit21Subsidiary[]
+  creditDocumentEntities            CreditDocumentEntity[]
+  uccDebtorCandidates               UccDebtorCandidate[]
+  sosNameFamilyCandidates           SosNameFamilyCandidate[]
+  addressClusterCandidates          AddressClusterCandidate[]
+  entityUniverseItems               EntityUniverseItem[]
+  entityUniverseIssues             EntityUniverseIssue[]
+  entityUniverseDiscoveryTasks      EntityUniverseDiscoveryTask[]
+  creditDocumentSources             CreditDocumentSource[]
+  creditDocumentEntityExtractions   CreditDocumentEntityExtraction[]
+  creditDocumentEntityRelationships CreditDocumentEntityRelationship[]
+  creditDocumentEntityRoleMatrixRows CreditDocumentEntityRoleMatrixRow[]
+  creditDocWorkflowIssues           CreditDocWorkflowIssue[]
 
   @@map("users")
 }
@@ -1294,4 +1307,742 @@ model EntitySearchTask {
   @@index([userId, ticker])
   @@index([userId, ticker, state, normalizedEntityName])
   @@map("entity_search_tasks")
+}
+
+// ----- Entity Universe & Affiliate Discovery (diligence workflow) -----
+
+enum EntityUniverseItemRole {
+  public_parent
+  exhibit_21_subsidiary
+  borrower
+  issuer
+  co_issuer
+  guarantor
+  grantor
+  pledgor
+  collateral_owner
+  restricted_subsidiary
+  unrestricted_subsidiary
+  excluded_subsidiary
+  immaterial_subsidiary
+  non_guarantor_subsidiary
+  finance_sub
+  funding_sub
+  receivables_sub
+  securitization_vehicle
+  leasing_sub
+  ip_holding_entity
+  real_estate_holding_entity
+  operating_company
+  holding_company
+  management_company
+  services_company
+  joint_venture
+  dba
+  former_name
+  possible_affiliate
+  unknown
+}
+
+enum EntityUniverseSourceCategory {
+  exhibit_21
+  credit_document
+  ucc_debtor_search
+  sos_name_family_search
+  address_cluster_search
+  user_added
+  other
+}
+
+enum EntityUniverseConfidenceKind {
+  high
+  medium
+  low
+  unknown
+}
+
+enum EntityUniverseReviewStatus {
+  unreviewed
+  confirmed_relevant
+  likely_relevant
+  possible_relevant
+  rejected
+  needs_follow_up
+  resolved
+}
+
+enum CreditDocumentEntitySourceKind {
+  credit_agreement
+  indenture
+  guarantee_agreement
+  security_agreement
+  pledge_agreement
+  collateral_agreement
+  intercreditor_agreement
+  receivables_agreement
+  securitization_agreement
+  amendment
+  other
+}
+
+enum CreditDocumentPartyRole {
+  borrower
+  issuer
+  co_issuer
+  guarantor
+  grantor
+  pledgor
+  loan_party
+  restricted_subsidiary
+  unrestricted_subsidiary
+  excluded_subsidiary
+  immaterial_subsidiary
+  receivables_subsidiary
+  securitization_subsidiary
+  foreign_subsidiary
+  non_guarantor_subsidiary
+  collateral_owner
+  other
+}
+
+enum UccDebtorFilingKind {
+  ucc_1
+  ucc_3
+  continuation
+  amendment
+  assignment
+  termination
+  fixture_filing
+  unknown
+}
+
+enum AddressClusterAddressKind {
+  hq_address
+  principal_office
+  mailing_address
+  facility_address
+  property_address
+  permit_address
+  registered_office
+  unknown
+}
+
+enum EntityUniverseIssueKind {
+  credit_doc_entity_not_in_exhibit_21
+  ucc_debtor_not_in_exhibit_21
+  finance_entity_not_in_exhibit_21
+  receivables_entity_not_in_exhibit_21
+  securitization_entity_not_in_exhibit_21
+  ip_holding_entity_not_in_exhibit_21
+  real_estate_entity_not_in_exhibit_21
+  address_cluster_candidate
+  name_family_candidate
+  possible_affiliate
+  inactive_or_dissolved_candidate
+  borrower_or_guarantor_status_issue
+  multiple_name_matches
+  needs_manual_confirmation
+  other
+}
+
+enum EntityUniverseIssueSeverityLevel {
+  low
+  medium
+  high
+  critical
+}
+
+enum EntityUniverseIssueWorkflowStatus {
+  open
+  resolved
+  dismissed
+  needs_follow_up
+}
+
+enum EntityUniverseDiscoveryTaskCategory {
+  credit_document_review
+  ucc_debtor_search
+  sos_name_family_search
+  address_cluster_search
+  general
+}
+
+enum EntityUniverseDiscoveryTaskWorkflowStatus {
+  not_started
+  in_progress
+  searched_no_result
+  candidate_found
+  confirmed_result
+  needs_follow_up
+  blocked_login_required
+  blocked_fee_required
+  not_applicable
+}
+
+model Exhibit21Subsidiary {
+  id                   String    @id @default(cuid())
+  userId               String    @map("user_id")
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker               String
+  entityName           String    @map("entity_name") @db.Text
+  normalizedEntityName String    @map("normalized_entity_name")
+  jurisdiction         String?
+  source10KTitle       String?   @map("source_10k_title") @db.Text
+  source10KUrl         String?   @map("source_10k_url") @db.Text
+  fiscalYear           String?   @map("fiscal_year")
+  listedAsSignificant  Boolean   @default(false) @map("listed_as_significant")
+  materialityNote      String?   @map("materiality_note") @db.Text
+  notes                String?   @db.Text
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedEntityName])
+  @@map("exhibit_21_subsidiaries")
+}
+
+model CreditDocumentEntity {
+  id                       String                         @id @default(cuid())
+  userId                   String                         @map("user_id")
+  user                     User                           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  entityName               String                         @map("entity_name") @db.Text
+  normalizedEntityName     String                         @map("normalized_entity_name")
+  sourceDocumentType       CreditDocumentEntitySourceKind @map("source_document_type")
+  sourceDocumentTitle      String                         @map("source_document_title") @db.Text
+  sourceDocumentUrl        String?                        @map("source_document_url") @db.Text
+  sourceDate               DateTime?                      @map("source_date") @db.Date
+  entityRole               CreditDocumentPartyRole       @map("entity_role")
+  sectionReference         String?                        @map("section_reference") @db.Text
+  excerpt                  String?                        @db.Text
+  listedInExhibit21        Boolean                        @default(false) @map("listed_in_exhibit_21")
+  relevanceScore           Int                            @default(0) @map("relevance_score")
+  confidence               EntityUniverseConfidenceKind    @default(unknown)
+  notes                    String?                        @db.Text
+  createdAt                DateTime                       @default(now()) @map("created_at")
+  updatedAt                DateTime                       @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedEntityName])
+  @@map("credit_document_entities")
+}
+
+model UccDebtorCandidate {
+  id                    String                           @id @default(cuid())
+  userId                String                           @map("user_id")
+  user                  User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                String
+  debtorName            String                           @map("debtor_name") @db.Text
+  normalizedDebtorName  String                           @map("normalized_debtor_name")
+  state                 String
+  sourceName            String                           @map("source_name") @db.Text
+  sourceUrl             String                           @map("source_url") @db.Text
+  filingNumber          String?                          @map("filing_number") @db.Text
+  filingDate            DateTime?                        @map("filing_date") @db.Date
+  securedPartyName      String?                          @map("secured_party_name") @db.Text
+  collateralDescription String?                          @map("collateral_description") @db.Text
+  filingType            UccDebtorFilingKind              @default(unknown) @map("filing_type")
+  matchedSearchTerm     String?                          @map("matched_search_term") @db.Text
+  listedInExhibit21     Boolean                          @default(false) @map("listed_in_exhibit_21")
+  appearsInCreditDocs   Boolean                          @default(false) @map("appears_in_credit_docs")
+  confidence            EntityUniverseConfidenceKind     @default(unknown)
+  relevanceScore        Int                              @default(0) @map("relevance_score")
+  reviewStatus          EntityUniverseReviewStatus      @default(unreviewed) @map("review_status")
+  notes                 String?                          @db.Text
+  createdAt             DateTime                         @default(now()) @map("created_at")
+  updatedAt             DateTime                         @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedDebtorName])
+  @@map("ucc_debtor_candidates")
+}
+
+model SosNameFamilyCandidate {
+  id                           String                           @id @default(cuid())
+  userId                       String                           @map("user_id")
+  user                         User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                       String
+  candidateEntityName          String                           @map("candidate_entity_name") @db.Text
+  normalizedCandidateEntityName String                          @map("normalized_candidate_entity_name")
+  state                        String
+  sourceName                   String                           @map("source_name") @db.Text
+  sourceUrl                    String                           @map("source_url") @db.Text
+  entityId                     String?                          @map("entity_id") @db.Text
+  entityType                   String?                          @map("entity_type") @db.Text
+  status                       VerifiedBusinessEntityStatus      @default(unknown)
+  formationDate                DateTime?                        @map("formation_date") @db.Date
+  registeredAgentName          String?                          @map("registered_agent_name") @db.Text
+  registeredAgentAddress       String?                          @map("registered_agent_address") @db.Text
+  principalOfficeAddress       String?                          @map("principal_office_address") @db.Text
+  mailingAddress               String?                          @map("mailing_address") @db.Text
+  matchedNameRoot              String?                          @map("matched_name_root") @db.Text
+  matchedSearchTerm            String?                          @map("matched_search_term") @db.Text
+  listedInExhibit21            Boolean                          @default(false) @map("listed_in_exhibit_21")
+  appearsInCreditDocs          Boolean                          @default(false) @map("appears_in_credit_docs")
+  confidence                   EntityUniverseConfidenceKind      @default(unknown)
+  relevanceScore               Int                              @default(0) @map("relevance_score")
+  reviewStatus                 EntityUniverseReviewStatus       @default(unreviewed) @map("review_status")
+  notes                        String?                         @db.Text
+  createdAt                    DateTime                        @default(now()) @map("created_at")
+  updatedAt                    DateTime                        @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedCandidateEntityName])
+  @@map("sos_name_family_candidates")
+}
+
+model AddressClusterCandidate {
+  id                           String                           @id @default(cuid())
+  userId                       String                           @map("user_id")
+  user                         User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                       String
+  candidateEntityName          String                           @map("candidate_entity_name") @db.Text
+  normalizedCandidateEntityName String                           @map("normalized_candidate_entity_name")
+  matchedAddress               String                           @map("matched_address") @db.Text
+  addressType                  AddressClusterAddressKind       @default(unknown)
+  state                        String
+  sourceName                   String                           @map("source_name") @db.Text
+  sourceUrl                    String                           @map("source_url") @db.Text
+  entityId                     String?                          @map("entity_id") @db.Text
+  entityType                   String?                          @map("entity_type") @db.Text
+  status                       VerifiedBusinessEntityStatus      @default(unknown)
+  evidenceJson                 Json?                            @map("evidence_json")
+  listedInExhibit21            Boolean                          @default(false) @map("listed_in_exhibit_21")
+  appearsInCreditDocs          Boolean                          @default(false) @map("appears_in_credit_docs")
+  confidence                   EntityUniverseConfidenceKind      @default(unknown)
+  relevanceScore               Int                              @default(0) @map("relevance_score")
+  reviewStatus                 EntityUniverseReviewStatus       @default(unreviewed) @map("review_status")
+  notes                        String?                         @db.Text
+  createdAt                    DateTime                        @default(now()) @map("created_at")
+  updatedAt                    DateTime                        @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedCandidateEntityName])
+  @@map("address_cluster_candidates")
+}
+
+model EntityUniverseItem {
+  id                       String                           @id @default(cuid())
+  userId                   String                           @map("user_id")
+  user                     User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  entityName               String                           @map("entity_name") @db.Text
+  normalizedEntityName     String                           @map("normalized_entity_name")
+  entityRole               EntityUniverseItemRole           @default(unknown)
+  primarySourceCategory    EntityUniverseSourceCategory    @default(other) @map("primary_source_category")
+  mergedSourceCategories   String[]                        @default([]) @map("merged_source_categories")
+  sourceDocumentTitle      String?                          @map("source_document_title") @db.Text
+  sourceDocumentUrl        String?                          @map("source_document_url") @db.Text
+  sourceDate               DateTime?                        @map("source_date") @db.Date
+  state                    String                           @default("")
+  jurisdiction             String                           @default("")
+  entityId                 String?                          @map("entity_id") @db.Text
+  entityType               String?                          @map("entity_type") @db.Text
+  status                   VerifiedBusinessEntityStatus    @default(unknown)
+  formationDate            DateTime?                        @map("formation_date") @db.Date
+  registeredAgentName       String?                          @map("registered_agent_name") @db.Text
+  registeredAgentAddress    String?                          @map("registered_agent_address") @db.Text
+  principalOfficeAddress    String?                          @map("principal_office_address") @db.Text
+  mailingAddress            String?                          @map("mailing_address") @db.Text
+  matchedAddress           String?                          @map("matched_address") @db.Text
+  matchedOfficerOrManager  String?                          @map("matched_officer_or_manager") @db.Text
+  listedInExhibit21        Boolean                          @default(false) @map("listed_in_exhibit_21")
+  appearsInCreditDocs      Boolean                          @default(false) @map("appears_in_credit_docs")
+  appearsInUccSearch       Boolean                          @default(false) @map("appears_in_ucc_search")
+  appearsInSosSearch       Boolean                          @default(false) @map("appears_in_sos_search")
+  appearsInAddressCluster  Boolean                          @default(false) @map("appears_in_address_cluster")
+  evidenceJson             Json?                            @map("evidence_json")
+  /** Credit-doc matrix / multi-role payload when merged from extractor (role → true|false|unknown|needs_review strings). */
+  roleFlagsJson            Json?                           @map("role_flags_json")
+  confidence               EntityUniverseConfidenceKind     @default(unknown)
+  relevanceScore           Int                              @default(0) @map("relevance_score")
+  reviewStatus             EntityUniverseReviewStatus      @default(unreviewed)
+  duplicateGroupKey        String?                          @map("duplicate_group_key") @db.Text
+  notes                    String?                          @db.Text
+  createdAt                DateTime                         @default(now()) @map("created_at")
+  updatedAt                DateTime                         @updatedAt @map("updated_at")
+
+  universeIssues EntityUniverseIssue[]
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedEntityName, state])
+  @@index([userId, ticker, duplicateGroupKey])
+  @@map("entity_universe_items")
+}
+
+model EntityUniverseIssue {
+  id                       String                             @id @default(cuid())
+  userId                   String                             @map("user_id")
+  user                     User                               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  relatedEntityUniverseItemId String?                         @map("related_entity_universe_item_id")
+  relatedUniverseItem      EntityUniverseItem?               @relation(fields: [relatedEntityUniverseItemId], references: [id], onDelete: SetNull)
+  relatedEntityName        String                             @map("related_entity_name") @db.Text
+  issueType                EntityUniverseIssueKind           @map("issue_type")
+  severity                 EntityUniverseIssueSeverityLevel
+  issueTitle               String                             @map("issue_title") @db.Text
+  issueDescription         String                             @map("issue_description") @db.Text
+  evidenceJson             Json?                              @map("evidence_json")
+  sourceUrl                String?                            @map("source_url") @db.Text
+  status                   EntityUniverseIssueWorkflowStatus  @default(open)
+  notes                    String?                            @db.Text
+  createdAt                DateTime                           @default(now()) @map("created_at")
+  updatedAt                DateTime                           @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, severity])
+  @@map("entity_universe_issues")
+}
+
+model EntityUniverseDiscoveryTask {
+  id             String                                   @id @default(cuid())
+  userId         String                                   @map("user_id")
+  user           User                                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker         String
+  taskCategory   EntityUniverseDiscoveryTaskCategory      @default(general) @map("task_category")
+  /** credit_document_review sub-target, e.g. credit_agreement */
+  taskSubtype    String?                                  @map("task_subtype") @db.Text
+  sourceCategory EntityUniverseSourceCategory             @default(other) @map("source_category")
+  searchTerm     String?                                  @map("search_term") @db.Text
+  state          String?
+  jurisdiction   String                                   @default("")
+  sourceUrl      String?                                  @map("source_url") @db.Text
+  instructions   String                                   @db.Text
+  status         EntityUniverseDiscoveryTaskWorkflowStatus @default(not_started)
+  notes          String?                                  @db.Text
+  checkedAt      DateTime?                                @map("checked_at")
+  createdAt      DateTime                                 @default(now()) @map("created_at")
+  updatedAt      DateTime                                 @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, status])
+  @@map("entity_universe_discovery_tasks")
+}
+
+// ----- Credit Document Subsidiaries / Entity Role Matrix workflow -----
+
+enum CreditDocSourceDocumentType {
+  credit_agreement
+  amended_and_restated_credit_agreement
+  loan_agreement
+  indenture
+  supplemental_indenture
+  guarantee_agreement
+  security_agreement
+  pledge_agreement
+  collateral_agreement
+  intercreditor_agreement
+  collateral_trust_agreement
+  joinder_agreement
+  amendment
+  waiver
+  consent
+  exchange_agreement
+  restructuring_support_agreement
+  plan_of_reorganization
+  disclosure_statement
+  receivables_agreement
+  securitization_agreement
+  abs_indenture
+  mortgage
+  deed_of_trust
+  other
+}
+
+enum CreditDocSourceFilingKind {
+  sec_8k
+  sec_10k
+  sec_10q
+  sec_s1
+  sec_s3
+  sec_s4
+  sec_424b
+  bankruptcy_docket
+  company_ir
+  uploaded_document
+  saved_document
+  user_url
+  other
+}
+
+enum CreditDocSourceProcessingStatus {
+  not_started
+  downloaded
+  parsed
+  extraction_complete
+  extraction_failed
+  needs_review
+}
+
+enum CreditDocWorkflowEntityRole {
+  borrower
+  issuer
+  co_issuer
+  guarantor
+  subsidiary_guarantor
+  parent_guarantor
+  grantor
+  pledgor
+  collateral_owner
+  loan_party
+  obligor
+  restricted_subsidiary
+  unrestricted_subsidiary
+  excluded_subsidiary
+  immaterial_subsidiary
+  non_guarantor_subsidiary
+  restricted_non_guarantor_subsidiary
+  foreign_subsidiary
+  domestic_subsidiary
+  receivables_subsidiary
+  securitization_subsidiary
+  finance_subsidiary
+  insurance_subsidiary
+  captive_insurance_subsidiary
+  subsidiary
+  parent
+  holding_company
+  operating_company
+  administrative_agent
+  collateral_agent
+  trustee
+  lender
+  secured_party
+  other
+  unknown
+}
+
+enum CreditDocExtractionMethod {
+  regex
+  llm
+  table_extraction
+  schedule_extraction
+  signature_page_extraction
+  manual
+}
+
+enum CreditDocExtractionConfidence {
+  high
+  medium
+  low
+}
+
+enum CreditDocDetailedReviewStatus {
+  unreviewed
+  confirmed
+  edited
+  rejected
+  needs_follow_up
+}
+
+enum CreditDocRelationshipType {
+  borrower_guarantor
+  issuer_guarantor
+  parent_subsidiary
+  restricted_sub_link
+  unrestricted_sub_link
+  excluded_sub_link
+  non_guarantor_sub_link
+  loan_party_link
+  grantor_collateral_agent
+  pledgor_collateral_agent
+  obligor_trustee
+  receivables_transfer
+  securitization_transfer
+  collateral_owner_link
+  released_guarantor
+  added_guarantor
+  added_borrower
+  added_grantor
+  predecessor_successor
+  relationship_other
+}
+
+enum CreditDocRelationshipConfidence {
+  high
+  medium
+  low
+}
+
+enum CreditDocWorkflowIssueSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+enum CreditDocWorkflowIssueWorkflowStatus {
+  open
+  resolved
+  dismissed
+  needs_follow_up
+}
+
+model CreditDocumentSource {
+  id                    String                           @id @default(cuid())
+  userId                String                           @map("user_id")
+  user                  User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                String
+  documentTitle         String                           @map("document_title") @db.Text
+  documentType          CreditDocSourceDocumentType      @map("document_type")
+  filingType            CreditDocSourceFilingKind       @map("filing_type")
+  filingDate            DateTime?                        @map("filing_date") @db.Date
+  periodDate            DateTime?                        @map("period_date") @db.Date
+  accessionNumber       String?                         @map("accession_number") @db.Text
+  exhibitNumber         String?                         @map("exhibit_number") @db.VarChar(64)
+  secUrl                String?                         @map("sec_url") @db.Text
+  sourceUrl             String?                         @map("source_url") @db.Text
+  localFileUrl          String?                         @map("local_file_url") @db.Text
+  savedDocumentRefId    String?                         @map("saved_document_ref_id")
+  htmlTextAvailable    Boolean                         @default(false) @map("html_text_available")
+  pdfAvailable         Boolean                         @default(false) @map("pdf_available")
+  processed            Boolean                         @default(false)
+  processingStatus      CreditDocSourceProcessingStatus  @default(not_started) @map("processing_status")
+  notes                String?                         @db.Text
+  extractedTextDigest  String?                         @map("extracted_text_digest") @db.Text
+  candidateRelevant    Boolean?                        @map("candidate_relevant")
+  createdAt            DateTime                        @default(now()) @map("created_at")
+  updatedAt            DateTime                        @updatedAt @map("updated_at")
+
+  extractions   CreditDocumentEntityExtraction[]
+  relationships CreditDocumentEntityRelationship[]
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, processingStatus])
+  @@map("credit_document_sources")
+}
+
+model CreditDocumentEntityExtraction {
+  id                       String                             @id @default(cuid())
+  userId                   String                             @map("user_id")
+  user                     User                               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  creditDocumentSourceId   String                             @map("credit_document_source_id")
+  source                   CreditDocumentSource               @relation(fields: [creditDocumentSourceId], references: [id], onDelete: Cascade)
+  entityName               String                             @map("entity_name") @db.Text
+  normalizedEntityName     String                             @map("normalized_entity_name")
+  entityRole               CreditDocWorkflowEntityRole        @map("entity_role")
+  roleConfidence           CreditDocExtractionConfidence      @default(medium) @map("role_confidence")
+  sourceSection            String?                            @map("source_section") @db.Text
+  sourceDefinition        String?                            @map("source_definition") @db.Text
+  sourceSchedule           String?                            @map("source_schedule") @db.Text
+  sourceExhibit            String?                            @map("source_exhibit") @db.VarChar(120)
+  pageNumber               String?                            @map("page_number") @db.VarChar(32)
+  excerpt                  String?                            @db.Text
+  extractionMethod         CreditDocExtractionMethod           @default(regex) @map("extraction_method")
+  listedInExhibit21        Boolean                            @default(false) @map("listed_in_exhibit_21")
+  alreadyInEntityUniverse Boolean                            @default(false) @map("already_in_entity_universe")
+  recommendedEntityUniverseRole EntityUniverseItemRole?       @map("recommended_entity_universe_role")
+  relevanceScore           Int                                @default(0) @map("relevance_score")
+  reviewStatus             CreditDocDetailedReviewStatus       @default(unreviewed) @map("review_status")
+  notes                    String?                            @db.Text
+  evidenceJson             Json?                              @map("evidence_json")
+  createdAt                DateTime                           @default(now()) @map("created_at")
+  updatedAt                DateTime                           @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedEntityName])
+  @@index([creditDocumentSourceId])
+  @@map("credit_document_entity_extractions")
+}
+
+model CreditDocumentEntityRelationship {
+  id                     String                            @id @default(cuid())
+  userId                 String                            @map("user_id")
+  user                   User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                 String
+  creditDocumentSourceId String                            @map("credit_document_source_id")
+  source                 CreditDocumentSource              @relation(fields: [creditDocumentSourceId], references: [id], onDelete: Cascade)
+  parentEntityName       String                            @map("parent_entity_name") @db.Text
+  childEntityName        String                            @map("child_entity_name") @db.Text
+  relationshipType       CreditDocRelationshipType         @map("relationship_type")
+  sourceSection          String?                           @map("source_section") @db.Text
+  sourceSchedule         String?                           @map("source_schedule") @db.Text
+  excerpt                String?                           @db.Text
+  confidence             CreditDocRelationshipConfidence     @default(medium)
+  notes                  String?                           @db.Text
+  evidenceJson           Json?                             @map("evidence_json")
+  createdAt              DateTime                          @default(now()) @map("created_at")
+  updatedAt              DateTime                          @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([creditDocumentSourceId])
+  @@map("credit_document_entity_relationships")
+}
+
+model CreditDocumentEntityRoleMatrixRow {
+  id                       String                               @id @default(cuid())
+  userId                   String                               @map("user_id")
+  user                     User                                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  entityName               String                               @map("entity_name") @db.Text
+  normalizedEntityName     String                               @map("normalized_entity_name")
+  state                    String                               @default("")
+  jurisdiction             String                               @default("")
+  sourceDocumentIds       Json                                  @map("source_document_ids")
+  sourceDocumentTitles    Json                                  @map("source_document_titles")
+  sourceEvidenceJson      Json                                  @map("source_evidence_json")
+  roleFlagsJson            Json                                  @map("role_flags_json")
+  listedInExhibit21        Boolean                               @default(false) @map("listed_in_exhibit_21")
+  alreadyInEntityUniverse Boolean                              @default(false) @map("already_in_entity_universe")
+  relevanceScore           Int                                   @default(0) @map("relevance_score")
+  confidence               EntityUniverseConfidenceKind            @default(unknown)
+  reviewStatus             CreditDocDetailedReviewStatus          @default(unreviewed) @map("review_status")
+  recommendedPrimaryRole   EntityUniverseItemRole?               @map("recommended_primary_role")
+  keyEvidence              String?                              @map("key_evidence") @db.Text
+  notes                    String?                              @db.Text
+  reconciliationFlagsJson  Json?                                @map("reconciliation_flags_json")
+  createdAt                DateTime                             @default(now()) @map("created_at")
+  updatedAt                DateTime                             @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker, normalizedEntityName])
+  @@index([userId, ticker])
+  @@map("credit_document_entity_role_matrix_rows")
+}
+
+model CreditDocWorkflowIssue {
+  id                  String                                     @id @default(cuid())
+  userId              String                                     @map("user_id")
+  user                User                                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker              String
+  issueType           String                                     @map("issue_type") @db.VarChar(120)
+  issueTitle          String                                     @map("issue_title") @db.Text
+  issueDescription    String                                     @map("issue_description") @db.Text
+  entityName          String?                                   @map("entity_name") @db.Text
+  severity            CreditDocWorkflowIssueSeverity
+  excerpt             String?                                   @db.Text
+  sourceUrl           String?                                   @map("source_url") @db.Text
+  evidenceJson        Json?                                     @map("evidence_json")
+  suggestedFollowUp   String?                                   @map("suggested_follow_up") @db.Text
+  status              CreditDocWorkflowIssueWorkflowStatus      @default(open)
+  notes               String?                                   @db.Text
+  createdAt           DateTime                                   @default(now()) @map("created_at")
+  updatedAt           DateTime                                   @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, severity])
+  @@map("credit_doc_workflow_issues")
+}
+
+/** Successful debt-footnote extractions per CIK for prior-period heading / label hints. */
+model DebtNotePattern {
+  id                   String   @id @default(cuid())
+  ticker               String
+  cik                  String
+  filingType           String   @map("filing_type")
+  filingDate           String   @map("filing_date")
+  accessionNumber      String   @map("accession_number")
+  debtNoteNumber       String?  @map("debt_note_number")
+  debtNoteHeading      String   @map("debt_note_heading") @db.Text
+  previousNoteHeading  String?  @map("previous_note_heading") @db.Text
+  nextNoteHeading      String?  @map("next_note_heading") @db.Text
+  extractionMethod     String   @map("extraction_method")
+  xbrlConceptsUsed     Json?    @map("xbrl_concepts_used")
+  debtTableLabels      Json?    @map("debt_table_labels")
+  confidence           String
+  userConfirmed        Boolean  @default(false) @map("user_confirmed")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@index([cik])
+  @@map("debt_note_patterns")
 }

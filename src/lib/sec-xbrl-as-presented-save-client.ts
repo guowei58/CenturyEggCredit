@@ -40,13 +40,29 @@ export function normalizeAccessionKey(a: string): string {
   return (a ?? "").replace(/-/g, "").trim().toLowerCase();
 }
 
-/** Drop period columns where only a tiny fraction of lines have facts (one-off tags); keeps consolidation-focused grids readable. */
+/** Drop period columns where only a tiny fraction of lines have facts (one-off tags); used for Excel export. */
 const SPARSE_PERIOD_MIN_LINE_FILL_RATIO = 0.05;
 
-export function visiblePeriodsForAsPresentedStatement(stmt: PresentedStatementForSave): PresentedStatementForSave["periods"] {
+/**
+ * Stricter rule for on-screen tables so sparse year columns (e.g. only two lines with FY23 facts) stay hidden.
+ * Does not apply to export unless overridden.
+ */
+export const SPARSE_PERIOD_MIN_LINE_FILL_RATIO_DISPLAY = 0.35;
+
+export type VisiblePeriodsOptions = {
+  /** Fraction of rows that must have a numeric fact in the period (exclusive bound uses `>`). Default: export ratio (~5%). */
+  minLineFillRatio?: number;
+};
+
+export function visiblePeriodsForAsPresentedStatement(
+  stmt: PresentedStatementForSave,
+  opts?: VisiblePeriodsOptions
+): PresentedStatementForSave["periods"] {
   const { periods, rows } = stmt;
   const n = rows.length;
   if (n === 0 || periods.length === 0) return periods;
+
+  const minRatio = opts?.minLineFillRatio ?? SPARSE_PERIOD_MIN_LINE_FILL_RATIO;
 
   const kept = periods.filter((p) => {
     let withValue = 0;
@@ -54,7 +70,7 @@ export function visiblePeriodsForAsPresentedStatement(stmt: PresentedStatementFo
       const v = r.values[p.key];
       if (v !== null && Number.isFinite(v)) withValue++;
     }
-    return withValue / n > SPARSE_PERIOD_MIN_LINE_FILL_RATIO;
+    return withValue / n > minRatio;
   });
 
   return kept.length > 0 ? kept : periods;
@@ -69,11 +85,14 @@ function rowHasDataInPeriods(row: PresentedStatementForSave["rows"][number], per
 }
 
 /** Visible period columns plus rows that have data in at least one of those columns (single pass). */
-export function visiblePeriodsAndRowsForStatement(stmt: PresentedStatementForSave): {
+export function visiblePeriodsAndRowsForStatement(
+  stmt: PresentedStatementForSave,
+  opts?: VisiblePeriodsOptions
+): {
   periods: PresentedStatementForSave["periods"];
   rows: PresentedStatementForSave["rows"];
 } {
-  const periods = visiblePeriodsForAsPresentedStatement(stmt);
+  const periods = visiblePeriodsForAsPresentedStatement(stmt, opts);
   const keys = periods.map((p) => p.key);
   const rows = keys.length === 0 ? [] : stmt.rows.filter((r) => rowHasDataInPeriods(r, keys));
   return { periods, rows };

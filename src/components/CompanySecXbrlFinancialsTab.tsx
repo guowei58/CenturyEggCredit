@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
-import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui";
 import {
-  normalizeAccessionKey,
-  savePresentedStatementsXlsxToServer,
+  SPARSE_PERIOD_MIN_LINE_FILL_RATIO_DISPLAY,
   visiblePeriodsAndRowsForStatement,
   type PresentedStatementForSave,
   type SecXbrlAsPresentedApiResponse,
 } from "@/lib/sec-xbrl-as-presented-save-client";
+import type { IxbrlExtractionDiagnostics } from "@/lib/sec-ixbrl-mdna-tables";
 
 type PresentedStatement = PresentedStatementForSave;
 type ApiResponse = SecXbrlAsPresentedApiResponse;
@@ -24,6 +23,9 @@ type IxbrlMdnaTable = {
   tableHtml?: string | null;
   factCount: number;
   section: IxbrlFilingSection;
+  textOffset?: number;
+  confidence?: "high" | "medium" | "low";
+  inclusionReason?: string;
 };
 
 type IxbrlMdnaJson =
@@ -33,6 +35,7 @@ type IxbrlMdnaJson =
       mdnaHeadingFound: boolean;
       segmentHeadingFound: boolean;
       mdnaTableHit: boolean;
+      diagnostics?: IxbrlExtractionDiagnostics;
       selected?: { primaryDocument?: string; form?: string; accessionNumber?: string };
       error?: undefined;
     }
@@ -49,7 +52,9 @@ function fmt(v: number | null): string {
 }
 
 function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
-  const { periods, rows } = visiblePeriodsAndRowsForStatement(stmt);
+  const { periods, rows } = visiblePeriodsAndRowsForStatement(stmt, {
+    minLineFillRatio: SPARSE_PERIOD_MIN_LINE_FILL_RATIO_DISPLAY,
+  });
   return (
     <Card title={stmt.title}>
       <div className="overflow-auto">
@@ -93,8 +98,8 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
         Amounts in <span className="font-medium">$ millions</span> (USD). Grid shows{" "}
         <span className="font-medium">SEC-style display</span> (instance fact, including inline sign, inverted only when
         the presentation arc uses a negated label role). API JSON includes <span className="font-medium">rawValues</span>{" "}
-        before that flip. Paired &quot;(XBRL raw)&quot; sheets hold instance-side numbers. Period columns are omitted when
-        fewer than ~5% of lines have a fact in that column (single one-off tags). Role:{" "}
+        before that flip. Paired &quot;(XBRL raw)&quot; sheets hold instance-side numbers. In this view, period columns are
+        hidden when fewer than about one-third of rows have an amount in that column (sparse columns). Role:{" "}
         <span className="font-mono">{stmt.role}</span>
       </p>
     </Card>
@@ -128,6 +133,19 @@ function IxbrlHtmlTableCard({ table }: { table: IxbrlMdnaTable }) {
           <span className="rounded px-2 py-0.5 text-[10px] font-semibold uppercase sm:text-xs" style={{ background: "var(--panel)", color: "var(--accent)" }}>
             {sectionLabel}
           </span>
+          {table.confidence ? (
+            <span
+              className="rounded px-2 py-0.5 text-[10px] font-medium uppercase sm:text-xs"
+              style={{
+                background: "var(--card2)",
+                color:
+                  table.confidence === "high" ? "var(--muted2)" : table.confidence === "medium" ? "var(--warn)" : "var(--muted)",
+              }}
+              title={table.inclusionReason ?? ""}
+            >
+              {table.confidence}
+            </span>
+          ) : null}
         </span>
       }
     >
@@ -173,13 +191,10 @@ function IxbrlHtmlTableCard({ table }: { table: IxbrlMdnaTable }) {
 
 export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
   const tk = (ticker ?? "").trim().toUpperCase();
-  const { status: authStatus } = useSession();
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [selectedAcc, setSelectedAcc] = useState<string>("");
-  const [excelSaving, setExcelSaving] = useState(false);
-  const [excelSaveMsg, setExcelSaveMsg] = useState<string | null>(null);
   const [ixbrl, setIxbrl] = useState<IxbrlMdnaJson | null>(null);
   const [ixLoading, setIxLoading] = useState(false);
   const [ixErr, setIxErr] = useState<string | null>(null);
@@ -263,15 +278,7 @@ export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
   return (
     <div className="space-y-4">
       <Card title={`SEC XBRL Financials — ${tk}`}>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-xs" style={{ color: "var(--muted2)" }}>
-              {data?.companyName ? <span style={{ color: "var(--text)" }}>{data.companyName}</span> : null}
-              {data?.cik ? <> · CIK {data.cik}</> : null}
-            </p>
-          </div>
-        </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-[10px] font-semibold uppercase" style={{ color: "var(--muted)" }}>
             Filing
           </span>
@@ -294,11 +301,11 @@ export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
           ) : null}
         </div>
         <p className="mt-2 text-[10px] leading-snug" style={{ color: "var(--muted)" }}>
-          Bulk-save all filings and AI consolidation live under{" "}
+          Bulk-save filing workbooks from the{" "}
           <span className="font-medium" style={{ color: "var(--muted2)" }}>
-            The Good, Bad and Ugly Historical Financial Statements → The Bad
-          </span>
-          .
+            Historical Financial Statements
+          </span>{" "}
+          tab before running the deterministic compiler.
         </p>
         {loading ? (
           <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
@@ -313,77 +320,9 @@ export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
 
       {!loading && !err && statements.length > 0 ? (
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm" style={{ color: "var(--muted2)" }}>
-              Primary statements (income statement, balance sheet, cash flow)
-            </p>
-            <div className="flex shrink-0 flex-col items-end gap-1">
-              <button
-                type="button"
-                className="btn-shell hi rounded-md px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-                disabled={excelSaving || authStatus !== "authenticated"}
-                title={
-                  authStatus !== "authenticated"
-                    ? "Sign in to save this workbook to Saved Documents for this ticker."
-                    : "Stores .xlsx in Saved Documents; saving again for the same filing replaces that workbook."
-                }
-                onClick={() => {
-                  if (!data?.selected?.accessionNumber || authStatus !== "authenticated") return;
-                  const sel = data.selected;
-                  const accKey = normalizeAccessionKey(sel.accessionNumber);
-                  const filingMeta = filings.find((f) => normalizeAccessionKey(f.accessionNumber) === accKey);
-                  const form = (sel.form ?? filingMeta?.form ?? "").trim();
-                  const filingDate = (sel.filingDate ?? filingMeta?.filingDate ?? "").trim();
-                  const accessionNumber = (sel.accessionNumber ?? filingMeta?.accessionNumber ?? "").trim();
-                  if (!form || !filingDate || !accessionNumber) {
-                    setExcelSaveMsg("Missing filing metadata; pick a filing and try again.");
-                    return;
-                  }
-                  setExcelSaveMsg(null);
-                  setExcelSaving(true);
-                  void (async () => {
-                    try {
-                      const r = await savePresentedStatementsXlsxToServer(
-                        tk,
-                        { form, filingDate, accessionNumber },
-                        data.companyName,
-                        data.cik,
-                        statements,
-                        data.validation,
-                        data.calculationLinkbaseLoaded
-                      );
-                      if (r.ok) {
-                        setExcelSaveMsg(
-                          r.filename ? `Saved to Saved Documents: ${r.filename}` : "Saved to Saved Documents."
-                        );
-                      } else {
-                        setExcelSaveMsg(r.error);
-                      }
-                    } catch (e) {
-                      setExcelSaveMsg(e instanceof Error ? e.message : "Save failed.");
-                    } finally {
-                      setExcelSaving(false);
-                    }
-                  })();
-                }}
-              >
-                {excelSaving ? "Saving…" : "Save as Excel"}
-              </button>
-              {authStatus !== "authenticated" ? (
-                <span className="max-w-[220px] text-right text-[10px]" style={{ color: "var(--muted)" }}>
-                  Sign in to save into Saved Documents.
-                </span>
-              ) : excelSaveMsg ? (
-                <span className="max-w-[280px] text-right text-[10px]" style={{ color: "var(--muted2)" }}>
-                  {excelSaveMsg}
-                </span>
-              ) : (
-                <span className="max-w-[220px] text-right text-[10px]" style={{ color: "var(--muted)" }}>
-                  Stable filename per filing (ticker + form + date + accession); re-save replaces the same document.
-                </span>
-              )}
-            </div>
-          </div>
+          <p className="text-sm" style={{ color: "var(--muted2)" }}>
+            Primary statements (income statement, balance sheet, cash flow)
+          </p>
           {statements.map((s) => (
             <StatementAsPresentedTable key={s.id} stmt={s} />
           ))}
@@ -399,13 +338,6 @@ export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
       ) : null}
 
       <Card title={`MD&A & segment tables (filing HTML) — ${tk}`}>
-        <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-          All <span className="font-medium">HTML tables</span> detected in MD&amp;A (10-K Item 7 / 10-Q Item 2) and in the{" "}
-          <span className="font-medium">segment-information style note</span> (e.g. Segment Information, Operating Segments,
-          Disaggregated Revenue) after the financial statements item. Single-row bullets, one-cell narrative blocks, and other
-          non-grid layout tables are skipped when they have no inline amounts; real grids and any table with{" "}
-          <span className="font-mono">ix:nonFraction</span> tags are kept.
-        </p>
         {ixLoading ? (
           <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
             Loading filing HTML…
@@ -416,12 +348,39 @@ export function CompanySecXbrlFinancialsTab({ ticker }: { ticker: string }) {
           </p>
         ) : ixbrl?.ok ? (
           <div className="mt-3 space-y-3">
-            <p className="text-xs font-mono leading-relaxed" style={{ color: "var(--muted)" }}>
-              {ixbrl.selected?.primaryDocument ? `${ixbrl.selected.primaryDocument}` : null}
-              {ixbrl.mdnaHeadingFound ? " · MD&A bounds OK" : " · MD&A bounds not detected"}
-              {ixbrl.segmentHeadingFound ? " · Segment note heading OK" : " · Segment note heading not detected"}
-              {ixbrl.mdnaTableHit ? " · Tables returned" : ""}
-            </p>
+            {ixbrl.diagnostics ? (
+              <details className="rounded border text-[11px]" style={{ borderColor: "var(--border2)" }}>
+                <summary className="cursor-pointer px-3 py-2 font-semibold" style={{ color: "var(--muted2)" }}>
+                  Extraction diagnostics
+                </summary>
+                <div className="space-y-2 border-t px-3 py-2 font-mono leading-relaxed" style={{ borderColor: "var(--border2)", color: "var(--muted)" }}>
+                  <div>
+                    MD&amp;A: conf {ixbrl.diagnostics.mdna.confidence ?? "—"} · range{" "}
+                    {ixbrl.diagnostics.mdna.startOffset ?? "—"}–{ixbrl.diagnostics.mdna.endOffset ?? "—"} · used{" "}
+                    {ixbrl.diagnostics.mdna.rangeUsedForExtraction ? "yes" : "no"}
+                  </div>
+                  <div>
+                    Notes: {ixbrl.diagnostics.notes.found ? "found" : "missing"} · segment score{" "}
+                    {ixbrl.diagnostics.segmentNote.score ?? "—"} ({ixbrl.diagnostics.segmentNote.confidence ?? "—"}) · heading{" "}
+                    {(ixbrl.diagnostics.segmentNote.heading ?? "").slice(0, 120)}
+                    {(ixbrl.diagnostics.segmentNote.heading ?? "").length > 120 ? "…" : ""}
+                  </div>
+                  <div>
+                    Tables: doc {ixbrl.diagnostics.tables.totalInDocument} · in MD&amp;A slice {ixbrl.diagnostics.tables.taggedInMdnaRange}{" "}
+                    · in segment slice {ixbrl.diagnostics.tables.taggedInSegmentRange} · included {ixbrl.diagnostics.tables.included} ·
+                    rejected {ixbrl.diagnostics.tables.rejected}
+                  </div>
+                  {Object.keys(ixbrl.diagnostics.rejectionReasons).length > 0 ? (
+                    <div>
+                      Rejections:{" "}
+                      {Object.entries(ixbrl.diagnostics.rejectionReasons)
+                        .map(([k, v]) => `${k}=${v}`)
+                        .join(", ")}
+                    </div>
+                  ) : null}
+                </div>
+              </details>
+            ) : null}
             {ixbrl.tables.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--muted2)" }}>
                 No tables in those sections (unusual headings, or segment note title didn&apos;t match expected patterns).

@@ -818,10 +818,13 @@ function DiagnosticsPanel({ result }: { result: Result | null }) {
 export function CompanyXbrlCompilerTab({
   ticker,
   savedDocumentsRev = 0,
+  compilerTitle,
 }: {
   ticker: string;
   /** Increment when Saved Documents gain new SEC-XBRL workbooks (e.g. after bulk save). */
   savedDocumentsRev?: number;
+  /** Override main compiler card heading (default: Deterministic XBRL Statement Compiler). */
+  compilerTitle?: string;
 }) {
   const { data: session } = useSession();
   const [panel, setPanel] = useState<Panel>("compile");
@@ -944,7 +947,7 @@ export function CompanyXbrlCompilerTab({
       <Card>
         <div className="flex items-center gap-3 mb-4">
           <h2 className="text-base font-bold tracking-tight" style={{ color: "var(--text)" }}>
-            Deterministic XBRL Statement Compiler
+            {compilerTitle ?? "Deterministic XBRL Statement Compiler"}
           </h2>
           <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide"
             style={{ background: "var(--accent)", color: "#fff" }}>{ticker}</span>

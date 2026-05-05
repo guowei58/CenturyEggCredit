@@ -75,8 +75,8 @@ export function CompanyEntitySearchesTab({ ticker, companyName }: { ticker: stri
         <div className="space-y-3 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
           <p className="text-xs" style={{ color: "var(--muted)" }}>
             Names below are a <strong className="font-semibold text-[var(--text)]">best-effort</strong> extract from your
-            saved Subsidiary List (if any), Exhibit 21 in the latest 10-K (embedded or standalone), and the SEC registrant
-            name—not a ranked “materiality” list. Confirm important entities in filings and on OpenCorporates.
+            saved AI subsidiary analysis (Entity Mapper, §7) if any, Exhibit 21 in the latest 10-K (embedded or standalone), and
+            the SEC registrant name—not a ranked “materiality” list. Confirm important entities in filings and on OpenCorporates.
           </p>
           {!tk ? (
             <p>Select a company to load subsidiary hints.</p>
@@ -88,8 +88,8 @@ export function CompanyEntitySearchesTab({ ticker, companyName }: { ticker: stri
             <div className="rounded border border-dashed px-3 py-2 text-xs" style={{ borderColor: "var(--border2)" }}>
               <p style={{ color: "var(--muted2)" }}>{hintsErr}</p>
               <p className="mt-2" style={{ color: "var(--muted)" }}>
-                Tip: use the <strong className="text-[var(--text)]">Subsidiary List</strong> tab to save a model or analyst
-                list—those names are merged into this view on refresh.
+                Tip: run <strong className="text-[var(--text)]">Entity Mapper</strong> (§7 AI Analysis of Subsidiaries) to save
+                a list—those names are merged into this view on refresh.
               </p>
             </div>
           ) : hints && hints.names.length > 0 ? (
@@ -137,8 +137,8 @@ export function CompanyEntitySearchesTab({ ticker, companyName }: { ticker: stri
                 </div>
               ) : (
                 <p className="text-xs" style={{ color: "var(--muted)" }}>
-                  Only the registrant name was found in the current sources. Add or refresh your Subsidiary List, or
-                  ensure the latest 10-K loads for this ticker.
+                  Only the registrant name was found in the current sources. Run Entity Mapper (§7) or ensure the latest 10-K
+                  loads for this ticker.
                 </p>
               )}
               {hints.sources.length > 0 ? (

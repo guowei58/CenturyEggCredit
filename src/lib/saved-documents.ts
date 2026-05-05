@@ -412,6 +412,32 @@ async function persistUpsertedDocumentFromUrl(
   };
 }
 
+/** Upsert raw bytes from an SEC Archives exhibit into Saved Documents (same filename replaces a prior run). */
+export async function upsertSecArchivesExhibitAsSavedDocument(
+  userId: string,
+  ticker: string,
+  params: {
+    sourceUrl: string;
+    filename: string;
+    title: string;
+    body: Buffer;
+    contentType: string | null;
+  }
+): Promise<{ ok: true; item: SavedDocumentItem } | { ok: false; error: string }> {
+  const safeTicker = sanitizeTicker(ticker);
+  if (!safeTicker) return { ok: false, error: "Invalid ticker" };
+  const savedAtIso = new Date().toISOString();
+  return persistUpsertedDocumentFromUrl(userId, safeTicker, {
+    sourceUrl: params.sourceUrl,
+    body: params.body,
+    filename: params.filename,
+    title: params.title,
+    contentType: params.contentType,
+    convertedToPdf: false,
+    savedAtIso,
+  });
+}
+
 export async function saveDocumentFromUrl(
   userId: string,
   ticker: string,

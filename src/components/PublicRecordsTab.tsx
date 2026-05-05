@@ -22,7 +22,7 @@ import {
 import { splitSubsidiaryLine } from "@/lib/exhibit21SubsidiaryRows";
 import { subsidiaryRowsFromProfileArrays } from "@/lib/publicRecordsSubsidiaryRows";
 import type { PublicRecordCategory } from "@/generated/prisma/client";
-import { EntityVerificationAffiliateDiscoveryPage } from "@/components/entityVerification/EntityVerificationAffiliateDiscoveryPage";
+import { EntityUniverseAffiliateDiscoveryPage, type EntityUniversePublicRecordsSubsidiaries } from "@/components/entityUniverse/EntityUniverseAffiliateDiscoveryPage";
 
 const AUTOSAVE_DEBOUNCE_MS = 900;
 
@@ -850,6 +850,16 @@ export function PublicRecordsTab({
     });
   }, [profileDraft, companyName, tk]);
 
+  const entityUniverseProfileSubsidiaries = useMemo<EntityUniversePublicRecordsSubsidiaries>(() => ({
+    subsidiaryExhibit21Snapshot: profileDraft.subsidiaryExhibit21Snapshot ?? null,
+    subsidiaryNames: profileDraft.subsidiaryNames ?? [],
+    subsidiaryDomiciles: profileDraft.subsidiaryDomiciles ?? [],
+  }), [
+    profileDraft.subsidiaryExhibit21Snapshot,
+    (profileDraft.subsidiaryNames ?? []).join("\u0001"),
+    (profileDraft.subsidiaryDomiciles ?? []).join("\u0001"),
+  ]);
+
   const categoryCounts = useMemo(() => {
     const m = new Map<PublicRecordCategory, { findings: number; unchecked: number }>();
     for (const c of PUBLIC_RECORD_CATEGORIES_ORDER) {
@@ -1051,12 +1061,7 @@ export function PublicRecordsTab({
                 Choose a category in the sidebar for diligence notes, recommended sources, and checklist actions. Use{" "}
                 <strong style={{ color: "var(--text)" }}>Overview → Public Records Profile</strong> to edit entity names and geography.
               </p>
-            ) : (
-              <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
-                Uses your Public Records profile for Exhibit 21, credit-party names, and geography. Recommended SOS sources remain below your
-                entity verification checklist.
-              </p>
-            )}
+            ) : null}
             <div
               role="tabpanel"
               aria-label={PUBLIC_RECORD_CATEGORY_LABELS[activeCategory]}
@@ -1064,7 +1069,11 @@ export function PublicRecordsTab({
             >
               {activeCategory === "entity_sos" ? (
                 <div className="mb-6">
-                  <EntityVerificationAffiliateDiscoveryPage ticker={tk} companyName={profileDraft.companyName ?? companyName} />
+                  <EntityUniverseAffiliateDiscoveryPage
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    publicRecordsProfileSubsidiaries={entityUniverseProfileSubsidiaries}
+                  />
                 </div>
               ) : null}
               {activeCategory !== "entity_sos" ? (
@@ -1077,42 +1086,52 @@ export function PublicRecordsTab({
                   {catDisclaimer}
                 </p>
               ) : null}
-              <h5 className="mb-2 mt-4 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
-                Recommended sources
-              </h5>
-              <ul className="space-y-2 text-[11px]">
-                {recommended
-                  .filter((r) => r.source.category === activeCategory)
-                  .map((r) => (
-                    <li key={r.sourceKey} className="rounded border border-[var(--border)] px-2 py-2" style={{ color: "var(--text)" }}>
-                      <div className="font-medium">{r.source.sourceName}</div>
-                      <div style={{ color: "var(--muted)" }}>{r.reason}</div>
-                      <div className="mt-1 flex flex-wrap gap-2">
-                        <a className="underline" href={r.source.sourceUrl} target="_blank" rel="noreferrer">
-                          Open source
-                        </a>
-                        <button type="button" className="underline" onClick={() => void navigator.clipboard.writeText(terms.categoryTerms[activeCategory].join(", "))}>
-                          Copy search terms
-                        </button>
-                        <button type="button" className="underline" onClick={() => void upsertCheck(r, "searched_no_result")}>
-                          Mark checked (no result)
-                        </button>
-                        <button type="button" className="underline" onClick={() => void upsertCheck(r, "confirmed_result")}>
-                          Mark match found
-                        </button>
-                      </div>
-                      {r.checklist && (
-                        <div className="mt-1 text-[10px]" style={{ color: "var(--muted2)" }}>
-                          Status: {r.checklist.status}
-                          {r.checklist.checkedAt ? ` · ${r.checklist.checkedAt.slice(0, 10)}` : ""}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                {recommended.filter((r) => r.source.category === activeCategory).length === 0 && (
-                  <li style={{ color: "var(--muted)" }}>No MVP registry entries for this category yet—add a custom source from the API or extend the registry.</li>
-                )}
-              </ul>
+              {activeCategory !== "entity_sos" ? (
+                <>
+                  <h5 className="mb-2 mt-4 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
+                    Recommended sources
+                  </h5>
+                  <ul className="space-y-2 text-[11px]">
+                    {recommended
+                      .filter((r) => r.source.category === activeCategory)
+                      .map((r) => (
+                        <li key={r.sourceKey} className="rounded border border-[var(--border)] px-2 py-2" style={{ color: "var(--text)" }}>
+                          <div className="font-medium">{r.source.sourceName}</div>
+                          <div style={{ color: "var(--muted)" }}>{r.reason}</div>
+                          <div className="mt-1 flex flex-wrap gap-2">
+                            <a className="underline" href={r.source.sourceUrl} target="_blank" rel="noreferrer">
+                              Open source
+                            </a>
+                            <button
+                              type="button"
+                              className="underline"
+                              onClick={() => void navigator.clipboard.writeText(terms.categoryTerms[activeCategory].join(", "))}
+                            >
+                              Copy search terms
+                            </button>
+                            <button type="button" className="underline" onClick={() => void upsertCheck(r, "searched_no_result")}>
+                              Mark checked (no result)
+                            </button>
+                            <button type="button" className="underline" onClick={() => void upsertCheck(r, "confirmed_result")}>
+                              Mark match found
+                            </button>
+                          </div>
+                          {r.checklist && (
+                            <div className="mt-1 text-[10px]" style={{ color: "var(--muted2)" }}>
+                              Status: {r.checklist.status}
+                              {r.checklist.checkedAt ? ` · ${r.checklist.checkedAt.slice(0, 10)}` : ""}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    {recommended.filter((r) => r.source.category === activeCategory).length === 0 && (
+                      <li style={{ color: "var(--muted)" }}>
+                        No MVP registry entries for this category yet—add a custom source from the API or extend the registry.
+                      </li>
+                    )}
+                  </ul>
+                </>
+              ) : null}
             </div>
           </Card>
         </div>

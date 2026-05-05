@@ -1,15 +1,17 @@
 /**
  * Capital-structure **Recommendation** tab corpus: full materialized workspace + all saved tab bodies + all Saved
- * Documents, excluding **Excel only**. Explicitly **includes** generated work product from **LME analysis**, **KPI
+ * Documents, excluding **Excel only**. Injects **Public Records Profile — Exhibit 21 subsidiaries** (when saved) as a
+ * tier-0 source for Entity Mapper / CS workflows. Explicitly **includes** generated work product from **LME analysis**, **KPI
  * commentary**, and **Forensic analysis** (e.g. `lme-analysis.md`, `kpi-latest.md`, `forensic-accounting-latest.md`) when
  * present. Still skips app-internal paths (`credit-memo/` caches, memo deck library export tree, embedding vector JSON
- * trees) and this tab’s own `cs-recommendation-latest*` artifacts to avoid self-feed loops.
+ * trees) and generated tab artifacts (`cs-recommendation-latest*`, `entity-mapper-latest*`) to avoid self-feed loops.
  */
 
 import { prisma } from "@/lib/prisma";
 import { loadCreditMemoConfig } from "@/lib/creditMemo/config";
 import { MEMO_DECK_LIBRARY_PATH_PREFIX } from "@/lib/creditMemo/workProductIngestScope";
 import { isWorkspaceEmbeddingVectorCachePath, isWorkspaceSpreadsheetFilename } from "@/lib/kpi-workspace-sources";
+import { subsidiaryTableRowsFromSavedProfile } from "@/lib/publicRecordsSubsidiaryRows";
 import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
 import { extractBytesForAi } from "@/lib/ticker-file-text-extract";
 import { tierForExtractedBody } from "@/lib/lme-tier-classify";
@@ -36,10 +38,18 @@ const CS_REC_SELF_TAB_KEYS = new Set([
   "cs-recommendation-latest",
   "cs-recommendation-latest-meta",
   "cs-recommendation-latest-source-pack",
+  "entity-mapper-latest",
+  "entity-mapper-latest-meta",
+  "entity-mapper-v2-snapshot",
 ]);
 
 function isCsRecSelfWorkspaceBasename(base: string): boolean {
-  return /^cs-recommendation-latest/i.test(base.trim());
+  const b = base.trim().toLowerCase();
+  return (
+    /^cs-recommendation-latest/i.test(b) ||
+    /^entity-mapper-latest/i.test(b) ||
+    /^entity-mapper-v2-snapshot/i.test(b)
+  );
 }
 
 function isInternalWorkspaceOnlyPath(rel: string): boolean {
@@ -103,6 +113,44 @@ export async function collectCsRecommendationRawDocuments(ticker: string, userId
     }
   }
 
+  try {
+    const pubProf = await prisma.publicRecordsProfile.findUnique({
+      where: { userId_ticker: { userId, ticker: sym } },
+      select: {
+        subsidiaryNames: true,
+        subsidiaryDomiciles: true,
+        subsidiaryExhibit21Snapshot: true,
+      },
+    });
+    if (pubProf) {
+      const subRows = subsidiaryTableRowsFromSavedProfile(
+        pubProf.subsidiaryExhibit21Snapshot,
+        pubProf.subsidiaryNames ?? [],
+        pubProf.subsidiaryDomiciles ?? []
+      );
+      if (subRows.length > 0) {
+        const lines = subRows.map((r, i) => {
+          const jur = r.domicile.replace(/\s+/g, " ").trim();
+          return `${String(i + 1).padStart(3, " ")}. ${r.name.trim()}${jur ? ` | Jurisdiction (if stated): ${jur}` : ""}`;
+        });
+        const raw =
+          `STATE & LOCAL PUBLIC RECORDS PROFILE — EXHIBIT 21 SUBSIDIARY UNIVERSE\n` +
+          `Source: saved Public Records profile (Exhibit 21 grid and/or subsidiary name/domicile table).\n` +
+          `This list is the authoritative row index for the Exhibit 21 subsidiary matrix — one reviewed subsidiary per line below.\n` +
+          `Exhibit 21 names alone are NOT evidence of borrower/guarantor/issuer status; verify every financing role only from financing documents in SOURCE DOCUMENTS.\n\n` +
+          lines.join("\n");
+        push({
+          tier: 0,
+          label: `Public Records profile — Exhibit 21 subsidiaries (${subRows.length} rows)`,
+          file: "public-records-profile-exhibit21-subsidiaries.txt",
+          raw,
+        });
+      }
+    }
+  } catch {
+    /* profile optional */
+  }
+
   const tabRows = await listUserTickerDocuments(userId, sym);
   for (const row of tabRows) {
     if (!(row.dataKey in SAVED_DATA_FILES)) continue;
@@ -155,7 +203,7 @@ export function formatSourcesForCsRecommendation(ticker: string, parts: LmeSourc
     `Ticker: ${sym}\n` +
     `The blocks below are packed from your full ticker workspace plus all saved tab bodies and Saved Documents (Excel spreadsheets excluded). ` +
     `Generated outputs from **LME analysis**, **KPI commentary**, and **Forensic analysis** are included when saved to the workspace or tabs. ` +
-    `Embedding-vector caches under \`credit-memo/\` and this tab’s own prior \`cs-recommendation-latest*\` files are excluded. ` +
+    `Embedding-vector caches under \`credit-memo/\` and prior \`cs-recommendation-latest*\` / \`entity-mapper-latest*\` / \`entity-mapper-v2-snapshot*\` outputs are excluded. ` +
     `When retrieval is enabled, you receive embedding-ranked context under the same catalog-wide ceiling as LME analysis. ` +
     `Use them as the primary factual basis for capital-structure protection conclusions.\n\n`;
   const blocks = parts.map(

@@ -3,6 +3,8 @@
  *
  * Strategy:
  * - Use SEC Archives `index.json` for the filing folder to locate XBRL instance + linkbases.
+ * - When `*_pre.xml` / `*_lab.xml` are missing from the folder listing, also scan `*-xbrl.zip` entry names (some filers only ship linkbases inside the zip).
+ * - When linkbases are still absent (common for iXBRL-only packages like some NXST filings), build presentation + labels from `FilingSummary.xml` and SEC IDEA `R*.htm` viewer tables (`defref_…` anchors), then join to the `*_htm.xml` instance.
  * - Parse presentation linkbase to get row order + hierarchy.
  * - Parse label linkbase for human-readable labels (company-provided).
  * - Parse instance for fact values and contexts to build columns.
@@ -12,6 +14,7 @@
  */
 
 import { XMLParser } from "fast-xml-parser";
+import JSZip from "jszip";
 
 import {
   type CalculationArcRow,
@@ -707,6 +710,176 @@ function parseLabels(labXml: string): Map<string, Map<string, string>> {
   return out;
 }
 
+const XBRL_STD_LABEL_ROLE = "http://www.xbrl.org/2003/role/label";
+
+async function fetchArrayBuffer(url: string): Promise<ArrayBuffer> {
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT, Accept: "*/*" } });
+  if (!res.ok) throw new Error(`SEC fetch failed (${res.status})`);
+  return res.arrayBuffer();
+}
+
+/** Loose `*_pre.xml` / `*_lab.xml` sometimes appear only inside `*-xbrl.zip`; add basenames to the pick list. */
+async function expandIndexNamesWithZipBasenames(baseUrl: string, names: string[]): Promise<string[]> {
+  const zipNames = names.filter((n) => /\.zip$/i.test(n) && /xbrl/i.test(n));
+  if (zipNames.length === 0) return names;
+  const extra = new Set<string>();
+  for (const zn of zipNames) {
+    try {
+      const buf = await fetchArrayBuffer(`${baseUrl}/${zn}`);
+      const zip = await JSZip.loadAsync(buf);
+      for (const rel of Object.keys(zip.files)) {
+        const f = zip.files[rel];
+        if (!f || f.dir) continue;
+        const base = rel.split(/[/\\]/).pop();
+        if (base) extra.add(base);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  if (extra.size === 0) return names;
+  return [...names, ...extra];
+}
+
+/** Map IDEA `defref_us-gaap_FooBar` to `us-gaap:FooBar`. */
+export function ideaViewerDefrefToConcept(defrefBody: string): string | null {
+  const s = defrefBody.trim();
+  const u = s.indexOf("_");
+  if (u < 1) return null;
+  const prefix = s.slice(0, u);
+  const local = s.slice(u + 1);
+  if (!prefix || !local) return null;
+  if (!/^[a-z0-9-]+$/i.test(prefix)) return null;
+  return `${prefix}:${local}`;
+}
+
+function stripHtmlTags(s: string): string {
+  return s.replace(/<[^>]+>/g, " ");
+}
+
+function decodeSecViewerText(s: string): string {
+  return stripHtmlTags(s)
+    .replace(/&#160;/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Parse SEC IDEA viewer HTML (`R*.htm`) for ordered row concepts + anchor labels. */
+export function parseIdeaViewerDefrefRows(html: string): Array<{ concept: string; label: string }> {
+  const out: Array<{ concept: string; label: string }> = [];
+  const seen = new Set<string>();
+  const re = /Show\.showAR\(\s*this,\s*'defref_([^']+)'[^>]*>([\s\S]*?)<\/a>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    const concept = ideaViewerDefrefToConcept(m[1] ?? "");
+    if (!concept) continue;
+    if (seen.has(concept)) continue;
+    seen.add(concept);
+    const label = decodeSecViewerText(m[2] ?? "");
+    out.push({ concept, label: label || concept });
+  }
+  return out;
+}
+
+function extractIdeaHtmlDocument(raw: string): string {
+  const htmlBlock = raw.match(/<html[\s\S]*?<\/html>/i);
+  return htmlBlock ? htmlBlock[0] : raw;
+}
+
+type FilingSummarySheetReport = {
+  htmlFileName: string;
+  role: string;
+  menuCategory: string;
+  reportType: string;
+  position: number;
+};
+
+function parseFilingSummarySheetReports(filingSummaryXml: string): FilingSummarySheetReport[] {
+  const o = parser.parse(filingSummaryXml) as Record<string, unknown>;
+  const fs = (o.FilingSummary ?? o) as Record<string, unknown>;
+  const my = (fs.MyReports ?? fs.myReports) as Record<string, unknown> | undefined;
+  const rawReports = my?.Report ?? my?.report;
+  const reports = asArr(rawReports as object);
+  const rows: FilingSummarySheetReport[] = [];
+  for (const r of reports) {
+    if (!r || typeof r !== "object") continue;
+    const x = r as Record<string, unknown>;
+    const htmlFileName = typeof x.HtmlFileName === "string" ? x.HtmlFileName.trim() : "";
+    const role = typeof x.Role === "string" ? x.Role.trim() : "";
+    const menuCategory = typeof x.MenuCategory === "string" ? x.MenuCategory.trim() : "";
+    const reportType = typeof x.ReportType === "string" ? x.ReportType.trim() : "";
+    const posRaw = x.Position;
+    const position =
+      typeof posRaw === "number" ? posRaw : typeof posRaw === "string" ? parseInt(posRaw, 10) : 0;
+    if (!htmlFileName || !role) continue;
+    rows.push({ htmlFileName, role, menuCategory, reportType, position: Number.isFinite(position) ? position : 0 });
+  }
+  rows.sort((a, b) => a.position - b.position);
+  return rows;
+}
+
+function buildSyntheticPresentationFromViewer(
+  parts: Array<{ role: string; rows: Array<{ concept: string; label: string }> }>
+): PreParse {
+  const roles: PreParse["roles"] = [];
+  for (const p of parts) {
+    const locs: Record<string, string> = {};
+    p.rows.forEach((r, i) => {
+      locs[`L${i}`] = r.concept;
+    });
+    roles.push({ role: p.role, locs, arcs: [] });
+  }
+  return { roles };
+}
+
+function buildSyntheticLabelsFromViewer(
+  parts: Array<{ role: string; rows: Array<{ concept: string; label: string }> }>
+): Map<string, Map<string, string>> {
+  const out = new Map<string, Map<string, string>>();
+  for (const p of parts) {
+    for (const r of p.rows) {
+      const m = out.get(r.concept) ?? new Map<string, string>();
+      if (!m.has(XBRL_STD_LABEL_ROLE)) m.set(XBRL_STD_LABEL_ROLE, r.label);
+      out.set(r.concept, m);
+    }
+  }
+  return out;
+}
+
+async function loadViewerPresentationFallback(baseUrl: string): Promise<{
+  pres: PreParse;
+  labs: Map<string, Map<string, string>>;
+}> {
+  const fsumXml = await fetchText(`${baseUrl}/FilingSummary.xml`);
+  const reports = parseFilingSummarySheetReports(fsumXml);
+  const parts: Array<{ role: string; rows: Array<{ concept: string; label: string }> }> = [];
+  for (const rep of reports) {
+    if (rep.reportType !== "Sheet") continue;
+    if (rep.menuCategory !== "Statements") continue;
+    if (!primaryStatementKind(rep.role)) continue;
+    let raw: string;
+    try {
+      raw = await fetchText(`${baseUrl}/${rep.htmlFileName}`);
+    } catch {
+      continue;
+    }
+    const html = extractIdeaHtmlDocument(raw);
+    const rows = parseIdeaViewerDefrefRows(html);
+    if (rows.length < 2) continue;
+    parts.push({ role: rep.role, rows });
+  }
+  if (parts.length === 0) {
+    throw new Error(
+      "XBRL presentation and label linkbases are missing from the filing folder, and SEC IDEA viewer tables could not be parsed (expected FilingSummary.xml plus R*.htm with defref anchors)."
+    );
+  }
+  return {
+    pres: buildSyntheticPresentationFromViewer(parts),
+    labs: buildSyntheticLabelsFromViewer(parts),
+  };
+}
+
 type InstanceParse = {
   contextPeriod: Map<string, { end: string; start: string | null }>;
   /** Count of xbrldi:explicitMember in context (0 = entity-wide, preferred for primary columns). */
@@ -960,21 +1133,24 @@ export async function fetchAsPresentedStatements(params: {
   const indexUrl = `https://www.sec.gov/Archives/edgar/data/${cikNum}/${accClean}/index.json`;
   const idx = await fetchJson(indexUrl);
   const items = normalizeIndexItems(idx);
-  const names = items.map((i) => (i.name ?? "").trim()).filter(Boolean);
+  const namesFlat = items.map((i) => (i.name ?? "").trim()).filter(Boolean);
+  const base = `https://www.sec.gov/Archives/edgar/data/${cikNum}/${accClean}`;
 
-  const picked = findBestXbrlFiles(names);
-  if (!picked.pre || !picked.lab || !picked.instance) {
-    throw new Error("XBRL linkbase files not found for this filing.");
+  let namesExpanded = namesFlat;
+  let picked = findBestXbrlFiles(namesExpanded);
+  if (!picked.pre || !picked.lab) {
+    namesExpanded = await expandIndexNamesWithZipBasenames(base, namesFlat);
+    picked = findBestXbrlFiles(namesExpanded);
   }
 
-  const base = `https://www.sec.gov/Archives/edgar/data/${cikNum}/${accClean}`;
-  const preXml = await fetchText(`${base}/${picked.pre}`);
-  const labXml = await fetchText(`${base}/${picked.lab}`);
-  const instanceXml = await fetchText(`${base}/${picked.instance}`);
+  let pres: PreParse;
+  let labs: Map<string, Map<string, string>>;
+  let instanceXml: string;
 
   let calculationLinkbaseLoaded = false;
   let calcArcs: CalculationArcRow[] = [];
-  if (picked.cal) {
+  const loadCalcIfAvailable = async () => {
+    if (!picked.cal) return;
     try {
       const calXml = await fetchText(`${base}/${picked.cal}`);
       calcArcs = parseCalculationLinkbase(calXml);
@@ -983,10 +1159,24 @@ export async function fetchAsPresentedStatements(params: {
       calcArcs = [];
       calculationLinkbaseLoaded = false;
     }
-  }
+  };
 
-  const pres = parsePresentation(preXml);
-  const labs = parseLabels(labXml);
+  if (picked.pre && picked.lab && picked.instance) {
+    await loadCalcIfAvailable();
+    const preXml = await fetchText(`${base}/${picked.pre}`);
+    const labXml = await fetchText(`${base}/${picked.lab}`);
+    instanceXml = await fetchText(`${base}/${picked.instance}`);
+    pres = parsePresentation(preXml);
+    labs = parseLabels(labXml);
+  } else if (picked.instance) {
+    await loadCalcIfAvailable();
+    instanceXml = await fetchText(`${base}/${picked.instance}`);
+    const v = await loadViewerPresentationFallback(base);
+    pres = v.pres;
+    labs = v.labs;
+  } else {
+    throw new Error("XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index).");
+  }
 
   // Build concept set: presentation tree ∪ calculation link (so rollups can resolve children off the face).
   const conceptSet = new Set<string>();

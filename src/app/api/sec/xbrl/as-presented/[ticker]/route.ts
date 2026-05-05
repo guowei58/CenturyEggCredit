@@ -26,10 +26,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
     })
     .slice(0, 600);
 
+  /** Filings are newest-first; default to latest 10-K or 10-Q (not “latest 10-K only”). */
   const chosen =
-    (acc
-      ? filings.find((f) => f.accessionNumber === acc)
-      : filings.find((f) => f.form === "10-K") ?? filings[0]) ?? null;
+    (acc ? filings.find((f) => f.accessionNumber === acc) : filings[0]) ?? null;
 
   if (!chosen) {
     return NextResponse.json({ error: "No 10-K/10-Q filings found" }, { status: 404 });

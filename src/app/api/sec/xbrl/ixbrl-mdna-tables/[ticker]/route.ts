@@ -13,6 +13,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
 
   const url = new URL(req.url);
   const acc = (url.searchParams.get("acc") ?? "").trim();
+  const uncertainQ = url.searchParams.get("uncertain");
+  const includeUncertainBoundaries: boolean | undefined =
+    uncertainQ === "1" || uncertainQ === "true"
+      ? true
+      : uncertainQ === "0" || uncertainQ === "false"
+        ? false
+        : undefined;
+  const lowConfQ = url.searchParams.get("lowConf");
+  const includeLowConfidenceTables: boolean | undefined =
+    lowConfQ === "1" || lowConfQ === "true"
+      ? true
+      : lowConfQ === "0" || lowConfQ === "false"
+        ? false
+        : undefined;
 
   const filingsRes = await getAllFilingsByTicker(sym);
   if (!filingsRes) return NextResponse.json({ error: "SEC submissions not found for ticker" }, { status: 404 });
@@ -26,10 +40,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
     })
     .slice(0, 600);
 
+  /** Filings are newest-first; default to latest 10-K or 10-Q (not “latest 10-K only”). */
   const chosen =
-    (acc
-      ? filings.find((f) => f.accessionNumber === acc)
-      : filings.find((f) => f.form === "10-K") ?? filings[0]) ?? null;
+    (acc ? filings.find((f) => f.accessionNumber === acc) : filings[0]) ?? null;
 
   if (!chosen) {
     return NextResponse.json({ error: "No 10-K/10-Q filings found" }, { status: 404 });
@@ -45,6 +58,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
     accessionNumber: chosen.accessionNumber,
     primaryDocument,
     form: chosen.form,
+    includeUncertainBoundaries,
+    includeLowConfidenceTables,
   });
 
   if (!extracted.ok) {
@@ -86,5 +101,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
     segmentHeadingFound: extracted.segmentHeadingFound,
     mdnaTableHit: extracted.mdnaTableHit,
     tables: extracted.tables,
+    diagnostics: extracted.diagnostics,
   });
 }

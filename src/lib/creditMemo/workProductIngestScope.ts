@@ -53,6 +53,8 @@ const GENERATED_WORK_PRODUCT_ARTIFACT_BASES = new Set(
     "cs-recommendation-latest.md",
     "cs-recommendation-latest-meta.json",
     "cs-recommendation-latest-source-pack.txt",
+    "entity-mapper-latest.md",
+    "entity-mapper-latest-meta.json",
     "literary-references-latest.md",
     "literary-references-latest-meta.json",
     "literary-references-latest-source-pack.txt",
@@ -69,7 +71,7 @@ const GENERATED_WORK_PRODUCT_ARTIFACT_BASES = new Set(
  * These stay in {@link GENERATED_WORK_PRODUCT_ARTIFACT_BASES} for other scopes but are allowed when `scope === "memo"`.
  */
 const MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES = new Set(
-  ["kpi-latest.md", "forensic-accounting-latest.md", "lme-analysis.md", "cs-recommendation-latest.md"].map((s) =>
+  ["kpi-latest.md", "forensic-accounting-latest.md", "lme-analysis.md", "cs-recommendation-latest.md", "entity-mapper-latest.md"].map((s) =>
     s.toLowerCase()
   )
 );

@@ -7,8 +7,16 @@ import * as cheerio from "cheerio";
 import type { ChildNode, Element as DomElement } from "domhandler";
 
 import { getSecEdgarUserAgent } from "@/lib/sec-edgar";
+import type { MdnaBounds, NotesSectionBounds, SegmentNotePick } from "@/lib/sec-ixbrl-mdna-boundaries";
+import {
+  buildNotesSectionBounds,
+  findBestSegmentNoteRange,
+  findMdnaBounds,
+} from "@/lib/sec-ixbrl-mdna-boundaries";
 
 export type IxbrlFilingSection = "mdna" | "segment";
+
+export type TableConfidence = "high" | "medium" | "low";
 
 export type IxbrlHtmlTable = {
   id: string;
@@ -19,19 +27,55 @@ export type IxbrlHtmlTable = {
   tableHtml: string | null;
   factCount: number;
   section: IxbrlFilingSection;
+  /** Byte offset in flattened body text (for diagnostics). */
+  textOffset: number;
+  confidence: TableConfidence;
+  inclusionReason: string;
+};
+
+export type IxbrlExtractionDiagnostics = {
+  form: string;
+  mdna: {
+    found: boolean;
+    startOffset?: number;
+    endOffset?: number;
+    startLabel?: string;
+    endLabel?: string;
+    confidence?: string;
+    warnings: string[];
+    rangeUsedForExtraction: boolean;
+  };
+  notes: { found: boolean; startOffset?: number; endOffset?: number; headingFound?: boolean };
+  segmentNote: {
+    found: boolean;
+    heading?: string;
+    score?: number;
+    confidence?: string;
+    warnings: string[];
+    rangeUsedForExtraction: boolean;
+  };
+  tables: {
+    totalInDocument: number;
+    taggedInMdnaRange: number;
+    taggedInSegmentRange: number;
+    included: number;
+    rejected: number;
+  };
+  rejectionReasons: Record<string, number>;
 };
 
 export type IxbrlMdnaTablesPayload =
   | {
       ok: true;
       primaryDocument: string;
-      /** Item 7 / Item 2 bounds detected (or loose MD&A title fallback). */
+      /** Item 7 / Item 2 bounds detected with usable confidence (or uncertain mode). */
       mdnaHeadingFound: boolean;
-      /** Segment-style note heading found after the financial statements item (when detectable). */
+      /** Segment note candidate found with usable confidence. */
       segmentHeadingFound: boolean;
       /** At least one table returned from MD&A or segment section. */
       mdnaTableHit: boolean;
       tables: IxbrlHtmlTable[];
+      diagnostics: IxbrlExtractionDiagnostics;
     }
   | { ok: false; error: string };
 
@@ -42,30 +86,54 @@ const MAX_TABLE_HTML_CHARS = 400_000;
 /**
  * SEC Inline XBRL often uses `<table>` for bullets or a single narrative row (layout, not a financial grid).
  * When there are no `ix:nonFraction` tags, require a minimal 2×2-style grid so we do not surface prose blocks.
+ *
+ * `narrativeFinancialSection`: tables already constrained to MD&A / segment slices are often **prose grids**
+ * (no digits, long cells) — without this, most 10-Q MD&A tables are dropped as "not plausible".
  */
-function isPlausibleDataTable(rows: string[][], factCount: number): boolean {
+export function isPlausibleDataTable(
+  rows: string[][],
+  factCount: number,
+  opts?: { narrativeFinancialSection?: boolean }
+): boolean {
   if (factCount >= 1) return true;
+  const narrative = opts?.narrativeFinancialSection === true;
 
   const colCount = rows.reduce((m, r) => Math.max(m, r.length), 0);
   const nonEmpty = rows.flat().map((c) => c.trim()).filter((c) => c.length > 0);
   const cellCount = nonEmpty.length;
   const maxCellLen = nonEmpty.length ? Math.max(...nonEmpty.map((c) => c.length)) : 0;
 
+  /** Single-column bullet / disclosure tables common in MD&A HTML */
+  if (narrative && colCount === 1 && rows.length >= 8 && cellCount >= 8 && maxCellLen <= 30000) return true;
+
   if (colCount < 2) return false;
   if (cellCount < 4) return false;
+
+  /** Issuers like QVC use huge prose cells — accept wide 2-col MD&A grids already boundary-filtered */
+  if (narrative) {
+    if (rows.length >= 4 && colCount >= 2 && cellCount >= 8 && maxCellLen <= 200000) return true;
+    if (rows.length >= 3 && colCount >= 2 && cellCount >= 6 && maxCellLen <= 200000) return true;
+    if (rows.length >= 4 && colCount >= 3 && cellCount >= 12) return true;
+    if (rows.length >= 3 && colCount >= 3 && cellCount >= 9) return true;
+    if (rows.length >= 2 && colCount >= 3 && cellCount >= 6 && maxCellLen <= 8000) return true;
+    if (rows.length >= 2 && colCount >= 2 && cellCount >= 4 && maxCellLen <= 5000 && rows.length >= 5) return true;
+  }
 
   if (rows.length < 2) {
     if (rows.length !== 1) return false;
     if (colCount < 4) return false;
+    if (maxCellLen > 72 && !narrative) return false;
+    if (narrative && colCount >= 4 && cellCount >= 4) return true;
     if (maxCellLen > 72) return false;
     return true;
   }
 
-  if (maxCellLen > 280 && cellCount <= 6) return false;
+  if (maxCellLen > 280 && cellCount <= 6 && !narrative) return false;
 
   const digitish = /(?:\d[\d,]{0,14}(?:\.\d+)?|\(\d[\d,]*\)|%|\$[0-9]|\b20\d{2}\b)/;
   const cellsWithNumberHint = nonEmpty.filter((c) => digitish.test(c)).length;
   if (rows.length >= 2 && colCount >= 2 && cellCount >= 4 && cellsWithNumberHint === 0 && maxCellLen > 120) {
+    if (narrative && maxCellLen <= 200000 && rows.length >= 2 && colCount >= 2) return true;
     return false;
   }
 
@@ -183,252 +251,147 @@ function extractTableGrid($: cheerio.CheerioAPI, table: DomElement): string[][] 
       .each((__, td) => {
         cells.push(cellText($, td as DomElement));
       });
-    if (cells.some((c) => c.length > 0)) rows.push(cells);
+    if (cells.some((c) => c.length > 0)) rows.push(mergeDollarOnlyCellsInRow(cells));
   });
   return rows;
 }
 
-/** Real MD&A narrative is much longer than a single TOC row (Item 7 … page 46 …). */
-const MIN_MDNA_SPAN_CHARS = 4000;
+function normalizeCellPlainText($frag: cheerio.CheerioAPI, el: DomElement): string {
+  return $frag(el).text().replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/** Strip NBSP / thin space so “$”-only currency columns still match. */
+function compactForCurrencyProbe(s: string): string {
+  return s.replace(/[\u00a0\u2009\u2007\u202f\ufeff]/g, "").replace(/\s+/g, "").trim();
+}
+
+function parseColspan($frag: cheerio.CheerioAPI, el: DomElement): number {
+  const v = parseInt(String($frag(el).attr("colspan") ?? "1"), 10);
+  return Number.isFinite(v) && v >= 1 ? v : 1;
+}
+
+function isDollarOnlyTextCell($frag: cheerio.CheerioAPI, el: DomElement): boolean {
+  const compact = compactForCurrencyProbe($frag(el).text());
+  return compact === "$";
+}
+
+function displayCellLooksLikeAmount($frag: cheerio.CheerioAPI, el: DomElement): boolean {
+  if ($frag(el).find(".ixbrl-nf").length) return true;
+  const t = normalizeCellPlainText($frag, el);
+  if (!t) return false;
+  if (/^\$/.test(t)) return true;
+  return /[0-9]/.test(t);
+}
+
+function displayAmountCellAlreadyHasDollar($frag: cheerio.CheerioAPI, el: DomElement): boolean {
+  if ($frag(el).find(".ixbrl-nf").length) return true;
+  return /^\$/.test(normalizeCellPlainText($frag, el));
+}
 
 /**
- * Many 10-Ks cite "Item 8. Financial Statements and Supplementary Data" inside MD&A (cross-references to notes).
- * Those matches must not end the MD&A range — only the real Part II Item 8 heading / transition should.
+ * Some filings use a separate &lt;td&gt; for "$" before the amount, which breaks column alignment.
+ * Merges that pair (or drops a redundant "$" cell when the amount already includes $).
  */
-function isItem8FinancialStatementsCrossReference(acc: string, item8MatchStart: number): boolean {
-  const w = acc.slice(item8MatchStart, item8MatchStart + 200);
-  const m = w.match(/\bITEM\s+8[\.\u2014\u2013\-]\s*Financial\s+Statements\s+and\s+Supplementary\s+Data/i);
-  if (!m) return false;
-  const rel = w.slice((m.index ?? 0) + m[0].length);
-  const t = rel.trimStart();
-  if (/^[,;]/.test(t)) return true;
-  if (/^["\u201c\u201d]/.test(t)) return true;
-  if (/^\.\s*[\u201c\u201d\u2018\u2019"]+\s*[A-Za-z]/.test(t)) return true;
-  if (/^\.\s+[a-z]/.test(t)) return true;
-  return false;
-}
+function mergeAdjacentDollarOnlyCellsInDisplayFragment($frag: cheerio.CheerioAPI, wrap: cheerio.Cheerio<DomElement>): void {
+  const $tbl = wrap.find("table").first();
+  if (!$tbl.length) return;
 
-function findMdnaEndCharIndex(acc: string, form: string, start: number): number {
-  const is10K = form.includes("10-K");
-  const tail = acc.slice(start + 1);
-
-  if (is10K) {
-    const strong = /\bITEM\s+8[\.\u2014\-]\s*FINANCIAL\s+STATEMENTS\b/gi;
-    let sm: RegExpExecArray | null;
-    while ((sm = strong.exec(tail)) !== null) {
-      const abs = start + 1 + sm.index;
-      if (!isItem8FinancialStatementsCrossReference(acc, abs)) return abs;
-    }
-  } else {
-    const strong = /\bITEM\s+3[\.\u2014\-]\s*QUANTITATIVE\b/gi;
-    const sm = strong.exec(tail);
-    if (sm && sm.index >= 0) return start + 1 + sm.index;
-  }
-
-  const stopN = is10K ? "8" : "3";
-  const weak = new RegExp(`\\bITEM\\s+${stopN}\\b`, "gi");
-  let wm: RegExpExecArray | null;
-  const proseStop = new RegExp(`^item\\s+${stopN}\\s+of\\b`, "i");
-  while ((wm = weak.exec(tail)) !== null) {
-    const abs = start + 1 + wm.index;
-    const after = acc.slice(abs, abs + 28).toLowerCase();
-    if (proseStop.test(after)) continue;
-    return abs;
-  }
-
-  return acc.length;
-}
-
-function findMdnaCharRangeInFlatText(acc: string, form: string): { start: number; end: number } | null {
-  const is10K = form.includes("10-K");
-  const itemN = is10K ? "7" : "2";
-  const itemStartRe = new RegExp(`\\bITEM\\s+${itemN}\\b`, "gi");
-
-  const starts: number[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = itemStartRe.exec(acc)) !== null) {
-    starts.push(m.index);
-    if (starts.length > 64) break;
-  }
-  if (starts.length === 0) return null;
-
-  const proseLead = new RegExp(`item\\s+${itemN}\\s+of\\b`, "i");
-
-  let best: { start: number; end: number; span: number } | null = null;
-
-  for (const start of starts) {
-    const lead = acc.slice(start, start + 36).toLowerCase();
-    if (proseLead.test(lead)) continue;
-
-    if (is10K) {
-      const head = acc.slice(start, start + 480);
-      if (/RESULTS\s+OF\s+OPERATIONS\s+\d{1,3}\b/i.test(head)) continue;
-      // TOC row: "Item 7 … Management's Discussion … Page N" — almost no MD&A substance before the page ref
-      const pageHit = head.search(/\bpage\s*\d{1,3}\b/i);
-      if (pageHit > 0 && pageHit < 240) {
-        const before = head.slice(0, pageHit).toLowerCase();
-        const hasMdnaCue =
-          /\b(results\s+of\s+operations|liquidity|capital\s+resources|critical\s+accounting|market\s+risk|covid|macroeconomic)\b/.test(
-            before
-          );
-        if (!hasMdnaCue && before.replace(/\s+/g, " ").trim().length < 170) continue;
+  $tbl.find("tr").each((_, tr) => {
+    const $tr = $frag(tr as DomElement);
+    for (let guard = 0; guard < 250; guard++) {
+      const ch = $tr.children("th,td");
+      if (ch.length < 2) break;
+      let mergedOne = false;
+      for (let i = 0; i < ch.length - 1; i++) {
+        const a = ch.get(i) as DomElement;
+        const b = ch.get(i + 1) as DomElement;
+        const $a = $frag(a);
+        const $b = $frag(b);
+        if (($a.attr("colspan") ?? "1") !== "1" || ($a.attr("rowspan") ?? "1") !== "1") continue;
+        if (($b.attr("colspan") ?? "1") !== "1" || ($b.attr("rowspan") ?? "1") !== "1") continue;
+        if (!isDollarOnlyTextCell($frag, a)) continue;
+        if (!displayCellLooksLikeAmount($frag, b)) continue;
+        const spanCombined = parseColspan($frag, a) + parseColspan($frag, b);
+        if (displayAmountCellAlreadyHasDollar($frag, b)) {
+          $b.attr("colspan", String(spanCombined));
+          $a.remove();
+        } else {
+          $b.attr("colspan", String(spanCombined));
+          $b.prepend("$");
+          $a.remove();
+        }
+        mergedOne = true;
+        break;
       }
+      if (!mergedOne) break;
     }
+  });
+}
 
-    const end = findMdnaEndCharIndex(acc, form, start);
-    const span = end - start;
-    if (span < MIN_MDNA_SPAN_CHARS) continue;
-
-    if (!best || span > best.span) best = { start, end, span };
-  }
-
-  return best ? { start: best.start, end: best.end } : null;
+function cellStringLooksLikeAmount(s: string): boolean {
+  const t = s.trim();
+  if (!t) return false;
+  if (/^\$/.test(t)) return true;
+  return /[0-9]/.test(t);
 }
 
 /**
- * First "Management's Discussion and Analysis" in many 10-Ks is inside the **table of contents**,
- * with the next `ITEM 8` match also in the TOC — producing a tiny range that still contains the TOC `<table>`.
- * Scan all anchor occurrences and require the same minimum span as strict matching so we bind to the real MD&A body.
+ * Flattened row from {@link extractTableGrid}: merge a cell that is only "$" with the following amount cell.
+ * Exported for unit tests.
  */
-function findMdnaCharRangeLoose(acc: string, form: string): { start: number; end: number } | null {
-  const anchor = /\bManagement'?s\s+Discussion\s+and\s+Analysis\b/gi;
-  let best: { start: number; end: number; span: number } | null = null;
-  let am: RegExpExecArray | null;
-  while ((am = anchor.exec(acc)) !== null) {
-    const start = Math.max(0, am.index - 800);
-    const end = findMdnaEndCharIndex(acc, form, am.index);
-    if (end <= am.index) continue;
-    const span = end - start;
-    if (span < MIN_MDNA_SPAN_CHARS) continue;
-    if (!best || span > best.span) best = { start, end, span };
+export function mergeDollarOnlyCellsInRow(row: string[]): string[] {
+  const out: string[] = [];
+  let i = 0;
+  while (i < row.length) {
+    const cur = (row[i] ?? "").replace(/\u00a0/g, " ");
+    const nextRaw = row[i + 1] ?? "";
+    const next = nextRaw.replace(/\u00a0/g, " ");
+    const curCompact = compactForCurrencyProbe(cur);
+    if (curCompact === "$" && i + 1 < row.length && cellStringLooksLikeAmount(next)) {
+      const nt = next.trim();
+      if (/^\$/.test(nt)) {
+        out.push(nextRaw.trim());
+      } else {
+        out.push(`$${nt}`);
+      }
+      i += 2;
+      continue;
+    }
+    out.push(row[i] ?? "");
+    i++;
   }
-  return best ? { start: best.start, end: best.end } : null;
+  return out;
 }
 
-/** First Item 8 / Item 1 financial statements heading in the body (skips early TOC when possible). */
-function findFinancialStatementsSectionStart(acc: string, form: string): number | null {
-  if (form.includes("10-K")) {
-    const re = /\bITEM\s+8[\.\u2014\-]\s*FINANCIAL\s+STATEMENTS\b/gi;
-    const hits: number[] = [];
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(acc)) !== null) {
-      if (!isItem8FinancialStatementsCrossReference(acc, m.index)) hits.push(m.index);
-    }
-    const bodyHits = hits.filter((i) => i > 35_000);
-    if (bodyHits.length) return Math.min(...bodyHits);
-    return hits[0] ?? null;
-  }
-  const q10q = [
-    /\bITEM\s+1[\.\u2014\-]\s*FINANCIAL\s+STATEMENTS\b/gi,
-    /\bPART\s+I[\s,]+ITEM\s+1\b/gi,
-  ];
-  for (const re of q10q) {
-    const mm = re.exec(acc);
-    if (mm) return mm.index;
-  }
-  return null;
+function bumpReason(map: Record<string, number>, reason: string): void {
+  map[reason] = (map[reason] ?? 0) + 1;
 }
 
-/** Segment notes are long only in pathological cases; caps runaway ranges when Item 9 / next note fail to match. */
-const MAX_SEGMENT_RANGE_CHARS = 180_000;
-
-/**
- * End of segment-note slice: next note title, Item 9 (flexible), exhibits / signatures — never "rest of filing"
- * when those anchors exist (fixes exhibit-index tables tagged as segment when Item 9 text doesn't match `ITEM 9.`).
- */
-function findSegmentRangeEndRel(rel: string, form: string): number {
-  const candidates: number[] = [];
-
-  const noteHead = /\b(?:NOTE|Note)\s+\d+[A-Za-z]?\b/g;
-  let nm: RegExpExecArray | null;
-  const noteHits: number[] = [];
-  while ((nm = noteHead.exec(rel)) !== null) noteHits.push(nm.index);
-  if (noteHits.length >= 2 && noteHits[1] > 8) candidates.push(noteHits[1]);
-
-  if (form.includes("10-K")) {
-    const item9Section = [
-      /\bITEM\s+9[\.\u2014\-]\s*/i,
-      /\bITEM\s+9\s+CHANGES\b/i,
-      /\bITEM\s+9\s+FINANCIAL\b/i,
-      /\bITEM\s+9\s+LEGAL\b/i,
-      /\bITEM\s+9\s+OTHER\b/i,
-      /\bITEM\s+9\s+DISCLOSURE\b/i,
-    ];
-    for (const re of item9Section) {
-      const m = re.exec(rel);
-      if (m && m.index > 8) candidates.push(m.index);
-    }
-    const exhibitStops = [
-      /\bITEM\s+15[\.\u2014\-\s]/i,
-      /\bITEM\s+15\b/i,
-      /\bEXHIBIT\s+INDEX\b/i,
-      /\bLIST\s+(?:OF\s+)?EXHIBITS?\b/i,
-      /\bLISTED\s+BELOW\s+ARE\s+THE\s+EXHIBITS\b/i,
-      /\bPART\s+IV\b/i,
-      /\bSIGNATURES?\b/i,
-    ];
-    for (const re of exhibitStops) {
-      const m = re.exec(rel);
-      if (m && m.index > 8) candidates.push(m.index);
-    }
-  } else {
-    const p2 = /\bPART\s+II\b/i.exec(rel);
-    if (p2 && p2.index > 8) candidates.push(p2.index);
-  }
-
-  const best = candidates.length ? Math.min(...candidates) : Math.min(rel.length, MAX_SEGMENT_RANGE_CHARS);
-  return Math.min(best, rel.length, MAX_SEGMENT_RANGE_CHARS);
-}
-
-/**
- * Note-level segment disclosure (usually under Item 8 / Item 1 FS). Ends at the next note title or Item 9 / Part II.
- */
-function findSegmentCharRangeInFlatText(
-  acc: string,
+function scanFilingTableZones(
+  $: cheerio.CheerioAPI,
   form: string,
-  mdnaEndFallback: number | null
-): { start: number; end: number } | null {
-  const fsStart = findFinancialStatementsSectionStart(acc, form) ?? (mdnaEndFallback != null && mdnaEndFallback > 0 ? mdnaEndFallback : null);
-  if (fsStart == null) return null;
-
-  const searchSlice = acc.slice(fsStart + 50);
-  const segmentNoteRes = [
-    /\b(?:Note|NOTE)\s+\d+[A-Za-z]?\s*[—–\-\.:]?\s*.{0,120}?\bSegment\s+Information\b/i,
-    /\b(?:Note|NOTE)\s+\d+[A-Za-z]?\s*[—–\-\.:]?\s*.{0,120}?\bOperating\s+Segments\b/i,
-    /\b(?:Note|NOTE)\s+\d+[A-Za-z]?\s*[—–\-\.:]?\s*.{0,120}?\bSegment\s+Reporting\b/i,
-    /\b(?:Note|NOTE)\s+\d+[A-Za-z]?\s*[—–\-\.:]?\s*.{0,120}?\bDisaggregated\s+Revenue\b/i,
-  ];
-
-  let absStart: number | null = null;
-  for (const re of segmentNoteRes) {
-    const sm = re.exec(searchSlice);
-    if (sm && sm.index >= 0) {
-      const abs = fsStart + 50 + sm.index;
-      if (absStart === null || abs < absStart) absStart = abs;
-    }
-  }
-  if (absStart === null) return null;
-
-  const rel = acc.slice(absStart);
-  const endRel = findSegmentRangeEndRel(rel, form);
-  if (endRel < 80) return null;
-  return { start: absStart, end: absStart + endRel };
-}
-
-function scanFilingTableZones($: cheerio.CheerioAPI, form: string): {
+  includeUncertainBoundaries: boolean
+): {
   flatText: string;
   mdnaRange: { start: number; end: number } | null;
   segmentRange: { start: number; end: number } | null;
+  mdnaMeta: MdnaBounds | null;
+  segmentMeta: SegmentNotePick | null;
+  notesMeta: NotesSectionBounds | null;
   tableOffsets: Map<DomElement, number>;
 } {
   const empty = {
     flatText: "",
     mdnaRange: null as { start: number; end: number } | null,
     segmentRange: null as { start: number; end: number } | null,
+    mdnaMeta: null as MdnaBounds | null,
+    segmentMeta: null as SegmentNotePick | null,
+    notesMeta: null as NotesSectionBounds | null,
     tableOffsets: new Map<DomElement, number>(),
   };
 
-  const body = $("body").get(0) as DomElement | undefined;
+  /** Some EDGAR iXBRL shells use a sparse or missing `body`; fall back to `html`. */
+  const body = ($("body").get(0) ?? $("html").get(0)) as DomElement | undefined;
   if (!body) return empty;
 
   let acc = "";
@@ -449,12 +412,28 @@ function scanFilingTableZones($: cheerio.CheerioAPI, form: string): {
 
   for (const c of body.children ?? []) walk(c);
 
-  let mdnaRange = findMdnaCharRangeInFlatText(acc, form);
-  if (!mdnaRange && acc.length > 6000) mdnaRange = findMdnaCharRangeLoose(acc, form);
+  const mdnaMeta = findMdnaBounds(acc, form);
+  let mdnaRange: { start: number; end: number } | null = null;
+  if (mdnaMeta && (includeUncertainBoundaries || mdnaMeta.confidence !== "low")) {
+    mdnaRange = { start: mdnaMeta.start, end: mdnaMeta.end };
+  }
 
-  const segmentRange = findSegmentCharRangeInFlatText(acc, form, mdnaRange?.end ?? null);
+  const notesMeta = buildNotesSectionBounds(acc, form);
+  const segmentPick = notesMeta ? findBestSegmentNoteRange(acc, notesMeta) : null;
+  let segmentRange: { start: number; end: number } | null = null;
+  if (segmentPick && (includeUncertainBoundaries || segmentPick.confidence !== "low")) {
+    segmentRange = { start: segmentPick.start, end: segmentPick.end };
+  }
 
-  return { flatText: acc, mdnaRange, segmentRange, tableOffsets };
+  return {
+    flatText: acc,
+    mdnaRange,
+    segmentRange,
+    mdnaMeta,
+    segmentMeta: segmentPick,
+    notesMeta,
+    tableOffsets,
+  };
 }
 
 function truncateCaption(s: string, max: number): string {
@@ -596,9 +575,38 @@ function buildDisplayTableHtml($: cheerio.CheerioAPI, table: DomElement): string
   }
 
   stripTablePresentationForAppTheme($frag, wrap);
+  mergeAdjacentDollarOnlyCellsInDisplayFragment($frag, wrap);
 
   const inner = wrap.html();
   return inner && inner.length > 0 ? inner : null;
+}
+
+function boundaryConfRank(c: string | undefined): number {
+  if (c === "high") return 3;
+  if (c === "medium") return 2;
+  return 1;
+}
+
+function inferTableConfidence(
+  section: IxbrlFilingSection,
+  mdnaMeta: MdnaBounds | null,
+  segmentMeta: SegmentNotePick | null,
+  rows: string[][],
+  factCount: number
+): TableConfidence {
+  const b =
+    section === "mdna"
+      ? boundaryConfRank(mdnaMeta?.confidence)
+      : boundaryConfRank(segmentMeta?.confidence);
+  const plausible = isPlausibleDataTable(rows, factCount, { narrativeFinancialSection: true });
+  const strongFacts = factCount >= 1 || /\d/.test(rows.flat().join(" "));
+  const dataRank = strongFacts ? 3 : plausible ? 2 : 1;
+  const r = Math.min(b, dataRank);
+  return r >= 3 ? "high" : r >= 2 ? "medium" : "low";
+}
+
+function inclusionReasonLine(section: IxbrlFilingSection, conf: TableConfidence): string {
+  return `${section === "mdna" ? "MD&A" : "Segment note"} · ${conf} confidence · inside validated section bounds`;
 }
 
 export async function fetchIxbrlMdnaTablesFromFiling(params: {
@@ -606,6 +614,10 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
   accessionNumber: string;
   primaryDocument: string;
   form: string;
+  /** Include tables when MD&A / segment _boundary_ confidence is Low. Omit or leave unset on 10-Q to default on; pass false to opt out. */
+  includeUncertainBoundaries?: boolean;
+  /** Include tables whose combined structure confidence is Low. Omit on 10-Q to default on; pass false to opt out. */
+  includeLowConfidenceTables?: boolean;
 }): Promise<IxbrlMdnaTablesPayload> {
   const cikNum = parseInt(params.cik.replace(/\D/g, ""), 10);
   if (!Number.isFinite(cikNum) || cikNum <= 0) return { ok: false, error: "Invalid CIK" };
@@ -628,11 +640,39 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
 
   if (!html || html.length < 500) return { ok: false, error: "Empty or invalid HTML" };
 
-  const $ = cheerio.load(html);
-  const { mdnaRange, segmentRange, tableOffsets } = scanFilingTableZones($, params.form);
+  /** Quarterly filings often get “low” MD&A/segment boundary confidence; default uncertain on for 10-Q unless caller opts out. */
+  const formUpper = (params.form ?? "").toUpperCase();
+  const is10q = formUpper.includes("10-Q");
+  const includeUncertainBoundaries =
+    params.includeUncertainBoundaries === false
+      ? false
+      : params.includeUncertainBoundaries === true
+        ? true
+        : is10q;
+  const includeLowConfidenceTables =
+    params.includeLowConfidenceTables === false
+      ? false
+      : params.includeLowConfidenceTables === true
+        ? true
+        : is10q;
 
-  const mdnaHeadingFound = mdnaRange !== null;
-  const segmentHeadingFound = segmentRange !== null;
+  const $ = cheerio.load(html);
+  const { mdnaRange, segmentRange, mdnaMeta, segmentMeta, notesMeta, tableOffsets } = scanFilingTableZones(
+    $,
+    params.form,
+    includeUncertainBoundaries
+  );
+
+  const mdnaHeadingFound = mdnaMeta !== null;
+  const segmentHeadingFound = segmentMeta !== null;
+
+  const rejectionReasons: Record<string, number> = {};
+  let taggedInMdna = 0;
+  let taggedInSegment = 0;
+  for (const [, off] of tableOffsets) {
+    if (mdnaRange && off >= mdnaRange.start && off < mdnaRange.end) taggedInMdna++;
+    if (segmentRange && off >= segmentRange.start && off < segmentRange.end) taggedInSegment++;
+  }
 
   type Tagged = { el: DomElement; offset: number; section: IxbrlFilingSection };
   const picked: Tagged[] = [];
@@ -649,19 +689,43 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
   const seen = new Set<string>();
   const out: IxbrlHtmlTable[] = [];
   let idx = 0;
+  let rejected = 0;
 
-  for (const { el, section } of picked) {
+  for (const { el, offset: off, section } of picked) {
     if (out.length >= MAX_TABLES_RETURNED) break;
     const rows = extractTableGrid($, el);
-    if (rows.length === 0) continue;
+    if (rows.length === 0) {
+      bumpReason(rejectionReasons, "empty_grid");
+      rejected++;
+      continue;
+    }
 
     const factCount = countNonFractionsInTable(el);
-    if (!isPlausibleDataTable(rows, factCount)) continue;
-    if (isLikelyTableOfContents(rows)) continue;
+    if (!isPlausibleDataTable(rows, factCount, { narrativeFinancialSection: true })) {
+      bumpReason(rejectionReasons, "not_plausible_data_table");
+      rejected++;
+      continue;
+    }
+    if (isLikelyTableOfContents(rows)) {
+      bumpReason(rejectionReasons, "likely_table_of_contents");
+      rejected++;
+      continue;
+    }
 
     const sig = JSON.stringify(rows).slice(0, 6000);
-    if (seen.has(sig)) continue;
+    if (seen.has(sig)) {
+      bumpReason(rejectionReasons, "duplicate_table");
+      rejected++;
+      continue;
+    }
     seen.add(sig);
+
+    const tConf = inferTableConfidence(section, mdnaMeta, segmentMeta, rows, factCount);
+    if (!includeLowConfidenceTables && tConf === "low") {
+      bumpReason(rejectionReasons, "low_confidence_table");
+      rejected++;
+      continue;
+    }
 
     const caption = tableCaption($, el);
     const tableHtml = buildDisplayTableHtml($, el);
@@ -673,8 +737,47 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
       tableHtml,
       factCount,
       section,
+      textOffset: off,
+      confidence: tConf,
+      inclusionReason: inclusionReasonLine(section, tConf),
     });
   }
+
+  const diagnostics: IxbrlExtractionDiagnostics = {
+    form: params.form,
+    mdna: {
+      found: mdnaMeta !== null,
+      startOffset: mdnaMeta?.start,
+      endOffset: mdnaMeta?.end,
+      startLabel: mdnaMeta?.startMatchLabel,
+      endLabel: mdnaMeta?.endMatchLabel,
+      confidence: mdnaMeta?.confidence,
+      warnings: mdnaMeta?.warnings ?? [],
+      rangeUsedForExtraction: mdnaRange !== null,
+    },
+    notes: {
+      found: notesMeta !== null,
+      startOffset: notesMeta?.start,
+      endOffset: notesMeta?.end,
+      headingFound: notesMeta?.notesHeadingFound,
+    },
+    segmentNote: {
+      found: segmentMeta !== null,
+      heading: segmentMeta?.headingText,
+      score: segmentMeta?.score,
+      confidence: segmentMeta?.confidence,
+      warnings: segmentMeta?.warnings ?? [],
+      rangeUsedForExtraction: segmentRange !== null,
+    },
+    tables: {
+      totalInDocument: tableOffsets.size,
+      taggedInMdnaRange: taggedInMdna,
+      taggedInSegmentRange: taggedInSegment,
+      included: out.length,
+      rejected,
+    },
+    rejectionReasons,
+  };
 
   return {
     ok: true,
@@ -683,5 +786,6 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
     segmentHeadingFound,
     mdnaTableHit: out.length > 0,
     tables: out,
+    diagnostics,
   };
 }

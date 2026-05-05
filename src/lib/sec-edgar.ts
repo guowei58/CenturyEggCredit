@@ -216,11 +216,23 @@ async function fetchSubmissionsChunk(name: string): Promise<SubmissionsChunkJson
   }
 }
 
+async function sleep(ms: number): Promise<void> {
+  await new Promise((r) => setTimeout(r, ms));
+}
+
+export type GetAllFilingsByCikOptions = {
+  /** Delay between submissions chunk fetches (SEC rate limiting). */
+  paceChunkMs?: number;
+};
+
 /**
  * Fetch all filings available in SEC submissions for a CIK by loading `filings.recent` plus `filings.files[]` chunks.
  * This is needed for multi-year (e.g. 20-year quarterly) history.
  */
-export async function getAllFilingsByCik(cik: string): Promise<SecFilingsResult | null> {
+export async function getAllFilingsByCik(
+  cik: string,
+  opts?: GetAllFilingsByCikOptions
+): Promise<SecFilingsResult | null> {
   const padded = cik.replace(/\D/g, "").padStart(10, "0");
   const url = `https://data.sec.gov/submissions/CIK${padded}.json`;
   const res = await fetch(url, secRemoteFetchInit());
@@ -255,6 +267,8 @@ export async function getAllFilingsByCik(cik: string): Promise<SecFilingsResult 
   for (const f of files) {
     const name = (f.name ?? "").trim();
     if (!name) continue;
+    const pace = opts?.paceChunkMs ?? 0;
+    if (pace > 0) await sleep(pace);
     const chunk = await fetchSubmissionsChunk(name);
     pushFromBlock(chunk);
   }

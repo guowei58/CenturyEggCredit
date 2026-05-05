@@ -86,7 +86,7 @@ type QueryNameHints =
 const ODP_PAGE_LIMIT = 50;
 
 const QUERY_HINTS_DISCLAIMER =
-  "Subsidiaries from your saved Public Records profile: the Exhibit 21 grid when you have one, otherwise the name + domicile table (State & Local → Overview / Public Records Profile). Verify matches on USPTO.";
+  "Subsidiaries from your saved Public Records profile: the Exhibit 21 grid when you have one, otherwise the name + domicile table (Overview → Public Records Profile). Verify matches on USPTO.";
 
 function buildNamesFromPublicRecordsProfile(p: PublicRecordsProfileResp["profile"]): string[] {
   return subsidiaryChipNamesFromSavedProfile(p.subsidiaryExhibit21Snapshot, p.subsidiaryNames, p.subsidiaryDomiciles);
@@ -226,7 +226,7 @@ export function CompanyTrademarkIpTab({
         if (names.length === 0) {
           setHintsPayload(null);
           setHintsMessage(
-            "No subsidiaries we could derive from your Public Records profile yet. Ensure the Exhibit 21 grid has entity names visible, or add rows under the subsidiary name/domicile table (State & Local → Overview / Public Records Profile), or ingest from SEC there.",
+            "No subsidiaries we could derive from your Public Records profile yet. Ensure the Exhibit 21 grid has entity names visible, or add rows under the subsidiary name/domicile table (Overview → Public Records Profile), or ingest from SEC there.",
           );
           return;
         }
@@ -274,7 +274,7 @@ export function CompanyTrademarkIpTab({
           <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
             {hintsMessage}{" "}
             <span style={{ color: "var(--muted2)" }}>
-              (Tip: Overview → State & Local Public Records → Public Records Profile, or ingest 10-K / Exhibit 21 there.)
+              (Tip: Overview → Public Records Profile, or ingest 10-K / Exhibit 21 there.)
             </span>
           </p>
         )}

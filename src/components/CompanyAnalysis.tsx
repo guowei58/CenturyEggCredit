@@ -10,6 +10,8 @@ import { CompanyFilingsTab } from "@/components/CompanyFilingsTab";
 import { CompanyFccFilingsTab } from "@/components/CompanyFccFilingsTab";
 import { CompanyOrgChartTab } from "@/components/CompanyOrgChartTab";
 import { CompanyCapitalStructureTab } from "@/components/CompanyCapitalStructureTab";
+import { CompanyCapitalStructureLatestPeriodicTab } from "@/components/CompanyCapitalStructureLatestPeriodicTab";
+import { CompanyEntityMapperTab } from "@/components/CompanyEntityMapperTab";
 import { CompanyOverviewTab } from "@/components/CompanyOverviewTab";
 import { CompanyRecentEventsTab } from "@/components/CompanyRecentEventsTab";
 import { CompanyHowStuffWorksTab } from "@/components/CompanyHowStuffWorksTab";
@@ -122,25 +124,14 @@ export function CompanyAnalysis({
     }
   }, [activeTab, onTabChange]);
 
-  /** State & Local Public Records hidden from Documents nav; migrate saved tab ids. */
-  useEffect(() => {
-    if (activeTab === "state-local-public-records") {
-      onTabChange(tabLabelToId("Saved Documents"));
-    }
-  }, [activeTab, onTabChange]);
-
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
   /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
   const resolvedTab =
     activeTab === "edgartools-sec"
       ? "sec-filings"
-      : activeTab === "entity-mapper"
-        ? tabLabelToId("Public Records Profile")
-        : activeTab === "state-local-public-records"
-          ? tabLabelToId("Saved Documents")
-          : activeTab === "20-year-look-back"
-            ? "sec-xbrl-financials"
-            : activeTab;
+      : activeTab === "20-year-look-back"
+        ? "sec-xbrl-financials"
+        : activeTab;
 
   const navDef = companyNav[topSection];
   const groups = navDef?.groups ?? [];
@@ -269,7 +260,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     return (
       <CompanyFinancialsTab
         ticker={ticker}
-        companyName={companyName}
         scrollToBadSection={tabId === "deterministic-xbrl-statement-compiler"}
       />
     );
@@ -295,6 +285,15 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     return (
       <CompanyCapitalStructureTab ticker={ticker ?? ""} companyName={companyName} />
     );
+  }
+  if (
+    tabId === tabLabelToId("Debt Footnote From 10K/Q") ||
+    tabId === tabLabelToId("Capital Structure - Latest 10Q/K")
+  ) {
+    return <CompanyCapitalStructureLatestPeriodicTab ticker={ticker} />;
+  }
+  if (tabId === tabLabelToId("Entity Mapper")) {
+    return <CompanyEntityMapperTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "org-chart") {
     return <CompanyOrgChartTab ticker={ticker} companyName={companyName} />;

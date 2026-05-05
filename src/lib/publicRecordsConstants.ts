@@ -1,7 +1,7 @@
 import type { PublicRecordCategory } from "@/generated/prisma/client";
 
 export const PUBLIC_RECORD_CATEGORY_LABELS: Record<PublicRecordCategory, string> = {
-  entity_sos: "Entity Verification & Affiliate Discovery",
+  entity_sos: "Entity Universe & Affiliate Discovery",
   ucc_secured_debt: "UCC / Secured Debt",
   tax_liens_releases: "Tax Liens & Releases",
   real_estate_recorder: "Real Estate / County Recorder",
@@ -18,7 +18,7 @@ export const PUBLIC_RECORD_CATEGORY_LABELS: Record<PublicRecordCategory, string>
 
 export const PUBLIC_RECORD_CATEGORY_DESCRIPTIONS: Record<PublicRecordCategory, string> = {
   entity_sos:
-    "Search business entity records, formation documents, amendments, mergers, conversions, registered agents, status, annual reports, and assumed names.",
+    "Build a credit-relevant entity universe using Exhibit 21, credit documents, UCC debtor searches, Secretary of State name-family searches, and address-cluster diligence—evidence capture first, not automated scraping.",
   ucc_secured_debt:
     "Search UCC financing statements, amendments, continuations, terminations, secured parties, collateral descriptions, and fixture filings.",
   tax_liens_releases:

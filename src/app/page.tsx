@@ -70,13 +70,6 @@ export default function Home() {
     setCompanyTab("sec-xbrl-financials");
   }, [companyTab, companyTopSection]);
 
-  /** Entity Mapper tab removed; land on Public Records Profile (Overview). */
-  useEffect(() => {
-    if (companyTab !== "entity-mapper") return;
-    if (companyTopSection !== "overview") setCompanyTopSection("overview");
-    setCompanyTab("public-records-profile");
-  }, [companyTab, companyTopSection]);
-
   return (
     <div
       className="shell"

@@ -1,8 +1,14 @@
 import { splitSubsidiaryLine } from "@/lib/exhibit21SubsidiaryRows";
 import {
   deriveSubsidiaryDisplayNamesFromGrid,
+  deriveSubsidiarySearchNamesFromGrid,
+  deriveSubsidiaryTableRowsFromGrid,
+  isPlausibleExhibit21NameCell,
+  looksLikeDomCodeOrRegion,
+  normalizeExhibit21MisalignedEntityColumn,
   parseExhibit21GridSnapshot,
 } from "@/lib/exhibit21GridSnapshot";
+import { normalizeEntityName } from "@/lib/entityNormalize";
 
 /**
  * Mirrors the subsidiary name/domicile table on the State & Local Public Records profile editor.
@@ -112,6 +118,111 @@ export function subsidiaryChipNamesFromProfile(
     out.push(decoded);
   }
   return out;
+}
+
+/** What the profile editor shows in the Exhibit 21 grid / subsidiary table — only drop empty/non-textual placeholders. */
+function subsidiaryNamePassesTableMirrorChecks(nameRaw: string): boolean {
+  const decoded = decodeBasicHtmlEntities(nameRaw.replace(/\s+/g, " ").trim());
+  if (decoded.length < 2 || decoded.length > 400) return false;
+  if (!/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(decoded)) return false;
+  return true;
+}
+
+/**
+ * Same sources as State & Local Public Records profile: Exhibit 21 grid snapshot when usable,
+ * otherwise subsidiary name/domicile rows from the editor.
+ */
+export function subsidiaryTableRowsFromSavedProfile(
+  subsidiaryExhibit21Snapshot: unknown,
+  subsidiaryNames?: string[],
+  subsidiaryDomiciles?: string[]
+): { name: string; domicile: string }[] {
+  const parsed = parseExhibit21GridSnapshot(subsidiaryExhibit21Snapshot);
+  const grid = parsed ? normalizeExhibit21MisalignedEntityColumn(parsed) : null;
+  const bodyRows = grid?.rows?.length ? (grid.hasHeaderRow ? grid.rows.slice(1) : grid.rows) : [];
+  const gridHasSubsidiaries = bodyRows.some((row) => row.some((c) => c.trim().length > 0));
+
+  if (grid && gridHasSubsidiaries) {
+    const aligned = normalizeExhibit21MisalignedEntityColumn(grid);
+    /** Same name ordering / extraction as persisted `subsidiaryNames` on the profile when a grid exists. */
+    const searchNames = deriveSubsidiarySearchNamesFromGrid(aligned);
+    const tableWithJur = deriveSubsidiaryTableRowsFromGrid(aligned);
+
+    const jurByNorm = new Map<string, string>();
+    for (const r of tableWithJur) {
+      const nm = decodeBasicHtmlEntities(r.name.replace(/\s+/g, " ").trim());
+      if (!nm) continue;
+      jurByNorm.set(
+        normalizeEntityName(nm).normalized,
+        decodeBasicHtmlEntities(r.jurisdiction.replace(/\s+/g, " ").trim())
+      );
+    }
+
+    const seen = new Set<string>();
+    const out: { name: string; domicile: string }[] = [];
+    for (const rawName of searchNames) {
+      const raw = rawName.replace(/\s+/g, " ").trim();
+      if (!subsidiaryNamePassesTableMirrorChecks(raw)) continue;
+      const decoded = decodeBasicHtmlEntities(raw);
+      const k = decoded.toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k);
+      const dom = jurByNorm.get(normalizeEntityName(decoded).normalized) ?? "";
+      out.push({ name: decoded, domicile: dom });
+    }
+
+    if (out.length === 0) {
+      for (const r of tableWithJur) {
+        const raw = r.name.replace(/\s+/g, " ").trim();
+        if (!subsidiaryNamePassesTableMirrorChecks(raw)) continue;
+        const decoded = decodeBasicHtmlEntities(raw);
+        const kk = decoded.toLowerCase();
+        if (seen.has(kk)) continue;
+        seen.add(kk);
+        out.push({
+          name: decoded,
+          domicile: decodeBasicHtmlEntities(r.jurisdiction.replace(/\s+/g, " ").trim()),
+        });
+      }
+    }
+
+    if (out.length === 0) {
+      const body = aligned.hasHeaderRow ? aligned.rows.slice(1) : aligned.rows;
+      for (const row of body) {
+        let picked: string | null = null;
+        for (const cell of row) {
+          const t = (cell ?? "").replace(/\s+/g, " ").trim();
+          if (!isPlausibleExhibit21NameCell(t)) continue;
+          if (
+            looksLikeDomCodeOrRegion(t) &&
+            t.length <= 14 &&
+            !/[,.]/.test(t) &&
+            !/\b(Inc|LLC|Corp|Ltd)\b/i.test(t)
+          )
+            continue;
+          if (/^of\s+incorporation/i.test(t)) continue;
+          if (/^state\s+or\s+country/i.test(t)) continue;
+          picked = decodeBasicHtmlEntities(t);
+          break;
+        }
+        if (!picked || !subsidiaryNamePassesTableMirrorChecks(picked)) continue;
+        const k = picked.toLowerCase();
+        if (seen.has(k)) continue;
+        seen.add(k);
+        /** One plausible name cell per exhibit row when column inference yielded nothing (matches visible grid intent). */
+        out.push({ name: picked.replace(/\s+/g, " ").trim(), domicile: "" });
+      }
+    }
+
+    if (out.length > 0) return out;
+  }
+
+  return subsidiaryRowsFromProfileArrays(subsidiaryNames, subsidiaryDomiciles)
+    .map((row) => ({
+      name: decodeBasicHtmlEntities(row.name.replace(/\s+/g, " ").trim()),
+      domicile: decodeBasicHtmlEntities(row.domicile.replace(/\s+/g, " ").trim()),
+    }))
+    .filter((row) => subsidiaryNamePassesTableMirrorChecks(row.name));
 }
 
 /**

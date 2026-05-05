@@ -27,7 +27,7 @@ export const companyAnalysisTabs = [
   "Business Model",
   "HowStuffWorks",
   "SEC XBRL Financials",
-  "The Good, Bad and Ugly Historical Financial Statements",
+  "Historical Financial Statements",
   "Org Chart",
   "Capital Structure",
   "Saved Documents",

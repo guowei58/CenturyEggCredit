@@ -395,8 +395,8 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
               </ul>
               {!data.hasSubstantiveText && !needsSignIn && (
                 <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-                  No substantive saved content yet. Fill the Capital Structure, Org Chart, Subsidiary List, and Credit
-                  Agreements tabs, then refresh.
+                  No substantive saved content yet. Fill the Capital Structure, Org Chart, Entity Mapper (AI subsidiary
+                  analysis), and Credit Agreements tabs, then refresh.
                 </p>
               )}
             </>

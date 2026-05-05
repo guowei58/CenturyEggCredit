@@ -374,6 +374,65 @@
     background: var(--panel);
   }
 
+  /**
+   * SEC periodic filing HTML frequently sets inline `color:#000` / `<font color>` on spans & cells.
+   * Force theme-readable colors inside our debt-footnote viewers only.
+   */
+  .saved-html-content.sec-debt-footnote-html {
+    color: var(--text);
+  }
+
+  .saved-html-content.sec-debt-footnote-html * {
+    color: inherit !important;
+    /* Inline XBRL / EDGAR spans often set white or pale yellow backgrounds — unreadable with forced light text. */
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  /**
+   * SEC tables often use inline white / pale-blue zebra rows while we force light body text.
+   * Strip those backgrounds and apply dark-theme zebra so contrast stays high.
+   */
+  .saved-html-content.sec-debt-footnote-html table {
+    background: var(--card) !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html table tr {
+    background: transparent !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html table th {
+    color: var(--muted2) !important;
+    background: var(--panel) !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html table td {
+    color: var(--text) !important;
+    background: transparent !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html table tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.055) !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html table caption {
+    color: var(--text) !important;
+    background: transparent !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html a[href]:not([href^="#"]):not([href^="javascript:"]) {
+    color: var(--blue) !important;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--blue) 50%, transparent);
+    text-underline-offset: 0.12em;
+  }
+
+  .saved-html-content.sec-debt-footnote-html a[href]:not([href^="#"]):not([href^="javascript:"]):hover {
+    color: color-mix(in srgb, var(--blue) 82%, white) !important;
+    text-decoration-color: var(--blue);
+  }
+
   /* Saved response fullscreen: let scroll body / textarea absorb remaining viewport */
   [data-saved-response-expanded="1"] .saved-response-fs-fill {
     max-height: none !important;

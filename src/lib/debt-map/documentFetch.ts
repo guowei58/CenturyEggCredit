@@ -18,6 +18,28 @@ export type FetchedDocument = {
   error?: string;
 };
 
+/** Raw bytes from SEC Archives (no PDF/HTML text extraction). Uses EDGAR pacing + identity UA. */
+export async function fetchSecArchivesRaw(url: string): Promise<
+  { ok: true; buffer: Buffer; contentType: string | null } | { ok: false; error: string }
+> {
+  await paceSec();
+  let res: Response;
+  try {
+    res = await fetch(url, { headers: { "User-Agent": getSecEdgarUserAgent() } });
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "fetch failed" };
+  }
+  if (!res.ok) {
+    return { ok: false, error: `HTTP ${res.status}` };
+  }
+  try {
+    const buffer = Buffer.from(await res.arrayBuffer());
+    return { ok: true, buffer, contentType: res.headers.get("content-type") };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "read body failed" };
+  }
+}
+
 export async function downloadAndExtractSecDocument(url: string): Promise<FetchedDocument> {
   await paceSec();
   let res: Response;

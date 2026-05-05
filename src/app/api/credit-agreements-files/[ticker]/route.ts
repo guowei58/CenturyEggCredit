@@ -19,16 +19,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ tick
   const { ticker } = await params;
   const url = new URL(request.url);
   const file = url.searchParams.get("file");
+  const inline = url.searchParams.get("inline") === "1";
 
   if (file) {
     const found = await getCreditAgreementsFileBuffer(userId, ticker, file);
     if (!found) return NextResponse.json({ error: "File not found" }, { status: 404 });
     const contentType = found.item?.contentType || "application/octet-stream";
     const originalName = found.item?.originalName || file;
+    const safeName = originalName.replace(/"/g, "");
     return new NextResponse(new Uint8Array(found.buf), {
       headers: {
         "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename="${originalName.replace(/"/g, "")}"`,
+        "Content-Disposition": `${inline ? "inline" : "attachment"}; filename="${safeName}"`,
       },
     });
   }
