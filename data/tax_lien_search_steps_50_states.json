@@ -1,0 +1,1556 @@
+{
+  "AL": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "ALDOR liens are recorded in county Probate Judge offices; SOS UCC division also notes state/federal tax liens may be handled like UCC filings.",
+        "url": "https://www.revenue.alabama.gov/collections/liens/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://arc-sos.state.al.us/CGI/UCCNAME.MBR/INPUT"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.alabamacounties.org/counties/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.alabama.gov/business-services/ucc-home"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "ALDOR liens are recorded in county Probate Judge offices; SOS UCC division also notes state/federal tax liens may be handled like UCC filings.",
+    "federalTaxLienRoute": "County Probate Judge / land records; also check AL SOS UCC/tax lien index where applicable."
+  },
+  "AK": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "State/federal liens are generally recorded in the Alaska Recorder's Office, which has statewide recording districts.",
+        "url": "https://tax.alaska.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://dnr.alaska.gov/ssd/recoff/search"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://dnr.alaska.gov/ssd/recoff/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.commerce.alaska.gov/cbp/main/search/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "State/federal liens are generally recorded in the Alaska Recorder's Office, which has statewide recording districts.",
+    "federalTaxLienRoute": "Alaska Recorder's Office public records search."
+  },
+  "AZ": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "ADOR state tax liens/releases post with County Recorder and/or Secretary of State depending on lien type.",
+        "url": "https://azdor.gov/collections-individuals/tax-liens-individuals"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://azsos.gov/business/uniform-commercial-code-ucc"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://azsos.gov/elections/about-elections/county-election-officials-contact-information"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://azsos.gov/business/uniform-commercial-code-ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "ADOR state tax liens/releases post with County Recorder and/or Secretary of State depending on lien type.",
+    "federalTaxLienRoute": "County Recorder and/or AZ SOS for state tax liens; county recorder for federal tax liens."
+  },
+  "AR": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "State/federal tax liens can be searched through county circuit clerk/recorder records; Arkansas SOS handles UCC and federal tax lien filings.",
+        "url": "https://www.dfa.arkansas.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.sos.arkansas.gov/business-commercial-services-bcs/ucc-and-federal-tax-liens"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.arcounties.org/counties/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.arkansas.gov/business-commercial-services-bcs/ucc-and-federal-tax-liens"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "State/federal tax liens can be searched through county circuit clerk/recorder records; Arkansas SOS handles UCC and federal tax lien filings.",
+    "federalTaxLienRoute": "County circuit clerk/recorder records and AR SOS federal tax liens."
+  },
+  "CA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "FTB/EDD/CDTFA state liens are generally recorded with county recorders and/or SOS depending on lien type; use agency lien pages plus county records.",
+        "url": "https://www.ftb.ca.gov/pay/collections/liens/index.html"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://bizfileonline.sos.ca.gov/search/ucc"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://cra.ca.gov/county-recorders/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://bizfileonline.sos.ca.gov/search/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "FTB/EDD/CDTFA state liens are generally recorded with county recorders and/or SOS depending on lien type; use agency lien pages plus county records.",
+    "federalTaxLienRoute": "County Recorder official records for NFTLs/releases and many state tax liens."
+  },
+  "CO": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Colorado DOR tax liens; official records are generally at county Clerk & Recorder / public trustee records.",
+        "url": "https://tax.colorado.gov/tax-liens"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.sos.state.co.us/pubs/UCC/uccHome.html"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://coloradocountyclerks.com/clerk-and-recorder-directory/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.state.co.us/pubs/UCC/uccHome.html"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Colorado DOR tax liens; official records are generally at county Clerk & Recorder / public trustee records.",
+    "federalTaxLienRoute": "County Clerk & Recorder records for NFTLs/releases."
+  },
+  "CT": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "DRS tax warrants/liens; many real-property recorded liens are at town clerks/land records.",
+        "url": "https://portal.ct.gov/drs"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://business.ct.gov/business-services/uniform-commercial-code"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://portal.ct.gov/sots/legislative-services/town-clerks"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://business.ct.gov/business-services/uniform-commercial-code"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "DRS tax warrants/liens; many real-property recorded liens are at town clerks/land records.",
+    "federalTaxLienRoute": "Town clerk land records for NFTLs/releases; DRS/tax warrant pages for state warrants."
+  },
+  "DE": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Check Delaware Division of Revenue delinquent taxpayers / state tax lien list; optionally use Division of Corporations Online Status with Tax & History for franchise-tax status and filing history; fo…",
+        "url": "https://revenue.delaware.gov/delawares-delinquent-taxpayers/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://corp.delaware.gov/onlinestatus/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://delaware.gov/topics/counties/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://corp.delaware.gov/uccsearch/"
+      }
+    ],
+    "supplementalUrls": [
+      "https://corp.delaware.gov/uccauthsrch/",
+      "https://www.newcastlede.gov/136/Recorder-of-Deeds",
+      "https://newcastle.dts-de.com/PAXWorld/"
+    ],
+    "stateTaxLienRoute": "Check Delaware Division of Revenue delinquent taxpayers / state tax lien list; optionally use Division of Corporations Online Status with Tax & History for franchise-tax status and filing history; for recorded judgments/warrants, also search county recorder/court records where the entity has a physical address or real property.",
+    "federalTaxLienRoute": "Federal tax liens/releases are recorded in county recording offices where the business has property/physical presence. Search New Castle, Kent, and Sussex county recorder/land records as applicable; New Castle Recorder specifically records federal tax liens."
+  },
+  "FL": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Florida DOR tax warrants and liens; county Official Records for many recorded liens/releases; DOS has judgment lien/UCC systems.",
+        "url": "https://floridarevenue.com/taxes/compliance/Pages/default.aspx"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://dos.fl.gov/sunbiz/other-services/judgment-lien/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.flclerks.com/page/ClerkWebsites"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://dos.fl.gov/sunbiz/other-services/uniform-commercial-code/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Florida DOR tax warrants and liens; county Official Records for many recorded liens/releases; DOS has judgment lien/UCC systems.",
+    "federalTaxLienRoute": "County Clerk Official Records for NFTLs/releases; DOS for judgment lien/UCC adjacent searches."
+  },
+  "GA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Georgia state tax executions are recorded with Clerks of Superior Court; GSCCCA provides a statewide lien index.",
+        "url": "https://dor.georgia.gov/liens"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.gsccca.org/learn/search-systems/lien-index"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://georgiacourts.gov/clerks/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.gsccca.org/ucc-system"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Georgia state tax executions are recorded with Clerks of Superior Court; GSCCCA provides a statewide lien index.",
+    "federalTaxLienRoute": "GSCCCA lien index covers liens filed under state/federal laws across counties."
+  },
+  "HI": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Liens are generally recorded with the Bureau of Conveyances / Land Court; state tax collection info via DOTAX.",
+        "url": "https://tax.hawaii.gov/collections/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://bocdataext.hi.wcicloud.com/DocumentSearch.aspx"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://dlnr.hawaii.gov/boc/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://hbe.ehawaii.gov/documents/search.html"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Liens are generally recorded with the Bureau of Conveyances / Land Court; state tax collection info via DOTAX.",
+    "federalTaxLienRoute": "Bureau of Conveyances document search for NFTLs/releases."
+  },
+  "ID": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Idaho State Tax Commission lien/release info; recorded liens typically checked via county recorder; SOS UCC for UCC/tax lien adjacent records.",
+        "url": "https://tax.idaho.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://sosbiz.idaho.gov/search/ucc"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://idcounties.org/counties/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://sosbiz.idaho.gov/search/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Idaho State Tax Commission lien/release info; recorded liens typically checked via county recorder; SOS UCC for UCC/tax lien adjacent records.",
+    "federalTaxLienRoute": "County recorder for NFTLs/releases; SOS UCC for state-level lien searches where applicable."
+  },
+  "IL": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Illinois DOR State Tax Lien Registry is statewide for IDOR liens/releases.",
+        "url": "https://tax.illinois.gov/programs/taxlienregistry.html"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://mytax.illinois.gov/_/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.ilcountyofficials.com/recorder.php"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.ilsos.gov/departments/business_services/uniform_commercial_code/home.html"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Illinois DOR State Tax Lien Registry is statewide for IDOR liens/releases.",
+    "federalTaxLienRoute": "County recorder still needed for federal tax liens unless indexed elsewhere."
+  },
+  "IN": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Indiana DOR tax warrants are filed with county clerk offices; DOR explains warrant process.",
+        "url": "https://www.in.gov/dor/i-am-a/tax-professional/the-collection-process/stages-of-collection/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://intaxwarrants.in.gov/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.inarcrecorder.org/directory/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://inbiz.in.gov/certified-search/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Indiana DOR tax warrants are filed with county clerk offices; DOR explains warrant process.",
+    "federalTaxLienRoute": "County clerk records for tax warrants and NFTLs/releases."
+  },
+  "IA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Iowa DOR liens/collections; county recorder / Iowa Land Records for recorded documents.",
+        "url": "https://revenue.iowa.gov/taxes/frequently-asked-questions/collections"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://iowalandrecords.org/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://iowalandrecords.org/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://sos.iowa.gov/search/business/UCCSearch.aspx"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Iowa DOR liens/collections; county recorder / Iowa Land Records for recorded documents.",
+    "federalTaxLienRoute": "County recorder / Iowa Land Records for NFTLs/releases."
+  },
+  "KS": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "KDOR tax warrants/liens; county register of deeds / district court records for recording/court warrants.",
+        "url": "https://www.ksrevenue.gov/prtaxwarrants.html"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.sos.ks.gov/business/ucc.html"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.kansasregisterofdeeds.com/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.ks.gov/business/ucc.html"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "KDOR tax warrants/liens; county register of deeds / district court records for recording/court warrants.",
+    "federalTaxLienRoute": "County register of deeds for NFTLs/releases."
+  },
+  "KY": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Kentucky DOR tax liens; county clerk records are key for recorded liens/releases.",
+        "url": "https://revenue.ky.gov/Collections/Pages/Tax-Liens.aspx"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://web.sos.ky.gov/uccsearch/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://kentuckycountyclerks.com/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://web.sos.ky.gov/uccsearch/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Kentucky DOR tax liens; county clerk records are key for recorded liens/releases.",
+    "federalTaxLienRoute": "County clerk for NFTLs/releases and many state lien records; SOS UCC for UCC liens."
+  },
+  "LA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "State tax liens/executions are recorded with one or more Clerks of Court; LDR has lien page.",
+        "url": "https://revenue.louisiana.gov/collections/general-sources/liens/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.evaultla.com/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.laclerksofcourt.org/clerks-of-court"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.la.gov/BusinessServices/UniformCommercialCode/Pages/default.aspx"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "State tax liens/executions are recorded with one or more Clerks of Court; LDR has lien page.",
+    "federalTaxLienRoute": "Parish clerk mortgage/conveyance records for federal liens/releases."
+  },
+  "ME": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Maine Revenue Services collections; lien records generally via county Registry of Deeds for real property and SOS/UCC for UCC liens.",
+        "url": "https://www.maine.gov/revenue/taxes/compliance"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.mainelandrecords.com/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.maine.gov/sos/arc/research/local/registrydeeds.html"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://apps3.web.maine.gov/nei-sos-icrs/ICRS"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Maine Revenue Services collections; lien records generally via county Registry of Deeds for real property and SOS/UCC for UCC liens.",
+    "federalTaxLienRoute": "County Registry of Deeds for NFTLs/releases."
+  },
+  "MD": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Comptroller collections/collections notices; Maryland Land Records for recorded liens/releases.",
+        "url": "https://www.marylandtaxes.gov/business/tax-compliance/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://mdlandrec.net/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://mdlandrec.net/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://sdat.dat.maryland.gov/ucc-charter/Pages/UCC-Search.aspx"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Comptroller collections/collections notices; Maryland Land Records for recorded liens/releases.",
+    "federalTaxLienRoute": "Maryland Land Records for recorded NFTLs/releases."
+  },
+  "MA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Massachusetts DOR collections/liens; recorded documents at registry of deeds districts.",
+        "url": "https://www.mass.gov/info-details/dor-collections-process"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.masslandrecords.com/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.masslandrecords.com/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://corp.sec.state.ma.us/corpweb/uccsearch/uccsearch.aspx"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Massachusetts DOR collections/liens; recorded documents at registry of deeds districts.",
+    "federalTaxLienRoute": "Registry of Deeds / MassLandRecords for NFTLs/releases."
+  },
+  "MI": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Treasury collections; tax liens often require county Register of Deeds/court record checks; SOS/UCC for UCC.",
+        "url": "https://www.michigan.gov/taxes/collections"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://cofs.lara.state.mi.us/SearchApi/Search/Search"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://mardmi.org/mard-members/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://cofs.lara.state.mi.us/SearchApi/Search/Search"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Treasury collections; tax liens often require county Register of Deeds/court record checks; SOS/UCC for UCC.",
+    "federalTaxLienRoute": "County Register of Deeds for NFTLs/releases."
+  },
+  "MN": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Minnesota SOS Business & Liens portal indexes UCC/tax liens; Revenue lien info available separately.",
+        "url": "https://www.revenue.state.mn.us/tax-liens"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://mblsportal.sos.state.mn.us/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.mncounty.org/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://mblsportal.sos.state.mn.us/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Minnesota SOS Business & Liens portal indexes UCC/tax liens; Revenue lien info available separately.",
+    "federalTaxLienRoute": "SOS Business & Liens portal plus county recorder where needed for federal/local records."
+  },
+  "MS": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Mississippi DOR State Tax Lien Registry is public/searchable for state liens.",
+        "url": "https://www.dor.ms.gov/news/state-tax-lien-registry"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.dor.ms.gov/node/6098"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.mschanceryclerks.org/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.ms.gov/business-services/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Mississippi DOR State Tax Lien Registry is public/searchable for state liens.",
+    "federalTaxLienRoute": "County chancery clerk / land records for federal liens/releases."
+  },
+  "MO": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Missouri DOR tax liens; county recorder of deeds records for recorded liens/releases.",
+        "url": "https://dor.mo.gov/taxation/business/tax-liens/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://bsd.sos.mo.gov/ucc/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://mora-mo.org/county-directory/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://bsd.sos.mo.gov/ucc/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Missouri DOR tax liens; county recorder of deeds records for recorded liens/releases.",
+    "federalTaxLienRoute": "County recorder for NFTLs/releases."
+  },
+  "MT": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Montana DOR collections/tax liens; county Clerk & Recorder / state lien/UCC records depending on lien type.",
+        "url": "https://mtrevenue.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://biz.sosmt.gov/search/business"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.mtcounties.org/resources/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://biz.sosmt.gov/search/business"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Montana DOR collections/tax liens; county Clerk & Recorder / state lien/UCC records depending on lien type.",
+    "federalTaxLienRoute": "County Clerk & Recorder for federal liens/releases."
+  },
+  "NE": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Nebraska DOR tax lien info; county Register of Deeds / state UCC for lien searches.",
+        "url": "https://revenue.nebraska.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.nebraska.gov/sos/ucc/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://nacone.org/webpages/counties/county_websites.html"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.nebraska.gov/sos/ucc/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Nebraska DOR tax lien info; county Register of Deeds / state UCC for lien searches.",
+    "federalTaxLienRoute": "County Register of Deeds for NFTLs/releases."
+  },
+  "NV": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Nevada Department of Taxation collections/liens; county recorder records for recorded liens/releases; SOS UCC for UCC.",
+        "url": "https://tax.nv.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.nvsos.gov/sos/businesses/ucc"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.nvcountyrecorders.org/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.nvsos.gov/sos/businesses/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Nevada Department of Taxation collections/liens; county recorder records for recorded liens/releases; SOS UCC for UCC.",
+    "federalTaxLienRoute": "County Recorder for NFTLs/releases."
+  },
+  "NH": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "DRA collections; county registry of deeds for recorded liens/releases; SOS UCC for UCC liens.",
+        "url": "https://www.revenue.nh.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.nhdeeds.org/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.nhdeeds.org/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://sos.nh.gov/corporation-ucc-securities/corporation/ucc/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "DRA collections; county registry of deeds for recorded liens/releases; SOS UCC for UCC liens.",
+    "federalTaxLienRoute": "County registry of deeds for NFTLs/releases."
+  },
+  "NJ": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Division of Taxation collections/certificates of debt; county clerks for recorded liens; Treasury UCC for UCC liens.",
+        "url": "https://www.nj.gov/treasury/taxation/collections.shtml"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.nj.gov/treasury/revenue/ucc.shtml"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.njclerks.org/members"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.nj.gov/treasury/revenue/ucc.shtml"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Division of Taxation collections/certificates of debt; county clerks for recorded liens; Treasury UCC for UCC liens.",
+    "federalTaxLienRoute": "County clerk/recording offices for NFTLs/releases."
+  },
+  "NM": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "TRD collections/liens; county clerk records for recorded liens/releases; SOS UCC for UCC.",
+        "url": "https://www.tax.newmexico.gov/individuals/collections/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://enterprise.sos.nm.gov/business-services/ucc"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.sos.nm.gov/voting-and-elections/voter-information-portal/county-clerk-information/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://enterprise.sos.nm.gov/business-services/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "TRD collections/liens; county clerk records for recorded liens/releases; SOS UCC for UCC.",
+    "federalTaxLienRoute": "County Clerk records for NFTLs/releases."
+  },
+  "NY": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "NYS tax warrants are searchable through Tax Department/DOS systems; satisfactions are filed with DOS and county clerk.",
+        "url": "https://www.tax.ny.gov/enforcement/warrant-search.htm"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www8.tax.ny.gov/WARR/warrStart"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://dos.ny.gov/county-clerks"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://appext20.dos.ny.gov/pls/ucc_public/web_search.main_frame"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "NYS tax warrants are searchable through Tax Department/DOS systems; satisfactions are filed with DOS and county clerk.",
+    "federalTaxLienRoute": "County clerk records and NYS tax warrant system for state warrants; county records for NFTLs/releases."
+  },
+  "NC": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "NCDOR collections/forced collection; county Register of Deeds/court records for certificates/liens; SOS UCC for UCC liens.",
+        "url": "https://www.ncdor.gov/file-pay/collections"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.sosnc.gov/online_services/search/by_title/_tax_liens"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.ncard.us/find-your-register-of-deeds/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sosnc.gov/online_services/search/by_title/_ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "NCDOR collections/forced collection; county Register of Deeds/court records for certificates/liens; SOS UCC for UCC liens.",
+    "federalTaxLienRoute": "County Register of Deeds for NFTLs/releases."
+  },
+  "ND": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Tax Department collections; SOS FirstStop/Central Indexing for UCC/tax liens; county recorder where applicable.",
+        "url": "https://www.tax.nd.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://firststop.sos.nd.gov/search/ucc"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.ndaco.org/counties/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://firststop.sos.nd.gov/search/ucc"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Tax Department collections; SOS FirstStop/Central Indexing for UCC/tax liens; county recorder where applicable.",
+    "federalTaxLienRoute": "County recorder and SOS/central indexing for liens."
+  },
+  "OH": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Ohio Attorney General handles many tax collections; county recorder/court records for liens/releases; SOS UCC for UCC.",
+        "url": "https://www.ohioattorneygeneral.gov/Business/Services-for-Business/Tax-Collections"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://ucc.sos.state.oh.us/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://ohiorecorders.com/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://ucc.sos.state.oh.us/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Ohio Attorney General handles many tax collections; county recorder/court records for liens/releases; SOS UCC for UCC.",
+    "federalTaxLienRoute": "County Recorder for NFTLs/releases."
+  },
+  "OK": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Oklahoma Tax Commission tax warrants; county clerk records and OK County Records portal for recorded documents; SOS UCC.",
+        "url": "https://oklahoma.gov/tax/individuals/collection-services/tax-warrants.html"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://okcountyrecords.com/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://oklahoma.gov/about/oklahoma-county-government.html"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.sos.ok.gov/ucc/default.aspx"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Oklahoma Tax Commission tax warrants; county clerk records and OK County Records portal for recorded documents; SOS UCC.",
+    "federalTaxLienRoute": "County clerk records for NFTLs/releases."
+  },
+  "OR": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Oregon DOR state tax liens page; county clerks/recorders for recorded liens/releases; SOS UCC for UCC.",
+        "url": "https://www.oregon.gov/dor/programs/collections/pages/state-tax-lien.aspx"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://secure.sos.state.or.us/uccsearch/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://sos.oregon.gov/elections/Pages/countyofficials.aspx"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://secure.sos.state.or.us/uccsearch/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Oregon DOR state tax liens page; county clerks/recorders for recorded liens/releases; SOS UCC for UCC.",
+    "federalTaxLienRoute": "County recording offices for NFTLs/releases."
+  },
+  "PA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Department of Revenue collections; tax liens often appear in county court/prothonotary/recorder records; DOS UCC for UCC liens.",
+        "url": "https://www.revenue.pa.gov/Compliance/Collections/Pages/default.aspx"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.corporations.pa.gov/search/corpsearch"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.pacounties.org/counties"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.corporations.pa.gov/search/corpsearch"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Department of Revenue collections; tax liens often appear in county court/prothonotary/recorder records; DOS UCC for UCC liens.",
+    "federalTaxLienRoute": "County prothonotary/recorder for NFTLs/releases."
+  },
+  "RI": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Division of Taxation collections; municipal land evidence records for recorded liens; SOS UCC.",
+        "url": "https://tax.ri.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://www.searchiqs.com/rigen/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.searchiqs.com/rigen/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://business.sos.ri.gov/uccfiling"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Division of Taxation collections; municipal land evidence records for recorded liens; SOS UCC.",
+    "federalTaxLienRoute": "Municipal land evidence records for NFTLs/releases."
+  },
+  "SC": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "SCDOR State Tax Lien Registry is centralized for state liens; county Register of Deeds for federal liens/releases.",
+        "url": "https://dor.sc.gov/notices-compliance/liens"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://uitax.dew.sc.gov/LienRegistry/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.sccounties.org/counties"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://businessfilings.sc.gov/BusinessFiling/Entity/Search"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "SCDOR State Tax Lien Registry is centralized for state liens; county Register of Deeds for federal liens/releases.",
+    "federalTaxLienRoute": "County Register of Deeds for NFTLs/releases."
+  },
+  "SD": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Department of Revenue tax/collections; county Register of Deeds for recorded liens/releases; SOS UCC for UCC liens.",
+        "url": "https://dor.sd.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://sosenterprise.sd.gov/BusinessServices/UCC/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://sdpaa.org/records-officials/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://sosenterprise.sd.gov/BusinessServices/UCC/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Department of Revenue tax/collections; county Register of Deeds for recorded liens/releases; SOS UCC for UCC liens.",
+    "federalTaxLienRoute": "County Register of Deeds for NFTLs/releases."
+  },
+  "TN": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Tennessee DOR tax liens page; county register records and SOS UCC/debtor index for UCC.",
+        "url": "https://www.tn.gov/revenue/tax-resources/legal-resources/tax-liens.html"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://tnbear.tn.gov/UCC/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://tnregisters.com/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://tnbear.tn.gov/UCC/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Tennessee DOR tax liens page; county register records and SOS UCC/debtor index for UCC.",
+    "federalTaxLienRoute": "County Register of Deeds for NFTLs/releases."
+  },
+  "TX": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Texas Comptroller collection/lien info; county clerk records for state/federal tax liens/releases; SOSDirect for UCC.",
+        "url": "https://comptroller.texas.gov/taxes/collections/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://direct.sos.state.tx.us/acct/acct-login.asp"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.county.org/About-Texas-Counties/About-Texas-County-Officials/Texas-County-Clerks"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://direct.sos.state.tx.us/acct/acct-login.asp"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Texas Comptroller collection/lien info; county clerk records for state/federal tax liens/releases; SOSDirect for UCC.",
+    "federalTaxLienRoute": "County Clerk official public records for NFTLs/releases."
+  },
+  "UT": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Utah State Tax Commission liens page; county recorder records for liens/releases; UCC search for UCC.",
+        "url": "https://tax.utah.gov/billing/liens"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://secure.utah.gov/uccsearch/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.uacnet.org/counties/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://secure.utah.gov/uccsearch/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Utah State Tax Commission liens page; county recorder records for liens/releases; UCC search for UCC.",
+    "federalTaxLienRoute": "County Recorder for NFTLs/releases."
+  },
+  "VT": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Vermont Tax Department collections; municipal/town land records for recorded liens; SOS UCC/business search for UCC.",
+        "url": "https://tax.vermont.gov/individuals/collection"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://sos.vermont.gov/municipal-division/town-clerks/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://sos.vermont.gov/municipal-division/town-clerks/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://bizfilings.vermont.gov/online/BusinessInquire/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Vermont Tax Department collections; municipal/town land records for recorded liens; SOS UCC/business search for UCC.",
+    "federalTaxLienRoute": "Town clerk land records for NFTLs/releases."
+  },
+  "VA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Virginia Tax collections; circuit court land records for recorded liens; SCC CIS for UCC/tax lien-related searches where available.",
+        "url": "https://www.tax.virginia.gov/collections"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://cis.scc.virginia.gov/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.vacourts.gov/courts/circuit.html"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://cis.scc.virginia.gov/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Virginia Tax collections; circuit court land records for recorded liens; SCC CIS for UCC/tax lien-related searches where available.",
+    "federalTaxLienRoute": "Circuit court land records for NFTLs/releases."
+  },
+  "WA": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Washington DOR tax warrants; county auditor/recording offices for recorded liens/releases; DOL UCC for UCC.",
+        "url": "https://dor.wa.gov/taxes-rates/tax-incentives/tax-warrants"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://fortress.wa.gov/dol/ucc/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://www.sos.wa.gov/elections/voters/county-elections-offices"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://fortress.wa.gov/dol/ucc/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Washington DOR tax warrants; county auditor/recording offices for recorded liens/releases; DOL UCC for UCC.",
+    "federalTaxLienRoute": "County auditor/recording offices for NFTLs/releases."
+  },
+  "WV": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "WV State Tax Department collections/liens; county clerk records for recorded liens/releases; SOS UCC/business for UCC.",
+        "url": "https://tax.wv.gov/Individuals/Collections/Pages/IndividualsCollectionsLiens.aspx"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://apps.sos.wv.gov/business/ucc/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://sos.wv.gov/elections/Pages/CountyClerkDirectory.aspx"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://apps.sos.wv.gov/business/ucc/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "WV State Tax Department collections/liens; county clerk records for recorded liens/releases; SOS UCC/business for UCC.",
+    "federalTaxLienRoute": "County clerk records for NFTLs/releases."
+  },
+  "WI": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Wisconsin DOR collections/tax warrants; circuit court/CCAP and county Register of Deeds for records; DFI UCC for UCC.",
+        "url": "https://www.revenue.wi.gov/Pages/FAQS/ise-collections.aspx"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://wcca.wicourts.gov/"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://wrdaonline.org/"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://www.wdfi.org/apps/uccsearch/"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Wisconsin DOR collections/tax warrants; circuit court/CCAP and county Register of Deeds for records; DFI UCC for UCC.",
+    "federalTaxLienRoute": "County Register of Deeds / court records for NFTLs/releases."
+  },
+  "WY": {
+    "steps": [
+      {
+        "step": 1,
+        "label": "State tax / collections",
+        "hint": "Wyoming DOR collections/business tax liens; county clerk records for recorded liens/releases; SOS UCC for UCC.",
+        "url": "https://revenue.wyo.gov/"
+      },
+      {
+        "step": 2,
+        "label": "Statewide index / central search",
+        "hint": "search exact legal name, normalized name, former names, and taxpayer/debtor variants",
+        "url": "https://wyobiz.wyo.gov/Business/UCCFilingSearch.aspx"
+      },
+      {
+        "step": 3,
+        "label": "County / local recorder",
+        "hint": "use county clerk/recorder directory, then search relevant counties for federal and state liens/releases",
+        "url": "https://sos.wyo.gov/Elections/Docs/WYCountyClerks.pdf"
+      },
+      {
+        "step": 4,
+        "label": "UCC / related lien (separate)",
+        "hint": "search separately for financing statements and related lien notices, not as a substitute for tax liens",
+        "url": "https://wyobiz.wyo.gov/Business/UCCFilingSearch.aspx"
+      }
+    ],
+    "supplementalUrls": [],
+    "stateTaxLienRoute": "Wyoming DOR collections/business tax liens; county clerk records for recorded liens/releases; SOS UCC for UCC.",
+    "federalTaxLienRoute": "County Clerk records for NFTLs/releases."
+  }
+}

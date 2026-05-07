@@ -7,6 +7,8 @@ const TITLE_KEYWORDS: { kw: RegExp; type: CreditDocSourceDocumentType }[] = [
   { kw: /\bamended\s+and\s+restated.*credit\b/i, type: "amended_and_restated_credit_agreement" },
   { kw: /\bamended\s+and\s+restated.*facility\b/i, type: "amended_and_restated_credit_agreement" },
   { kw: /\bsupplemental\s+indenture\b/i, type: "supplemental_indenture" },
+  // High-value schedules / financing address disclosures
+  { kw: /\bperfection\s+certificate\b|\bcollateral\s+information\s+certificate\b|\bucc\s+questionnaire\b/i, type: "other" },
   { kw: /\babs\s+indenture\b|\basset[\s-]backed\s+indenture\b/i, type: "abs_indenture" },
   { kw: /\btrust\s+indenture\b|\bindenture\s+trustee\b/i, type: "indenture" },
   { kw: /\b(convertible|subordinated)\s+notes?\b|\bsenior\s+(secured\s+)?notes?\b/i, type: "indenture" },

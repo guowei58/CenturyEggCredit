@@ -108,6 +108,15 @@ model User {
   creditDocumentEntityRelationships CreditDocumentEntityRelationship[]
   creditDocumentEntityRoleMatrixRows CreditDocumentEntityRoleMatrixRow[]
   creditDocWorkflowIssues           CreditDocWorkflowIssue[]
+  uccSearchResults                  UccSearchResult[]
+  uccManualSearchTasks              UccManualSearchTask[]
+  uccCreditDocumentMatches          UccCreditDocumentMatch[]
+  uccDiscoveredEntityCandidates     UccDiscoveredEntityCandidate[]
+  openCorporatesApiCacheEntries     OpenCorporatesApiCacheEntry[]
+  openCorporatesSubsidiaryAddressResults OpenCorporatesSubsidiaryAddressResult[]
+  taxLienWorkflowCandidates        TaxLienWorkflowCandidate[]
+  taxLienDocuments                 TaxLienDocument[]
+  taxLienManualSearchTasks         TaxLienManualSearchTask[]
 
   @@map("users")
 }
@@ -1549,12 +1558,249 @@ model UccDebtorCandidate {
   relevanceScore        Int                              @default(0) @map("relevance_score")
   reviewStatus          EntityUniverseReviewStatus      @default(unreviewed) @map("review_status")
   notes                 String?                          @db.Text
+  /** Semicolon-separated workflow sources (exhibit21_profile, sos, …). */
+  workflowEntitySources        String                     @default("") @map("workflow_entity_sources") @db.Text
+  jurisdictionFormationRaw     String?                    @map("jurisdiction_formation_raw") @db.Text
+  secondaryStates              Json?                      @map("secondary_states")
+  queryVariantsJson            Json?                      @map("query_variants_json")
+  jurisdictionPlanJson         Json?                      @map("jurisdiction_plan_json")
+  workflowSearchStatus         String                     @default("pending_manual") @map("workflow_search_status")
+  workflowHitCount             Int                        @default(0) @map("workflow_hit_count")
+  automationBucket             String                     @default("unknown_needs_configuration") @map("automation_bucket")
+  jurisdictionConfidenceKind   String                     @default("unknown") @map("jurisdiction_confidence_kind")
+  recommendedSearchMethod      String                     @default("") @map("recommended_search_method")
   createdAt             DateTime                         @default(now()) @map("created_at")
   updatedAt             DateTime                         @updatedAt @map("updated_at")
+
+  manualSearchTasks     UccManualSearchTask[]
+  searchResults         UccSearchResult[]
 
   @@index([userId, ticker])
   @@index([userId, ticker, normalizedDebtorName])
   @@map("ucc_debtor_candidates")
+}
+
+model UccSearchResult {
+  id                               String                       @id @default(cuid())
+  userId                           String                       @map("user_id")
+  user                             User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                           String
+  candidateId                      String?                      @map("candidate_id")
+  candidate                        UccDebtorCandidate?          @relation(fields: [candidateId], references: [id], onDelete: SetNull)
+  entitySearched                   String                       @map("entity_searched") @db.Text
+  jurisdiction                     String
+  searchQueryUsed                  String?                      @map("search_query_used") @db.Text
+  debtorNameFound                  String                       @map("debtor_name_found") @db.Text
+  debtorAddress                    String?                      @map("debtor_address") @db.Text
+  securedPartyName                 String?                      @map("secured_party_name") @db.Text
+  securedPartyAddress              String?                      @map("secured_party_address") @db.Text
+  filingNumber                     String?                      @map("filing_number") @db.Text
+  filingType                       UccDebtorFilingKind          @default(unknown) @map("filing_type")
+  filingDate                       DateTime?                    @map("filing_date") @db.Date
+  lapseDate                        DateTime?                    @map("lapse_date") @db.Date
+  filingStatus                     String                       @default("unknown") @map("filing_status")
+  collateralDescription            String?                      @map("collateral_description") @db.Text
+  collateralDescriptionAvailable   Boolean                      @default(false) @map("collateral_description_available")
+  documentLink                     String?                      @map("document_link") @db.Text
+  pdfDownloaded                    Boolean                      @default(false) @map("pdf_downloaded")
+  sourceUrl                        String?                      @map("source_url") @db.Text
+  sourceMethod                     String                       @default("manual") @map("source_method")
+  searchedAt                       DateTime?                    @map("searched_at")
+  likelyFinancingRelationship      String?                      @map("likely_financing_relationship") @db.Text
+  confidence                       EntityUniverseConfidenceKind   @default(unknown)
+  notes                            String?                      @db.Text
+  rawPayloadJson                   Json?                        @map("raw_payload_json")
+  createdAt                        DateTime                     @default(now()) @map("created_at")
+  updatedAt                        DateTime                     @updatedAt @map("updated_at")
+
+  creditDocMatches                 UccCreditDocumentMatch[]
+  discoveredEntityHints             UccDiscoveredEntityCandidate[]
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, filingNumber])
+  @@map("ucc_search_results")
+}
+
+model UccManualSearchTask {
+  id                     String             @id @default(cuid())
+  userId                 String             @map("user_id")
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                 String
+  candidateId            String?            @map("candidate_id")
+  candidate              UccDebtorCandidate? @relation(fields: [candidateId], references: [id], onDelete: SetNull)
+  entityName             String             @map("entity_name") @db.Text
+  jurisdiction           String
+  portalUrl              String             @map("portal_url") @db.Text
+  exactSearchQuery       String             @map("exact_search_query") @db.Text
+  normalizedQueriesJson  Json?              @map("normalized_queries_json")
+  reasonManual           String             @map("reason_manual") @db.Text
+  instructions           String             @map("instructions") @db.Text
+  taskStatus             String             @default("open") @map("task_status")
+  automationBucket       String             @default("") @map("automation_bucket")
+  workflowStatusLabel    String             @default("manual_required") @map("workflow_status_label")
+  isDelawareAuthorizedSearcherTask Boolean @default(false) @map("is_delaware_authorized_searcher_task")
+  notes                  String?            @db.Text
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@map("ucc_manual_search_tasks")
+}
+
+model UccCreditDocumentMatch {
+  id                        String                     @id @default(cuid())
+  userId                    String                     @map("user_id")
+  user                      User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                    String
+  searchResultId            String?                    @map("search_result_id")
+  searchResult              UccSearchResult?           @relation(fields: [searchResultId], references: [id], onDelete: SetNull)
+  uccDebtorName             String                     @map("ucc_debtor_name") @db.Text
+  securedPartyName          String?                    @map("secured_party_name") @db.Text
+  matchedCreditPartyName    String?                    @map("matched_credit_party_name") @db.Text
+  matchedFacilityInstrument String?                    @map("matched_facility_instrument") @db.Text
+  filingDate                DateTime?                  @map("filing_date") @db.Date
+  documentDate              DateTime?                  @map("document_date") @db.Date
+  likelyRole                String?                    @map("likely_role") @db.Text
+  sourceEvidence            String                     @map("source_evidence") @db.Text
+  confidence                EntityUniverseConfidenceKind @default(unknown)
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+
+  @@index([userId, ticker])
+  @@map("ucc_credit_document_matches")
+}
+
+model UccDiscoveredEntityCandidate {
+  id                String                     @id @default(cuid())
+  userId            String                     @map("user_id")
+  user              User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker            String
+  searchResultId    String?                    @map("search_result_id")
+  searchResult      UccSearchResult?           @relation(fields: [searchResultId], references: [id], onDelete: SetNull)
+  newEntityName     String                     @map("new_entity_name") @db.Text
+  jurisdiction      String?
+  debtorAddress     String?                    @map("debtor_address") @db.Text
+  securedPartyName  String?                    @map("secured_party_name") @db.Text
+  filingNumber      String?                    @map("filing_number") @db.Text
+  reasonFlagged     String                     @map("reason_flagged") @db.Text
+  suggestedNextStep String                     @map("suggested_next_step") @db.Text
+  confidence        EntityUniverseConfidenceKind @default(unknown)
+  createdAt         DateTime                   @default(now()) @map("created_at")
+
+  @@index([userId, ticker])
+  @@map("ucc_discovered_entity_candidates")
+}
+
+/** Tax lien & release research queue — one row per entity (Exhibit 21, user-added, or parent issuer). */
+model TaxLienWorkflowCandidate {
+  id                         String                   @id @default(cuid())
+  userId                     String                   @map("user_id")
+  user                       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                     String
+  entityLegalName            String                   @map("entity_legal_name") @db.Text
+  normalizedEntityName       String                   @map("normalized_entity_name")
+  isParentIssuer             Boolean                  @default(false) @map("is_parent_issuer")
+  formationJurisdictionRaw   String?                  @map("formation_jurisdiction_raw") @db.Text
+  formationStateAbbr         String                   @default("UN") @map("formation_state_abbr")
+  entityType                 String?                  @map("entity_type") @db.Text
+  principalOfficeAddress     String?                  @map("principal_office_address") @db.Text
+  mailingAddress             String?                  @map("mailing_address") @db.Text
+  registeredOfficeAddress    String?                  @map("registered_office_address") @db.Text
+  uccDebtorAddress           String?                  @map("ucc_debtor_address") @db.Text
+  aliasesJson                Json?                    @map("aliases_json")
+  sourceFiling               String?                  @map("source_filing") @db.Text
+  sourceDate                 DateTime?                @map("source_date") @db.Date
+  searchJurisdictionsJson    Json                     @map("search_jurisdictions_json")
+  searchCountiesJson         Json?                    @map("search_counties_json")
+  queryVariantsJson          Json?                    @map("query_variants_json")
+  searchPlanJson             Json?                    @map("search_plan_json")
+  workflowSearchStatus       String                   @default("queued") @map("workflow_search_status")
+  resultsFound               Int                      @default(0) @map("results_found")
+  manualRequired             Boolean                  @default(true) @map("manual_required")
+  workflowEntitySources      String                   @default("") @map("workflow_entity_sources") @db.Text
+  notes                      String?                  @db.Text
+  federalTaxLienFound        Boolean                  @default(false) @map("federal_tax_lien_found")
+  stateTaxLienFound          Boolean                  @default(false) @map("state_tax_lien_found")
+  taxLienReleased            Boolean                  @default(false) @map("tax_lien_released")
+  unreleasedTaxLienFlag      Boolean                  @default(false) @map("unreleased_tax_lien_flag")
+  latestLienFilingDate       DateTime?                @map("latest_lien_filing_date") @db.Date
+  latestReleaseDate          DateTime?                @map("latest_release_date") @db.Date
+  lienAmountText             String?                  @map("lien_amount_text") @db.Text
+  sourceEvidenceCount        Int                      @default(0) @map("source_evidence_count")
+  highestMatchConfidence     String                   @default("unknown") @map("highest_match_confidence")
+  mapperManualReviewRequired Boolean                  @default(false) @map("mapper_manual_review_required")
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+
+  documents    TaxLienDocument[]
+  manualTasks  TaxLienManualSearchTask[]
+
+  @@index([userId, ticker])
+  @@index([userId, ticker, normalizedEntityName])
+  @@map("tax_lien_workflow_candidates")
+}
+
+model TaxLienDocument {
+  id                         String                   @id @default(cuid())
+  userId                     String                   @map("user_id")
+  user                       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                     String
+  candidateId                String?                  @map("candidate_id")
+  candidate                  TaxLienWorkflowCandidate? @relation(fields: [candidateId], references: [id], onDelete: SetNull)
+  entitySearched             String                   @map("entity_searched") @db.Text
+  matchedTaxpayerName        String                   @map("matched_taxpayer_name") @db.Text
+  normalizedTaxpayerName     String?                  @map("normalized_taxpayer_name") @db.Text
+  taxpayerAddress            String?                  @map("taxpayer_address") @db.Text
+  matchConfidence            String                   @default("unknown") @map("match_confidence")
+  lienKind                   String                   @default("unknown") @map("lien_kind")
+  documentCategory           String                   @default("unknown") @map("document_category")
+  documentTypeLabel          String                   @map("document_type_label") @db.Text
+  filingJurisdiction         String                   @map("filing_jurisdiction") @db.Text
+  countyRecordingOffice      String?                  @map("county_recording_office") @db.Text
+  filingDate                 DateTime?                @map("filing_date") @db.Date
+  recordingDate              DateTime?                @map("recording_date") @db.Date
+  taxPeriodText              String?                  @map("tax_period_text") @db.Text
+  assessmentDate             DateTime?                @map("assessment_date") @db.Date
+  amountText                 String?                  @map("amount_text") @db.Text
+  filingNumber               String?                  @map("filing_number") @db.Text
+  bookPageText               String?                  @map("book_page_text") @db.Text
+  derivedStatus              String                   @default("unknown") @map("derived_status")
+  releaseDate                DateTime?                @map("release_date") @db.Date
+  relatedPrimaryDocumentId   String?                  @map("related_primary_document_id")
+  sourceUrl                  String?                  @map("source_url") @db.Text
+  documentImageUrl           String?                  @map("document_image_url") @db.Text
+  rawSourceText              String?                  @map("raw_source_text") @db.Text
+  sourceMethod               String                   @default("pending") @map("source_method")
+  notes                      String?                  @db.Text
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@index([candidateId])
+  @@map("tax_lien_documents")
+}
+
+model TaxLienManualSearchTask {
+  id                           String                   @id @default(cuid())
+  userId                       String                   @map("user_id")
+  user                         User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                       String
+  candidateId                  String?                  @map("candidate_id")
+  candidate                    TaxLienWorkflowCandidate? @relation(fields: [candidateId], references: [id], onDelete: SetNull)
+  entityLegalName              String                   @map("entity_legal_name") @db.Text
+  stateAbbr                    String                   @map("state_abbr")
+  countyName                   String?                  @map("county_name") @db.Text
+  reasonManual                 String                   @map("reason_manual") @db.Text
+  searchUrl                    String                   @map("search_url") @db.Text
+  exactSearchQuery             String                   @map("exact_search_query") @db.Text
+  suggestedDocTypeFiltersJson  Json?                    @map("suggested_doc_type_filters_json")
+  taskStatus                   String                   @default("open") @map("task_status")
+  userNotes                    String?                  @map("user_notes") @db.Text
+  uploadResultUrl              String?                  @map("upload_result_url") @db.Text
+  createdAt                    DateTime                 @default(now()) @map("created_at")
+  updatedAt                    DateTime                 @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@map("tax_lien_manual_search_tasks")
 }
 
 model SosNameFamilyCandidate {
@@ -1659,6 +1905,8 @@ model EntityUniverseItem {
   reviewStatus             EntityUniverseReviewStatus      @default(unreviewed)
   duplicateGroupKey        String?                          @map("duplicate_group_key") @db.Text
   notes                    String?                          @db.Text
+  /** Roll-up from Tax Lien workflow (not legal advice). */
+  taxLienSummaryJson       Json?                            @map("tax_lien_summary_json")
   createdAt                DateTime                         @default(now()) @map("created_at")
   updatedAt                DateTime                         @updatedAt @map("updated_at")
 
@@ -2045,4 +2293,68 @@ model DebtNotePattern {
 
   @@index([cik])
   @@map("debt_note_patterns")
+}
+
+/** Cached OpenCorporates API search responses (dedupe by user + cacheKey). */
+model OpenCorporatesApiCacheEntry {
+  id                       String   @id @default(cuid())
+  userId                   String   @map("user_id")
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                   String
+  cik                      String?
+  cacheKey                 String   @map("cache_key")
+  normalizedSubsidiaryName String   @map("normalized_subsidiary_name") @db.Text
+  jurisdictionFilter       String   @map("jurisdiction_filter")
+  queryUsed                String   @map("query_used") @db.Text
+  apiEndpoint              String   @map("api_endpoint") @db.Text
+  responseAt               DateTime @map("response_at")
+  resultCount              Int      @map("result_count")
+  rawResponseJson          Json     @map("raw_response_json")
+  selectedResultJson       Json?    @map("selected_result_json")
+  errorText                String?  @map("error_text") @db.Text
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, cacheKey])
+  @@index([userId, ticker])
+  @@map("opencorporates_api_cache_entries")
+}
+
+/** One row per Exhibit 21 subsidiary — latest OpenCorporates address finder outcome. */
+model OpenCorporatesSubsidiaryAddressResult {
+  id                     String    @id @default(cuid())
+  userId                 String    @map("user_id")
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                 String
+  cik                    String?
+  parentCompanyName      String?   @map("parent_company_name") @db.Text
+  subsidiaryRowIndex     Int       @map("subsidiary_row_index")
+  exhibitLegalName       String    @map("exhibit_legal_name") @db.Text
+  exhibitJurisdiction    String?   @map("exhibit_jurisdiction") @db.Text
+  entityType             String?   @map("entity_type") @db.Text
+  sourceFiling           String?   @map("source_filing") @db.Text
+  filingDate             String?   @map("filing_date") @db.Text
+  searchQueryUsed        String    @map("search_query_used") @db.Text
+  matchedName            String?   @map("matched_name") @db.Text
+  ocJurisdiction         String?   @map("oc_jurisdiction") @db.Text
+  companyNumber          String?   @map("company_number") @db.Text
+  companyStatus          String?   @map("company_status") @db.Text
+  registeredAddress      String?   @map("registered_address") @db.Text
+  rawAddress             String?   @map("raw_address") @db.Text
+  normalizedAddress      String?   @map("normalized_address") @db.Text
+  addressConfidence      String?   @map("address_confidence")
+  matchConfidence        String?   @map("match_confidence")
+  ocUrl                  String?   @map("oc_url") @db.Text
+  registryUrl            String?   @map("registry_url") @db.Text
+  retrievalTimestamp     DateTime? @map("retrieval_timestamp")
+  resultStatus           String    @map("result_status") @db.Text
+  notes                  String?   @db.Text
+  topCandidatesJson      Json?     @map("top_candidates_json")
+  rawSearchResponseJson  Json?     @map("raw_search_response_json")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker, subsidiaryRowIndex])
+  @@index([userId, ticker])
+  @@map("opencorporates_subsidiary_address_results")
 }

@@ -17,7 +17,7 @@ export const companyTopSections: Array<{ id: CompanyTopSectionId; label: string 
   { id: "industry-competition", label: "Industry & Competition" },
   { id: "financials", label: "Financials" },
   { id: "capital-structure", label: "Capital Structure" },
-  { id: "documents", label: "Documents" },
+  { id: "documents", label: "Regulatory Documents" },
   { id: "risk", label: "Risk" },
   { id: "research", label: "Research" },
   { id: "work-product", label: "Work Product" },
@@ -93,7 +93,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         // "EdgarTools SEC" intentionally omitted from nav for now; CompanyEdgarToolsTab + /api/edgartools/* remain.
         tabs: [
-          "Saved Documents",
           "SEC Filings",
           "FCC Filings",
           "Patent IP Filings",

@@ -58,6 +58,8 @@ export function CreditDocEntityWorkflowPanel({ ticker }: { ticker: string }) {
 
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [autoRunBusy, setAutoRunBusy] = useState(false);
+  const [missingEx21, setMissingEx21] = useState<Record<string, unknown>[]>([]);
 
   const [candidates, setCandidates] = useState<FinderCandidate[]>([]);
   /** Full EDGAR debt playbook payload (API `edgarDebtSearch`). */
@@ -144,6 +146,36 @@ export function CreditDocEntityWorkflowPanel({ ticker }: { ticker: string }) {
       setMsg("Scan failed.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const autoRun = async () => {
+    if (!tk) return;
+    setAutoRunBusy(true);
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await fetch(`${wfApi(tk)}/auto-run`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lookbackYears: 10, maxDocumentsToQueue: 100, maxDocumentsToProcess: 24 }),
+      });
+      const j = (await r.json().catch(() => ({}))) as Record<string, unknown>;
+      if (!r.ok || j.ok !== true) throw new Error(String(j.error ?? `Auto-run failed (${r.status})`));
+      const rows = (j.missingFromExhibit21 as Record<string, unknown>[] | undefined) ?? [];
+      setMissingEx21(rows);
+      setMsg(
+        `Auto-run complete. Queued ${String(j.queued ?? "0")} document(s); processed ${String(
+          j.processedCount ?? "0"
+        )}; candidates not on Exhibit 21: ${rows.length}.`
+      );
+      await loadAll();
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Auto-run failed");
+    } finally {
+      setBusy(false);
+      setAutoRunBusy(false);
     }
   };
 
@@ -327,6 +359,53 @@ export function CreditDocEntityWorkflowPanel({ ticker }: { ticker: string }) {
           {msg}
         </div>
       ) : null}
+
+      <section className="space-y-2 rounded border border-[var(--border)] p-3">
+        <h4 className="text-[12px] font-semibold text-[var(--text)]">0. One-click run (recommended)</h4>
+        <p className="text-[11px] text-[var(--muted)]">
+          Runs the full workflow: find credit documents → auto-queue → extract entities → build matrix → show entities not
+          on Exhibit 21 (source-backed candidates).
+        </p>
+        <button
+          type="button"
+          className="rounded border border-[var(--accent)]/50 px-2 py-1 text-[11px] text-[var(--text)] hover:bg-[rgba(0,212,170,0.12)] disabled:opacity-50"
+          disabled={busy || autoRunBusy}
+          onClick={() => void autoRun()}
+        >
+          {autoRunBusy ? "Running credit-doc discovery…" : "Run full credit/collateral discovery"}
+        </button>
+
+        {missingEx21.length > 0 ? (
+          <div className="overflow-x-auto">
+            <div className="mb-1 text-[10px] uppercase tracking-wide text-[var(--muted2)]">
+              Entities not on Exhibit 21 (credit-doc matrix)
+            </div>
+            <table className={tableShell}>
+              <thead>
+                <tr className="border-b border-[var(--border)] text-[10px] uppercase text-[var(--muted2)]">
+                  <th className="py-1 pr-2">Entity</th>
+                  <th className="py-1 pr-2">Score</th>
+                  <th className="py-1 pr-2">Confidence</th>
+                  <th className="py-1 pr-2">Key evidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {missingEx21.slice(0, 80).map((r) => (
+                  <tr key={String(r.id)} className="border-b border-[var(--border)]/60 align-top">
+                    <td className="py-1 pr-2 max-w-[240px] whitespace-pre-wrap">{String(r.entityName ?? "")}</td>
+                    <td className="py-1 pr-2 whitespace-nowrap">{String(r.relevanceScore ?? "—")}</td>
+                    <td className="py-1 pr-2 whitespace-nowrap">{String(r.confidence ?? "—")}</td>
+                    <td className="py-1 pr-2 max-w-[280px] whitespace-pre-wrap text-[10px]">
+                      {String(r.keyEvidence ?? "").slice(0, 280)}
+                      {String(r.keyEvidence ?? "").length > 280 ? "…" : ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
 
       <section className="space-y-2 rounded border border-[var(--border)] p-3">
         <h4 className="text-[12px] font-semibold text-[var(--text)]">1. Credit document finder</h4>

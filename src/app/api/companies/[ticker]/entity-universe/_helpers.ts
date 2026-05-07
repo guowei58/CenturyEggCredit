@@ -15,7 +15,22 @@ export async function requireUserTicker(rawTicker: string) {
 /** ISO date fields for JSON */
 export function serEntityUniverseRow(row: Record<string, unknown>) {
   const r = { ...row };
-  for (const k of ["createdAt", "updatedAt", "sourceDate", "filingDate", "formationDate", "checkedAt"]) {
+  for (const k of [
+    "createdAt",
+    "updatedAt",
+    "sourceDate",
+    "filingDate",
+    "formationDate",
+    "checkedAt",
+    "searchedAt",
+    "lapseDate",
+    "retrievalTimestamp",
+    "recordingDate",
+    "assessmentDate",
+    "releaseDate",
+    "latestLienFilingDate",
+    "latestReleaseDate",
+  ]) {
     const v = r[k];
     if (v instanceof Date) r[k] = v.toISOString();
   }

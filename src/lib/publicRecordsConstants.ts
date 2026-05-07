@@ -3,6 +3,7 @@ import type { PublicRecordCategory } from "@/generated/prisma/client";
 export const PUBLIC_RECORD_CATEGORY_LABELS: Record<PublicRecordCategory, string> = {
   entity_sos: "Entity Universe & Affiliate Discovery",
   ucc_secured_debt: "UCC / Secured Debt",
+  // Hidden categories: retained only because the Prisma enum includes them.
   tax_liens_releases: "Tax Liens & Releases",
   real_estate_recorder: "Real Estate / County Recorder",
   property_tax_assessor: "Property Tax / Assessor",
@@ -21,6 +22,7 @@ export const PUBLIC_RECORD_CATEGORY_DESCRIPTIONS: Record<PublicRecordCategory, s
     "Build a credit-relevant entity universe using Exhibit 21, credit documents, UCC debtor searches, Secretary of State name-family searches, and address-cluster diligence—evidence capture first, not automated scraping.",
   ucc_secured_debt:
     "Search UCC financing statements, amendments, continuations, terminations, secured parties, collateral descriptions, and fixture filings.",
+  // Hidden categories: retained only because the Prisma enum includes them.
   tax_liens_releases:
     "Search federal, state, and local tax lien notices, releases, withdrawals, subordinations, discharges, tax warrants, and related recorded documents.",
   real_estate_recorder:
@@ -48,15 +50,10 @@ export const PUBLIC_RECORD_CATEGORIES_ORDER: PublicRecordCategory[] = [
   "entity_sos",
   "ucc_secured_debt",
   "tax_liens_releases",
-  "real_estate_recorder",
-  "property_tax_assessor",
-  "permits_zoning_co",
   "environmental_compliance",
   "courts_judgments",
   "licenses_regulatory",
-  "economic_incentives",
   "procurement_contracts",
-  "gis_facility_mapping",
 ];
 
 export const REGISTRY_DISCLAIMER =

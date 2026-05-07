@@ -290,6 +290,7 @@ function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock })
   const pubs = data.industryPublications ?? [];
   return (
     <section
+      id={`daily-news-ticker-${tk}`}
       className="mb-8 rounded-xl border p-4 last:mb-0 sm:p-5"
       style={{
         borderColor: "var(--border)",
@@ -367,19 +368,27 @@ function TopLevelSummaryBulletLine({ line }: { line: string }) {
   const m = normalized.match(/^(\s*•\s+)([A-Z][A-Z0-9._-]*):\s*(.*)$/);
   if (m) {
     const [, prefix, ticker, rest] = m;
+    const anchorId = `daily-news-ticker-${ticker}`;
     return (
       <p className="m-0 leading-relaxed" style={{ color: "var(--text)" }}>
         {prefix}
-        <span
-          className="mr-1.5 inline-block align-baseline rounded-md px-2 py-0.5 font-mono text-[0.9em] font-bold tabular-nums tracking-tight"
+        <button
+          type="button"
+          className="mr-1.5 inline-block align-baseline rounded-md px-2 py-0.5 font-mono text-[0.9em] font-bold tabular-nums tracking-tight hover:opacity-90"
           style={{
             background: "rgba(0, 212, 170, 0.14)",
             color: "var(--accent)",
             border: "1px solid rgba(0, 212, 170, 0.4)",
           }}
+          onClick={() => {
+            const el = document.getElementById(anchorId);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          title={`Jump to ${ticker}`}
+          aria-label={`Jump to ${ticker} news section`}
         >
           {ticker}
-        </span>
+        </button>
         <span>: {rest}</span>
       </p>
     );

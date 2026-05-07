@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { exhibit21UniverseMirrorFromProfileSubsidiaries } from "@/lib/entityUniverseExhibitMirror";
 import { normalizeEntityName } from "@/lib/entityNormalize";
 import { subsidiaryTableRowsFromSavedProfile } from "@/lib/publicRecordsSubsidiaryRows";
+import { computeUccStateAggregation } from "@/lib/ucc/stateAggregation";
 import { syncExhibit21SubsidiariesFromPublicProfile } from "@/lib/syncExhibit21FromPublicProfile";
+import { getAllTaxLienMatrixRows } from "@/lib/taxLien/taxLienSourceMatrix";
 import { requireUserTicker, serEntityUniverseRow } from "../_helpers";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +22,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
     /** Table may not exist yet, or DB error — bootstrap still returns profile mirror for Exhibit 21. */
   }
 
+  try {
   let exhibit21Subsidiaries: Awaited<ReturnType<typeof prisma.exhibit21Subsidiary.findMany>> = [];
   try {
     exhibit21Subsidiaries = await prisma.exhibit21Subsidiary.findMany({
@@ -31,7 +34,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
   }
 
   const [
-    creditDocEntities,
     uccDebtorCandidates,
     sosNameFamilyCandidates,
     addressClusterCandidates,
@@ -40,21 +42,34 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
     discoveryTasks,
     intelProfile,
     publicRecordsProf,
+    uccSearchResults,
+    uccManualSearchTasks,
+    uccCreditDocumentMatches,
+    uccDiscoveredEntityCandidates,
+    taxLienWorkflowCandidates,
+    taxLienDocuments,
+    taxLienManualSearchTasks,
   ] = await Promise.all([
-    prisma.creditDocumentEntity.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }),
-    prisma.uccDebtorCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }),
-    prisma.sosNameFamilyCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }),
-    prisma.addressClusterCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }),
-    prisma.entityUniverseItem.findMany({ where: { userId, ticker }, orderBy: [{ relevanceScore: "desc" }, { updatedAt: "desc" }] }),
-    prisma.entityUniverseIssue.findMany({ where: { userId, ticker }, orderBy: [{ severity: "desc" }, { updatedAt: "desc" }] }),
-    prisma.entityUniverseDiscoveryTask.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }),
-    prisma.entityIntelligenceProfile.findFirst({ where: { userId, ticker } }),
-    prisma.publicRecordsProfile.findUnique({
-      where: { userId_ticker: { userId, ticker } },
-    }),
+    prisma.uccDebtorCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.sosNameFamilyCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.addressClusterCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.entityUniverseItem
+      .findMany({ where: { userId, ticker }, orderBy: [{ relevanceScore: "desc" }, { updatedAt: "desc" }] })
+      .catch(() => []),
+    prisma.entityUniverseIssue.findMany({ where: { userId, ticker }, orderBy: [{ severity: "desc" }, { updatedAt: "desc" }] }).catch(() => []),
+    prisma.entityUniverseDiscoveryTask.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.entityIntelligenceProfile.findFirst({ where: { userId, ticker } }).catch(() => null),
+    prisma.publicRecordsProfile.findUnique({ where: { userId_ticker: { userId, ticker } } }).catch(() => null),
+    prisma.uccSearchResult.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.uccManualSearchTask.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.uccCreditDocumentMatch.findMany({ where: { userId, ticker }, orderBy: { createdAt: "desc" } }).catch(() => []),
+    prisma.uccDiscoveredEntityCandidate.findMany({ where: { userId, ticker }, orderBy: { createdAt: "desc" } }).catch(() => []),
+    prisma.taxLienWorkflowCandidate.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.taxLienDocument.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
+    prisma.taxLienManualSearchTask.findMany({ where: { userId, ticker }, orderBy: { updatedAt: "desc" } }).catch(() => []),
   ]);
 
-  const cdNorm = new Set(creditDocEntities.map((r) => r.normalizedEntityName));
+  const cdNorm = new Set<string>();
   const uccNorm = new Set(uccDebtorCandidates.map((r) => r.normalizedDebtorName));
 
   const profileTableRows =
@@ -90,10 +105,34 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
     })
   );
 
+  const uccStateAggregation = computeUccStateAggregation(
+    uccDebtorCandidates.map((c) => ({
+      state: c.state,
+      workflowEntitySources: c.workflowEntitySources,
+      jurisdictionConfidenceKind: c.jurisdictionConfidenceKind,
+      workflowHitCount: c.workflowHitCount,
+      workflowSearchStatus: c.workflowSearchStatus,
+    }))
+  );
+
+  const taxLienStateSources = getAllTaxLienMatrixRows();
+
   return NextResponse.json({
     exhibit21Subsidiaries: exhibit21Payload,
-    creditDocEntities: creditDocEntities.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
     uccDebtorCandidates: uccDebtorCandidates.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
+    uccSearchResults: uccSearchResults.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
+    uccManualSearchTasks: uccManualSearchTasks.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
+    uccCreditDocumentMatches: uccCreditDocumentMatches.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
+    uccDiscoveredEntityCandidates: uccDiscoveredEntityCandidates.map((r) =>
+      serEntityUniverseRow(r as unknown as Record<string, unknown>)
+    ),
+    taxLienWorkflowCandidates: taxLienWorkflowCandidates.map((r) =>
+      serEntityUniverseRow(r as unknown as Record<string, unknown>)
+    ),
+    taxLienDocuments: taxLienDocuments.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
+    taxLienManualSearchTasks: taxLienManualSearchTasks.map((r) =>
+      serEntityUniverseRow(r as unknown as Record<string, unknown>)
+    ),
     sosNameFamilyCandidates: sosNameFamilyCandidates.map((r) =>
       serEntityUniverseRow(r as unknown as Record<string, unknown>)
     ),
@@ -105,5 +144,19 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
     discoveryTasks: discoveryTasks.map((r) => serEntityUniverseRow(r as unknown as Record<string, unknown>)),
     entityIntelligenceProfile: intelProfile ? serEntityUniverseRow(intelProfile as unknown as Record<string, unknown>) : null,
     exhibit21NormalizedSet: [...exNorm],
+    uccStateAggregation,
+    taxLienStateSources,
   });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "entity-universe bootstrap failed";
+    console.error("[entity-universe/bootstrap]", ticker, msg, e);
+    return NextResponse.json(
+      {
+        error: msg,
+        hint:
+          "Often caused by DB schema behind Prisma (run migrations) or invalid profile snapshot JSON. Check server logs for stack trace.",
+      },
+      { status: 500 }
+    );
+  }
 }

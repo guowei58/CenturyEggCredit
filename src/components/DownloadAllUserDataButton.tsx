@@ -196,7 +196,7 @@ export function DownloadAllUserDataButton({ className }: { className?: string })
         aria-label="Open download options for saved data"
       >
         <DownloadIcon className="shrink-0 opacity-90" />
-        Download all data
+        Download All Data
       </button>
 
       {modalOpen ? (

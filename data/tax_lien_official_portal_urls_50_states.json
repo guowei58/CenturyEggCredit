@@ -1,0 +1,252 @@
+{
+  "AL": {
+    "stateTaxLienOrCollectionsUrl": "https://www.revenue.alabama.gov/collections/liens/",
+    "statewideSearchUrl": "https://arc-sos.state.al.us/CGI/UCCNAME.MBR/INPUT",
+    "countyClerkRecorderDirectoryUrl": "https://www.alabamacounties.org/counties/"
+  },
+  "AK": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.alaska.gov/",
+    "statewideSearchUrl": "https://dnr.alaska.gov/ssd/recoff/search",
+    "countyClerkRecorderDirectoryUrl": "https://dnr.alaska.gov/ssd/recoff/"
+  },
+  "AZ": {
+    "stateTaxLienOrCollectionsUrl": "https://azdor.gov/collections-individuals/tax-liens-individuals",
+    "statewideSearchUrl": "https://azsos.gov/business/uniform-commercial-code-ucc",
+    "countyClerkRecorderDirectoryUrl": "https://azsos.gov/elections/about-elections/county-election-officials-contact-information"
+  },
+  "AR": {
+    "stateTaxLienOrCollectionsUrl": "https://www.dfa.arkansas.gov/",
+    "statewideSearchUrl": "https://www.sos.arkansas.gov/business-commercial-services/bcs/ucc-and-federal-tax-liens",
+    "countyClerkRecorderDirectoryUrl": "https://www.arcounties.org/counties/"
+  },
+  "CA": {
+    "stateTaxLienOrCollectionsUrl": "https://www.ftb.ca.gov/pay/collections/liens/index.html",
+    "statewideSearchUrl": "https://bizfileonline.sos.ca.gov/search/ucc",
+    "countyClerkRecorderDirectoryUrl": "https://cra.ca.gov/county-recorders/"
+  },
+  "CO": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.colorado.gov/tax-liens",
+    "statewideSearchUrl": "https://www.sos.state.co.us/pubs/UCC/uccHome.html",
+    "countyClerkRecorderDirectoryUrl": "https://coloradocountyclerks.org/clerk-and-recorder-directory/"
+  },
+  "CT": {
+    "stateTaxLienOrCollectionsUrl": "https://portal.ct.gov/drs",
+    "statewideSearchUrl": "https://business.ct.gov/business-services/uniform-commercial-code",
+    "countyClerkRecorderDirectoryUrl": "https://portal.ct.gov/sots/legislative-services/town-clerks"
+  },
+  "DE": {
+    "stateTaxLienOrCollectionsUrl": "https://revenue.delaware.gov/",
+    "statewideSearchUrl": "https://corp.delaware.gov/uccsearch/",
+    "countyClerkRecorderDirectoryUrl": "https://delaware.gov/topics/counties/"
+  },
+  "FL": {
+    "stateTaxLienOrCollectionsUrl": "https://floridarevenue.com/taxes/compliance/Pages/default.aspx",
+    "statewideSearchUrl": "https://dos.fl.gov/sunbiz/other-services/judgment-lien/",
+    "countyClerkRecorderDirectoryUrl": "https://www.flclerks.com/page/ClerkWebsites"
+  },
+  "GA": {
+    "stateTaxLienOrCollectionsUrl": "https://dor.georgia.gov/liens",
+    "statewideSearchUrl": "https://www.gsccca.org/learn/search-systems/lien-index",
+    "countyClerkRecorderDirectoryUrl": "https://georgiacourts.gov/clerks/"
+  },
+  "HI": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.hawaii.gov/collections/",
+    "statewideSearchUrl": "https://bocdataext.hi.wcicloud.com/DocumentSearch.aspx",
+    "countyClerkRecorderDirectoryUrl": "https://dlnr.hawaii.gov/boc/"
+  },
+  "ID": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.idaho.gov/",
+    "statewideSearchUrl": "https://sosbiz.idaho.gov/search/ucc",
+    "countyClerkRecorderDirectoryUrl": "https://idcounties.org/counties/"
+  },
+  "IL": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.illinois.gov/programs/taxlienregistry.html",
+    "statewideSearchUrl": "https://mytax.illinois.gov/_/",
+    "countyClerkRecorderDirectoryUrl": "https://www.ilcountyofficials.com/recorder.php"
+  },
+  "IN": {
+    "stateTaxLienOrCollectionsUrl": "https://www.in.gov/dor/i-am-a-tax-professional/the-collection-process/stages-of-collection/",
+    "statewideSearchUrl": "https://intaxwarrants.in.gov/",
+    "countyClerkRecorderDirectoryUrl": "https://www.inarecorder.org/directory/"
+  },
+  "IA": {
+    "stateTaxLienOrCollectionsUrl": "https://revenue.iowa.gov/taxes/frequently-asked-questions/collections",
+    "statewideSearchUrl": "https://iowalandrecords.org/",
+    "countyClerkRecorderDirectoryUrl": "https://iowalandrecords.org/"
+  },
+  "KS": {
+    "stateTaxLienOrCollectionsUrl": "https://www.ksrevenue.gov/prtaxwarrants.html",
+    "statewideSearchUrl": "https://www.sos.ks.gov/business/ucc.html",
+    "countyClerkRecorderDirectoryUrl": "https://www.kansasregisterofdeeds.com/"
+  },
+  "KY": {
+    "stateTaxLienOrCollectionsUrl": "https://revenue.ky.gov/Collections/Pages/Tax-Liens.aspx",
+    "statewideSearchUrl": "https://web.sos.ky.gov/uccsearch/",
+    "countyClerkRecorderDirectoryUrl": "https://kentuckycountyclerks.com/"
+  },
+  "LA": {
+    "stateTaxLienOrCollectionsUrl": "https://revenue.louisiana.gov/collections/general-sources/liens/",
+    "statewideSearchUrl": "https://www.evaultla.com/",
+    "countyClerkRecorderDirectoryUrl": "https://www.laclerksofcourt.org/clerks-of-court"
+  },
+  "ME": {
+    "stateTaxLienOrCollectionsUrl": "https://www.maine.gov/revenue/taxes/compliance",
+    "statewideSearchUrl": "https://www.mainelandrecords.com/",
+    "countyClerkRecorderDirectoryUrl": "https://www.maine.gov/sos/arc/research/local/registrydeeds.html"
+  },
+  "MD": {
+    "stateTaxLienOrCollectionsUrl": "https://www.marylandtaxes.gov/business/tax-compliance/",
+    "statewideSearchUrl": "https://mdlandrec.net/",
+    "countyClerkRecorderDirectoryUrl": "https://mdlandrec.net/"
+  },
+  "MA": {
+    "stateTaxLienOrCollectionsUrl": "https://www.mass.gov/info-details/dor-collections-process",
+    "statewideSearchUrl": "https://www.masslandrecords.com/",
+    "countyClerkRecorderDirectoryUrl": "https://www.masslandrecords.com/"
+  },
+  "MI": {
+    "stateTaxLienOrCollectionsUrl": "https://www.michigan.gov/taxes/collections",
+    "statewideSearchUrl": "https://cofs.lara.state.mi.us/SearchApi/Search/Search",
+    "countyClerkRecorderDirectoryUrl": "https://mardmi.org/mard-members/"
+  },
+  "MN": {
+    "stateTaxLienOrCollectionsUrl": "https://www.revenue.state.mn.us/tax-liens",
+    "statewideSearchUrl": "https://mblportal.sos.state.mn.us/",
+    "countyClerkRecorderDirectoryUrl": "https://www.mncounty.org/"
+  },
+  "MS": {
+    "stateTaxLienOrCollectionsUrl": "https://www.dor.ms.gov/news/state-tax-lien-registry",
+    "statewideSearchUrl": "https://www.dor.ms.gov/node/6098",
+    "countyClerkRecorderDirectoryUrl": "https://www.mschanceryclerks.org/"
+  },
+  "MO": {
+    "stateTaxLienOrCollectionsUrl": "https://dor.mo.gov/taxation/business/tax-liens/",
+    "statewideSearchUrl": "https://bsd.sos.mo.gov/ucc/",
+    "countyClerkRecorderDirectoryUrl": "https://mora-mo.org/county-directory/"
+  },
+  "MT": {
+    "stateTaxLienOrCollectionsUrl": "https://mtrevenue.gov/",
+    "statewideSearchUrl": "https://biz.sosmt.gov/search/business",
+    "countyClerkRecorderDirectoryUrl": "https://www.mtcounties.org/resources/"
+  },
+  "NE": {
+    "stateTaxLienOrCollectionsUrl": "https://revenue.nebraska.gov/",
+    "statewideSearchUrl": "https://www.nebraska.gov/sos/ucc/",
+    "countyClerkRecorderDirectoryUrl": "https://nacone.org/webpages/counties/county_websites.html"
+  },
+  "NV": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.nv.gov/",
+    "statewideSearchUrl": "https://www.nvsos.gov/sos/businesses/ucc",
+    "countyClerkRecorderDirectoryUrl": "https://www.nvcountyrecorders.org/"
+  },
+  "NH": {
+    "stateTaxLienOrCollectionsUrl": "https://www.revenue.nh.gov/",
+    "statewideSearchUrl": "https://www.nhdeeds.org/",
+    "countyClerkRecorderDirectoryUrl": "https://www.nhdeeds.org/"
+  },
+  "NJ": {
+    "stateTaxLienOrCollectionsUrl": "https://www.nj.gov/treasury/taxation/collections.shtml",
+    "statewideSearchUrl": "https://www.nj.gov/treasury/revenue/ucc.shtml",
+    "countyClerkRecorderDirectoryUrl": "https://www.njclerks.org/members"
+  },
+  "NM": {
+    "stateTaxLienOrCollectionsUrl": "https://www.tax.newmexico.gov/individuals/collections/",
+    "statewideSearchUrl": "https://enterprise.sos.nm.gov/business-services/ucc",
+    "countyClerkRecorderDirectoryUrl": "https://www.sos.nm.gov/voting-and-elections/voter-information-portal/county-clerk-information/"
+  },
+  "NY": {
+    "stateTaxLienOrCollectionsUrl": "https://www.tax.ny.gov/enforcement/warrant-search.htm",
+    "statewideSearchUrl": "https://www8.tax.ny.gov/WARR/warrStart",
+    "countyClerkRecorderDirectoryUrl": "https://dos.ny.gov/county-clerks"
+  },
+  "NC": {
+    "stateTaxLienOrCollectionsUrl": "https://www.ncdor.gov/file-pay/collections",
+    "statewideSearchUrl": "https://www.sosnc.gov/online_services/search/by_title/_tax_liens",
+    "countyClerkRecorderDirectoryUrl": "https://www.ncard.us/find-your-register-of-deeds/"
+  },
+  "ND": {
+    "stateTaxLienOrCollectionsUrl": "https://www.tax.nd.gov/",
+    "statewideSearchUrl": "https://firststop.sos.nd.gov/search/ucc",
+    "countyClerkRecorderDirectoryUrl": "https://www.ndaco.org/counties/"
+  },
+  "OH": {
+    "stateTaxLienOrCollectionsUrl": "https://www.ohioattorneygeneral.gov/Business/Services-for-Business/Tax-Collections",
+    "statewideSearchUrl": "https://ucc.sos.state.oh.us/",
+    "countyClerkRecorderDirectoryUrl": "https://ohiorecorders.com/"
+  },
+  "OK": {
+    "stateTaxLienOrCollectionsUrl": "https://oklahoma.gov/tax/individuals/collection-services/tax-warrants.html",
+    "statewideSearchUrl": "https://okcountyrecords.com/",
+    "countyClerkRecorderDirectoryUrl": "https://oklahoma.gov/about/oklahoma-county-government.html"
+  },
+  "OR": {
+    "stateTaxLienOrCollectionsUrl": "https://www.oregon.gov/dor/programs/collections/pages/state-tax-lien.aspx",
+    "statewideSearchUrl": "https://secure.sos.state.or.us/uccsearch",
+    "countyClerkRecorderDirectoryUrl": "https://sos.oregon.gov/elections/Pages/countyofficials.aspx"
+  },
+  "PA": {
+    "stateTaxLienOrCollectionsUrl": "https://www.revenue.pa.gov/Compliance/Collections/Pages/default.aspx",
+    "statewideSearchUrl": "https://www.corporations.pa.gov/search/corpsearch",
+    "countyClerkRecorderDirectoryUrl": "https://www.pacounties.org/counties"
+  },
+  "RI": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.ri.gov/",
+    "statewideSearchUrl": "https://www.searchiqs.com/rigen/",
+    "countyClerkRecorderDirectoryUrl": "https://www.searchiqs.com/rigen/"
+  },
+  "SC": {
+    "stateTaxLienOrCollectionsUrl": "https://dor.sc.gov/notices-compliance/liens",
+    "statewideSearchUrl": "https://uitax.dew.sc.gov/LienRegistry/",
+    "countyClerkRecorderDirectoryUrl": "https://www.sccounties.org/counties"
+  },
+  "SD": {
+    "stateTaxLienOrCollectionsUrl": "https://dor.sd.gov/",
+    "statewideSearchUrl": "https://sosenterprise.sd.gov/BusinessServices/UCC/",
+    "countyClerkRecorderDirectoryUrl": "https://sdpaa.org/records-officials/"
+  },
+  "TN": {
+    "stateTaxLienOrCollectionsUrl": "https://www.tn.gov/revenue/tax-resources/legal-resources/tax-liens.html",
+    "statewideSearchUrl": "https://tnbear.tn.gov/UCC/",
+    "countyClerkRecorderDirectoryUrl": "https://tnregisters.com/"
+  },
+  "TX": {
+    "stateTaxLienOrCollectionsUrl": "https://comptroller.texas.gov/taxes/collections/",
+    "statewideSearchUrl": "https://direct.sos.state.tx.us/acct/acct-login.asp",
+    "countyClerkRecorderDirectoryUrl": "https://www.county.org/About-Texas-Counties/About-Texas-County-Officials/Texas-County-Clerks"
+  },
+  "UT": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.utah.gov/billing/liens",
+    "statewideSearchUrl": "https://secure.utah.gov/uccsearch/",
+    "countyClerkRecorderDirectoryUrl": "https://www.uacnet.org/counties"
+  },
+  "VT": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.vermont.gov/individuals/collection",
+    "statewideSearchUrl": "https://sos.vermont.gov/municipal-division/town-clerks/",
+    "countyClerkRecorderDirectoryUrl": "https://sos.vermont.gov/municipal-division/town-clerks/"
+  },
+  "VA": {
+    "stateTaxLienOrCollectionsUrl": "https://www.tax.virginia.gov/collections",
+    "statewideSearchUrl": "https://cis.scc.virginia.gov/",
+    "countyClerkRecorderDirectoryUrl": "https://www.vacourts.gov/courts/circuit.html"
+  },
+  "WA": {
+    "stateTaxLienOrCollectionsUrl": "https://dor.wa.gov/taxes-rates/tax-incentives/tax-warrants",
+    "statewideSearchUrl": "https://fortress.wa.gov/dol/ucc/",
+    "countyClerkRecorderDirectoryUrl": "https://www.sos.wa.gov/elections/voters/county-elections-offices"
+  },
+  "WV": {
+    "stateTaxLienOrCollectionsUrl": "https://tax.wv.gov/Individuals/Collections/Pages/IndividualCollectionsLiens.aspx",
+    "statewideSearchUrl": "https://apps.sos.wv.gov/business/ucc/",
+    "countyClerkRecorderDirectoryUrl": "https://www.sos.wv.gov/elections/Pages/CountyClerkDirectory.aspx"
+  },
+  "WI": {
+    "stateTaxLienOrCollectionsUrl": "https://www.revenue.wi.gov/Pages/FAQS/ise-collections.aspx",
+    "statewideSearchUrl": "https://wcca.wicourts.gov/",
+    "countyClerkRecorderDirectoryUrl": "https://wrdaonline.org/"
+  },
+  "WY": {
+    "stateTaxLienOrCollectionsUrl": "https://revenue.wyo.gov/",
+    "statewideSearchUrl": "https://wyobiz.wyo.gov/Business/UCCFilingSearch.aspx",
+    "countyClerkRecorderDirectoryUrl": "https://sos.wyo.gov/Elections/Docs/WYCountyClerks.pdf"
+  }
+}

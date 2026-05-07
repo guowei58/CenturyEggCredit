@@ -108,16 +108,11 @@ export function recommendPublicRecordSources(profile: PublicRecordsProfileForRec
     });
   }
 
-  const catOrder = (c: PublicRecordCategory) =>
-    [
-      "entity_sos",
-      "ucc_secured_debt",
-      "tax_liens_releases",
-      "real_estate_recorder",
-      "property_tax_assessor",
-      "permits_zoning_co",
-      "environmental_compliance",
-    ].indexOf(c);
+  const catOrder = (c: PublicRecordCategory) => {
+    const order = ["entity_sos", "ucc_secured_debt", "tax_liens_releases", "environmental_compliance"] as const;
+    const i = order.indexOf(c as (typeof order)[number]);
+    return i === -1 ? 999 : i;
+  };
 
   out.sort((a, b) => {
     const pa = a.priority === "primary" ? 0 : 1;

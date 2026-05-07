@@ -59,15 +59,10 @@ const CATEGORIES = new Set<string>([
   "entity_sos",
   "ucc_secured_debt",
   "tax_liens_releases",
-  "real_estate_recorder",
-  "property_tax_assessor",
-  "permits_zoning_co",
   "environmental_compliance",
   "courts_judgments",
   "licenses_regulatory",
-  "economic_incentives",
   "procurement_contracts",
-  "gis_facility_mapping",
   "other",
 ]);
 

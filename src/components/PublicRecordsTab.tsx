@@ -22,6 +22,7 @@ import {
 import { splitSubsidiaryLine } from "@/lib/exhibit21SubsidiaryRows";
 import { subsidiaryRowsFromProfileArrays } from "@/lib/publicRecordsSubsidiaryRows";
 import type { PublicRecordCategory } from "@/generated/prisma/client";
+import { EnvironmentalComplianceDiscoveryPanel } from "@/components/entityUniverse/EnvironmentalComplianceDiscoveryPanel";
 import { EntityUniverseAffiliateDiscoveryPage, type EntityUniversePublicRecordsSubsidiaries } from "@/components/entityUniverse/EntityUniverseAffiliateDiscoveryPage";
 
 const AUTOSAVE_DEBOUNCE_MS = 900;
@@ -98,27 +99,6 @@ type Profile = {
   knownPermitJurisdictions: unknown;
   knownRegulatoryJurisdictions: unknown;
   subsidiaryExhibit21Snapshot?: unknown;
-  notes: string | null;
-};
-
-type PublicRecordRow = {
-  id: string;
-  category: PublicRecordCategory;
-  sourceKey: string | null;
-  recordType: string | null;
-  status: string;
-  searchedEntityName: string | null;
-  matchedEntityName: string | null;
-  filingDate: string | null;
-  amount: string | null;
-  jurisdictionState: string | null;
-  jurisdictionCounty: string | null;
-  recordingNumber: string | null;
-  caseNumber: string | null;
-  permitNumber: string | null;
-  riskLevel: string;
-  confidence: string;
-  documentUrl: string | null;
   notes: string | null;
 };
 
@@ -682,7 +662,6 @@ export function PublicRecordsTab({
 
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [records, setRecords] = useState<PublicRecordRow[]>([]);
   const [checklist, setChecklist] = useState<ChecklistRow[]>([]);
   const [recommended, setRecommended] = useState<Recommended[]>([]);
 
@@ -723,29 +702,25 @@ export function PublicRecordsTab({
         return;
       }
 
-      const [pRes, rRes, cRes, sRes] = await Promise.all([
+      const [pRes, cRes, sRes] = await Promise.all([
         fetch(`${base}/profile?companyName=${encodeURIComponent(companyName ?? "")}`, { credentials: "same-origin" }),
-        fetch(`${base}/records`, { credentials: "same-origin" }),
         fetch(`${base}/checklist`, { credentials: "same-origin" }),
         fetch(`${base}/sources`, { credentials: "same-origin" }),
       ]);
-      if (!pRes.ok || !rRes.ok || !cRes.ok || !sRes.ok) {
+      if (!pRes.ok || !cRes.ok || !sRes.ok) {
         const parts: string[] = [];
         if (!pRes.ok) parts.push(`profile: ${await responseErrorDetail(pRes)}`);
-        if (!rRes.ok) parts.push(`records: ${await responseErrorDetail(rRes)}`);
         if (!cRes.ok) parts.push(`checklist: ${await responseErrorDetail(cRes)}`);
         if (!sRes.ok) parts.push(`sources: ${await responseErrorDetail(sRes)}`);
         throw new Error(`Failed to load public records data (${parts.join("; ")}).`);
       }
       const pJson = (await pRes.json()) as { profile: Profile };
-      const rJson = (await rRes.json()) as { records: PublicRecordRow[] };
       const cJson = (await cRes.json()) as { items: ChecklistRow[] };
       const sJson = (await sRes.json()) as { registry: RegistryEntry[]; recommended: Recommended[] };
 
       setProfile(pJson.profile);
       setProfileDraft(withNormalizedExhibit21Snapshot(pJson.profile));
       lastSavedProfileBodyRef.current = serializeProfileBody(pJson.profile);
-      setRecords(rJson.records);
       setChecklist(cJson.items);
       setRecommended(sJson.recommended);
     } catch {
@@ -859,24 +834,6 @@ export function PublicRecordsTab({
     (profileDraft.subsidiaryNames ?? []).join("\u0001"),
     (profileDraft.subsidiaryDomiciles ?? []).join("\u0001"),
   ]);
-
-  const categoryCounts = useMemo(() => {
-    const m = new Map<PublicRecordCategory, { findings: number; unchecked: number }>();
-    for (const c of PUBLIC_RECORD_CATEGORIES_ORDER) {
-      m.set(c, { findings: 0, unchecked: 0 });
-    }
-    for (const r of records) {
-      const x = m.get(r.category);
-      if (x) x.findings++;
-    }
-    for (const rec of recommended) {
-      const cat = rec.source.category;
-      const entry = m.get(cat);
-      if (!entry) continue;
-      if (!rec.checklist || rec.checklist.status === "not_started") entry.unchecked++;
-    }
-    return m;
-  }, [records, recommended]);
 
   const runSecIngest = useCallback(
     async (opts: { refresh: boolean }) => {
@@ -994,9 +951,7 @@ export function PublicRecordsTab({
       ? TAX_LIEN_DISCLAIMER
       : activeCategory === "ucc_secured_debt"
         ? UCC_DISCLAIMER
-        : activeCategory === "real_estate_recorder"
-          ? REAL_ESTATE_DISCLAIMER
-          : null;
+        : null;
 
   if (!tk) return <p className="text-sm text-[var(--muted)]">Select a company.</p>;
 
@@ -1019,49 +974,38 @@ export function PublicRecordsTab({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(15.5rem,20rem)_minmax(0,1fr)] lg:items-start lg:gap-6">
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(15.5rem,20rem)_minmax(0,1fr)] lg:items-start lg:gap-0 lg:pt-3">
         <aside
-          className="order-first shrink-0 lg:sticky lg:top-3 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto"
+          className="order-first shrink-0 lg:sticky lg:top-0 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto lg:border-r lg:border-[var(--border)] lg:pr-6"
           aria-label="Public records navigation"
         >
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
-            Categories
-          </p>
-          <nav className="flex flex-col gap-1" aria-label="Record categories">
-            {PUBLIC_RECORD_CATEGORIES_ORDER.map((cat) => {
-              const cc = categoryCounts.get(cat) ?? { findings: 0, unchecked: 0 };
-              const selected = activeCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setActiveCategory(cat)}
-                  className={`w-full rounded-md border px-2.5 py-2 text-left text-[11px] font-medium leading-snug transition ${
-                    selected
-                      ? "border-[var(--accent)] bg-[var(--card2)] shadow-sm"
-                      : "border-[var(--border)] bg-[var(--card)] hover:border-[var(--muted2)]"
-                  }`}
-                >
-                  <span className="block" style={{ color: "var(--text)" }}>
-                    {PUBLIC_RECORD_CATEGORY_LABELS[cat]}
-                  </span>
-                  <span className="mt-1 block text-[10px] font-normal" style={{ color: "var(--muted)" }}>
-                    Findings: {cc.findings} · Open checks: {cc.unchecked}
-                  </span>
-                </button>
-              );
-            })}
-          </nav>
+          <Card title="Categories">
+            <nav className="flex flex-col gap-1" aria-label="Record categories">
+              {PUBLIC_RECORD_CATEGORIES_ORDER.map((cat) => {
+                const selected = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setActiveCategory(cat)}
+                    className={`w-full rounded-md border px-2.5 py-2 text-left text-[11px] font-medium leading-snug transition ${
+                      selected
+                        ? "border-[var(--accent)] bg-[var(--card2)] shadow-sm"
+                        : "border-[var(--border)] bg-[var(--card)] hover:border-[var(--muted2)]"
+                    }`}
+                  >
+                    <span className="block" style={{ color: "var(--text)" }}>
+                      {PUBLIC_RECORD_CATEGORY_LABELS[cat]}
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
+          </Card>
         </aside>
 
-        <div className="min-w-0 space-y-6">
+        <div className="min-w-0 space-y-6 lg:pl-6">
           <Card title={PUBLIC_RECORD_CATEGORY_LABELS[activeCategory]}>
-            {activeCategory !== "entity_sos" ? (
-              <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
-                Choose a category in the sidebar for diligence notes, recommended sources, and checklist actions. Use{" "}
-                <strong style={{ color: "var(--text)" }}>Overview → Public Records Profile</strong> to edit entity names and geography.
-              </p>
-            ) : null}
             <div
               role="tabpanel"
               aria-label={PUBLIC_RECORD_CATEGORY_LABELS[activeCategory]}
@@ -1072,11 +1016,52 @@ export function PublicRecordsTab({
                   <EntityUniverseAffiliateDiscoveryPage
                     ticker={tk}
                     companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
                     publicRecordsProfileSubsidiaries={entityUniverseProfileSubsidiaries}
+                    allowedTabs={["ex21", "manual_subsidiaries"]}
+                    initialTab="ex21"
                   />
                 </div>
               ) : null}
-              {activeCategory !== "entity_sos" ? (
+              {activeCategory === "ucc_secured_debt" ? (
+                <div className="mb-6">
+                  <EntityUniverseAffiliateDiscoveryPage
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
+                    publicRecordsProfileSubsidiaries={entityUniverseProfileSubsidiaries}
+                    allowedTabs={["ucc"]}
+                    initialTab="ucc"
+                    cacheBootstrapAcrossTabs
+                  />
+                </div>
+              ) : null}
+              {activeCategory === "tax_liens_releases" ? (
+                <div className="mb-6">
+                  <EntityUniverseAffiliateDiscoveryPage
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
+                    publicRecordsProfileSubsidiaries={entityUniverseProfileSubsidiaries}
+                    allowedTabs={["tax_liens"]}
+                    initialTab="tax_liens"
+                    cacheBootstrapAcrossTabs
+                  />
+                </div>
+              ) : null}
+              {activeCategory === "environmental_compliance" ? (
+                <div className="mb-6">
+                  <EnvironmentalComplianceDiscoveryPanel
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
+                  />
+                </div>
+              ) : null}
+              {activeCategory !== "entity_sos" &&
+              activeCategory !== "ucc_secured_debt" &&
+              activeCategory !== "tax_liens_releases" &&
+              activeCategory !== "environmental_compliance" ? (
                 <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
                   {PUBLIC_RECORD_CATEGORY_DESCRIPTIONS[activeCategory]}
                 </p>
@@ -1086,7 +1071,10 @@ export function PublicRecordsTab({
                   {catDisclaimer}
                 </p>
               ) : null}
-              {activeCategory !== "entity_sos" ? (
+              {activeCategory !== "entity_sos" &&
+              activeCategory !== "ucc_secured_debt" &&
+              activeCategory !== "tax_liens_releases" &&
+              activeCategory !== "environmental_compliance" ? (
                 <>
                   <h5 className="mb-2 mt-4 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
                     Recommended sources

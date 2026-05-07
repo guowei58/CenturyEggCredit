@@ -22,6 +22,8 @@ export default {
 
       if (path.startsWith("/api/auth")) return true;
       if (path === "/api/register") return true;
+      // Public marketing cover page at root.
+      if (path === "/") return true;
 
       const isPublicAuthPage =
         path.startsWith("/login") ||

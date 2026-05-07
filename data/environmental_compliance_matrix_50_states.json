@@ -1,0 +1,952 @@
+{
+  "AL": {
+    "stateName": "Alabama",
+    "primaryUrl": "https://adem.alabama.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Alabama environmental department — permits, inspections, violations, spills.",
+        "url": "https://adem.alabama.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "AK": {
+    "stateName": "Alaska",
+    "primaryUrl": "https://dec.alaska.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Alaska environmental department — permits, inspections, violations, spills.",
+        "url": "https://dec.alaska.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "AZ": {
+    "stateName": "Arizona",
+    "primaryUrl": "https://azdeq.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Arizona environmental department — permits, inspections, violations, spills.",
+        "url": "https://azdeq.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "AR": {
+    "stateName": "Arkansas",
+    "primaryUrl": "https://www.adeq.state.ar.us/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Arkansas environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.adeq.state.ar.us/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "CA": {
+    "stateName": "California",
+    "primaryUrl": "https://calepa.ca.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official California environmental department — permits, inspections, violations, spills.",
+        "url": "https://calepa.ca.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "CO": {
+    "stateName": "Colorado",
+    "primaryUrl": "https://cdphe.colorado.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Colorado environmental department — permits, inspections, violations, spills.",
+        "url": "https://cdphe.colorado.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "CT": {
+    "stateName": "Connecticut",
+    "primaryUrl": "https://portal.ct.gov/DEEP",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Connecticut environmental department — permits, inspections, violations, spills.",
+        "url": "https://portal.ct.gov/DEEP"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "DE": {
+    "stateName": "Delaware",
+    "primaryUrl": "https://dnrec.alpha.delaware.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Delaware environmental department — permits, inspections, violations, spills.",
+        "url": "https://dnrec.alpha.delaware.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "FL": {
+    "stateName": "Florida",
+    "primaryUrl": "https://floridadep.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Florida environmental department — permits, inspections, violations, spills.",
+        "url": "https://floridadep.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "GA": {
+    "stateName": "Georgia",
+    "primaryUrl": "https://epd.georgia.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Georgia environmental department — permits, inspections, violations, spills.",
+        "url": "https://epd.georgia.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "HI": {
+    "stateName": "Hawaii",
+    "primaryUrl": "https://health.hawaii.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Hawaii environmental department — permits, inspections, violations, spills.",
+        "url": "https://health.hawaii.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "ID": {
+    "stateName": "Idaho",
+    "primaryUrl": "https://www.deq.idaho.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Idaho environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.deq.idaho.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "IL": {
+    "stateName": "Illinois",
+    "primaryUrl": "https://epa.illinois.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Illinois environmental department — permits, inspections, violations, spills.",
+        "url": "https://epa.illinois.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "IN": {
+    "stateName": "Indiana",
+    "primaryUrl": "https://www.in.gov/idem/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Indiana environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.in.gov/idem/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "IA": {
+    "stateName": "Iowa",
+    "primaryUrl": "https://www.iowadnr.gov/Environmental-Protection",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Iowa environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.iowadnr.gov/Environmental-Protection"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "KS": {
+    "stateName": "Kansas",
+    "primaryUrl": "https://www.kdhe.ks.gov/145/Division-of-Environment",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Kansas environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.kdhe.ks.gov/145/Division-of-Environment"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "KY": {
+    "stateName": "Kentucky",
+    "primaryUrl": "https://eec.ky.gov/Environmental-Protection/Pages/default.aspx",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Kentucky environmental department — permits, inspections, violations, spills.",
+        "url": "https://eec.ky.gov/Environmental-Protection/Pages/default.aspx"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "LA": {
+    "stateName": "Louisiana",
+    "primaryUrl": "https://deq.louisiana.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Louisiana environmental department — permits, inspections, violations, spills.",
+        "url": "https://deq.louisiana.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "ME": {
+    "stateName": "Maine",
+    "primaryUrl": "https://www.maine.gov/dep/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Maine environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.maine.gov/dep/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MD": {
+    "stateName": "Maryland",
+    "primaryUrl": "https://mde.maryland.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Maryland environmental department — permits, inspections, violations, spills.",
+        "url": "https://mde.maryland.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MA": {
+    "stateName": "Massachusetts",
+    "primaryUrl": "https://www.mass.gov/orgs/massachusetts-department-of-environmental-protection",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Massachusetts environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.mass.gov/orgs/massachusetts-department-of-environmental-protection"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MI": {
+    "stateName": "Michigan",
+    "primaryUrl": "https://www.michigan.gov/egle",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Michigan environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.michigan.gov/egle"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MN": {
+    "stateName": "Minnesota",
+    "primaryUrl": "https://www.pca.state.mn.us/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Minnesota environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.pca.state.mn.us/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MS": {
+    "stateName": "Mississippi",
+    "primaryUrl": "https://www.mdeq.ms.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Mississippi environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.mdeq.ms.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MO": {
+    "stateName": "Missouri",
+    "primaryUrl": "https://dnr.mo.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Missouri environmental department — permits, inspections, violations, spills.",
+        "url": "https://dnr.mo.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "MT": {
+    "stateName": "Montana",
+    "primaryUrl": "https://deq.mt.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Montana environmental department — permits, inspections, violations, spills.",
+        "url": "https://deq.mt.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NE": {
+    "stateName": "Nebraska",
+    "primaryUrl": "https://dee.nebraska.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Nebraska environmental department — permits, inspections, violations, spills.",
+        "url": "https://dee.nebraska.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NV": {
+    "stateName": "Nevada",
+    "primaryUrl": "https://ndep.nv.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Nevada environmental department — permits, inspections, violations, spills.",
+        "url": "https://ndep.nv.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NH": {
+    "stateName": "New Hampshire",
+    "primaryUrl": "https://www.des.nh.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official New Hampshire environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.des.nh.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NJ": {
+    "stateName": "New Jersey",
+    "primaryUrl": "https://dep.nj.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official New Jersey environmental department — permits, inspections, violations, spills.",
+        "url": "https://dep.nj.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NM": {
+    "stateName": "New Mexico",
+    "primaryUrl": "https://www.env.nm.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official New Mexico environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.env.nm.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NY": {
+    "stateName": "New York",
+    "primaryUrl": "https://dec.ny.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official New York environmental department — permits, inspections, violations, spills.",
+        "url": "https://dec.ny.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "NC": {
+    "stateName": "North Carolina",
+    "primaryUrl": "https://www.deq.nc.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official North Carolina environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.deq.nc.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "ND": {
+    "stateName": "North Dakota",
+    "primaryUrl": "https://deq.nd.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official North Dakota environmental department — permits, inspections, violations, spills.",
+        "url": "https://deq.nd.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "OH": {
+    "stateName": "Ohio",
+    "primaryUrl": "https://epa.ohio.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Ohio environmental department — permits, inspections, violations, spills.",
+        "url": "https://epa.ohio.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "OK": {
+    "stateName": "Oklahoma",
+    "primaryUrl": "https://www.deq.ok.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Oklahoma environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.deq.ok.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "OR": {
+    "stateName": "Oregon",
+    "primaryUrl": "https://www.oregon.gov/deq/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Oregon environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.oregon.gov/deq/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "PA": {
+    "stateName": "Pennsylvania",
+    "primaryUrl": "https://www.dep.pa.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Pennsylvania environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.dep.pa.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "RI": {
+    "stateName": "Rhode Island",
+    "primaryUrl": "https://dem.ri.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Rhode Island environmental department — permits, inspections, violations, spills.",
+        "url": "https://dem.ri.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "SC": {
+    "stateName": "South Carolina",
+    "primaryUrl": "https://scdhec.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official South Carolina environmental department — permits, inspections, violations, spills.",
+        "url": "https://scdhec.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "SD": {
+    "stateName": "South Dakota",
+    "primaryUrl": "https://danr.sd.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official South Dakota environmental department — permits, inspections, violations, spills.",
+        "url": "https://danr.sd.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "TN": {
+    "stateName": "Tennessee",
+    "primaryUrl": "https://www.tn.gov/environment.html",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Tennessee environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.tn.gov/environment.html"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "TX": {
+    "stateName": "Texas",
+    "primaryUrl": "https://www.tceq.texas.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Texas environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.tceq.texas.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "UT": {
+    "stateName": "Utah",
+    "primaryUrl": "https://deq.utah.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Utah environmental department — permits, inspections, violations, spills.",
+        "url": "https://deq.utah.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "VT": {
+    "stateName": "Vermont",
+    "primaryUrl": "https://dec.vermont.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Vermont environmental department — permits, inspections, violations, spills.",
+        "url": "https://dec.vermont.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "VA": {
+    "stateName": "Virginia",
+    "primaryUrl": "https://www.deq.virginia.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Virginia environmental department — permits, inspections, violations, spills.",
+        "url": "https://www.deq.virginia.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "WA": {
+    "stateName": "Washington",
+    "primaryUrl": "https://ecology.wa.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Washington environmental department — permits, inspections, violations, spills.",
+        "url": "https://ecology.wa.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "WV": {
+    "stateName": "West Virginia",
+    "primaryUrl": "https://dep.wv.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official West Virginia environmental department — permits, inspections, violations, spills.",
+        "url": "https://dep.wv.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "WI": {
+    "stateName": "Wisconsin",
+    "primaryUrl": "https://dnr.wisconsin.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Wisconsin environmental department — permits, inspections, violations, spills.",
+        "url": "https://dnr.wisconsin.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  },
+  "WY": {
+    "stateName": "Wyoming",
+    "primaryUrl": "https://deq.wyoming.gov/",
+    "secondaryUrl": "https://echo.epa.gov/tools/data-downloads",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State environmental agency",
+        "hint": "Official Wyoming environmental department — permits, inspections, violations, spills.",
+        "url": "https://deq.wyoming.gov/"
+      },
+      {
+        "step": 2,
+        "label": "EPA ECHO (national)",
+        "hint": "Federal Enforcement & Compliance History Online — cross-check facilities and enforcement.",
+        "url": "https://echo.epa.gov/tools/data-downloads"
+      }
+    ]
+  }
+}

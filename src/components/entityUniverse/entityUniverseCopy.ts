@@ -5,13 +5,10 @@ export const ENTITY_UNIVERSE_EXHIBIT21_NOTE =
   "Companies may omit certain subsidiaries from Exhibit 21 depending on materiality and disclosure rules. An entity not listed in Exhibit 21 is not automatically problematic.";
 
 export const ENTITY_UNIVERSE_UCC_NOTE =
-  "UCC debtor searches can reveal financing vehicles, receivables entities, leasing entities, collateral owners, and other entities that may be important to credit analysis.";
+  "UCC debtor searches can reveal financing vehicles, receivables SPVs, leasing entities, collateral owners, and other entities relevant to secured financing. This workflow queues debtor-name variants and jurisdiction plans; official portals are often manual-only (CAPTCHA / login / paid access). Results stay investigative—not legal conclusions.";
 
 export const ENTITY_UNIVERSE_SOS_NOTE =
   "Name-family searches are useful for discovering possible related entities, but name similarity alone is weak evidence. Combine name evidence with credit documents, UCC filings, addresses, officers, or other official records.";
 
 export const ENTITY_UNIVERSE_ADDRESS_NOTE =
   "Shared addresses are leads, not conclusions. A shared HQ, principal office, property, permit, or credit-document notice address may indicate a related entity, but user review is required.";
-
-export const ENTITY_UNIVERSE_ETHICS_NOTE =
-  "Do not scrape paywalled systems, bypass CAPTCHAs or logins, or use this workflow to violate applicable website terms. Treat registered-agent matches involving common commercial agents as weak leads unless corroborated.";

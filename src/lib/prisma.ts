@@ -74,7 +74,9 @@ function getPrisma(): PrismaClient {
     typeof existing.conversationMember?.findMany === "function" &&
     typeof existing.eggHocMessage?.findMany === "function" &&
     typeof existing.userDailyNewsBatch?.upsert === "function" &&
-    typeof existing.publicRecordsProfile?.findUnique === "function"
+    typeof existing.publicRecordsProfile?.findUnique === "function" &&
+    typeof existing.openCorporatesSubsidiaryAddressResult?.upsert === "function" &&
+    typeof existing.openCorporatesApiCacheEntry?.upsert === "function"
   ) {
     return existing;
   }

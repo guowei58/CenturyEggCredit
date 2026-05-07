@@ -121,31 +121,10 @@ const CATEGORY_HINTS: Record<PublicRecordCategory, string[]> = {
     "Sales Tax Lien",
     "Payroll Tax Lien",
   ],
-  real_estate_recorder: [
-    "Deed",
-    "Mortgage",
-    "Deed of Trust",
-    "Assignment",
-    "Release",
-    "Easement",
-    "Mechanic's Lien",
-    "Judgment Lien",
-    "Restriction",
-    "Covenant",
-    "Plat",
-    "Memorandum of Lease",
-  ],
-  property_tax_assessor: ["delinquent", "tax account", "geo id", "parcel", "ownership"],
-  permits_zoning_co: [
-    "Building Permit",
-    "Certificate of Occupancy",
-    "Demolition Permit",
-    "Site Plan",
-    "Zoning",
-    "Variance",
-    "Code Violation",
-    "Stop Work Order",
-  ],
+  // Hidden categories: retained only because the Prisma enum includes them.
+  real_estate_recorder: [],
+  property_tax_assessor: [],
+  permits_zoning_co: [],
   environmental_compliance: [
     "Notice of Violation",
     "Enforcement",
@@ -179,17 +158,10 @@ const CATEGORY_HINTS: Record<PublicRecordCategory, string[]> = {
     "Consent Order",
     "Revocation",
   ],
-  economic_incentives: [
-    "Tax Abatement",
-    "PILOT",
-    "TIF",
-    "Development Agreement",
-    "Incentive Agreement",
-    "Job Creation Grant",
-    "Clawback",
-  ],
   procurement_contracts: ["Contract", "Award", "RFP", "Bid", "Purchase Order", "Vendor Payment", "Termination"],
-  gis_facility_mapping: ["parcel map", "zoning layer", "floodplain", "easement", "environmental overlay", "footprint"],
+  // Hidden categories: retained only because the Prisma enum includes them.
+  economic_incentives: [],
+  gis_facility_mapping: [],
   other: [],
 };
 
@@ -203,7 +175,7 @@ export function generatePublicRecordsSearchTerms(input: SearchTermProfileInput):
     categoryTerms[cat] = dedupeOrdered([
       ...entityNameVariants,
       ...addresses,
-      ...(cat === "gis_facility_mapping" || cat === "property_tax_assessor" ? parcels : []),
+      // (Hidden category) Keep schema compatible but do not expand parcels into a hidden category.
       ...CATEGORY_HINTS[cat],
     ]);
   });

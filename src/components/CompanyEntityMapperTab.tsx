@@ -342,15 +342,6 @@ export function CompanyEntityMapperTab({ ticker, companyName }: { ticker: string
                     : "Running pipeline…"
                   : "Run Entity Mapper"}
               </button>
-              <button
-                type="button"
-                onClick={() => void load()}
-                disabled={running || loading || !prefsReady}
-                className="rounded border px-3 py-2 text-xs font-medium disabled:opacity-50"
-                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-              >
-                Refresh
-              </button>
               {lastSavedDocs ? (
                 <span className="text-[11px]" style={{ color: "var(--muted)" }}>
                   SEC exhibits saved: {lastSavedDocs.saved}

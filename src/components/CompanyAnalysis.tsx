@@ -119,15 +119,15 @@ export function CompanyAnalysis({
   }, [ticker]);
 
   useEffect(() => {
-    if (activeTab === "edgartools-sec") {
+    if (activeTab === "edgartools-sec" || activeTab === "state-local-public-records") {
       onTabChange("sec-filings");
     }
   }, [activeTab, onTabChange]);
 
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
-  /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
+  /** Removed-from-nav tab ids: map stale URLs to SEC Filings without a one-frame flash. */
   const resolvedTab =
-    activeTab === "edgartools-sec"
+    activeTab === "edgartools-sec" || activeTab === "state-local-public-records"
       ? "sec-filings"
       : activeTab === "20-year-look-back"
         ? "sec-xbrl-financials"
@@ -135,6 +135,7 @@ export function CompanyAnalysis({
 
   const navDef = companyNav[topSection];
   const groups = navDef?.groups ?? [];
+  const savedDocsActive = resolvedTab === "saved-documents";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -165,11 +166,34 @@ export function CompanyAnalysis({
                 </button>
               ))}
             </div>
-            <DownloadAllUserDataButton />
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onTopSectionChange("documents");
+                  onTabChange("saved-documents");
+                }}
+                className="btn-shell hi inline-flex shrink-0 items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold shadow-md transition-[box-shadow,opacity] hover:shadow-lg"
+                style={{
+                  color: savedDocsActive ? "var(--accent-fg)" : "var(--text)",
+                  borderColor: savedDocsActive ? "var(--accent)" : "var(--border2)",
+                  background: savedDocsActive
+                    ? "var(--accent)"
+                    : "color-mix(in srgb, var(--card2) 65%, var(--card))",
+                  boxShadow: savedDocsActive
+                    ? "0 1px 0 color-mix(in srgb, var(--accent) 55%, transparent)"
+                    : "0 1px 0 color-mix(in srgb, var(--border2) 60%, transparent)",
+                }}
+                title="Open Saved Documents for this ticker"
+              >
+                Saved Documents
+              </button>
+              <DownloadAllUserDataButton />
+            </div>
           </nav>
 
           {/* Level 2: sub-tabs for the active top-level section only (secondary) */}
-          {groups.length > 0 && (
+          {groups.length > 0 && !savedDocsActive && (
             <div className="nav-secondary flex flex-shrink-0 w-full flex-col">
               {groups.map((group, gi) => {
                 const tabs = (group.tabs ?? []).map((label) => ({ id: tabLabelToId(label), label }));
@@ -309,9 +333,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "patent-ip-filings") {
     return <CompanyTrademarkIpTab ticker={ticker} companyName={companyName} />;
-  }
-  if (tabId === "state-local-public-records") {
-    return <PublicRecordsTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "subsidiary-list") {
     return <CompanySubsidiaryListTab ticker={ticker ?? ""} />;
