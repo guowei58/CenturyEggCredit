@@ -38,6 +38,13 @@ export default function AppShellClient() {
     setCompanyTab(getFirstTabIdForTopSection("financials"));
   }, [companyTopSection]);
 
+  /** Risk section is hidden from the section bar; bounce stale state to Overview. */
+  useEffect(() => {
+    if (companyTopSection !== "risk") return;
+    setCompanyTopSection("overview");
+    setCompanyTab(getFirstTabIdForTopSection("overview"));
+  }, [companyTopSection]);
+
   /** Reddit tab removed; bounce saved or bookmarked state. */
   useEffect(() => {
     if (companyTab !== "reddit") return;

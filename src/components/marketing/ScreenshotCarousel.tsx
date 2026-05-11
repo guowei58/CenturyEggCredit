@@ -4,7 +4,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Shot = { src: string; alt: string };
 
-export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
+export function ScreenshotCarousel({
+  shots,
+  compact = false,
+  showCaptions = true,
+  showDots = true,
+}: {
+  shots: Shot[];
+  compact?: boolean;
+  showCaptions?: boolean;
+  showDots?: boolean;
+}) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(0);
   const [modalIdx, setModalIdx] = useState<number | null>(null);
@@ -50,7 +60,10 @@ export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
   const modalHasNext = modalIdx != null && modalIdx < safeShots.length - 1;
 
   return (
-    <div className="rounded-2xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+    <div
+      className={compact ? "rounded-2xl border p-2" : "rounded-2xl border p-3 sm:p-4"}
+      style={{ borderColor: "var(--border)", background: "var(--card)" }}
+    >
       <div className="relative">
         <div
           ref={scrollerRef}
@@ -58,7 +71,7 @@ export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {safeShots.map((s, idx) => (
-            <div key={s.src} className="w-full shrink-0 snap-start px-1">
+            <div key={s.src} className={compact ? "w-full shrink-0 snap-start" : "w-full shrink-0 snap-start px-1"}>
               <button
                 type="button"
                 className="w-full overflow-hidden rounded-xl border text-left"
@@ -76,16 +89,18 @@ export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
                     decoding="async"
                     className="block h-auto max-w-full cursor-zoom-in"
                     style={{
-                      maxHeight: "70vh",
-                      width: "auto",
+                      maxHeight: compact ? "none" : "70vh",
+                      width: compact ? "100%" : "auto",
                       objectFit: "contain",
                     }}
                   />
                 </div>
               </button>
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[12px]" style={{ color: "var(--muted)" }}>
-                <span>{s.alt}</span>
-              </div>
+              {showCaptions ? (
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[12px]" style={{ color: "var(--muted)" }}>
+                  <span>{s.alt}</span>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
@@ -96,7 +111,7 @@ export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
               type="button"
               onClick={() => scrollToIndex(active - 1)}
               disabled={active <= 0}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-md border px-2 py-1 text-xs font-semibold disabled:opacity-40"
+              className={`absolute left-2 top-1/2 -translate-y-1/2 rounded-md border font-semibold disabled:opacity-40 ${compact ? "px-2 py-1 text-[11px]" : "px-2 py-1 text-xs"}`}
               style={{
                 borderColor: "var(--border2)",
                 background: "color-mix(in srgb, var(--card2) 70%, var(--card))",
@@ -110,7 +125,7 @@ export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
               type="button"
               onClick={() => scrollToIndex(active + 1)}
               disabled={active >= safeShots.length - 1}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md border px-2 py-1 text-xs font-semibold disabled:opacity-40"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-md border font-semibold disabled:opacity-40 ${compact ? "px-2 py-1 text-[11px]" : "px-2 py-1 text-xs"}`}
               style={{
                 borderColor: "var(--border2)",
                 background: "color-mix(in srgb, var(--card2) 70%, var(--card))",
@@ -124,8 +139,8 @@ export function ScreenshotCarousel({ shots }: { shots: Shot[] }) {
         ) : null}
       </div>
 
-      {safeShots.length > 1 ? (
-        <div className="mt-3 flex items-center justify-center gap-2">
+      {safeShots.length > 1 && showDots ? (
+        <div className={compact ? "mt-2 flex items-center justify-center gap-2" : "mt-3 flex items-center justify-center gap-2"}>
           {safeShots.map((_, i) => (
             <button
               key={i}

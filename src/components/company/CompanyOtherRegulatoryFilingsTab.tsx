@@ -73,13 +73,6 @@ function fallbackWhatsInside(source: RegulatorySourceRegistryEntry): string[] {
   ];
 }
 
-function fallbackHowToAccess(source: RegulatorySourceRegistryEntry): string[] {
-  const out = [`Open ${source.display_name} and search by company legal name, affiliate name, identifier, or relevant keyword.`];
-  if (source.supports_state_filter) out.push("Use state filters when available to reduce false positives.");
-  if (source.supports_date_filter) out.push("Use date filters when available to focus on recent filings or records.");
-  return out;
-}
-
 export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { ticker: string; companyName?: string }) {
   const safeTicker = ticker?.trim() ?? "";
   const sources = useMemo(
@@ -122,7 +115,6 @@ export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { tick
   const guide = activeSource ? accessGuideForSource(activeSource.source_id) : null;
   const accessRequirements = guide?.accessRequirements?.length ? guide.accessRequirements : activeSource ? fallbackAccessRequirements(activeSource) : [];
   const whatsInside = guide?.whatsInside?.length ? guide.whatsInside : activeSource ? fallbackWhatsInside(activeSource) : [];
-  const howToAccess = guide?.howToAccess?.length ? guide.howToAccess : activeSource ? fallbackHowToAccess(activeSource) : [];
   const searchSeed = (companyName ?? "").trim() || safeTicker;
 
   return (
@@ -227,22 +219,11 @@ export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { tick
           </div>
         </div>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="mt-5">
           <div className="rounded-lg border p-4" style={{ borderColor: "var(--border2)", background: "var(--card)" }}>
             {sectionTitle("Type of data available")}
             <ul className="space-y-2 text-sm leading-relaxed" style={{ color: "var(--text)" }}>
               {whatsInside.map((item, index) => (
-                <li key={index} className="flex gap-2">
-                  <span style={{ color: "var(--muted2)" }}>•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-lg border p-4" style={{ borderColor: "var(--border2)", background: "var(--card)" }}>
-            {sectionTitle("How users should access it")}
-            <ul className="space-y-2 text-sm leading-relaxed" style={{ color: "var(--text)" }}>
-              {howToAccess.map((item, index) => (
                 <li key={index} className="flex gap-2">
                   <span style={{ color: "var(--muted2)" }}>•</span>
                   <span>{item}</span>

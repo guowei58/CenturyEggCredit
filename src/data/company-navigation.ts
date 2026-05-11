@@ -18,7 +18,6 @@ export const companyTopSections: Array<{ id: CompanyTopSectionId; label: string 
   { id: "financials", label: "Financials" },
   { id: "capital-structure", label: "Capital Structure" },
   { id: "documents", label: "Regulatory Documents" },
-  { id: "risk", label: "Risk" },
   { id: "research", label: "Research" },
   { id: "work-product", label: "Work Product" },
 ];
