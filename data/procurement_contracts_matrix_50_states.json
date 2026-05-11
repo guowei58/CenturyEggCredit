@@ -1,0 +1,952 @@
+{
+  "AL": {
+    "stateName": "Alabama",
+    "primaryUrl": "https://purchasing.alabama.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Alabama solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://purchasing.alabama.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "AK": {
+    "stateName": "Alaska",
+    "primaryUrl": "https://aws.state.ak.us/OnlinePublicNotices/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Alaska solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://aws.state.ak.us/OnlinePublicNotices/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "AZ": {
+    "stateName": "Arizona",
+    "primaryUrl": "https://app.az.gov/page.aspx/en/rfp/request_browse_public",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Arizona solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://app.az.gov/page.aspx/en/rfp/request_browse_public"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "AR": {
+    "stateName": "Arkansas",
+    "primaryUrl": "https://www.dfa.arkansas.gov/office/procurement/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Arkansas solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.dfa.arkansas.gov/office/procurement/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "CA": {
+    "stateName": "California",
+    "primaryUrl": "https://caleprocure.ca.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search California solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://caleprocure.ca.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "CO": {
+    "stateName": "Colorado",
+    "primaryUrl": "https://www.colorado.gov/vss",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Colorado solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.colorado.gov/vss"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "CT": {
+    "stateName": "Connecticut",
+    "primaryUrl": "https://portal.ct.gov/das/ctsource",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Connecticut solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://portal.ct.gov/das/ctsource"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "DE": {
+    "stateName": "Delaware",
+    "primaryUrl": "https://bids.delaware.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Delaware solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://bids.delaware.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "FL": {
+    "stateName": "Florida",
+    "primaryUrl": "https://www.myflorida.com/apps/vbs/vbs_www.main_menu",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Florida solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.myflorida.com/apps/vbs/vbs_www.main_menu"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "GA": {
+    "stateName": "Georgia",
+    "primaryUrl": "https://ssl.doas.state.ga.us/gpr/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Georgia solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://ssl.doas.state.ga.us/gpr/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "HI": {
+    "stateName": "Hawaii",
+    "primaryUrl": "https://hands.ehawaii.gov/hands/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Hawaii solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://hands.ehawaii.gov/hands/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "ID": {
+    "stateName": "Idaho",
+    "primaryUrl": "https://purchasing.idaho.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Idaho solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://purchasing.idaho.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "IL": {
+    "stateName": "Illinois",
+    "primaryUrl": "https://www.bidbuy.illinois.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Illinois solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.bidbuy.illinois.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "IN": {
+    "stateName": "Indiana",
+    "primaryUrl": "https://www.in.gov/idoa/procurement/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Indiana solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.in.gov/idoa/procurement/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "IA": {
+    "stateName": "Iowa",
+    "primaryUrl": "https://bids.sciquest.com/apps/Router/PublicEvent?CustomerOrg=StateOfIowa",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Iowa solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://bids.sciquest.com/apps/Router/PublicEvent?CustomerOrg=StateOfIowa"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "KS": {
+    "stateName": "Kansas",
+    "primaryUrl": "https://supplier.sok.ks.gov/psc/sokfsprdsup/SUPPLIER/ERP/c/SCP_PUBLIC_MENU_FL.SCP_PUB_BID_CMP_FL.GBL",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Kansas solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://supplier.sok.ks.gov/psc/sokfsprdsup/SUPPLIER/ERP/c/SCP_PUBLIC_MENU_FL.SCP_PUB_BID_CMP_FL.GBL"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "KY": {
+    "stateName": "Kentucky",
+    "primaryUrl": "https://emars311.ky.gov/webapp/vssonline/AltSelfService",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Kentucky solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://emars311.ky.gov/webapp/vssonline/AltSelfService"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "LA": {
+    "stateName": "Louisiana",
+    "primaryUrl": "https://wwwcfprd.doa.louisiana.gov/OSP/LaPAC/pubMain.cfm",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Louisiana solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://wwwcfprd.doa.louisiana.gov/OSP/LaPAC/pubMain.cfm"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "ME": {
+    "stateName": "Maine",
+    "primaryUrl": "https://www.maine.gov/dafs/bbm/procurementservices/vendors/requests-proposals",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Maine solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.maine.gov/dafs/bbm/procurementservices/vendors/requests-proposals"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MD": {
+    "stateName": "Maryland",
+    "primaryUrl": "https://emma.maryland.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Maryland solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://emma.maryland.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MA": {
+    "stateName": "Massachusetts",
+    "primaryUrl": "https://www.commbuys.com/bso/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Massachusetts solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.commbuys.com/bso/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MI": {
+    "stateName": "Michigan",
+    "primaryUrl": "https://sigma.michigan.gov/webapp/PRDVSS2X1/AltSelfService",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Michigan solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://sigma.michigan.gov/webapp/PRDVSS2X1/AltSelfService"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MN": {
+    "stateName": "Minnesota",
+    "primaryUrl": "https://mn.gov/admin/osp/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Minnesota solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://mn.gov/admin/osp/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MS": {
+    "stateName": "Mississippi",
+    "primaryUrl": "https://www.dfa.ms.gov/procurement-contracts/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Mississippi solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.dfa.ms.gov/procurement-contracts/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MO": {
+    "stateName": "Missouri",
+    "primaryUrl": "https://missouribuys.mo.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Missouri solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://missouribuys.mo.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "MT": {
+    "stateName": "Montana",
+    "primaryUrl": "https://spb.mt.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Montana solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://spb.mt.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NE": {
+    "stateName": "Nebraska",
+    "primaryUrl": "https://das.nebraska.gov/materiel/purchasing/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Nebraska solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://das.nebraska.gov/materiel/purchasing/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NV": {
+    "stateName": "Nevada",
+    "primaryUrl": "https://purchasing.nv.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Nevada solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://purchasing.nv.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NH": {
+    "stateName": "New Hampshire",
+    "primaryUrl": "https://apps.das.nh.gov/bidscontracts/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search New Hampshire solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://apps.das.nh.gov/bidscontracts/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NJ": {
+    "stateName": "New Jersey",
+    "primaryUrl": "https://www.njstart.gov/bso/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search New Jersey solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.njstart.gov/bso/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NM": {
+    "stateName": "New Mexico",
+    "primaryUrl": "https://www.generalservices.state.nm.us/state-purchasing/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search New Mexico solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.generalservices.state.nm.us/state-purchasing/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NY": {
+    "stateName": "New York",
+    "primaryUrl": "https://ogs.ny.gov/procurement",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search New York solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://ogs.ny.gov/procurement"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "NC": {
+    "stateName": "North Carolina",
+    "primaryUrl": "https://www.ips.state.nc.us/IPS/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search North Carolina solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.ips.state.nc.us/IPS/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "ND": {
+    "stateName": "North Dakota",
+    "primaryUrl": "https://www.omb.nd.gov/doing-business-state/procurement",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search North Dakota solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.omb.nd.gov/doing-business-state/procurement"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "OH": {
+    "stateName": "Ohio",
+    "primaryUrl": "https://procure.ohio.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Ohio solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://procure.ohio.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "OK": {
+    "stateName": "Oklahoma",
+    "primaryUrl": "https://oklahoma.gov/omes/services/purchasing.html",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Oklahoma solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://oklahoma.gov/omes/services/purchasing.html"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "OR": {
+    "stateName": "Oregon",
+    "primaryUrl": "https://oregonbuys.gov/bso/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Oregon solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://oregonbuys.gov/bso/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "PA": {
+    "stateName": "Pennsylvania",
+    "primaryUrl": "https://www.emarketplace.state.pa.us/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Pennsylvania solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.emarketplace.state.pa.us/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "RI": {
+    "stateName": "Rhode Island",
+    "primaryUrl": "https://ridop.ri.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Rhode Island solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://ridop.ri.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "SC": {
+    "stateName": "South Carolina",
+    "primaryUrl": "https://procurement.sc.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search South Carolina solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://procurement.sc.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "SD": {
+    "stateName": "South Dakota",
+    "primaryUrl": "https://boa.sd.gov/central-services/procurement-management/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search South Dakota solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://boa.sd.gov/central-services/procurement-management/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "TN": {
+    "stateName": "Tennessee",
+    "primaryUrl": "https://www.tn.gov/generalservices/procurement.html",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Tennessee solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.tn.gov/generalservices/procurement.html"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "TX": {
+    "stateName": "Texas",
+    "primaryUrl": "https://www.txsmartbuy.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Texas solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://www.txsmartbuy.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "UT": {
+    "stateName": "Utah",
+    "primaryUrl": "https://purchasing.utah.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Utah solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://purchasing.utah.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "VT": {
+    "stateName": "Vermont",
+    "primaryUrl": "https://bgs.vermont.gov/purchasing-contracting",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Vermont solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://bgs.vermont.gov/purchasing-contracting"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "VA": {
+    "stateName": "Virginia",
+    "primaryUrl": "https://eva.virginia.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Virginia solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://eva.virginia.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "WA": {
+    "stateName": "Washington",
+    "primaryUrl": "https://pr-webs-vendor.des.wa.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Washington solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://pr-webs-vendor.des.wa.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "WV": {
+    "stateName": "West Virginia",
+    "primaryUrl": "https://wvvendor.selfservice.wv.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search West Virginia solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://wvvendor.selfservice.wv.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "WI": {
+    "stateName": "Wisconsin",
+    "primaryUrl": "https://esupplier.wi.gov/",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Wisconsin solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://esupplier.wi.gov/"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  },
+  "WY": {
+    "stateName": "Wyoming",
+    "primaryUrl": "https://ai.wyo.gov/divisions/procurement",
+    "secondaryUrl": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State procurement / bids portal",
+        "hint": "Search Wyoming solicitations, RFPs, awards, vendor registrations, and contract notices where available.",
+        "url": "https://ai.wyo.gov/divisions/procurement"
+      },
+      {
+        "step": 2,
+        "label": "NASPO procurement directory",
+        "hint": "Directory of state procurement sites and resources.",
+        "url": "https://www.naspo.org/research-and-innovation/rosp-category/procurement-website/"
+      }
+    ]
+  }
+}

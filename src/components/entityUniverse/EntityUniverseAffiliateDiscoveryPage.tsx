@@ -278,7 +278,7 @@ export function EntityUniverseAffiliateDiscoveryPage({
 
       <Card className="space-y-2 p-3">
         {!showTabStrip && (showUccTaxRefresh || busy) ? (
-          <div className="mb-2 flex flex-wrap items-center justify-end gap-2 border-b border-[var(--border)]/50 pb-2">
+          <div className="mb-2 flex flex-wrap items-center justify-end gap-2">
             {showUccTaxRefresh ? (
               <button
                 type="button"

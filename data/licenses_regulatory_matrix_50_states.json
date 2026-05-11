@@ -1,0 +1,952 @@
+{
+  "AL": {
+    "stateName": "Alabama",
+    "primaryUrl": "https://inform.alabama.gov/agencysearch.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Alabama professional / business license registries and regulatory actions where available.",
+        "url": "https://inform.alabama.gov/agencysearch.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "AK": {
+    "stateName": "Alaska",
+    "primaryUrl": "https://www.commerce.alaska.gov/cbp/main/search/professional",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Alaska professional / business license registries and regulatory actions where available.",
+        "url": "https://www.commerce.alaska.gov/cbp/main/search/professional"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "AZ": {
+    "stateName": "Arizona",
+    "primaryUrl": "https://elicense.az.gov/ARDC_LicenseSearch",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Arizona professional / business license registries and regulatory actions where available.",
+        "url": "https://elicense.az.gov/ARDC_LicenseSearch"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "AR": {
+    "stateName": "Arkansas",
+    "primaryUrl": "https://www.arkansas.gov/agency/department-of-labor-and-licensing/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Arkansas professional / business license registries and regulatory actions where available.",
+        "url": "https://www.arkansas.gov/agency/department-of-labor-and-licensing/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "CA": {
+    "stateName": "California",
+    "primaryUrl": "https://search.dca.ca.gov/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search California professional / business license registries and regulatory actions where available.",
+        "url": "https://search.dca.ca.gov/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "CO": {
+    "stateName": "Colorado",
+    "primaryUrl": "https://apps.colorado.gov/dora/licensing/Default.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Colorado professional / business license registries and regulatory actions where available.",
+        "url": "https://apps.colorado.gov/dora/licensing/Default.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "CT": {
+    "stateName": "Connecticut",
+    "primaryUrl": "https://www.elicense.ct.gov/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Connecticut professional / business license registries and regulatory actions where available.",
+        "url": "https://www.elicense.ct.gov/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "DE": {
+    "stateName": "Delaware",
+    "primaryUrl": "https://delpros.delaware.gov/OH_VerifyLicense",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Delaware professional / business license registries and regulatory actions where available.",
+        "url": "https://delpros.delaware.gov/OH_VerifyLicense"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "FL": {
+    "stateName": "Florida",
+    "primaryUrl": "https://www.myfloridalicense.com/wl11.asp",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Florida professional / business license registries and regulatory actions where available.",
+        "url": "https://www.myfloridalicense.com/wl11.asp"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "GA": {
+    "stateName": "Georgia",
+    "primaryUrl": "https://verify.sos.ga.gov/verification/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Georgia professional / business license registries and regulatory actions where available.",
+        "url": "https://verify.sos.ga.gov/verification/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "HI": {
+    "stateName": "Hawaii",
+    "primaryUrl": "https://pvl.ehawaii.gov/pvlsearch/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Hawaii professional / business license registries and regulatory actions where available.",
+        "url": "https://pvl.ehawaii.gov/pvlsearch/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "ID": {
+    "stateName": "Idaho",
+    "primaryUrl": "https://elitepublic.ibol.idaho.gov/IBOLPortal/Public/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Idaho professional / business license registries and regulatory actions where available.",
+        "url": "https://elitepublic.ibol.idaho.gov/IBOLPortal/Public/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "IL": {
+    "stateName": "Illinois",
+    "primaryUrl": "https://online-dfpr.micropact.com/lookup/licenselookup.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Illinois professional / business license registries and regulatory actions where available.",
+        "url": "https://online-dfpr.micropact.com/lookup/licenselookup.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "IN": {
+    "stateName": "Indiana",
+    "primaryUrl": "https://mylicense.in.gov/everification/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Indiana professional / business license registries and regulatory actions where available.",
+        "url": "https://mylicense.in.gov/everification/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "IA": {
+    "stateName": "Iowa",
+    "primaryUrl": "https://licenses.iowa.gov/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Iowa professional / business license registries and regulatory actions where available.",
+        "url": "https://licenses.iowa.gov/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "KS": {
+    "stateName": "Kansas",
+    "primaryUrl": "https://licensing.ks.gov/Verification_KBTP/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Kansas professional / business license registries and regulatory actions where available.",
+        "url": "https://licensing.ks.gov/Verification_KBTP/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "KY": {
+    "stateName": "Kentucky",
+    "primaryUrl": "https://oop.ky.gov/DPLServices/LicenseLookup",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Kentucky professional / business license registries and regulatory actions where available.",
+        "url": "https://oop.ky.gov/DPLServices/LicenseLookup"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "LA": {
+    "stateName": "Louisiana",
+    "primaryUrl": "https://www.louisiana.gov/licenses/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Louisiana professional / business license registries and regulatory actions where available.",
+        "url": "https://www.louisiana.gov/licenses/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "ME": {
+    "stateName": "Maine",
+    "primaryUrl": "https://www.pfr.maine.gov/almsonline/almsquery/welcome.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Maine professional / business license registries and regulatory actions where available.",
+        "url": "https://www.pfr.maine.gov/almsonline/almsquery/welcome.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MD": {
+    "stateName": "Maryland",
+    "primaryUrl": "https://www.dllr.state.md.us/cgi-bin/ElectronicLicensing/OP_search/OP_search.cgi",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Maryland professional / business license registries and regulatory actions where available.",
+        "url": "https://www.dllr.state.md.us/cgi-bin/ElectronicLicensing/OP_search/OP_search.cgi"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MA": {
+    "stateName": "Massachusetts",
+    "primaryUrl": "https://www.mass.gov/how-to/check-an-occupational-board-license",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Massachusetts professional / business license registries and regulatory actions where available.",
+        "url": "https://www.mass.gov/how-to/check-an-occupational-board-license"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MI": {
+    "stateName": "Michigan",
+    "primaryUrl": "https://www.michigan.gov/lara/bureau-list/bpl/verify-a-license",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Michigan professional / business license registries and regulatory actions where available.",
+        "url": "https://www.michigan.gov/lara/bureau-list/bpl/verify-a-license"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MN": {
+    "stateName": "Minnesota",
+    "primaryUrl": "https://mn.gov/elicense/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Minnesota professional / business license registries and regulatory actions where available.",
+        "url": "https://mn.gov/elicense/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MS": {
+    "stateName": "Mississippi",
+    "primaryUrl": "https://www.ms.gov/Home/License",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Mississippi professional / business license registries and regulatory actions where available.",
+        "url": "https://www.ms.gov/Home/License"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MO": {
+    "stateName": "Missouri",
+    "primaryUrl": "https://pr.mo.gov/licensee-search.asp",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Missouri professional / business license registries and regulatory actions where available.",
+        "url": "https://pr.mo.gov/licensee-search.asp"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "MT": {
+    "stateName": "Montana",
+    "primaryUrl": "https://ebiz.mt.gov/pol/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Montana professional / business license registries and regulatory actions where available.",
+        "url": "https://ebiz.mt.gov/pol/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NE": {
+    "stateName": "Nebraska",
+    "primaryUrl": "https://www.nebraska.gov/LISSearch/search.cgi",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Nebraska professional / business license registries and regulatory actions where available.",
+        "url": "https://www.nebraska.gov/LISSearch/search.cgi"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NV": {
+    "stateName": "Nevada",
+    "primaryUrl": "https://nvbusiness.nv.gov/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Nevada professional / business license registries and regulatory actions where available.",
+        "url": "https://nvbusiness.nv.gov/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NH": {
+    "stateName": "New Hampshire",
+    "primaryUrl": "https://forms.nh.gov/licenseverification/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search New Hampshire professional / business license registries and regulatory actions where available.",
+        "url": "https://forms.nh.gov/licenseverification/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NJ": {
+    "stateName": "New Jersey",
+    "primaryUrl": "https://newjersey.mylicense.com/verification/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search New Jersey professional / business license registries and regulatory actions where available.",
+        "url": "https://newjersey.mylicense.com/verification/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NM": {
+    "stateName": "New Mexico",
+    "primaryUrl": "https://nmrldlpi.force.com/bcd/s/public-search",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search New Mexico professional / business license registries and regulatory actions where available.",
+        "url": "https://nmrldlpi.force.com/bcd/s/public-search"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NY": {
+    "stateName": "New York",
+    "primaryUrl": "https://www.op.nysed.gov/verification-search",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search New York professional / business license registries and regulatory actions where available.",
+        "url": "https://www.op.nysed.gov/verification-search"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "NC": {
+    "stateName": "North Carolina",
+    "primaryUrl": "https://www.nc.gov/working/professional-licenses-permits",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search North Carolina professional / business license registries and regulatory actions where available.",
+        "url": "https://www.nc.gov/working/professional-licenses-permits"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "ND": {
+    "stateName": "North Dakota",
+    "primaryUrl": "https://www.nd.gov/licensing/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search North Dakota professional / business license registries and regulatory actions where available.",
+        "url": "https://www.nd.gov/licensing/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "OH": {
+    "stateName": "Ohio",
+    "primaryUrl": "https://elicense.ohio.gov/oh_verifylicense",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Ohio professional / business license registries and regulatory actions where available.",
+        "url": "https://elicense.ohio.gov/oh_verifylicense"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "OK": {
+    "stateName": "Oklahoma",
+    "primaryUrl": "https://licensing.ok.gov/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Oklahoma professional / business license registries and regulatory actions where available.",
+        "url": "https://licensing.ok.gov/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "OR": {
+    "stateName": "Oregon",
+    "primaryUrl": "https://www.oregon.gov/business/pages/licenses.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Oregon professional / business license registries and regulatory actions where available.",
+        "url": "https://www.oregon.gov/business/pages/licenses.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "PA": {
+    "stateName": "Pennsylvania",
+    "primaryUrl": "https://www.pals.pa.gov/#/page/search",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Pennsylvania professional / business license registries and regulatory actions where available.",
+        "url": "https://www.pals.pa.gov/#/page/search"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "RI": {
+    "stateName": "Rhode Island",
+    "primaryUrl": "https://elicensing.ri.gov/Lookup/LicenseLookup.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Rhode Island professional / business license registries and regulatory actions where available.",
+        "url": "https://elicensing.ri.gov/Lookup/LicenseLookup.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "SC": {
+    "stateName": "South Carolina",
+    "primaryUrl": "https://verify.llronline.com/LicLookup/LookupMain.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search South Carolina professional / business license registries and regulatory actions where available.",
+        "url": "https://verify.llronline.com/LicLookup/LookupMain.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "SD": {
+    "stateName": "South Dakota",
+    "primaryUrl": "https://dlr.sd.gov/btp/licensee_lookup.aspx",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search South Dakota professional / business license registries and regulatory actions where available.",
+        "url": "https://dlr.sd.gov/btp/licensee_lookup.aspx"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "TN": {
+    "stateName": "Tennessee",
+    "primaryUrl": "https://verify.tn.gov/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Tennessee professional / business license registries and regulatory actions where available.",
+        "url": "https://verify.tn.gov/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "TX": {
+    "stateName": "Texas",
+    "primaryUrl": "https://www.tdlr.texas.gov/LicenseSearch/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Texas professional / business license registries and regulatory actions where available.",
+        "url": "https://www.tdlr.texas.gov/LicenseSearch/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "UT": {
+    "stateName": "Utah",
+    "primaryUrl": "https://secure.utah.gov/llv/search/index.html",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Utah professional / business license registries and regulatory actions where available.",
+        "url": "https://secure.utah.gov/llv/search/index.html"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "VT": {
+    "stateName": "Vermont",
+    "primaryUrl": "https://sos.vermont.gov/opr/lookup-a-license/",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Vermont professional / business license registries and regulatory actions where available.",
+        "url": "https://sos.vermont.gov/opr/lookup-a-license/"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "VA": {
+    "stateName": "Virginia",
+    "primaryUrl": "https://dhp.virginiainteractive.org/Lookup/Index",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Virginia professional / business license registries and regulatory actions where available.",
+        "url": "https://dhp.virginiainteractive.org/Lookup/Index"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "WA": {
+    "stateName": "Washington",
+    "primaryUrl": "https://professions.dol.wa.gov/s/license-lookup",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Washington professional / business license registries and regulatory actions where available.",
+        "url": "https://professions.dol.wa.gov/s/license-lookup"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "WV": {
+    "stateName": "West Virginia",
+    "primaryUrl": "https://apps.wv.gov/ostw/wvlicensedprofessionals/search",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search West Virginia professional / business license registries and regulatory actions where available.",
+        "url": "https://apps.wv.gov/ostw/wvlicensedprofessionals/search"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "WI": {
+    "stateName": "Wisconsin",
+    "primaryUrl": "https://license.wi.gov/s/license-lookup",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Wisconsin professional / business license registries and regulatory actions where available.",
+        "url": "https://license.wi.gov/s/license-lookup"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  },
+  "WY": {
+    "stateName": "Wyoming",
+    "primaryUrl": "https://sites.google.com/wyo.gov/wyominglicensingboards/home",
+    "secondaryUrl": "https://nc-sara.org/professional-licensure-directory/",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State licensing / regulatory search",
+        "hint": "Search Wyoming professional / business license registries and regulatory actions where available.",
+        "url": "https://sites.google.com/wyo.gov/wyominglicensingboards/home"
+      },
+      {
+        "step": 2,
+        "label": "National licensure directory",
+        "hint": "Directory of state professional licensing resources and links.",
+        "url": "https://nc-sara.org/professional-licensure-directory/"
+      }
+    ]
+  }
+}

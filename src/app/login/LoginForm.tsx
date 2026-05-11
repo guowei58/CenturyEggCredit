@@ -95,10 +95,13 @@ export function LoginForm({
     >
       <div className="flex w-full shrink-0 justify-center pt-8 sm:pt-10">
         <div className="grid max-w-[min(100%,22rem)] grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_auto_auto] gap-x-3 gap-y-1 sm:gap-x-3.5">
-          <div
-            className="col-start-1 row-span-3 row-start-1 grid size-[4.5rem] shrink-0 place-items-center overflow-hidden sm:size-[5rem]"
+          <a
+            href="https://www.centuryeggcredit.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="col-start-1 row-span-3 row-start-1 grid size-[4.5rem] shrink-0 cursor-pointer place-items-center overflow-hidden rounded-md outline-none ring-[var(--accent)] ring-offset-2 ring-offset-[var(--bg)] transition-opacity hover:opacity-95 focus-visible:ring-2 sm:size-[5rem]"
             style={LOGO_MARK_CELL_BG}
-            aria-hidden
+            aria-label="CenturyEggCredit — open centuryeggcredit.com"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- static asset from /public */}
             <img
@@ -107,7 +110,7 @@ export function LoginForm({
               className="h-full w-full object-contain object-center mix-blend-multiply contrast-[1.08]"
               draggable={false}
             />
-          </div>
+          </a>
           <div className="col-start-2 row-start-1 flex min-w-0 flex-col gap-1 self-start leading-tight sm:gap-1.5">
             <span className="text-base font-bold tracking-tight sm:text-lg" style={{ color: "var(--text)" }}>
               OREO

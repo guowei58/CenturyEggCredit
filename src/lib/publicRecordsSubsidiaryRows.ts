@@ -24,10 +24,15 @@ export function subsidiaryRowsFromProfileArrays(
   for (let i = 0; i < len; i++) {
     const rawName = names[i] ?? "";
     const rawDom = doms[i] ?? "";
-    const p = splitSubsidiaryLine(rawName);
+    // Only parse legacy "Name — Domicile" rows when the delimiter is actually present.
+    // Otherwise preserve the raw input verbatim so typing spaces works naturally.
+    const shouldSplit = /[—–]/.test(rawName);
+    const p = shouldSplit ? splitSubsidiaryLine(rawName) : { name: rawName, domicile: "" };
     rows.push({
-      name: (p.name || rawName).trim(),
-      domicile: (rawDom || p.domicile).trim(),
+      // Preserve user-typed whitespace while editing (do not trim on every keystroke).
+      // Normalization happens when deriving chip/search names, not in the table mirror.
+      name: p.name || rawName,
+      domicile: rawDom || p.domicile,
     });
   }
   if (rows.length === 0) return [{ name: "", domicile: "" }];

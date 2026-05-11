@@ -19,7 +19,9 @@ export function parseExhibit21GridSnapshot(json: unknown): Exhibit21GridSnapshot
   if (!Array.isArray(o.rows)) return null;
   const rows = o.rows
     .filter((r): r is unknown[] => Array.isArray(r))
-    .map((r) => r.filter((c): c is string => typeof c === "string").map((c) => c.replace(/\s+/g, " ").trim()));
+    // IMPORTANT: Preserve raw cell whitespace while editing in the UI.
+    // Normalization should happen only when *deriving* search/display names, not at parse time.
+    .map((r) => r.filter((c): c is string => typeof c === "string").map((c) => c));
   if (rows.length === 0) return null;
   if (!rows.some((r) => r.some((c) => c.length > 0))) return null;
   const src = o.source === "html_table" || o.source === "text_lines" ? o.source : null;

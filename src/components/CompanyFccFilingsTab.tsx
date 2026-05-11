@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { Card, DataTable } from "@/components/ui";
+import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
+import { confidenceLevelColors, matchConfidenceFromQuery } from "@/lib/matchConfidenceFromQuery";
 
 type EcfsFilingRow = {
   id_submission: string;
@@ -103,6 +105,15 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
 
   return (
     <div className="space-y-6">
+      <SubsidiaryQuerySuggestionsCard
+        ticker={safeTicker}
+        disabled={loading}
+        disclaimer="Subsidiaries from your saved Public Records profile (Exhibit 21 grid when present, otherwise the subsidiary name table). Use these as ECFS keyword searches. Verify matches."
+        onPickName={(name) => {
+          setQueryDraft(name);
+          void runFetch(name);
+        }}
+      />
       <Card title={`FCC Filings (ECFS) — ${safeTicker}`}>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="min-w-0 flex-1">
@@ -182,7 +193,10 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
         {payload && (
           <>
             <p className="text-[11px] mt-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-              {payload.ecfs_search_note}
+              {payload.ecfs_search_note}{" "}
+              <span style={{ color: "var(--muted)" }}>
+                Confidence compares your search words to filer names, proceedings, and preview text (heuristic, not an FCC score).
+              </span>
             </p>
             {payload.filings.length === 0 ? (
               <p className="text-sm py-6" style={{ color: "var(--muted2)" }}>
@@ -199,10 +213,15 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
                     <th>Proceeding(s)</th>
                     <th>Submission</th>
                     <th>ECFS</th>
+                    <th>Confidence</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {payload.filings.map((f) => (
+                  {payload.filings.map((f) => {
+                    const q = activeQuery ?? payload.query_used;
+                    const conf = matchConfidenceFromQuery(q, [f.filer_names, f.proceedings, f.preview_text]);
+                    const cb = confidenceLevelColors(conf);
+                    return (
                     <tr key={f.id_submission}>
                       <td className="whitespace-nowrap font-mono text-[11px]" style={{ color: "var(--muted2)" }}>
                         {formatWhen(f.date_disseminated || f.date_received)}
@@ -233,8 +252,17 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
                           <SaveFilingLinkButton ticker={safeTicker} url={f.view_url} />
                         </span>
                       </td>
+                      <td>
+                        <span
+                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                          style={{ background: cb.bg, color: cb.fg, borderColor: cb.border }}
+                        >
+                          {conf}
+                        </span>
+                      </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </DataTable>
             )}

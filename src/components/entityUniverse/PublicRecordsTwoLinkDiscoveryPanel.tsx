@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import environmentalMatrix from "../../../data/environmental_compliance_matrix_50_states.json";
 import {
   readEntityUniverseBootstrapSessionCache,
   writeEntityUniverseBootstrapSessionCache,
@@ -12,34 +11,39 @@ import { getStateCapability } from "@/lib/ucc/stateCapabilityRegistry";
 
 type Row = Record<string, unknown>;
 
-type EnvStep = { step: number; label: string; hint: string; url: string };
-type EnvStatePayload = { stateName: string; primaryUrl: string; secondaryUrl: string; steps: EnvStep[] };
+export type TwoLinkStep = { step: number; label: string; hint: string; url: string };
+export type TwoLinkStatePayload = {
+  stateName: string;
+  primaryUrl: string;
+  secondaryUrl: string;
+  steps: TwoLinkStep[];
+};
 
 const base = (ticker: string) => `/api/companies/${encodeURIComponent(ticker.trim().toUpperCase())}/entity-universe`;
 
-/**
- * Public Records — Environmental / Compliance. Same layout as Tax Liens (2 steps, entities list, Refresh + session cache).
- */
-export function EnvironmentalComplianceDiscoveryPanel({
+export function PublicRecordsTwoLinkDiscoveryPanel({
   ticker,
   companyName,
   issuerStateOfIncorporation,
+  title,
+  matrix,
 }: {
   ticker: string;
   companyName?: string;
   issuerStateOfIncorporation?: string | null;
+  title: string;
+  matrix: Record<string, TwoLinkStatePayload>;
 }) {
   const tk = ticker.trim().toUpperCase();
   const useBootstrapSessionCache = true;
 
   const matrixByAbbr = useMemo(() => {
-    const raw = environmentalMatrix as Record<string, EnvStatePayload>;
-    const m = new Map<string, EnvStatePayload>();
-    for (const [abbr, payload] of Object.entries(raw)) {
+    const m = new Map<string, TwoLinkStatePayload>();
+    for (const [abbr, payload] of Object.entries(matrix)) {
       m.set(abbr.trim().toUpperCase(), payload);
     }
     return m;
-  }, []);
+  }, [matrix]);
 
   const [busy, setBusy] = useState(false);
   const [data, setData] = useState<Record<string, Row[]>>({});
@@ -163,23 +167,19 @@ export function EnvironmentalComplianceDiscoveryPanel({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-end gap-2">
-        <button
-          type="button"
-          className={refreshBtnClass}
-          style={{ color: "var(--text)" }}
-          disabled={busy}
-          onClick={() => void load(true)}
-        >
+        <button type="button" className={refreshBtnClass} style={{ color: "var(--text)" }} disabled={busy} onClick={() => void load(true)}>
           Refresh
         </button>
         {busy ? <div className="text-[11px] text-[var(--muted)]">Working…</div> : null}
       </div>
-      {loadError ? (
-        <div className="text-[10px] leading-snug text-[var(--danger)]">{loadError}</div>
-      ) : null}
+      {loadError ? <div className="text-[10px] leading-snug text-[var(--danger)]">{loadError}</div> : null}
 
       <div className="space-y-2">
-        {copyMsg ? <div className="text-xs" style={{ color: "var(--muted2)" }}>{copyMsg}</div> : null}
+        {copyMsg ? (
+          <div className="text-xs" style={{ color: "var(--muted2)" }}>
+            {copyMsg}
+          </div>
+        ) : null}
 
         {subsidiariesByUsState.length === 0 ? (
           <div className="text-sm" style={{ color: "var(--muted)" }}>
@@ -196,7 +196,7 @@ export function EnvironmentalComplianceDiscoveryPanel({
               const fullState = cap.state_name;
               const n = r.names.length;
               const payload = matrixByAbbr.get(r.state);
-              const envSteps = payload?.steps?.length ? payload.steps : null;
+              const steps = payload?.steps?.length ? payload.steps : null;
               return (
                 <section
                   key={r.state}
@@ -212,15 +212,16 @@ export function EnvironmentalComplianceDiscoveryPanel({
                       </span>
                     </div>
                   </div>
+
                   <div className="mt-3 text-xs" style={{ color: "var(--muted)" }}>
-                    {envSteps ? (
+                    {steps ? (
                       <div className="space-y-3">
                         <p className="font-medium" style={{ color: "var(--text)" }}>
-                          Environmental compliance — 2 steps
+                          {title} — {steps.length} steps
                         </p>
                         <ol className="list-decimal space-y-3 pl-5 [text-align:start]">
-                          {envSteps.map((s) => (
-                            <li key={`${r.state}-env-${s.step}`} className="pl-1 marker:font-semibold">
+                          {steps.map((s) => (
+                            <li key={`${r.state}-${title}-${s.step}`} className="pl-1 marker:font-semibold">
                               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-x-4">
                                 <div className="min-w-0 flex-1">
                                   <span className="font-semibold" style={{ color: "var(--text)" }}>
@@ -242,10 +243,7 @@ export function EnvironmentalComplianceDiscoveryPanel({
                                     >
                                       Open
                                     </a>
-                                    <div
-                                      className="mt-1.5 w-full max-w-full break-all text-right text-[10px] leading-snug"
-                                      style={{ color: "var(--muted2)" }}
-                                    >
+                                    <div className="mt-1.5 w-full max-w-full break-all text-right text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
                                       {s.url}
                                     </div>
                                   </div>
@@ -257,10 +255,11 @@ export function EnvironmentalComplianceDiscoveryPanel({
                       </div>
                     ) : (
                       <div className="text-[11px]" style={{ color: "var(--muted2)" }}>
-                        No environmental matrix row for this state.
+                        No matrix row for this state.
                       </div>
                     )}
                   </div>
+
                   <div className="mt-6 flex items-center justify-between gap-3">
                     <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--muted2)" }}>
                       Entities
@@ -269,7 +268,7 @@ export function EnvironmentalComplianceDiscoveryPanel({
                   <div className="my-3 border-b border-dashed" style={{ borderColor: "var(--border)" }} aria-hidden />
                   <ul className="space-y-2">
                     {r.names.map((nm, i) => (
-                      <li key={`${r.state}-env-n-${i}-${nm}`} className="flex items-start justify-between gap-6">
+                      <li key={`${r.state}-${title}-n-${i}-${nm}`} className="flex items-start justify-between gap-6">
                         <span className="min-w-0 flex-1 break-words" style={{ color: "var(--text)" }}>
                           {nm}
                         </span>
@@ -297,3 +296,4 @@ export function EnvironmentalComplianceDiscoveryPanel({
     </div>
   );
 }
+

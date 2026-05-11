@@ -42,6 +42,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Capital Allocation",
           "Credit Timeline",
           "Out-of-the-Box Ideas",
+          "Risk from 10K",
         ],
       },
     ],
@@ -94,19 +95,35 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
         // "EdgarTools SEC" intentionally omitted from nav for now; CompanyEdgarToolsTab + /api/edgartools/* remain.
         tabs: [
           "SEC Filings",
+          "Litigation",
+          "Enforcements",
           "FCC Filings",
           "Patent IP Filings",
-          "Other Regulatory Filings",
+          "EPA ECHO Filings",
+          "EPA Envirofacts Filings",
+          "FDA / openFDA Filings",
+          "CFPB Complaints",
+          "FFIEC CDR",
+          "CMS Data",
+          "OSHA",
+          "OFAC Sanctions",
+          "PHMSA",
+          "FERC",
+          "USAspending Filings",
+          "Federal Register Filings",
+          "Regulations.gov Filings",
+          "eCFR Filings",
+          "EIA Filings",
+          "SAM.gov Filings",
+          "FEC Filings",
+          "State & Local Public Records",
+          "Other Regulatory Filings - Manual",
         ],
       },
     ],
   },
   risk: {
     groups: [
-      {
-        label: "Desktop Risks",
-        tabs: ["Risk from 10K"],
-      },
       {
         label: "Claims",
         tabs: [

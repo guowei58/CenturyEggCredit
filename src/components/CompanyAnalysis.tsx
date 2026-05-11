@@ -37,6 +37,8 @@ import { PublicRecordsTab } from "@/components/PublicRecordsTab";
 import { CompanyTrademarkIpTab } from "@/components/CompanyTrademarkIpTab";
 import { CompanyNewsEventsTab } from "@/components/CompanyNewsEventsTab";
 import { CompanyIndustryPublicationsTab } from "@/components/CompanyIndustryPublicationsTab";
+import { CompanyOtherRegulatoryFilingsTab } from "@/components/company/CompanyOtherRegulatoryFilingsTab";
+import { CompanyRegulatoryApiTab } from "@/components/company/CompanyRegulatoryApiTab";
 import { CompanySubsidiaryListTab } from "@/components/CompanySubsidiaryListTab";
 import { CompanyLmeAnalysisTab } from "@/components/CompanyLmeAnalysisTab";
 import { CompanyCreditAgreementsIndenturesTab } from "@/components/CompanyCreditAgreementsIndenturesTab";
@@ -119,18 +121,26 @@ export function CompanyAnalysis({
   }, [ticker]);
 
   useEffect(() => {
-    if (activeTab === "edgartools-sec" || activeTab === "state-local-public-records") {
+    if (activeTab === "edgartools-sec") {
       onTabChange("sec-filings");
     }
   }, [activeTab, onTabChange]);
 
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
-  /** Removed-from-nav tab ids: map stale URLs to SEC Filings without a one-frame flash. */
+  /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
   const resolvedTab =
-    activeTab === "edgartools-sec" || activeTab === "state-local-public-records"
+    activeTab === "edgartools-sec"
       ? "sec-filings"
       : activeTab === "20-year-look-back"
         ? "sec-xbrl-financials"
+        : activeTab === tabLabelToId("Other Regulatory Filings - Manual")
+          ? "other-regulatory-filings"
+        : activeTab === tabLabelToId("NHTSA") || activeTab === tabLabelToId("NHTSA Filings")
+          ? "other-regulatory-filings"
+        : activeTab === tabLabelToId("FDIC BankFind")
+          ? "other-regulatory-filings"
+        : activeTab === tabLabelToId("OCC Institution Data")
+          ? "other-regulatory-filings"
         : activeTab;
 
   const navDef = companyNav[topSection];
@@ -325,14 +335,95 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "sec-filings") {
     return <CompanyFilingsTab ticker={ticker} />;
   }
+  if (tabId === tabLabelToId("Litigation")) {
+    return (
+      <CompanyRegulatoryApiTab
+        ticker={ticker ?? ""}
+        companyName={companyName}
+        sourceId="litigation"
+        tabTitle="Litigation"
+        autoSearchOnMount={false}
+        topNotice="Searches CourtListener / RECAP first. If PACER credentials are configured on this machine, the tab also queries PACER Case Locator. PACER searches can incur PACER charges, so litigation search does not auto-run when the tab opens."
+      />
+    );
+  }
+  if (tabId === tabLabelToId("Enforcements")) {
+    return (
+      <CompanyRegulatoryApiTab
+        ticker={ticker ?? ""}
+        companyName={companyName}
+        sourceId="enforcements"
+        tabTitle="Enforcements"
+        topNotice="Merged enforcement search across DOJ enforcement-related press releases, FTC cases and proceedings, and DOL / OSHA inspection-citation enforcement results. FTC may occasionally rate-limit or block automated retrieval for some searches."
+      />
+    );
+  }
   if (tabId === "fcc-filings") {
     return <CompanyFccFilingsTab ticker={ticker ?? ""} />;
+  }
+  if (tabId === "other-regulatory-filings") {
+    return <CompanyOtherRegulatoryFilingsTab ticker={ticker ?? ""} companyName={companyName} />;
+  }
+  // Regulatory APIs (split out of "Other Regulatory Filings")
+  if (tabId === tabLabelToId("EPA ECHO Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="epa_echo" tabTitle="EPA ECHO Filings" />;
+  }
+  if (tabId === tabLabelToId("EPA Envirofacts Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="epa_envirofacts" tabTitle="EPA Envirofacts Filings" />;
+  }
+  if (tabId === tabLabelToId("FDA / openFDA Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="fda_openfda" tabTitle="FDA / openFDA Filings" />;
+  }
+  if (tabId === tabLabelToId("CFPB Complaints")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="cfpb_complaints" tabTitle="CFPB Complaints" />;
+  }
+  if (tabId === tabLabelToId("FFIEC CDR")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="ffiec_cdr" tabTitle="FFIEC CDR" />;
+  }
+  if (tabId === tabLabelToId("CMS Data")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="cms_data" tabTitle="CMS Data" />;
+  }
+  if (tabId === tabLabelToId("OSHA")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="osha" tabTitle="OSHA" />;
+  }
+  if (tabId === tabLabelToId("OFAC Sanctions")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="ofac" tabTitle="OFAC Sanctions" />;
+  }
+  if (tabId === tabLabelToId("PHMSA")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="phmsa" tabTitle="PHMSA" />;
+  }
+  if (tabId === tabLabelToId("FERC")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="ferc" tabTitle="FERC" />;
+  }
+  if (tabId === tabLabelToId("USAspending Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="usaspending" tabTitle="USAspending Filings" />;
+  }
+  if (tabId === tabLabelToId("Federal Register Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="federal_register" tabTitle="Federal Register Filings" />;
+  }
+  if (tabId === tabLabelToId("Regulations.gov Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="regulations_gov" tabTitle="Regulations.gov Filings" />;
+  }
+  if (tabId === tabLabelToId("eCFR Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="ecfr" tabTitle="eCFR Filings" />;
+  }
+  if (tabId === tabLabelToId("EIA Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="eia" tabTitle="EIA Filings" />;
+  }
+  if (tabId === tabLabelToId("SAM.gov Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="sam_gov" tabTitle="SAM.gov Filings" />;
+  }
+  if (tabId === tabLabelToId("FEC Filings")) {
+    return <CompanyRegulatoryApiTab ticker={ticker ?? ""} companyName={companyName} sourceId="fec" tabTitle="FEC Filings" />;
   }
   if (tabId === "saved-documents") {
     return <CompanySavedDocumentsTab ticker={ticker} />;
   }
   if (tabId === "patent-ip-filings") {
     return <CompanyTrademarkIpTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "state-local-public-records") {
+    return <PublicRecordsTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "subsidiary-list") {
     return <CompanySubsidiaryListTab ticker={ticker ?? ""} />;
@@ -453,7 +544,8 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   ]);
 
   const newTabPlaceholders: Record<string, string> = {
-    "other-regulatory-filings": "Other Regulatory Filings",
+    "other-regulatory-filings": "Other Regulatory Filings - Manual",
+    [tabLabelToId("Other Regulatory Filings - Manual")]: "Other Regulatory Filings - Manual",
     substack: "Substack",
     "twitter-sentiment": "Twitter Sentiment",
     "dear-diary": "Dear Diary",

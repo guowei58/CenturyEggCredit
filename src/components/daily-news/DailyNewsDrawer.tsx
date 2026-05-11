@@ -228,7 +228,7 @@ function ItemList({
   empty,
 }: {
   title: string;
-  items: Array<{ headline: string; summary: string; url: string; source: string; whyItMatters: string }>;
+  items: Array<{ headline: string; summary: string; url: string; source: string; whyItMatters?: string }>;
   empty: string;
 }) {
   if (!items.length) {
@@ -272,12 +272,6 @@ function ItemList({
               <a href={it.url} target="_blank" rel="noopener noreferrer" className="font-medium underline" style={{ color: "var(--accent)" }}>
                 Open link
               </a>
-            </div>
-            <div className="mt-2 border-t pt-2 text-xs italic leading-relaxed" style={{ color: "var(--muted2)", borderColor: "var(--border2)" }}>
-              <span className="font-semibold not-italic" style={{ color: "var(--muted)" }}>
-                Why it matters:{" "}
-              </span>
-              {it.whyItMatters}
             </div>
           </li>
         ))}
@@ -326,9 +320,6 @@ function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock })
           </ul>
         </div>
       ) : null}
-      <p className="mb-5 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-        {data.whyItMatters}
-      </p>
       <ItemList
         title="SEC filings (last window)"
         items={data.secFilings}

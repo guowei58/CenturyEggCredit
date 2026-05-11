@@ -22,8 +22,11 @@ import {
 import { splitSubsidiaryLine } from "@/lib/exhibit21SubsidiaryRows";
 import { subsidiaryRowsFromProfileArrays } from "@/lib/publicRecordsSubsidiaryRows";
 import type { PublicRecordCategory } from "@/generated/prisma/client";
+import { CourtsJudgmentsDiscoveryPanel } from "@/components/entityUniverse/CourtsJudgmentsDiscoveryPanel";
 import { EnvironmentalComplianceDiscoveryPanel } from "@/components/entityUniverse/EnvironmentalComplianceDiscoveryPanel";
 import { EntityUniverseAffiliateDiscoveryPage, type EntityUniversePublicRecordsSubsidiaries } from "@/components/entityUniverse/EntityUniverseAffiliateDiscoveryPage";
+import { LicensesRegulatoryDiscoveryPanel } from "@/components/entityUniverse/LicensesRegulatoryDiscoveryPanel";
+import { ProcurementContractsDiscoveryPanel } from "@/components/entityUniverse/ProcurementContractsDiscoveryPanel";
 
 const AUTOSAVE_DEBOUNCE_MS = 900;
 
@@ -231,8 +234,10 @@ function subsidiaryRowsToArrays(rows: { name: string; domicile: string }[]) {
   const subsidiaryNames: string[] = [];
   const subsidiaryDomiciles: string[] = [];
   for (const r of rows) {
-    const nm = r.name.replace(/\s+/g, " ").trim();
-    const dm = r.domicile.replace(/\s+/g, " ").trim();
+    // IMPORTANT: do not trim/collapse whitespace on each keystroke; it breaks typing spaces.
+    // We keep raw input here; downstream display/search helpers normalize when needed.
+    const nm = r.name;
+    const dm = r.domicile;
     if (!nm && !dm) continue;
     subsidiaryNames.push(nm);
     subsidiaryDomiciles.push(dm);
@@ -559,6 +564,9 @@ function PublicRecordsProfileCard({
                                 className="w-full min-w-[7rem] border-0 bg-transparent px-2 py-1.5 font-mono text-[11px] text-white placeholder:text-white/55 caret-white outline-none focus:ring-1 focus:ring-inset focus:ring-[var(--accent)]"
                                 value={cell}
                                 onChange={(e) => updateGridCell(rowIndexGlobal, ci, e.target.value)}
+                                onKeyDownCapture={(e) => {
+                                  if (e.key === " ") e.stopPropagation();
+                                }}
                                 aria-label={`Exhibit row ${rowIndexGlobal + 1} column ${ci + 1}`}
                               />
                             </td>
@@ -604,6 +612,10 @@ function PublicRecordsProfileCard({
                           className="w-full min-w-[12rem] border-0 bg-transparent px-2 py-1.5 font-mono text-[11px] text-white placeholder:text-white/55 caret-white outline-none focus:ring-1 focus:ring-inset focus:ring-[var(--accent)]"
                           value={row.name}
                           onChange={(e) => updateSubRow(i, "name", e.target.value)}
+                          onKeyDownCapture={(e) => {
+                            // Defensive: allow spaces even if some ancestor/global key handler intercepts Space.
+                            if (e.key === " ") e.stopPropagation();
+                          }}
                           placeholder="e.g. Example Holdings LLC"
                           aria-label={`Subsidiary ${i + 1} name`}
                         />
@@ -613,6 +625,9 @@ function PublicRecordsProfileCard({
                           className="w-full min-w-[10rem] border-0 bg-transparent px-2 py-1.5 font-mono text-[11px] text-white placeholder:text-white/55 caret-white outline-none focus:ring-1 focus:ring-inset focus:ring-[var(--accent)]"
                           value={row.domicile}
                           onChange={(e) => updateSubRow(i, "domicile", e.target.value)}
+                          onKeyDownCapture={(e) => {
+                            if (e.key === " ") e.stopPropagation();
+                          }}
                           placeholder="e.g. DE, France"
                           aria-label={`Subsidiary ${i + 1} domicile`}
                         />
@@ -1058,10 +1073,40 @@ export function PublicRecordsTab({
                   />
                 </div>
               ) : null}
+              {activeCategory === "courts_judgments" ? (
+                <div className="mb-6">
+                  <CourtsJudgmentsDiscoveryPanel
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
+                  />
+                </div>
+              ) : null}
+              {activeCategory === "licenses_regulatory" ? (
+                <div className="mb-6">
+                  <LicensesRegulatoryDiscoveryPanel
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
+                  />
+                </div>
+              ) : null}
+              {activeCategory === "procurement_contracts" ? (
+                <div className="mb-6">
+                  <ProcurementContractsDiscoveryPanel
+                    ticker={tk}
+                    companyName={profileDraft.companyName ?? companyName}
+                    issuerStateOfIncorporation={profileDraft.stateOfIncorporation}
+                  />
+                </div>
+              ) : null}
               {activeCategory !== "entity_sos" &&
               activeCategory !== "ucc_secured_debt" &&
               activeCategory !== "tax_liens_releases" &&
-              activeCategory !== "environmental_compliance" ? (
+              activeCategory !== "environmental_compliance" &&
+              activeCategory !== "courts_judgments" &&
+              activeCategory !== "licenses_regulatory" &&
+              activeCategory !== "procurement_contracts" ? (
                 <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
                   {PUBLIC_RECORD_CATEGORY_DESCRIPTIONS[activeCategory]}
                 </p>
@@ -1074,7 +1119,10 @@ export function PublicRecordsTab({
               {activeCategory !== "entity_sos" &&
               activeCategory !== "ucc_secured_debt" &&
               activeCategory !== "tax_liens_releases" &&
-              activeCategory !== "environmental_compliance" ? (
+              activeCategory !== "environmental_compliance" &&
+              activeCategory !== "courts_judgments" &&
+              activeCategory !== "licenses_regulatory" &&
+              activeCategory !== "procurement_contracts" ? (
                 <>
                   <h5 className="mb-2 mt-4 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
                     Recommended sources

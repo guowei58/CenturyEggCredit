@@ -1,0 +1,952 @@
+{
+  "AL": {
+    "stateName": "Alabama",
+    "primaryUrl": "https://pa.alacourt.com/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Alabama court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://pa.alacourt.com/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "AK": {
+    "stateName": "Alaska",
+    "primaryUrl": "https://records.courts.alaska.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Alaska court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://records.courts.alaska.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "AZ": {
+    "stateName": "Arizona",
+    "primaryUrl": "https://apps.supremecourt.az.gov/publicaccess/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Arizona court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://apps.supremecourt.az.gov/publicaccess/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "AR": {
+    "stateName": "Arkansas",
+    "primaryUrl": "https://caseinfo.arcourts.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Arkansas court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://caseinfo.arcourts.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "CA": {
+    "stateName": "California",
+    "primaryUrl": "https://www.courts.ca.gov/find-my-court.htm",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search California court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.courts.ca.gov/find-my-court.htm"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "CO": {
+    "stateName": "Colorado",
+    "primaryUrl": "https://www.cocourts.com/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Colorado court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.cocourts.com/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "CT": {
+    "stateName": "Connecticut",
+    "primaryUrl": "https://civilinquiry.jud.ct.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Connecticut court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://civilinquiry.jud.ct.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "DE": {
+    "stateName": "Delaware",
+    "primaryUrl": "https://courtconnect.courts.delaware.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Delaware court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://courtconnect.courts.delaware.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "FL": {
+    "stateName": "Florida",
+    "primaryUrl": "https://www.flcourts.gov/Florida-Courts/Court-Locations",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Florida court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.flcourts.gov/Florida-Courts/Court-Locations"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "GA": {
+    "stateName": "Georgia",
+    "primaryUrl": "https://georgiacourts.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Georgia court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://georgiacourts.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "HI": {
+    "stateName": "Hawaii",
+    "primaryUrl": "https://www.courts.state.hi.us/legal_references/records/jims_system_availability",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Hawaii court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.courts.state.hi.us/legal_references/records/jims_system_availability"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "ID": {
+    "stateName": "Idaho",
+    "primaryUrl": "https://mycourts.idaho.gov/odysseyportal",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Idaho court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://mycourts.idaho.gov/odysseyportal"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "IL": {
+    "stateName": "Illinois",
+    "primaryUrl": "https://www.illinoiscourts.gov/courts-directory/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Illinois court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.illinoiscourts.gov/courts-directory/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "IN": {
+    "stateName": "Indiana",
+    "primaryUrl": "https://public.courts.in.gov/mycase",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Indiana court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://public.courts.in.gov/mycase"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "IA": {
+    "stateName": "Iowa",
+    "primaryUrl": "https://www.iowacourts.state.ia.us/ESAWebApp/DefaultFrame",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Iowa court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.iowacourts.state.ia.us/ESAWebApp/DefaultFrame"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "KS": {
+    "stateName": "Kansas",
+    "primaryUrl": "https://prodportal.kscourts.org/prodportal",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Kansas court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://prodportal.kscourts.org/prodportal"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "KY": {
+    "stateName": "Kentucky",
+    "primaryUrl": "https://kcoj.kycourts.net/CourtNet/Search/Index",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Kentucky court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://kcoj.kycourts.net/CourtNet/Search/Index"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "LA": {
+    "stateName": "Louisiana",
+    "primaryUrl": "https://www.lasc.org/links.asp",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Louisiana court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.lasc.org/links.asp"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "ME": {
+    "stateName": "Maine",
+    "primaryUrl": "https://www.courts.maine.gov/ecourts/portal.html",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Maine court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.courts.maine.gov/ecourts/portal.html"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MD": {
+    "stateName": "Maryland",
+    "primaryUrl": "https://casesearch.courts.state.md.us/casesearch/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Maryland court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://casesearch.courts.state.md.us/casesearch/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MA": {
+    "stateName": "Massachusetts",
+    "primaryUrl": "https://www.masscourts.org/eservices/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Massachusetts court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.masscourts.org/eservices/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MI": {
+    "stateName": "Michigan",
+    "primaryUrl": "https://micourt.courts.michigan.gov/case-search/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Michigan court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://micourt.courts.michigan.gov/case-search/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MN": {
+    "stateName": "Minnesota",
+    "primaryUrl": "https://publicaccess.courts.state.mn.us/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Minnesota court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://publicaccess.courts.state.mn.us/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MS": {
+    "stateName": "Mississippi",
+    "primaryUrl": "https://courts.ms.gov/mec/mec.php",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Mississippi court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://courts.ms.gov/mec/mec.php"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MO": {
+    "stateName": "Missouri",
+    "primaryUrl": "https://www.courts.mo.gov/cnet/welcome.do",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Missouri court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.courts.mo.gov/cnet/welcome.do"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "MT": {
+    "stateName": "Montana",
+    "primaryUrl": "https://courts.mt.gov/courts/records/search/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Montana court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://courts.mt.gov/courts/records/search/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NE": {
+    "stateName": "Nebraska",
+    "primaryUrl": "https://www.nebraska.gov/justice/ccn/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Nebraska court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.nebraska.gov/justice/ccn/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NV": {
+    "stateName": "Nevada",
+    "primaryUrl": "https://nvcourts.gov/supreme/how_do_i/find_a_case",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Nevada court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://nvcourts.gov/supreme/how_do_i/find_a_case"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NH": {
+    "stateName": "New Hampshire",
+    "primaryUrl": "https://portal.courts.nh.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search New Hampshire court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://portal.courts.nh.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NJ": {
+    "stateName": "New Jersey",
+    "primaryUrl": "https://portal.njcourts.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search New Jersey court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://portal.njcourts.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NM": {
+    "stateName": "New Mexico",
+    "primaryUrl": "https://caselookup.nmcourts.gov/caselookup/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search New Mexico court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://caselookup.nmcourts.gov/caselookup/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NY": {
+    "stateName": "New York",
+    "primaryUrl": "https://iapps.courts.state.ny.us/webcivil/FCASMain",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search New York court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://iapps.courts.state.ny.us/webcivil/FCASMain"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "NC": {
+    "stateName": "North Carolina",
+    "primaryUrl": "https://portal-nc.tylertech.cloud/Portal/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search North Carolina court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://portal-nc.tylertech.cloud/Portal/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "ND": {
+    "stateName": "North Dakota",
+    "primaryUrl": "https://publicsearch.ndcourts.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search North Dakota court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://publicsearch.ndcourts.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "OH": {
+    "stateName": "Ohio",
+    "primaryUrl": "https://www.supremecourt.ohio.gov/courts/judicial-system/ohio-trial-courts/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Ohio court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.supremecourt.ohio.gov/courts/judicial-system/ohio-trial-courts/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "OK": {
+    "stateName": "Oklahoma",
+    "primaryUrl": "https://www.oscn.net/dockets/Search.aspx",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Oklahoma court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.oscn.net/dockets/Search.aspx"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "OR": {
+    "stateName": "Oregon",
+    "primaryUrl": "https://webportal.courts.oregon.gov/portal/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Oregon court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://webportal.courts.oregon.gov/portal/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "PA": {
+    "stateName": "Pennsylvania",
+    "primaryUrl": "https://ujsportal.pacourts.us/CaseSearch",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Pennsylvania court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://ujsportal.pacourts.us/CaseSearch"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "RI": {
+    "stateName": "Rhode Island",
+    "primaryUrl": "https://publicportal.courts.ri.gov/PublicPortal",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Rhode Island court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://publicportal.courts.ri.gov/PublicPortal"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "SC": {
+    "stateName": "South Carolina",
+    "primaryUrl": "https://publicindex.sccourts.org/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search South Carolina court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://publicindex.sccourts.org/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "SD": {
+    "stateName": "South Dakota",
+    "primaryUrl": "https://ujspars.sd.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search South Dakota court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://ujspars.sd.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "TN": {
+    "stateName": "Tennessee",
+    "primaryUrl": "https://www.tncourts.gov/courts",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Tennessee court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.tncourts.gov/courts"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "TX": {
+    "stateName": "Texas",
+    "primaryUrl": "https://card.txcourts.gov/directorysearch.aspx",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Texas court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://card.txcourts.gov/directorysearch.aspx"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "UT": {
+    "stateName": "Utah",
+    "primaryUrl": "https://www.utcourts.gov/en/court-records-publications/records/xchange.html",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Utah court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.utcourts.gov/en/court-records-publications/records/xchange.html"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "VT": {
+    "stateName": "Vermont",
+    "primaryUrl": "https://www.vermontjudiciary.org/about-vermont-judiciary/public-portal",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Vermont court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.vermontjudiciary.org/about-vermont-judiciary/public-portal"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "VA": {
+    "stateName": "Virginia",
+    "primaryUrl": "https://eapps.courts.state.va.us/ocis/landing",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Virginia court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://eapps.courts.state.va.us/ocis/landing"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "WA": {
+    "stateName": "Washington",
+    "primaryUrl": "https://dw.courts.wa.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Washington court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://dw.courts.wa.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "WV": {
+    "stateName": "West Virginia",
+    "primaryUrl": "https://www.courtswv.gov/public-resources/public-access-to-court-records",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search West Virginia court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://www.courtswv.gov/public-resources/public-access-to-court-records"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "WI": {
+    "stateName": "Wisconsin",
+    "primaryUrl": "https://wcca.wicourts.gov/",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Wisconsin court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://wcca.wicourts.gov/"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  },
+  "WY": {
+    "stateName": "Wyoming",
+    "primaryUrl": "https://efiling.courts.state.wy.us/public/caseSearch.do?link=Y",
+    "secondaryUrl": "https://www.justice.gov/jmd/ls/state",
+    "steps": [
+      {
+        "step": 1,
+        "label": "State court case search",
+        "hint": "Search Wyoming court dockets, civil cases, judgments, and filings by party name when available.",
+        "url": "https://efiling.courts.state.wy.us/public/caseSearch.do?link=Y"
+      },
+      {
+        "step": 2,
+        "label": "DOJ state court directory",
+        "hint": "Fallback directory of court systems and resources when the primary portal is limited.",
+        "url": "https://www.justice.gov/jmd/ls/state"
+      }
+    ]
+  }
+}

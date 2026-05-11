@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
+import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
 import { Card, DataTable } from "@/components/ui";
-import { subsidiaryChipNamesFromSavedProfile } from "@/lib/publicRecordsSubsidiaryRows";
 import { formatOdpPatentQueryString } from "@/lib/uspto-ip";
+import { confidenceLevelColors, matchConfidenceFromQuery } from "@/lib/matchConfidenceFromQuery";
 
 type Links = {
   odpSignup: string;
@@ -67,30 +68,7 @@ type ApiErr = {
   odpSignup?: string;
 };
 
-type PublicRecordsProfileResp = {
-  profile: {
-    companyName?: string | null;
-    legalNames?: string[];
-    subsidiaryNames?: string[];
-    subsidiaryDomiciles?: string[];
-    /** When set, mirrors the Exhibit 21 grid shown on Public Records Profile (may be populated while subsidiaryNames is empty). */
-    subsidiaryExhibit21Snapshot?: unknown;
-    updatedAt?: string;
-  };
-};
-
-type QueryNameHints =
-  | { ok: true; names: string[]; sources: string[]; disclaimer: string }
-  | { ok: false; message: string };
-
 const ODP_PAGE_LIMIT = 50;
-
-const QUERY_HINTS_DISCLAIMER =
-  "Subsidiaries from your saved Public Records profile: the Exhibit 21 grid when you have one, otherwise the name + domicile table (Overview → Public Records Profile). Verify matches on USPTO.";
-
-function buildNamesFromPublicRecordsProfile(p: PublicRecordsProfileResp["profile"]): string[] {
-  return subsidiaryChipNamesFromSavedProfile(p.subsidiaryExhibit21Snapshot, p.subsidiaryNames, p.subsidiaryDomiciles);
-}
 
 function ellipsize(s: string, max: number): string {
   const t = s.replace(/\s+/g, " ").trim();
@@ -116,10 +94,6 @@ export function CompanyTrademarkIpTab({
   const [odpPatentRows, setOdpPatentRows] = useState<OdpPatentRow[]>([]);
   /** Raw `q` sent to the API for the current result set (`null` = server uses company name / ticker). */
   const [pagingQ, setPagingQ] = useState<string | null>(null);
-
-  const [hintsPayload, setHintsPayload] = useState<Extract<QueryNameHints, { ok: true }> | null>(null);
-  const [hintsLoading, setHintsLoading] = useState(false);
-  const [hintsMessage, setHintsMessage] = useState<string | null>(null);
 
   const runPatentSearch = useCallback(
     async (qParam: string | undefined) => {
@@ -189,71 +163,6 @@ export function CompanyTrademarkIpTab({
     void runPatentSearch(undefined);
   }, [safeTicker, companyName, runPatentSearch]);
 
-  useEffect(() => {
-    if (!safeTicker) return;
-    let cancelled = false;
-    setHintsLoading(true);
-    setHintsMessage(null);
-    setHintsPayload(null);
-
-    const u = `/api/companies/${encodeURIComponent(safeTicker)}/public-records/profile?companyName=${encodeURIComponent((companyName ?? "").trim())}`;
-
-    fetch(u, { credentials: "same-origin", cache: "no-store" })
-      .then(async (res) => {
-        if (cancelled) return;
-
-        if (res.status === 401) {
-          setHintsPayload(null);
-          setHintsMessage("Sign in to load subsidiaries from your Public Records profile.");
-          return;
-        }
-
-        if (!res.ok) {
-          setHintsPayload(null);
-          setHintsMessage("Could not load Public Records profile for this ticker.");
-          return;
-        }
-
-        const body = (await res.json()) as PublicRecordsProfileResp;
-        const p = body.profile;
-        const names = buildNamesFromPublicRecordsProfile(p);
-
-        const sources = [
-          `Public Records Profile — subsidiary names (${names.length})`,
-          p.updatedAt ? `Profile updated ${typeof p.updatedAt === "string" ? p.updatedAt.slice(0, 10) : ""}` : "",
-        ].filter(Boolean);
-
-        if (names.length === 0) {
-          setHintsPayload(null);
-          setHintsMessage(
-            "No subsidiaries we could derive from your Public Records profile yet. Ensure the Exhibit 21 grid has entity names visible, or add rows under the subsidiary name/domicile table (Overview → Public Records Profile), or ingest from SEC there.",
-          );
-          return;
-        }
-
-
-        setHintsPayload({
-          ok: true,
-          names,
-          sources,
-          disclaimer: QUERY_HINTS_DISCLAIMER,
-        });
-        setHintsMessage(null);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setHintsPayload(null);
-          setHintsMessage("Could not load Public Records profile.");
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setHintsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [safeTicker, companyName]);
-
   if (!safeTicker) {
     return (
       <p className="text-sm" style={{ color: "var(--muted)" }}>
@@ -264,54 +173,17 @@ export function CompanyTrademarkIpTab({
 
   return (
     <div className="space-y-6">
+      <SubsidiaryQuerySuggestionsCard
+        ticker={safeTicker}
+        companyName={companyName}
+        disabled={loading || loadingMoreOdp}
+        disclaimer="Subsidiaries from your saved Public Records profile (Exhibit 21 grid when present, otherwise the subsidiary name table). Use these as search queries. Verify matches on USPTO."
+        onPickName={(name) => {
+          setQueryDraft(formatOdpPatentQueryString(name));
+          void runPatentSearch(name);
+        }}
+      />
       <Card title="Search query">
-        {hintsLoading && (
-          <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
-            Loading subsidiaries from your Public Records profile…
-          </p>
-        )}
-        {hintsMessage && !hintsLoading && (
-          <p className="mb-3 text-[11px]" style={{ color: "var(--muted)" }}>
-            {hintsMessage}{" "}
-            <span style={{ color: "var(--muted2)" }}>
-              (Tip: Overview → Public Records Profile, or ingest 10-K / Exhibit 21 there.)
-            </span>
-          </p>
-        )}
-        {hintsPayload && hintsPayload.names.length > 0 && (
-          <div className="mb-4 rounded border border-[var(--border)] bg-[var(--card2)]/30 px-3 py-2.5">
-            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
-              Names to try in the query box
-            </div>
-            <p className="mt-1 text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
-              {hintsPayload.disclaimer}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {hintsPayload.names.map((n, idx) => (
-                <button
-                  key={`${n}-${idx}`}
-                  type="button"
-                  title={n}
-                  disabled={loading || loadingMoreOdp}
-                  onClick={() => {
-                    setQueryDraft(formatOdpPatentQueryString(n));
-                    void runPatentSearch(n);
-                  }}
-                  className="max-w-full rounded border border-[var(--border)] bg-[var(--card)] px-2 py-1 text-left text-[11px] leading-snug transition hover:bg-[var(--card2)] disabled:opacity-50"
-                  style={{ color: "var(--text)" }}
-                >
-                  {ellipsize(n, 52)}
-                </button>
-              ))}
-            </div>
-            {hintsPayload.sources.length > 0 && (
-              <p className="mt-2 text-[10px]" style={{ color: "var(--muted2)" }}>
-                From: {hintsPayload.sources.join(" · ")}
-              </p>
-            )}
-          </div>
-        )}
-
         <div className="flex flex-wrap items-end gap-2">
           <label className="flex min-w-[220px] flex-1 flex-col gap-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
             Query
@@ -385,7 +257,10 @@ export function CompanyTrademarkIpTab({
         >
           <p className="mb-2 text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
             The Open Data Portal returns at most {ODP_PAGE_LIMIT} rows per request; the title is the total hit count in the
-            index, not how many rows are shown below. Load more appends the next page so you can scroll through everything.
+            index, not how many rows are shown below. Load more appends the next page so you can scroll through everything.{" "}
+            <span style={{ color: "var(--muted2)" }}>
+              Confidence compares your query tokens to assignee, title, and inventors (heuristic; not a USPTO score).
+            </span>
           </p>
           <p className="mb-3 text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
             Showing {odpPatentRows.length.toLocaleString()} row(s) loaded
@@ -405,10 +280,16 @@ export function CompanyTrademarkIpTab({
                   <th>Status</th>
                   <th>Assignee</th>
                   <th>Patent</th>
+                  <th>Confidence</th>
                 </tr>
               </thead>
               <tbody>
-                {odpPatentRows.map((r, i) => (
+                {odpPatentRows.map((r, i) => {
+                  const q = activeQuery ?? payload?.queryUsed ?? "";
+                  const inv = Array.isArray(r.inventorNames) ? r.inventorNames.join(" ") : "";
+                  const conf = matchConfidenceFromQuery(q, [r.assigneeEntityName, r.inventionTitle, inv]);
+                  const cb = confidenceLevelColors(conf);
+                  return (
                   <tr key={`${r.applicationNumberText ?? "row"}-${i}`}>
                     <td className="align-top font-mono text-[11px]" style={{ color: "var(--muted2)" }}>
                       {r.applicationNumberText ?? "—"}
@@ -439,8 +320,17 @@ export function CompanyTrademarkIpTab({
                         </span>
                       )}
                     </td>
+                    <td className="align-top">
+                      <span
+                        className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                        style={{ background: cb.bg, color: cb.fg, borderColor: cb.border }}
+                      >
+                        {conf}
+                      </span>
+                    </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </DataTable>
           )}
@@ -507,10 +397,16 @@ export function CompanyTrademarkIpTab({
                 <th>Title</th>
                 <th>Date</th>
                 <th>Link</th>
+                <th>Confidence</th>
               </tr>
             </thead>
             <tbody>
-              {block.patents.map((p) => (
+              {block.patents.map((p) => {
+                const q = activeQuery ?? payload?.queryUsed ?? "";
+                const assigneeLine = (p.assignees ?? []).join(" ");
+                const conf = matchConfidenceFromQuery(q, [p.title, assigneeLine, block.assigneeOrganization]);
+                const cb = confidenceLevelColors(conf);
+                return (
                 <tr key={p.patentId ?? p.title ?? ""}>
                   <td className="font-mono text-[11px]" style={{ color: "var(--muted2)" }}>
                     {p.patentId ?? "—"}
@@ -533,8 +429,17 @@ export function CompanyTrademarkIpTab({
                       "—"
                     )}
                   </td>
+                  <td>
+                    <span
+                      className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                      style={{ background: cb.bg, color: cb.fg, borderColor: cb.border }}
+                    >
+                      {conf}
+                    </span>
+                  </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </DataTable>
         </Card>
