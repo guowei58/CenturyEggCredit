@@ -495,9 +495,18 @@ function numericFromXbrlFactItem(item: any): number | null {
 }
 
 /** One of three primary financials, or null = skip (parenthetical, disclosure, equity, OCI, etc.). */
-function primaryStatementKind(role: string): "is" | "bs" | "cf" | null {
+export function primaryStatementKind(role: string): "is" | "bs" | "cf" | null {
   const u = role.toLowerCase();
   const c = u.replace(/[\s_-]/g, "");
+  const stem = (() => {
+    const slash = c.lastIndexOf("/");
+    return slash >= 0 ? c.slice(slash + 1) : c;
+  })();
+  const statementOfIdx = stem.indexOf("statementof");
+  const statementsOfIdx = stem.indexOf("statementsof");
+  const statementIdx =
+    statementsOfIdx >= 0 ? statementsOfIdx : statementOfIdx >= 0 ? statementOfIdx : -1;
+  const isFaceStatementRole = statementIdx >= 0 && statementIdx <= 24;
   if (u.includes("parenthetical")) return null;
   if (/\/role\/disclosure/i.test(role) || c.includes("disclosureoperating") || c.includes("disclosurestock") || c.includes("disclosuredebt")) return null;
   if (c.includes("documentdocument") || c.includes("documentandentity")) return null;
@@ -532,11 +541,21 @@ function primaryStatementKind(role: string): "is" | "bs" | "cf" | null {
     c.includes("incomestatement") ||
     c.includes("statementofincome") ||
     c.includes("statementsofincome") ||
+    c.includes("statementofincomeloss") ||
+    c.includes("statementsofincomeloss") ||
+    c.includes("incomeloss") ||
     c.includes("statementsofoperations") ||
     c.includes("statementofoperations") ||
     c.includes("consolidatedstatementsofcomprehensive") ||
     c.includes("statementofcomprehensiveincome") ||
     c.includes("statementsofcomprehensiveincome") ||
+    c.includes("statementofcomprehensiveincomeloss") ||
+    c.includes("statementsofcomprehensiveincomeloss") ||
+    c.includes("comprehensiveincomeloss") ||
+    (isFaceStatementRole && stem.includes("income")) ||
+    (isFaceStatementRole && stem.includes("operations")) ||
+    (isFaceStatementRole && stem.includes("earnings")) ||
+    (isFaceStatementRole && stem.includes("profitloss")) ||
     (c.includes("statement") && c.includes("operations")) ||
     (c.includes("statement") && c.includes("earnings")) ||
     (c.includes("profit") && c.includes("loss"))
@@ -544,6 +563,60 @@ function primaryStatementKind(role: string): "is" | "bs" | "cf" | null {
     return "is";
   }
   return null;
+}
+
+export function isComprehensiveIncomeRole(role: string): boolean {
+  const c = role.toLowerCase().replace(/[\s_-]/g, "");
+  const slash = c.lastIndexOf("/");
+  const stem = slash >= 0 ? c.slice(slash + 1) : c;
+  const statementOfIdx = stem.indexOf("statementof");
+  const statementsOfIdx = stem.indexOf("statementsof");
+  const statementIdx =
+    statementsOfIdx >= 0 ? statementsOfIdx : statementOfIdx >= 0 ? statementOfIdx : -1;
+  const isFaceStatementRole = statementIdx >= 0 && statementIdx <= 24;
+  return (
+    c.includes("consolidatedstatementsofcomprehensive") ||
+    c.includes("statementofcomprehensiveincome") ||
+    c.includes("statementsofcomprehensiveincome") ||
+    c.includes("statementofcomprehensiveincomeloss") ||
+    c.includes("statementsofcomprehensiveincomeloss") ||
+    c.includes("comprehensiveincomeloss") ||
+    (isFaceStatementRole && stem.includes("comprehensive"))
+  );
+}
+
+export function incomeStatementSelectionPriority(role: string): number {
+  const u = role.toLowerCase();
+  const c = u.replace(/[\s_-]/g, "");
+  const slash = c.lastIndexOf("/");
+  const stem = slash >= 0 ? c.slice(slash + 1) : c;
+  const statementOfIdx = stem.indexOf("statementof");
+  const statementsOfIdx = stem.indexOf("statementsof");
+  const statementIdx =
+    statementsOfIdx >= 0 ? statementsOfIdx : statementOfIdx >= 0 ? statementOfIdx : -1;
+  const isFaceStatementRole = statementIdx >= 0 && statementIdx <= 24;
+
+  if (isComprehensiveIncomeRole(role)) return 0;
+  if (
+    c.includes("incomestatement") ||
+    c.includes("statementofincome") ||
+    c.includes("statementsofincome") ||
+    c.includes("statementofincomeloss") ||
+    c.includes("statementsofincomeloss") ||
+    c.includes("incomeloss") ||
+    c.includes("statementsofoperations") ||
+    c.includes("statementofoperations") ||
+    (isFaceStatementRole && stem.includes("income")) ||
+    (isFaceStatementRole && stem.includes("operations")) ||
+    (isFaceStatementRole && stem.includes("earnings")) ||
+    (isFaceStatementRole && stem.includes("profitloss")) ||
+    (c.includes("statement") && c.includes("operations")) ||
+    (c.includes("statement") && c.includes("earnings")) ||
+    (c.includes("profit") && c.includes("loss"))
+  ) {
+    return 2;
+  }
+  return 1;
 }
 
 function displayTitleForPrimaryKind(kind: "is" | "bs" | "cf"): string {
@@ -623,11 +696,19 @@ function findBestXbrlFiles(names: string[]): {
   const cal = pick(/_cal\.xml$/i);
   let instance = pick(/_htm\.xml$/i);
   if (!instance) {
-    const idx = lower.findIndex(
-      (n) =>
-        n.endsWith(".xml") && !n.endsWith("_pre.xml") && !n.endsWith("_lab.xml") && !n.endsWith("_cal.xml")
-    );
-    instance = idx >= 0 ? names[idx]! : null;
+    const candidates = names.filter((name) => {
+      const n = name.toLowerCase();
+      if (!n.endsWith(".xml")) return false;
+      if (n.endsWith("_pre.xml") || n.endsWith("_lab.xml") || n.endsWith("_cal.xml") || n.endsWith("_def.xml")) return false;
+      if (n === "filingsummary.xml" || n === "defnref.xml") return false;
+      if (/^r\d+\.xml$/i.test(name)) return false;
+      return true;
+    });
+    instance =
+      candidates.find((name) => /(_ins\.xml|instance\.xml)$/i.test(name)) ??
+      candidates.find((name) => /-\d{8}\.xml$/i.test(name) || /_\d{8}\.xml$/i.test(name)) ??
+      candidates[0] ??
+      null;
   }
   return { instance, pre, lab, cal };
 }
@@ -1189,6 +1270,7 @@ export async function fetchAsPresentedStatements(params: {
 
   type PrimaryCandidate = {
     kind: "is" | "bs" | "cf";
+    selectionPriority: number;
     density: number;
     rowsWithValues: number;
     statement: PresentedStatement;
@@ -1284,7 +1366,10 @@ export async function fetchAsPresentedStatements(params: {
     const density = gridNonNullCount(rows, periodKeys);
     const rowsWithValues = rows.filter((row) => periodKeys.some((pk) => row.values[pk] !== null)).length;
 
-    const title = statementTitle;
+    const title =
+      kind === "is" && isComprehensiveIncomeRole(r.role)
+        ? "Comprehensive Income"
+        : statementTitle;
     const statement: PresentedStatement = {
       id: `primary-${kind}`,
       title,
@@ -1298,7 +1383,13 @@ export async function fetchAsPresentedStatements(params: {
       })),
       rows,
     };
-    primaryCandidates.push({ kind, density, rowsWithValues, statement });
+    primaryCandidates.push({
+      kind,
+      selectionPriority: kind === "is" ? incomeStatementSelectionPriority(r.role) : 0,
+      density,
+      rowsWithValues,
+      statement,
+    });
   }
 
   const bestByKind = new Map<"is" | "bs" | "cf", PrimaryCandidate>();
@@ -1306,8 +1397,10 @@ export async function fetchAsPresentedStatements(params: {
     const prev = bestByKind.get(c.kind);
     if (
       !prev ||
-      c.density > prev.density ||
-      (c.density === prev.density && c.rowsWithValues > prev.rowsWithValues)
+      c.selectionPriority > prev.selectionPriority ||
+      (c.selectionPriority === prev.selectionPriority &&
+        (c.density > prev.density ||
+          (c.density === prev.density && c.rowsWithValues > prev.rowsWithValues)))
     ) {
       bestByKind.set(c.kind, c);
     }

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { extractEmployerIdentificationNumberFromTenK } from "@/lib/buildPublicRecordsProfileFromSec";
+import {
+  extractEmployerIdentificationNumberFromTenK,
+  extractPropertiesSectionFromTenKHtml,
+  extractPropertiesSectionFromTenKText,
+} from "@/lib/buildPublicRecordsProfileFromSec";
 
 describe("extractEmployerIdentificationNumberFromTenK", () => {
   it("parses EIN immediately after Employer Identification No. (period after label)", () => {
@@ -54,5 +58,77 @@ describe("extractEmployerIdentificationNumberFromTenK", () => {
   it("cover scan finds hyphen EIN after noise in flattened IX HTML", () => {
     const noisy = `<div style="">${"x ".repeat(2000)}</div><span>(I.R.S.)</span> 33-8877666`;
     expect(extractEmployerIdentificationNumberFromTenK("", "", noisy)).toBe("33-8877666");
+  });
+});
+
+describe("extractPropertiesSectionFromTenKText", () => {
+  it("extracts the real Item 2 properties section body", () => {
+    const tenK = `
+TABLE OF CONTENTS
+Item 2. Properties ................................ 15
+Item 3. Legal Proceedings .......................... 19
+
+PART I
+
+ITEM 2. PROPERTIES
+
+We own our corporate headquarters in Denver, Colorado.
+We lease distribution centers in Texas and Ohio.
+
+ITEM 3. LEGAL PROCEEDINGS
+No material proceedings.
+`;
+
+    expect(extractPropertiesSectionFromTenKText(tenK)).toContain("We own our corporate headquarters in Denver, Colorado.");
+  });
+
+  it("ignores an early table-of-contents hit and prefers the later full section", () => {
+    const tenK = `
+TABLE OF CONTENTS
+ITEM 2. PROPERTIES
+ITEM 3. LEGAL PROCEEDINGS
+
+... many pages later ...
+
+PART I
+ITEM 2. PROPERTIES
+
+Our properties include manufacturing plants, office campuses, and warehouse facilities across the United States.
+Several properties are owned and others are leased.
+
+ITEM 3. LEGAL PROCEEDINGS
+None.
+`;
+
+    const extracted = extractPropertiesSectionFromTenKText(tenK);
+    expect(extracted).toContain("manufacturing plants");
+    expect(extracted).not.toContain("TABLE OF CONTENTS");
+  });
+
+  it("returns null when no Item 2 properties section is present", () => {
+    expect(extractPropertiesSectionFromTenKText("ITEM 1. BUSINESS\nNo properties heading here.")).toBeNull();
+  });
+});
+
+describe("extractPropertiesSectionFromTenKHtml", () => {
+  it("preserves tables inside the properties section html excerpt", () => {
+    const html = `
+      <html><body>
+        <div>TABLE OF CONTENTS Item 2. Properties .... Item 3. Legal Proceedings</div>
+        <h2>PART I</h2>
+        <h2>ITEM 2. PROPERTIES</h2>
+        <p>Our properties include offices and warehouses.</p>
+        <table>
+          <tr><th>Location</th><th>Owned / Leased</th></tr>
+          <tr><td>Dallas, TX</td><td>Owned</td></tr>
+        </table>
+        <h2>ITEM 3. LEGAL PROCEEDINGS</h2>
+      </body></html>
+    `;
+
+    const extracted = extractPropertiesSectionFromTenKHtml(html);
+    expect(extracted).toContain("<table>");
+    expect(extracted).toContain("Dallas, TX");
+    expect(extracted).not.toContain("TABLE OF CONTENTS");
   });
 });

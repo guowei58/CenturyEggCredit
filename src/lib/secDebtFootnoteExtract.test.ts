@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEBT_FOOTNOTE_GOLDEN_FIXTURES } from "@/lib/secDebtFootnoteExtract.fixtures";
 import { extractDebtFootnote } from "@/lib/secDebtSectionExtract";
+import { getAllFilingsByTicker, getSecEdgarUserAgent, type SecFiling } from "@/lib/sec-edgar";
 
 function synthetic10kNotes(opts: { weirdDebtHeading?: boolean } = {}): string {
   const debtHeading = opts.weirdDebtHeading
@@ -315,4 +316,112 @@ describe("DEBT_FOOTNOTE_GOLDEN_FIXTURES", () => {
   it("has at least 50 labeled scenarios for manual EDGAR verification", () => {
     expect(DEBT_FOOTNOTE_GOLDEN_FIXTURES.length).toBeGreaterThanOrEqual(50);
   });
+});
+
+describe("live debt footnote regressions", () => {
+  it("uses FilingSummary debt reports when the primary 10-K HTML is only a shell document (HCA)", async () => {
+    const url = "https://www.sec.gov/Archives/edgar/data/860730/000119312526044769/hca-20251231.htm";
+    const res = await fetch(url, {
+      headers: { "User-Agent": getSecEdgarUserAgent() },
+      cache: "no-store",
+    });
+    expect(res.ok).toBe(true);
+    const html = await res.text();
+    const fetchSecArchiveText = async (memberUrl: string) => {
+      const memberRes = await fetch(memberUrl, {
+        headers: { "User-Agent": getSecEdgarUserAgent() },
+        cache: "no-store",
+      });
+      if (!memberRes.ok) return null;
+      return await memberRes.text();
+    };
+    const r = await extractDebtFootnote(html, {
+      formType: "10-K",
+      filingDate: "2026-02-10",
+      accessionNumber: "0001193125-26-044769",
+      cik: "0000860730",
+      fetchSecArchiveText,
+      enableLlmAdjudication: false,
+    });
+
+    expect(r.noteNumber).toBe("8");
+    expect(r.debtNoteTitle?.toLowerCase()).toContain("debt");
+    expect(r.extractedFootnoteText.toLowerCase()).toContain("commercial paper");
+    expect(r.extractedFootnoteText.toLowerCase()).toContain("senior unsecured notes payable");
+    expect(r.diagnosticReport?.extractionPathsFired).toContain("filing_summary_report");
+    expect(r.candidates[0]?.noteNumber).toBe("8");
+  }, 60_000);
+
+  it("resolves listed issuer filings to debt-related sections", async () => {
+    const targets: Array<{
+      ticker: string;
+      form: "10-K" | "10-Q";
+      title: RegExp;
+      confidence: Array<"High" | "Medium">;
+      noteNumber?: string | null;
+    }> = [
+      { ticker: "GE", form: "10-K", title: /borrow|debt/i, confidence: ["High"], noteNumber: "22" },
+      { ticker: "GE", form: "10-Q", title: /borrow|debt/i, confidence: ["High"], noteNumber: null },
+      { ticker: "NFLX", form: "10-K", title: /debt/i, confidence: ["High"], noteNumber: "8" },
+      { ticker: "CHTR", form: "10-Q", title: /total debt|debt/i, confidence: ["High"], noteNumber: null },
+      { ticker: "T", form: "10-Q", title: /long-term debt|debt|financing/i, confidence: ["High", "Medium"], noteNumber: null },
+      { ticker: "SIRI", form: "10-K", title: /debt/i, confidence: ["High"], noteNumber: null },
+      { ticker: "SIRI", form: "10-Q", title: /debt/i, confidence: ["High"], noteNumber: null },
+      { ticker: "GD", form: "10-K", title: /debt/i, confidence: ["High"], noteNumber: null },
+      { ticker: "GD", form: "10-Q", title: /debt/i, confidence: ["High"], noteNumber: null },
+      { ticker: "IBM", form: "10-K", title: /borrowings|debt/i, confidence: ["High", "Medium"], noteNumber: null },
+    ];
+
+    const pickLatestExactForm = (filings: SecFiling[], exactForm: string): SecFiling | null => {
+      for (const filing of filings) {
+        if (filing.form.trim() === exactForm) return filing;
+      }
+      return null;
+    };
+
+    const fetchSecArchiveText = async (memberUrl: string) => {
+      const memberRes = await fetch(memberUrl, {
+        headers: { "User-Agent": getSecEdgarUserAgent() },
+        cache: "no-store",
+      });
+      if (!memberRes.ok) return null;
+      return await memberRes.text();
+    };
+
+    for (const target of targets) {
+      const filingsBundle = await getAllFilingsByTicker(target.ticker);
+      const filing = filingsBundle ? pickLatestExactForm(filingsBundle.filings, target.form) : null;
+      if (!filing || !filingsBundle) {
+        throw new Error(`Missing latest ${target.form} for ${target.ticker}`);
+      }
+      const htmlRes = await fetch(filing.docUrl, {
+        headers: { "User-Agent": getSecEdgarUserAgent() },
+        cache: "no-store",
+      });
+      const html = htmlRes.ok ? await htmlRes.text() : "";
+      const r = html
+        ? await extractDebtFootnote(html, {
+            formType: target.form,
+            filingDate: filing.filingDate,
+            accessionNumber: filing.accessionNumber,
+            cik: filingsBundle.cik,
+            fetchSecArchiveText,
+            enableLlmAdjudication: false,
+          })
+        : null;
+
+      expect(r).toBeTruthy();
+      expect(r?.extractionMethod).toBe("filing_summary_report");
+      expect(target.confidence).toContain(r?.confidence as "High" | "Medium");
+      expect(r?.debtNoteTitle ?? "").toMatch(target.title);
+      if (target.noteNumber !== undefined) {
+        expect(r?.noteNumber ?? null).toBe(target.noteNumber);
+      }
+      expect(r?.debtNoteTitle ?? "").not.toMatch(/pension|postretirement|list of exhibits|for more information/i);
+      expect((r?.diagnosticReport?.extractionPathsFired ?? []).includes("filing_summary_report")).toBe(true);
+      expect((r?.candidates[0]?.snippet ?? "").toLowerCase()).toMatch(
+        /debt|borrow|credit|notes payable|long-term debt|supplier financing/,
+      );
+    }
+  }, 180_000);
 });

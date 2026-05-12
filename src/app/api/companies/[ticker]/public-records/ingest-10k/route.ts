@@ -103,6 +103,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     );
     const snapshotJson: Prisma.InputJsonValue | typeof Prisma.JsonNull =
       cappedSnapshot === null ? Prisma.JsonNull : (cappedSnapshot as unknown as Prisma.InputJsonValue);
+    const knownPropertyLocationsJson: Prisma.InputJsonValue | typeof Prisma.JsonNull =
+      merged.knownPropertyLocations == null
+        ? Prisma.JsonNull
+        : (merged.knownPropertyLocations as Prisma.InputJsonValue);
 
     let profile;
     try {
@@ -134,7 +138,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
           irsEmployerIdentificationNumber: merged.irsEmployerIdentificationNumber ?? null,
           fiscalYearEnd: merged.fiscalYearEnd ?? null,
           majorFacilityLocations: Prisma.JsonNull,
-          knownPropertyLocations: Prisma.JsonNull,
+          knownPropertyLocations: knownPropertyLocationsJson,
           knownPermitJurisdictions: Prisma.JsonNull,
           knownRegulatoryJurisdictions: Prisma.JsonNull,
           notes: merged.notes ?? null,
@@ -155,6 +159,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
           cik: merged.cik ?? undefined,
           irsEmployerIdentificationNumber: merged.irsEmployerIdentificationNumber ?? undefined,
           fiscalYearEnd: merged.fiscalYearEnd ?? undefined,
+          knownPropertyLocations: knownPropertyLocationsJson,
           notes: merged.notes ?? undefined,
         },
       });

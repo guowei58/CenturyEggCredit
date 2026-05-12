@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import DOMPurify from "dompurify";
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { Card } from "@/components/ui";
 import {
@@ -12,7 +13,7 @@ import {
 } from "@/lib/publicRecordsConstants";
 import { generatePublicRecordsSearchTerms } from "@/lib/generatePublicRecordsSearchTerms";
 import { mergePublicRecordsSecPrefill } from "@/lib/mergePublicRecordsSecPrefill";
-import type { PublicRecordsSecPrefill } from "@/lib/publicRecordsSecPrefillTypes";
+import type { PublicRecordsPropertiesSection, PublicRecordsSecPrefill } from "@/lib/publicRecordsSecPrefillTypes";
 import {
   deriveSubsidiarySearchNamesFromGrid,
   normalizeExhibit21MisalignedEntityColumn,
@@ -150,9 +151,56 @@ function profileLikeForMerge(p: Profile | Partial<Profile> | null) {
     cik: p?.cik ?? null,
     irsEmployerIdentificationNumber: p?.irsEmployerIdentificationNumber ?? null,
     fiscalYearEnd: p?.fiscalYearEnd ?? null,
+    knownPropertyLocations: p?.knownPropertyLocations ?? null,
     stateOfIncorporation: p?.stateOfIncorporation ?? null,
     notes: p?.notes ?? null,
   };
+}
+
+function parsePropertiesSection(value: unknown): PublicRecordsPropertiesSection | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const v = value as Record<string, unknown>;
+  if (v.source !== "sec_10k_item_2") return null;
+  if (typeof v.text !== "string" || !v.text.trim()) return null;
+  if (typeof v.title !== "string" || typeof v.form !== "string" || typeof v.filingDate !== "string" || typeof v.docUrl !== "string") {
+    return null;
+  }
+  return {
+    v: 1,
+    source: "sec_10k_item_2",
+    title: v.title,
+    text: v.text,
+    html: typeof v.html === "string" && v.html.trim() ? v.html : undefined,
+    form: v.form,
+    filingDate: v.filingDate,
+    docUrl: v.docUrl,
+    truncated: v.truncated === true,
+  };
+}
+
+function sanitizePropertiesHtml(html: string): string {
+  if (!html.trim()) return "";
+  return DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: [
+      "colspan",
+      "rowspan",
+      "class",
+      "style",
+      "align",
+      "valign",
+      "width",
+      "height",
+      "border",
+      "cellpadding",
+      "cellspacing",
+      "nowrap",
+      "id",
+      "headers",
+      "scope",
+    ],
+    ADD_TAGS: ["colgroup", "col"],
+  });
 }
 
 /** True when SEC-ingest fields are still blank — safe to auto-run ingest once on load. */
@@ -188,6 +236,7 @@ function applyMergeToProfile(merged: ReturnType<typeof mergePublicRecordsSecPref
       irsEmployerIdentificationNumber:
         merged.irsEmployerIdentificationNumber ?? base.irsEmployerIdentificationNumber ?? null,
       fiscalYearEnd: merged.fiscalYearEnd ?? base.fiscalYearEnd ?? null,
+      knownPropertyLocations: merged.knownPropertyLocations ?? base.knownPropertyLocations ?? null,
       stateOfIncorporation: merged.stateOfIncorporation ?? base.stateOfIncorporation,
       notes: merged.notes ?? base.notes,
     };
@@ -217,9 +266,9 @@ function applyMergeToProfile(merged: ReturnType<typeof mergePublicRecordsSecPref
     cik: merged.cik ?? null,
     irsEmployerIdentificationNumber: merged.irsEmployerIdentificationNumber ?? null,
     fiscalYearEnd: merged.fiscalYearEnd ?? null,
+    knownPropertyLocations: merged.knownPropertyLocations ?? null,
     stateOfIncorporation: merged.stateOfIncorporation ?? null,
     majorFacilityLocations: null,
-    knownPropertyLocations: null,
     knownPermitJurisdictions: null,
     knownRegulatoryJurisdictions: null,
     notes: merged.notes ?? null,
@@ -263,6 +312,14 @@ function PublicRecordsProfileCard({
   const exhibitGrid = useMemo(
     () => parseExhibit21GridSnapshot(profileDraft.subsidiaryExhibit21Snapshot),
     [profileDraft.subsidiaryExhibit21Snapshot]
+  );
+  const propertiesSection = useMemo(
+    () => parsePropertiesSection(profileDraft.knownPropertyLocations),
+    [profileDraft.knownPropertyLocations]
+  );
+  const safePropertiesHtml = useMemo(
+    () => sanitizePropertiesHtml(propertiesSection?.html ?? ""),
+    [propertiesSection?.html]
   );
 
   const persistExhibitGrid = (snap: Exhibit21GridSnapshotV1) => {
@@ -494,6 +551,55 @@ function PublicRecordsProfileCard({
           onChange={(e) => setProfileDraft((p) => ({ ...p, principalExecutiveOfficeAddress: e.target.value }))}
         />
       </label>
+
+      <div className="mt-4 space-y-2">
+        <label className="mb-1 flex flex-col gap-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
+          Properties
+          <span className="text-[9px] font-normal normal-case leading-snug" style={{ color: "var(--muted2)" }}>
+            Latest 10-K `Part I, Item 2` section when the filing exposes a usable Properties section.
+          </span>
+        </label>
+        <div className="rounded border border-[var(--border)] bg-[var(--card)] p-3">
+          {propertiesSection ? (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px]" style={{ color: "var(--muted2)" }}>
+                <span>{propertiesSection.title}</span>
+                <span>{propertiesSection.form} filed {propertiesSection.filingDate}</span>
+                <a
+                  href={propertiesSection.docUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-[var(--border)] underline-offset-2 hover:text-[var(--accent)]"
+                >
+                  Open filing
+                </a>
+                {propertiesSection.truncated ? <span>Excerpted for the profile view.</span> : null}
+              </div>
+              <div className="max-h-[24rem] overflow-y-auto">
+                {safePropertiesHtml ? (
+                  <div className="overflow-x-auto rounded border border-[var(--border)] bg-[var(--panel)]">
+                    <div
+                      className="saved-html-content sec-debt-footnote-html min-w-0 max-h-[24rem] overflow-y-auto p-3 text-[12px] leading-snug text-[var(--text)]"
+                      // eslint-disable-next-line react/no-danger
+                      dangerouslySetInnerHTML={{ __html: safePropertiesHtml }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="whitespace-pre-wrap rounded border border-[var(--border)] bg-[var(--panel)] p-3 text-[11px] leading-relaxed text-[var(--text)]"
+                  >
+                    {propertiesSection.text}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
+              Refresh to pull the latest 10-K Properties section before the subsidiary schedule.
+            </p>
+          )}
+        </div>
+      </div>
 
       <div className="mt-4 space-y-2">
         <label className="mb-1 flex flex-col gap-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
@@ -749,7 +855,7 @@ export function PublicRecordsTab({
     void refresh();
   }, [refresh]);
 
-  /** Fill CIK / EIN / FYE when missing (SEC submissions + 10‑K cover in prefill-from-SEC). Saves via debounced autosave. */
+  /** Fill SEC identity fields and Part I, Item 2 properties when missing. Saves via debounced autosave. */
   useEffect(() => {
     if (loading || !profile?.id) return undefined;
 
@@ -759,7 +865,8 @@ export function PublicRecordsTab({
     const needIdentity =
       !(profile.cik ?? "").trim() ||
       !(profile.fiscalYearEnd ?? "").trim() ||
-      !(profile.irsEmployerIdentificationNumber ?? "").trim();
+      !(profile.irsEmployerIdentificationNumber ?? "").trim() ||
+      !parsePropertiesSection(profile.knownPropertyLocations);
 
     if (!needIdentity) {
       identityPrefillRanKeyRef.current = bootstrapKey;

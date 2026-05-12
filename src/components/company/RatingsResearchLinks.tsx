@@ -165,11 +165,7 @@ export function RatingsResearchLinks({
       description={
         <>
           Official links from Fitch, Moody&apos;s, and S&amp;P (issuer/issue pages, rating actions, research) discovered via web search.
-          We only show agency domains — no paywalled body text is scraped or reproduced. Set{" "}
-          <code className="text-[10px]" style={{ color: "var(--accent)" }}>
-            SERPER_API_KEY
-          </code>{" "}
-          in <code className="text-[10px]">.env.local</code>. Results stay saved until you refresh.
+          We only show agency domains — no paywalled body text is scraped or reproduced. Results stay saved until you refresh.
         </>
       }
       onRefresh={() => void runSearch()}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { extractSubsidiaryNamesFromStandaloneExhibitBody } from "@/lib/subsidiary-name-hints";
+import { extractExhibit21GridSnapshotFromDocument } from "@/lib/exhibit21GridExtract";
 import { pairedSubsidiariesFromLines } from "@/lib/exhibit21SubsidiaryRows";
 
 function workivaStyleEx21(): string {
@@ -44,5 +45,28 @@ describe("extractSubsidiaryNamesFromStandaloneExhibitBody (Exhibit 21)", () => {
     const { names, domiciles } = pairedSubsidiariesFromLines(lines);
     expect(names[0]).toBe("DISH Network Corporation");
     expect(domiciles[0]).toBe("Nevada");
+  });
+
+  it("rebuilds standalone one-column Exhibit 21 schedules into one subsidiary per row", () => {
+    const html = `
+    <html><body>
+      <div>SIRIUS XM HOLDINGS INC.</div>
+      <div>SUBSIDIARIES</div>
+      <div>Sirius XM Inc.</div>
+      <div>Sirius XM Radio LLC.</div>
+      <div>Automatic Labs Inc.</div>
+      <div>Satellite CD Radio LLC</div>
+      <div>Pandora Media, LLC</div>
+    </body></html>`;
+    const snap = extractExhibit21GridSnapshotFromDocument(html);
+    expect(snap).toBeTruthy();
+    expect(snap?.hasHeaderRow).toBe(false);
+    expect(snap?.rows.map((r) => r[0])).toEqual([
+      "Sirius XM Inc.",
+      "Sirius XM Radio LLC.",
+      "Automatic Labs Inc.",
+      "Satellite CD Radio LLC",
+      "Pandora Media, LLC",
+    ]);
   });
 });

@@ -1,5 +1,17 @@
 import type { Exhibit21GridSnapshotV1 } from "@/lib/exhibit21GridSnapshot";
 
+export type PublicRecordsPropertiesSection = {
+  v: 1;
+  source: "sec_10k_item_2";
+  title: string;
+  text: string;
+  html?: string;
+  form: string;
+  filingDate: string;
+  docUrl: string;
+  truncated?: boolean;
+};
+
 /** Payload returned by GET …/public-records/profile/prefill-from-sec (merged into profile draft on the client). */
 export type PublicRecordsSecPrefill = {
   companyName: string | null;
@@ -20,6 +32,7 @@ export type PublicRecordsSecPrefill = {
   /** From 10-K cover when scraped */
   irsEmployerIdentificationNumber: string | null;
   fiscalYearEnd: string | null;
+  propertiesSection: PublicRecordsPropertiesSection | null;
   sources: string[];
   warnings: string[];
   filing: {

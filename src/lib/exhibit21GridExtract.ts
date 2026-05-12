@@ -12,6 +12,7 @@ import {
   isSubsidiaryScheduleHeaderRow,
   type Exhibit21GridSnapshotV1,
 } from "@/lib/exhibit21GridSnapshot";
+import { extractSubsidiaryNamesFromStandaloneExhibitBody } from "@/lib/subsidiary-name-hints";
 
 function decodeInlineHtmlEntities(s: string): string {
   let t = s.replace(/&#x([0-9a-fA-F]{1,6});?/gi, (_, h: string) => {
@@ -290,6 +291,57 @@ function rowsFromTabOrPipeLines(lines: string[]): string[][] {
   return rowsOut;
 }
 
+/**
+ * Standalone Exhibit 21 files are sometimes visually a one-column subsidiary list, but SEC HTML flattening
+ * can collapse that into one giant cell/row. Rebuild into one subsidiary per row so the Public Records
+ * profile mirrors the schedule instead of a single concatenated blob.
+ */
+function normalizeStandaloneSingleColumnRows(rows: string[][], rawDocument: string): string[][] {
+  const width = matrixWidth(rows);
+  if (width !== 1) return rows;
+  const body = rows
+    .map((r) => normalizeCellText(r[0] ?? ""))
+    .filter((cell) => cell.length > 0);
+
+  const parsedNames = extractSubsidiaryNamesFromStandaloneExhibitBody(rawDocument, 12_000, true, false)
+    .map((name) => normalizeCellText(name))
+    .filter((name) => name.length > 0);
+  if (parsedNames.length < 2) return rows;
+
+  let normalizedNames = [...parsedNames];
+  if (
+    normalizedNames.length >= 2 &&
+    /^subsidiar(?:y|ies)$/i.test(normalizedNames[1] ?? "") &&
+    /[A-Za-z]/.test(normalizedNames[0] ?? "")
+  ) {
+    normalizedNames = normalizedNames.slice(2);
+  }
+  const first = normalizedNames[0] ?? "";
+  const second = normalizedNames[1] ?? "";
+  const letters = first.replace(/[^A-Za-z]/g, "");
+  const uppercaseRatio =
+    letters.length > 0 ? (first.match(/[A-Z]/g)?.length ?? 0) / letters.length : 0;
+  if (
+    normalizedNames.length >= 3 &&
+    /subsidiar(?:y|ies)/i.test(rawDocument) &&
+    uppercaseRatio >= 0.85 &&
+    second !== second.toUpperCase()
+  ) {
+    normalizedNames = normalizedNames.slice(1);
+  }
+  normalizedNames = normalizedNames.filter(
+    (name) =>
+      !/^(subsidiar(?:y|ies)|list\s+of\s+subsidiar(?:y|ies)|exhibit\s*21)$/i.test(name)
+  );
+  if (normalizedNames.length < 2) return rows;
+  const rawBodyMatchesNormalized =
+    body.length === normalizedNames.length &&
+    body.every((cell, i) => cell === normalizedNames[i]);
+  if (rawBodyMatchesNormalized) return rows;
+
+  return normalizedNames.map((name) => [name]);
+}
+
 export function extractExhibit21GridSnapshotFromDocument(rawIn: string): Exhibit21GridSnapshotV1 | null {
   const raw = decodeInlineHtmlEntities(rawIn).replace(/\u00feff/g, "");
   if (!raw || raw.length < 80) return null;
@@ -366,6 +418,8 @@ export function extractExhibit21GridSnapshotFromDocument(rawIn: string): Exhibit
   rect = stripPreambleGarbageRows(rect).filter((r) => r.some((c) => c.trim()));
   rect = rectangularize(rect, matrixWidth(rect));
   rect = explodeMegacellsToGrid(rect);
+  rect = rectangularize(rect, matrixWidth(rect));
+  rect = normalizeStandaloneSingleColumnRows(rect, raw);
   rect = rectangularize(rect, matrixWidth(rect));
   if (rect.length < 2) return null;
 

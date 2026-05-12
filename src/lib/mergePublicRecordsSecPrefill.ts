@@ -24,6 +24,7 @@ type ProfileLike = {
   cik?: string | null;
   irsEmployerIdentificationNumber?: string | null;
   fiscalYearEnd?: string | null;
+  knownPropertyLocations?: unknown;
   notes?: string | null;
 };
 
@@ -68,6 +69,7 @@ export function mergePublicRecordsSecPrefill(
     if (prefill.cik?.trim()) next.cik = prefill.cik.trim();
     if (prefill.fiscalYearEnd?.trim()) next.fiscalYearEnd = prefill.fiscalYearEnd.trim();
     if (prefill.irsEmployerIdentificationNumber?.trim()) next.irsEmployerIdentificationNumber = prefill.irsEmployerIdentificationNumber.trim();
+    if (prefill.propertiesSection) next.knownPropertyLocations = prefill.propertiesSection;
   } else {
     if (empty(prev.companyName) && prefill.companyName) {
       next.companyName = prefill.companyName;
@@ -95,6 +97,9 @@ export function mergePublicRecordsSecPrefill(
     }
     if (empty(prev.irsEmployerIdentificationNumber) && prefill.irsEmployerIdentificationNumber?.trim()) {
       next.irsEmployerIdentificationNumber = prefill.irsEmployerIdentificationNumber.trim();
+    }
+    if ((prev.knownPropertyLocations === null || prev.knownPropertyLocations === undefined) && prefill.propertiesSection) {
+      next.knownPropertyLocations = prefill.propertiesSection;
     }
   }
 

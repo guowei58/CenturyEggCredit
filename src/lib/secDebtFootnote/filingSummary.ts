@@ -11,10 +11,12 @@ export type FilingSummaryReportRef = {
   htmlFile?: string;
 };
 
-const DEBT_FILENAME_HINTS = /debt|borrow|credit|financ|convertible|lease\s+obligation|notes?\s+payable/i;
-
-const DEBT_MENU_HINTS =
-  /\b(debt|long[\s-]*term\s+debt|borrowings|notes\s+payable|credit\s+facilities|financing\s+arrangements|convertible\s+notes|finance\s+lease\s+obligations|debt\s+and\s+finance\s+lease)/i;
+const DEBT_CORE_HINTS =
+  /\b(debt|total\s+debt|long[\s-]*term\s+debt|short[\s-]*term\s+debt|borrowings|notes\s+payable|credit\s+facilit(?:y|ies)|revolving\s+credit|term\s+loan|debentures?|senior\s+notes|convertible\s+notes|debt\s+disclosure|supplier\s+and\s+vendor\s+financing|fair\s+value.*long[\s-]*term\s+debt)\b/i;
+const DEBT_FILENAME_HINTS =
+  /\b(debt|borrow|credit|termloan|notespayable|debenture|convertible|supplier|vendor)\b/i;
+const DEBT_GENERIC_NEGATIVE_HINTS =
+  /\b(statement|cover\s+page|financial\s+assets?\s*&\s*liabilities|financial\s+instruments?|financing\s+receivables|derivative|leases?\b|discontinued\s+operations|preparation\s+of\s+interim\s+financial\s+statements|additional\s+financial\s+information)\b/i;
 
 export function filingSummaryXmlUrl(cikPadded10: string, accessionDashed: string): string {
   const cikNum = String(parseInt(cikPadded10.replace(/^0+/, "") || "0", 10));
@@ -41,6 +43,10 @@ function pickReportsRoot(parsed: Record<string, unknown>): unknown {
     if (o.Report !== undefined) return o.Report;
     if (o.Reports !== undefined && typeof o.Reports === "object") {
       const inner = (o.Reports as Record<string, unknown>).Report;
+      if (inner !== undefined) return inner;
+    }
+    if (o.MyReports !== undefined && typeof o.MyReports === "object") {
+      const inner = (o.MyReports as Record<string, unknown>).Report;
       if (inner !== undefined) return inner;
     }
     return null;
@@ -103,11 +109,28 @@ export function parseFilingSummaryReports(xml: string): FilingSummaryReportRef[]
 }
 
 export function filterDebtRelatedFilingSummaryReports(reports: FilingSummaryReportRef[]): FilingSummaryReportRef[] {
-  return reports.filter((rep) => {
-    const blob = [rep.shortName, rep.longName, rep.menuCategory, rep.htmlFile].filter(Boolean).join(" | ");
-    if (!blob.trim()) return false;
-    if (DEBT_MENU_HINTS.test(blob)) return true;
-    if (rep.htmlFile && DEBT_FILENAME_HINTS.test(rep.htmlFile)) return true;
-    return false;
-  });
+  const scoreReport = (rep: FilingSummaryReportRef): number => {
+    const short = String(rep.shortName ?? "").trim();
+    const long = String(rep.longName ?? "").trim();
+    const menu = String(rep.menuCategory ?? "").trim();
+    const file = String(rep.htmlFile ?? "").trim();
+    const blob = [short, long, menu, file].filter(Boolean).join(" | ");
+    if (!blob) return Number.NEGATIVE_INFINITY;
+
+    let score = 0;
+    if (DEBT_CORE_HINTS.test(blob)) score += 80;
+    if (file && DEBT_FILENAME_HINTS.test(file)) score += 18;
+    if (/^\s*(debt|borrowings?|total\s+debt|long[\s-]*term\s+debt)\b/i.test(short)) score += 28;
+    if (/\((?:notes|tables)\)/i.test(short) || /\bdisclosure\b/i.test(long)) score += 8;
+    if (/\bdetail/i.test(short) || /\bdetail/i.test(long)) score -= 6;
+    if (DEBT_GENERIC_NEGATIVE_HINTS.test(blob) && !DEBT_CORE_HINTS.test(blob)) score -= 50;
+    if (/\bfair\s+value\b/i.test(blob) && !/\blong[\s-]*term\s+debt\b/i.test(blob)) score -= 12;
+    return score;
+  };
+
+  return reports
+    .map((rep) => ({ rep, score: scoreReport(rep) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(({ rep }) => rep);
 }

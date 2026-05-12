@@ -479,7 +479,7 @@ export function LandingPage() {
 
         <section className="mt-16 rounded-2xl border p-6 sm:p-7" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="text-2xl font-semibold leading-tight">Start with one ticker.</div>
               <div className="mt-2 max-w-3xl text-sm leading-relaxed tracking-normal" style={{ color: "var(--muted)" }}>
                 Create an account and generate your first source-backed research packet. Use OREO for credit diligence, equity
@@ -489,7 +489,7 @@ export function LandingPage() {
                 Free to use. No credit card required.
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               <Link
                 href="/register"
                 className="rounded-md px-4 py-2 text-sm font-semibold tracking-normal"

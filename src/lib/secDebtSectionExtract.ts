@@ -18,6 +18,7 @@ import {
   filingSummaryXmlUrl,
   filterDebtRelatedFilingSummaryReports,
   parseFilingSummaryReports,
+  type FilingSummaryReportRef,
 } from "@/lib/secDebtFootnote/filingSummary";
 import { collectIxDebtBlocks, ixOverlapBoostForSegment, type IxDebtBlock } from "@/lib/secDebtFootnote/ixbrlDebtBlocks";
 import {
@@ -1378,6 +1379,8 @@ function isExcludedNonDebtHeadingTitle(titleRaw: string, headingDisplay: string)
 
   if (/^exhibits?\b/.test(t)) return true;
   if (/^signatures?\b/.test(t)) return true;
+  if (/^list\s+of\s+exhibits\b/.test(t)) return true;
+  if (/^financial\s+statements\b/.test(t) && !/\bdebt\b/.test(t) && !/\bborrowings?\b/.test(t)) return true;
   if (/\bexhibit\s+index\b/.test(t)) return true;
 
   if (/\bfinancial\s+statement\s+schedules?\b/.test(t) && !/\bdebt\b/.test(t)) return true;
@@ -1473,6 +1476,7 @@ function isCrossReferenceNoteHeading(html: string, idx: number, titleRaw: string
     )
   )
     return true;
+  if (/^note\s+\d{1,2}[a-z]?\s+for\s+more\s+information\b/i.test(previewNorm)) return true;
   if (/^to\s+the\s+financial\s+statements\b/.test(combined)) return true;
   if (/^to\s+our\s+financial\s+statements\b/.test(combined)) return true;
   if (/^included\s+in\b/.test(combined)) return true;
@@ -1524,6 +1528,8 @@ function isNumberedScheduleFootnotePseudoHeading(titleRaw: string): boolean {
     return true;
 
   return (
+    /^see\s+(?:the\s+)?/i.test(t) ||
+    /^for\s+more\s+information\b/i.test(t) ||
     /^reflects?\s+(?:the\s+)?/i.test(t) ||
     /^maturity\s+reference\b/i.test(t) ||
     /^the\s+exchange\s+feature\b/i.test(t) ||
@@ -2351,6 +2357,124 @@ function pathsForMethodOnly(method: DebtFootnoteExtractionMethod): DebtFootnoteP
   return ["note_map"];
 }
 
+function buildSyntheticStandaloneReportSegment(reportHtml: string, reportTitle: string): Segment | null {
+  const cleaned = preprocessFootnoteSlice(preprocessSecHtml(reportHtml));
+  if (!cleaned.trim()) return null;
+
+  const title = collapseWs(reportTitle).trim() || "Debt";
+  const noteMatch = stripTagsToPlain(cleaned.slice(0, 4_000)).match(/\bnote\s+(\d{1,2}[a-z]?)\b/i);
+  const titleIdx = cleaned.toLowerCase().indexOf(title.toLowerCase());
+  const start = titleIdx >= 0 ? titleIdx : 0;
+  const end = Math.min(start + Math.max(title.length, 1), cleaned.length);
+  const hit: HeadingHit = {
+    index: start,
+    end,
+    noteNum: noteMatch?.[1]?.trim() ?? "",
+    titleRaw: title,
+    priority: 85,
+  };
+  const seg = buildSegmentAt(cleaned, hit, null, cleaned.length);
+  return {
+    ...seg,
+    headingDisplay: title,
+    headingScore: scoreDebtHeading(`${hit.noteNum ? `Note ${hit.noteNum} ` : ""}${title}`),
+  };
+}
+
+function collectStandaloneFilingSummaryCandidates(
+  reportHtml: string,
+  ixBlocks: IxDebtBlock[],
+  reportRef?: FilingSummaryReportRef,
+): ScoredNoteBlock[] {
+  const cleaned = preprocessSecHtml(reportHtml);
+  const headings = filterBogusHighNoteHeadingHits(scanNoteHeadings(cleaned, 0, cleaned.length));
+  let segments: Segment[] = [];
+
+  if (headings.length) {
+    segments = buildSegments(cleaned, headings, cleaned.length).filter(segmentHasExtractableBody);
+    if (!segments.length) {
+      segments = buildSegments(cleaned, headings, cleaned.length);
+    }
+  } else {
+    const synthetic = buildSyntheticStandaloneReportSegment(
+      reportHtml,
+      String(reportRef?.shortName ?? reportRef?.longName ?? "Debt").replace(/\((?:tables?|details?)\)/gi, "").trim(),
+    );
+    if (synthetic) segments = [synthetic];
+  }
+  if (!segments.length) return [];
+
+  return segments
+    .map((seg) =>
+      scoreSegmentWithMethod(seg, "filing_summary_report", ixBlocks, {
+        pathsFired: ["filing_summary_report"],
+        filingSummaryScore: 52,
+      }),
+    )
+    .filter(
+      (row) =>
+        row.headingSpecScore >= 35 ||
+        row.bodySpecScore >= 40 ||
+        row.tableEvidenceScore >= 12 ||
+        row.segment.maxDebtTableKeywordScore >= 16,
+    )
+    .sort((a, b) => b.totalDebtScore - a.totalDebtScore)
+    .slice(0, 2);
+}
+
+async function collectFilingSummaryCandidateRows(
+  cleaned: string,
+  headings: HeadingHit[],
+  notesStart: number,
+  regionEnd: number,
+  ixBlocks: IxDebtBlock[],
+  opts: Pick<ExtractDebtFootnoteOptions, "cik" | "accessionNumber" | "fetchSecArchiveText">,
+): Promise<{ rows: ScoredNoteBlock[]; filingSummaryXmlFound: boolean }> {
+  if (!opts.fetchSecArchiveText || !opts.cik?.trim() || !opts.accessionNumber?.trim()) {
+    return { rows: [], filingSummaryXmlFound: false };
+  }
+
+  try {
+    const fsUrl = filingSummaryXmlUrl(opts.cik.trim(), opts.accessionNumber.trim());
+    const xml = await opts.fetchSecArchiveText(fsUrl);
+    if (!xml || (!/FilingSummary/i.test(xml) && !/<(?:Report|Reports|MyReports)\b/i.test(xml))) {
+      return { rows: [], filingSummaryXmlFound: false };
+    }
+
+    const reps = filterDebtRelatedFilingSummaryReports(parseFilingSummaryReports(xml));
+    const rows: ScoredNoteBlock[] = [];
+    for (const rep of reps.slice(0, 6)) {
+      const fn = rep.htmlFile ?? rep.shortName;
+      if (!fn || !/\.(htm|html)$/i.test(fn)) continue;
+      const reportUrl = filingSummaryMemberUrl(opts.cik.trim(), opts.accessionNumber.trim(), fn);
+      const reportHtml = await opts.fetchSecArchiveText(reportUrl);
+      if (!reportHtml || reportHtml.length < 120) continue;
+
+      const prepped = preprocessSecHtml(reportHtml);
+      const needlePlain = stripTagsToPlain(prepped).slice(0, 1400);
+      const seg =
+        headings.length > 0
+          ? findNoteSegmentContainingPlainSnippet(cleaned, headings, notesStart, regionEnd, needlePlain)
+          : null;
+      if (seg) {
+        rows.push(
+          scoreSegmentWithMethod(seg, "filing_summary_report", ixBlocks, {
+            pathsFired: ["filing_summary_report"],
+            filingSummaryScore: 46,
+          }),
+        );
+        continue;
+      }
+
+      rows.push(...collectStandaloneFilingSummaryCandidates(reportHtml, ixBlocks, rep));
+    }
+
+    return { rows, filingSummaryXmlFound: true };
+  } catch {
+    return { rows: [], filingSummaryXmlFound: false };
+  }
+}
+
 function collectTableAnchorCandidates(
   html: string,
   headings: HeadingHit[],
@@ -2470,6 +2594,7 @@ function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolea
   const strongTable = top.tableEvidenceScore >= 30 || top.segment.maxDebtTableKeywordScore >= 22;
   const debtIndicators3 = bi >= 3 || bodyTerms >= 3;
   const pathCount = countIndependentStrongPaths(top.pathsFired);
+  const filingSummaryDriven = top.pathsFired.includes("filing_summary_report");
 
   const toxicHeading =
     /\brisk\s+factors\b/.test(top.headingNorm) ||
@@ -2477,6 +2602,9 @@ function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolea
     /\bquantitative\s+and\s+qualitative\s+disclosures\s+about\s+market\s+risk\b/.test(top.headingNorm);
 
   if (!notesFound) {
+    if (filingSummaryDriven && (hiHead || strongTable) && (bodyTerms >= 3 || bi >= 4)) {
+      return pathCount >= 2 ? "High" : "Medium";
+    }
     if (top.totalDebtScore < 28 && bodyTerms < 2 && !strongTable) return "Not Found";
     return "Low";
   }
@@ -2496,6 +2624,10 @@ function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolea
     notesFound
   ) {
     return "High";
+  }
+
+  if (filingSummaryDriven && hiHead && top.totalDebtScore >= 110 && top.negativeScore < 40) {
+    return "Medium";
   }
 
   if (
@@ -2656,6 +2788,20 @@ export async function extractDebtFootnote(
   headings = filterBogusHighNoteHeadingHits(headings);
 
   const anchorsInNotes = debtAnchorsHitInNotes(cleaned, notesStart, regionEnd);
+  const filingSummaryResult = await collectFilingSummaryCandidateRows(
+    cleaned,
+    headings,
+    notesStart,
+    regionEnd,
+    ixBlocks,
+    {
+      cik: opts.cik,
+      accessionNumber: opts.accessionNumber,
+      fetchSecArchiveText: opts.fetchSecArchiveText,
+    },
+  );
+  const filingSummaryRows = filingSummaryResult.rows;
+  filingSummaryXmlFound = filingSummaryResult.filingSummaryXmlFound;
 
   const buildFailureDiagnostic = (
     reason: string,
@@ -2689,7 +2835,7 @@ export async function extractDebtFootnote(
     ...(footnoteSeg ? { footnoteSegmentation: footnoteSeg } : {}),
   });
 
-  if (headings.length === 0) {
+  if (headings.length === 0 && filingSummaryRows.length === 0) {
     let excerpt = stripTagsToPlain(cleaned.slice(notesStart, notesStart + 120_000)).trim();
     let msg =
       "Debt footnote not found — no numbered note headings detected after Notes to Financial Statements.";
@@ -2710,9 +2856,21 @@ export async function extractDebtFootnote(
     return emptyResult(msg, notesStart, excerptOut, formType, warnings, diag);
   }
 
-  let segments = buildSegments(cleaned, headings, regionEnd).filter(segmentHasExtractableBody);
-  if (segments.length === 0 && headings.length > 0) {
-    segments = buildSegments(cleaned, headings, regionEnd);
+  let usingStandaloneFilingSummaryBase = false;
+  let segments: Segment[] = [];
+  let scoredMap: ScoredNoteBlock[] = [];
+
+  if (headings.length === 0 && filingSummaryRows.length > 0) {
+    usingStandaloneFilingSummaryBase = true;
+    segments = filingSummaryRows.map((row) => row.segment);
+    scoredMap = [...filingSummaryRows];
+    headings = segments.map((seg) => seg.hit);
+    warnings.push("Primary filing HTML omitted extractable Notes headings; using FilingSummary debt report HTML.");
+  } else {
+    segments = buildSegments(cleaned, headings, regionEnd).filter(segmentHasExtractableBody);
+    if (segments.length === 0 && headings.length > 0) {
+      segments = buildSegments(cleaned, headings, regionEnd);
+    }
   }
 
   if (segments.length === 0) {
@@ -2726,50 +2884,17 @@ export async function extractDebtFootnote(
     return emptyResult(msg, notesStart, "", formType, warnings, diag);
   }
 
-  let scoredMap = segments.map((s) => scoreSegmentWithMethod(s, "direct_heading_match", ixBlocks));
+  if (!usingStandaloneFilingSummaryBase) {
+    scoredMap = segments.map((s) => scoreSegmentWithMethod(s, "direct_heading_match", ixBlocks));
 
-  const anchorRows = collectTableAnchorCandidates(cleaned, headings, notesStart, regionEnd, ixBlocks);
-  scoredMap = mergeAnchorUpgradeIntoPrimary(scoredMap, anchorRows);
+    const anchorRows = collectTableAnchorCandidates(cleaned, headings, notesStart, regionEnd, ixBlocks);
+    scoredMap = mergeAnchorUpgradeIntoPrimary(scoredMap, anchorRows);
+  }
 
   const bsLabels = extractBalanceSheetDebtLabels(cleaned, regionStart, notesStart);
 
-  if (opts.fetchSecArchiveText && opts.cik?.trim() && opts.accessionNumber?.trim()) {
-    try {
-      const fsUrl = filingSummaryXmlUrl(opts.cik.trim(), opts.accessionNumber.trim());
-      const xml = await opts.fetchSecArchiveText(fsUrl);
-      if (xml && (/FilingSummary/i.test(xml) || /<(?:Report|Reports)\b/i.test(xml))) {
-        filingSummaryXmlFound = true;
-        const reps = filterDebtRelatedFilingSummaryReports(parseFilingSummaryReports(xml));
-        const filingRows: ScoredNoteBlock[] = [];
-        for (const rep of reps.slice(0, 6)) {
-          const fn = rep.htmlFile ?? rep.shortName;
-          if (!fn || !/\.(htm|html)$/i.test(fn)) continue;
-          const reportUrl = filingSummaryMemberUrl(opts.cik.trim(), opts.accessionNumber.trim(), fn);
-          const reportHtml = await opts.fetchSecArchiveText(reportUrl);
-          if (!reportHtml || reportHtml.length < 120) continue;
-          const prepped = preprocessSecHtml(reportHtml);
-          const needlePlain = stripTagsToPlain(prepped).slice(0, 1400);
-          const seg = findNoteSegmentContainingPlainSnippet(
-            cleaned,
-            headings,
-            notesStart,
-            regionEnd,
-            needlePlain,
-          );
-          if (seg) {
-            filingRows.push(
-              scoreSegmentWithMethod(seg, "filing_summary_report", ixBlocks, {
-                pathsFired: ["filing_summary_report"],
-                filingSummaryScore: 46,
-              }),
-            );
-          }
-        }
-        scoredMap = mergeMultipathRows(scoredMap, filingRows);
-      }
-    } catch {
-      /* auxiliary */
-    }
+  if (!usingStandaloneFilingSummaryBase && filingSummaryRows.length > 0) {
+    scoredMap = mergeMultipathRows(scoredMap, filingSummaryRows);
   }
 
   const ixStandalone: ScoredNoteBlock[] = [];

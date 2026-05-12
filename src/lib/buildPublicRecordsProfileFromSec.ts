@@ -19,7 +19,7 @@ import {
   lookupStateAbbrFromUsZip,
 } from "@/lib/censusCountyFromAddress";
 
-import type { PublicRecordsSecPrefill } from "@/lib/publicRecordsSecPrefillTypes";
+import type { PublicRecordsPropertiesSection, PublicRecordsSecPrefill } from "@/lib/publicRecordsSecPrefillTypes";
 
 const US_STATE_NAMES: Record<string, string> = {
   alabama: "AL",
@@ -413,6 +413,75 @@ function findItem2Slice(text: string): string | null {
   return slice;
 }
 
+const PROPERTIES_SECTION_MAX_CHARS = 18_000;
+const PROPERTIES_SECTION_MAX_HTML_CHARS = 120_000;
+const HTML_HEADING_GAP = String.raw`(?:[\s\u00a0]|&nbsp;|&#160;|&#xa0;|<[^>]+>){0,80}`;
+
+function scorePropertiesSlice(startIdx: number, body: string): number {
+  let score = 0;
+  const normalized = body.toLowerCase();
+  const propertySignalCount =
+    body.match(/\b(own|lease|leased|facility|facilities|plant|plants|office|offices|distribution|warehouse|stores?|acre|square feet|real estate)\b/gi)
+      ?.length ?? 0;
+  if (startIdx >= 2_500) score += 14;
+  if (body.length >= 500) score += 10;
+  if (body.length >= 1_500) score += 6;
+  if (body.length < 250) score -= propertySignalCount >= 2 ? 4 : 20;
+  if (normalized.includes("table of contents")) score -= 80;
+  if ((body.match(/\.{8,}/g) ?? []).length >= 2) score -= 40;
+  score += Math.min(propertySignalCount, 6) * 8;
+  return score;
+}
+
+export function extractPropertiesSectionFromTenKText(text: string): string | null {
+  const startRe = /\bITEM\s+2\.?\s*(?:[-:]\s*)?(?:PROPERT(?:Y|IES)|DESCRIPTION\s+OF\s+PROPERT(?:Y|IES))\b/gi;
+  const endRe = /\bITEM\s+(?:3|4)\.?\s*(?:LEGAL\s+PROCEEDINGS|MINE\s+SAFETY\s+DISCLOSURES|INFORMATION\s+ABOUT\s+OUR\s+EXECUTIVE\s+OFFICERS|SUBMISSION\s+OF\s+MATTERS|UNRESOLVED\s+STAFF\s+COMMENTS)?\b/gi;
+  const candidates: { score: number; body: string }[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = startRe.exec(text)) !== null) {
+    const start = match.index;
+    const bodyStart = start + match[0].length;
+    endRe.lastIndex = bodyStart;
+    const endMatch = endRe.exec(text);
+    const rawBody = normalizeWhitespace(text.slice(bodyStart, endMatch?.index ?? bodyStart + 24_000));
+    if (!rawBody) continue;
+    const score = scorePropertiesSlice(start, rawBody);
+    candidates.push({ score, body: rawBody });
+  }
+  const best = candidates.sort((a, b) => b.score - a.score || b.body.length - a.body.length)[0];
+  if (!best || best.score < 8) return null;
+  return best.body.slice(0, PROPERTIES_SECTION_MAX_CHARS).trim() || null;
+}
+
+export function extractPropertiesSectionFromTenKHtml(html: string): string | null {
+  if (!html.trim()) return null;
+  const startRe = new RegExp(
+    String.raw`\bitem${HTML_HEADING_GAP}2\.?${HTML_HEADING_GAP}(?:propert(?:y|ies)|description${HTML_HEADING_GAP}of${HTML_HEADING_GAP}propert(?:y|ies))\b`,
+    "gi"
+  );
+  const endRe = new RegExp(
+    String.raw`\bitem${HTML_HEADING_GAP}(?:3|4)\.?(?:${HTML_HEADING_GAP}(?:legal${HTML_HEADING_GAP}proceedings|mine${HTML_HEADING_GAP}safety${HTML_HEADING_GAP}disclosures|information${HTML_HEADING_GAP}about${HTML_HEADING_GAP}our${HTML_HEADING_GAP}executive${HTML_HEADING_GAP}officers|submission${HTML_HEADING_GAP}of${HTML_HEADING_GAP}matters|unresolved${HTML_HEADING_GAP}staff${HTML_HEADING_GAP}comments))?\b`,
+    "gi"
+  );
+  const candidates: { score: number; html: string }[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = startRe.exec(html)) !== null) {
+    const start = match.index;
+    const bodyStart = start + match[0].length;
+    endRe.lastIndex = bodyStart;
+    const endMatch = endRe.exec(html);
+    const rawHtml = html.slice(bodyStart, endMatch?.index ?? Math.min(bodyStart + PROPERTIES_SECTION_MAX_HTML_CHARS, html.length));
+    if (!rawHtml.trim()) continue;
+    const plain = stripSecFilingHtml(rawHtml);
+    if (!plain) continue;
+    const score = scorePropertiesSlice(start, plain);
+    candidates.push({ score, html: rawHtml.slice(0, PROPERTIES_SECTION_MAX_HTML_CHARS).trim() });
+  }
+  const best = candidates.sort((a, b) => b.score - a.score || b.html.length - a.html.length)[0];
+  if (!best || best.score < 8) return null;
+  return best.html || null;
+}
+
 /**
  * Pull a registrant HQ / principal executive block from plain filing text.
  */
@@ -803,6 +872,7 @@ export async function buildPublicRecordsProfileFromSec(
   }
 
   let filing: PublicRecordsSecPrefill["filing"] = null;
+  let propertiesSection: PublicRecordsPropertiesSection | null = null;
   let principalExecutiveOfficeAddress: string | null = null;
   let irsEmployerIdentificationNumber: string | null = null;
   let hqCity: string | null = null;
@@ -849,6 +919,25 @@ export async function buildPublicRecordsProfileFromSec(
       if (res.ok) {
         const html = await res.text();
         const text = stripSecFilingHtml(html);
+
+        const propertiesText = extractPropertiesSectionFromTenKText(text);
+        const propertiesHtml = extractPropertiesSectionFromTenKHtml(html);
+        if (propertiesText || propertiesHtml) {
+          propertiesSection = {
+            v: 1,
+            source: "sec_10k_item_2",
+            title: "Part I, Item 2. Properties",
+            text: propertiesText ?? stripSecFilingHtml(propertiesHtml ?? ""),
+            html: propertiesHtml ?? undefined,
+            form: tenK.form,
+            filingDate: tenK.filingDate,
+            docUrl: tenK.docUrl,
+            truncated:
+              (propertiesText?.length ?? 0) >= PROPERTIES_SECTION_MAX_CHARS ||
+              (propertiesHtml?.length ?? 0) >= PROPERTIES_SECTION_MAX_HTML_CHARS,
+          };
+          sources.push(`Latest ${tenK.form} (${tenK.filingDate}) — Part I, Item 2 Properties`);
+        }
 
         const einCoverAltPlain = filingHtmlToEinPlainBlob(html);
         const einFromCover = extractEmployerIdentificationNumberFromTenK(text, einCoverAltPlain, html);
@@ -941,6 +1030,7 @@ export async function buildPublicRecordsProfileFromSec(
     cik,
     fiscalYearEnd,
     irsEmployerIdentificationNumber,
+    propertiesSection,
     stateOfIncorporation,
     hqState,
     hqCity,
