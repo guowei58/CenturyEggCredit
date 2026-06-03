@@ -39,9 +39,92 @@ _Q_RE  = re.compile(r"^([1-4])Q(\d{2})$", re.I)
 _FY_RE = re.compile(r"^FY(\d{2})$", re.I)
 _CM_RE = re.compile(r"^([69])M(\d{2})$", re.I)
 
+_SEC_DATE_RE = re.compile(
+    r"\b("
+    r"Jan(?:uary|\.)?|Feb(?:ruary|\.)?|Mar(?:ch|\.)?|Apr(?:il|\.)?|May\.?|Jun(?:e|\.)?|"
+    r"Jul(?:y|\.)?|Aug(?:ust|\.)?|Sep(?:t(?:ember)?|\.)?|Oct(?:ober|\.)?|Nov(?:ember|\.)?|Dec(?:ember|\.)?"
+    r")\s+(\d{1,2}),\s*(\d{4})\b",
+    re.I,
+)
+
+_NUM_DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+
 
 def _year(yy: str) -> int:
     return 2000 + int(yy)
+
+
+def _month_num_from_token(tok: str) -> int | None:
+    t = re.sub(r"[^a-z]", "", tok.lower())
+    if len(t) < 3:
+        return None
+    prefix = t[:3]
+    months = (
+        "jan", "feb", "mar", "apr", "may", "jun",
+        "jul", "aug", "sep", "oct", "nov", "dec",
+    )
+    try:
+        return months.index(prefix) + 1
+    except ValueError:
+        return None
+
+
+def _collect_dates(s: str) -> list[tuple[int, int, int]]:
+    """Return dates as (year, month, day) in order of appearance."""
+    out: list[tuple[int, int, int]] = []
+    for m in _SEC_DATE_RE.finditer(s):
+        mo = _month_num_from_token(m.group(1))
+        if mo is None:
+            continue
+        d = int(m.group(2))
+        y = int(m.group(3))
+        out.append((y, mo, d))
+    for m in _NUM_DATE_RE.finditer(s):
+        mo, d, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if 1 <= mo <= 12 and 1 <= d <= 31:
+            out.append((y, mo, d))
+    return out
+
+
+def _parse_sec_prose_period(header: str) -> Period | None:
+    """Infer FY / Q / 6M / 9M from SEC HTML-style column headers."""
+    s = header.strip()
+    if not s:
+        return None
+    low = s.lower()
+    dates = _collect_dates(s)
+    if not dates:
+        return None
+    y, mo, d = dates[-1]
+
+    if "nine month" in low:
+        return Period("9M", y, header)
+    if "six month" in low:
+        return Period("6M", y, header)
+    if "three month" in low or "one quarter" in low or "quarter ended" in low:
+        q = (mo - 1) // 3 + 1
+        return Period(f"Q{q}", y, header)
+    if "twelve month" in low:
+        return Period("FY", y, header)
+    if "year ended" in low or "years ended" in low:
+        return Period("FY", y, header)
+
+    if "as of" in low:
+        if mo == 12 and d == 31:
+            return Period("FY", y, header)
+        q = (mo - 1) // 3 + 1
+        return Period(f"Q{q}", y, header)
+
+    if not any(x in low for x in ("month", "quarter", "year", "as of")):
+        if mo == 12 and d == 31:
+            return Period("FY", y, header)
+        q = (mo - 1) // 3 + 1
+        return Period(f"Q{q}", y, header)
+
+    if mo == 12 and d == 31 and "ended" in low:
+        return Period("FY", y, header)
+    q = (mo - 1) // 3 + 1
+    return Period(f"Q{q}", y, header)
 
 
 def parse_period(header: str) -> Period | None:
@@ -59,6 +142,10 @@ def parse_period(header: str) -> Period | None:
     m = _CM_RE.match(s)
     if m:
         return Period(f"{m.group(1)}M", _year(m.group(2)), s)
+
+    prose = _parse_sec_prose_period(s)
+    if prose:
+        return prose
 
     return None
 

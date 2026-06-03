@@ -233,24 +233,29 @@ function ItemList({
 }) {
   if (!items.length) {
     return (
-      <div className="mb-6">
+      <div className="mb-6 pt-1.5">
         <h4
-          className="mb-2 border-b pb-1.5 text-xs font-bold uppercase tracking-wider sm:text-sm"
-          style={{ color: "var(--accent)", borderColor: "var(--border2)" }}
+          className="mb-2 text-xs font-bold uppercase tracking-wider sm:text-sm"
+          style={{ color: "var(--accent)" }}
         >
           {title}
         </h4>
-        <p className="text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted2)" }}>
-          {empty}
-        </p>
+        <div
+          className="rounded-lg border px-3 py-3 text-xs leading-relaxed sm:px-4 sm:py-3.5 sm:text-sm"
+          style={{ borderColor: "var(--border2)", background: "var(--card)" }}
+        >
+          <p className="m-0" style={{ color: "var(--muted2)" }}>
+            {empty}
+          </p>
+        </div>
       </div>
     );
   }
   return (
-    <div className="mb-6">
+    <div className="mb-6 pt-1.5">
       <h4
-        className="mb-3 border-b pb-2 text-xs font-bold uppercase tracking-wider sm:text-sm"
-        style={{ color: "var(--accent)", borderColor: "var(--border2)" }}
+        className="mb-3 text-xs font-bold uppercase tracking-wider sm:text-sm"
+        style={{ color: "var(--accent)" }}
       >
         {title}
       </h4>
@@ -292,7 +297,7 @@ function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock })
         boxShadow: "0 1px 0 rgba(0,0,0,0.06)",
       }}
     >
-      <div className="flex flex-col gap-1 border-b pb-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4" style={{ borderColor: "var(--border2)" }}>
+      <div className="flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4" style={{ borderColor: "var(--border2)" }}>
         <div className="min-w-0">
           <div className="font-mono text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: "var(--accent)" }}>
             {tk}
@@ -301,25 +306,35 @@ function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock })
             {data.companyName}
           </div>
         </div>
+        {pubs.length > 0 ? (
+          <details
+            className="w-full shrink-0 rounded-lg border sm:mt-1 sm:w-auto sm:min-w-[16rem]"
+            style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
+          >
+            <summary
+              className="cursor-pointer list-none px-3 py-2 text-[10px] font-semibold uppercase tracking-wide marker:content-none"
+              style={{ color: "var(--muted)" }}
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span>Industry publications scanned</span>
+                <span className="rounded-full border px-2 py-0.5 text-[9px]" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
+                  {pubs.length}
+                </span>
+              </span>
+            </summary>
+            <div className="border-t px-3 pb-3 pt-2 text-xs leading-relaxed sm:text-sm" style={{ borderColor: "var(--border2)" }}>
+              <ul className="list-inside list-disc space-y-1.5 pl-0.5" style={{ color: "var(--text)" }}>
+                {pubs.map((p) => (
+                  <li key={p.id}>
+                    <span className="font-medium">{p.name}</span>
+                    <span style={{ color: "var(--muted2)" }}> ({p.siteDomain})</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </details>
+        ) : null}
       </div>
-      {pubs.length > 0 ? (
-        <div
-          className="mb-4 mt-4 rounded-lg border px-3 py-3 text-xs leading-relaxed sm:text-sm"
-          style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
-        >
-          <div className="font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-            Industry publications scanned
-          </div>
-          <ul className="mt-2 list-inside list-disc space-y-1.5 pl-0.5" style={{ color: "var(--text)" }}>
-            {pubs.map((p) => (
-              <li key={p.id}>
-                <span className="font-medium">{p.name}</span>
-                <span style={{ color: "var(--muted2)" }}> ({p.siteDomain})</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
       <ItemList
         title="SEC filings (last window)"
         items={data.secFilings}

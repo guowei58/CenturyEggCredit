@@ -108,6 +108,32 @@ None.
   it("returns null when no Item 2 properties section is present", () => {
     expect(extractPropertiesSectionFromTenKText("ITEM 1. BUSINESS\nNo properties heading here.")).toBeNull();
   });
+
+  it("ignores embedded page-number and table-of-contents noise inside the real section", () => {
+    const tenK = `
+PART I
+ITEM 2. PROPERTIES
+
+We own and lease non-retail properties in a number of locations globally.
+Location Use Approximate Square Feet
+Vancouver, BC Executive and Administrative Offices 140,000
+
+23
+Table of Contents
+
+Leased
+Ontario, CA Distribution Center 1,255,000
+
+ITEM 3. LEGAL PROCEEDINGS
+None.
+`;
+
+    const extracted = extractPropertiesSectionFromTenKText(tenK);
+    expect(extracted).toContain("We own and lease non-retail properties in a number of locations globally.");
+    expect(extracted).toContain("Ontario, CA Distribution Center 1,255,000");
+    expect(extracted).not.toContain("Table of Contents");
+    expect(extracted).not.toContain("\n\n23\n\n");
+  });
 });
 
 describe("extractPropertiesSectionFromTenKHtml", () => {
@@ -130,5 +156,32 @@ describe("extractPropertiesSectionFromTenKHtml", () => {
     expect(extracted).toContain("<table>");
     expect(extracted).toContain("Dallas, TX");
     expect(extracted).not.toContain("TABLE OF CONTENTS");
+  });
+
+  it("removes inline table-of-contents footer noise from a real properties section html excerpt", () => {
+    const html = `
+      <html><body>
+        <div id="item2"></div>
+        <div><span>ITEM&#160;2.&#160;PROPERTIES</span></div>
+        <div><span>We own and lease non-retail properties in a number of locations globally.</span></div>
+        <table>
+          <tr><th>Location</th><th>Use</th></tr>
+          <tr><td>Vancouver, BC</td><td>Executive and Administrative Offices</td></tr>
+        </table>
+        <div><span>23</span></div>
+        <div><span><a href="#toc">Table of Contents</a></span></div>
+        <div><span>Leased</span></div>
+        <table>
+          <tr><td>Ontario, CA</td><td>Distribution Center</td></tr>
+        </table>
+        <div><span>ITEM&#160;3.&#160;LEGAL PROCEEDINGS</span></div>
+      </body></html>
+    `;
+
+    const extracted = extractPropertiesSectionFromTenKHtml(html);
+    expect(extracted).toContain("Vancouver, BC");
+    expect(extracted).toContain("Ontario, CA");
+    expect(extracted).not.toContain("Table of Contents");
+    expect(extracted).not.toContain(">23<");
   });
 });

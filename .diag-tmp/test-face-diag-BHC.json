@@ -1,0 +1,865 @@
+{
+  "ticker": "BHC",
+  "checked": 66,
+  "suspicious": 18,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-06",
+    "form": "10-Q",
+    "accessionNumber": "0000885590-19-000026"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000885590-26-000023",
+      "filingDate": "2026-02-19",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 62 numeric cell(s) missing inline XBRL tags (0/62 tagged)",
+        "cash-flow: 33 numeric cell(s) missing inline XBRL tags (0/33 tagged)",
+        "inline XBRL filing: 95 untagged numeric cell(s) across primary statements (60/155 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2025",
+            "Years Ended December 31, 2024",
+            "Change 2024 to 2025"
+          ],
+          "firstRows": [
+            "Product sales",
+            "Other revenues",
+            "Expenses",
+            "Cost of goods sold (excluding amortization and impairments of intangible assets)",
+            "Cost of other revenues",
+            "Selling, general and administrative"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Trade receivables, net",
+            "Inventories, net",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2025",
+            "Years Ended December 31, 2024",
+            "Change 2024 to 2025"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile Net income (loss) to net cash provided by operating activities",
+            "Cash provided by operating activities before changes in operating assets and liabilities",
+            "Changes in operating assets and liabilities",
+            "Net cash provided by operating activities",
+            "Net cash used in investing activities"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 22,
+          "numericCells": 62,
+          "taggedCells": 0,
+          "untaggedNumericCells": 62,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 35,
+          "numericCells": 60,
+          "taggedCells": 60,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 33,
+          "taggedCells": 0,
+          "untaggedNumericCells": 33,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000885590-25-000007",
+      "filingDate": "2025-02-20",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "cash-flow: 66 numeric cell(s) missing inline XBRL tags (0/66 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (58/142 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2024 Amount",
+            "2023 Amount",
+            "2022 Amount"
+          ],
+          "firstRows": [
+            "Salix",
+            "International",
+            "Solta Medical",
+            "Diversified",
+            "Bausch + Lomb",
+            "Total revenues"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2024",
+            "December 31, 2023"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Trade receivables, net",
+            "Inventories, net",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2024",
+            "Years Ended December 31, 2023",
+            "Years Ended December 31, 2022",
+            "Change 2023 to 2024",
+            "Period 9",
+            "Period 10"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile Net loss to net cash provided by operating activities",
+            "Cash provided by (used in) operating activities before changes in operating assets and liabilities",
+            "Changes in operating assets and liabilities",
+            "Net cash provided by (used in) operating activities",
+            "Net cash used in investing activities"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 33,
+          "numericCells": 58,
+          "taggedCells": 58,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 66,
+          "taggedCells": 0,
+          "untaggedNumericCells": 66,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000885590-24-000011",
+      "filingDate": "2024-02-22",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "cash-flow: 66 numeric cell(s) missing inline XBRL tags (0/66 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (58/142 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2023 Amount",
+            "2022 Amount",
+            "2021 Amount"
+          ],
+          "firstRows": [
+            "Salix",
+            "International",
+            "Solta Medical",
+            "Diversified",
+            "Bausch + Lomb",
+            "Total revenues"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2023",
+            "December 31, 2022"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash and other settlement deposits",
+            "Trade receivables, net",
+            "Inventories, net",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2023",
+            "Years Ended December 31, 2022",
+            "Years Ended December 31, 2021",
+            "Change 2022 to 2023",
+            "Period 9",
+            "Period 10"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile Net loss to net cash provided by operating activities",
+            "Cash provided by (used in) operating activities before changes in operating assets and liabilities",
+            "Changes in operating assets and liabilities",
+            "Net cash provided by (used in) operating activities",
+            "Net cash (used in) provided by investing activities"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 33,
+          "numericCells": 58,
+          "taggedCells": 58,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 66,
+          "taggedCells": 0,
+          "untaggedNumericCells": 66,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000885590-23-000009",
+      "filingDate": "2023-02-23",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "cash-flow: 66 numeric cell(s) missing inline XBRL tags (0/66 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (57/141 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2022 Amount",
+            "2021 Amount",
+            "2020 Amount"
+          ],
+          "firstRows": [
+            "Salix",
+            "International",
+            "Solta Medical",
+            "Diversified Products",
+            "Bausch + Lomb",
+            "Total revenues"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash and other settlement deposits",
+            "Trade receivables, net",
+            "Inventories, net",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2022",
+            "Years Ended December 31, 2021",
+            "Years Ended December 31, 2020",
+            "Change 2021 to 2022",
+            "Period 9",
+            "Period 10"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile Net loss to net cash provided by operating activities",
+            "Cash (used in) provided by operating activities before changes in operating assets and liabilities",
+            "Changes in operating assets and liabilities",
+            "Net cash (used in) provided by operating activities",
+            "Net cash (used in) provided by investing activities"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 33,
+          "numericCells": 57,
+          "taggedCells": 57,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 66,
+          "taggedCells": 0,
+          "untaggedNumericCells": 66,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000885590-22-000010",
+      "filingDate": "2022-02-23",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "cash-flow: 66 numeric cell(s) missing inline XBRL tags (0/66 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (56/140 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2021 Amount",
+            "2020 Amount",
+            "2019 Amount"
+          ],
+          "firstRows": [
+            "Bausch + Lomb",
+            "Salix",
+            "International Rx",
+            "Ortho Dermatologics",
+            "Diversified Products",
+            "Total revenues"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2021",
+            "December 31, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash and other settlement deposits",
+            "Trade receivables, net",
+            "Inventories, net",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2021",
+            "Years Ended December 31, 2020",
+            "Years Ended December 31, 2019",
+            "Change 2020 to 2021",
+            "Period 9",
+            "Period 10"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile Net loss to net cash provided by operating activities",
+            "Cash provided by operating activities before changes in operating assets and liabilities",
+            "Changes in operating assets and liabilities",
+            "Net cash provided by operating activities",
+            "Net cash provided by (used in) investing activities"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 32,
+          "numericCells": 56,
+          "taggedCells": 56,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 66,
+          "taggedCells": 0,
+          "untaggedNumericCells": 66,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000885590-21-000011",
+      "filingDate": "2021-02-24",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 35 numeric cell(s) missing inline XBRL tags (0/35 tagged)",
+        "cash-flow: 64 numeric cell(s) missing inline XBRL tags (0/64 tagged)",
+        "inline XBRL filing: 99 untagged numeric cell(s) across primary statements (57/156 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2020",
+            "Years Ended December 31, 2019",
+            "Years Ended December 31, 2018",
+            "Change 2019 to 2020",
+            "Change 2018 to 2019"
+          ],
+          "firstRows": [
+            "Revenues",
+            "Operating income (loss)",
+            "Loss before benefit from income taxes",
+            "Net loss",
+            "Net loss attributable to Bausch Health Companies Inc.",
+            "Loss per share attributable to Bausch Health Companies Inc."
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2020",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Trade receivables, net",
+            "Inventories, net",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2020",
+            "Years Ended December 31, 2019",
+            "Years Ended December 31, 2018",
+            "Change 2019 to 2020",
+            "Period 9",
+            "Period 10"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile Net loss to net cash provided by operating activities",
+            "Cash provided by operating activities before changes in operating assets and liabilities",
+            "Changes in operating assets and liabilities",
+            "Net cash provided by operating activities",
+            "Net cash used in investing activities"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 8,
+          "numericCells": 35,
+          "taggedCells": 0,
+          "untaggedNumericCells": 35,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 33,
+          "numericCells": 57,
+          "taggedCells": 57,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 64,
+          "taggedCells": 0,
+          "untaggedNumericCells": 64,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000885590-20-000006",
+      "filingDate": "2020-02-19",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000885590-19-000006",
+      "filingDate": "2019-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000885590-18-000017",
+      "filingDate": "2018-02-28",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000885590-17-000015",
+      "filingDate": "2017-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000885590-16-000101",
+      "filingDate": "2016-04-29",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000885590-15-000015",
+      "filingDate": "2015-02-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000885590-14-000025",
+      "filingDate": "2014-02-28",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000885590-13-000014",
+      "filingDate": "2013-02-28",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001047469-10-009337",
+      "filingDate": "2010-11-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "At September 30 2010",
+            "At December 31 2009"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Marketable securities",
+            "Accounts receivable",
+            "Inventories",
+            "Prepaid expenses and other current assets",
+            "Deferred tax assets, net of valuation allowance"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended September 30 2010",
+            "Three Months Ended September 30 2009",
+            "Nine Months Ended September 30 2010",
+            "Nine Months Ended September 30 2009"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities",
+            "Depreciation and amortization",
+            "Amortization of deferred revenue",
+            "Amortization of discounts on long-term debt",
+            "Amortization and write-down of deferred financing costs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001047469-10-007155",
+      "filingDate": "2010-08-06",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "At June 30 2010",
+            "At December 31 2009"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Marketable securities",
+            "Accounts receivable",
+            "Inventories",
+            "Prepaid expenses and other current assets",
+            "Deferred tax assets, net of valuation allowance"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended June 30 2010",
+            "Three Months Ended June 30 2009",
+            "Six Months Ended June 30 2010",
+            "Six Months Ended June 30 2009"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities",
+            "Depreciation and amortization",
+            "Amortization of deferred revenue",
+            "Amortization of discounts on long-term obligations",
+            "Amortization and write-down of deferred financing costs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001047469-10-004969",
+      "filingDate": "2010-05-07",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "At March 31 2010",
+            "At December 31 2009"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Marketable securities",
+            "Accounts receivable",
+            "Inventories",
+            "Prepaid expenses and other current assets",
+            "Deferred tax assets, net of valuation allowance"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31 2010",
+            "Three Months Ended March 31 2009"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities",
+            "Depreciation and amortization",
+            "Amortization of deferred revenue",
+            "Amortization of discounts on long-term obligations",
+            "Amortization of deferred financing costs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001047469-10-001559",
+      "filingDate": "2010-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Revenues ($000)",
+            "% of Product Revenues"
+          ],
+          "firstRows": [
+            "Product/Product Line 2009",
+            "United States",
+            "Wellbutrin XL®(1)",
+            "Xenazine®(3)",
+            "Aplenzin®",
+            "Zovirax®"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31 2009",
+            "Years Ended December 31 2008",
+            "Years Ended December 31 2007",
+            "Change 2008 to 2009",
+            "Change 2008 to 2009 %",
+            "Change 2007 to 2008",
+            "Change 2007 to 2008 %"
+          ],
+          "firstRows": [
+            "Net cash provided by operating activities",
+            "Net cash used in investing activities",
+            "Net cash provided by (used in) financing activities",
+            "Effect of exchange rate changes on cash and cash equivalents",
+            "Net decrease in cash and cash equivalents",
+            "Cash and cash equivalents, beginning of year"
+          ]
+        }
+      ]
+    }
+  ]
+}

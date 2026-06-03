@@ -1,0 +1,105 @@
+{
+  "ticker": "SIRI",
+  "checked": 80,
+  "suspicious": 7,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-30",
+    "form": "10-Q",
+    "accessionNumber": "0000908937-19-000025"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000950123-08-009301",
+      "filingDate": "2008-08-11",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950123-08-005516",
+      "filingDate": "2008-05-12",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000930413-07-008339",
+      "filingDate": "2007-11-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000930413-07-006583",
+      "filingDate": "2007-08-09",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000930413-07-004301",
+      "filingDate": "2007-05-10",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950117-06-004577",
+      "filingDate": "2006-11-08",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950117-06-003434",
+      "filingDate": "2006-08-09",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

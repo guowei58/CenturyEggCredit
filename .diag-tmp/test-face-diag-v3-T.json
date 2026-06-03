@@ -1,0 +1,665 @@
+{
+  "ticker": "T",
+  "checked": 80,
+  "suspicious": 24,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-05",
+    "form": "10-Q",
+    "accessionNumber": "0001562762-19-000164"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001562762-19-000164",
+      "filingDate": "2019-08-05",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "cash-flow: 2 numeric cell(s) missing inline XBRL tags (72/74 tagged)",
+        "inline XBRL filing: 2 untagged numeric cell(s) across primary statements (238/240 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF INCOME Dollars in millions except per share amounts (Unaudited) Three months ended June 30, 2019",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF INCOME Dollars in millions except per share amounts (Unaudited) Three months ended June 30, 2018",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF INCOME Dollars in millions except per share amounts (Unaudited) Six months ended June 30, 2019",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF INCOME Dollars in millions except per share amounts (Unaudited) Six months ended June 30, 2018"
+          ],
+          "firstRows": [
+            "Service",
+            "Equipment",
+            "Total operating revenues",
+            "Operating Expenses",
+            "Cost of revenues",
+            "Equipment"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS Dollars in millions except per share amounts June 30, 2019 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS Dollars in millions except per share amounts December 31, 2018"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable - net of allowances for doubtful accounts of $1,086 and $907",
+            "Prepaid expenses",
+            "Other current assets",
+            "Total current assets",
+            "Noncurrent Inventories and Theatrical Film and Television Production Costs"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions Six months ended June 30, 2019",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions Six months ended June 30, 2018"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Amortization of television and film costs",
+            "Undistributed earnings from investments in equity affiliates",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 27,
+          "numericCells": 92,
+          "taggedCells": 92,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 43,
+          "numericCells": 74,
+          "taggedCells": 74,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 44,
+          "numericCells": 74,
+          "taggedCells": 72,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 35,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-19-045608",
+      "filingDate": "2019-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-18-000009",
+      "filingDate": "2018-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-17-000021",
+      "filingDate": "2017-02-17",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-16-000147",
+      "filingDate": "2016-02-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-15-000016",
+      "filingDate": "2015-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-14-000010",
+      "filingDate": "2014-02-21",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-13-000017",
+      "filingDate": "2013-02-22",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-12-000025",
+      "filingDate": "2012-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-11-000014",
+      "filingDate": "2011-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-10-000091",
+      "filingDate": "2010-11-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS September 30, 2010 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2009"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for doubtful accounts of $978 and $1,202",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2010",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2009"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to",
+            "net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Bad debt expense"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-10-000074",
+      "filingDate": "2010-08-06",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS June 30, 2010 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2009"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for doubtful accounts of $1,084 and $1,202",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2010",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2009"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to",
+            "net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Bad debt expense"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-10-000013",
+      "filingDate": "2010-02-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-09-000091",
+      "filingDate": "2009-11-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS September 30, 2009 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2008"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $1,345 and $1,270",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2009",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2008"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to",
+            "net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Provision for uncollectible accounts",
+            "Deferred income tax expense"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-09-000050",
+      "filingDate": "2009-08-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS June 30, 2009 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2008"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $1,269 and $1,270",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2009",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2008"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to",
+            "net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Provision for uncollectible accounts",
+            "Deferred income tax expense"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-09-000007",
+      "filingDate": "2009-02-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-08-000074",
+      "filingDate": "2008-11-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-08-000062",
+      "filingDate": "2008-08-06",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS June 30, 2008 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2007"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $1,303 and $1,364",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2008",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2007"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash",
+            "provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-08-000012",
+      "filingDate": "2008-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-07-000094",
+      "filingDate": "2007-11-06",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS September 30, 2007 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2006"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $1,362 and $1,276",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2007",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2006"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash",
+            "provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-07-000074",
+      "filingDate": "2007-08-03",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS June 30, 2007 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2006"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $1,371 and $1,276",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2007",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2006"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash",
+            "provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-07-000015",
+      "filingDate": "2007-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000732717-06-000074",
+      "filingDate": "2006-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS September 30, 2006 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2005"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $936 and $1,176",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2006",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Nine months ended September 30, 2005"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash",
+            "provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000732717-06-000061",
+      "filingDate": "2006-08-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS June 30, 2006 (Unaudited)",
+            "AT&T INC. CONSOLIDATED BALANCE SHEETS December 31, 2005"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable – net of allowances for",
+            "uncollectibles of $1,039 and $1,176",
+            "Prepaid expenses",
+            "Deferred income taxes",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2006",
+            "AT&T INC. CONSOLIDATED STATEMENTS OF CASH FLOWS Dollars in millions, increase (decrease) in cash and cash equivalents (Unaudited) Six months ended June 30, 2005"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash",
+            "provided by operating activities:",
+            "Depreciation and amortization",
+            "Undistributed earnings from investments in equity affiliates",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ]
+    }
+  ]
+}

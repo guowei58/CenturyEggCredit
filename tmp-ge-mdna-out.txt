@@ -1,0 +1,29 @@
+
+=== 10-K https://www.sec.gov/Archives/edgar/data/40545/000004054526000008/ge-20251231.htm
+status 200 html 3254512
+flat 459412
+null bounds
+first DISCUSSION AND ANALYSIS @ 68038
+  ctx: ibed therein. TABLE OF CONTENTS Page Forward-Looking Statements 3 About GE Aerospace 4 Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A) 7 Consolidated Results 8 Segment Operations 9 Corporate & Other 10 Other Consolidated Information 11 Capital Resources and Liquidity 12 Critical Accounting Esti
+CONSOLIDATED RESULTS occurrences: 2
+Management title hits: 4 @ 68025, 101801, 436446, 455919
+  @68025: LE OF CONTENTS Page Forward-Looking Statements 3 About GE Aerospace 4 Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A) 7 Consolidated Results 8 Segment Oper
+  @101801: r Relations. Reports filed with the SEC may be viewed at www.sec.gov. MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS (MD&A). The consolidated financial statement
+  @436446: er 31, 2025, 2024 and 2023 Notes to consolidated financial statements Management’s Discussion and Analysis of Financial Condition and Results of Operations - Summary of Operating Segments (a)2. Financ
+  @455919: ses of Equity Securities 22 Item 6. [Reserved] Not applicable Item 7. Management’s Discussion and Analysis of Financial Condition and Results of Operations 7-22 Item 7A. Quantitative and Qualitative D
+  hit ITEM 7 @ 455911: Item 7. Management’s Discussion and Analysis of Financial Condition and Results of Operations 7-22 Item 7A. Quantitative
+  hit ITEM 7 @ 456010: Item 7A. Quantitative and Qualitative Disclosures About Market Risk 13, 68-69 Item 8. Financial Statements and Supplemen
+
+=== 10-Q https://www.sec.gov/Archives/edgar/data/40545/000004054526000027/ge-20260331.htm
+status 200 html 1394730
+flat 145407
+null bounds
+first DISCUSSION AND ANALYSIS @ 23628
+  ctx: rch 31, 2026. TABLE OF CONTENTS Page Forward-Looking Statements 3 About GE Aerospace 4 Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A) 4 Consolidated Results 5 Segment Operations 5 Corporate & Other 7 Other Consolidated Information 7 Capital Resources and Liquidity 8 Critical Accounting Estimat
+CONSOLIDATED RESULTS occurrences: 2
+Management title hits: 3 @ 23615, 32717, 144165
+  @23615: LE OF CONTENTS Page Forward-Looking Statements 3 About GE Aerospace 4 Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A) 4 Consolidated Results 5 Segment Oper
+  @32717: ime to time, as information is updated and new information is posted. MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS (MD&A). The consolidated financial statement
+  @144165: I – FINANCIAL INFORMATION Item 1. Financial Statements 13 -30 Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 4 -12 Item 3. Quantitative and Qualitative D
+  hit ITEM 2 @ 144157: Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations 4 -12 Item 3. Quantitative
+  hit ITEM 2 @ 144465: Item 2. Unregistered Sales of Equity Securities and Use of Proceeds 12 Item 3. Defaults Upon Senior Securities Not appli

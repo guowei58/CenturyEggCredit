@@ -1,0 +1,306 @@
+{
+  "ticker": "TSLA",
+  "checked": 64,
+  "suspicious": 4,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-29",
+    "form": "10-Q",
+    "accessionNumber": "0001564590-19-026445"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000950170-22-000796",
+      "filingDate": "2022-02-07",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 40 numeric cell(s) missing inline XBRL tags (0/40 tagged)",
+        "inline XBRL filing: 40 untagged numeric cell(s) across primary statements (190/230 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year Ended December 31, 2021",
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019",
+            "2021 vs. 2020 Change",
+            "2020 vs. 2019 Change"
+          ],
+          "firstRows": [
+            "Automotive sales",
+            "Automotive regulatory credits",
+            "Automotive leasing",
+            "Total automotive revenues",
+            "Services and other",
+            "Total automotive & services and other segment revenue"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2021",
+            "December 31, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term marketable securities",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2021",
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 8,
+          "numericCells": 40,
+          "taggedCells": 0,
+          "untaggedNumericCells": 40,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 65,
+          "taggedCells": 65,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 125,
+          "taggedCells": 125,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 38,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-21-004599",
+      "filingDate": "2021-02-08",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 40 numeric cell(s) missing inline XBRL tags (0/40 tagged)",
+        "inline XBRL filing: 40 untagged numeric cell(s) across primary statements (192/232 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019 (3)",
+            "Year Ended December 31, 2018 (2)",
+            "Year Ended December 31, 2017",
+            "Year Ended December 31, 2016 (1)"
+          ],
+          "firstRows": [
+            "Total revenues",
+            "Gross profit",
+            "Income (loss) from operations",
+            "Net income (loss) attributable to common stockholders",
+            "Net income (loss) per share of common stock attributable to common stockholders (4)",
+            "Basic"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2020",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019",
+            "Year Ended December 31, 2018"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 10,
+          "numericCells": 40,
+          "taggedCells": 0,
+          "untaggedNumericCells": 40,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 63,
+          "taggedCells": 63,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 129,
+          "taggedCells": 129,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 53,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-20-004475",
+      "filingDate": "2020-02-13",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 35 numeric cell(s) missing inline XBRL tags (0/35 tagged)",
+        "inline XBRL filing: 35 untagged numeric cell(s) across primary statements (207/242 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year Ended December 31, 2019",
+            "Year Ended December 31, 2018",
+            "Year Ended December 31, 2017",
+            "2019 vs. 2018 Change",
+            "2018 vs. 2017 Change"
+          ],
+          "firstRows": [
+            "Automotive sales",
+            "Automotive leasing",
+            "Total automotive revenues",
+            "Services and other",
+            "Total automotive & services and other segment revenue",
+            "Energy generation and storage segment revenue"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2019",
+            "December 31, 2018"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2019",
+            "Year Ended December 31, 2018",
+            "Year Ended December 31, 2017"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash provided by (used in) operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 7,
+          "numericCells": 35,
+          "taggedCells": 0,
+          "untaggedNumericCells": 35,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 42,
+          "numericCells": 71,
+          "taggedCells": 71,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 58,
+          "numericCells": 136,
+          "taggedCells": 136,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 55,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-15-001031",
+      "filingDate": "2015-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

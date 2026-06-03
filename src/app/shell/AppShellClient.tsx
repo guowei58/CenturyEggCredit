@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { initTickerSaveFolder } from "@/lib/saved-data-client";
+import { sanitizeTicker } from "@/lib/saved-ticker-data";
+import { PLACEHOLDER_DEFAULT_TICKER } from "@/data/mock";
 import { TopNav, LeftSidebar, ChatDrawer, EggHocCommitteeDrawer } from "@/components/layout";
 import { DailyNewsDrawer } from "@/components/daily-news/DailyNewsDrawer";
 import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
@@ -10,22 +13,60 @@ import { Card } from "@/components/ui";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
 import { getFirstTabIdForTopSection } from "@/data/company-navigation";
 
+async function fetchWatchlistForShell(): Promise<string[] | null> {
+  try {
+    const res = await fetch("/api/me/watchlist");
+    if (!res.ok) return null;
+    const data = (await res.json()) as { tickers?: unknown };
+    return Array.isArray(data.tickers) ? data.tickers.filter((t): t is string => typeof t === "string") : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function AppShellClient() {
+  const { status } = useSession();
+  const userPickedTickerRef = useRef(false);
   const [mode, setMode] = useState<"co" | "pm">("co");
   const [companyTopSection, setCompanyTopSection] = useState<CompanyTopSectionId>("overview");
-  const [ticker, setTicker] = useState<string | null>("LUMN");
+  const [ticker, setTicker] = useState<string | null>(null);
   const [companyTab, setCompanyTab] = useState<string>(getFirstTabIdForTopSection("overview"));
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [eggHocOpen, setEggHocOpen] = useState(false);
   const [dailyNewsOpen, setDailyNewsOpen] = useState(false);
 
   const handleTickerSelect = useCallback((t: string) => {
-    setTicker(t);
+    userPickedTickerRef.current = true;
+    const sym = sanitizeTicker(t) ?? t.trim().toUpperCase();
+    setTicker(sym);
     setMode("co");
     setCompanyTopSection("overview");
     setCompanyTab(getFirstTabIdForTopSection("overview"));
-    void initTickerSaveFolder(t);
+    void initTickerSaveFolder(sym);
   }, []);
+
+  /** First resolved symbol: first watchlist row when signed in; placeholder when signed out or list empty. Never races past an explicit sidebar/search selection. */
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (status !== "authenticated") {
+      if (!userPickedTickerRef.current) setTicker(PLACEHOLDER_DEFAULT_TICKER);
+      return;
+    }
+
+    let cancelled = false;
+    void (async () => {
+      const list = (await fetchWatchlistForShell()) ?? [];
+      if (cancelled || userPickedTickerRef.current) return;
+      const firstRaw = list[0]?.trim();
+      const sym = firstRaw ? sanitizeTicker(firstRaw) ?? firstRaw.toUpperCase() : null;
+      setTicker(sym ?? PLACEHOLDER_DEFAULT_TICKER);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
 
   useEffect(() => {
     if (mode === "co" && ticker) void initTickerSaveFolder(ticker);
@@ -107,6 +148,14 @@ export default function AppShellClient() {
         <LeftSidebar onTickerSelect={handleTickerSelect} currentTicker={ticker} />
         <div className="main flex min-h-0 flex-1 flex-col overflow-hidden">
           {mode === "co" ? (
+            ticker === null ? (
+              <div
+                className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-6"
+                style={{ color: "var(--muted2)" }}
+              >
+                <p className="text-sm">Loading…</p>
+              </div>
+            ) : (
             <CompanyAnalysis
               ticker={ticker}
               activeTab={companyTab}
@@ -124,6 +173,7 @@ export default function AppShellClient() {
                 setAiChatOpen(true);
               }}
             />
+            )
           ) : (
             <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-auto p-6">
               <Card title="PM Dashboard" className="w-full max-w-lg">

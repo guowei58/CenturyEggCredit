@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
+import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
 function reorderList<T>(list: T[], fromIndex: number, toIndex: number): T[] {
   if (fromIndex === toIndex) return list;
@@ -48,6 +49,10 @@ export function LeftSidebar({
   const [names, setNames] = useState<Record<string, string>>({});
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const activeWatchlistRowRef = useRef<HTMLDivElement | null>(null);
+  const sidebarScrollAreaRef = useRef<HTMLDivElement | null>(null);
+
+  const normalizedCurrentTicker = sanitizeTicker(currentTicker ?? "");
 
   const persistWatchlist = useCallback(async (list: string[]) => {
     await persistWatchlistServer(list);
@@ -100,16 +105,28 @@ export function LeftSidebar({
     };
   }, [watchlist]);
 
+  useLayoutEffect(() => {
+    if (!normalizedCurrentTicker || watchlist.length === 0) return;
+    const el = activeWatchlistRowRef.current;
+    if (!el) return;
+    const pane = sidebarScrollAreaRef.current;
+    if (!pane || !pane.contains(el)) return;
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+  }, [normalizedCurrentTicker, watchlist]);
+
   function handleGo() {
-    const ticker = search.trim().toUpperCase();
-    if (!ticker) return;
+    const sym = sanitizeTicker(search);
+    if (!sym) return;
     setWatchlist((prev) => {
-      if (prev.includes(ticker)) return prev;
-      const next = [...prev, ticker];
+      const alreadyHas = prev.some((t) => sanitizeTicker(t) === sym);
+      if (alreadyHas) return prev;
+      const next = [...prev, sym];
       void persistWatchlist(next);
       return next;
     });
-    onTickerSelect(ticker);
+    onTickerSelect(sym);
     setSearch("");
   }
 
@@ -188,7 +205,7 @@ export function LeftSidebar({
           </button>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <div ref={sidebarScrollAreaRef} className="flex-1 overflow-y-auto">
         <div
           className="px-5 pt-6 pb-3 text-[9px] font-semibold uppercase tracking-widest"
           style={{ color: "var(--muted)" }}
@@ -206,18 +223,25 @@ export function LeftSidebar({
           </div>
         ) : (
           <div className="space-y-1 px-2.5 pb-3">
-            {watchlist.map((tk, index) => (
+            {watchlist.map((tk, index) => {
+              const normalizedRow = sanitizeTicker(tk);
+              const isSelected =
+                normalizedCurrentTicker !== null &&
+                normalizedRow !== null &&
+                normalizedCurrentTicker === normalizedRow;
+              return (
               <div
                 key={tk}
+                ref={isSelected ? activeWatchlistRowRef : undefined}
                 draggable
                 onDragStart={(e) => handleDragStart(e, index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, index)}
                 onDragEnd={handleDragEnd}
-                className={`group flex w-full cursor-grab active:cursor-grabbing items-start gap-2 rounded-lg border-l-2 py-2 pl-2.5 pr-1.5 ${
-                  currentTicker === tk
-                    ? "border-l-[var(--accent)] bg-[var(--accent)]/10"
+                className={`group flex w-full cursor-grab active:cursor-grabbing items-start gap-2 rounded-lg border-l-[3px] py-2 pl-2.5 pr-1.5 ${
+                  isSelected
+                    ? "border-l-[var(--accent)] bg-[var(--accent)]/15 shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_35%,transparent)]"
                     : "border-l-transparent hover:bg-white/[0.03]"
                 } ${draggedIndex === index ? "opacity-50" : ""} ${
                   dropTargetIndex === index ? "ring-1 ring-[var(--accent)] ring-inset" : ""
@@ -234,8 +258,12 @@ export function LeftSidebar({
                   type="button"
                   onClick={() => onTickerSelect(tk)}
                   className="min-w-0 flex-1 flex-col items-start gap-1 pr-2 text-left"
+                  aria-current={isSelected ? "true" : undefined}
                 >
-                  <span className="font-mono text-xs font-medium" style={{ color: "var(--text)" }}>
+                  <span
+                    className={`font-mono text-xs ${isSelected ? "font-semibold" : "font-medium"}`}
+                    style={{ color: isSelected ? "var(--accent)" : "var(--text)" }}
+                  >
                     {tk}
                   </span>
                   <span
@@ -259,7 +287,8 @@ export function LeftSidebar({
                   ×
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -8,6 +8,7 @@ import {
   reconcileSavedDocuments,
   saveDocumentFromUrl,
   saveDeterministicCompilerExcelToSavedDocuments,
+  saveSecFilingFinancialsExcelToSavedDocuments,
   saveXbrlAsPresentedExcelToSavedDocuments,
 } from "@/lib/saved-documents";
 import { deleteAllUserSavedDocumentsForTicker, getUserSavedDocumentBody } from "@/lib/user-workspace-store";
@@ -56,6 +57,7 @@ function contentTypeForFilename(filename: string): string {
  * POST { url } — fetch URL, store native format (HTML/PDF/XML/text) in Postgres
  * POST multipart: action=save-xbrl-compiler-xlsx, file=(.xlsx) — deterministic compiler export (replaces prior for ticker)
  * POST multipart: action=save-xbrl-as-presented-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber — preferred (no base64 size blow-up)
+ * POST multipart: action=save-sec-filing-financials-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber
  * POST JSON: { action: "save-xbrl-as-presented-xlsx", base64, filing } — legacy / small workbooks only
  * POST { action: "import-ticker-files" } — legacy no-op; returns current list
  * DELETE { all: true } — remove all saved documents for this ticker
@@ -167,6 +169,41 @@ export async function POST(
       }
       try {
         const result = await saveXbrlAsPresentedExcelToSavedDocuments(userId, ticker, { form, filingDate, accessionNumber }, buf);
+        if (!result.ok) {
+          return NextResponse.json({ error: result.error }, { status: 400 });
+        }
+        return NextResponse.json({ ok: true, item: result.item });
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Save failed";
+        return NextResponse.json({ error: message }, { status: 500 });
+      }
+    }
+    if (action === "save-sec-filing-financials-xlsx") {
+      const rawFile = fd.get("file");
+      if (rawFile === null || typeof rawFile === "string") {
+        return NextResponse.json({ error: "Missing spreadsheet file." }, { status: 400 });
+      }
+      const blob = rawFile as Blob;
+      if (blob.size < 64) {
+        return NextResponse.json({ error: "Spreadsheet file is empty or too small." }, { status: 400 });
+      }
+      const form = String(fd.get("filingForm") ?? "").trim();
+      const filingDate = String(fd.get("filingDate") ?? "").trim();
+      const accessionNumber = String(fd.get("accessionNumber") ?? "").trim();
+      if (!form || !filingDate || !accessionNumber) {
+        return NextResponse.json(
+          { error: "Missing filing metadata (form, filing date, or accession number)." },
+          { status: 400 }
+        );
+      }
+      let buf: Buffer;
+      try {
+        buf = Buffer.from(await blob.arrayBuffer());
+      } catch {
+        return NextResponse.json({ error: "Could not read uploaded file." }, { status: 400 });
+      }
+      try {
+        const result = await saveSecFilingFinancialsExcelToSavedDocuments(userId, ticker, { form, filingDate, accessionNumber }, buf);
         if (!result.ok) {
           return NextResponse.json({ error: result.error }, { status: 400 });
         }

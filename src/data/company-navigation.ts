@@ -64,7 +64,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   financials: {
     groups: [
       {
-        tabs: ["SEC XBRL Financials", "Historical Financial Statements"],
+        tabs: ["SEC XBRL Financials", "TEST", "SEC Filing Financials", "Historical Financial Statements"],
       },
     ],
   },

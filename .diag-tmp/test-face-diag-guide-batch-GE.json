@@ -1,0 +1,722 @@
+{
+  "ticker": "GE",
+  "checked": 80,
+  "suspicious": 29,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-31",
+    "form": "10-Q",
+    "accessionNumber": "0000040545-19-000053"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000040545-21-000064",
+      "filingDate": "2021-10-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended September 30 2021",
+            "Three months ended September 30 2020",
+            "Nine months ended September 30 2021",
+            "Nine months ended September 30 2020"
+          ],
+          "firstRows": [
+            "Aviation",
+            "Healthcare",
+            "Renewable Energy",
+            "Power",
+            "Capital",
+            "Total segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 24,
+          "numericCells": 89,
+          "taggedCells": 89,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 16,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000052",
+      "filingDate": "2021-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended June 30 Consolidated 2021",
+            "Three months ended June 30 Consolidated 2020"
+          ],
+          "firstRows": [
+            "Sales of goods",
+            "Sales of services",
+            "GE Capital revenues from services",
+            "Total revenues (Note 9)",
+            "Cost of goods sold",
+            "Cost of services sold"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 43,
+          "numericCells": 71,
+          "taggedCells": 71,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000026",
+      "filingDate": "2021-04-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended March 31 2021",
+            "Three months ended March 31 2020"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Capital",
+            "Total segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 45,
+          "taggedCells": 45,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000058",
+      "filingDate": "2020-10-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended September 30 2020",
+            "Three months ended September 30 2019",
+            "Three months ended September 30 V%",
+            "Nine months ended September 30 2020",
+            "Nine months ended September 30 2019"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Capital",
+            "Total segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 24,
+          "numericCells": 112,
+          "taggedCells": 112,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 15,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000046",
+      "filingDate": "2020-07-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 43 numeric cell(s) missing inline XBRL tags (0/43 tagged)",
+        "inline XBRL filing: 43 untagged numeric cell(s) across primary statements (0/43 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended June 30 2020",
+            "Three months ended June 30 2019",
+            "Six months ended June 30 2020",
+            "Six months ended June 30 2019"
+          ],
+          "firstRows": [
+            "Equipment",
+            "Services",
+            "Total orders",
+            "Gas Power",
+            "Power Portfolio",
+            "Total segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 11,
+          "numericCells": 43,
+          "taggedCells": 0,
+          "untaggedNumericCells": 43,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000021",
+      "filingDate": "2020-04-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 46 numeric cell(s) missing inline XBRL tags (0/46 tagged)",
+        "inline XBRL filing: 46 untagged numeric cell(s) across primary statements (0/46 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended March 31 2020",
+            "Three months ended March 31 2019"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Capital",
+            "Total segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 46,
+          "taggedCells": 0,
+          "untaggedNumericCells": 46,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000009",
+      "filingDate": "2020-02-24",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 162 numeric cell(s) missing inline XBRL tags (0/162 tagged)",
+        "inline XBRL filing: 162 untagged numeric cell(s) across primary statements (0/162 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "SUMMARY OF REPORTABLE SEGMENTS (In millions)",
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Total industrial segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 27,
+          "numericCells": 162,
+          "taggedCells": 0,
+          "untaggedNumericCells": 162,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000069",
+      "filingDate": "2019-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended September 30 2019",
+            "Three months ended September 30 2018",
+            "Nine months ended September 30 2019",
+            "Nine months ended September 30 2018"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Total industrial segment revenues",
+            "Capital"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 26,
+          "numericCells": 104,
+          "taggedCells": 104,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 23,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000053",
+      "filingDate": "2019-07-31",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended June 30 2019",
+            "Three months ended June 30 2018",
+            "Six months ended June 30 2019",
+            "Six months ended June 30 2018"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Oil & Gas",
+            "Total industrial segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 28,
+          "numericCells": 109,
+          "taggedCells": 109,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 16,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000024",
+      "filingDate": "2019-04-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000014",
+      "filingDate": "2019-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2018",
+            "General Electric Company and consolidated affiliates 2017",
+            "General Electric Company and consolidated affiliates 2016"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Oil & Gas",
+            "Healthcare",
+            "Transportation"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-18-000081",
+      "filingDate": "2018-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000061",
+      "filingDate": "2018-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000032",
+      "filingDate": "2018-05-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000014",
+      "filingDate": "2018-02-23",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000073",
+      "filingDate": "2017-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000053",
+      "filingDate": "2017-07-28",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000028",
+      "filingDate": "2017-05-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000010",
+      "filingDate": "2017-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2016",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2015",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2014",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2013",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2012"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Oil & Gas",
+            "Aviation",
+            "Healthcare",
+            "Transportation"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-16-000195",
+      "filingDate": "2016-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000174",
+      "filingDate": "2016-08-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000152",
+      "filingDate": "2016-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000145",
+      "filingDate": "2016-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2015",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2014",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2013",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2012",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2011"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Oil & Gas",
+            "Energy Management",
+            "Aviation",
+            "Healthcare"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-15-000114",
+      "filingDate": "2015-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000088",
+      "filingDate": "2015-07-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000054",
+      "filingDate": "2015-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000030",
+      "filingDate": "2015-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "SEGMENT REVENUES & PROFIT -- Revenue -- Profit SEGMENT REVENUES & PROFIT WALK: 2014 – 2013 Revenues 2013",
+            "SEGMENT REVENUES & PROFIT -- Revenue -- Profit SEGMENT REVENUES & PROFIT WALK: 2014 – 2013 Profit"
+          ],
+          "firstRows": [
+            "Volume",
+            "Price",
+            "Foreign Exchange",
+            "(Inflation)/Deflation",
+            "Mix",
+            "Productivity"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000011",
+      "filingDate": "2008-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-07-000017",
+      "filingDate": "2007-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

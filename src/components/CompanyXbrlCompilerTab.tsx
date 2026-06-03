@@ -36,6 +36,7 @@ type ValidationEntry = { check: string; passed: boolean; statement_type: string;
 
 type Result = {
   ok: boolean;
+  compiler_schema_version?: number;
   error?: string;
   elapsed_s?: number;
   master_file?: string;
@@ -51,8 +52,8 @@ type Result = {
   validation_passed?: number;
   validation_failed?: number;
   inputFileCount?: number;
-  /** API/UI statement grids omit periods before this fiscal year; full history remains in backend files. */
-  display_models_min_fiscal_year?: number;
+  /** Optional extra floor for API/UI statement grids; the compiler also starts at the first fiscal year with Q1–Q4 when present. */
+  display_models_min_fiscal_year?: number | null;
   models?: Models;
   conflicts_detail?: ConflictEntry[];
   unresolved_detail?: UnresolvedEntry[];
@@ -76,6 +77,18 @@ type Result = {
     cells_added: number;
   };
 };
+
+const COMPILER_SCHEMA_VERSION = 2;
+
+function isRenderableCompiledResult(result: Result | null | undefined): result is Result {
+  return Boolean(
+    result &&
+      result.ok &&
+      result.compiler_schema_version === COMPILER_SCHEMA_VERSION &&
+      result.models &&
+      Object.keys(result.models).length > 0
+  );
+}
 
 type Panel = "compile" | "statements" | "conflicts" | "diagnostics";
 type ViewMode = "quarterly" | "annual";
@@ -135,7 +148,7 @@ function triggerBrowserDownload(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-/** Builds the same workbook the user downloads; caller may also POST it to Saved Documents. */
+/** Builds the workbook for browser download / Saved Documents (quarterly sheets only; FY columns stay in quarterly grid). */
 async function buildCompiledExcelBlob(
   ticker: string,
   result: Result
@@ -156,7 +169,8 @@ async function buildCompiledExcelBlob(
 
     const label = STMT_LABEL[stmtKey] || stmtKey;
 
-    for (const mode of ["quarterly", "annual"] as const) {
+    /* Annual tabs are omitted from the file — quarterly periods include FY## columns when present. */
+    for (const mode of ["quarterly"] as const) {
       const m = stmtData[mode];
       if (!m || !m.rows.length) continue;
 
@@ -442,8 +456,16 @@ function CompilePanel({
               <div>Elapsed: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.elapsed_s}s</span></div>
               <div>Validation: <span className="font-semibold" style={{ color: result.validation_failed ? "#ef4444" : "var(--text)" }}>{result.validation_passed} ok, {result.validation_failed} fail</span></div>
               <div className="col-span-2">
-                Statements view (tab + Excel download): fiscal year ≥{" "}
-                <span className="font-semibold" style={{ color: "var(--text)" }}>{result.display_models_min_fiscal_year ?? 2017}</span>
+                Statements view (tab + Excel download):{" "}
+                <span className="font-semibold" style={{ color: "var(--text)" }}>
+                  {result.display_models_min_fiscal_year != null ? (
+                    <>
+                      fiscal year ≥ {result.display_models_min_fiscal_year} (never earlier than the first full Q1–Q4 year)
+                    </>
+                  ) : (
+                    "first fiscal year with all four quarters (per statement), otherwise every period"
+                  )}
+                </span>
                 <span className="text-[10px] ml-1" style={{ color: "var(--muted2)" }}>(full history in output folder)</span>
               </div>
             </div>
@@ -838,10 +860,11 @@ export function CompanyXbrlCompilerTab({
   // Restore from cache on ticker change
   useEffect(() => {
     const cached = _resultCache.get(ticker);
-    if (cached) {
+    if (isRenderableCompiledResult(cached)) {
       setResult(cached);
       setStatus(cached.ok ? "done" : "error");
     } else {
+      if (cached) _resultCache.delete(ticker);
       setResult(null);
       setStatus("idle");
     }
@@ -850,7 +873,7 @@ export function CompanyXbrlCompilerTab({
   // Auto-switch to statements tab when cached result exists on mount
   useEffect(() => {
     const cached = _resultCache.get(ticker);
-    if (cached?.ok && cached.models && Object.keys(cached.models).length > 0) {
+    if (isRenderableCompiledResult(cached)) {
       setPanel("statements");
     }
   }, [ticker]);
@@ -879,20 +902,14 @@ export function CompanyXbrlCompilerTab({
           title: String(f.title ?? ""),
           savedAt: String(f.savedAt ?? ""),
           contentType: f.contentType ? String(f.contentType) : null,
-          isXbrl: Boolean(f.isXbrl),
+          isXbrl: Boolean(f.isXbrl ?? (f as { isCompilerSource?: unknown }).isCompilerSource),
         }));
         setFiles(list);
         setSelected(new Set(list.filter((f) => f.isXbrl).map((f) => f.filename)));
 
         const last = j.lastCompiledResult as Result | null | undefined;
         // Only hydrate compiled statements from server on first load per rev cycle — not after bulk-save refetch (would jump tabs).
-        if (
-          savedDocumentsRev === 0 &&
-          last &&
-          last.ok &&
-          last.models &&
-          Object.keys(last.models).length > 0
-        ) {
+        if (savedDocumentsRev === 0 && isRenderableCompiledResult(last)) {
           setResult(last);
           _resultCache.set(ticker, last);
           setStatus("done");

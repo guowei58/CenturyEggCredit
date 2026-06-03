@@ -1,0 +1,13 @@
+{
+  "ticker": "GOOG",
+  "checked": 83,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-04-30",
+    "form": "10-Q",
+    "accessionNumber": "0001652044-19-000015"
+  },
+  "failures": []
+}

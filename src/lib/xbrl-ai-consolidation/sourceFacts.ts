@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import { parseFinancialCellValue, parseMarkdownTablesForExcel } from "@/lib/markdown-tables-to-xlsx";
-import { parseSecXbrlSavedWorkbookFullPeriods } from "@/lib/xbrl-saved-history/parseWorkbook";
+import { parseIsoDates, parseSecXbrlSavedWorkbookFullPeriods } from "@/lib/xbrl-saved-history/parseWorkbook";
 import type { ParsedSavedWorkbookFull, StatementKind } from "@/lib/xbrl-saved-history/types";
 
 const EPS = 0.02;
@@ -156,6 +156,106 @@ export function mergeLatestFilingWins(facts: SourceFact[]): SourceFact[] {
   return out;
 }
 
+const HARMONIZE_EPS_ABS = 0.06;
+const HARMONIZE_EPS_RATIO = 0.015;
+
+function amountsNear(a: number, b: number): boolean {
+  const tol = Math.max(HARMONIZE_EPS_ABS, HARMONIZE_EPS_RATIO * Math.max(Math.abs(a), Math.abs(b), 1));
+  return Math.abs(a - b) <= tol;
+}
+
+/** IS/CF accrual buckets from range length (aligns with {@link inferPeriodShortLabel} bands). */
+function accrualDurationBucket(durationDays: number, hasStart: boolean): "fy" | "q3ytd" | "q" | "other" {
+  if (!hasStart) return "other";
+  if (durationDays >= 330 && durationDays <= 400) return "fy";
+  if (durationDays >= 235 && durationDays <= 325) return "q3ytd";
+  if (durationDays >= 70 && durationDays <= 125) return "q";
+  if (durationDays >= 28 && durationDays < 70) return "q";
+  return "other";
+}
+
+/**
+ * After {@link mergeLatestFilingWins}, some IS/CF lines still disagree in **display sign** between filings
+ * (10-K vs 10-Q) because SEC presentation `preferredLabel` roles can differ for the same concept. That breaks
+ * `4Q = FY − 9M`, `9M = Q1+Q2+Q3`, and `FY = sum(Q1…Q4)` in consolidation — for **summable flow** lines only; **not**
+ * weighted-average share counts (see consolidation instructions / LLM system prompt).
+ *
+ * Mutates `value` in place when a **pure sign inversion** reconciles totals (calendar December year-end only).
+ */
+export function harmonizeCrossFilingAccrualSigns(facts: SourceFact[]): void {
+  const byLine = new Map<string, SourceFact[]>();
+  for (const f of facts) {
+    if (f.kind !== "is" && f.kind !== "cf") continue;
+    const k = `${f.kind}\t${f.concept}`;
+    let arr = byLine.get(k);
+    if (!arr) {
+      arr = [];
+      byLine.set(k, arr);
+    }
+    arr.push(f);
+  }
+
+  for (const arr of byLine.values()) harmonizeOneConceptLineDecFy(arr);
+}
+
+function harmonizeOneConceptLineDecFy(facts: SourceFact[]): void {
+  type P = { f: SourceFact; end: string; b: "fy" | "q3ytd" | "q" };
+  const parsed: P[] = [];
+  for (const f of facts) {
+    const { start, end, durationDays } = parseIsoDates(f.periodLabel);
+    if (!end || !start) continue;
+    const b = accrualDurationBucket(durationDays, true);
+    if (b === "other") continue;
+    parsed.push({ f, end, b });
+  }
+
+  const calendarYears = new Set<string>();
+  for (const x of parsed) {
+    if (x.b === "fy" && /^\d{4}-12-31$/.test(x.end)) calendarYears.add(x.end.slice(0, 4));
+    if (x.b === "q3ytd" && /^\d{4}-09-30$/.test(x.end)) calendarYears.add(x.end.slice(0, 4));
+  }
+
+  for (const y of calendarYears) {
+    const fyEnd = `${y}-12-31`;
+    const q1e = `${y}-03-31`;
+    const q2e = `${y}-06-30`;
+    const q3e = `${y}-09-30`;
+    const q4e = `${y}-12-31`;
+    const nineMEnd = q3e;
+
+    const fy = parsed.find((p) => p.b === "fy" && p.end === fyEnd);
+    const nineM = parsed.find((p) => p.b === "q3ytd" && p.end === nineMEnd);
+    const q1 = parsed.find((p) => p.b === "q" && p.end === q1e);
+    const q2 = parsed.find((p) => p.b === "q" && p.end === q2e);
+    const q3 = parsed.find((p) => p.b === "q" && p.end === q3e);
+    const q4 = parsed.find((p) => p.b === "q" && p.end === q4e);
+    const haveAllStandaloneQuarters = !!(q1 && q2 && q3 && q4);
+
+    if (nineM && q1 && q2 && q3) {
+      const s = q1.f.value + q2.f.value + q3.f.value;
+      if (!amountsNear(s, nineM.f.value) && amountsNear(s, -nineM.f.value)) {
+        nineM.f.value = -nineM.f.value;
+      }
+    }
+
+    if (fy && q1 && q2 && q3 && q4) {
+      const s = q1.f.value + q2.f.value + q3.f.value + q4.f.value;
+      if (!amountsNear(s, fy.f.value) && amountsNear(s, -fy.f.value)) {
+        fy.f.value = -fy.f.value;
+      }
+    }
+
+    if (fy && nineM && q4 && !haveAllStandaloneQuarters) {
+      const implied = fy.f.value - nineM.f.value;
+      if (!amountsNear(implied, q4.f.value)) {
+        const bridge = q4.f.value + nineM.f.value;
+        if (amountsNear(-bridge, fy.f.value)) fy.f.value = -fy.f.value;
+        else if (amountsNear(-implied, q4.f.value)) fy.f.value = -fy.f.value;
+      }
+    }
+  }
+}
+
 export async function buildMergedFactsAndLineIndex(
   userId: string,
   ticker: string
@@ -196,7 +296,9 @@ export async function buildMergedFactsAndLineIndex(
   if (!parsedList.length) return null;
 
   const { allFacts, conceptToLines } = flattenWorkbooksToFacts(parsedList);
-  return { merged: mergeLatestFilingWins(allFacts), conceptToLines };
+  const merged = mergeLatestFilingWins(allFacts);
+  harmonizeCrossFilingAccrualSigns(merged);
+  return { merged, conceptToLines };
 }
 
 export function validateConsolidatedMarkdownAgainstXbrl(

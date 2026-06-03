@@ -1,0 +1,758 @@
+{
+  "ticker": "HSY",
+  "checked": 80,
+  "suspicious": 8,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-04-25",
+    "form": "10-Q",
+    "accessionNumber": "0000047111-19-000023"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001628280-26-008586",
+      "filingDate": "2026-02-17",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (116/120 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (268/272 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2025",
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Business realignment costs",
+            "Operating profit"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2025",
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Goodwill impairment charges"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 20,
+          "numericCells": 51,
+          "taggedCells": 51,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 120,
+          "taggedCells": 116,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 101,
+          "taggedCells": 101,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 41,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-25-000014",
+      "filingDate": "2025-02-18",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (116/120 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (264/268 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2024",
+            "2023",
+            "2022"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Business realignment costs",
+            "Operating profit"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023",
+            "2022"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Write-down of equity investments"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 20,
+          "numericCells": 51,
+          "taggedCells": 51,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 120,
+          "taggedCells": 116,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 39,
+          "numericCells": 97,
+          "taggedCells": 97,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 39,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-24-000009",
+      "filingDate": "2024-02-20",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (116/120 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (271/275 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2023",
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Business realignment costs",
+            "Operating profit"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2023",
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Net income including noncontrolling interest",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Write-down of equity investments"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 22,
+          "numericCells": 55,
+          "taggedCells": 55,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 120,
+          "taggedCells": 116,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 40,
+          "numericCells": 100,
+          "taggedCells": 100,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 38,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-23-000012",
+      "filingDate": "2023-02-17",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (116/120 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (274/278 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2022",
+            "2021",
+            "2020"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Long-lived asset impairment charges",
+            "Business realignment costs"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2022",
+            "2021",
+            "2020"
+          ],
+          "firstRows": [
+            "Net income including noncontrolling interest",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Impairment of long-lived assets (see Note 6)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 57,
+          "taggedCells": 57,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 120,
+          "taggedCells": 116,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 101,
+          "taggedCells": 101,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 37,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-22-000017",
+      "filingDate": "2022-02-18",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (122/126 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (282/286 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2021",
+            "2020",
+            "2019"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Long-lived and intangible asset impairment charges",
+            "Business realignment costs"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2021",
+            "2020",
+            "2019"
+          ],
+          "firstRows": [
+            "Net income including noncontrolling interest",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Impairment of long-lived and intangible assets (see Note 6)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 59,
+          "taggedCells": 59,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 126,
+          "taggedCells": 122,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 40,
+          "numericCells": 101,
+          "taggedCells": 101,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 35,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-21-000007",
+      "filingDate": "2021-02-17",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (124/128 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (290/294 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2020",
+            "2019",
+            "2018"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Long-lived and intangible asset impairment charges",
+            "Business realignment costs"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2020",
+            "2019",
+            "2018"
+          ],
+          "firstRows": [
+            "Net income including noncontrolling interest",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Impairment of long-lived and intangible assets (see Note 6)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 60,
+          "taggedCells": 60,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 128,
+          "taggedCells": 124,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 43,
+          "numericCells": 106,
+          "taggedCells": 106,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 35,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-20-000007",
+      "filingDate": "2020-02-20",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (124/128 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (284/288 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2019",
+            "2018",
+            "2017"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Long-lived and intangible asset impairment charges",
+            "Business realignment costs"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2019",
+            "2018",
+            "2017"
+          ],
+          "firstRows": [
+            "Net income including noncontrolling interest",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Impairment of long-lived and intangible assets (see Note 6)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 60,
+          "taggedCells": 60,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 128,
+          "taggedCells": 124,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 100,
+          "taggedCells": 100,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 33,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000047111-19-000010",
+      "filingDate": "2019-02-22",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "balance-sheet: 4 numeric cell(s) missing inline XBRL tags (124/128 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (284/288 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2018",
+            "2017",
+            "2016"
+          ],
+          "firstRows": [
+            "Net sales",
+            "Cost of sales",
+            "Gross profit",
+            "Selling, marketing and administrative expense",
+            "Long-lived and intangible asset impairment charges",
+            "Business realignment costs"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "December 31,",
+            "ASSETS",
+            "Current assets:",
+            "Cash and cash equivalents",
+            "Accounts receivable—trade, net",
+            "Inventories"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2018",
+            "2017",
+            "2016"
+          ],
+          "firstRows": [
+            "Net income including noncontrolling interest",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation expense",
+            "Deferred income taxes",
+            "Impairment of long-lived and intangible assets (see Notes 3 and 7)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 59,
+          "taggedCells": 59,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 128,
+          "taggedCells": 124,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 42,
+          "numericCells": 101,
+          "taggedCells": 101,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 34,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    }
+  ]
+}

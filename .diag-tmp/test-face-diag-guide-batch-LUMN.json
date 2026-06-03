@@ -1,0 +1,13 @@
+{
+  "ticker": "LUMN",
+  "checked": 80,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0000018926-19-000018"
+  },
+  "failures": []
+}

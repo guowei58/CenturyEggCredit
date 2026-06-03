@@ -1,0 +1,890 @@
+{
+  "ticker": "GE",
+  "checked": 80,
+  "suspicious": 52,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-31",
+    "form": "10-Q",
+    "accessionNumber": "0000040545-19-000053"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000040545-26-000027",
+      "filingDate": "2026-04-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-26-000008",
+      "filingDate": "2026-01-29",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-25-000132",
+      "filingDate": "2025-10-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-25-000111",
+      "filingDate": "2025-07-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-25-000062",
+      "filingDate": "2025-04-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-25-000015",
+      "filingDate": "2025-02-03",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-24-000200",
+      "filingDate": "2024-10-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-24-000176",
+      "filingDate": "2024-07-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-24-000113",
+      "filingDate": "2024-04-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-24-000027",
+      "filingDate": "2024-02-02",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-23-000238",
+      "filingDate": "2023-10-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-23-000198",
+      "filingDate": "2023-07-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-23-000136",
+      "filingDate": "2023-04-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-23-000023",
+      "filingDate": "2023-02-10",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-22-000060",
+      "filingDate": "2022-10-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-22-000050",
+      "filingDate": "2022-07-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-22-000027",
+      "filingDate": "2022-04-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-22-000008",
+      "filingDate": "2022-02-11",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000064",
+      "filingDate": "2021-10-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000052",
+      "filingDate": "2021-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000026",
+      "filingDate": "2021-04-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000011",
+      "filingDate": "2021-02-12",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000058",
+      "filingDate": "2020-10-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000046",
+      "filingDate": "2020-07-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000021",
+      "filingDate": "2020-04-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000009",
+      "filingDate": "2020-02-24",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000069",
+      "filingDate": "2019-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000053",
+      "filingDate": "2019-07-31",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000024",
+      "filingDate": "2019-04-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000014",
+      "filingDate": "2019-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000081",
+      "filingDate": "2018-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000061",
+      "filingDate": "2018-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000032",
+      "filingDate": "2018-05-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000014",
+      "filingDate": "2018-02-23",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000073",
+      "filingDate": "2017-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000053",
+      "filingDate": "2017-07-28",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000028",
+      "filingDate": "2017-05-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000010",
+      "filingDate": "2017-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000195",
+      "filingDate": "2016-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000174",
+      "filingDate": "2016-08-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000152",
+      "filingDate": "2016-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000145",
+      "filingDate": "2016-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000114",
+      "filingDate": "2015-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000088",
+      "filingDate": "2015-07-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000054",
+      "filingDate": "2015-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000030",
+      "filingDate": "2015-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040554-14-000023",
+      "filingDate": "2014-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1"
+          ],
+          "firstRows": [
+            "1 Basis of Presentation and Summary of Significant Accounting Policies",
+            "2 Assets and Liabilities of Businesses Held for Sale and Discontinued Operations",
+            "3 Investment Securities",
+            "4 Current Receivables",
+            "5 Inventories",
+            "6 GECC Financing Receivables, Allowance for Losses on Financing Receivables and Supplemental Information on Credit Quality"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2013",
+            "General Electric Company and consolidated affiliates 2012"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Note 6)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2013",
+            "General Electric Company and consolidated affiliates 2012",
+            "General Electric Company and consolidated affiliates 2011"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-13-000036",
+      "filingDate": "2013-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1"
+          ],
+          "firstRows": [
+            "1 Basis of Presentation and Summary of Significant Accounting Policies",
+            "2 Assets and Liabilities of Businesses Held for Sale and Discontinued Operations",
+            "3 Investment Securities",
+            "4 Current Receivables",
+            "5 Inventories",
+            "6 GECC Financing Receivables and Allowance for Losses on Financing Receivables"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2012",
+            "General Electric Company and consolidated affiliates 2011"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Notes 6 and 23)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2012",
+            "General Electric Company and consolidated affiliates 2011",
+            "General Electric Company and consolidated affiliates 2010"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-12-000016",
+      "filingDate": "2012-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1"
+          ],
+          "firstRows": [
+            "1 Summary of Significant Accounting Policies",
+            "2 Assets and Liabilities of Businesses Held for Sale and Discontinued Operations",
+            "3 Investment Securities",
+            "4 Current Receivables",
+            "5 Inventories",
+            "6 GECS Financing Receivables and Allowances for Losses on Financing Receivables"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2011",
+            "General Electric Company and consolidated affiliates 2010"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Notes 6 and 23)",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2011",
+            "General Electric Company and consolidated affiliates 2010",
+            "General Electric Company and consolidated affiliates 2009"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-11-047479",
+      "filingDate": "2011-02-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1"
+          ],
+          "firstRows": [
+            "1 Summary of Significant Accounting Policies",
+            "2 Assets and Liabilities of Businesses Held for Sale and Discontinued Operations",
+            "3 Investment Securities",
+            "4 Current Receivables",
+            "5 Inventory",
+            "6 Financing Receivables and Allowances for Losses on Financing Receivables"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2010",
+            "General Electric Company and consolidated affiliates 2009"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Notes 6 and 23)",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2010",
+            "General Electric Company and consolidated affiliates 2009",
+            "General Electric Company and consolidated affiliates 2008"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the Company to cash provided from operating activities",
+            "Depreciation and amortization of property, plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000011",
+      "filingDate": "2008-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-07-000017",
+      "filingDate": "2007-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "ticker": "LUMN",
+  "checked": 80,
+  "suspicious": 5,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0000018926-19-000018"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000018926-25-000093",
+      "filingDate": "2025-07-31",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2025 (Dollars in millions and shares in thousands)",
+            "December 31, 2024 (Dollars in millions and shares in thousands)"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, less allowance of $53 and $59",
+            "Assets held for sale",
+            "Other current assets, net",
+            "Total current assets",
+            "Property, plant and equipment, net of accumulated depreciation of $23,158 and $23,121"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2025 (Dollars in millions)",
+            "Six Months Ended June 30, 2024 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net (loss) income",
+            "Adjustments to reconcile net (loss) income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Net loss on sale of business",
+            "Goodwill impairment",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 47,
+          "numericCells": 73,
+          "taggedCells": 73,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 23,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-23-000085",
+      "filingDate": "2023-08-01",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2023 (Dollars in millions and shares in thousands)",
+            "December 31, 2022 (Dollars in millions and shares in thousands)"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, less allowance of $78 and $85",
+            "Assets held for sale",
+            "Other",
+            "Total current assets",
+            "Property, plant and equipment, net of accumulated depreciation of $20,529 and $19,886"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2023 (Dollars in millions)",
+            "Six Months Ended June 30, 2022 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net (loss) income",
+            "Adjustments to reconcile net (loss) income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Loss on disposal group held for sale",
+            "Goodwill impairment",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 41,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 45,
+          "numericCells": 70,
+          "taggedCells": 70,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 23,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-20-000009",
+      "filingDate": "2020-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "As of December 31, 2019 (Dollars in millionsand shares in thousands)",
+            "As of December 31, 2018 (Dollars in millionsand shares in thousands)"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash - current",
+            "Accounts receivable, less allowance of $106 and $142",
+            "Assets held for sale",
+            "Other",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2019 (Dollars in millions)",
+            "Years Ended December 31, 2018 (Dollars in millions)",
+            "Years Ended December 31, 2017 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net (loss) income",
+            "Adjustments to reconcile net (loss) income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Impairment of goodwill and other assets",
+            "Deferred income taxes",
+            "Loss on the sale of data centers and colocation business"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 44,
+          "numericCells": 69,
+          "taggedCells": 69,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 35,
+          "numericCells": 86,
+          "taggedCells": 86,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 27,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-19-000012",
+      "filingDate": "2019-05-10",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2019 (Unaudited) (Dollars in millions and shares in thousands)",
+            "December 31, 2018 (Dollars in millions and shares in thousands)"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, less allowance of $156 and $142",
+            "Assets held for sale",
+            "Other",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2019 (Dollars in millions)",
+            "Three Months Ended March 31, 2018 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net (loss) income",
+            "Adjustments to reconcile net (loss) income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Impairment of goodwill and other assets",
+            "Deferred income taxes",
+            "Provision for uncollectible accounts"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001140361-07-004700",
+      "filingDate": "2007-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2006 (Dollars in thousands) ASSETS",
+            "December 31, 2005 (Dollars in thousands) ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable",
+            "Customers, less allowance of $11,321 and $11,312",
+            "Interexchange carriers and other, less allowance of $9,584 and $10,409",
+            "Materials and supplies, at average cost",
+            "Other"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year ended December 31, 2006 (Dollars in thousands)",
+            "Year ended December 31, 2005 (Dollars in thousands)",
+            "Year ended December 31, 2004 (Dollars in thousands)"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities",
+            "Depreciation and amortization",
+            "Gain on asset dispositions",
+            "Deferred income taxes",
+            "Income from unconsolidated cellular entity"
+          ]
+        }
+      ]
+    }
+  ]
+}

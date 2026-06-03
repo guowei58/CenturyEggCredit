@@ -60,6 +60,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
       },
       statements: stmt.statements,
       validation: stmt.validation,
+      selfDiagnosticChecklist: stmt.selfDiagnosticChecklist,
       calculationLinkbaseLoaded: stmt.calculationLinkbaseLoaded,
     });
   } catch (e) {

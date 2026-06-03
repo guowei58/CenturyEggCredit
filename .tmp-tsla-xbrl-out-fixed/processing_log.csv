@@ -1,0 +1,20 @@
+Pipeline start  input=.tmp-tsla-xbrl  output=.tmp-tsla-xbrl-out-fixed
+Step 1: Loading workbooks
+Loaded 5 workbooks, 1011 facts
+Step 2: Identifying master 10-K
+Master workbook: TSLA_SEC-XBRL-financials_as-presented_10-K_2026-01-29_0001628280-26-003952.xlsx  (is_10k=True, latest_fy=2025)
+Step 3: Building master presentation
+Master rows: 95, concept mappings: 96, AI matches: 0, interest netting aliases: 0
+Step 4: Mapping facts to canonical rows
+Mapped: 1011, unresolved: 0
+File recency order (oldest→newest): ['TSLA_SEC-XBRL-financials_as-presented_10-Q_2025-04-23_0001628280-25-018911.xlsx', 'TSLA_SEC-XBRL-financials_as-presented_10-Q_2025-07-24_0001628280-25-035806.xlsx', 'TSLA_SEC-XBRL-financials_as-presented_10-Q_2025-10-23_0001628280-25-045968.xlsx', 'TSLA_SEC-XBRL-financials_as-presented_10-K_2026-01-29_0001628280-26-003952.xlsx', 'TSLA_SEC-XBRL-financials_as-presented_10-Q_2026-04-23_0001628280-26-026673.xlsx']
+Step 5: Consolidating across files
+Consolidated cells: 830, conflicts: 1
+Step 5b: Coverage pass
+Coverage: repaired 0 mapped cells; row_order registry +0 rows; explicit workbook +0 rows / +0 cells; workbook gap fills 0; integrated 0 unresolved rows, 0 cells; unresolved remaining 0
+Step 6: Deriving missing quarters
+Derived 372 quarterly values
+Step 6b: Final raw XBRL reconcile (add any missing lines / cells)
+Final reconcile: scanned 96 raw keys; +0 rows, +0 map repairs, +0 orphan master rows, +0 cells
+Step 7: Validating
+Step 8: Exporting

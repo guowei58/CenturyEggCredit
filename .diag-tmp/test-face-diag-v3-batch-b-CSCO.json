@@ -1,0 +1,122 @@
+{
+  "ticker": "CSCO",
+  "checked": 80,
+  "suspicious": 6,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-11-19",
+    "form": "10-Q",
+    "accessionNumber": "0000858877-19-000018"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001193125-11-247394",
+      "filingDate": "2011-09-14",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 30, 2011",
+            "July 31, 2010"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Investments",
+            "Accounts receivable, net of allowance for doubtful accounts of $204 at July 30, 2011 and $235 at July 31, 2010",
+            "Inventories",
+            "Financing receivables, net",
+            "Deferred tax assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "July 30, 2011",
+            "July 31, 2010",
+            "July 25, 2009"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and other",
+            "Share-based compensation expense",
+            "Provision for doubtful accounts",
+            "Deferred income taxes"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-10-213400",
+      "filingDate": "2010-09-21",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-190326",
+      "filingDate": "2009-09-11",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-195608",
+      "filingDate": "2008-09-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-202552",
+      "filingDate": "2007-09-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-06-192133",
+      "filingDate": "2006-09-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

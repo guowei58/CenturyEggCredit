@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from period_parser import parse_period
 from consolidator import ConsolidatedData
 from master_presentation_builder import MasterRow
+from derivation_engine import is_weighted_average_shares_concept
 
 logger = logging.getLogger(__name__)
 
@@ -215,6 +216,8 @@ def _check_q_sum(
 ) -> None:
     """Q1+Q2+Q3+Q4 should equal FY for every row (IS and CF)."""
     for crid, vals in concepts.items():
+        if is_weighted_average_shares_concept(crid):
+            continue
         for yr in _years(vals):
             yy = str(yr % 100).zfill(2)
             qs = [_g(vals, f"{q}Q{yy}") for q in range(1, 5)]

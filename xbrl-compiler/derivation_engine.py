@@ -1,12 +1,26 @@
 """Derive missing quarterly values using fixed arithmetic rules.
 
-Income Statement : 4Q is **always** FY − 1Q − 2Q − 3Q whenever FY exists for that
-                   year (missing Q1–Q3 treated as 0).  Any value already in the 4Q
-                   slot from consolidation is overwritten — raw IS workbooks do not
-                   supply authoritative standalone 4Q facts.
+Income Statement : Before deriving 4Q, optional **FY display-sign harmonization** for
+                   gain/loss/disposition-style rows when FY ≈ −(1Q+2Q+3Q) with the same
+                   zero-fill as the bridge. That pattern usually means the annual (10-K)
+                   and quarterly (10-Q) saved workbooks used opposite presentation sign
+                   for the same economic total—not calendar Dec-31 filers only (TS
+                   ``harmonizeCrossFilingAccrualSigns`` in the AI path is Dec-YE only).
+                   Matching uses **display label keywords** and, when the label is empty or
+                   generic, the **canonical concept local name** (e.g.
+                   ``GainLossOnDispositionOfBusiness``) so harmonization still runs.
+
+                   4Q is then **FY − 1Q − 2Q − 3Q** whenever FY exists (missing Q1–Q3
+                   treated as 0). Any value already in the 4Q slot from consolidation
+                   is overwritten — raw IS workbooks do not supply authoritative
+                   standalone 4Q facts. **Exception:** weighted-average share counts
+                   are period averages, not summable flows — **4Q = FY** (same
+                   full‑year weighted average) instead of subtracting prior quarters.
 Balance Sheet    : 4Q = FY  (same instant balance)
 Cash Flow        : 2Q = 6M − 1Q ;  3Q = 9M − 6M ;  4Q = FY − 9M
-                   (missing component treated as 0 when the cumulative exists)
+                   (missing component treated as 0 when the cumulative exists).
+                   **Exception:** weighted-average share rows skip 2Q/3Q/4Q cumulative
+                   bridges and use **4Q = FY** when 4Q is missing.
 """
 from __future__ import annotations
 
@@ -18,6 +32,113 @@ from master_presentation_builder import MasterRow
 
 logger = logging.getLogger(__name__)
 
+_HARM_TOL_ABS = 0.5
+_HARM_TOL_RATIO = 0.02
+
+
+def _amounts_near(a: float, b: float) -> bool:
+    tol = max(_HARM_TOL_ABS, _HARM_TOL_RATIO * max(abs(a), abs(b), 1.0))
+    return abs(a - b) <= tol
+
+
+def _label_suggests_gain_loss_disposition_harmon(display_label: str) -> bool:
+    """Sparse IS lines where 10-K vs 10-Q presentation sign often inverts (narrow gate)."""
+    u = display_label.lower()
+    if "disposition" in u or "divest" in u:
+        return True
+    if "gain" in u and "loss" in u:
+        return True
+    if "gain on sale" in u or "loss on sale" in u:
+        return True
+    return False
+
+
+def _concept_local_name(crid: str) -> str:
+    if "://" in crid:
+        return crid.rsplit("/", 1)[-1]
+    if ":" in crid:
+        return crid.rsplit(":", 1)[-1]
+    return crid
+
+
+def is_weighted_average_shares_concept(crid: str) -> bool:
+    """True for EPS-denominator-style weighted-average share / unit facts (XBRL local names).
+
+    These are period averages, not fiscal sums — **never** apply Q1+Q2+Q3+4Q = FY style
+    bridging from cumulative YTD deltas.
+    """
+    ln = _concept_local_name(crid).replace("_", "").lower()
+    if not ln:
+        return False
+    if "weightedaverage" not in ln and "weightedavg" not in ln:
+        return False
+    if "share" in ln:
+        return True
+    return False
+
+
+def is_weighted_average_shares_row(crid: str, display_label: str) -> bool:
+    """Like ``is_weighted_average_shares_concept`` plus display-label fallback."""
+    if is_weighted_average_shares_concept(crid):
+        return True
+    u = (display_label or "").lower()
+    return "weighted average" in u and "share" in u
+
+
+def _concept_suggests_gain_loss_disposition_harmon(crid: str) -> bool:
+    """When ``display_label`` is empty or truncated, infer from canonical / master concept."""
+    u = _concept_local_name(crid).replace("_", "").lower()
+    if not u:
+        return False
+    if "divest" in u:
+        return True
+    if "disposition" in u or "disposal" in u:
+        if "gain" in u or "loss" in u or "gainloss" in u:
+            return True
+    if "gainlossonsale" in u or "gainonsaleof" in u or "lossonsaleof" in u:
+        return True
+    return False
+
+
+def _row_matches_gain_loss_disposition_harmon(display_label: str, crid: str) -> bool:
+    return _label_suggests_gain_loss_disposition_harmon(display_label) or _concept_suggests_gain_loss_disposition_harmon(
+        crid
+    )
+
+
+def harmonize_income_statement_fy_display_sign_before_4q(
+    data: ConsolidatedData,
+    label_map: dict[tuple[str, str], str],
+) -> None:
+    """If FY is the negation of (1Q+2Q+3Q) on a gain/loss/disposition row, flip FY.
+
+    Otherwise ``4Q = FY - Q1 - Q2 - Q3`` double-applies opposite conventions and blows
+    up 4Q (e.g. FICO FY2021 disposition activity).
+    """
+    rows = data.get("income_statement")
+    if not rows:
+        return
+    for crid, vals in rows.items():
+        label = label_map.get(("income_statement", crid), "")
+        if not _row_matches_gain_loss_disposition_harmon(label, crid):
+            continue
+        years = _years(vals)
+        for yr in years:
+            yy = str(yr % 100).zfill(2)
+            fk = f"FY{yy}"
+            fy = vals.get(fk)
+            if fy is None:
+                continue
+            # Match _is_4q: missing Q1–Q3 treated as 0 for the bridge comparison
+            s123 = _z(vals, f"1Q{yy}") + _z(vals, f"2Q{yy}") + _z(vals, f"3Q{yy}")
+            if _amounts_near(fy, -s123):
+                vals[fk] = -float(fy)
+                logger.info(
+                    "HARMONIZE IS FY sign (gain/loss row): %s %s — %s was %s, "
+                    "flipped to %s (1Q+2Q+3Q=%s from saved workbooks)",
+                    crid, fk, label[:72], fy, vals[fk], s123,
+                )
+
 
 def derive_quarters(
     data: ConsolidatedData,
@@ -28,6 +149,8 @@ def derive_quarters(
     label_map: dict[tuple[str, str], str] = {
         (r.statement_type, r.canonical_row_id): r.display_label for r in master_rows
     }
+
+    harmonize_income_statement_fy_display_sign_before_4q(data, label_map)
 
     reported: set[tuple[str, str, str]] = set()
     for ae in existing_audit:
@@ -108,6 +231,17 @@ def _is_4q(st, crid, disp, vals, yy, audit):
     if fy is None:
         _log_miss(st, crid, lbl, [f"FY{yy}"])
         return
+    if is_weighted_average_shares_row(crid, disp):
+        # FY weighted average is not the sum of quarterly weighted averages.
+        formula = (
+            f"4Q{yy} = FY{yy} (weighted-average shares: FY is not the sum of quarters; "
+            f"replacing flow-style bridge)"
+        )
+        _put(
+            vals, lbl, float(fy), formula, st, crid, disp,
+            "copied_from_fy_for_wacs", audit,
+        )
+        return
     q1 = _z(vals, f"1Q{yy}")
     q2 = _z(vals, f"2Q{yy}")
     q3 = _z(vals, f"3Q{yy}")
@@ -138,9 +272,10 @@ def _bs_4q(st, crid, disp, vals, yy, reported, audit):
 # ── Cash Flow ─────────────────────────────────────────────────────────────
 
 def _cf(st, crid, disp, vals, yy, reported, audit):
+    wacs = is_weighted_average_shares_row(crid, disp)
     # 2Q = 6M − 1Q  (1Q defaults to 0 if absent)
     lbl = f"2Q{yy}"
-    if not _skip(vals, lbl, reported, st, crid):
+    if not wacs and not _skip(vals, lbl, reported, st, crid):
         sm = _g(vals, f"6M{yy}")
         if sm is not None:
             q1 = _z(vals, f"1Q{yy}")
@@ -150,10 +285,12 @@ def _cf(st, crid, disp, vals, yy, reported, audit):
                  st, crid, disp, "derived", audit)
         else:
             _log_miss(st, crid, lbl, [f"6M{yy}"])
+    elif wacs:
+        pass  # cumulative bridges do not apply to weighted-average shares
 
     # 3Q = 9M − 6M  (6M defaults to 0 if absent)
     lbl = f"3Q{yy}"
-    if not _skip(vals, lbl, reported, st, crid):
+    if not wacs and not _skip(vals, lbl, reported, st, crid):
         nm = _g(vals, f"9M{yy}")
         if nm is not None:
             sm = _z(vals, f"6M{yy}")
@@ -163,16 +300,25 @@ def _cf(st, crid, disp, vals, yy, reported, audit):
                  st, crid, disp, "derived", audit)
         else:
             _log_miss(st, crid, lbl, [f"9M{yy}"])
+    elif wacs:
+        pass  # cumulative bridges do not apply to weighted-average shares
 
     # 4Q = FY − 9M  (9M defaults to 0 if absent)
     lbl = f"4Q{yy}"
     if not _skip(vals, lbl, reported, st, crid):
         fy = _g(vals, f"FY{yy}")
         if fy is not None:
-            nm = _z(vals, f"9M{yy}")
-            nm_note = f"9M{yy}" if _g(vals, f"9M{yy}") is not None else f"9M{yy}(=0, not reported)"
-            _put(vals, lbl, fy - nm,
-                 f"FY{yy} - {nm_note} = {fy} - {nm}",
-                 st, crid, disp, "derived", audit)
+            if wacs:
+                _put(
+                    vals, lbl, float(fy),
+                    f"4Q{yy} = FY{yy} (weighted-average shares: not FY−9M)",
+                    st, crid, disp, "copied_from_fy_for_wacs", audit,
+                )
+            else:
+                nm = _z(vals, f"9M{yy}")
+                nm_note = f"9M{yy}" if _g(vals, f"9M{yy}") is not None else f"9M{yy}(=0, not reported)"
+                _put(vals, lbl, fy - nm,
+                     f"FY{yy} - {nm_note} = {fy} - {nm}",
+                     st, crid, disp, "derived", audit)
         else:
             _log_miss(st, crid, lbl, [f"FY{yy}"])

@@ -1,0 +1,102 @@
+{
+  "ticker": "LUMN",
+  "checked": 80,
+  "suspicious": 3,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0000018926-19-000018"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000018926-10-000031",
+      "filingDate": "2010-11-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000018926-09-000043",
+      "filingDate": "2009-11-09",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001140361-07-004700",
+      "filingDate": "2007-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "balance-sheet: too few rows (5)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year ended or as of December 31, 2006 (Dollars in thousands)",
+            "Year ended or as of December 31, 2005 (Dollars in thousands)",
+            "Year ended or as of December 31, 2004 (Dollars in thousands)",
+            "Year ended or as of December 31, 2003 (Dollars in thousands)",
+            "Year ended or as of December 31, 2002 (Dollars in thousands)"
+          ],
+          "firstRows": [
+            "Access lines",
+            "% Residential",
+            "% Business",
+            "Internet customers",
+            "% High-speed Internet service",
+            "% Dial-up service"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2006 (Dollars in thousands)",
+            "December 31, 2005 (Dollars in thousands)",
+            "December 31, 2004 (Dollars in thousands)",
+            "December 31, 2003 (Dollars in thousands)",
+            "December 31, 2002 (Dollars in thousands)"
+          ],
+          "firstRows": [
+            "Net property, plant and equipment",
+            "Goodwill",
+            "Total assets",
+            "Long-term debt",
+            "Stockholders' equity"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year ended December 31, 2006 (Dollars in thousands)",
+            "Year ended December 31, 2005 (Dollars in thousands)",
+            "Year ended December 31, 2004 (Dollars in thousands)"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities",
+            "Depreciation and amortization",
+            "Gain on asset dispositions",
+            "Deferred income taxes",
+            "Income from unconsolidated cellular entity"
+          ]
+        }
+      ]
+    }
+  ]
+}

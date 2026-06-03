@@ -15,6 +15,14 @@ Two-stage aggregation:
                other concepts are segment components that were mapped to
                the same row — summing them would double-count.
 
+            a2) Income statement only: if the bucket contains exactly one
+               **preferred face revenue total** (e.g. ``SalesRevenueNet``,
+               ``RevenueFromContractWithCustomerExcludingAssessedTax``)
+               alongside sibling components, use that total only.  Older
+               10-Q/10-K pairs often disagree on the total tag name so (a)
+               does not fire; without this rule, (c) would **sum** net
+               revenue with its components.
+
             b) If no master concept is present, but one fact's value equals
                the sum of all others (within rounding tolerance), treat it
                as a **subtotal** and use only that value.
@@ -24,9 +32,12 @@ Two-stage aggregation:
                the master presentation merges into a single row.
 
   Stage 2 – **Across files**, if more than one file supplies a value for the
-            same cell, the **most recent file wins** (highest ``file_recency``
-            rank).  Identical duplicates are silently kept; differing values
-            are logged to the conflicts list.
+            same cell, prefer a file that **headlines** that period (the quarter
+            / YTD / FY the filing primarily reports — see ``headline_periods``).
+            Among headline matches, use the highest ``file_recency`` rank; if no
+            file headlines that period, fall back to **most recent file wins**
+            (highest recency). Identical duplicates are logged quietly; differing
+            values are logged to the conflicts list with the resolution taken.
 """
 from __future__ import annotations
 
@@ -57,7 +68,7 @@ class AuditEntry:
     source_column: str
     raw_line_label: str
     raw_concept: str
-    source_method: str           # reported | derived | copied_from_fy_for_bs | summed_within_file | interest_net
+    source_method: str           # reported | derived | copied_from_fy_for_bs | copied_from_fy_for_wacs | summed_within_file | interest_net
     derivation_formula: str = ""
 
 
@@ -83,6 +94,28 @@ class _FileAggregate:
 _SUM_TOL = 0.5  # rounding tolerance for subtotal detection
 
 
+def _concept_local_name(concept: str) -> str:
+    if "://" in concept:
+        return concept.rsplit("/", 1)[-1]
+    if ":" in concept:
+        return concept.rsplit(":", 1)[-1]
+    return concept
+
+
+# Face / consolidated revenue tags — must not be SUM()’d with presentation siblings
+# (TechnologyServicesRevenue, LicensesRevenue, …) when concept-map collapses them
+# onto the same canonical row. Older filings use SalesRevenueNet while the 10-K
+# master row may be RevenueFromContract… so Priority A does not fire.
+_PREFERRED_REVENUE_TOTAL_LOCALS: frozenset[str] = frozenset({
+    "SalesRevenueNet",
+    "Revenues",
+    "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "RevenueFromContractWithCustomerIncludingAssessedTax",
+    "RevenueFromContractWithCustomer",
+    "SalesRevenueGoodsNet",
+})
+
+
 def _resolve_multi_concept(
     st: str, crid: str, plabel: str, src_file: str,
     non_null: list[MappedFact],
@@ -105,6 +138,22 @@ def _resolve_multi_concept(
             st, crid, plabel, src_file, master_concept, val, others,
         )
         return val, False
+
+    # ── Priority A2: income statement buckets that mix a revenue total + components
+    if st == "income_statement" and len(non_null) >= 2:
+        totals = [
+            f for f in non_null
+            if _concept_local_name(f.raw_concept) in _PREFERRED_REVENUE_TOTAL_LOCALS
+        ]
+        if len(totals) == 1:
+            f0 = totals[0]
+            others = ", ".join(sorted(raw_concepts - {f0.raw_concept}))
+            logger.info(
+                "SUBTOTAL-PREFERRED: %s/%s/%s in %s — using %s (=%s), "
+                "not summing siblings: %s",
+                st, crid, plabel, src_file, f0.raw_concept, f0.value, others,
+            )
+            return f0.value, False
 
     # ── Priority B: detect implicit subtotal (one value ≈ sum of the rest)
     if len(non_null) >= 2:
@@ -137,15 +186,22 @@ def consolidate(
     mapped_facts: list[MappedFact],
     master_rows: list[MasterRow],
     file_recency: dict[str, int] | None = None,
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> tuple[ConsolidatedData, list[AuditEntry], list[Conflict]]:
     """
     Merge all mapped facts.
 
     *file_recency* maps ``source_file`` → integer rank where **higher = more
-    recent**.  When multiple files supply a value for the same cell the
-    highest-ranked file always wins.
+    recent**.
+
+    *file_headline_periods* maps ``source_file`` → set of canonical period keys
+    that filing **primarily** reports (not comparatives from a later period).
+    When multiple files supply a cell, any file that headlines that period is
+    preferred before recency; if none do, recency alone decides (legacy
+    behavior).
     """
     recency = file_recency or {}
+    headlines = file_headline_periods or {}
     label_map: dict[tuple[str, str], str] = {
         (r.statement_type, r.canonical_row_id): r.display_label for r in master_rows
     }
@@ -207,11 +263,13 @@ def consolidate(
             )
         )
 
-    # ── Stage 2: across files, pick the most recent
+    # ── Stage 2: across files, period-primary headline wins, else recency
     for (st, crid, plabel), aggs in cell_aggregates.items():
         disp = label_map.get((st, crid), crid)
 
-        winner = max(aggs, key=lambda a: (recency.get(a.source_file, 0), a.source_file))
+        pool = [a for a in aggs if plabel in headlines.get(a.source_file, frozenset())]
+        candidates = pool if pool else list(aggs)
+        winner = max(candidates, key=lambda a: (recency.get(a.source_file, 0), a.source_file))
 
         data[st][crid][plabel] = winner.value
 
@@ -254,6 +312,11 @@ def consolidate(
                     st, crid, plabel, len(aggs), winner.source_file,
                 )
             else:
+                resolution = (
+                    f"Kept period-primary filing {winner.source_file}"
+                    if pool
+                    else f"Kept most-recent value from {winner.source_file}"
+                )
                 c = Conflict(
                     statement_type=st, canonical_row_id=crid, period=plabel,
                     values=[
@@ -263,12 +326,13 @@ def consolidate(
                          " + ".join(sorted({f.raw_concept for f in a.components})))
                         for a in aggs
                     ],
-                    resolution=f"Kept most-recent value from {winner.source_file}",
+                    resolution=resolution,
                 )
                 conflicts.append(c)
                 logger.info(
-                    "CONFLICT: %s/%s/%s – %d files, used most-recent %s",
+                    "CONFLICT: %s/%s/%s – %d files, winner %s (%s)",
                     st, crid, plabel, len(aggs), winner.source_file,
+                    "period-primary" if pool else "recency",
                 )
 
     logger.info(

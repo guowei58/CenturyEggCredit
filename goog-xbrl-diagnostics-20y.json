@@ -1,0 +1,432 @@
+{
+  "ticker": "GOOG",
+  "checked": 83,
+  "suspicious": 41,
+  "failures": [
+    {
+      "accessionNumber": "0001652044-16-000012",
+      "filingDate": "2016-02-11",
+      "form": "10-K",
+      "issues": [
+        "income-statement: missing core income-statement cues",
+        "cash-flow: missing core cash-flow cues",
+        "XBRL display grid failed 1 structural / rollup check(s) for this filing"
+      ],
+      "summaries": [
+        {
+          "id": "primary-is · Income Statement",
+          "periods": [
+            "FY13",
+            "FY14",
+            "FY15"
+          ],
+          "firstRows": [
+            "Income Statement [Abstract]",
+            "Statement [Table]",
+            "Legal Entity [Axis]",
+            "Entity [Domain]",
+            "Subsidiaries [Member]",
+            "Class of Stock [Axis]"
+          ]
+        },
+        {
+          "id": "primary-bs · Balance Sheet",
+          "periods": [
+            "FY12",
+            "FY13",
+            "2014-02-28",
+            "2014-07-31",
+            "2014-08-31",
+            "FY14",
+            "FY15"
+          ],
+          "firstRows": [
+            "Statement of Financial Position [Abstract]",
+            "Statement [Table]",
+            "Legal Entity [Axis]",
+            "Entity [Domain]",
+            "Subsidiaries [Member]",
+            "Statement [Line Items]"
+          ]
+        },
+        {
+          "id": "primary-cf · Cash Flow",
+          "periods": [
+            "FY13",
+            "FY14",
+            "2015-05-01 → 2015-05-31",
+            "FY15"
+          ],
+          "firstRows": [
+            "Statement of Cash Flows [Abstract]",
+            "Statement [Table]",
+            "Legal Entity [Axis]",
+            "Entity [Domain]",
+            "Subsidiaries [Member]",
+            "Business Acquisition [Axis]"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001288776-15-000046",
+      "filingDate": "2015-10-29",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-15-000035",
+      "filingDate": "2015-07-23",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-15-000023",
+      "filingDate": "2015-04-29",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-15-000008",
+      "filingDate": "2015-02-09",
+      "form": "10-K",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-14-000075",
+      "filingDate": "2014-10-23",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-14-000065",
+      "filingDate": "2014-07-25",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-14-000040",
+      "filingDate": "2014-04-24",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-14-000020",
+      "filingDate": "2014-02-12",
+      "form": "10-K",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-13-000068",
+      "filingDate": "2013-10-24",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-13-000055",
+      "filingDate": "2013-07-25",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001288776-13-000030",
+      "filingDate": "2013-04-25",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-13-028362",
+      "filingDate": "2013-01-29",
+      "form": "10-K",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-12-440217",
+      "filingDate": "2012-10-30",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-12-312575",
+      "filingDate": "2012-07-24",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-12-182401",
+      "filingDate": "2012-04-25",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-12-025336",
+      "filingDate": "2012-01-26",
+      "form": "10-K",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-11-282235",
+      "filingDate": "2011-10-26",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-11-199078",
+      "filingDate": "2011-07-27",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-11-134428",
+      "filingDate": "2011-05-10",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-11-032930",
+      "filingDate": "2011-02-11",
+      "form": "10-K",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-10-241317",
+      "filingDate": "2010-10-29",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-10-172387",
+      "filingDate": "2010-07-30",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-10-108704",
+      "filingDate": "2010-05-05",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-10-030774",
+      "filingDate": "2010-02-12",
+      "form": "10-K",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-222384",
+      "filingDate": "2009-11-04",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-163845",
+      "filingDate": "2009-08-04",
+      "form": "10-Q",
+      "issues": [
+        "SEC fetch failed (404)"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-101727",
+      "filingDate": "2009-05-06",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-029448",
+      "filingDate": "2009-02-13",
+      "form": "10-K",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-230197",
+      "filingDate": "2008-11-07",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-170309",
+      "filingDate": "2008-08-07",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-111739",
+      "filingDate": "2008-05-12",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-032690",
+      "filingDate": "2008-02-15",
+      "form": "10-K",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-238468",
+      "filingDate": "2007-11-07",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-175880",
+      "filingDate": "2007-08-09",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-108436",
+      "filingDate": "2007-05-09",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-044494",
+      "filingDate": "2007-03-01",
+      "form": "10-K",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-06-228163",
+      "filingDate": "2006-11-08",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-06-167945",
+      "filingDate": "2006-08-09",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-06-107734",
+      "filingDate": "2006-05-10",
+      "form": "10-Q",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-06-056598",
+      "filingDate": "2006-03-16",
+      "form": "10-K",
+      "issues": [
+        "XBRL instance document not found for this filing (no *_htm.xml or non-linkbase .xml in the index)."
+      ],
+      "summaries": []
+    }
+  ]
+}

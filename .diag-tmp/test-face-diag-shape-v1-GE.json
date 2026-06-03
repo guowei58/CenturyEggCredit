@@ -1,0 +1,2395 @@
+{
+  "ticker": "GE",
+  "checked": 80,
+  "suspicious": 48,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-31",
+    "form": "10-Q",
+    "accessionNumber": "0000040545-19-000053"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000040545-26-000027",
+      "filingDate": "2026-04-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 31 numeric cell(s) missing inline XBRL tags (0/31 tagged)",
+        "inline XBRL filing: 31 untagged numeric cell(s) across primary statements (157/188 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended March 31 2026",
+            "Three months ended March 31 2025"
+          ],
+          "firstRows": [
+            "Insurance revenue (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenue",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities",
+            "Restructuring and other charges (Note 19)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2026",
+            "December 31, 2025"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)",
+            "Current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2026",
+            "Three months ended March 31 2025"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 6)",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 16,
+          "numericCells": 31,
+          "taggedCells": 0,
+          "untaggedNumericCells": 31,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 44,
+          "numericCells": 81,
+          "taggedCells": 81,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-26-000008",
+      "filingDate": "2026-01-29",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 104 numeric cell(s) missing inline XBRL tags (0/104 tagged)",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 118 untagged numeric cell(s) across primary statements (77/195 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "REVENUE AND OPERATING PROFIT (COST)",
+            "Insurance revenue (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenue",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 19)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2025",
+            "2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2025",
+            "2024"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "(Gains) Losses on purchases and sales of business interests",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 19,
+          "numericCells": 104,
+          "taggedCells": 0,
+          "untaggedNumericCells": 104,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000132",
+      "filingDate": "2025-10-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 66 numeric cell(s) missing inline XBRL tags (0/66 tagged)",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 80 untagged numeric cell(s) across primary statements (78/158 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended September 30 2025",
+            "Three months ended September 30 2024",
+            "Nine months ended September 30 2025",
+            "Nine months ended September 30 2024"
+          ],
+          "firstRows": [
+            "Insurance revenue (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenue",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 18)",
+            "Restructuring and other charges (Note 19)(a)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2025",
+            "2024"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "(Gains) losses on purchases and sales of business interests",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 66,
+          "taggedCells": 0,
+          "untaggedNumericCells": 66,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000111",
+      "filingDate": "2025-07-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 62 numeric cell(s) missing inline XBRL tags (0/62 tagged)",
+        "inline XBRL filing: 62 untagged numeric cell(s) across primary statements (164/226 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended June 30 2025",
+            "Three months ended June 30 2024",
+            "Six months ended June 30 2025",
+            "Six months ended June 30 2024"
+          ],
+          "firstRows": [
+            "Insurance revenue (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenue",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 18)",
+            "Restructuring and other charges (Note 19)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2025",
+            "Six months ended June 30 2024"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 16,
+          "numericCells": 62,
+          "taggedCells": 0,
+          "untaggedNumericCells": 62,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 47,
+          "numericCells": 86,
+          "taggedCells": 86,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000062",
+      "filingDate": "2025-04-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 31 numeric cell(s) missing inline XBRL tags (0/31 tagged)",
+        "inline XBRL filing: 31 untagged numeric cell(s) across primary statements (162/193 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended March 31 2025",
+            "Three months ended March 31 2024"
+          ],
+          "firstRows": [
+            "Insurance revenue (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenue",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 18)",
+            "Restructuring and other charges (Note 19)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2025",
+            "Three months ended March 31 2024"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 16,
+          "numericCells": 31,
+          "taggedCells": 0,
+          "untaggedNumericCells": 31,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 84,
+          "taggedCells": 84,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000015",
+      "filingDate": "2025-02-03",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 106 numeric cell(s) missing inline XBRL tags (0/106 tagged)",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 120 untagged numeric cell(s) across primary statements (80/200 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "REVENUE AND OPERATING PROFIT (COST)",
+            "Insurance revenue (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenue",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 19)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "(Gains) Losses on purchases and sales of business interests",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 19,
+          "numericCells": 106,
+          "taggedCells": 0,
+          "untaggedNumericCells": 106,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 41,
+          "numericCells": 80,
+          "taggedCells": 80,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000200",
+      "filingDate": "2024-10-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 65 numeric cell(s) missing inline XBRL tags (0/65 tagged)",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 79 untagged numeric cell(s) across primary statements (80/159 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended September 30 2024",
+            "Three months ended September 30 2023",
+            "Nine months ended September 30 2024",
+            "Nine months ended September 30 2023"
+          ],
+          "firstRows": [
+            "Insurance revenues (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenues",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 18)",
+            "Restructuring and other charges (Note 19)(a)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2024",
+            "December 31, 2023"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "(Gains) losses on purchases and sales of business interests",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 65,
+          "taggedCells": 0,
+          "untaggedNumericCells": 65,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 41,
+          "numericCells": 80,
+          "taggedCells": 80,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000176",
+      "filingDate": "2024-07-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 64 numeric cell(s) missing inline XBRL tags (0/64 tagged)",
+        "inline XBRL filing: 64 untagged numeric cell(s) across primary statements (171/235 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended June 30 2024",
+            "Three months ended June 30 2023",
+            "Six months ended June 30 2024",
+            "Six months ended June 30 2023"
+          ],
+          "firstRows": [
+            "Insurance revenues (Note 12)",
+            "Eliminations and other",
+            "Corporate & Other revenues",
+            "Gains (losses) on purchases and sales of business interests",
+            "Gains (losses) on retained and sold ownership interests and other equity securities (Note 18)",
+            "Restructuring and other charges (Note 19)"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2024",
+            "December 31, 2023"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2024",
+            "Six months ended June 30 2023"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 16,
+          "numericCells": 64,
+          "taggedCells": 0,
+          "untaggedNumericCells": 64,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 41,
+          "numericCells": 82,
+          "taggedCells": 82,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 89,
+          "taggedCells": 89,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000113",
+      "filingDate": "2024-04-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 47 numeric cell(s) missing inline XBRL tags (0/47 tagged)",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 61 untagged numeric cell(s) across primary statements (78/139 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2024",
+            "December 31, 2023"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Increase (decrease) in Aerospace-related customer allowance accruals",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Net restructuring and other charges/(cash expenditures)",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 47,
+          "numericCells": 47,
+          "taggedCells": 0,
+          "untaggedNumericCells": 47,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000027",
+      "filingDate": "2024-02-02",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 118 numeric cell(s) missing inline XBRL tags (0/118 tagged)",
+        "inline XBRL filing: 118 untagged numeric cell(s) across primary statements (225/343 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "SUMMARY OF REPORTABLE SEGMENTS",
+            "Aerospace",
+            "Renewable Energy",
+            "Power",
+            "Total segment revenues",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2023",
+            "2022"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2023",
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests (Note 19)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 20,
+          "numericCells": 118,
+          "taggedCells": 0,
+          "untaggedNumericCells": 118,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 79,
+          "taggedCells": 79,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 146,
+          "taggedCells": 146,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 57,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000238",
+      "filingDate": "2023-10-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 44 numeric cell(s) missing inline XBRL tags (0/44 tagged)",
+        "inline XBRL filing: 44 untagged numeric cell(s) across primary statements (171/215 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2023",
+            "December 31, 2022"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 2023",
+            "Nine months ended September 30 2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests (Note 19)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 44,
+          "numericCells": 44,
+          "taggedCells": 0,
+          "untaggedNumericCells": 44,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 79,
+          "taggedCells": 79,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 92,
+          "taggedCells": 92,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 34,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000198",
+      "filingDate": "2023-07-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 44 numeric cell(s) missing inline XBRL tags (0/44 tagged)",
+        "inline XBRL filing: 44 untagged numeric cell(s) across primary statements (169/213 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2023",
+            "December 31, 2022"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2023",
+            "Six months ended June 30 2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 44,
+          "numericCells": 44,
+          "taggedCells": 0,
+          "untaggedNumericCells": 44,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 80,
+          "taggedCells": 80,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 48,
+          "numericCells": 89,
+          "taggedCells": 89,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 32,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000136",
+      "filingDate": "2023-04-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 44 numeric cell(s) missing inline XBRL tags (0/44 tagged)",
+        "inline XBRL filing: 44 untagged numeric cell(s) across primary statements (170/214 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2023",
+            "December 31, 2022"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2023",
+            "Three months ended March 31 2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 44,
+          "numericCells": 44,
+          "taggedCells": 0,
+          "untaggedNumericCells": 44,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 80,
+          "taggedCells": 80,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 48,
+          "numericCells": 90,
+          "taggedCells": 90,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 33,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000023",
+      "filingDate": "2023-02-10",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 134 numeric cell(s) missing inline XBRL tags (0/134 tagged)",
+        "cash-flow: 17 numeric cell(s) missing inline XBRL tags (0/17 tagged)",
+        "inline XBRL filing: 151 untagged numeric cell(s) across primary statements (78/229 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "SUMMARY OF REPORTABLE SEGMENTS",
+            "Aerospace",
+            "Renewable Energy",
+            "Power",
+            "HealthCare",
+            "Total segment revenues"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Increase (decrease) in Aerospace-related customer allowance accruals",
+            "Net interest and other financial charges/(cash paid)",
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "Decrease in factoring related liabilities",
+            "Cash settlement of Alstom legacy legal matter"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 134,
+          "taggedCells": 0,
+          "untaggedNumericCells": 134,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 9,
+          "numericCells": 17,
+          "taggedCells": 0,
+          "untaggedNumericCells": 17,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000060",
+      "filingDate": "2022-10-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 44 numeric cell(s) missing inline XBRL tags (0/44 tagged)",
+        "cash-flow: 15 numeric cell(s) missing inline XBRL tags (0/15 tagged)",
+        "inline XBRL filing: 59 untagged numeric cell(s) across primary statements (78/137 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash(a)",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Increase (decrease) in Aerospace-related customer allowance accruals",
+            "Net interest and other financial charges/(cash paid)",
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "Decrease in factoring related liabilities",
+            "Cash settlement of Alstom legacy legal matter"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 44,
+          "numericCells": 44,
+          "taggedCells": 0,
+          "untaggedNumericCells": 44,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 8,
+          "numericCells": 15,
+          "taggedCells": 0,
+          "untaggedNumericCells": 15,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000050",
+      "filingDate": "2022-07-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 43 numeric cell(s) missing inline XBRL tags (0/43 tagged)",
+        "cash-flow: 20 numeric cell(s) missing inline XBRL tags (0/20 tagged)",
+        "inline XBRL filing: 63 untagged numeric cell(s) across primary statements (78/141 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash(a)",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2022",
+            "Six months ended June 30 2021",
+            "Six months ended June 30 V$"
+          ],
+          "firstRows": [
+            "CFOA (GAAP)",
+            "Less: Insurance CFOA 55",
+            "CFOA excluding Insurance (Non-GAAP)",
+            "Add: gross additions to property, plant and equipment (660)",
+            "Add: gross additions to internal-use software (48)",
+            "Less: separation costs cash expenditures (22)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 43,
+          "numericCells": 43,
+          "taggedCells": 0,
+          "untaggedNumericCells": 43,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 20,
+          "taggedCells": 0,
+          "untaggedNumericCells": 20,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000027",
+      "filingDate": "2022-04-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 44 numeric cell(s) missing inline XBRL tags (0/44 tagged)",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 58 untagged numeric cell(s) across primary statements (78/136 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash(a)",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 9)",
+            "All other current assets (Note 10)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2022",
+            "Three months ended March 31 2021"
+          ],
+          "firstRows": [
+            "CFOA (GAAP)",
+            "Less: Insurance CFOA (15)",
+            "CFOA excluding Insurance (Non-GAAP)",
+            "Add: gross additions to property, plant and equipment (340)",
+            "Add: gross additions to internal-use software (23)",
+            "Less: separation costs cash expenditures (3)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 44,
+          "numericCells": 44,
+          "taggedCells": 0,
+          "untaggedNumericCells": 44,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 9,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000008",
+      "filingDate": "2022-02-11",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 6 numeric cell(s) missing inline XBRL tags (130/136 tagged)",
+        "inline XBRL filing: 6 untagged numeric cell(s) across primary statements (357/363 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "SUMMARY OF REPORTABLE SEGMENTS",
+            "Aviation",
+            "Healthcare",
+            "Renewable Energy",
+            "Power",
+            "Total segment revenues"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2021",
+            "2020"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash(a)",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2021",
+            "2020",
+            "2019"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings (loss)",
+            "to cash provided from operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 136,
+          "taggedCells": 130,
+          "untaggedNumericCells": 6,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 55,
+          "numericCells": 151,
+          "taggedCells": 151,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 57,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000064",
+      "filingDate": "2021-10-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 45 numeric cell(s) missing inline XBRL tags (0/45 tagged)",
+        "inline XBRL filing: 45 untagged numeric cell(s) across primary statements (0/45 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate Items and Eliminations"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 45,
+          "numericCells": 45,
+          "taggedCells": 0,
+          "untaggedNumericCells": 45,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000052",
+      "filingDate": "2021-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 45 numeric cell(s) missing inline XBRL tags (0/45 tagged)",
+        "inline XBRL filing: 45 untagged numeric cell(s) across primary statements (0/45 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate Items and Eliminations"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 45,
+          "numericCells": 45,
+          "taggedCells": 0,
+          "untaggedNumericCells": 45,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000026",
+      "filingDate": "2021-04-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 46 numeric cell(s) missing inline XBRL tags (0/46 tagged)",
+        "inline XBRL filing: 46 untagged numeric cell(s) across primary statements (0/46 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "Forward-Looking Statements",
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate Items and Eliminations"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 46,
+          "numericCells": 46,
+          "taggedCells": 0,
+          "untaggedNumericCells": 46,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000011",
+      "filingDate": "2021-02-12",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 148 numeric cell(s) missing inline XBRL tags (0/148 tagged)",
+        "inline XBRL filing: 148 untagged numeric cell(s) across primary statements (230/378 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "SUMMARY OF REPORTABLE SEGMENTS",
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Capital"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 2020",
+            "Consolidated 2019"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash(a)",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Financing receivables – net (Note 5)",
+            "Inventories, including deferred inventory costs (Note 6)",
+            "Other GE Capital receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Consolidated 2020",
+            "Consolidated 2019",
+            "Consolidated 2018"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings (loss) to cash provided from operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 7)",
+            "Amortization of intangible assets (Note 8)",
+            "Goodwill impairments (Note 8)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 25,
+          "numericCells": 148,
+          "taggedCells": 0,
+          "untaggedNumericCells": 148,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 48,
+          "numericCells": 86,
+          "taggedCells": 86,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 144,
+          "taggedCells": 144,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 50,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000058",
+      "filingDate": "2020-10-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 44 numeric cell(s) missing inline XBRL tags (0/44 tagged)",
+        "inline XBRL filing: 44 untagged numeric cell(s) across primary statements (0/44 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Page"
+          ],
+          "firstRows": [
+            "About General Electric",
+            "Management’s Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            "Consolidated Results",
+            "Segment Operations",
+            "Corporate Items and Eliminations",
+            "Other Consolidated Information"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 44,
+          "numericCells": 44,
+          "taggedCells": 0,
+          "untaggedNumericCells": 44,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000046",
+      "filingDate": "2020-07-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000021",
+      "filingDate": "2020-04-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000009",
+      "filingDate": "2020-02-24",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 162 numeric cell(s) missing inline XBRL tags (0/162 tagged)",
+        "inline XBRL filing: 162 untagged numeric cell(s) across primary statements (0/162 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3",
+            "Period 4",
+            "Period 5",
+            "Period 6"
+          ],
+          "firstRows": [
+            "SUMMARY OF REPORTABLE SEGMENTS (In millions)",
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Total industrial segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 27,
+          "numericCells": 162,
+          "taggedCells": 0,
+          "untaggedNumericCells": 162,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000069",
+      "filingDate": "2019-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended September 30 2019",
+            "Three months ended September 30 2018",
+            "Nine months ended September 30 2019",
+            "Nine months ended September 30 2018"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Total industrial segment revenues",
+            "Capital"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 26,
+          "numericCells": 104,
+          "taggedCells": 104,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 23,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000053",
+      "filingDate": "2019-07-31",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three months ended June 30 2019",
+            "Three months ended June 30 2018",
+            "Six months ended June 30 2019",
+            "Six months ended June 30 2018"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Healthcare",
+            "Oil & Gas",
+            "Total industrial segment revenues"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 28,
+          "numericCells": 109,
+          "taggedCells": 109,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 16,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000024",
+      "filingDate": "2019-04-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000014",
+      "filingDate": "2019-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2018",
+            "General Electric Company and consolidated affiliates 2017",
+            "General Electric Company and consolidated affiliates 2016"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Aviation",
+            "Oil & Gas",
+            "Healthcare",
+            "Transportation"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-18-000081",
+      "filingDate": "2018-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000061",
+      "filingDate": "2018-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000032",
+      "filingDate": "2018-05-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000014",
+      "filingDate": "2018-02-23",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000073",
+      "filingDate": "2017-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000053",
+      "filingDate": "2017-07-28",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000028",
+      "filingDate": "2017-05-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000010",
+      "filingDate": "2017-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2016",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2015",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2014",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2013",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2012"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Oil & Gas",
+            "Aviation",
+            "Healthcare",
+            "Transportation"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-16-000195",
+      "filingDate": "2016-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000174",
+      "filingDate": "2016-08-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000152",
+      "filingDate": "2016-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000145",
+      "filingDate": "2016-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2015",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2014",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2013",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2012",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2011"
+          ],
+          "firstRows": [
+            "Power",
+            "Renewable Energy",
+            "Oil & Gas",
+            "Energy Management",
+            "Aviation",
+            "Healthcare"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-15-000114",
+      "filingDate": "2015-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000088",
+      "filingDate": "2015-07-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000054",
+      "filingDate": "2015-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000030",
+      "filingDate": "2015-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2014",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2013",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2012",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2011",
+            "SUMMARY OF OPERATING SEGMENTS General Electric Company and consolidated affiliates 2010"
+          ],
+          "firstRows": [
+            "Power & Water",
+            "Oil & Gas",
+            "Energy Management",
+            "Aviation",
+            "Healthcare",
+            "Transportation"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000011",
+      "filingDate": "2008-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-07-000017",
+      "filingDate": "2007-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

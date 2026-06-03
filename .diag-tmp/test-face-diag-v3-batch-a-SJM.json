@@ -1,0 +1,2055 @@
+{
+  "ticker": "SJM",
+  "checked": 80,
+  "suspicious": 34,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-27",
+    "form": "10-Q",
+    "accessionNumber": "0000091419-19-000014"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000091419-26-000016",
+      "filingDate": "2026-02-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (38/40 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (34/35 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (146/149 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2026 ASSETS",
+            "April 30, 2025 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 21,
+          "numericCells": 40,
+          "taggedCells": 38,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 44,
+          "numericCells": 74,
+          "taggedCells": 74,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 40,
+          "numericCells": 35,
+          "taggedCells": 34,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-25-000106",
+      "filingDate": "2025-11-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (32/34 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (29/30 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (135/138 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2025 ASSETS",
+            "April 30, 2025 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 34,
+          "taggedCells": 32,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 44,
+          "numericCells": 74,
+          "taggedCells": 74,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 35,
+          "numericCells": 30,
+          "taggedCells": 29,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 9,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-25-000071",
+      "filingDate": "2025-08-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 3 numeric cell(s) missing inline XBRL tags (45/48 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (28/29 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (147/151 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2025 ASSETS",
+            "April 30, 2025 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 48,
+          "taggedCells": 45,
+          "untaggedNumericCells": 3,
+          "cellsWithSignMismatch": 3,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 44,
+          "numericCells": 74,
+          "taggedCells": 74,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 34,
+          "numericCells": 29,
+          "taggedCells": 28,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-25-000011",
+      "filingDate": "2025-02-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (38/40 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (38/39 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (153/156 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2025 ASSETS",
+            "April 30, 2024 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 21,
+          "numericCells": 40,
+          "taggedCells": 38,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 44,
+          "numericCells": 39,
+          "taggedCells": 38,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-24-000103",
+      "filingDate": "2024-11-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (34/36 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (31/32 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (143/146 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2024 ASSETS",
+            "April 30, 2024 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 19,
+          "numericCells": 36,
+          "taggedCells": 34,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 47,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 37,
+          "numericCells": 32,
+          "taggedCells": 31,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 10,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-24-000077",
+      "filingDate": "2024-08-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 3 numeric cell(s) missing inline XBRL tags (43/46 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (28/29 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (147/151 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2024 ASSETS",
+            "April 30, 2024 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 46,
+          "taggedCells": 43,
+          "untaggedNumericCells": 3,
+          "cellsWithSignMismatch": 3,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 45,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 34,
+          "numericCells": 29,
+          "taggedCells": 28,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 9,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-24-000010",
+      "filingDate": "2024-02-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (31/33 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (37/38 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (144/147 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2024 ASSETS",
+            "April 30, 2023 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 33,
+          "taggedCells": 31,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 43,
+          "numericCells": 38,
+          "taggedCells": 37,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 16,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-23-000143",
+      "filingDate": "2023-12-05",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (32/34 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (33/34 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (141/144 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2023 ASSETS",
+            "April 30, 2023 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 34,
+          "taggedCells": 32,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 45,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 39,
+          "numericCells": 34,
+          "taggedCells": 33,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 14,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-23-000113",
+      "filingDate": "2023-08-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 3 numeric cell(s) missing inline XBRL tags (42/45 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (30/31 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (148/152 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2023 ASSETS",
+            "April 30, 2023 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 16,
+          "numericCells": 45,
+          "taggedCells": 42,
+          "untaggedNumericCells": 3,
+          "cellsWithSignMismatch": 3,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 45,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 36,
+          "numericCells": 31,
+          "taggedCells": 30,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-23-000021",
+      "filingDate": "2023-02-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (32/34 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (34/35 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (141/144 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2023 ASSETS",
+            "April 30, 2022 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 34,
+          "taggedCells": 32,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 1,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 45,
+          "numericCells": 75,
+          "taggedCells": 75,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 40,
+          "numericCells": 35,
+          "taggedCells": 34,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-22-000140",
+      "filingDate": "2022-11-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (30/32 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (33/34 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (139/142 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2022 ASSETS",
+            "April 30, 2022 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 32,
+          "taggedCells": 30,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 45,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 39,
+          "numericCells": 34,
+          "taggedCells": 33,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-22-000096",
+      "filingDate": "2022-08-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 3 numeric cell(s) missing inline XBRL tags (45/48 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (31/32 tagged)",
+        "inline XBRL filing: 4 untagged numeric cell(s) across primary statements (152/156 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,",
+            "Period 3",
+            "Period 4"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2022 ASSETS",
+            "April 30, 2022 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 48,
+          "taggedCells": 45,
+          "untaggedNumericCells": 3,
+          "cellsWithSignMismatch": 3,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 45,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 37,
+          "numericCells": 32,
+          "taggedCells": 31,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 10,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-22-000017",
+      "filingDate": "2022-03-01",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (32/34 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (34/35 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (143/146 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2022 ASSETS",
+            "April 30, 2021 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 34,
+          "taggedCells": 32,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 40,
+          "numericCells": 35,
+          "taggedCells": 34,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 14,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-21-000107",
+      "filingDate": "2021-11-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (30/32 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (31/32 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (138/141 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2021 ASSETS",
+            "April 30, 2021 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 32,
+          "taggedCells": 30,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 37,
+          "numericCells": 32,
+          "taggedCells": 31,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 13,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-21-000083",
+      "filingDate": "2021-08-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 1 numeric cell(s) missing inline XBRL tags (15/16 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (29/30 tagged)",
+        "inline XBRL filing: 2 untagged numeric cell(s) across primary statements (122/124 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold (A)",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2021 ASSETS",
+            "April 30, 2021 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 16,
+          "taggedCells": 15,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 1,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 35,
+          "numericCells": 30,
+          "taggedCells": 29,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 12,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-21-000011",
+      "filingDate": "2021-02-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (32/34 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (31/32 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (140/143 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2021 ASSETS",
+            "April 30, 2020 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 34,
+          "taggedCells": 32,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 37,
+          "numericCells": 32,
+          "taggedCells": 31,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-20-000151",
+      "filingDate": "2020-11-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (30/32 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (28/29 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (135/138 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2020 ASSETS",
+            "April 30, 2020 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 32,
+          "taggedCells": 30,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 34,
+          "numericCells": 29,
+          "taggedCells": 28,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-20-000111",
+      "filingDate": "2020-08-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 1 numeric cell(s) missing inline XBRL tags (15/16 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (27/28 tagged)",
+        "inline XBRL filing: 2 untagged numeric cell(s) across primary statements (119/121 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2020 ASSETS",
+            "April 30, 2020 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables – net",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 16,
+          "taggedCells": 15,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 1,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 33,
+          "numericCells": 28,
+          "taggedCells": 27,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-20-000012",
+      "filingDate": "2020-02-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 4 numeric cell(s) missing inline XBRL tags (64/68 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (33/34 tagged)",
+        "inline XBRL filing: 5 untagged numeric cell(s) across primary statements (172/177 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended January 31,",
+            "Period 5",
+            "Period 6",
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "January 31, 2020 ASSETS",
+            "April 30, 2019 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables, less allowance for doubtful accounts",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended January 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 18,
+          "numericCells": 68,
+          "taggedCells": 64,
+          "untaggedNumericCells": 4,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 82
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 75,
+          "taggedCells": 75,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 39,
+          "numericCells": 34,
+          "taggedCells": 33,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 11,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-19-000024",
+      "filingDate": "2019-11-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 2 numeric cell(s) missing inline XBRL tags (30/32 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (31/32 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (136/139 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended October 31,",
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "October 31, 2019 ASSETS",
+            "April 30, 2019 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables, less allowance for doubtful accounts",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended October 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 32,
+          "taggedCells": 30,
+          "untaggedNumericCells": 2,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 92
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 75,
+          "taggedCells": 75,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 37,
+          "numericCells": 32,
+          "taggedCells": 31,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 10,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-19-000014",
+      "filingDate": "2019-08-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 1 numeric cell(s) missing inline XBRL tags (15/16 tagged)",
+        "cash-flow: 1 numeric cell(s) missing inline XBRL tags (28/29 tagged)",
+        "inline XBRL filing: 2 untagged numeric cell(s) across primary statements (118/120 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions, except per share data",
+            "Net sales",
+            "Cost of products sold",
+            "Gross Profit",
+            "Selling, distribution, and administrative expenses",
+            "Amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2019 ASSETS",
+            "April 30, 2019 ASSETS"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Trade receivables, less allowance for doubtful accounts",
+            "Inventories:",
+            "Finished products",
+            "Raw materials",
+            "Total Inventory"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended July 31,"
+          ],
+          "firstRows": [
+            "Dollars in millions",
+            "Operating Activities",
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used for) operations:",
+            "Depreciation",
+            "Amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 17,
+          "numericCells": 16,
+          "taggedCells": 15,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 92
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 46,
+          "numericCells": 75,
+          "taggedCells": 75,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 34,
+          "numericCells": 29,
+          "taggedCells": 28,
+          "untaggedNumericCells": 1,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 83
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000091419-18-000005",
+      "filingDate": "2018-06-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000091419-17-000005",
+      "filingDate": "2017-06-19",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000091419-16-000007",
+      "filingDate": "2016-06-21",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-15-235197",
+      "filingDate": "2015-06-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-14-245437",
+      "filingDate": "2014-06-23",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-13-266625",
+      "filingDate": "2013-06-21",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-12-282260",
+      "filingDate": "2012-06-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950123-11-062373",
+      "filingDate": "2011-06-28",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950123-10-060708",
+      "filingDate": "2010-06-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950123-09-017972",
+      "filingDate": "2009-06-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950152-08-005018",
+      "filingDate": "2008-06-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950152-07-005388",
+      "filingDate": "2007-06-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000950152-06-005568",
+      "filingDate": "2006-06-30",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

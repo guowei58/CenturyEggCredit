@@ -1,0 +1,2235 @@
+{
+  "ticker": "TSLA",
+  "checked": 64,
+  "suspicious": 38,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-29",
+    "form": "10-Q",
+    "accessionNumber": "0001564590-19-026445"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001628280-26-026673",
+      "filingDate": "2026-04-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31,2026",
+            "December 31,2025"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2026",
+            "Three Months Ended March 31, 2025"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory write-downs",
+            "Foreign currency transaction net unrealized loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 40,
+          "numericCells": 67,
+          "taggedCells": 67,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 26,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-26-003952",
+      "filingDate": "2026-01-29",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31,2025",
+            "December 31,2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2025",
+            "Year Ended December 31, 2024",
+            "Year Ended December 31, 2023"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss (gain)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 43,
+          "numericCells": 102,
+          "taggedCells": 102,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 42,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-25-045968",
+      "filingDate": "2025-10-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30,2025",
+            "December 31,2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2025",
+            "Nine Months Ended September 30, 2024"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 42,
+          "numericCells": 69,
+          "taggedCells": 69,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-25-035806",
+      "filingDate": "2025-07-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30,2025",
+            "December 31,2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2025",
+            "Six Months Ended June 30, 2024"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss (gain)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 42,
+          "numericCells": 69,
+          "taggedCells": 69,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 27,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-25-018911",
+      "filingDate": "2025-04-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31,2025",
+            "December 31,2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2025",
+            "Three Months Ended March 31, 2024"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss (gain)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 67,
+          "taggedCells": 67,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 27,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-25-003063",
+      "filingDate": "2025-01-30",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31,2024",
+            "December 31,2023"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2024",
+            "Year Ended December 31, 2023",
+            "Year Ended December 31, 2022"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 108,
+          "taggedCells": 108,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 44,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-24-043486",
+      "filingDate": "2024-10-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30,2024",
+            "December 31,2023"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2024",
+            "Nine Months Ended September 30, 2023"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss (gain)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 70,
+          "taggedCells": 70,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-24-032662",
+      "filingDate": "2024-07-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30,2024",
+            "December 31,2023"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2024",
+            "Six Months Ended June 30, 2023"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized gain"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 70,
+          "taggedCells": 70,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-24-017503",
+      "filingDate": "2024-04-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31,2024",
+            "December 31,2023"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2024",
+            "Three Months Ended March 31, 2023"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized gain"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 27,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-24-002390",
+      "filingDate": "2024-01-29",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31,2023",
+            "December 31,2022"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2023",
+            "Year Ended December 31, 2022",
+            "Year Ended December 31, 2021"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 111,
+          "taggedCells": 111,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 45,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001628280-23-034847",
+      "filingDate": "2023-10-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30,2023",
+            "December 31,2022"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2023",
+            "Nine Months Ended September 30, 2022"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 74,
+          "taggedCells": 74,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 30,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-23-033872",
+      "filingDate": "2023-07-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2023",
+            "December 31, 2022"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2023",
+            "Six Months Ended June 30, 2022"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized gain"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 45,
+          "numericCells": 73,
+          "taggedCells": 73,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 31,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-23-013890",
+      "filingDate": "2023-04-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2023",
+            "December 31, 2022"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2023",
+            "Three Months Ended March 31, 2022"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized gain"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 41,
+          "numericCells": 68,
+          "taggedCells": 68,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-23-001409",
+      "filingDate": "2023-01-31",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term investments",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2022",
+            "Year Ended December 31, 2021",
+            "Year Ended December 31, 2020"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss (gain)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 51,
+          "numericCells": 119,
+          "taggedCells": 119,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 49,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-22-019867",
+      "filingDate": "2022-10-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term marketable securities",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2022",
+            "Nine Months Ended September 30, 2021"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 48,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 31,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-22-012936",
+      "filingDate": "2022-07-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term marketable securities",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2022",
+            "Six Months Ended June 30, 2021"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized gain"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 47,
+          "numericCells": 75,
+          "taggedCells": 75,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 30,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-22-006034",
+      "filingDate": "2022-04-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2022",
+            "December 31, 2021"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term marketable securities",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2022",
+            "Three Months Ended March 31, 2021"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized gain"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 72,
+          "taggedCells": 72,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-22-000796",
+      "filingDate": "2022-02-07",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2021",
+            "December 31, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term marketable securities",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2021",
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net unrealized (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 65,
+          "taggedCells": 65,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 125,
+          "taggedCells": 125,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 38,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-21-002253",
+      "filingDate": "2021-10-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2021",
+            "December 31, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Short-term marketable securities",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2021",
+            "Nine Months Ended September 30, 2020"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 65,
+          "taggedCells": 65,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 80,
+          "taggedCells": 80,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 31,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-21-000524",
+      "filingDate": "2021-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2021",
+            "December 31, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2021",
+            "Six Months Ended June 30, 2020"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 64,
+          "taggedCells": 64,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 24,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-21-000046",
+      "filingDate": "2021-04-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2021",
+            "December 31, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2021",
+            "Three Months Ended March 31, 2020"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by (used in) operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Inventory and purchase commitments write-downs",
+            "Foreign currency transaction net (gain) loss"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 64,
+          "taggedCells": 64,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 45,
+          "numericCells": 74,
+          "taggedCells": 74,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 9,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-21-004599",
+      "filingDate": "2021-02-08",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 40 numeric cell(s) missing inline XBRL tags (0/40 tagged)",
+        "inline XBRL filing: 40 untagged numeric cell(s) across primary statements (192/232 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019 (3)",
+            "Year Ended December 31, 2018 (2)",
+            "Year Ended December 31, 2017",
+            "Year Ended December 31, 2016 (1)"
+          ],
+          "firstRows": [
+            "Total revenues",
+            "Gross profit",
+            "Income (loss) from operations",
+            "Net income (loss) attributable to common stockholders",
+            "Net income (loss) per share of common stock attributable to common stockholders (4)",
+            "Basic"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2020",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019",
+            "Year Ended December 31, 2018"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 10,
+          "numericCells": 40,
+          "taggedCells": 0,
+          "untaggedNumericCells": 40,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 63,
+          "taggedCells": 63,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 129,
+          "taggedCells": 129,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 53,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-20-047486",
+      "filingDate": "2020-10-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2020",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2020",
+            "Nine Months Ended September 30, 2019"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 63,
+          "taggedCells": 63,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 51,
+          "numericCells": 87,
+          "taggedCells": 87,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 36,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-20-033670",
+      "filingDate": "2020-07-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2020",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2020",
+            "Six Months Ended June 30, 2019"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 63,
+          "taggedCells": 63,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 51,
+          "numericCells": 84,
+          "taggedCells": 84,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 33,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-20-019931",
+      "filingDate": "2020-04-30",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2020",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Operating lease vehicles, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2020",
+            "Three Months Ended March 31, 2019"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Adjustments to reconcile net income (loss) to net cash used in operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 63,
+          "taggedCells": 63,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 47,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-20-004475",
+      "filingDate": "2020-02-13",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2019",
+            "December 31, 2018"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2019",
+            "Year Ended December 31, 2018",
+            "Year Ended December 31, 2017"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash provided by (used in) operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory and purchase commitments write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 42,
+          "numericCells": 71,
+          "taggedCells": 71,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 58,
+          "numericCells": 136,
+          "taggedCells": 136,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 55,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-19-038256",
+      "filingDate": "2019-10-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2019",
+            "December 31, 2018"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2019",
+            "Nine Months Ended September 30, 2018"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash provided by operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 42,
+          "numericCells": 71,
+          "taggedCells": 71,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 51,
+          "numericCells": 84,
+          "taggedCells": 84,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 36,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-19-026445",
+      "filingDate": "2019-07-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2019",
+            "December 31, 2018"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2019",
+            "Six Months Ended June 30, 2018"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 42,
+          "numericCells": 71,
+          "taggedCells": 71,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 51,
+          "numericCells": 84,
+          "taggedCells": 84,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 36,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-19-013462",
+      "filingDate": "2019-04-29",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2019",
+            "December 31, 2018"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2019",
+            "Three Months Ended March 31, 2018"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-19-003165",
+      "filingDate": "2019-02-19",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2018",
+            "December 31, 2017"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2018",
+            "Year Ended December 31, 2017",
+            "Year Ended December 31, 2016"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash provided by (used in) operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-18-026353",
+      "filingDate": "2018-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2018",
+            "December 31, 2017"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2018",
+            "Nine Months Ended September 30, 2017"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash provided by (used in) operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-18-019254",
+      "filingDate": "2018-08-06",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2018",
+            "December 31, 2017"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2018",
+            "Six Months Ended June 30, 2017"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation, amortization and impairment",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-18-011086",
+      "filingDate": "2018-05-07",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2018",
+            "December 31, 2017"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three Months Ended March 31, 2018",
+            "Three Months Ended March 31, 2017"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-18-002956",
+      "filingDate": "2018-02-23",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2017",
+            "December 31, 2016"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2017",
+            "Year Ended December 31, 2016",
+            "Year Ended December 31, 2015"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-17-021343",
+      "filingDate": "2017-11-03",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2017",
+            "December 31, 2016"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2017",
+            "Nine Months Ended September 30, 2016"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash (used in) provided by operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation",
+            "Amortization of debt discounts and issuance costs",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-17-015705",
+      "filingDate": "2017-08-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2017",
+            "December 31, 2016"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2017",
+            "Six Months Ended June 30, 2016"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation",
+            "Amortization of debt discounts",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-17-003118",
+      "filingDate": "2017-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2016",
+            "December 31, 2015"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net",
+            "Inventory",
+            "Prepaid expenses and other current assets",
+            "Total current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2016",
+            "Year Ended December 31, 2015",
+            "Year Ended December 31, 2014"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash used in operating activities:",
+            "Depreciation and amortization",
+            "Stock-based compensation",
+            "Amortization of discount on convertible debt",
+            "Inventory write-downs"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-15-001031",
+      "filingDate": "2015-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

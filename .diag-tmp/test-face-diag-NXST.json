@@ -1,0 +1,935 @@
+{
+  "ticker": "NXST",
+  "checked": 80,
+  "suspicious": 18,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2018-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0001564590-18-020586"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001193125-26-078361",
+      "filingDate": "2026-02-27",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 63 numeric cell(s) missing inline XBRL tags (0/63 tagged)",
+        "inline XBRL filing: 63 untagged numeric cell(s) across primary statements (0/63 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2025",
+            "Years Ended December 31, 2024",
+            "Years Ended December 31, 2023"
+          ],
+          "firstRows": [
+            "Distribution",
+            "Advertising",
+            "Other",
+            "Net revenue",
+            "Operating expenses:",
+            "Direct operating"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 24,
+          "numericCells": 63,
+          "taggedCells": 0,
+          "untaggedNumericCells": 63,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-25-028949",
+      "filingDate": "2025-02-27",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 61 numeric cell(s) missing inline XBRL tags (0/61 tagged)",
+        "inline XBRL filing: 61 untagged numeric cell(s) across primary statements (0/61 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2024",
+            "Years Ended December 31, 2023",
+            "Years Ended December 31, 2022"
+          ],
+          "firstRows": [
+            "Distribution",
+            "Advertising",
+            "Other",
+            "Net revenue",
+            "Operating expenses:",
+            "Direct operating"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 61,
+          "taggedCells": 0,
+          "untaggedNumericCells": 61,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-24-021979",
+      "filingDate": "2024-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "inline XBRL filing: 18 untagged numeric cell(s) across primary statements (0/18 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2023 Amount",
+            "2022 Amount",
+            "2021 Amount"
+          ],
+          "firstRows": [
+            "Core advertising",
+            "Political advertising",
+            "Distribution",
+            "Digital",
+            "Other",
+            "Total net revenue"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-23-005209",
+      "filingDate": "2023-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "inline XBRL filing: 18 untagged numeric cell(s) across primary statements (0/18 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2022 Amount",
+            "2021 Amount",
+            "2020 Amount"
+          ],
+          "firstRows": [
+            "Core advertising",
+            "Political advertising",
+            "Distribution",
+            "Digital",
+            "Other",
+            "Total net revenue"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-22-002187",
+      "filingDate": "2022-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 21 numeric cell(s) missing inline XBRL tags (0/21 tagged)",
+        "inline XBRL filing: 21 untagged numeric cell(s) across primary statements (0/21 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2021 Amount",
+            "2020 Amount",
+            "2019 Amount"
+          ],
+          "firstRows": [
+            "Core advertising (local and national)",
+            "Political advertising",
+            "Distribution",
+            "Digital",
+            "Other",
+            "Trade"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 7,
+          "numericCells": 21,
+          "taggedCells": 0,
+          "untaggedNumericCells": 21,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-21-009747",
+      "filingDate": "2021-03-01",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement",
+        "income-statement: 130 numeric cell(s) missing inline XBRL tags (0/130 tagged)",
+        "cash-flow: 55 numeric cell(s) missing inline XBRL tags (0/55 tagged)",
+        "inline XBRL filing: 185 untagged numeric cell(s) across primary statements (0/185 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2020 Statements of Operations Data, for the years ended December 31:",
+            "2019",
+            "2018",
+            "2017",
+            "2016"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Corporate expenses",
+            "Direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding corporate",
+            "Trade and barter expense"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2020 Balance Sheet data, as of December 31:",
+            "2019",
+            "2018",
+            "2017",
+            "2016"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets(1)",
+            "Total debt(1)",
+            "Total stockholders’ equity"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 32,
+          "numericCells": 130,
+          "taggedCells": 0,
+          "untaggedNumericCells": 130,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 13,
+          "numericCells": 55,
+          "taggedCells": 0,
+          "untaggedNumericCells": 55,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-20-008129",
+      "filingDate": "2020-03-02",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement",
+        "income-statement: 123 numeric cell(s) missing inline XBRL tags (0/123 tagged)",
+        "cash-flow: 55 numeric cell(s) missing inline XBRL tags (0/55 tagged)",
+        "inline XBRL filing: 178 untagged numeric cell(s) across primary statements (0/178 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2019 Statements of Operations Data, for the years ended December 31:",
+            "2018",
+            "2017",
+            "2016",
+            "2015"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Corporate expenses",
+            "Direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding corporate",
+            "Trade and barter expense"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2019 Balance Sheet data, as of December 31:",
+            "2018",
+            "2017",
+            "2016",
+            "2015"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets(1)",
+            "Total debt(1)",
+            "Total stockholders’ equity"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 30,
+          "numericCells": 123,
+          "taggedCells": 0,
+          "untaggedNumericCells": 123,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 13,
+          "numericCells": 55,
+          "taggedCells": 0,
+          "untaggedNumericCells": 55,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-19-004527",
+      "filingDate": "2019-02-27",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement",
+        "income-statement: 114 numeric cell(s) missing inline XBRL tags (0/114 tagged)",
+        "cash-flow: 55 numeric cell(s) missing inline XBRL tags (0/55 tagged)",
+        "inline XBRL filing: 169 untagged numeric cell(s) across primary statements (0/169 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2018 Statements of Operations Data, for the years ended December 31:",
+            "2017",
+            "2016",
+            "2015",
+            "2014"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Corporate expenses",
+            "Direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding corporate",
+            "Trade and barter expense"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2018 Balance Sheet data, as of December 31:",
+            "2017",
+            "2016",
+            "2015",
+            "2014"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets(1)(2)",
+            "Total debt(1)(2)",
+            "Total stockholders’ equity"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 29,
+          "numericCells": 114,
+          "taggedCells": 0,
+          "untaggedNumericCells": 114,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 13,
+          "numericCells": 55,
+          "taggedCells": 0,
+          "untaggedNumericCells": 55,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-18-003921",
+      "filingDate": "2018-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2017 Statements of Operations Data, for the years ended December 31:",
+            "2016",
+            "2015",
+            "2014",
+            "2013"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses:",
+            "Corporate expenses",
+            "Direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding corporate",
+            "Trade and barter expense"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2017 Balance Sheet data, as of December 31:",
+            "2016",
+            "2015",
+            "2014",
+            "2013"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets(1)(2)",
+            "Total debt(1)(2)",
+            "Total stockholders’ equity (deficit)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-17-002905",
+      "filingDate": "2017-02-28",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2016 Statements of Operations Data, for the years ended December 31:",
+            "2015",
+            "2014",
+            "2013",
+            "2012"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses:",
+            "Corporate expenses",
+            "Direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding corporate",
+            "Trade and barter expense"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2016 Balance Sheet data, as of December 31:",
+            "2015",
+            "2014",
+            "2013",
+            "2012"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets(1)",
+            "Total debt(1)",
+            "Total stockholders’ equity (deficit)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-16-013630",
+      "filingDate": "2016-02-29",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2015 Statements of Operations Data, for the years ended December 31:",
+            "2014",
+            "2013",
+            "2012",
+            "2011"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses:",
+            "Corporate expenses",
+            "Direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding corporate",
+            "Trade and barter expense"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2015 Balance Sheet data, as of December 31:",
+            "2014",
+            "2013",
+            "2012",
+            "2011"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital(1)",
+            "Net intangible assets and goodwill",
+            "Total assets(1)",
+            "Total debt(1)",
+            "Total stockholders’ equity (deficit)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-15-001137",
+      "filingDate": "2015-03-02",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2014 Statements of Operations Data, for the years ended December 31:",
+            "2013",
+            "2012",
+            "2011",
+            "2010"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Corporate expenses",
+            "Station direct operating expenses, net of trade",
+            "Station selling, general and administrative expenses, excluding depreciation and amortization",
+            "Amortization of broadcast rights, excluding barter"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2014 Balance Sheet data, as of December 31:",
+            "2013",
+            "2012",
+            "2011",
+            "2010"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets",
+            "Total debt",
+            "Total stockholders’ equity (deficit)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001142417-14-000012",
+      "filingDate": "2014-03-03",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2013 Statements of Operations Data, for the years ended December 31:",
+            "2012",
+            "2011",
+            "2010",
+            "2009"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Corporate expenses",
+            "Station direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding depreciation and amortization",
+            "Restructure Charge"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2013 Balance Sheet data, as of December 31:",
+            "2012",
+            "2011",
+            "2010",
+            "2009"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets",
+            "Total debt",
+            "Total stockholders’ (deficit) equity(1)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001142417-13-000006",
+      "filingDate": "2013-03-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: top rows look like another statement"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2012 Statements of Operations Data, for the years ended December 31:",
+            "2011",
+            "2010",
+            "2009",
+            "2008"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Corporate expenses",
+            "Station direct operating expenses, net of trade",
+            "Selling, general and administrative expenses, excluding depreciation and amortization",
+            "Restructure Charge"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2012 Balance Sheet data, as of December 31:",
+            "2011",
+            "2010",
+            "2009",
+            "2008"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Working capital",
+            "Net intangible assets and goodwill",
+            "Total assets (1)",
+            "Total debt",
+            "Total stockholders’ equity (deficit)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001142417-12-000010",
+      "filingDate": "2012-03-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2011 Amount",
+            "2010 Amount",
+            "2009 Amount"
+          ],
+          "firstRows": [
+            "Local",
+            "National",
+            "Political",
+            "Retransmission compensation(1)",
+            "eMedia revenue",
+            "Network compensation"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2011 Statement of Operations Data, for the years ended December 31:",
+            "2010",
+            "2009",
+            "2008",
+            "2007"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Direct operating expenses, excluding depreciation and amortization",
+            "Selling, general and administrative expenses, excluding depreciation and amortization",
+            "Restructure Charge",
+            "Non-cash contract termination fees"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-09-068206",
+      "filingDate": "2009-03-31",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Fiscal year ended December 31, 2008 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2007 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2006 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2005 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2004 (in thousands, except per share amounts)"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Direct operating expenses (exclusive of depreciation and amortization shown separately below)",
+            "Selling, general and administrative expenses (exclusive of depreciation and amortization shown separately below)",
+            "Non-cash contract termination fees",
+            "Impairment of goodwill"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Fiscal year ended December 31, 2008 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2007 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2006 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2005 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2004 (in thousands, except per share amounts)"
+          ],
+          "firstRows": [
+            "Net loss attributable to common shareholders",
+            "Weighted average number of shares outstanding:",
+            "Basic and diluted",
+            "Balance Sheet Data (end of period):",
+            "Cash and cash equivalents",
+            "Working capital (deficit)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-08-052568",
+      "filingDate": "2008-03-11",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Fiscal year ended December 31, 2007 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2006 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2005 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2004 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2003(1) (in thousands, except per share amounts)"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses (income):",
+            "Direct operating expenses (exclusive of depreciation and amortization shown separately below)",
+            "Selling, general and administrative expenses(exclusive of depreciation and amortization shown separately below)",
+            "Amortization of broadcast rights",
+            "Depreciation and amortization"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Fiscal year ended December 31, 2007 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2006 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2005 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2004 (in thousands, except per share amounts)",
+            "Fiscal year ended December 31, 2003(1) (in thousands, except per share amounts)"
+          ],
+          "firstRows": [
+            "Net loss attributable to common shareholders",
+            "Cumulative effect of change in accounting principle",
+            "Weighted average number of shares outstanding:",
+            "Basic and diluted",
+            "Balance Sheet Data (end of period):",
+            "Cash and cash equivalents"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-07-054642",
+      "filingDate": "2007-03-14",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Fiscal year ended December 31, 2006 (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2005 (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2004 (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2003(1) (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2002(1) (in thousands, except per share/unit amounts)"
+          ],
+          "firstRows": [
+            "Net revenue",
+            "Operating expenses:",
+            "Direct operating expenses (exclusive of depreciation and amortization shown separately below)",
+            "Selling, general and administrative expenses (exclusive of depreciation and amortization shown separately below)",
+            "Amortization of broadcast rights",
+            "Depreciation and amortization"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Fiscal year ended December 31, 2006 (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2005 (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2004 (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2003(1) (in thousands, except per share/unit amounts)",
+            "Fiscal year ended December 31, 2002(1) (in thousands, except per share/unit amounts)"
+          ],
+          "firstRows": [
+            "Net loss attributable to common shareholders",
+            "Net loss attributable to common unitholders",
+            "Cumulative effect of change in accounting principle",
+            "Basic and diluted:",
+            "Weighted average number of shares outstanding",
+            "Weighted average number of units outstanding"
+          ]
+        }
+      ]
+    }
+  ]
+}

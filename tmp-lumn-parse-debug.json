@@ -1,0 +1,350 @@
+{
+  "section": {
+    "start": 284192,
+    "end": 515842
+  },
+  "accLen": 567018,
+  "item8InAcc": [
+    "Item 8. Consolidated Financial Statements",
+    "Item 8. All references to “Notes” in this section refer to the Notes to Consolidated Financial Statements",
+    "Item 8. CRITICAL ACCOUNTING ESTIMATES The preparation of our consolidated financial statements",
+    "ITEM 8. CONSOLIDATED FINANCIAL STATEMENTS"
+  ],
+  "consolidatedItem8InAcc": [
+    "Item 8. Consolidated Financial Statements",
+    "Item 8. All references to \"Notes\" in this Item 1A of Part Irefer to the Notes to Consolidated Financial Statements",
+    "Item 8. All references to “Notes” in this section refer to the Notes to Consolidated Financial Statements",
+    "Item 8. CRITICAL ACCOUNTING ESTIMATES The preparation of our consolidated financial statements",
+    "ITEM 8. CONSOLIDATED FINANCIAL STATEMENTS"
+  ],
+  "item8Offsets": [
+    {
+      "index": 89139,
+      "text": "Item 8. Consolidated Financial Statements"
+    },
+    {
+      "index": 284192,
+      "text": "ITEM 8. CONSOLIDATED FINANCIAL STATEMENTS"
+    }
+  ],
+  "partII": 88697,
+  "bodyAnchorIdx": 89207,
+  "operatingRevenueOffsets": [
+    296084
+  ],
+  "perKindOffsets": {
+    "is": null,
+    "bs": null,
+    "cf": 300173
+  },
+  "perKindFirstLabels": {
+    "is": [
+      "OPERATING REVENUE",
+      "OPERATING EXPENSES",
+      "Cost of services and products (exclusive of depreciation and amortization)"
+    ],
+    "bs": [],
+    "cf": [
+      "Net loss",
+      "Adjustments to reconcile net loss to net cash provided by operating activities:",
+      "Depreciation and amortization"
+    ]
+  },
+  "wrongIsText": " Years Ended December 31, 202520242023 (Dollars in millions)NET LOSS$(1,739)(55)(10,298)OTHER COMPREHENSIVE INCOME: Items related to employee benefit plans: Change in net actuarial loss (gain), net of $(38), $(30) and $20 tax113 97 (59)Reclassification of net actuarial loss to (loss) gain on the sale of businesses, net of $—, $— and $— tax— — (22)Change in net prior service cost, net of $2, $4 and $4 tax(7)(11)(11)Reclassification of realized loss on foreign currency translation to (loss) gain on the sale of businesses, net of $—, $— and $— tax— — 382 Foreign currency translation adjustment, net of $—, $— and $(3) tax16 1 (1)Other comprehensive income122 87 289 COMPREHENSIVE (LOSS) INCOME$(1,617)32 (10,009)",
+  "tablesNearStatements": [
+    {
+      "offset": 295970,
+      "preview": " Years Ended December 31, 202520242023 (Dollars in millions, except per shareamounts, and shares in ",
+      "hasOpRev": true,
+      "hasOci": false,
+      "hasTotalAssets": false,
+      "hasHeldForSale": false
+    },
+    {
+      "offset": 297258,
+      "preview": " Years Ended December 31, 202520242023 (Dollars in millions)NET LOSS$(1,739)(55)(10,298)OTHER COMPRE",
+      "hasOpRev": false,
+      "hasOci": true,
+      "hasTotalAssets": false,
+      "hasHeldForSale": false
+    },
+    {
+      "offset": 298176,
+      "preview": " December 31, 20252024 (Dollars in millionsand shares in thousands)ASSETS CURRENT ASSETS Cash and ca",
+      "hasOpRev": false,
+      "hasOci": false,
+      "hasTotalAssets": true,
+      "hasHeldForSale": true
+    },
+    {
+      "offset": 303285,
+      "preview": " Years Ended December 31, 202520242023 (Dollars in millions except per share amounts)COMMON STOCK Ba",
+      "hasOpRev": false,
+      "hasOci": true,
+      "hasTotalAssets": false,
+      "hasHeldForSale": false
+    }
+  ],
+  "headingsNearStatements": [
+    {
+      "p": "consolidated statements of operations",
+      "idx": 409
+    },
+    {
+      "p": "comprehensive",
+      "idx": 448
+    },
+    {
+      "p": "consolidated balance sheets",
+      "idx": 276
+    },
+    {
+      "p": "consolidated statements of cash flows",
+      "idx": 15944
+    }
+  ],
+  "tableCount": 127,
+  "statements": [
+    {
+      "id": "income-statement",
+      "units": "(Dollars in millions, except per shareamounts, and shares in thousands)",
+      "periods": [
+        "Years Ended December 31, 2025 (Dollars in millions, except per shareamounts, and shares in thousands)",
+        "Years Ended December 31, 2024 (Dollars in millions, except per shareamounts, and shares in thousands)",
+        "Years Ended December 31, 2023 (Dollars in millions, except per shareamounts, and shares in thousands)"
+      ],
+      "sourceHtmlFile": "lumn-20251231.htm",
+      "firstRows": [
+        {
+          "label": "OPERATING REVENUE",
+          "values": {
+            "p1": 12402,
+            "p2": 13108,
+            "p3": 14557
+          },
+          "concept": "us-gaap:Revenues"
+        },
+        {
+          "label": "OPERATING EXPENSES",
+          "values": {
+            "p1": null,
+            "p2": null,
+            "p3": null
+          },
+          "concept": "html:operating-expenses"
+        },
+        {
+          "label": "Cost of services and products (exclusive of depreciation and amortization)",
+          "values": {
+            "p1": 6638,
+            "p2": 6703,
+            "p3": 7144
+          },
+          "concept": "us-gaap:CostOfGoodsAndServicesSold"
+        },
+        {
+          "label": "Selling, general and administrative",
+          "values": {
+            "p1": 3199,
+            "p2": 2972,
+            "p3": 3198
+          },
+          "concept": "us-gaap:SellingGeneralAndAdministrativeExpense"
+        },
+        {
+          "label": "Net loss on sale of businesses",
+          "values": {
+            "p1": null,
+            "p2": 17,
+            "p3": 121
+          },
+          "concept": "us-gaap:GainLossOnSaleOfBusiness"
+        },
+        {
+          "label": "Depreciation and amortization",
+          "values": {
+            "p1": 2749,
+            "p2": 2956,
+            "p3": 2985
+          },
+          "concept": "us-gaap:DepreciationAndAmortization"
+        },
+        {
+          "label": "Goodwill impairment",
+          "values": {
+            "p1": 628,
+            "p2": null,
+            "p3": 10693
+          },
+          "concept": "us-gaap:GoodwillImpairmentLoss"
+        },
+        {
+          "label": "Total operating expenses",
+          "values": {
+            "p1": 13214,
+            "p2": 12648,
+            "p3": 24141
+          },
+          "concept": "us-gaap:CostsAndExpenses"
+        },
+        {
+          "label": "OPERATING (LOSS) INCOME",
+          "values": {
+            "p1": -812,
+            "p2": 460,
+            "p3": -9584
+          },
+          "concept": "us-gaap:OperatingIncomeLoss"
+        },
+        {
+          "label": "OTHER EXPENSE",
+          "values": {
+            "p1": null,
+            "p2": null,
+            "p3": null
+          },
+          "concept": "html:other-expense"
+        },
+        {
+          "label": "Interest expense",
+          "values": {
+            "p1": -1284,
+            "p2": -1372,
+            "p3": -1158
+          },
+          "concept": "us-gaap:InterestExpenseNonoperating"
+        },
+        {
+          "label": "Net (loss) gain on early retirement of debt (Note 7)",
+          "values": {
+            "p1": -740,
+            "p2": 348,
+            "p3": 618
+          },
+          "concept": "us-gaap:GainsLossesOnExtinguishmentOfDebt"
+        }
+      ]
+    },
+    {
+      "id": "cash-flow",
+      "units": "(Dollars in millions)",
+      "periods": [
+        "Years Ended December 31, 2025 (Dollars in millions)",
+        "Years Ended December 31, 2024 (Dollars in millions)",
+        "Years Ended December 31, 2023 (Dollars in millions)"
+      ],
+      "sourceTableOffset": 300173,
+      "sourceHtmlFile": "lumn-20251231.htm",
+      "firstRows": [
+        {
+          "label": "Net loss",
+          "values": {
+            "p1": -1739,
+            "p2": -55,
+            "p3": -10298
+          },
+          "concept": "us-gaap:NetIncomeLoss"
+        },
+        {
+          "label": "Adjustments to reconcile net loss to net cash provided by operating activities:",
+          "values": {
+            "p1": null,
+            "p2": null,
+            "p3": null
+          },
+          "concept": "html:adjustments-to-reconcile-net-loss-to-net-cash-provided-by-operating-activities"
+        },
+        {
+          "label": "Depreciation and amortization",
+          "values": {
+            "p1": 2749,
+            "p2": 2956,
+            "p3": 2985
+          },
+          "concept": "us-gaap:DepreciationDepletionAndAmortization"
+        },
+        {
+          "label": "Net loss on sale of businesses",
+          "values": {
+            "p1": null,
+            "p2": 17,
+            "p3": 121
+          },
+          "concept": "us-gaap:GainLossOnSaleOfBusiness"
+        },
+        {
+          "label": "Goodwill impairment",
+          "values": {
+            "p1": 628,
+            "p2": null,
+            "p3": 10693
+          },
+          "concept": "us-gaap:GoodwillImpairmentLoss"
+        },
+        {
+          "label": "Impairment of long-lived assets",
+          "values": {
+            "p1": 109,
+            "p2": 83,
+            "p3": 27
+          },
+          "concept": "us-gaap:ImpairmentOfLongLivedAssetsToBeDisposedOf"
+        },
+        {
+          "label": "Deferred income taxes",
+          "values": {
+            "p1": -705,
+            "p2": -209,
+            "p3": 8
+          },
+          "concept": "us-gaap:DeferredIncomeTaxesAndTaxCredits"
+        },
+        {
+          "label": "Provision for uncollectible accounts",
+          "values": {
+            "p1": 70,
+            "p2": 72,
+            "p3": 100
+          },
+          "concept": "us-gaap:ProvisionForDoubtfulAccounts"
+        },
+        {
+          "label": "Net loss (gain) on early retirement and modification of debt",
+          "values": {
+            "p1": 740,
+            "p2": -348,
+            "p3": -618
+          },
+          "concept": "us-gaap:GainsLossesOnExtinguishmentOfDebt"
+        },
+        {
+          "label": "Debt modification costs and related fees",
+          "values": {
+            "p1": null,
+            "p2": -79,
+            "p3": null
+          },
+          "concept": "lumn:DebtModificationCostsAndRelatedFees"
+        },
+        {
+          "label": "Gain on sale of investment",
+          "values": {
+            "p1": null,
+            "p2": -205,
+            "p3": null
+          },
+          "concept": "us-gaap:EquityMethodInvestmentRealizedGainLossOnDisposal"
+        },
+        {
+          "label": "Unrealized loss on investments",
+          "values": {
+            "p1": null,
+            "p2": 10,
+            "p3": 97
+          },
+          "concept": "us-gaap:UnrealizedGainLossOnInvestments"
+        }
+      ]
+    }
+  ]
+}

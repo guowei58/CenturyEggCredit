@@ -1,0 +1,13 @@
+{
+  "ticker": "NVDA",
+  "checked": 80,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-15",
+    "form": "10-Q",
+    "accessionNumber": "0001045810-19-000144"
+  },
+  "failures": []
+}

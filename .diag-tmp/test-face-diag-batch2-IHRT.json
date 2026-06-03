@@ -1,0 +1,13 @@
+{
+  "ticker": "IHRT",
+  "checked": 72,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2020-05-07",
+    "form": "10-Q",
+    "accessionNumber": "0001400891-20-000031"
+  },
+  "failures": []
+}

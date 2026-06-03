@@ -1,0 +1,534 @@
+{
+  "ticker": "CSCO",
+  "checked": 80,
+  "suspicious": 10,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-11-19",
+    "form": "10-Q",
+    "accessionNumber": "0000858877-19-000018"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000858877-25-000111",
+      "filingDate": "2025-09-03",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 87 numeric cell(s) missing inline XBRL tags (0/87 tagged)",
+        "inline XBRL filing: 87 untagged numeric cell(s) across primary statements (182/269 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3"
+          ],
+          "firstRows": [
+            "Report of Independent Registered Public Accounting Firm (PCAOB ID 238)",
+            "Reports of Management",
+            "Consolidated Balance Sheets",
+            "Consolidated Statements of Operations",
+            "Consolidated Statements of Comprehensive Income",
+            "Consolidated Statements of Cash Flows"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 26, 2025",
+            "July 27, 2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Investments",
+            "Accounts receivable, net of allowance of $69 at July 26, 2025 and $87 at July 27, 2024",
+            "Inventories",
+            "Financing receivables, net",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "July 26, 2025",
+            "July 27, 2024",
+            "July 29, 2023"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization, and other",
+            "Share-based compensation expense",
+            "Provision for receivables",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 29,
+          "numericCells": 87,
+          "taggedCells": 0,
+          "untaggedNumericCells": 87,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 120,
+          "taggedCells": 120,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 43,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000858877-24-000017",
+      "filingDate": "2024-09-05",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 84 numeric cell(s) missing inline XBRL tags (0/84 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (182/266 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3"
+          ],
+          "firstRows": [
+            "Report of Independent Registered Public Accounting Firm (PCAOB ID 238)",
+            "Reports of Management",
+            "Consolidated Balance Sheets",
+            "Consolidated Statements of Operations",
+            "Consolidated Statements of Comprehensive Income",
+            "Consolidated Statements of Cash Flows"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 27, 2024",
+            "July 29, 2023"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Investments",
+            "Accounts receivable, net of allowance of $87 at July 27, 2024 and $85 at July 29, 2023",
+            "Inventories",
+            "Financing receivables, net",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "July 27, 2024",
+            "July 29, 2023",
+            "July 30, 2022"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization, and other",
+            "Share-based compensation expense",
+            "Provision for receivables",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 28,
+          "numericCells": 84,
+          "taggedCells": 0,
+          "untaggedNumericCells": 84,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 120,
+          "taggedCells": 120,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 43,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000858877-23-000023",
+      "filingDate": "2023-09-07",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 84 numeric cell(s) missing inline XBRL tags (0/84 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (183/267 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3"
+          ],
+          "firstRows": [
+            "Report of Independent Registered Public Accounting Firm (PCAOB ID 238)",
+            "Reports of Management",
+            "Consolidated Balance Sheets",
+            "Consolidated Statements of Operations",
+            "Consolidated Statements of Comprehensive Income",
+            "Consolidated Statements of Cash Flows"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 29, 2023",
+            "July 30, 2022"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Investments",
+            "Accounts receivable, net of allowance of $85 at July 29, 2023 and $83 at July 30, 2022",
+            "Inventories",
+            "Financing receivables, net",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "July 29, 2023",
+            "July 30, 2022",
+            "July 31, 2021"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization, and other",
+            "Share-based compensation expense",
+            "Provision (benefit) for receivables",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 28,
+          "numericCells": 84,
+          "taggedCells": 0,
+          "untaggedNumericCells": 84,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 121,
+          "taggedCells": 121,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 42,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000858877-22-000013",
+      "filingDate": "2022-09-08",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 84 numeric cell(s) missing inline XBRL tags (0/84 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (183/267 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3"
+          ],
+          "firstRows": [
+            "Report of Independent Registered Public Accounting Firm (PCAOB ID 238)",
+            "Reports of Management",
+            "Consolidated Balance Sheets",
+            "Consolidated Statements of Operations",
+            "Consolidated Statements of Comprehensive Income",
+            "Consolidated Statements of Cash Flows"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 30, 2022",
+            "July 31, 2021"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Investments",
+            "Accounts receivable, net of allowance of $83 at July 30, 2022 and $109 at July 31, 2021",
+            "Inventories",
+            "Financing receivables, net",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "July 30, 2022",
+            "July 31, 2021",
+            "July 25, 2020"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization, and other",
+            "Share-based compensation expense",
+            "Provision (benefit) for receivables",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 28,
+          "numericCells": 84,
+          "taggedCells": 0,
+          "untaggedNumericCells": 84,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 121,
+          "taggedCells": 121,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 42,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000858877-21-000013",
+      "filingDate": "2021-09-09",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: 84 numeric cell(s) missing inline XBRL tags (0/84 tagged)",
+        "inline XBRL filing: 84 untagged numeric cell(s) across primary statements (180/264 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Period 1",
+            "Period 2",
+            "Period 3"
+          ],
+          "firstRows": [
+            "Report of Independent Registered Public Accounting Firm",
+            "Reports of Management",
+            "Consolidated Balance Sheets",
+            "Consolidated Statements of Operations",
+            "Consolidated Statements of Comprehensive Income",
+            "Consolidated Statements of Cash Flows"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "July 31, 2021",
+            "July 25, 2020"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Investments",
+            "Accounts receivable, net of allowance of $109 at July 31, 2021 and $143 at July 25, 2020",
+            "Inventories",
+            "Financing receivables, net",
+            "Other current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "July 31, 2021",
+            "July 25, 2020",
+            "July 27, 2019"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation, amortization, and other",
+            "Share-based compensation expense",
+            "Provision (benefit) for receivables",
+            "Deferred income taxes"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 28,
+          "numericCells": 84,
+          "taggedCells": 0,
+          "untaggedNumericCells": 84,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 37,
+          "numericCells": 62,
+          "taggedCells": 62,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 45,
+          "numericCells": 118,
+          "taggedCells": 118,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 42,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-10-213400",
+      "filingDate": "2010-09-21",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-190326",
+      "filingDate": "2009-09-11",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-195608",
+      "filingDate": "2008-09-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-202552",
+      "filingDate": "2007-09-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-06-192133",
+      "filingDate": "2006-09-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

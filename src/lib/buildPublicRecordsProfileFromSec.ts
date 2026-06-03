@@ -3,6 +3,7 @@
  * Does not replace manual diligence — borrowers/guarantors usually need credit documents.
  */
 
+import { load } from "cheerio";
 import { getSubsidiaryHintsForTicker } from "@/lib/subsidiary-hints";
 import {
   deriveSubsidiarySearchNamesFromGrid,
@@ -417,6 +418,59 @@ const PROPERTIES_SECTION_MAX_CHARS = 18_000;
 const PROPERTIES_SECTION_MAX_HTML_CHARS = 120_000;
 const HTML_HEADING_GAP = String.raw`(?:[\s\u00a0]|&nbsp;|&#160;|&#xa0;|<[^>]+>){0,80}`;
 
+function normalizePropertiesNoiseText(value: string): string {
+  return decodeHtmlEntities(value)
+    .replace(/\u00a0/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function cleanPropertiesSectionText(body: string): string {
+  const lines = body
+    .split(/\n+/)
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter(Boolean)
+    .filter((line) => {
+      const normalized = normalizePropertiesNoiseText(line);
+      if (!normalized) return false;
+      if (normalized === "table of contents") return false;
+      if (/^\d{1,4}$/.test(normalized)) return false;
+      if (/^[<>«»‹›←→]+$/.test(normalized)) return false;
+      return true;
+    });
+  return normalizeWhitespace(lines.join("\n\n"));
+}
+
+function cleanPropertiesSectionHtml(rawHtml: string): string {
+  if (!rawHtml.trim()) return rawHtml;
+  try {
+    const $ = load(`<section data-properties-root="1">${rawHtml}</section>`, {
+      xmlMode: false,
+    });
+    const root = $("section[data-properties-root='1']").first();
+
+    root.find("*").each((_, el) => {
+      const node = $(el);
+      const normalized = normalizePropertiesNoiseText(node.text());
+      if (!normalized) return;
+      const childElementCount = node.children().length;
+      if ((normalized === "table of contents" || /^\d{1,4}$/.test(normalized)) && childElementCount <= 2) {
+        node.remove();
+      }
+    });
+
+    root.find("tr, div, p").each((_, el) => {
+      const node = $(el);
+      if (normalizePropertiesNoiseText(node.text()).length === 0) node.remove();
+    });
+
+    return (root.html() ?? rawHtml).trim();
+  } catch {
+    return rawHtml;
+  }
+}
+
 function scorePropertiesSlice(startIdx: number, body: string): number {
   let score = 0;
   const normalized = body.toLowerCase();
@@ -443,7 +497,7 @@ export function extractPropertiesSectionFromTenKText(text: string): string | nul
     const bodyStart = start + match[0].length;
     endRe.lastIndex = bodyStart;
     const endMatch = endRe.exec(text);
-    const rawBody = normalizeWhitespace(text.slice(bodyStart, endMatch?.index ?? bodyStart + 24_000));
+    const rawBody = cleanPropertiesSectionText(normalizeWhitespace(text.slice(bodyStart, endMatch?.index ?? bodyStart + 24_000)));
     if (!rawBody) continue;
     const score = scorePropertiesSlice(start, rawBody);
     candidates.push({ score, body: rawBody });
@@ -470,9 +524,11 @@ export function extractPropertiesSectionFromTenKHtml(html: string): string | nul
     const bodyStart = start + match[0].length;
     endRe.lastIndex = bodyStart;
     const endMatch = endRe.exec(html);
-    const rawHtml = html.slice(bodyStart, endMatch?.index ?? Math.min(bodyStart + PROPERTIES_SECTION_MAX_HTML_CHARS, html.length));
+    const rawHtml = cleanPropertiesSectionHtml(
+      html.slice(bodyStart, endMatch?.index ?? Math.min(bodyStart + PROPERTIES_SECTION_MAX_HTML_CHARS, html.length))
+    );
     if (!rawHtml.trim()) continue;
-    const plain = stripSecFilingHtml(rawHtml);
+    const plain = cleanPropertiesSectionText(stripSecFilingHtml(rawHtml));
     if (!plain) continue;
     const score = scorePropertiesSlice(start, plain);
     candidates.push({ score, html: rawHtml.slice(0, PROPERTIES_SECTION_MAX_HTML_CHARS).trim() });

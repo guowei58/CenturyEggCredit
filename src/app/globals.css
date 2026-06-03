@@ -380,10 +380,18 @@
    */
   .saved-html-content.sec-debt-footnote-html {
     color: var(--text);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
   }
 
   .saved-html-content.sec-debt-footnote-html * {
     color: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
     /* Inline XBRL / EDGAR spans often set white or pale yellow backgrounds — unreadable with forced light text. */
     background-color: transparent !important;
     background-image: none !important;
@@ -420,6 +428,27 @@
     background: transparent !important;
   }
 
+  /**
+   * Filings frequently ship inline `word-break` / aggressive `overflow-wrap` on cells (`break-all`, legacy `normal` quirks).
+   * Parent flex layouts plus Tailwind `[overflow-wrap:anywhere]` elsewhere can ripple in and stack digits vertically.
+   * Clamp every SEC-viewer cell to normal token breaking; subtree rules tighten numeric columns.
+   */
+  .saved-html-content.sec-debt-footnote-html table th,
+  .saved-html-content.sec-debt-footnote-html table td {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  /**
+   * Legacy EDGAR tables use &lt;p style="margin-left: Npt; text-indent: -Npt"&gt; for row labels.
+   * We zero margins on many &lt;p&gt; rules for alignment; without also clearing text-indent, the lone
+   * negative indent shifts the first line left and clips the opening letters (e.g. “Revenues” → “.evenues”).
+   */
+  .saved-html-content.sec-debt-footnote-html table td p,
+  .saved-html-content.sec-debt-footnote-html table th p {
+    text-indent: 0 !important;
+  }
+
   .saved-html-content.sec-debt-footnote-html a[href]:not([href^="#"]):not([href^="javascript:"]) {
     color: var(--blue) !important;
     font-weight: 600;
@@ -431,6 +460,374 @@
   .saved-html-content.sec-debt-footnote-html a[href]:not([href^="#"]):not([href^="javascript:"]):hover {
     color: color-mix(in srgb, var(--blue) 82%, white) !important;
     text-decoration-color: var(--blue);
+  }
+
+  /** Inline XBRL amounts normalized to $M spans inside filing HTML viewers. */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-nf {
+    display: inline-block;
+    text-align: right;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /** Inside MD&A excerpt tables, inline-block amounts break across lines next to filing $ cells — keep one line. */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root .ixbrl-nf {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
+  /** Coalesced plain-text amounts (parentheses / % / ixBRL split across &lt;p&gt;) — monospace + tabular for column alignment. */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root .ixbrl-amt-inline {
+    display: inline-block;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  /**
+   * MD&A excerpt: `buildMdnaSectionDisplayHtml` uses filing fidelity (no column-collapse / merge heuristics) so complex
+   * multi-row headers stay aligned. Prefer `max-content` width and light cell rules — like press-release tables.
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root {
+    line-height: 1.45;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /**
+   * Earnings press release / Exhibit 99 HTML: legacy filings often use narrow %-width columns. Tailwind’s
+   * `overflow-wrap: anywhere` + `break-words` on the root made every character stack vertically. Prefer
+   * `break-word` only at word boundaries for prose; tables get `width: max-content`, horizontal scroll, and
+   * `nowrap` on numeric columns (same idea as MD&A excerpt tables).
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    line-height: 1.45;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    float: none !important;
+    border-collapse: collapse;
+    width: max-content;
+    max-width: none;
+    min-width: 0;
+    table-layout: auto;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table td,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table th {
+    vertical-align: top;
+    padding: 0.35rem 0.5rem;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table thead th,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table thead td {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table td:first-child,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table th:first-child {
+    white-space: normal !important;
+    text-align: left !important;
+    min-width: 9.5rem;
+    max-width: min(32rem, 55vw);
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table tbody td:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table tbody th:not(:first-child) {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table thead th:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table thead td:not(:first-child) {
+    text-align: center !important;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table td p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table th p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table tbody td:not(:first-child) p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table tbody th:not(:first-child) p {
+    display: inline !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table tbody td:not(:first-child) p + p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root table tbody th:not(:first-child) p + p {
+    margin-top: 0 !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-press-release-root .ixbrl-nf {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap !important;
+  }
+
+  /**
+   * EBITDA card: show filing/press-release grid with minimal layout forcing — preserves multi-column headers
+   * and issuer `align` / `%` widths better than the MD&A “tight numeric grid” rules.
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    line-height: 1.45;
+    overflow-x: auto;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    float: none !important;
+    border-collapse: collapse;
+    width: max-content;
+    max-width: none;
+    min-width: 0;
+    table-layout: auto;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table td,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table th {
+    vertical-align: top;
+    padding: 0.35rem 0.5rem;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table thead th,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table thead td {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table td:first-child,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table th:first-child {
+    white-space: normal !important;
+    text-align: left !important;
+    min-width: 9.5rem;
+    max-width: min(32rem, 55vw);
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table tbody td:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table tbody th:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table thead th:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table thead td:not(:first-child) {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table thead th:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table thead td:not(:first-child) {
+    text-align: center !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table tbody td:not(:first-child) p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table tbody th:not(:first-child) p {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root .ixbrl-nf {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap !important;
+  }
+
+  /**
+   * Exhibit 99 investor decks (e.g. Workiva): full-width slide images plus duplicate narrative in 1pt FONT blocks.
+   * Images are the readable content; hide the redundant caption text visually. Root class is set only when
+   * `exhibitClass === "slide_deck"` (see CompanySecXbrlFinancialsTab).
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-slide-deck-root {
+    line-height: normal;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-slide-deck-root img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0.75rem auto;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-slide-deck-root font[style*="font-size:1pt"],
+  .saved-html-content.sec-debt-footnote-html .ixbrl-earnings-slide-deck-root font[style*="font-size: 1pt"] {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table {
+    width: max-content !important;
+    min-width: 0;
+    max-width: none;
+    table-layout: auto !important;
+    border-collapse: collapse;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    float: none !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table td,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table th {
+    vertical-align: top !important;
+    padding: 0.35rem 0.5rem !important;
+  }
+
+  /**
+   * First header column keeps multi-line captions; numeric year / delta columns stay one line — inline filing CSS
+   * must not splice “$ 297” vertically.
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead th,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead td {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-align: center;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead th:first-child,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead td:first-child {
+    white-space: normal !important;
+    text-align: left !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead th:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead td:not(:first-child) {
+    white-space: nowrap !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table td:first-child,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table th:first-child {
+    white-space: normal !important;
+    text-align: left !important;
+    min-width: 10.5rem;
+    max-width: min(34rem, 52vw);
+  }
+
+  /**
+   * Row labels sometimes use negative `text-indent` on `div`/`span` (not only `p`). Reset subtree indents in the label
+   * column so opening letters are not clipped.
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table td:first-child,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table td:first-child *,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table th:first-child,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table th:first-child * {
+    text-indent: 0 !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody td:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody th:not(:first-child) {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead th:not(:first-child) *,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table thead td:not(:first-child) *,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody td:not(:first-child) *,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody th:not(:first-child) * {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table td p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table th p {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-indent: 0 !important;
+  }
+
+  /**
+   * SEC ixbrl often puts “$” and the amount in separate <p> blocks in the same cell.
+   * Scope inline-paragraph coalescing to tbody so header rows keep natural block flow.
+   */
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody td:not(:first-child) p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody th:not(:first-child) p {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody td:not(:first-child) p + p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table tbody th:not(:first-child) p + p {
+    margin-top: 0 !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table td:first-child p + p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-mdna-section-root table th:first-child p + p {
+    margin-top: 0.35em !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table td p,
+  .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table th p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+
+  /**
+   * Public Records Properties should match the editable subsidiary grid typography.
+   * Keep the dark-theme color fixes from the SEC viewer, but normalize the filing HTML
+   * onto the same monospace stack / size used by those table inputs.
+   */
+  .saved-html-content.sec-profile-properties-html,
+  .saved-html-content.sec-profile-properties-html * {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    font-size: 11px !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    text-align: left !important;
+    text-indent: 0 !important;
+  }
+
+  .saved-html-content.sec-profile-properties-html strong,
+  .saved-html-content.sec-profile-properties-html b,
+  .saved-html-content.sec-profile-properties-html th {
+    font-weight: 600 !important;
+  }
+
+  .saved-html-content.sec-profile-properties-html h1,
+  .saved-html-content.sec-profile-properties-html h2,
+  .saved-html-content.sec-profile-properties-html h3,
+  .saved-html-content.sec-profile-properties-html h4,
+  .saved-html-content.sec-profile-properties-html h5,
+  .saved-html-content.sec-profile-properties-html h6 {
+    font-size: 11px !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
   }
 
   /* Saved response fullscreen: let scroll body / textarea absorb remaining viewport */

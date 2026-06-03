@@ -6,9 +6,12 @@ import os from "os";
 import { randomBytes } from "crypto";
 import { auth } from "@/auth";
 import { listSavedDocuments } from "@/lib/saved-documents";
-import { getUserSavedDocumentBody } from "@/lib/user-workspace-store";
+import {
+  getUserSavedDocumentBody,
+  readUserTickerDocument,
+  writeUserTickerDocument,
+} from "@/lib/user-workspace-store";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
-import { readUserTickerDocument, writeUserTickerDocument } from "@/lib/user-workspace-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -96,7 +99,10 @@ async function materializeFiles(
   });
 
   if (!xbrl.length) {
-    return { ok: false, error: `No XBRL workbooks found for ${sym}. Save statements via "SEC XBRL Financials" first.` };
+    return {
+      ok: false,
+      error: `No XBRL workbooks found for ${sym}. Save statements via "SEC XBRL Financials" (or bulk save on Historical Financial Statements) first.`,
+    };
   }
 
   const dir = path.join(os.tmpdir(), `ceg-xbrl-${sym}-${randomBytes(6).toString("hex")}`);
@@ -165,7 +171,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ ticker:
     }
   }
 
-  return NextResponse.json({ ticker: sym, xbrlFileCount: xbrlFiles.length, xbrlFiles, allFiles, lastCompiledResult });
+  return NextResponse.json({
+    ticker: sym,
+    xbrlFileCount: xbrlFiles.length,
+    xbrlFiles,
+    allFiles,
+    lastCompiledResult,
+  });
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ ticker: string }> }) {

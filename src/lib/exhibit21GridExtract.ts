@@ -130,6 +130,66 @@ function mergeSameWidthTablesDomOrder(matrices: string[][][]): string[][] | null
 const MAX_MERGE_COL_WIDTH_DELTA = 2;
 
 /**
+ * Workiva / paginated Exhibit 21 often uses many consecutive `<table>` blocks with one `<td>` per row
+ * ("1.Name LLC (DE)"). Those matrices have width 1, so {@link mergeSameWidthTablesDomOrder} skips them
+ * (`w < 2`) and only {@link mergeRelaxWidthContinuationDomOrder} runs — which also requires `w >= 2`.
+ * Result: we kept a single fragment (~one printed page). Concatenate eligible consecutive 1-col tables.
+ */
+function singleColumnMatrixLooksLikeSubsidiarySchedule(mx: string[][]): boolean {
+  if (matrixWidth(mx) !== 1 || mx.length < 2) return false;
+  const cells = mx.map((r) => normalizeCellText(r[0] ?? "")).filter((c) => c.length > 0);
+  if (cells.length < 2) return false;
+  let parenRows = 0;
+  let numberedEntityRows = 0;
+  for (const c of cells) {
+    if (/\([^)]{2,120}\)/.test(c)) parenRows++;
+    if (/^\d+\.\s*\S/.test(c)) numberedEntityRows++;
+  }
+  return (
+    parenRows >= Math.max(2, Math.floor(cells.length * 0.3)) ||
+    numberedEntityRows >= Math.max(2, Math.floor(cells.length * 0.3))
+  );
+}
+
+function mergeSingleColumnSubsidiaryTablesDomOrder(matrices: string[][][]): string[][] | null {
+  const runs: string[][][] = [];
+  let cur: string[][][] = [];
+
+  function flush() {
+    if (cur.length >= 2) runs.push(cur);
+    cur = [];
+  }
+
+  for (const mx of matrices) {
+    if (matrixWidth(mx) === 1 && mx.length >= 2 && singleColumnMatrixLooksLikeSubsidiarySchedule(mx)) {
+      cur.push(mx);
+    } else {
+      flush();
+    }
+  }
+  flush();
+
+  let best: string[][] | null = null;
+  let bestScore = -1;
+  for (const run of runs) {
+    let out: string[][] = [];
+    for (const m of run) {
+      let rows = rectangularize([...m], 1);
+      if (rows.length > 0 && isSubsidiaryScheduleHeaderRow(rows[0]!)) rows = rows.slice(1);
+      out = [...out, ...rows];
+    }
+    out = rectangularize(out.filter((r) => r.some((c) => c.trim())), 1);
+    if (out.length < 2) continue;
+    const sc = scoreMatrixCandidate(out);
+    if (sc > bestScore) {
+      bestScore = sc;
+      best = out;
+    }
+  }
+  return best;
+}
+
+/**
  * Chains consecutive <table> matrices in DOM order when column counts differ slightly
  * (`<hr/>` page breaks sometimes switch markup so one side has trailing empty `<td>`s).
  * Avoids dropping a smaller continuation table because `bestSingle` picked only the taller fragment.
@@ -370,6 +430,7 @@ export function extractExhibit21GridSnapshotFromDocument(rawIn: string): Exhibit
 
     const mergedSameWidth = mergeSameWidthTablesDomOrder(matrices);
     const mergedRelaxWidths = mergeRelaxWidthContinuationDomOrder(matrices);
+    const mergedSingleColSubs = mergeSingleColumnSubsidiaryTablesDomOrder(matrices);
 
     let chosen = bestSingle;
     let chosenSc = bestScore;
@@ -385,6 +446,13 @@ export function extractExhibit21GridSnapshotFromDocument(rawIn: string): Exhibit
 
     consider(mergedSameWidth);
     consider(mergedRelaxWidths);
+    /**
+     * Single-column pagination merge only when the best standalone `<table>` is already 1‑col.
+     * Typical Name | Jurisdiction Exhibit 21 uses width ≥ 2 — unchanged. Avoids touching those paths.
+     */
+    if (bestSingle && matrixWidth(bestSingle) === 1) {
+      consider(mergedSingleColSubs);
+    }
 
     if (chosen && chosen.length >= 2) {
       rows = stripPreambleGarbageRows(chosen).filter((r) => r.some((c) => c.trim()));

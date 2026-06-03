@@ -1,0 +1,538 @@
+{
+  "ticker": "NXST",
+  "checked": 80,
+  "suspicious": 28,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2018-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0001564590-18-020586"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001193125-26-078361",
+      "filingDate": "2026-02-27",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 63 numeric cell(s) missing inline XBRL tags (0/63 tagged)",
+        "inline XBRL filing: 63 untagged numeric cell(s) across primary statements (0/63 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2025",
+            "Years Ended December 31, 2024",
+            "Years Ended December 31, 2023"
+          ],
+          "firstRows": [
+            "Distribution",
+            "Advertising",
+            "Other",
+            "Net revenue",
+            "Operating expenses:",
+            "Direct operating"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 24,
+          "numericCells": 63,
+          "taggedCells": 0,
+          "untaggedNumericCells": 63,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-25-028949",
+      "filingDate": "2025-02-27",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 61 numeric cell(s) missing inline XBRL tags (0/61 tagged)",
+        "inline XBRL filing: 61 untagged numeric cell(s) across primary statements (0/61 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2024",
+            "Years Ended December 31, 2023",
+            "Years Ended December 31, 2022"
+          ],
+          "firstRows": [
+            "Distribution",
+            "Advertising",
+            "Other",
+            "Net revenue",
+            "Operating expenses:",
+            "Direct operating"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 23,
+          "numericCells": 61,
+          "taggedCells": 0,
+          "untaggedNumericCells": 61,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-24-021979",
+      "filingDate": "2024-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "inline XBRL filing: 18 untagged numeric cell(s) across primary statements (0/18 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2023 Amount",
+            "2022 Amount",
+            "2021 Amount"
+          ],
+          "firstRows": [
+            "Core advertising",
+            "Political advertising",
+            "Distribution",
+            "Digital",
+            "Other",
+            "Total net revenue"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-23-005209",
+      "filingDate": "2023-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 18 numeric cell(s) missing inline XBRL tags (0/18 tagged)",
+        "inline XBRL filing: 18 untagged numeric cell(s) across primary statements (0/18 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2022 Amount",
+            "2021 Amount",
+            "2020 Amount"
+          ],
+          "firstRows": [
+            "Core advertising",
+            "Political advertising",
+            "Distribution",
+            "Digital",
+            "Other",
+            "Total net revenue"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 6,
+          "numericCells": 18,
+          "taggedCells": 0,
+          "untaggedNumericCells": 18,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000950170-22-002187",
+      "filingDate": "2022-02-28",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "income-statement: 21 numeric cell(s) missing inline XBRL tags (0/21 tagged)",
+        "inline XBRL filing: 21 untagged numeric cell(s) across primary statements (0/21 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "2021 Amount",
+            "2020 Amount",
+            "2019 Amount"
+          ],
+          "firstRows": [
+            "Core advertising (local and national)",
+            "Political advertising",
+            "Distribution",
+            "Digital",
+            "Other",
+            "Trade"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 7,
+          "numericCells": 21,
+          "taggedCells": 0,
+          "untaggedNumericCells": 21,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001564590-21-053847",
+      "filingDate": "2021-11-03",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-21-041546",
+      "filingDate": "2021-08-05",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-21-023951",
+      "filingDate": "2021-05-05",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-21-009747",
+      "filingDate": "2021-03-01",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-20-051920",
+      "filingDate": "2020-11-06",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-20-037661",
+      "filingDate": "2020-08-06",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-20-023663",
+      "filingDate": "2020-05-08",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-20-008129",
+      "filingDate": "2020-03-02",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-19-042435",
+      "filingDate": "2019-11-12",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-19-004527",
+      "filingDate": "2019-02-27",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0001564590-18-003921",
+      "filingDate": "2018-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001564590-17-002905",
+      "filingDate": "2017-02-28",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001564590-16-013630",
+      "filingDate": "2016-02-29",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001564590-15-009753",
+      "filingDate": "2015-11-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001564590-15-001137",
+      "filingDate": "2015-03-02",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001142417-14-000012",
+      "filingDate": "2014-03-03",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001142417-13-000006",
+      "filingDate": "2013-03-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001142417-12-000010",
+      "filingDate": "2012-03-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001142417-11-000018",
+      "filingDate": "2011-03-16",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001142417-10-000007",
+      "filingDate": "2010-03-15",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-09-068206",
+      "filingDate": "2009-03-31",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-08-052568",
+      "filingDate": "2008-03-11",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001193125-07-054642",
+      "filingDate": "2007-03-14",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

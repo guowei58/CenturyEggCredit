@@ -1,0 +1,324 @@
+{
+  "ticker": "LUMN",
+  "checked": 80,
+  "suspicious": 5,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0000018926-19-000018"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000018926-24-000016",
+      "filingDate": "2024-02-22",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: missing core income-statement cues",
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "(Decrease) Increasein Net Loss (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Income tax benefit",
+            "Net of tax",
+            "Amortization of pension & post-retirement plans (1)",
+            "Net actuarial loss",
+            "Settlement charge",
+            "Reclassification of net actuarial loss and prior service credit to gain on the sale of business"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "As of December 31, 2023 (Dollars in millionsand shares in thousands)",
+            "As of December 31, 2022 (Dollars in millionsand shares in thousands)"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, less allowance of $67 and $85",
+            "Assets held for sale",
+            "Other",
+            "Total current assets",
+            "Property, plant and equipment, net of accumulated depreciation of $21,318 and $19,886"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2023 (Dollars in millions)",
+            "Years Ended December 31, 2022 (Dollars in millions)",
+            "Years Ended December 31, 2021 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net (loss) income",
+            "Adjustments to reconcile net (loss) income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Net loss (gain) on sale of businesses",
+            "Loss on disposal groups held for sale",
+            "Goodwill impairment"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 12,
+          "numericCells": 10,
+          "taggedCells": 10,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 41,
+          "numericCells": 66,
+          "taggedCells": 66,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 34,
+          "numericCells": 82,
+          "taggedCells": 82,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 32,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-23-000013",
+      "filingDate": "2023-02-23",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "income-statement: missing core income-statement cues",
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Decrease (Increase)in Net Income (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Income tax benefit",
+            "Net of tax",
+            "Amortization of pension & post-retirement plans (1)",
+            "Net actuarial loss",
+            "Prior service cost",
+            "Reclassification of net actuarial loss and prior service credit to gain on the sale of business"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "As of December 31, 2022 (Dollars in millionsand shares in thousands)",
+            "As of December 31, 2021 (Dollars in millionsand shares in thousands)"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Accounts receivable, less allowance of $85 and $114",
+            "Assets held for sale",
+            "Other",
+            "Total current assets",
+            "Property, plant and equipment, net of accumulated depreciation of $19,886 and $19,271"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2022 (Dollars in millions)",
+            "Years Ended December 31, 2021 (Dollars in millions)",
+            "Years Ended December 31, 2020 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net (loss) income",
+            "Adjustments to reconcile net (loss) income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Gain on sale of businesses",
+            "Loss on disposal groups held for sale",
+            "Goodwill impairment"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 12,
+          "numericCells": 10,
+          "taggedCells": 10,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 8,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 40,
+          "numericCells": 64,
+          "taggedCells": 64,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 95
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 34,
+          "numericCells": 80,
+          "taggedCells": 80,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 30,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-18-000012",
+      "filingDate": "2018-03-01",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Years Ended December 31, 2017 (Dollars in millions, except per shareamounts and shares in thousands)",
+            "Years Ended December 31, 2016 (Dollars in millions, except per shareamounts and shares in thousands)",
+            "Years Ended December 31, 2015 (Dollars in millions, except per shareamounts and shares in thousands)"
+          ],
+          "firstRows": [
+            "OPERATING REVENUES",
+            "OPERATING EXPENSES",
+            "Cost of services and products (exclusive of depreciation and amortization)",
+            "Selling, general and administrative",
+            "Depreciation and amortization",
+            "Total operating expenses"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Years Ended December 31, 2017 (Dollars in millions)",
+            "Years Ended December 31, 2016 (Dollars in millions)",
+            "Years Ended December 31, 2015 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Impairment of assets",
+            "Deferred income taxes",
+            "Loss on the sale of data centers and colocation business"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-17-000074",
+      "filingDate": "2017-11-09",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended September 30, 2017 (Dollars in millions, except per share amountsand shares in thousands)",
+            "Three Months Ended September 30, 2016 (Dollars in millions, except per share amountsand shares in thousands)",
+            "Nine Months Ended September 30, 2017 (Dollars in millions, except per share amountsand shares in thousands)",
+            "Nine Months Ended September 30, 2016 (Dollars in millions, except per share amountsand shares in thousands)"
+          ],
+          "firstRows": [
+            "OPERATING REVENUES",
+            "OPERATING EXPENSES",
+            "Cost of services and products (exclusive of depreciation and amortization)",
+            "Selling, general and administrative",
+            "Depreciation and amortization",
+            "Total operating expenses"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine Months Ended September 30, 2017 (Dollars in millions)",
+            "Nine Months Ended September 30, 2016 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Deferred income taxes",
+            "Loss on the sale of data centers and colocation business",
+            "Impairment of assets held for sale"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000018926-17-000055",
+      "filingDate": "2017-08-07",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Three Months Ended June 30, 2017 (Dollars in millions, except per share amountsand shares in thousands)",
+            "Three Months Ended June 30, 2016 (Dollars in millions, except per share amountsand shares in thousands)",
+            "Six Months Ended June 30, 2017 (Dollars in millions, except per share amountsand shares in thousands)",
+            "Six Months Ended June 30, 2016 (Dollars in millions, except per share amountsand shares in thousands)"
+          ],
+          "firstRows": [
+            "OPERATING REVENUES",
+            "OPERATING EXPENSES",
+            "Cost of services and products (exclusive of depreciation and amortization)",
+            "Selling, general and administrative",
+            "Depreciation and amortization",
+            "Total operating expenses"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six Months Ended June 30, 2017 (Dollars in millions)",
+            "Six Months Ended June 30, 2016 (Dollars in millions)"
+          ],
+          "firstRows": [
+            "Net income",
+            "Adjustments to reconcile net income to net cash provided by operating activities:",
+            "Depreciation and amortization",
+            "Deferred income taxes",
+            "Loss on the sale of data centers and colocation business",
+            "Impairment of assets held for sale"
+          ]
+        }
+      ]
+    }
+  ]
+}

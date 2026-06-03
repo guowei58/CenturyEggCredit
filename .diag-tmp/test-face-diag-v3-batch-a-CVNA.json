@@ -1,0 +1,13 @@
+{
+  "ticker": "CVNA",
+  "checked": 37,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2018-05-09",
+    "form": "10-Q",
+    "accessionNumber": "0001690820-18-000042"
+  },
+  "failures": []
+}

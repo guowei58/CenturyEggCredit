@@ -85,7 +85,8 @@ CORE RULES
 
 **Exception A — Standalone income-statement quarters from YTD (only when needed):**
 - If the uploaded workbooks **already report** a standalone figure for a quarter (1Q, 2Q, 3Q, or 4Q), use that cell **exactly** — never replace it with a calculation.
-- If and **only if** a standalone quarter is **not** in the files and you must follow **BUILD STANDALONE QUARTERS**, you may use the prescribed subtractions (e.g. 2Q = 6M YTD − 1Q, 3Q = 9M YTD − 6M YTD, **4Q = FY − 9M YTD**). Flag every such cell in Source Map / Provenance as **derived from YTD**.
+- If and **only if** a standalone quarter is **not** in the files and you must follow **BUILD STANDALONE QUARTERS**, you may use the prescribed subtractions (e.g. 2Q = 6M YTD − 1Q, 3Q = 9M YTD − 6M YTD, **4Q = FY − 9M YTD**) **for line items that accumulate as flows over the year** (revenues, expenses, subtotals that sum, etc.). Flag every such cell in Source Map / Provenance as **derived from YTD**.
+- **Exception A does NOT apply** to **weighted-average share counts** and other **period averages** (not fiscal sums): concepts such as `us-gaap:WeightedAverageNumberOfSharesOutstandingBasic`, `us-gaap:WeightedAverageNumberOfSharesOutstandingDiluted`, `us-gaap:WeightedAverageNumberDilutedSharesOutstanding`, or any row whose label clearly indicates **weighted average** shares / units used as EPS denominators. For those rows **never** derive 2Q/3Q/4Q from YTD differences and **never** use **4Q = FY − 9M** (that produces nonsensical negatives). If the source lacks a standalone 4Q figure but reports **FY weighted average**, **copy that FY value into the 4Q column** for that row; otherwise use **—** and explain in provenance.
 - If both a direct standalone amount and a derivable amount exist, **always** use the **direct** amount from the latest applicable filing.
 
 **Exception B — Standalone quarterly cash flow (only when needed):**
@@ -115,10 +116,11 @@ For quarterly presentation, show standalone quarters:
 
 Use the following rules (this is the **only** place income-statement subtraction is allowed — see 3C):
 - **Prefer copy from source:** If a standalone quarter is directly provided in the workbooks, transcribe it. Do not recalculate.
-- **YTD-only:** If only year-to-date amounts are provided in 10-Q style data and a standalone cell is missing, derive the standalone quarter by subtraction **only as follows**:
+- **YTD-only:** If only year-to-date amounts are provided in 10-Q style data and a standalone cell is missing, derive the standalone quarter by subtraction **only as follows** (and **only for summable flow line items** — see **Exception A** exclusion for **weighted-average shares**):
   - 2Q = 6M YTD minus 1Q
   - 3Q = 9M YTD minus 6M YTD
   - 4Q = FY minus 9M YTD
+- For **weighted-average number of shares** (basic / diluted) and similar **averages**, do **not** use the three bullets above; use **reported quarterly** values if present, else **repeat the FY weighted average in 4Q** when FY exists, else **—**.
 - Always prefer directly reported standalone quarter data over derived data if available.
 - Clearly flag derived quarters in Source Map / Provenance (and data-quality notes).
 
@@ -138,7 +140,8 @@ Use the following rules (this is the **only** place income-statement subtraction
 8. INCOME STATEMENT TREATMENT
 - Present standalone quarterly income statement values for 1Q, 2Q, 3Q, 4Q by **copying** from the workbooks when present.
 - Present full-year values from the annual filing by **copying** (Latest Filing Wins).
-- Derive a standalone quarter **only** when the source does not provide that quarter’s cell and section 5 / 3C Exception A applies.
+- Derive a standalone quarter **only** when the source does not provide that quarter’s cell and section 5 / 3C Exception A applies **and** the line is a **summable flow** — **not** weighted-average share counts (see 3C).
+- **Weighted-average shares:** never YTD-subtract; if 4Q standalone is missing, use the **FY weighted-average** in the 4Q column when available.
 
 9. DURATION VS INSTANT CONCEPTS
 Be careful to distinguish:
@@ -305,7 +308,7 @@ IMPORTANT RESTRICTIONS
 - Do not stop because the task is long.
 - Do not split the three primary statements into multiple tables by year; use one wide table per statement from earliest through latest period.
 - Do not omit **1Q, 2Q, 3Q, 4Q, or FY** for any fiscal year in **Y_start…Y_end** — the **MANDATORY PERIOD COLUMN LAYOUT** applies with no exceptions. Do not duplicate the same fiscal year in both Part 1 and Part 2.
-- Do not calculate, re-sum, or “fix” numbers except **section 3C** (standalone quarters from YTD when the source omits that quarter — including 4Q = FY − 9M; and standalone quarterly cash flow from YTD when required). Otherwise copy from the XBRL exports only.
+- Do not calculate, re-sum, or “fix” numbers except **section 3C** (standalone quarters from YTD when the source omits that quarter for **summable flow** lines — including 4Q = FY − 9M **only where 3C allows**; weighted-average shares excluded per 3C; and standalone quarterly cash flow from YTD when required). Otherwise copy from the XBRL exports only.
 
 FINAL STANDARD
 

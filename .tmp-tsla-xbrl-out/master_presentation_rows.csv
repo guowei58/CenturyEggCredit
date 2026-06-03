@@ -1,0 +1,96 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,"Revenue from Contract with Customer, Excluding Assessed Tax",0,4
+income_statement,us-gaap:CostOfRevenue,us-gaap:CostOfRevenue,Cost of Revenue,1,4
+income_statement,us-gaap:GrossProfit,us-gaap:GrossProfit,Gross Profit,2,3
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research and Development Expense,3,4
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, General and Administrative Expense",4,4
+income_statement,tsla:RestructuringAndOtherExpenses,tsla:RestructuringAndOtherExpenses,Restructuring and other expenses.,5,4
+income_statement,us-gaap:OperatingExpenses,us-gaap:OperatingExpenses,Operating Expenses,6,4
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating Income (Loss),7,3
+income_statement,us-gaap:InvestmentIncomeInterest,us-gaap:InvestmentIncomeInterest,"Investment Income, Interest",8,3
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,"Interest Expense, Nonoperating",9,3
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Other Nonoperating Income (Expense),10,3
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,"Income (Loss) from Continuing Operations before Income Taxes, Noncontrolling Interest",11,3
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income Tax Expense (Benefit),12,3
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,"Net Income (Loss), Including Portion Attributable to Noncontrolling Interest",13,3
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net Income (Loss) Attributable to Noncontrolling Interest,14,3
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net Income (Loss) Attributable to Parent,15,3
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,"Earnings Per Share, Basic",16,4
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,"Earnings Per Share, Diluted",17,4
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,"Weighted Average Number of Shares Outstanding, Basic",18,4
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,"Weighted Average Number of Shares Outstanding, Diluted",19,4
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and Cash Equivalent,0,5
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-Term Investments,1,5
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts Receivable, after Allowance for Credit Loss, Current",2,5
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,"Inventory, Net",3,5
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,"Prepaid Expense and Other Assets, Current",4,5
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,"Assets, Current",5,5
+balance_sheet,us-gaap:DeferredCostsLeasingNetNoncurrent,us-gaap:DeferredCostsLeasingNetNoncurrent,"Deferred Costs, Leasing, Net, Noncurrent",6,4
+balance_sheet,tsla:LeasedAssetsNet,tsla:LeasedAssetsNet,Leased assets net.,7,4
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property, Plant, and Equipment and Finance Lease Right-of-Use Asset, after Accumulated Depreciation and Amortization",9,4
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,"Operating Lease, Right-of-Use Asset",10,4
+balance_sheet,us-gaap:CryptoAssetFairValueNoncurrent,us-gaap:CryptoAssetFairValueNoncurrent,"Crypto Asset, Fair Value, Noncurrent",11,4
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,"Deferred Income Tax Assets, Net",14,4
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,"Other Assets, Noncurrent",15,4
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Assets,16,4
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,"Accounts Payable, Current",17,5
+balance_sheet,tsla:AccruedAndOtherCurrentLiabilities,tsla:AccruedAndOtherCurrentLiabilities,Accrued and other current liabilities.,18,5
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,"Contract with Customer, Liability, Current",19,5
+balance_sheet,tsla:LongTermDebtAndFinanceLeasesCurrent,tsla:LongTermDebtAndFinanceLeasesCurrent,Long term debt and finance leases current.,20,5
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,"Liabilities, Current",21,5
+balance_sheet,tsla:LongTermDebtAndFinanceLeasesNoncurrent,tsla:LongTermDebtAndFinanceLeasesNoncurrent,"Long term debt and finance leases, noncurrent",22,4
+balance_sheet,us-gaap:ContractWithCustomerLiabilityNoncurrent,us-gaap:ContractWithCustomerLiabilityNoncurrent,"Contract with Customer, Liability, Noncurrent",23,4
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,"Other Liabilities, Noncurrent",24,4
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Liabilities,25,4
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,"Redeemable Noncontrolling Interest, Equity, Carrying Amount",26,3
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred Stock, Value, Issued",27,5
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common Stock, Value, Issued",28,5
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,"Additional Paid in Capital, Common Stock",29,5
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,"Accumulated Other Comprehensive Income (Loss), Net of Tax",30,5
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained Earnings (Accumulated Deficit),31,5
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,"Equity, Attributable to Parent",32,5
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,"Equity, Attributable to Noncontrolling Interest",33,4
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Liabilities and Equity,34,3
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,"Net Income (Loss), Including Portion Attributable to Noncontrolling Interest",0,2
+cash_flow,tsla:DepreciationAmortizationAndImpairment,tsla:DepreciationAmortizationAndImpairment,Depreciation amortization and impairment.,1,3
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,"Share-Based Payment Arrangement, Noncash Expense",2,3
+cash_flow,us-gaap:InventoryWriteDown,us-gaap:InventoryWriteDown,Inventory Write-down,3,3
+cash_flow,us-gaap:ForeignCurrencyTransactionGainLossUnrealized,us-gaap:ForeignCurrencyTransactionGainLossUnrealized,"Unrealized Gain (Loss), Foreign Currency Transaction, before Tax",4,3
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred Income Tax Expense (Benefit),5,3
+cash_flow,tsla:NoncashInterestIncomeExpenseAndOtherOperatingActivities,tsla:NoncashInterestIncomeExpenseAndOtherOperatingActivities,Noncash interest income (expense) and other operating activities.,6,3
+cash_flow,tsla:GainLossOnDigitalAssets,tsla:GainLossOnDigitalAssets,Gain (loss) on digital assets.,7,3
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Increase (Decrease) in Accounts Receivable,8,4
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Increase (Decrease) in Inventories,9,4
+cash_flow,tsla:IncreaseDecreaseInOperatingLeaseVehicles,tsla:IncreaseDecreaseInOperatingLeaseVehicles,Increase decrease in operating lease vehicles.,10,4
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,Increase (Decrease) in Prepaid Expense and Other Assets,11,4
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,Increase (Decrease) in Accounts Payable and Accrued Liabilities,12,4
+cash_flow,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,"Increase (Decrease) in Contract with Customer, Liability",13,4
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,"Cash Provided by (Used in) Operating Activity, Including Discontinued Operation",14,2
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,"Payments to Acquire Property, Plant, and Equipment",15,2
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Payments to Acquire Investments,19,2
+cash_flow,us-gaap:ProceedsFromSaleMaturityAndCollectionsOfInvestments,us-gaap:ProceedsFromSaleMaturityAndCollectionsOfInvestments,"Proceeds from Sale, Maturity and Collection of Investments",20,2
+cash_flow,us-gaap:ProceedsFromSaleOfShortTermInvestments,us-gaap:ProceedsFromSaleOfShortTermInvestments,Proceeds from Sale of Short-Term Investments,21,2
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Payments to Acquire Businesses, Net of Cash Acquired",22,2
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,"Cash Provided by (Used in) Investing Activity, Including Discontinued Operation",23,2
+cash_flow,us-gaap:ProceedsFromIssuanceOfDebt,us-gaap:ProceedsFromIssuanceOfDebt,Proceeds from Issuance of Debt,24,2
+cash_flow,us-gaap:RepaymentsOfConvertibleDebt,us-gaap:RepaymentsOfConvertibleDebt,Repayments of Convertible Debt,25,2
+cash_flow,us-gaap:ProceedsFromIssuanceOfSharesUnderIncentiveAndShareBasedCompensationPlansIncludingStockOptions,us-gaap:ProceedsFromIssuanceOfSharesUnderIncentiveAndShareBasedCompensationPlansIncludingStockOptions,"Proceeds, Issuance of Shares, Share-Based Payment Arrangement, Including Option Exercised",26,2
+cash_flow,us-gaap:FinanceLeasePrincipalPayments,us-gaap:FinanceLeasePrincipalPayments,"Finance Lease, Principal Payments",27,2
+cash_flow,tsla:ProceedsReceivedFromDirectorsInShareholderSettlement,tsla:ProceedsReceivedFromDirectorsInShareholderSettlement,Proceeds Received From Directors In Shareholder Settlement,28,2
+cash_flow,tsla:PaymentForLegalFees,tsla:PaymentForLegalFees,Payment For Legal Fees,29,2
+cash_flow,us-gaap:PaymentsOfDebtIssuanceCosts,us-gaap:PaymentsOfDebtIssuanceCosts,Payments of Debt Issuance Costs,30,2
+cash_flow,us-gaap:PaymentsToMinorityShareholders,us-gaap:PaymentsToMinorityShareholders,Payments to Noncontrolling Interests,31,2
+cash_flow,tsla:PaymentsForBuyOutsOfNoncontrollingInterestsInSubsidiaries,tsla:PaymentsForBuyOutsOfNoncontrollingInterestsInSubsidiaries,Payments for buy-outs of noncontrolling interests in subsidiaries.,32,2
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,"Cash Provided by (Used in) Financing Activity, Including Discontinued Operation",33,2
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,"Effect of Exchange Rate on Cash, Cash Equivalent, Restricted Cash, and Restricted Cash Equivalent, Including Discontinued Operation",34,1
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Cash, Cash Equivalent, Restricted Cash, and Restricted Cash Equivalent, Period Increase (Decrease), Including Exchange Rate Effect and Discontinued Operation",35,1
+cash_flow,us-gaap:NoncashOrPartNoncashAcquisitionValueOfAssetsAcquired1,us-gaap:NoncashOrPartNoncashAcquisitionValueOfAssetsAcquired1,"Noncash or Part Noncash Acquisition, Value of Assets Acquired",36,2
+cash_flow,us-gaap:InterestPaidNet,us-gaap:InterestPaidNet,"Interest Paid, Excluding Capitalized Interest, Operating Activity",39,2
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, Plant and Equipment, Net",8,4
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible Assets, Net (Excluding Goodwill)",12,4
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,13,4
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,Right-of-Use Asset Obtained in Exchange for Finance Lease Liability,37,2
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability,Right-of-Use Asset Obtained in Exchange for Operating Lease Liability,38,2
+cash_flow,us-gaap:PaymentsToAcquireEquityMethodInvestments,us-gaap:PaymentsToAcquireEquityMethodInvestments,Payments to Acquire Equity Method Investments,16,2
+cash_flow,us-gaap:PaymentsToAcquireShortTermInvestments,us-gaap:PaymentsToAcquireShortTermInvestments,Payments to Acquire Short-Term Investments,17,2
+cash_flow,us-gaap:ProceedsFromSaleMaturityAndCollectionOfShorttermInvestments,us-gaap:ProceedsFromSaleMaturityAndCollectionOfShorttermInvestments,"Proceeds from Sale, Maturity and Collection of Short-Term Investments",18,2

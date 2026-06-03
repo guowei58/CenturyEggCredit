@@ -61,19 +61,42 @@ function reconcileIsColumn(period: string, vals: Map<string, number>): Reconcili
 
   const tax = firstConceptMatch(vals, /:IncomeTaxExpenseBenefit$/i);
 
+  const nci =
+    firstConceptMatch(vals, /NetIncomeLossAttributableToNoncontrollingInterest$/i) ??
+    firstConceptMatch(vals, /ProfitLossAttributableToNoncontrollingInterest$/i);
+
   if (stated !== null && ebt !== null && tax !== null) {
-    const dPlus = Math.abs(ebt + tax - stated);
-    const dMinus = Math.abs(ebt - tax - stated);
-    const delta = Math.min(dPlus, dMinus);
-    const calc = dPlus <= dMinus ? ebt + tax : ebt - tax;
-    const form = dPlus <= dMinus ? "EBT + tax" : "EBT − tax";
+    const netVariants: number[] = [ebt + tax, ebt - tax];
+    if (nci !== null && Number.isFinite(nci)) {
+      for (const base of [ebt + tax, ebt - tax]) {
+        netVariants.push(base - nci, base + nci);
+      }
+    }
+    const delta = Math.min(...netVariants.map((c) => Math.abs(c - stated)));
+    const bestCalc = netVariants.reduce((best, c) =>
+      Math.abs(c - stated) < Math.abs(best - stated) ? c : best,
+    netVariants[0]!);
+    const tol = EPS;
+    const formParts: string[] = [];
+    if (Math.abs(bestCalc - (ebt + tax)) <= tol) formParts.push("EBT + tax");
+    else if (Math.abs(bestCalc - (ebt - tax)) <= tol) formParts.push("EBT − tax");
+    else if (nci !== null) {
+      if (Math.abs(bestCalc - (ebt - tax - nci)) <= tol) formParts.push("EBT − tax − NCI");
+      else if (Math.abs(bestCalc - (ebt - tax + nci)) <= tol) formParts.push("EBT − tax + NCI");
+      else if (Math.abs(bestCalc - (ebt + tax - nci)) <= tol) formParts.push("EBT + tax − NCI");
+      else if (Math.abs(bestCalc - (ebt + tax + nci)) <= tol) formParts.push("EBT + tax + NCI");
+      else formParts.push("EBT ± tax ± NCI");
+    } else formParts.push("EBT ± tax");
+
     return [
       {
         statement: "is",
         period,
         check: "Net income vs EBT ± income tax (SEC-style display)",
         ok: delta <= EPS,
-        detail: `${form}: ${calc.toFixed(2)} vs stated net income ${stated.toFixed(2)} (Δ ${delta.toFixed(2)}).`,
+        detail: `${formParts[0]}: ${bestCalc.toFixed(2)} vs stated net income ${stated.toFixed(2)} (Δ ${delta.toFixed(
+          2,
+        )}).`,
       },
     ];
   }

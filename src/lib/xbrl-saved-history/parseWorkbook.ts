@@ -44,8 +44,8 @@ function readMeta(aoa: (string | number | null | undefined)[][]): Partial<Workbo
   };
 }
 
-/** Parse `YYYY-MM-DD` at start or after arrow. */
-function parseIsoDates(label: string): { start: string | null; end: string | null; durationDays: number } {
+/** Parse `YYYY-MM-DD` at start or after arrow (iXBRL / workbook column labels). */
+export function parseIsoDates(label: string): { start: string | null; end: string | null; durationDays: number } {
   const t = String(label).trim();
   const arrow = t.includes("→") || t.includes("->");
   const parts = t.split(/\s*(?:→|->)\s*/).map((s) => s.trim());

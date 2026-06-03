@@ -7,8 +7,8 @@ GAAP filings often show either:
 This module **early** (before ``map_all_facts``) forces separate interest-income
 and interest-expense concepts onto the **same canonical row** as the master
 presentation’s net-interest line when we can detect it.  The consolidator then
-nets within each source file: **expense legs − income legs** so the stored
-number is interest expense **net of** interest income.
+combines the already display-signed values within each source file to produce a
+single net-interest figure.
 """
 from __future__ import annotations
 
@@ -37,6 +37,22 @@ def _norm_label(s: str) -> str:
     s = s.lower()
     s = re.sub(r"[^a-z0-9\s]", " ", s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+def _has_standalone_interest_income_master_row(rows: list) -> bool:
+    for r in rows:
+        loc = _local(r.canonical_row_id)
+        if is_interest_income_leg(loc):
+            return True
+        lab = _norm_label(r.display_label)
+        if (
+            "investment income" in lab
+            or lab == "interest income"
+            or "interest income " in lab
+            or lab.endswith(" interest income")
+        ):
+            return True
+    return False
 
 
 # Already a single combined net line — do not split / remap with netting math
@@ -97,16 +113,21 @@ def find_net_interest_canonical_row(master_rows: list) -> str | None:
     # 2) Label text: "interest … net", "net interest", "interest expense, net"
     for r in is_rows:
         lab = _norm_label(r.display_label)
+        if "noncontrolling interest" in lab or "minority interest" in lab or "net income" in lab:
+            continue
         if "net interest" in lab or "interest expense net" in lab or "interest income expense net" in lab:
             return r.canonical_row_id
         if "interest" in lab and "net" in lab and "tax" not in lab:
             return r.canonical_row_id
 
-    # 3) Generic InterestExpense row (not obviously income-only)
-    for r in is_rows:
-        loc = _local(r.canonical_row_id)
-        if re.search(r"InterestExpense", loc, re.I) and not re.search(r"Income", loc, re.I):
-            return r.canonical_row_id
+    # 3) Generic InterestExpense row only when the master does not already
+    # carry a standalone interest-income line. Otherwise the presentation is
+    # already separate-leg and netting would collapse real rows together.
+    if not _has_standalone_interest_income_master_row(is_rows):
+        for r in is_rows:
+            loc = _local(r.canonical_row_id)
+            if re.search(r"InterestExpense", loc, re.I) and not re.search(r"Income", loc, re.I):
+                return r.canonical_row_id
 
     return None
 
@@ -192,7 +213,8 @@ def try_aggregate_net_interest_row(
     net_interest_crid: str | None,
 ) -> tuple[float | None, bool, str] | None:
     """
-    If *crid* is the net-interest canonical row, combine facts as **expense − income**
+    If *crid* is the net-interest canonical row, combine facts as a single
+    display-signed net-interest value.
     (missing leg treated as 0).  Returns ``(value, was_summed, formula)`` or
     ``None`` to fall back to standard multi-concept resolution.
     """
@@ -215,8 +237,16 @@ def try_aggregate_net_interest_row(
     i = sum(f.value for f in inc_facts if f.value is not None)
 
     if exp_facts or inc_facts:
-        net = e - i
-        note = f"interest_net: expense_sum={e} - income_sum={i}"
+        # Saved SEC XBRL workbooks already store statement-display signs
+        # (expense rows usually negative, income rows positive). Preserve that
+        # convention instead of subtracting already-negative expense values.
+        signed_vals = [f.value for f in non_null if f.value is not None]
+        if signed_vals and any(v < 0 for v in signed_vals):
+            net = sum(signed_vals)
+            note = f"interest_net: signed_sum={net} from values={signed_vals}"
+        else:
+            net = e - i
+            note = f"interest_net: expense_sum={e} - income_sum={i}"
         return net, True, note
 
     return None  # fall back — unrelated concepts on same cell

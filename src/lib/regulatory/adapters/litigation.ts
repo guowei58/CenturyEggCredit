@@ -61,6 +61,9 @@ type PacerSearchResponse = {
   unbilledPageCount?: number | null;
 };
 
+/** Set true to re-enable PACER Case Locator party search (may incur PACER charges). */
+const LITIGATION_PACER_ENABLED = false;
+
 const COURTLISTENER_PAGE_SIZE = 50;
 const COURTLISTENER_MAX_PAGES = 100;
 const PACER_PAGE_SIZE = 54;
@@ -668,7 +671,8 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
   sourceId: "litigation",
   validateConfig: () => {
     const hasCourtListener = Boolean(courtListenerToken());
-    const hasPacer = Boolean(pacerUsername() && pacerPassword());
+    const hasPacer =
+      LITIGATION_PACER_ENABLED && Boolean(pacerUsername() && pacerPassword());
     if (hasCourtListener || hasPacer) {
       return {
         ok: true,
@@ -677,15 +681,14 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
           hasCourtListener && hasPacer
             ? "Using CourtListener / RECAP and PACER Case Locator."
             : hasCourtListener
-              ? "Using CourtListener / RECAP. PACER Case Locator is optional if PACER credentials are added."
+              ? "Using CourtListener / RECAP for federal litigation search."
               : "Using PACER Case Locator only. CourtListener / RECAP is optional if COURTLISTENER_API_TOKEN is added.",
       };
     }
     return {
       ok: false,
       mode: "missing_key",
-      message:
-        "Set COURTLISTENER_API_TOKEN for CourtListener / RECAP search. Optionally add PACER_USERNAME and PACER_PASSWORD for PACER Case Locator coverage.",
+      message: "Set COURTLISTENER_API_TOKEN for CourtListener / RECAP litigation search.",
       envKeyName: "COURTLISTENER_API_TOKEN",
     };
   },
@@ -693,15 +696,20 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
     const q = params.query?.trim();
     if (!q) return { ok: false, error: "Search query required." };
 
-    const [courtListener, pacer] = await Promise.all([searchCourtListener(params), searchPacer(params)]);
+    const courtListener = await searchCourtListener(params);
+    const pacer = LITIGATION_PACER_ENABLED
+      ? await searchPacer(params)
+      : { ok: false as const, warning: undefined, warnings: [] as string[], rows: [] as PacerPartyRow[], requestUrl: undefined, raw: null };
     const retrievedAt = new Date().toISOString();
     const warnings: string[] = [];
     const results: RegulatorySearchResult[] = [];
 
     if (!courtListener.ok && courtListener.warning) warnings.push(courtListener.warning);
     if (courtListener.ok && courtListener.warnings?.length) warnings.push(...courtListener.warnings);
-    if (!pacer.ok && pacer.warning) warnings.push(summarizePacerWarning(pacer.warning));
-    if (pacer.ok && pacer.warnings?.length) warnings.push(...pacer.warnings);
+    if (LITIGATION_PACER_ENABLED) {
+      if (!pacer.ok && pacer.warning) warnings.push(summarizePacerWarning(pacer.warning));
+      if (pacer.ok && pacer.warnings?.length) warnings.push(...pacer.warnings);
+    }
 
     if (courtListener.ok) {
       for (const row of courtListener.rows) {
@@ -741,7 +749,7 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
       }
     }
 
-    if (pacer.ok) {
+    if (LITIGATION_PACER_ENABLED && pacer.ok) {
       const pageInfo = (pacer.raw as { pageInfo?: Record<string, unknown> } | null)?.pageInfo ?? {};
       const totalPages = Number(pageInfo.totalPages ?? 0);
       const totalElements = Number(pageInfo.totalElements ?? 0);
@@ -811,10 +819,6 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
           ? warnings
           : ["No litigation matches were returned. Try a different legal-entity name, affiliate name, or narrower company variant."],
       };
-    }
-
-    if (courtListener.ok) {
-      warnings.push("CourtListener / RECAP coverage is strongest where PACER data has been collected into RECAP; it is not a complete substitute for PACER.");
     }
 
     return {

@@ -1,0 +1,13 @@
+{
+  "ticker": "AMC",
+  "checked": 50,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-08-08",
+    "form": "10-Q",
+    "accessionNumber": "0001411579-19-000047"
+  },
+  "failures": []
+}

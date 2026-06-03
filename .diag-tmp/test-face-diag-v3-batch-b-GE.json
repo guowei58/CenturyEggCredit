@@ -1,0 +1,3002 @@
+{
+  "ticker": "GE",
+  "checked": 80,
+  "suspicious": 80,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-07-31",
+    "form": "10-Q",
+    "accessionNumber": "0000040545-19-000053"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0000040545-26-000027",
+      "filingDate": "2026-04-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2026",
+            "December 31, 2025"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)",
+            "Current assets"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2026",
+            "Three months ended March 31 2025"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 6)",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 44,
+          "numericCells": 81,
+          "taggedCells": 81,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-26-000008",
+      "filingDate": "2026-01-29",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2025",
+            "2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2025",
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 6)",
+            "Amortization of intangible assets (Note 7)",
+            "Goodwill impairments (Note 7)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 77,
+          "taggedCells": 77,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 52,
+          "numericCells": 137,
+          "taggedCells": 137,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 49,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000132",
+      "filingDate": "2025-10-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 14 untagged numeric cell(s) across primary statements (78/92 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "September 30, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2025",
+            "2024"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "(Gains) losses on purchases and sales of business interests",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000111",
+      "filingDate": "2025-07-21",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2025",
+            "Six months ended June 30 2024"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 47,
+          "numericCells": 86,
+          "taggedCells": 86,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000062",
+      "filingDate": "2025-04-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2025",
+            "Three months ended March 31 2024"
+          ],
+          "firstRows": [
+            "Net income (loss)",
+            "Net (income) loss from discontinued operations activities",
+            "Adjustments to reconcile net income (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 39,
+          "numericCells": 78,
+          "taggedCells": 78,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 46,
+          "numericCells": 84,
+          "taggedCells": 84,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 29,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-25-000015",
+      "filingDate": "2025-02-03",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023",
+            "2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "Goodwill impairments (Note 7)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 142,
+          "taggedCells": 142,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 52,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000200",
+      "filingDate": "2024-10-22",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 14 untagged numeric cell(s) across primary statements (0/14 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "(Gains) losses on purchases and sales of business interests",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000176",
+      "filingDate": "2024-07-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2024",
+            "Six months ended June 30 2023"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on equity securities (Note 18)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 89,
+          "taggedCells": 89,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 28,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000113",
+      "filingDate": "2024-04-23",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 14 untagged numeric cell(s) across primary statements (0/14 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2024",
+            "2023"
+          ],
+          "firstRows": [
+            "Increase (decrease) in employee benefit liabilities",
+            "Increase (decrease) in Aerospace-related customer allowance accruals",
+            "Net interest and other financial charges/(cash paid)",
+            "Other deferred assets",
+            "Net restructuring and other charges/(cash expenditures)",
+            "Other"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 7,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-24-000027",
+      "filingDate": "2024-02-02",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2023",
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities:",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests (Note 19)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 146,
+          "taggedCells": 146,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 57,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000238",
+      "filingDate": "2023-10-24",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 2023",
+            "Nine months ended September 30 2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests (Note 19)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 92,
+          "taggedCells": 92,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 34,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000198",
+      "filingDate": "2023-07-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2023",
+            "Six months ended June 30 2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 48,
+          "numericCells": 89,
+          "taggedCells": 89,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 32,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000136",
+      "filingDate": "2023-04-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2023",
+            "Three months ended March 31 2022"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "(Gains) losses on purchases and sales of business interests"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 48,
+          "numericCells": 90,
+          "taggedCells": 90,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 33,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-23-000023",
+      "filingDate": "2023-02-10",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2022",
+            "2021",
+            "2020"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations activities",
+            "Adjustments to reconcile net earnings (loss) to cash from (used for) operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets (Note 7)",
+            "Goodwill impairments (Note 7)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 55,
+          "numericCells": 151,
+          "taggedCells": 151,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 60,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000060",
+      "filingDate": "2022-10-25",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "cash-flow: 15 numeric cell(s) missing inline XBRL tags (0/15 tagged)",
+        "inline XBRL filing: 15 untagged numeric cell(s) across primary statements (0/15 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2022",
+            "2021"
+          ],
+          "firstRows": [
+            "Increase (decrease) in Aerospace-related customer allowance accruals",
+            "Net interest and other financial charges/(cash paid)",
+            "Increase (decrease) in employee benefit liabilities",
+            "Net restructuring and other charges/(cash expenditures)",
+            "Decrease in factoring related liabilities",
+            "Cash settlement of Alstom legacy legal matter"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 8,
+          "numericCells": 15,
+          "taggedCells": 0,
+          "untaggedNumericCells": 15,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000050",
+      "filingDate": "2022-07-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "cash-flow: 20 numeric cell(s) missing inline XBRL tags (0/20 tagged)",
+        "inline XBRL filing: 20 untagged numeric cell(s) across primary statements (0/20 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 2022",
+            "Six months ended June 30 2021",
+            "Six months ended June 30 V$"
+          ],
+          "firstRows": [
+            "CFOA (GAAP)",
+            "Less: Insurance CFOA 55",
+            "CFOA excluding Insurance (Non-GAAP)",
+            "Add: gross additions to property, plant and equipment (660)",
+            "Add: gross additions to internal-use software (48)",
+            "Less: separation costs cash expenditures (22)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 11,
+          "numericCells": 20,
+          "taggedCells": 0,
+          "untaggedNumericCells": 20,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000027",
+      "filingDate": "2022-04-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1",
+        "cash-flow: 14 numeric cell(s) missing inline XBRL tags (0/14 tagged)",
+        "inline XBRL filing: 14 untagged numeric cell(s) across primary statements (0/14 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 2022",
+            "Three months ended March 31 2021"
+          ],
+          "firstRows": [
+            "CFOA (GAAP)",
+            "Less: Insurance CFOA (15)",
+            "CFOA excluding Insurance (Non-GAAP)",
+            "Add: gross additions to property, plant and equipment (340)",
+            "Add: gross additions to internal-use software (23)",
+            "Less: separation costs cash expenditures (3)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 9,
+          "numericCells": 14,
+          "taggedCells": 0,
+          "untaggedNumericCells": 14,
+          "cellsWithSignMismatch": 0,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 50
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-22-000008",
+      "filingDate": "2022-02-11",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "2021",
+            "2020"
+          ],
+          "firstRows": [
+            "Cash, cash equivalents and restricted cash(a)",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories, including deferred inventory costs (Note 5)",
+            "Current contract assets (Note 8)",
+            "All other current assets (Note 9)"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "2021",
+            "2020",
+            "2019"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings (loss)",
+            "to cash provided from operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Amortization of intangible assets"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 38,
+          "numericCells": 76,
+          "taggedCells": 76,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 2,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 55,
+          "numericCells": 151,
+          "taggedCells": 151,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 57,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-21-000064",
+      "filingDate": "2021-10-26",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000052",
+      "filingDate": "2021-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000026",
+      "filingDate": "2021-04-27",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-21-000011",
+      "filingDate": "2021-02-12",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Consolidated 2020",
+            "Consolidated 2019",
+            "Consolidated 2018"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings (loss) to cash provided from operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 7)",
+            "Amortization of intangible assets (Note 8)",
+            "Goodwill impairments (Note 8)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 54,
+          "numericCells": 144,
+          "taggedCells": 144,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 50,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-20-000058",
+      "filingDate": "2020-10-28",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000046",
+      "filingDate": "2020-07-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000021",
+      "filingDate": "2020-04-29",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-20-000009",
+      "filingDate": "2020-02-24",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Consolidated 2019",
+            "Consolidated 2018",
+            "Consolidated 2017"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings (loss) to cash provided from operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 7)",
+            "Amortization of intangible assets (Note 8)",
+            "Goodwill impairments (Note 8)"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "cash-flow",
+          "rowCount": 52,
+          "numericCells": 141,
+          "taggedCells": 141,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 44,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-19-000069",
+      "filingDate": "2019-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000053",
+      "filingDate": "2019-07-31",
+      "form": "10-Q",
+      "isInlineXbrl": true,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": [],
+      "extractionQa": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000024",
+      "filingDate": "2019-04-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-19-000014",
+      "filingDate": "2019-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Companyand consolidated affiliates 2018",
+            "General Electric Companyand consolidated affiliates 2017",
+            "General Electric Companyand consolidated affiliates 2016"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings (loss) to cash provided from operating activities:",
+            "Depreciation and amortization of property, plant and equipment (Note 7)",
+            "Amortization of intangible assets (Note 8)",
+            "Goodwill impairments (Note 8)"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-18-000081",
+      "filingDate": "2018-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000061",
+      "filingDate": "2018-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000032",
+      "filingDate": "2018-05-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-18-000014",
+      "filingDate": "2018-02-23",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Companyand consolidated affiliates 2017",
+            "General Electric Companyand consolidated affiliates 2016",
+            "General Electric Companyand consolidated affiliates 2015"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings (loss) attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the Company to cash provided from operating activities:",
+            "Depreciation and amortization of property, plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-17-000073",
+      "filingDate": "2017-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000053",
+      "filingDate": "2017-07-28",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000028",
+      "filingDate": "2017-05-05",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-17-000010",
+      "filingDate": "2017-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "STATEMENT OF CASH FLOWS General Electric Company and consolidated affiliates 2016",
+            "STATEMENT OF CASH FLOWS General Electric Company and consolidated affiliates 2015",
+            "STATEMENT OF CASH FLOWS General Electric Company and consolidated affiliates 2014"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings (loss) attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities:"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-16-000195",
+      "filingDate": "2016-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000174",
+      "filingDate": "2016-08-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000152",
+      "filingDate": "2016-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-16-000145",
+      "filingDate": "2016-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "cash-flow",
+          "periods": [
+            "STATEMENT OF CASH FLOWS General Electric Company and consolidated affiliates 2015",
+            "STATEMENT OF CASH FLOWS General Electric Company and consolidated affiliates 2014",
+            "STATEMENT OF CASH FLOWS General Electric Company and consolidated affiliates 2013"
+          ],
+          "firstRows": [
+            "Net earnings (loss)",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings (loss) attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities:"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-15-000114",
+      "filingDate": "2015-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000088",
+      "filingDate": "2015-07-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000054",
+      "filingDate": "2015-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-15-000030",
+      "filingDate": "2015-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "STATEMENT OF FINANCIAL POSITION General Electric Company and consolidated affiliates 2014",
+            "STATEMENT OF FINANCIAL POSITION General Electric Company and consolidated affiliates 2013"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Note 6 and 27)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2014",
+            "General Electric Company and consolidated affiliates 2013",
+            "General Electric Company and consolidated affiliates 2012"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-14-000049",
+      "filingDate": "2014-11-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates Condensed Statement of Financial Position Consolidated September 30, 2014 (Unaudited)",
+            "General Electric Company and consolidated affiliates Condensed Statement of Financial Position Consolidated December 31, 2013",
+            "General Electric Company and consolidated affiliates Condensed Statement of Financial Position GE(a) September 30, 2014 (Unaudited)",
+            "General Electric Company and consolidated affiliates Condensed Statement of Financial Position GE(a) December 31, 2013",
+            "General Electric Company and consolidated affiliates Condensed Statement of Financial Position Financial Services (GECC) September 30, 2014 (Unaudited)",
+            "General Electric Company and consolidated affiliates Condensed Statement of Financial Position Financial Services (GECC) December 31, 2013"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables",
+            "Inventories (Note 4)",
+            "Financing receivables – net (Note 5 and 18)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates Condensed Statement of Cash Flows Nine months ended September 30 (Unaudited) Consolidated 2014",
+            "General Electric Company and consolidated affiliates Condensed Statement of Cash Flows Nine months ended September 30 (Unaudited) Consolidated 2013",
+            "General Electric Company and consolidated affiliates Condensed Statement of Cash Flows Nine months ended September 30 (Unaudited) GE(a) 2014",
+            "General Electric Company and consolidated affiliates Condensed Statement of Cash Flows Nine months ended September 30 (Unaudited) GE(a) 2013",
+            "General Electric Company and consolidated affiliates Condensed Statement of Cash Flows Nine months ended September 30 (Unaudited) Financial Services (GECC) 2014",
+            "General Electric Company and consolidated affiliates Condensed Statement of Cash Flows Nine months ended September 30 (Unaudited) Financial Services (GECC) 2013"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-14-000034",
+      "filingDate": "2014-07-31",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2014 (Unaudited)",
+            "Consolidated December 31, 2013",
+            "GE(a) June 30, 2014 (Unaudited)",
+            "GE(a) December 31, 2013",
+            "Financial Services (GECC) June 30, 2014 (Unaudited)",
+            "Financial Services (GECC) December 31, 2013"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables",
+            "Inventories (Note 4)",
+            "Financing receivables – net (Note 5 and 18)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2014",
+            "Six months ended June 30 (Unaudited) Consolidated 2013",
+            "Six months ended June 30 (Unaudited) GE(a) 2014",
+            "Six months ended June 30 (Unaudited) GE(a) 2013",
+            "Six months ended June 30 (Unaudited) Financial Services (GECC) 2014",
+            "Six months ended June 30 (Unaudited) Financial Services (GECC) 2013"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040554-14-000061",
+      "filingDate": "2014-05-12",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated March 31, 2014 (Unaudited)",
+            "Consolidated December 31, 2013",
+            "GE(a) March 31, 2014 (Unaudited)",
+            "GE(a) December 31, 2013",
+            "Financial Services (GECC) March 31, 2014 (Unaudited)",
+            "Financial Services (GECC) December 31, 2013"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2014",
+            "Three months ended March 31 (Unaudited) Consolidated 2013",
+            "Three months ended March 31 (Unaudited) GE(a) 2014",
+            "Three months ended March 31 (Unaudited) GE(a) 2013",
+            "Three months ended March 31 (Unaudited) Financial Services (GECC) 2014",
+            "Three months ended March 31 (Unaudited) Financial Services (GECC) 2013"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less: net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040554-14-000023",
+      "filingDate": "2014-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2013",
+            "General Electric Company and consolidated affiliates 2012"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Note 6)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2013",
+            "General Electric Company and consolidated affiliates 2012",
+            "General Electric Company and consolidated affiliates 2011"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-13-000092",
+      "filingDate": "2013-11-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated September 30, 2013 (Unaudited)",
+            "Consolidated December 31, 2012",
+            "GE(a) September 30, 2013 (Unaudited)",
+            "GE(a) December 31, 2012",
+            "Financial Services (GECC) September 30, 2013 (Unaudited)",
+            "Financial Services (GECC) December 31, 2012"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30, (Unaudited) Consolidated 2013",
+            "Nine months ended September 30, (Unaudited) Consolidated 2012",
+            "Nine months ended September 30, (Unaudited) GE(a) 2013",
+            "Nine months ended September 30, (Unaudited) GE(a) 2012",
+            "Nine months ended September 30, (Unaudited) Financial Services (GECC) 2013",
+            "Nine months ended September 30, (Unaudited) Financial Services (GECC) 2012"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-13-000075",
+      "filingDate": "2013-07-26",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2013 (Unaudited)",
+            "Consolidated December 31, 2012",
+            "GE(a) June 30, 2013 (Unaudited)",
+            "GE(a) December 31, 2012",
+            "Financial Services (GECC) June 30, 2013 (Unaudited)",
+            "Financial Services (GECC) December 31, 2012"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2013",
+            "Six months ended June 30 (Unaudited) Consolidated 2012",
+            "Six months ended June 30 (Unaudited) GE(a) 2013",
+            "Six months ended June 30 (Unaudited) GE(a) 2012",
+            "Six months ended June 30 (Unaudited) Financial Services (GECC) 2013",
+            "Six months ended June 30 (Unaudited) Financial Services (GECC) 2012"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-13-000057",
+      "filingDate": "2013-05-08",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated March 31, 2013 (Unaudited)",
+            "Consolidated December 31, 2012",
+            "GE(a) March 31, 2013 (Unaudited)",
+            "GE(a) December 31, 2012",
+            "Financial Services (GECC) March 31, 2013 (Unaudited)",
+            "Financial Services (GECC) December 31, 2012"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2013",
+            "Three months ended March 31 (Unaudited) Consolidated 2012",
+            "Three months ended March 31 (Unaudited) GE(a) 2013",
+            "Three months ended March 31 (Unaudited) GE(a) 2012",
+            "Three months ended March 31 (Unaudited) Financial Services (GECC) 2013",
+            "Three months ended March 31 (Unaudited) Financial Services (GECC) 2012"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-13-000036",
+      "filingDate": "2013-02-26",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2012",
+            "General Electric Company and consolidated affiliates 2011"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Notes 6 and 23)",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2012",
+            "General Electric Company and consolidated affiliates 2011",
+            "General Electric Company and consolidated affiliates 2010"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-12-000088",
+      "filingDate": "2012-11-07",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated September 30, 2012 (Unaudited)",
+            "Consolidated December 31, 2011",
+            "GE(a) September 30, 2012 (Unaudited)",
+            "GE(a) December 31, 2011",
+            "Financial Services (GECC) September 30, 2012 (Unaudited)",
+            "Financial Services (GECC) December 31, 2011"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2012",
+            "Nine months ended September 30 (Unaudited) Consolidated 2011",
+            "Nine months ended September 30 (Unaudited) GE(a) 2012",
+            "Nine months ended September 30 (Unaudited) GE(a) 2011",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECC) 2012",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECC) 2011"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-12-000071",
+      "filingDate": "2012-07-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2012 (Unaudited)",
+            "Consolidated December 31, 2011",
+            "GE(a) June 30, 2012 (Unaudited)",
+            "GE(a) December 31, 2011",
+            "Financial Services (GECC) June 30, 2012 (Unaudited)",
+            "Financial Services (GECC) December 31, 2011"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2012",
+            "Six months ended June 30 (Unaudited) Consolidated 2011",
+            "Six months ended June 30 (Unaudited) GE(a) 2012",
+            "Six months ended June 30 (Unaudited) GE(a) 2011",
+            "Six months ended June 30 (Unaudited) Financial Services (GECC) 2012",
+            "Six months ended June 30 (Unaudited) Financial Services (GECC) 2011"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-12-000037",
+      "filingDate": "2012-05-04",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated March 31, 2012 (Unaudited)",
+            "Consolidated December 31, 2011",
+            "GE(a) March 31, 2012 (Unaudited)",
+            "GE(a) December 31, 2011",
+            "Financial Services (GECC) March 31, 2012 (Unaudited)",
+            "Financial Services (GECC) December 31, 2011"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECC receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2012",
+            "Three months ended March 31 (Unaudited) Consolidated 2011",
+            "Three months ended March 31 (Unaudited) GE(a) 2012",
+            "Three months ended March 31 (Unaudited) GE(a) 2011",
+            "Three months ended March 31 (Unaudited) Financial Services (GECC) 2012",
+            "Three months ended March 31 (Unaudited) Financial Services (GECC) 2011"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-12-000016",
+      "filingDate": "2012-02-24",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2011",
+            "General Electric Company and consolidated affiliates 2010"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Notes 6 and 23)",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2011",
+            "General Electric Company and consolidated affiliates 2010",
+            "General Electric Company and consolidated affiliates 2009"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-11-000058",
+      "filingDate": "2011-11-08",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated September 30, 2011 (Unaudited)",
+            "Consolidated December 31, 2010",
+            "GE(a) September 30, 2011 (Unaudited)",
+            "GE(a) December 31, 2010",
+            "Financial Services (GECS) September 30, 2011 (Unaudited)",
+            "Financial Services (GECS) December 31, 2010"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2011",
+            "Nine months ended September 30 (Unaudited) Consolidated 2010",
+            "Nine months ended September 30 (Unaudited) GE(a) 2011",
+            "Nine months ended September 30 (Unaudited) GE(a) 2010",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2011",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2010"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings (loss) attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-11-000047",
+      "filingDate": "2011-07-29",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2011 (Unaudited)",
+            "Consolidated December 31, 2010",
+            "GE(a) June 30, 2011 (Unaudited)",
+            "GE(a) December 31, 2010",
+            "Financial Services (GECS) June 30, 2011 (Unaudited)",
+            "Financial Services (GECS) December 31, 2010"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2011",
+            "Six months ended June 30 (Unaudited) Consolidated 2010",
+            "Six months ended June 30 (Unaudited) GE(a) 2011",
+            "Six months ended June 30 (Unaudited) GE(a) 2010",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2011",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2010"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-11-000032",
+      "filingDate": "2011-05-06",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated March 31, 2011 (Unaudited)",
+            "Consolidated December 31, 2010",
+            "GE(a) March 31, 2011 (Unaudited)",
+            "GE(a) December 31, 2010",
+            "Financial Services (GECS) March 31, 2011 (Unaudited)",
+            "Financial Services (GECS) December 31, 2010"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2011",
+            "Three months ended March 31 (Unaudited) Consolidated 2010",
+            "Three months ended March 31 (Unaudited) GE(a) 2011",
+            "Three months ended March 31 (Unaudited) GE(a) 2010",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2011",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2010"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-11-047479",
+      "filingDate": "2011-02-25",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2010",
+            "General Electric Company and consolidated affiliates 2009"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Notes 6 and 23)",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2010",
+            "General Electric Company and consolidated affiliates 2009",
+            "General Electric Company and consolidated affiliates 2008"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "(Earnings) loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the Company to cash provided from operating activities",
+            "Depreciation and amortization of property, plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-10-246292",
+      "filingDate": "2010-11-03",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated September 30,2010 (Unaudited)",
+            "Consolidated December 31,2009",
+            "GE(a) September 30,2010 (Unaudited)",
+            "GE(a) December 31,2009",
+            "Financial Services (GECS) September 30,2010 (Unaudited)",
+            "Financial Services (GECS) December 31,2009"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2010",
+            "Nine months ended September 30 (Unaudited) Consolidated 2009",
+            "Nine months ended September 30 (Unaudited) GE(a) 2010",
+            "Nine months ended September 30 (Unaudited) GE(a) 2009",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2010",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2009"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the Company to cash provided from operating activities",
+            "Depreciation and amortization of property, plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-10-173396",
+      "filingDate": "2010-08-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2010 (Unaudited)",
+            "Consolidated December 31, 2009",
+            "GE(a) June 30, 2010 (Unaudited)",
+            "GE(a) December 31, 2009",
+            "Financial Services (GECS) June 30, 2010 (Unaudited)",
+            "Financial Services (GECS) December 31, 2009"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2010",
+            "Six months ended June 30 (Unaudited) Consolidated 2009",
+            "Six months ended June 30 (Unaudited) GE(a) 2010",
+            "Six months ended June 30 (Unaudited) GE(a) 2009",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2010",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2009"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the Company to cash provided from operating activities",
+            "Depreciation and amortization of property, plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-10-000042",
+      "filingDate": "2010-05-07",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated March 31, 2010 (Unaudited)",
+            "Consolidated December 31, 2009",
+            "GE(a) March 31, 2010 (Unaudited)",
+            "GE(a) December 31, 2009",
+            "Financial Services (GECS) March 31, 2010 (Unaudited)",
+            "Financial Services (GECS) December 31, 2009"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2010",
+            "Three months ended March 31 (Unaudited) Consolidated 2009",
+            "Three months ended March 31 (Unaudited) GE(a) 2010",
+            "Three months ended March 31 (Unaudited) GE(a) 2009",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2010",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2009"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-10-000010",
+      "filingDate": "2010-02-19",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2009",
+            "General Electric Company and consolidated affiliates 2008"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 3)",
+            "Current receivables (Note 4)",
+            "Inventories (Note 5)",
+            "Financing receivables – net (Note 6)",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2009",
+            "General Electric Company and consolidated affiliates 2008",
+            "General Electric Company and consolidated affiliates 2007"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Less net earnings attributable to noncontrolling interests",
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-09-000071",
+      "filingDate": "2009-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated September 30, 2009 (Unaudited)",
+            "Consolidated December 31, 2008",
+            "GE(a) September 30, 2009 (Unaudited)",
+            "GE(a) December 31, 2008",
+            "Financial Services (GECS) September 30, 2009 (Unaudited)",
+            "Financial Services (GECS) December 31, 2008"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2009",
+            "Nine months ended September 30 (Unaudited) Consolidated 2008",
+            "Nine months ended September 30 (Unaudited) GE(a) 2009",
+            "Nine months ended September 30 (Unaudited) GE(a) 2008",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2009",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2008"
+          ],
+          "firstRows": [
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-09-000049",
+      "filingDate": "2009-08-03",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2009 (Unaudited)",
+            "Consolidated December 31, 2008",
+            "GE(a) June 30, 2009 (Unaudited)",
+            "GE(a) December 31, 2008",
+            "Financial Services (GECS) June 30, 2009 (Unaudited)",
+            "Financial Services (GECS) December 31, 2008"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2009",
+            "Six months ended June 30 (Unaudited) Consolidated 2008",
+            "Six months ended June 30 (Unaudited) GE(a) 2009",
+            "Six months ended June 30 (Unaudited) GE(a) 2008",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2009",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2008"
+          ],
+          "firstRows": [
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000797463-09-000018",
+      "filingDate": "2009-05-01",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated March 31, 2009 (Unaudited)",
+            "Consolidated December 31, 2008",
+            "GE(a) March 31, 2009 (Unaudited)",
+            "GE(a) December 31, 2008",
+            "Financial Services (GECS) March 31, 2009 (Unaudited)",
+            "Financial Services (GECS) December 31, 2008"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2009",
+            "Three months ended March 31 (Unaudited) Consolidated 2008",
+            "Three months ended March 31 (Unaudited) GE(a) 2009",
+            "Three months ended March 31 (Unaudited) GE(a) 2008",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2009",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2008"
+          ],
+          "firstRows": [
+            "Net earnings attributable to the Company",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings attributable to the",
+            "Company to cash provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-09-000012",
+      "filingDate": "2009-02-18",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2008",
+            "General Electric Company and consolidated affiliates 2007"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities (Note 9)",
+            "Current receivables (Note 10)",
+            "Inventories (Note 11)",
+            "Financing receivables – net (Notes 12 and 13)",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "General Electric Company and consolidated affiliates 2008",
+            "General Electric Company and consolidated affiliates 2007",
+            "General Electric Company and consolidated affiliates 2006"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss (earnings) from discontinued operations",
+            "Adjustments to reconcile net earnings to cash provided",
+            "from operating activities",
+            "Depreciation and amortization of property, plant and equipment",
+            "Earnings from continuing operations retained by GECS"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000059",
+      "filingDate": "2008-10-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated September 30, 2008 (Unaudited)",
+            "Consolidated December 31, 2007",
+            "GE(a) September 30, 2008 (Unaudited)",
+            "GE(a) December 31, 2007",
+            "Financial Services (GECS) September 30, 2008 (Unaudited)",
+            "Financial Services (GECS) December 31, 2007"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2008",
+            "Nine months ended September 30 (Unaudited) Consolidated 2007",
+            "Nine months ended September 30 (Unaudited) GE(a) 2008",
+            "Nine months ended September 30 (Unaudited) GE(a) 2007",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2008",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2007"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000033",
+      "filingDate": "2008-07-25",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated June 30, 2008 (Unaudited)",
+            "Consolidated December 31, 2007",
+            "GE(a) June 30, 2008 (Unaudited)",
+            "GE(a) December 31, 2007",
+            "Financial Services (GECS) June 30, 2008 (Unaudited)",
+            "Financial Services (GECS) December 31, 2007"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables – net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2008",
+            "Six months ended June 30 (Unaudited) Consolidated 2007",
+            "Six months ended June 30 (Unaudited) GE(a) 2008",
+            "Six months ended June 30 (Unaudited) GE(a) 2007",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2008",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2007"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000015",
+      "filingDate": "2008-04-25",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 3/31/08",
+            "Consolidated 12/31/07",
+            "GE 3/31/08",
+            "GE 12/31/07",
+            "Financial Services (GECS) 3/31/08",
+            "Financial Services (GECS) 12/31/07"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables - net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2008",
+            "Three months ended March 31 (Unaudited) Consolidated 2007",
+            "Three months ended March 31 (Unaudited) GE 2008",
+            "Three months ended March 31 (Unaudited) GE 2007",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2008",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2007"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-08-000011",
+      "filingDate": "2008-02-20",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-07-000051",
+      "filingDate": "2007-11-02",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 9/30/07",
+            "Consolidated 12/31/06",
+            "GE 9/30/07",
+            "GE 12/31/06",
+            "Financial Services (GECS) 9/30/07",
+            "Financial Services (GECS) 12/31/06"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables - net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2007",
+            "Nine months ended September 30 (Unaudited) Consolidated 2006",
+            "Nine months ended September 30 (Unaudited) GE 2007",
+            "Nine months ended September 30 (Unaudited) GE 2006",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2007",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2006"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss (earnings) from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-07-000039",
+      "filingDate": "2007-07-27",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 6/30/07",
+            "Consolidated 12/31/06",
+            "GE 6/30/07",
+            "GE 12/31/06",
+            "Financial Services (GECS) 6/30/07",
+            "Financial Services (GECS) 12/31/06"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables - net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2007",
+            "Six months ended June 30 (Unaudited) Consolidated 2006",
+            "Six months ended June 30 (Unaudited) GE 2007",
+            "Six months ended June 30 (Unaudited) GE 2006",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2007",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2006"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss (earnings) from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-07-000022",
+      "filingDate": "2007-04-27",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 3/31/07",
+            "Consolidated 12/31/06",
+            "GE 3/31/07",
+            "GE 12/31/06",
+            "Financial Services (GECS) 3/31/07",
+            "Financial Services (GECS) 12/31/06"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables - net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Three months ended March 31 (Unaudited) Consolidated 2007",
+            "Three months ended March 31 (Unaudited) Consolidated 2006",
+            "Three months ended March 31 (Unaudited) GE 2007",
+            "Three months ended March 31 (Unaudited) GE 2006",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2007",
+            "Three months ended March 31 (Unaudited) Financial Services (GECS) 2006"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Loss (earnings) from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-07-000017",
+      "filingDate": "2007-02-27",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0000040545-06-000054",
+      "filingDate": "2006-10-31",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 9/30/06",
+            "Consolidated 12/31/05",
+            "GE 9/30/06",
+            "GE 12/31/05",
+            "Financial Services (GECS) 9/30/06",
+            "Financial Services (GECS) 12/31/05"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables - net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Nine months ended September 30 (Unaudited) Consolidated 2006",
+            "Nine months ended September 30 (Unaudited) Consolidated 2005",
+            "Nine months ended September 30 (Unaudited) GE 2006",
+            "Nine months ended September 30 (Unaudited) GE 2005",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2006",
+            "Nine months ended September 30 (Unaudited) Financial Services (GECS) 2005"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Earnings from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0000040545-06-000025",
+      "filingDate": "2006-07-24",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "Consolidated 6/30/06",
+            "Consolidated 12/31/05",
+            "GE 6/30/06",
+            "GE 12/31/05",
+            "Financial Services (GECS) 6/30/06",
+            "Financial Services (GECS) 12/31/05"
+          ],
+          "firstRows": [
+            "Cash and equivalents",
+            "Investment securities",
+            "Current receivables",
+            "Inventories",
+            "Financing receivables - net",
+            "Other GECS receivables"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Six months ended June 30 (Unaudited) Consolidated 2006",
+            "Six months ended June 30 (Unaudited) Consolidated 2005",
+            "Six months ended June 30 (Unaudited) GE 2006",
+            "Six months ended June 30 (Unaudited) GE 2005",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2006",
+            "Six months ended June 30 (Unaudited) Financial Services (GECS) 2005"
+          ],
+          "firstRows": [
+            "Net earnings",
+            "Earnings from discontinued operations",
+            "Adjustments to reconcile net earnings to cash",
+            "provided from operating activities",
+            "Depreciation and amortization of property,",
+            "plant and equipment"
+          ]
+        }
+      ]
+    }
+  ]
+}

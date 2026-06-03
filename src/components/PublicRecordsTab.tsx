@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import DOMPurify from "dompurify";
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
@@ -28,6 +28,11 @@ import { EnvironmentalComplianceDiscoveryPanel } from "@/components/entityUniver
 import { EntityUniverseAffiliateDiscoveryPage, type EntityUniversePublicRecordsSubsidiaries } from "@/components/entityUniverse/EntityUniverseAffiliateDiscoveryPage";
 import { LicensesRegulatoryDiscoveryPanel } from "@/components/entityUniverse/LicensesRegulatoryDiscoveryPanel";
 import { ProcurementContractsDiscoveryPanel } from "@/components/entityUniverse/ProcurementContractsDiscoveryPanel";
+import {
+  PLACEHOLDER_COMPANY_DISPLAY_NAME,
+  PLACEHOLDER_DEFAULT_TICKER,
+  PLACEHOLDER_FICTIONAL_ADDRESS_LINE,
+} from "@/data/mock";
 
 const AUTOSAVE_DEBOUNCE_MS = 900;
 
@@ -105,6 +110,40 @@ type Profile = {
   subsidiaryExhibit21Snapshot?: unknown;
   notes: string | null;
 };
+
+function withPlaceholderPublicRecordsDefaults(tickerSym: string, row: Profile): Profile {
+  if (tickerSym !== PLACEHOLDER_DEFAULT_TICKER) return row;
+  return {
+    ...row,
+    companyName: (row.companyName ?? "").trim() || PLACEHOLDER_COMPANY_DISPLAY_NAME,
+    principalExecutiveOfficeAddress:
+      (row.principalExecutiveOfficeAddress ?? "").trim() || PLACEHOLDER_FICTIONAL_ADDRESS_LINE,
+    stateOfIncorporation:
+      (row.stateOfIncorporation ?? "").trim() || PLACEHOLDER_FICTIONAL_ADDRESS_LINE,
+  };
+}
+
+/** Signed-out / profile API unavailable — still show the fictional issuer fields locally. */
+function offlinePlaceholderProfileDraft(tickerSym: string): Partial<Profile> {
+  return {
+    ticker: tickerSym,
+    companyName: PLACEHOLDER_COMPANY_DISPLAY_NAME,
+    principalExecutiveOfficeAddress: PLACEHOLDER_FICTIONAL_ADDRESS_LINE,
+    stateOfIncorporation: PLACEHOLDER_FICTIONAL_ADDRESS_LINE,
+    legalNames: [],
+    formerNames: [],
+    dbaNames: [],
+    subsidiaryNames: [],
+    subsidiaryDomiciles: [],
+    borrowerNames: [],
+    guarantorNames: [],
+    issuerNames: [],
+    restrictedSubsidiaryNames: [],
+    unrestrictedSubsidiaryNames: [],
+    parentCompanyNames: [],
+    operatingCompanyNames: [],
+  };
+}
 
 type ChecklistRow = {
   id: string;
@@ -434,11 +473,11 @@ function PublicRecordsProfileCard({
         </button>
       }
     >
-      {ingestFeedback ? (
+      {ingestFeedback?.kind === "err" ? (
         <p
           className="mb-3 text-[10px] leading-snug"
-          style={{ color: ingestFeedback.kind === "err" ? "var(--danger)" : "var(--muted)" }}
-          role={ingestFeedback.kind === "err" ? "alert" : "status"}
+          style={{ color: "var(--danger)" }}
+          role="alert"
         >
           {ingestFeedback.text}
         </p>
@@ -555,9 +594,6 @@ function PublicRecordsProfileCard({
       <div className="mt-4 space-y-2">
         <label className="mb-1 flex flex-col gap-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
           Properties
-          <span className="text-[9px] font-normal normal-case leading-snug" style={{ color: "var(--muted2)" }}>
-            Latest 10-K `Part I, Item 2` section when the filing exposes a usable Properties section.
-          </span>
         </label>
         <div className="rounded border border-[var(--border)] bg-[var(--card)] p-3">
           {propertiesSection ? (
@@ -579,14 +615,14 @@ function PublicRecordsProfileCard({
                 {safePropertiesHtml ? (
                   <div className="overflow-x-auto rounded border border-[var(--border)] bg-[var(--panel)]">
                     <div
-                      className="saved-html-content sec-debt-footnote-html min-w-0 max-h-[24rem] overflow-y-auto p-3 text-[12px] leading-snug text-[var(--text)]"
+                      className="saved-html-content sec-debt-footnote-html sec-profile-properties-html min-w-0 max-h-[24rem] overflow-y-auto p-3 font-mono text-[11px] text-[var(--text)]"
                       // eslint-disable-next-line react/no-danger
                       dangerouslySetInnerHTML={{ __html: safePropertiesHtml }}
                     />
                   </div>
                 ) : (
                   <div
-                    className="whitespace-pre-wrap rounded border border-[var(--border)] bg-[var(--panel)] p-3 text-[11px] leading-relaxed text-[var(--text)]"
+                    className="whitespace-pre-wrap rounded border border-[var(--border)] bg-[var(--panel)] p-3 font-mono text-[11px] text-[var(--text)]"
                   >
                     {propertiesSection.text}
                   </div>
@@ -810,21 +846,22 @@ export function PublicRecordsTab({
     try {
       /** Overview → Public Records Profile only needs saved profile—not findings/registry APIs. */
       if (profileOnly) {
-        const pRes = await fetch(`${base}/profile?companyName=${encodeURIComponent(companyName ?? "")}`, {
+        const pRes = await fetch(`${base}/profile`, {
           credentials: "same-origin",
         });
         if (!pRes.ok) {
           throw new Error(`Could not load profile: ${await responseErrorDetail(pRes)}`);
         }
         const pJson = (await pRes.json()) as { profile: Profile };
-        setProfile(pJson.profile);
-        setProfileDraft(withNormalizedExhibit21Snapshot(pJson.profile));
-        lastSavedProfileBodyRef.current = serializeProfileBody(pJson.profile);
+        const merged = withPlaceholderPublicRecordsDefaults(tk, pJson.profile);
+        setProfile(merged);
+        setProfileDraft(withNormalizedExhibit21Snapshot(merged));
+        lastSavedProfileBodyRef.current = serializeProfileBody(merged);
         return;
       }
 
       const [pRes, cRes, sRes] = await Promise.all([
-        fetch(`${base}/profile?companyName=${encodeURIComponent(companyName ?? "")}`, { credentials: "same-origin" }),
+        fetch(`${base}/profile`, { credentials: "same-origin" }),
         fetch(`${base}/checklist`, { credentials: "same-origin" }),
         fetch(`${base}/sources`, { credentials: "same-origin" }),
       ]);
@@ -836,20 +873,28 @@ export function PublicRecordsTab({
         throw new Error(`Failed to load public records data (${parts.join("; ")}).`);
       }
       const pJson = (await pRes.json()) as { profile: Profile };
+      const mergedProfile = withPlaceholderPublicRecordsDefaults(tk, pJson.profile);
       const cJson = (await cRes.json()) as { items: ChecklistRow[] };
       const sJson = (await sRes.json()) as { registry: RegistryEntry[]; recommended: Recommended[] };
 
-      setProfile(pJson.profile);
-      setProfileDraft(withNormalizedExhibit21Snapshot(pJson.profile));
-      lastSavedProfileBodyRef.current = serializeProfileBody(pJson.profile);
+      setProfile(mergedProfile);
+      setProfileDraft(withNormalizedExhibit21Snapshot(mergedProfile));
+      lastSavedProfileBodyRef.current = serializeProfileBody(mergedProfile);
       setChecklist(cJson.items);
       setRecommended(sJson.recommended);
     } catch {
+      if (tk === PLACEHOLDER_DEFAULT_TICKER) {
+        setProfile(null);
+        setProfileDraft(withNormalizedExhibit21Snapshot(offlinePlaceholderProfileDraft(tk)));
+        lastSavedProfileBodyRef.current = null;
+        setChecklist([]);
+        setRecommended([]);
+      }
       // Load failures are intentionally silent (no error banner).
     } finally {
       if (!silent) setLoading(false);
     }
-  }, [base, companyName, profileOnly]);
+  }, [base, profileOnly]);
 
   useEffect(() => {
     void refresh();
@@ -857,6 +902,7 @@ export function PublicRecordsTab({
 
   /** Fill SEC identity fields and Part I, Item 2 properties when missing. Saves via debounced autosave. */
   useEffect(() => {
+    if (tk === PLACEHOLDER_DEFAULT_TICKER) return undefined;
     if (loading || !profile?.id) return undefined;
 
     const bootstrapKey = `${tk}:${profile.id}`;
@@ -1045,6 +1091,7 @@ export function PublicRecordsTab({
 
   useEffect(() => {
     if (!profileOnly) return;
+    if (tk === PLACEHOLDER_DEFAULT_TICKER) return;
     if (loading || !profile) return;
     if (!isProfileSecEmpty(profile)) return;
     if (autoSecIngestAttemptedForTickerRef.current === tk) return;

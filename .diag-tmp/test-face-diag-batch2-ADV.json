@@ -1,0 +1,286 @@
+{
+  "ticker": "ADV",
+  "checked": 28,
+  "suspicious": 7,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2021-05-17",
+    "form": "10-Q",
+    "accessionNumber": "0001193125-21-163670"
+  },
+  "failures": [
+    {
+      "accessionNumber": "0001193125-26-088543",
+      "filingDate": "2026-03-03",
+      "form": "10-K",
+      "isInlineXbrl": true,
+      "issues": [
+        "cash-flow: 3 numeric cell(s) missing inline XBRL tags (115/118 tagged)",
+        "inline XBRL filing: 3 untagged numeric cell(s) across primary statements (245/248 tagged)"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year Ended December 31, 2025",
+            "Year Ended December 31, 2024",
+            "Year Ended December 31, 2023"
+          ],
+          "firstRows": [
+            "Revenues",
+            "Cost of revenues (exclusive of depreciation and amortization shown separately below)",
+            "Selling, general, and administrative expenses",
+            "Impairment of goodwill and indefinite-lived asset",
+            "Depreciation and amortization",
+            "Income from investment in European joint venture and other"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31, 2025",
+            "December 31, 2024"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net of allowance for expected credit losses of $16,771 and $13,047, respectively",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Property, equipment, and capitalized software, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2025",
+            "Year Ended December 31, 2024",
+            "Year Ended December 31, 2023"
+          ],
+          "firstRows": [
+            "Net loss from continuing operations",
+            "Adjustments to reconcile net loss to net cash provided by operating activities",
+            "Non-cash adjustments on derivatives and non-cash interest expense (income)",
+            "Amortization of deferred financing fees",
+            "Impairment of goodwill and indefinite-lived asset",
+            "Depreciation and amortization"
+          ]
+        }
+      ],
+      "extractionQa": [
+        {
+          "statementId": "income-statement",
+          "rowCount": 31,
+          "numericCells": 72,
+          "taggedCells": 72,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 6,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "balance-sheet",
+          "rowCount": 34,
+          "numericCells": 58,
+          "taggedCells": 58,
+          "untaggedNumericCells": 0,
+          "cellsWithSignMismatch": 4,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 85
+        },
+        {
+          "statementId": "cash-flow",
+          "rowCount": 49,
+          "numericCells": 118,
+          "taggedCells": 115,
+          "untaggedNumericCells": 3,
+          "cellsWithSignMismatch": 45,
+          "extractionMethod": "html_table_ixbrl",
+          "confidenceScore": 84
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001193125-21-082812",
+      "filingDate": "2021-03-16",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "income-statement: annual statement has too few periods"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "Year Ended December 31,"
+          ],
+          "firstRows": [
+            "(amounts in thousands) 2020",
+            "Revenues",
+            "Cost of revenues",
+            "Selling, general, and administrative expenses",
+            "Recovery from Take 5",
+            "Depreciation and amortization"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "December 31,2020",
+            "December 31,2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Restricted cash",
+            "Accounts receivable, net of allowance for expected credit losses of $16,377 and $15,107, respectively",
+            "Prepaid expenses and other current assets",
+            "Total current assets",
+            "Property and equipment, net"
+          ]
+        },
+        {
+          "id": "cash-flow",
+          "periods": [
+            "Year Ended December 31, 2020",
+            "Year Ended December 31, 2019",
+            "Year Ended December 31, 2018"
+          ],
+          "firstRows": [
+            "Net loss",
+            "Adjustments to reconcile net loss to net cash provided by operating activities",
+            "Noncash interest expense",
+            "Extinguishment costs related to repayment of First and Second Lien Credit Agreements",
+            "Impairment of goodwill and long-lived assets",
+            "Loss on Take 5"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001213900-20-021895",
+      "filingDate": "2020-08-13",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 2"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "For The Three Months Ended June 30, 2020",
+            "For the Period From For The Six Months Ended June 30, 2020",
+            "For the Period From May 2, 2019 (inception) Through June 30, 2019"
+          ],
+          "firstRows": [
+            "General and administrative expenses",
+            "State franchise taxes",
+            "Loss from operations",
+            "Interest income earned on cash equivalents and marketable securities held in Trust Account",
+            "Income before income tax expense",
+            "Income tax expense"
+          ]
+        },
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "June 30, 2020 (Unaudited)",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Prepaid expenses",
+            "Prepaid income taxes",
+            "Total current assets",
+            "Marketable securities held in Trust Account",
+            "Total assets"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001213900-20-012022",
+      "filingDate": "2020-05-13",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "balance-sheet",
+          "periods": [
+            "March 31, 2020 (Unaudited)",
+            "December 31, 2019"
+          ],
+          "firstRows": [
+            "Cash and cash equivalents",
+            "Prepaid expenses",
+            "Prepaid income taxes",
+            "Total current assets",
+            "Marketable securities held in Trust Account",
+            "Total assets"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001213900-20-007995",
+      "filingDate": "2020-03-30",
+      "form": "10-K",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    },
+    {
+      "accessionNumber": "0001213900-19-023317",
+      "filingDate": "2019-11-14",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 1"
+      ],
+      "summaries": [
+        {
+          "id": "income-statement",
+          "periods": [
+            "For the Period From May 2, 2019 Three Months Ended September 30, 2019",
+            "For the Period From May 2, 2019 (inception) through September 30, 2019"
+          ],
+          "firstRows": [
+            "General and administrative expenses",
+            "State franchise taxes",
+            "Loss from operations",
+            "Interest income earned on cash equivalents and marketable securities held in Trust Account",
+            "Income before income tax expense",
+            "Income tax expense"
+          ]
+        }
+      ]
+    },
+    {
+      "accessionNumber": "0001213900-19-017033",
+      "filingDate": "2019-08-30",
+      "form": "10-Q",
+      "isInlineXbrl": false,
+      "issues": [
+        "missing income statement",
+        "missing balance sheet",
+        "missing cash flow",
+        "expected 3 primary statements (IS / BS / CF), got 0"
+      ],
+      "summaries": []
+    }
+  ]
+}

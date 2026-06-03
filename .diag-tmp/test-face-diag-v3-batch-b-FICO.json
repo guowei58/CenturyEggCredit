@@ -1,0 +1,13 @@
+{
+  "ticker": "FICO",
+  "checked": 80,
+  "suspicious": 0,
+  "minFilingYear": 2006,
+  "maxFilingsRequested": 80,
+  "firstInlineXbrlQuarter": {
+    "filingDate": "2019-04-30",
+    "form": "10-Q",
+    "accessionNumber": "0000814547-19-000008"
+  },
+  "failures": []
+}

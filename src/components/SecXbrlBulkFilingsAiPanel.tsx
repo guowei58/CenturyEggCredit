@@ -18,6 +18,7 @@ import {
   type PresentedFiling,
   type SecXbrlAsPresentedApiResponse,
 } from "@/lib/sec-xbrl-as-presented-save-client";
+import { hasBlockingXbrlExportFailures } from "@/lib/sec-xbrl-export-validation";
 
 const XBRL_AI_SAVE_KEY = "xbrl-consolidated-financials-ai" as const;
 
@@ -226,6 +227,13 @@ export function SecXbrlBulkFilingsAiPanel({
                           }
                           if (!stmts.length) {
                             skipped++;
+                            continue;
+                          }
+                          if (hasBlockingXbrlExportFailures(j.validation)) {
+                            failed++;
+                            failNotes.push(
+                              `${f.accessionNumber}: statement validation failed (not saved — open SEC XBRL Financials for details)`
+                            );
                             continue;
                           }
                           const r = await savePresentedStatementsXlsxToServer(

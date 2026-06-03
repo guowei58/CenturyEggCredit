@@ -1,5 +1,10 @@
 /** Mock data for CenturyEggCredit — corporate credit research. LUMN sample. No real APIs. */
 
+/** Fictional issuer used when the watchlist is empty (or while signed out). Not a live SEC ticker. */
+export const PLACEHOLDER_DEFAULT_TICKER = "CEC";
+export const PLACEHOLDER_COMPANY_DISPLAY_NAME = "Century Egg Credit";
+export const PLACEHOLDER_FICTIONAL_ADDRESS_LINE = "yo mama's house";
+
 export const MOCK_TICKER = "LUMN";
 export const MOCK_COMPANY_NAME = "Lumen Technologies, Inc.";
 export const MOCK_SIC = "Telecom";

@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { tabLabelToId } from "@/lib/tabs";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
 import { companyNav, companyTopSections } from "@/data/company-navigation";
-import { MOCK_TICKER, mockCompanyBar } from "@/data/mock";
+import {
+  MOCK_TICKER,
+  PLACEHOLDER_COMPANY_DISPLAY_NAME,
+  PLACEHOLDER_DEFAULT_TICKER,
+  mockCompanyBar,
+} from "@/data/mock";
 import { CompanyBar } from "@/components/layout";
 import { CompanyFilingsTab } from "@/components/CompanyFilingsTab";
 import { CompanyFccFilingsTab } from "@/components/CompanyFccFilingsTab";
@@ -59,7 +64,9 @@ import { CompanyIndustryContactsTab } from "@/components/CompanyIndustryContacts
 import { CompanyDearDiaryTab } from "@/components/CompanyDearDiaryTab";
 import { CompanyFinancialsTab } from "@/components/CompanyFinancialsTab";
 import { CompanyKpiTab } from "@/components/CompanyKpiTab";
+import { CompanySecFilingFinancialsTab } from "@/components/CompanySecFilingFinancialsTab";
 import { CompanySecXbrlFinancialsTab } from "@/components/CompanySecXbrlFinancialsTab";
+import { CompanyTestFinancialsTab } from "@/components/CompanyTestFinancialsTab";
 import { CompanyRoicAiTab } from "@/components/CompanyRoicAiTab";
 import {
   CompanyRoicAiV2StatementsTab,
@@ -72,6 +79,9 @@ import { Card, EmptyState, TabBar } from "@/components/ui";
 /** Build company bar data: full mock for LUMN, else ticker + fetched name. */
 function getCompanyBarData(ticker: string, companyName: string | null) {
   if (ticker === MOCK_TICKER) return mockCompanyBar;
+  if (ticker === PLACEHOLDER_DEFAULT_TICKER) {
+    return { ticker: PLACEHOLDER_DEFAULT_TICKER, name: PLACEHOLDER_COMPANY_DISPLAY_NAME };
+  }
   return {
     ticker,
     name: companyName && companyName.toUpperCase() !== ticker ? companyName : ticker,
@@ -100,8 +110,13 @@ export function CompanyAnalysis({
 }) {
   const [companyName, setCompanyName] = useState<string | null>(null);
 
+  /** Avoid one frame (or parallel request) with the previous ticker’s display name — it seeds `PublicRecordsProfile.companyName` on first GET. */
+  useLayoutEffect(() => {
+    setCompanyName(null);
+  }, [ticker]);
+
   useEffect(() => {
-    if (!ticker || ticker === MOCK_TICKER) {
+    if (!ticker || ticker === MOCK_TICKER || ticker === PLACEHOLDER_DEFAULT_TICKER) {
       setCompanyName(null);
       return;
     }
@@ -230,8 +245,20 @@ export function CompanyAnalysis({
             </div>
           )}
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-8 sm:py-5">
-            <CompanyTabContent tabId={resolvedTab} ticker={ticker!} companyName={co.name} />
+          <div className="min-h-0 flex-1 overflow-hidden">
+            {resolvedTab === "sec-xbrl-financials" ? (
+              <div className="flex h-full min-h-0 flex-col">
+                <CompanySecXbrlFinancialsTab ticker={ticker!} />
+              </div>
+            ) : resolvedTab === "test" ? (
+              <div className="flex h-full min-h-0 flex-col">
+                <CompanyTestFinancialsTab ticker={ticker!} />
+              </div>
+            ) : (
+              <div className="h-full min-h-0 overflow-y-auto px-5 py-4 sm:px-8 sm:py-5">
+                <CompanyTabContent tabId={resolvedTab} ticker={ticker!} companyName={co.name} />
+              </div>
+            )}
           </div>
         </>
       ) : (
@@ -304,6 +331,12 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "sec-xbrl-financials") {
     return <CompanySecXbrlFinancialsTab ticker={ticker} />;
   }
+  if (tabId === "test") {
+    return <CompanyTestFinancialsTab ticker={ticker} />;
+  }
+  if (tabId === "sec-filing-financials") {
+    return <CompanySecFilingFinancialsTab ticker={ticker} />;
+  }
   if (tabId === ROIC_ANNUAL_FINANCIAL_STATEMENTS_TAB_ID) {
     return <CompanyRoicAiV2StatementsTab ticker={ticker} statementPeriod="annual" title="Annual Financial Statements" />;
   }
@@ -343,7 +376,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
         sourceId="litigation"
         tabTitle="Litigation"
         autoSearchOnMount={false}
-        topNotice="Searches CourtListener / RECAP first. If PACER credentials are configured on this machine, the tab also queries PACER Case Locator. PACER searches can incur PACER charges, so litigation search does not auto-run when the tab opens."
+        topNotice="Searches CourtListener / RECAP for federal litigation dockets. Litigation search does not auto-run when the tab opens."
       />
     );
   }

@@ -17,9 +17,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger("xbrl_compiler")
 
-# Frontend / API ``models`` only: full pipeline still loads all years; statements
-# shown in the app (and compile-tab Excel download) omit periods before this FY.
-DISPLAY_MODEL_MIN_FISCAL_YEAR = 2017
+# Frontend / API ``models`` only: optional extra floor on top of the **first fiscal
+# year that has all four quarters** (1Q–4Q) in consolidated data. ``None`` = no
+# extra floor (still starts at the first complete fiscal year when one exists).
+DISPLAY_MODEL_MIN_FISCAL_YEAR: int | None = None
+COMPILER_SCHEMA_VERSION = 2
 
 
 def run(
@@ -42,7 +44,10 @@ def run(
         reconcile_final_statements_with_raw_xbrl,
         _prune_unresolved_after_map,
     )
+    from row_deduplication import apply_row_deduplication
+    from statement_universe import universe_keys_not_in_concept_map
     from period_parser import parse_period, sort_period_labels
+    from headline_periods import headline_periods_for_workbook
 
     t0 = time.time()
     log_msgs: list[str] = []
@@ -101,11 +106,20 @@ def run(
     # 4b – Build file recency ranking (higher = more recent filing)
     sorted_wbs = sorted(workbooks, key=lambda w: (w.latest_fy, w.filename))
     file_recency = {w.filename: i for i, w in enumerate(sorted_wbs)}
+    file_headline_periods = {w.filename: headline_periods_for_workbook(w) for w in workbooks}
     _log(f"File recency order (oldest→newest): {[w.filename for w in sorted_wbs]}")
+    _log(
+        "Headline periods (period-primary source): "
+        + ", ".join(
+            f"{fn}={sorted(list(keys))}" for fn, keys in sorted(file_headline_periods.items())
+        )
+    )
 
-    # 5 – Consolidate (most-recent file wins when duplicates exist)
+    # 5 – Consolidate (period-primary filing wins when tagged; else most-recent file)
     _log("Step 5: Consolidating across files")
-    consolidated, audit_entries, conflicts = consolidate(mapped, master_rows, file_recency)
+    consolidated, audit_entries, conflicts = consolidate(
+        mapped, master_rows, file_recency, file_headline_periods,
+    )
     _log(f"Consolidated cells: {sum(len(v) for cc in consolidated.values() for v in cc.values())}, conflicts: {len(conflicts)}")
 
     # 5b – Coverage pass (repair mapped gaps; integrate unresolved with positional rows)
@@ -154,7 +168,19 @@ def run(
         _log(f"Re-derived after reconcile: {len(derived_audit_2)} quarterly values")
         unresolved = _prune_unresolved_after_map(unresolved, concept_map)
 
-    all_audit = audit_entries + derived_audit + derived_audit_2
+    _log("Step 6c: Row deduplication (merge duplicate canonical rows)")
+    dedup_res = apply_row_deduplication(
+        consolidated, master_rows, concept_map, audit_entries,
+    )
+    derived_audit_3: list = []
+    if dedup_res.changed:
+        derived_audit_3 = derive_quarters(consolidated, master_rows, audit_entries)
+        _log(f"Row deduplication: removed {dedup_res.rows_removed} duplicate canonical rows; re-derived {len(derived_audit_3)} values")
+        unresolved = _prune_unresolved_after_map(unresolved, concept_map)
+    else:
+        _log("Row deduplication: no duplicate canonical rows merged")
+
+    all_audit = audit_entries + derived_audit + derived_audit_2 + derived_audit_3
 
     # 7 – Validate
     _log("Step 7: Validating")
@@ -190,6 +216,7 @@ def run(
 
     summary = {
         "ok": True,
+        "compiler_schema_version": COMPILER_SCHEMA_VERSION,
         "display_models_min_fiscal_year": DISPLAY_MODEL_MIN_FISCAL_YEAR,
         "elapsed_s": elapsed,
         "master_file": master_wb.filename,
@@ -199,7 +226,13 @@ def run(
         "total_concepts": len(master_rows),
         "mapped_facts": len(mapped),
         "statements_built": list(consolidated.keys()),
-        "derived_facts": len(derived_audit) + len(derived_audit_2),
+        "derived_facts": len(derived_audit) + len(derived_audit_2) + len(derived_audit_3),
+        "row_deduplication": {
+            "changed": dedup_res.changed,
+            "rows_removed": dedup_res.rows_removed,
+            "detail": dedup_res.detail,
+        },
+        "universe_gaps_after_build": universe_keys_not_in_concept_map(workbooks, concept_map),
         "final_raw_reconcile": {
             "raw_keys_scanned": final_reconcile.raw_keys_scanned,
             "rows_added": final_reconcile.rows_added,
@@ -247,10 +280,16 @@ def run(
         ],
     }
 
-    _log(
-        f"Display models: periods restricted to fiscal year >= {DISPLAY_MODEL_MIN_FISCAL_YEAR} "
-        "(full history remains in consolidated output files)"
-    )
+    if DISPLAY_MODEL_MIN_FISCAL_YEAR is None:
+        _log(
+            "Display models: quarterly/annual columns start at the first fiscal year "
+            "with all four quarters (unless no such year exists); full history in export files"
+        )
+    else:
+        _log(
+            f"Display models: columns start at max(first complete FY, {DISPLAY_MODEL_MIN_FISCAL_YEAR}); "
+            "full history remains in consolidated output files"
+        )
     _log(f"Pipeline complete in {elapsed}s")
     return summary
 
@@ -264,7 +303,11 @@ def _models_json(
 ) -> dict:
     from period_parser import parse_period, sort_period_labels
 
-    floor = display_min_fiscal_year if display_min_fiscal_year is not None else DISPLAY_MODEL_MIN_FISCAL_YEAR
+    floor_eff = (
+        display_min_fiscal_year
+        if display_min_fiscal_year is not None
+        else DISPLAY_MODEL_MIN_FISCAL_YEAR
+    )
 
     failures = cell_failures or {}
 
@@ -304,10 +347,12 @@ def _models_json(
                     a_set.add(lbl)
 
         qs_all = sort_period_labels(list(q_set))
-        ays = sort_period_labels(list(a_set))
+        ays_all = sort_period_labels(list(a_set))
 
-        # Trim quarterly periods: start from the earliest year that has
-        # all 4 quarters (1Q, 2Q, 3Q, 4Q) with at least *some* data.
+        # Display columns: start at the earliest fiscal year that has Q1–Q4 (any line
+        # with data). Align annual columns to the same floor. If no year has all
+        # four quarters, show all periods (same as before). Optional ``floor_eff``
+        # raises the start year when set.
         year_qtrs: dict[int, set[str]] = {}
         for lbl in qs_all:
             p = parse_period(lbl)
@@ -320,27 +365,25 @@ def _models_json(
                 first_complete_year = yr
                 break
 
-        # Quarterly-style grid: respect both (a) earliest year with four quarters
-        # and (b) display floor — never show periods before *floor*.
-        if first_complete_year is not None:
-            min_q_yr = max(first_complete_year, floor)
-            qs = [
-                lbl for lbl in qs_all
-                if (p := parse_period(lbl)) is not None
-                and p.fiscal_year >= min_q_yr
-            ]
+        if floor_eff is None:
+            display_floor = first_complete_year
+        elif first_complete_year is None:
+            display_floor = floor_eff
+        else:
+            display_floor = max(first_complete_year, floor_eff)
+
+        if display_floor is None:
+            qs = qs_all
+            ays = ays_all
         else:
             qs = [
                 lbl for lbl in qs_all
-                if (p := parse_period(lbl)) is not None
-                and p.fiscal_year >= floor
+                if (p := parse_period(lbl)) is not None and p.fiscal_year >= display_floor
             ]
-
-        ays = [
-            lbl for lbl in ays
-            if (p := parse_period(lbl)) is not None
-            and p.fiscal_year >= floor
-        ]
+            ays = [
+                lbl for lbl in ays_all
+                if (p := parse_period(lbl)) is not None and p.fiscal_year >= display_floor
+            ]
 
         seen: set[str] = set()
         ordered: list[str] = []

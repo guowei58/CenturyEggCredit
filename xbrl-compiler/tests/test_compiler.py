@@ -22,6 +22,7 @@ from master_presentation_builder import (
 )
 from row_mapper import map_all_facts, MappedFact, UnresolvedRow
 from consolidator import consolidate, AuditEntry, Conflict
+from headline_periods import headline_periods_for_workbook
 from derivation_engine import derive_quarters
 from validators import validate_all
 from pathlib import Path
@@ -112,6 +113,37 @@ class TestPeriodParsing:
     def test_sort_multi_year(self):
         assert sort_period_labels(["FY16", "1Q15", "FY15", "1Q16"]) == [
             "1Q15", "FY15", "1Q16", "FY16"]
+
+
+class TestHeadlinePeriods:
+    def test_10q_newest_quarter_is_headline(self):
+        f1 = _fact(plabel="1Q25", value=1, src="w.xlsx")
+        f2 = _fact(plabel="2Q25", value=2, src="w.xlsx")
+        sh = _sheet([f1, f2], src="w.xlsx")
+        wb = _wb([sh], filename="w.xlsx", is_10k=False, fy=2025)
+        h = headline_periods_for_workbook(wb)
+        assert h == frozenset({"2Q25"})
+
+    def test_10q_q2_includes_6m_when_present(self):
+        facts = [
+            _fact(plabel="1Q25", value=1, src="w.xlsx"),
+            _fact(plabel="2Q25", value=2, src="w.xlsx"),
+            _fact(plabel="6M25", value=3, src="w.xlsx"),
+        ]
+        sh = _sheet(facts, src="w.xlsx")
+        wb = _wb([sh], is_10k=False, fy=2025)
+        h = headline_periods_for_workbook(wb)
+        assert "2Q25" in h and "6M25" in h
+
+    def test_10k_fy_columns_headline(self):
+        facts = [
+            _fact(plabel="FY24", value=10, src="k.xlsx"),
+            _fact(plabel="FY23", value=9, src="k.xlsx"),
+        ]
+        sh = _sheet(facts, src="k.xlsx")
+        wb = _wb([sh], filename="co_10K_2025.xlsx", is_10k=True, fy=2024)
+        h = headline_periods_for_workbook(wb)
+        assert h == frozenset({"FY24", "FY23"})
 
 
 # ===========================================================================
@@ -869,6 +901,96 @@ class TestIS4Q:
 
 
 # ===========================================================================
+# Weighted-average shares — not summable like revenue / cash flows
+# ===========================================================================
+
+
+class TestWACShareDerivation:
+    def test_is_4q_copies_fy_when_quarters_exist(self):
+        """FY minus prior quarters is bogus for WACS (e.g. Tesla-style negatives)."""
+        canon = "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic"
+        rows = [
+            MasterRow(
+                "income_statement",
+                canon,
+                canon,
+                "Weighted Average Number of Shares Outstanding, Basic",
+                0,
+                0,
+            ),
+        ]
+        data = {
+            "income_statement": {
+                canon: {
+                    "1Q24": 3186.0,
+                    "2Q24": 3191.0,
+                    "3Q24": 3198.0,
+                    "FY24": 3197.0,
+                },
+            },
+        }
+        da = derive_quarters(data, rows, [])
+        assert data["income_statement"][canon]["4Q24"] == 3197.0
+        assert any(a.source_method == "copied_from_fy_for_wacs" for a in da)
+
+    def test_cf_4q_wacs_is_fy_not_ytd_spread(self):
+        canon = "us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding"
+        rows = [MasterRow("cash_flow", canon, canon, "Weighted Average …", 0, 0)]
+        data = {"cash_flow": {canon: {"9M15": 200.0, "FY15": 180.0}}}
+        da = derive_quarters(data, rows, [])
+        assert data["cash_flow"][canon]["4Q15"] == 180.0
+        a4 = [a for a in da if a.output_period == "4Q15"]
+        assert len(a4) == 1
+        assert a4[0].source_method == "copied_from_fy_for_wacs"
+
+
+# ===========================================================================
+# Gain/loss disposition — FY sign harmonization before 4Q derivation
+# ===========================================================================
+
+class TestDispositionFYHarmonize:
+    """When FY ≈ −(1Q+2Q+3Q), flip FY so 4Q = FY − Q1 − Q2 − Q3 is not double‑signed."""
+
+    def test_fy23_style_empty_display_label_uses_concept(self):
+        canon = "us-gaap:GainLossOnDispositionOfBusiness"
+        rows = [MasterRow("income_statement", canon, canon, "", 0, 0)]
+        data = {
+            "income_statement": {
+                canon: {"1Q23": 1.94, "2Q23": 0.0, "3Q23": 0.0, "FY23": -1.94},
+            }
+        }
+        derive_quarters(data, rows, [])
+        assert abs(data["income_statement"][canon]["FY23"] - 1.94) < 0.001
+        assert abs(data["income_statement"][canon]["4Q23"]) < 0.001
+
+    def test_fy21_fico_style_magnitude(self):
+        canon = "us-gaap:GainLossOnDispositionOfBusiness"
+        rows = [
+            MasterRow(
+                "income_statement",
+                canon,
+                canon,
+                "Gain (Loss) on Disposition of Business",
+                0,
+                0,
+            ),
+        ]
+        data = {
+            "income_statement": {
+                canon: {
+                    "1Q21": 7.33,
+                    "2Q21": 0.0,
+                    "3Q21": 92.81,
+                    "FY21": -100.14,
+                },
+            },
+        }
+        derive_quarters(data, rows, [])
+        assert abs(data["income_statement"][canon]["FY21"] - 100.14) < 0.02
+        assert abs(data["income_statement"][canon]["4Q21"]) < 0.02
+
+
+# ===========================================================================
 # Cash flow derivations
 # ===========================================================================
 
@@ -974,6 +1096,40 @@ class TestConflicts:
         _, _, conflicts = consolidate(facts, rows)
         assert len(conflicts) == 1
 
+    def test_period_primary_wins_over_newer_comparative(self):
+        """Later 10-Q restates prior quarter; prefer the original quarter's filing."""
+        rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
+        facts = [
+            MappedFact("income_statement", "R", "Revenue", _p("1Q25"), 100.0,
+                       "q125.xlsx", "IS", "1Q25", "Revenue", "us-gaap:Revenues"),
+            MappedFact("income_statement", "R", "Revenue", _p("1Q25"), 200.0,
+                       "q226.xlsx", "IS", "1Q25", "Revenue", "us-gaap:Revenues"),
+        ]
+        recency = {"q125.xlsx": 0, "q226.xlsx": 1}
+        headlines = {
+            "q125.xlsx": frozenset({"1Q25"}),
+            "q226.xlsx": frozenset({"2Q26"}),
+        }
+        data, audit, conflicts = consolidate(facts, rows, recency, headlines)
+        assert data["income_statement"]["R"]["1Q25"] == 100.0
+        assert audit[0].source_file == "q125.xlsx"
+        assert len(conflicts) == 1
+        assert "period-primary" in conflicts[0].resolution.lower()
+
+    def test_fallback_to_recency_when_no_headline_owner(self):
+        rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
+        facts = [
+            MappedFact("income_statement", "R", "Revenue", _p("1Q25"), 100.0,
+                       "old.xlsx", "IS", "1Q25", "Revenue", "R"),
+            MappedFact("income_statement", "R", "Revenue", _p("1Q25"), 250.0,
+                       "new.xlsx", "IS", "1Q25", "Revenue", "R"),
+        ]
+        recency = {"old.xlsx": 0, "new.xlsx": 1}
+        headlines = {"old.xlsx": frozenset(), "new.xlsx": frozenset()}
+        data, _, conflicts = consolidate(facts, rows, recency, headlines)
+        assert data["income_statement"]["R"]["1Q25"] == 250.0
+        assert len(conflicts) == 1
+
     def test_most_recent_file_wins(self):
         """When two files differ, the one with the higher recency rank is used."""
         rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
@@ -989,6 +1145,42 @@ class TestConflicts:
         assert audit[0].source_file == "new_10K.xlsx"
         assert len(conflicts) == 1
         assert "new_10K.xlsx" in conflicts[0].resolution
+
+    def test_revenue_total_not_summed_with_sibling_components(self):
+        """10-K master row is RevenueFromContract…; old 10-Q has SalesRevenueNet + segment lines
+        collapsed onto the same canonical id — must not SUM (FICO-style double-count)."""
+        master_crid = "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax"
+        rows = [
+            MasterRow(
+                "income_statement",
+                master_crid,
+                master_crid,
+                "Revenue from Contract with Customer, Excluding Assessed Tax",
+                0,
+                0,
+            ),
+        ]
+        facts = [
+            MappedFact(
+                "income_statement", master_crid, "Technology services", _p("1Q17"), 43.543,
+                "fico_q.xlsx", "Income Statement", "1Q17",
+                "Technology services revenue", "us-gaap:TechnologyServicesRevenue",
+            ),
+            MappedFact(
+                "income_statement", master_crid, "Licenses", _p("1Q17"), 22.397,
+                "fico_q.xlsx", "Income Statement", "1Q17",
+                "Licenses revenue", "us-gaap:LicensesRevenue",
+            ),
+            MappedFact(
+                "income_statement", master_crid, "Revenue, net", _p("1Q17"), 219.6,
+                "fico_q.xlsx", "Income Statement", "1Q17",
+                "Revenue, net", "us-gaap:SalesRevenueNet",
+            ),
+        ]
+        data, audit, conflicts = consolidate(facts, rows)
+        assert conflicts == []
+        assert abs(data["income_statement"][master_crid]["1Q17"] - 219.6) < 0.01
+        assert not any(a.source_method == "summed_within_file" for a in audit)
 
     def test_most_recent_wins_even_identical(self):
         """Even with identical values, the audit trail should reference the most-recent file."""
@@ -1204,31 +1396,30 @@ class TestWithinFileSum:
 
 class TestInterestNetting:
     def test_net_interest_expense_minus_income_same_file(self):
-        """Separate expense + income legs on the net-interest row → expense − income."""
+        """Separate legs on an explicit net-interest row preserve display-signed netting."""
         rows = [
             MasterRow(
-                "income_statement", "us-gaap:InterestExpense",
-                "us-gaap:InterestExpense", "Interest expense", 0, 0,
+                "income_statement", "us-gaap:InterestExpenseNet",
+                "us-gaap:InterestExpenseNet", "Interest expense, net", 0, 0,
             ),
         ]
         facts = [
             MappedFact(
-                "income_statement", "us-gaap:InterestExpense", "Interest expense",
-                _p("FY20"), 100.0, "file.xlsx", "IS", "FY20", "Interest expense",
+                "income_statement", "us-gaap:InterestExpenseNet", "Interest expense, net",
+                _p("FY20"), -100.0, "file.xlsx", "IS", "FY20", "Interest expense",
                 "us-gaap:InterestExpense",
             ),
             MappedFact(
-                "income_statement", "us-gaap:InterestExpense", "Interest expense",
+                "income_statement", "us-gaap:InterestExpenseNet", "Interest expense, net",
                 _p("FY20"), 25.0, "file.xlsx", "IS", "FY20", "Interest income",
                 "us-gaap:InterestIncome",
             ),
         ]
         data, audit, _ = consolidate(facts, rows)
-        assert data["income_statement"]["us-gaap:InterestExpense"]["FY20"] == 75.0
+        assert data["income_statement"]["us-gaap:InterestExpenseNet"]["FY20"] == -75.0
         assert len(audit) == 1
         assert audit[0].source_method == "interest_net"
-        assert "expense_sum=100" in audit[0].derivation_formula
-        assert "income_sum=25" in audit[0].derivation_formula
+        assert "signed_sum=-75.0" in audit[0].derivation_formula
 
     def test_apply_interest_netting_aliases_maps_both_legs(self):
         from interest_netting import apply_interest_netting_aliases, find_net_interest_canonical_row
@@ -1257,6 +1448,78 @@ class TestInterestNetting:
         assert by_raw[("income_statement", "us-gaap:InterestExpense")].mapping_status == (
             "interest_net_alias"
         )
+
+    def test_find_net_interest_canonical_row_skips_noncontrolling_interest_labels(self):
+        from interest_netting import find_net_interest_canonical_row
+
+        rows = [
+            MasterRow(
+                "income_statement",
+                "us-gaap:ProfitLoss",
+                "us-gaap:ProfitLoss",
+                "Net Income (Loss), Including Portion Attributable to Noncontrolling Interest",
+                0,
+                0,
+            ),
+            MasterRow(
+                "income_statement",
+                "us-gaap:InterestExpenseNonoperating",
+                "us-gaap:InterestExpenseNonoperating",
+                "Interest Expense, Nonoperating",
+                1,
+                0,
+            ),
+            MasterRow(
+                "income_statement",
+                "us-gaap:InvestmentIncomeInterest",
+                "us-gaap:InvestmentIncomeInterest",
+                "Investment Income, Interest",
+                2,
+                0,
+            ),
+        ]
+
+        assert find_net_interest_canonical_row(rows) is None
+
+    def test_apply_interest_netting_aliases_skips_when_master_already_has_separate_interest_rows(self):
+        from interest_netting import apply_interest_netting_aliases
+
+        rows = [
+            MasterRow(
+                "income_statement",
+                "us-gaap:InterestExpenseNonoperating",
+                "us-gaap:InterestExpenseNonoperating",
+                "Interest Expense, Nonoperating",
+                0,
+                0,
+            ),
+            MasterRow(
+                "income_statement",
+                "us-gaap:InvestmentIncomeInterest",
+                "us-gaap:InvestmentIncomeInterest",
+                "Investment Income, Interest",
+                1,
+                0,
+            ),
+            MasterRow(
+                "income_statement",
+                "us-gaap:ProfitLoss",
+                "us-gaap:ProfitLoss",
+                "Net Income (Loss), Including Portion Attributable to Noncontrolling Interest",
+                2,
+                0,
+            ),
+        ]
+        f1 = _fact(concept="us-gaap:InterestExpenseNonoperating", value=-92.0)
+        f2 = _fact(concept="us-gaap:InvestmentIncomeInterest", value=434.0)
+        sheet = _sheet([f1, f2], stmt="income_statement")
+        wb = _wb([sheet])
+        cmap: list = []
+
+        n = apply_interest_netting_aliases(rows, cmap, [wb])
+
+        assert n == 0
+        assert cmap == []
 
 
 # ===========================================================================
@@ -1364,13 +1627,157 @@ class TestRowOrderRegistry:
         assert m_int[0].mapping_status == "row_order_registry"
 
 
+class TestRowDeduplication:
+    def test_merges_ident_values_investing_prefix_bs(self):
+        from row_deduplication import apply_row_deduplication
+
+        consolidated: dict = {
+            "balance_sheet": {
+                "us-gaap:MarketableSecurities": {"FY20": 42.0},
+                "us-gaap:MarketableSecuritiesNoncurrent": {"FY20": 42.0},
+            },
+        }
+        master_rows = [
+            MasterRow(
+                "balance_sheet",
+                "us-gaap:MarketableSecurities",
+                "us-gaap:MarketableSecurities",
+                "Marketable securities",
+                0,
+                1,
+            ),
+            MasterRow(
+                "balance_sheet",
+                "us-gaap:MarketableSecuritiesNoncurrent",
+                "us-gaap:MarketableSecuritiesNoncurrent",
+                "Marketable securities, noncurrent",
+                1,
+                1,
+            ),
+        ]
+        concept_map = [
+            ConceptMapping(
+                "balance_sheet",
+                "us-gaap:MarketableSecurities",
+                "us-gaap:MarketableSecurities",
+                "test",
+                "",
+            ),
+            ConceptMapping(
+                "balance_sheet",
+                "us-gaap:MarketableSecuritiesNoncurrent",
+                "us-gaap:MarketableSecuritiesNoncurrent",
+                "test",
+                "",
+            ),
+        ]
+        audit: list = []
+        res = apply_row_deduplication(consolidated, master_rows, concept_map, audit)
+        assert res.changed
+        assert len(master_rows) == 1
+        assert master_rows[0].canonical_row_id == "us-gaap:MarketableSecuritiesNoncurrent"
+        assert "us-gaap:MarketableSecuritiesNoncurrent" in consolidated["balance_sheet"]
+        assert "us-gaap:MarketableSecurities" not in consolidated["balance_sheet"]
+        assert all(m.canonical_row_id != "us-gaap:MarketableSecurities" for m in concept_map)
+
+
 class TestFullMasterPresentationInExports:
     """Rows on the master 10-K presentation must appear even with no facts."""
 
-    def test_models_json_hides_periods_before_2017(self):
+    def test_models_json_includes_partial_years_when_no_full_four_quarters(self):
+        """If no fiscal year has Q1–Q4, the grid still lists every period (legacy behavior)."""
         from main import _models_json, DISPLAY_MODEL_MIN_FISCAL_YEAR
 
-        assert DISPLAY_MODEL_MIN_FISCAL_YEAR == 2017
+        assert DISPLAY_MODEL_MIN_FISCAL_YEAR is None
+        consolidated = {
+            "income_statement": {
+                "us-gaap:Revenue": {
+                    "FY15": 100.0,
+                    "FY16": 110.0,
+                    "FY17": 120.0,
+                    "1Q16": 24.0,
+                    "1Q17": 30.0,
+                },
+            },
+        }
+        rows = [
+            MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
+        ]
+        models = _models_json(consolidated, rows, None)
+        ann = models["income_statement"]["annual"]["periods"]
+        qtr = models["income_statement"]["quarterly"]["periods"]
+        assert "FY15" in ann and "FY16" in ann and "FY17" in ann
+        assert "1Q16" in qtr and "1Q17" in qtr
+        r = models["income_statement"]["annual"]["rows"][0]
+        assert r.get("FY15") == 100.0 and r.get("FY16") == 110.0
+        assert r.get("FY17") == 120.0
+
+    def test_models_json_starts_at_first_fiscal_year_with_four_quarters(self):
+        from main import _models_json, DISPLAY_MODEL_MIN_FISCAL_YEAR
+
+        assert DISPLAY_MODEL_MIN_FISCAL_YEAR is None
+        consolidated = {
+            "income_statement": {
+                "us-gaap:Revenue": {
+                    "1Q15": 10.0,
+                    "1Q16": 11.0,
+                    "2Q16": 12.0,
+                    "3Q16": 13.0,
+                    "4Q16": 14.0,
+                    "FY15": 40.0,
+                    "FY16": 50.0,
+                },
+            },
+        }
+        rows = [
+            MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
+        ]
+        models = _models_json(consolidated, rows, None)
+        qtr = models["income_statement"]["quarterly"]["periods"]
+        ann = models["income_statement"]["annual"]["periods"]
+        assert "1Q15" not in qtr
+        assert "1Q16" in qtr and "4Q16" in qtr
+        assert "FY15" not in ann
+        assert "FY16" in ann
+        r_q = models["income_statement"]["quarterly"]["rows"][0]
+        assert r_q.get("1Q15") is None
+        assert r_q.get("1Q16") == 11.0
+
+    def test_models_json_display_min_year_after_first_complete(self):
+        """Optional display_min_fiscal_year is max'd with first complete fiscal year."""
+        from main import _models_json
+
+        consolidated = {
+            "income_statement": {
+                "us-gaap:Revenue": {
+                    "1Q16": 1.0,
+                    "2Q16": 1.0,
+                    "3Q16": 1.0,
+                    "4Q16": 1.0,
+                    "1Q17": 2.0,
+                    "2Q17": 2.0,
+                    "3Q17": 2.0,
+                    "4Q17": 2.0,
+                    "FY16": 4.0,
+                    "FY17": 8.0,
+                },
+            },
+        }
+        rows = [
+            MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
+        ]
+        models = _models_json(consolidated, rows, None, display_min_fiscal_year=2017)
+        qtr = models["income_statement"]["quarterly"]["periods"]
+        ann = models["income_statement"]["annual"]["periods"]
+        assert "1Q16" not in qtr
+        assert "1Q17" in qtr
+        assert "FY16" not in ann
+        assert "FY17" in ann
+
+    def test_models_json_respects_display_min_year_override(self):
+        """Optional floor (e.g. for tests) still trims early years."""
+        from main import _models_json
+
         consolidated = {
             "income_statement": {
                 "us-gaap:Revenue": {
@@ -1384,15 +1791,10 @@ class TestFullMasterPresentationInExports:
         rows = [
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
-        models = _models_json(consolidated, rows, None)
+        models = _models_json(consolidated, rows, None, display_min_fiscal_year=2017)
         ann = models["income_statement"]["annual"]["periods"]
-        qtr = models["income_statement"]["quarterly"]["periods"]
         assert "FY15" not in ann and "FY16" not in ann
         assert "FY17" in ann
-        assert "1Q17" in qtr
-        r = models["income_statement"]["annual"]["rows"][0]
-        assert r.get("FY15") is None and r.get("FY16") is None
-        assert r.get("FY17") == 120.0
 
     def test_models_json_includes_master_rows_without_consolidated_cells(self):
         from main import _models_json
@@ -1478,7 +1880,17 @@ class TestValidation:
         assert not q_checks[0].passed
         assert ("income_statement", "R", "FY15") in failures
 
-    def test_bs_equation_pass(self):
+    def test_q_sum_skipped_for_weighted_average_shares(self):
+        """Quarters + FY are not additive for WACS; do not flag Q_SUM."""
+        w = "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic"
+        data = {
+            "income_statement": {
+                w: {"1Q24": 10.0, "2Q24": 11.0, "3Q24": 12.0, "4Q24": 3197.0, "FY24": 9.0},
+            },
+        }
+        res, _failures = validate_all(data)
+        q_w = [r for r in res if r.check == "Q_SUM" and r.canonical_row_id == w]
+        assert q_w == []
         rows = [
             MasterRow("balance_sheet", "us-gaap:Assets", "us-gaap:Assets", "Total Assets", 0, 0),
             MasterRow("balance_sheet", "us-gaap:Liabilities", "us-gaap:Liabilities", "Total Liabilities", 1, 0),

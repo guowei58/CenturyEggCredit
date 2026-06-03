@@ -56,8 +56,9 @@ export function CompanyFinancialsTab({
             <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
               Pull SEC as-presented numbers for each 10-K and 10-Q and store them under{" "}
               <strong style={{ color: "var(--text)" }}>Saved Documents</strong> as{" "}
-              <span className="font-mono text-xs">.xlsx</span> files. Run bulk save before compiling—you need those files in
-              step 2.
+              <span className="font-mono text-xs">.xlsx</span> files (same source as the{" "}
+              <strong style={{ color: "var(--text)" }}>SEC XBRL Financials</strong> tab). Run bulk save before compiling—you
+              need those files in step 2.
             </p>
           </div>
         </div>

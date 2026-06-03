@@ -28,8 +28,8 @@ export const REGULATORY_SOURCE_REGISTRY: RegulatorySourceRegistryEntry[] = [
   {
     source_id: "litigation",
     display_name: "Litigation",
-    agency: "CourtListener / PACER",
-    category: "Federal Litigation / Dockets / RECAP / PACER",
+    agency: "CourtListener / RECAP",
+    category: "Federal Litigation / Dockets / RECAP",
     access_type: "api",
     base_url: "https://www.courtlistener.com/",
     api_docs_url: "https://courtlistener.com/help/api/rest/search",
@@ -48,7 +48,7 @@ export const REGULATORY_SOURCE_REGISTRY: RegulatorySourceRegistryEntry[] = [
     adapter_status: "working",
     priority: "high",
     notes:
-      "Searches CourtListener / RECAP for federal litigation by company name. If PACER_USERNAME and PACER_PASSWORD are also configured, the tab adds PACER Case Locator party-search results too. PACER searches may incur PACER charges.",
+      "Searches CourtListener / RECAP for federal litigation by company name.",
   },
   {
     source_id: "epa_echo",

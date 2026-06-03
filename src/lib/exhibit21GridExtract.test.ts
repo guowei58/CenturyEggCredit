@@ -75,4 +75,22 @@ describe("extractExhibit21GridSnapshotFromDocument", () => {
     expect(joined.includes("LIST OF SUBSIDIARIES ACME")).toBe(false);
     expect(joined.includes("Acme One LLC")).toBe(true);
   });
+
+  it("merges consecutive single-column subsidiary tables (Workiva / MetLife-style pagination)", () => {
+    const html = `<html><body>
+      <table>
+        <tr><td>1.Alpha Holdings LLC (Delaware)</td></tr>
+        <tr><td>2.Beta Corp (Texas)</td></tr>
+      </table>
+      <table>
+        <tr><td>3.Gamma Ltd (United Kingdom)</td></tr>
+        <tr><td>4.Delta SPV LLC (New York)</td></tr>
+      </table>
+    </body></html>`;
+    const snap = extractExhibit21GridSnapshotFromDocument(html);
+    expect(snap).not.toBeNull();
+    expect(snap!.source).toBe("html_table");
+    expect(snap!.rows.length).toBe(4);
+    expect(snap!.rows.some((r) => r[0]?.includes("Gamma Ltd"))).toBe(true);
+  });
 });

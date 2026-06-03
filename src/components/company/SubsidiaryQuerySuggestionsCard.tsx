@@ -57,7 +57,7 @@ export function SubsidiaryQuerySuggestionsCard({
     setHintsLoading(true);
     setHintsMessage(null);
     setHintsPayload(null);
-    const u = `/api/companies/${encodeURIComponent(safeTicker)}/public-records/profile?companyName=${encodeURIComponent((companyName ?? "").trim())}`;
+    const u = `/api/companies/${encodeURIComponent(safeTicker)}/public-records/profile`;
     fetch(u, { credentials: "same-origin", cache: "no-store" })
       .then(async (res) => {
         if (cancelled) return;
@@ -105,7 +105,7 @@ export function SubsidiaryQuerySuggestionsCard({
     return () => {
       cancelled = true;
     };
-  }, [safeTicker, companyName, disclaimer, onNamesLoaded]);
+  }, [safeTicker, disclaimer, onNamesLoaded]);
 
   if (!safeTicker) return null;
 
