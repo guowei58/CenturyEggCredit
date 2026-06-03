@@ -152,7 +152,7 @@ function singleColumnMatrixLooksLikeSubsidiarySchedule(mx: string[][]): boolean 
 }
 
 function mergeSingleColumnSubsidiaryTablesDomOrder(matrices: string[][][]): string[][] | null {
-  const runs: string[][][] = [];
+  const runs: string[][][][] = [];
   let cur: string[][][] = [];
 
   function flush() {

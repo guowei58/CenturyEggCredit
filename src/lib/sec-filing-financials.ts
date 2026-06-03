@@ -3194,7 +3194,7 @@ function normalizeRowsToMillions(
 
   const out = rows.map((row) => {
     const keepNative = rowKeepsNativeUnits(row.label, kind);
-    if (keepNative) return { ...row, valueFormat: "native" };
+    if (keepNative) return { ...row, valueFormat: "native" as const };
     const values: Record<string, number | null> = {};
     for (const period of periods) {
       const raw = row.values[period.key];

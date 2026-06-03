@@ -5,7 +5,7 @@ import {
   fetchAsPresentedValidationContext,
   incomeStatementSelectionPriority,
   isComprehensiveIncomeRole,
-  useComprehensiveIncomeStatementTitle,
+  isStandaloneComprehensiveIncomeTitle,
   ideaViewerDefrefToConcept,
   parseIdeaViewerDefrefRows,
   primaryStatementKind,
@@ -47,19 +47,19 @@ describe("primaryStatementKind", () => {
 
   it("uses Comprehensive Income title only for standalone CI — not combined Income and Comprehensive Income roles", () => {
     expect(
-      useComprehensiveIncomeStatementTitle(
+      isStandaloneComprehensiveIncomeTitle(
         "http://issuer.example/role/ConsolidatedStatementsOfIncomeAndComprehensiveIncome"
       )
     ).toBe(false);
     expect(
-      useComprehensiveIncomeStatementTitle(
+      isStandaloneComprehensiveIncomeTitle(
         "http://issuer.example/role/StatementsOfIncomeLossAndComprehensiveIncomeLoss"
       )
     ).toBe(false);
     expect(
-      useComprehensiveIncomeStatementTitle("http://issuer.example/role/ConsolidatedStatementsofComprehensiveIncomeLoss")
+      isStandaloneComprehensiveIncomeTitle("http://issuer.example/role/ConsolidatedStatementsofComprehensiveIncomeLoss")
     ).toBe(true);
-    expect(useComprehensiveIncomeStatementTitle("http://issuer.example/role/StatementsofConsolidatedIncome")).toBe(false);
+    expect(isStandaloneComprehensiveIncomeTitle("http://issuer.example/role/StatementsofConsolidatedIncome")).toBe(false);
   });
 
   it("prefers a direct income statement role over a comprehensive income role", () => {

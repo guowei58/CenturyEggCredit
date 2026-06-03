@@ -53,9 +53,10 @@ export function faceStatementToWorkbookShape(stmt: FacePresentedStatement) {
       workbookCells: Object.fromEntries(
         stmt.periods.map((p) => {
           const n = faceStatementCellNumeric(r, p.key, statementId);
-          return [p.key, n !== null && Number.isFinite(n) ? n : ""];
+          const cell: number | "" = n !== null && Number.isFinite(n) ? n : "";
+          return [p.key, cell] as const;
         })
-      ),
+      ) as Record<string, number | "">,
     })),
   };
 }

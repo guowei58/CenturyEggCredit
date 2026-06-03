@@ -123,7 +123,7 @@ export const MAX_EARNINGS_PRESS_RELEASE_HTML_CHARS = 1_200_000;
  * Reduce full EDGAR HTML to markup suitable for in-app rendering (removes script/style; keeps body content).
  */
 export function extractPressReleaseBodyHtmlForDisplay(rawHtml: string): string {
-  const $ = cheerio.load(rawHtml, { decodeEntities: false });
+  const $ = cheerio.load(rawHtml);
   $("script, style, noscript, link[rel='stylesheet'], meta").remove();
   /**
    * Exhibit 99 HTML often uses relative `src` (e.g. `image001.jpg`) next to the .htm on SEC; in-app rendering
@@ -174,7 +174,7 @@ export function resolveSrcsetAgainstDocument(srcset: string, documentUrl: string
  */
 export function extractSlideDeckBodyHtmlForDisplay(rawHtml: string, documentUrl: string): string {
   const docUrl = (documentUrl ?? "").trim();
-  const $ = cheerio.load(rawHtml, { decodeEntities: false });
+  const $ = cheerio.load(rawHtml);
   $("script, style, noscript, link[rel='stylesheet'], meta").remove();
 
   if (docUrl.length > 0) {
@@ -210,7 +210,7 @@ export function extractSlideDeckBodyHtmlForDisplay(rawHtml: string, documentUrl:
 
 /** Tesla-style decks: full-size slide raster + tiny/white “invisible” text for accessibility. */
 function scoreImageHeavySlideDeckSignals(html: string): number {
-  const $ = cheerio.load(html, { decodeEntities: false });
+  const $ = cheerio.load(html);
   const imgs = $("img").toArray();
   if (imgs.length === 0) return 0;
 
@@ -261,7 +261,7 @@ function scoreSpacedHeadingSlideSignal(rawText: string): number {
 
 /** Exported for unit tests / tuning. */
 export function scoreEarningsHtmlSlideDeckLikelihood(html: string, filename: string): number {
-  const $ = cheerio.load(html, { decodeEntities: false });
+  const $ = cheerio.load(html);
   const fn = (filename ?? "").toLowerCase();
   const imgHeavySig = scoreImageHeavySlideDeckSignals(html);
   let s = imgHeavySig;
@@ -310,7 +310,7 @@ export function scoreEarningsHtmlSlideDeckLikelihood(html: string, filename: str
 
 /** Exported for unit tests / tuning. */
 export function scoreEarningsHtmlPressReleaseLikelihood(html: string, filename: string): number {
-  const $ = cheerio.load(html, { decodeEntities: false });
+  const $ = cheerio.load(html);
   const fn = (filename ?? "").toLowerCase();
   const t = $.text();
   const tl = t.toLowerCase();

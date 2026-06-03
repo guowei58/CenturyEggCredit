@@ -820,7 +820,7 @@ export function isComprehensiveIncomeRole(role: string): boolean {
  * Income,” which share one presentation tree for Revenue → net income — the face title is still an income
  * statement for users even when the role URI mentions comprehensive.
  */
-export function useComprehensiveIncomeStatementTitle(role: string): boolean {
+export function isStandaloneComprehensiveIncomeTitle(role: string): boolean {
   if (!isComprehensiveIncomeRole(role)) return false;
   const c = role.toLowerCase().replace(/[\s_-]/g, "");
   return !roleUriIsCombinedIncomeAndComprehensiveStatement(c);
@@ -2605,7 +2605,7 @@ async function loadPresentedStatementsValidationContext(params: {
     ).length;
 
     const title =
-      kind === "is" && useComprehensiveIncomeStatementTitle(r.role) && financialFiler
+      kind === "is" && isStandaloneComprehensiveIncomeTitle(r.role) && financialFiler
         ? "Comprehensive Income"
         : statementTitle;
     const statement: PresentedStatement = {

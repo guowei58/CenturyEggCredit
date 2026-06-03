@@ -174,14 +174,14 @@ async function buildCompiledExcelBlob(
       const m = stmtData[mode];
       if (!m || !m.rows.length) continue;
 
-      const sheetName = `${label.replace("Statement", "Stmt")}${mode === "annual" ? " Annual" : ""}`.slice(0, 31);
+      const sheetName = `${label.replace("Statement", "Stmt")}`.slice(0, 31);
       const ws = wb.addWorksheet(sheetName);
 
       const periods = m.periods;
       const colCount = periods.length + 1;
 
       // ── Title row ──
-      const titleRow = ws.addRow([`${ticker.toUpperCase()} — ${label}${mode === "annual" ? " (Annual)" : ""}`]);
+      const titleRow = ws.addRow([`${ticker.toUpperCase()} — ${label}`]);
       titleRow.font = { bold: true, size: 12, color: { argb: CLR_SECTION_FT } };
       ws.mergeCells(titleRow.number, 1, titleRow.number, colCount);
       const titleCell = ws.getCell(titleRow.number, 1);

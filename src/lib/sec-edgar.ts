@@ -255,7 +255,7 @@ const TICKER_MERGED_PREDECESSOR_CIKS: Record<string, readonly string[]> = {
   GOOGL: ["0001288776"],
 };
 
-let cachedPredecessorCiksByTicker: Record<string, readonly string[]> | null | undefined;
+let cachedPredecessorCiksByTicker: Record<string, readonly string[]> | undefined;
 
 /**
  * Optional `data/sec-predecessor-ciks-by-ticker.json`: `{ "TICKER": ["0001234567", ...] }` (zero-padded CIKs).

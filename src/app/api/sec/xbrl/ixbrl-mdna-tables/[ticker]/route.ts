@@ -163,8 +163,6 @@ async function fetchPressReleaseFullHtml(
     return fetchArchivesFilingFileHtml(issuerCik, src.accessionNumber, src.primaryDocument);
   }
   return fetchEdgarPrimaryDocumentHtml(issuerCik, {
-    form: src.form,
-    filingDate: src.filingDate,
     accessionNumber: src.accessionNumber,
     primaryDocument: src.primaryDocument,
   });
