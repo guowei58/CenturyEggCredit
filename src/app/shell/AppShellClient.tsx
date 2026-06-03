@@ -111,11 +111,17 @@ export default function AppShellClient() {
     setCompanyTab("kpi-commentary");
   }, [companyTab]);
 
-  /** 20-Year Look Back tab removed; land on SEC XBRL Financials. */
+  /** 20-Year Look Back + SEC XBRL / SEC Filing Financials hidden from nav; land on Historical Financial Statements. */
   useEffect(() => {
-    if (companyTab !== "20-year-look-back") return;
+    if (
+      companyTab !== "20-year-look-back" &&
+      companyTab !== "sec-xbrl-financials" &&
+      companyTab !== "sec-filing-financials"
+    ) {
+      return;
+    }
     if (companyTopSection !== "financials") setCompanyTopSection("financials");
-    setCompanyTab("sec-xbrl-financials");
+    setCompanyTab("historical-financial-statements");
   }, [companyTab, companyTopSection]);
 
   return (

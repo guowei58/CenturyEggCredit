@@ -146,8 +146,10 @@ export function CompanyAnalysis({
   const resolvedTab =
     activeTab === "edgartools-sec"
       ? "sec-filings"
-      : activeTab === "20-year-look-back"
-        ? "sec-xbrl-financials"
+      : activeTab === "20-year-look-back" ||
+          activeTab === "sec-xbrl-financials" ||
+          activeTab === "sec-filing-financials"
+        ? "historical-financial-statements"
         : activeTab === tabLabelToId("Other Regulatory Filings - Manual")
           ? "other-regulatory-filings"
         : activeTab === tabLabelToId("NHTSA") || activeTab === tabLabelToId("NHTSA Filings")
