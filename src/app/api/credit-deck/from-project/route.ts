@@ -14,7 +14,7 @@ export const maxDuration = 600;
 export async function POST(req: Request) {
   const llmAuth = await getAuthenticatedLlmContext();
   if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { userId, bundle } = llmAuth.ctx;
+  const { userId, bundle, llmTemperature } = llmAuth.ctx;
 
   let body: {
     projectId?: string;
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
   const project = await getProject(userId, projectId);
   if (!project) {
-    return NextResponse.json({ error: "Project not found â€” run ingest again." }, { status: 404 });
+    return NextResponse.json({ error: "Project not found â€?run ingest again." }, { status: 404 });
   }
 
   const DEFAULT_TARGET_WORDS = 10_000;
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   const memoTitle =
     typeof body.memoTitle === "string" && body.memoTitle.trim()
       ? body.memoTitle.trim()
-      : `${project.ticker} â€” Credit Memo`;
+      : `${project.ticker} â€?Credit Memo`;
 
   const deckTitle =
     typeof body.deckTitle === "string" && body.deckTitle.trim()
@@ -74,6 +74,7 @@ export async function POST(req: Request) {
     useTemplate: body.useTemplate !== false,
     models,
     apiKeys: bundle,
+    temperature: llmTemperature,
   });
 
   if (!result.ok) {

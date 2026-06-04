@@ -130,7 +130,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Sign in to run Entity Mapper." }, { status: 401 });
   }
-  const { userId, bundle } = llmAuth.ctx;
+  const { userId, bundle, llmTemperature } = llmAuth.ctx;
   if (!isProviderConfigured(provider, bundle)) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
@@ -140,6 +140,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     ticker: sym,
     provider,
     bundle,
+    temperature: llmTemperature,
     models: modelsFromBody(modelBody),
     companyNameHint: companyNameFromClient,
     discoverSecDocuments,

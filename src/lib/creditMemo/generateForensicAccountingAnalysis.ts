@@ -84,6 +84,7 @@ export async function runForensicAccountingAnalysisGeneration(params: {
   companyName?: string;
   models: ForensicResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
   userId: string | null;
 }): Promise<
   | {
@@ -181,6 +182,7 @@ export async function runForensicAccountingAnalysisGeneration(params: {
     geminiModel,
     deepseekModel,
     apiKeys: params.apiKeys,
+    temperature: params.temperature,
   });
 
   if (!result.ok) {

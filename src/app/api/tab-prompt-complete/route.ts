@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { bundle } = llmAuth.ctx;
+  const { bundle, llmTemperature } = llmAuth.ctx;
 
   let body: unknown;
   try {
@@ -132,6 +132,7 @@ export async function POST(request: Request) {
           openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
           geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
           apiKeys: bundle,
+          temperature: llmTemperature,
         })
       : await llmCompleteSingle(provider, system, user, {
           maxTokens,
@@ -144,6 +145,7 @@ export async function POST(request: Request) {
           openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
           geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
           apiKeys: bundle,
+          temperature: llmTemperature,
         });
 
   if (!result.ok) {

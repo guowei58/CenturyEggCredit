@@ -19,6 +19,7 @@ export async function runKpiCommentaryFromTicker(params: {
   companyName?: string;
   models: CovenantResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
 }): Promise<
   | {
       ok: true;
@@ -59,7 +60,8 @@ export async function runKpiCommentaryFromTicker(params: {
     params.companyName,
     params.provider,
     params.models,
-    params.apiKeys
+    params.apiKeys,
+    params.temperature
   );
 
   if (!syn.ok) {

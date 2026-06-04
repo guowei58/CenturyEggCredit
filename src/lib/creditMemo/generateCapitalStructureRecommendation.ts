@@ -55,6 +55,7 @@ export async function runCapitalStructureRecommendationGeneration(params: {
   companyName?: string;
   models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
 }): Promise<{ ok: true; markdown: string; sourcePack: string } | { ok: false; error: string }> {
   const cfg = loadCreditMemoConfig();
   const ai = params.provider;
@@ -85,6 +86,7 @@ export async function runCapitalStructureRecommendationGeneration(params: {
     geminiModel,
     deepseekModel,
     apiKeys: params.apiKeys,
+    temperature: params.temperature,
   });
 
   if (!result.ok) {

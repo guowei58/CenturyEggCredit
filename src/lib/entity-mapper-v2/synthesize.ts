@@ -52,6 +52,7 @@ export async function synthesizeEntityMapperV2Json(params: {
   provider: AiProvider;
   models: CovenantResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
 }): Promise<{ ok: true; rawText: string } | { ok: false; error: string }> {
   const maxOut =
     params.provider === "deepseek" ? DEEPSEEK_MAX_OUTPUT_TOKENS : LLM_MAX_OUTPUT_TOKENS;
@@ -66,6 +67,7 @@ export async function synthesizeEntityMapperV2Json(params: {
     geminiModel: params.models.geminiModel,
     deepseekModel: params.models.deepseekModel,
     apiKeys: params.apiKeys,
+    temperature: params.temperature,
   });
 
   if (!result.ok) return { ok: false, error: result.error };

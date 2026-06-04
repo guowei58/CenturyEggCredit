@@ -27,6 +27,7 @@ export type EntityMapperV2PipelineOpts = {
   ticker: string;
   provider: AiProvider;
   bundle: LlmCallApiKeys;
+  temperature?: number;
   models: CovenantResolvedModels;
   companyNameHint?: string | null;
   discoverSecDocuments?: boolean;
@@ -133,6 +134,7 @@ export async function runEntityMapperV2Pipeline(
     provider: opts.provider,
     models: opts.models,
     apiKeys: opts.bundle,
+    temperature: opts.temperature,
   });
   if (!syn.ok) return { ok: false, error: syn.error, code: "llm" };
 

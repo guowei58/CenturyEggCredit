@@ -115,6 +115,7 @@ export async function runCreditDeckGeneration(params: {
   useTemplate?: boolean;
   models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
 }): Promise<
   | {
       ok: true;
@@ -190,6 +191,7 @@ export async function runCreditDeckGeneration(params: {
     geminiModel,
     deepseekModel,
     apiKeys: params.apiKeys,
+    temperature: params.temperature,
   });
 
   if (!result.ok) {

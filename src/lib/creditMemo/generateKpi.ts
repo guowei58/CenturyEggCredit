@@ -11,6 +11,7 @@ export async function runKpiGeneration(params: {
   companyName?: string;
   models: CovenantResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
 }): Promise<
   | {
       ok: true;
@@ -28,5 +29,6 @@ export async function runKpiGeneration(params: {
     companyName: params.companyName,
     models: params.models,
     apiKeys: params.apiKeys,
+    temperature: params.temperature,
   });
 }

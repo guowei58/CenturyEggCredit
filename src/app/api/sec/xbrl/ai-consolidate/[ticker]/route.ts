@@ -40,7 +40,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { userId, bundle } = llmAuth.ctx;
+  const { userId, bundle, llmTemperature } = llmAuth.ctx;
 
   const { ticker } = await params;
   const sym = sanitizeTicker(ticker ?? "");
@@ -105,6 +105,7 @@ ${pack.text}
     deepseekModel: models.deepseekModel,
     llmHttpTimeoutMs: XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS,
     apiKeys: bundle,
+    temperature: llmTemperature,
   });
 
   if (!result.ok) {

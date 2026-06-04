@@ -54,6 +54,8 @@ export async function llmCompleteSingle(
     openaiWebSearch?: boolean;
     /** Gemini native Google Search grounding (tab prompts / AI Chat when enabled server-side). */
     geminiGoogleSearch?: boolean;
+    /** Provider sampling temperature (account Engineer ↔ Artist setting). */
+    temperature?: number;
   } = {}
 ): Promise<LlmResult> {
   const ak = options.apiKeys;
@@ -65,6 +67,7 @@ export async function llmCompleteSingle(
       fetchTimeoutMs: httpMs ?? options.openaiFetchTimeoutMs,
       apiKeys: ak,
       webSearch: options.openaiWebSearch === true,
+      temperature: options.temperature,
     });
     return toLlm(r);
   }
@@ -75,6 +78,7 @@ export async function llmCompleteSingle(
       apiKeys: ak,
       googleSearch: options.geminiGoogleSearch === true,
       fetchTimeoutMs: httpMs,
+      temperature: options.temperature,
     });
     return toLlm(r);
   }
@@ -84,6 +88,7 @@ export async function llmCompleteSingle(
       model: options.deepseekModel,
       apiKeys: ak,
       fetchTimeoutMs: httpMs,
+      temperature: options.temperature,
     });
     return toLlm(r);
   }
@@ -93,6 +98,7 @@ export async function llmCompleteSingle(
     tools: options.claudeTools,
     apiKeys: ak,
     fetchTimeoutMs: httpMs,
+    temperature: options.temperature,
   });
 }
 
@@ -112,6 +118,7 @@ export async function llmCompleteConversation(
     apiKeys?: LlmCallApiKeys;
     openaiWebSearch?: boolean;
     geminiGoogleSearch?: boolean;
+    temperature?: number;
   } = {}
 ): Promise<LlmResult> {
   if ((provider === "openai" || provider === "gemini") && conversationHasPdf(messages)) {
@@ -139,6 +146,7 @@ export async function llmCompleteConversation(
       fetchTimeoutMs: httpMs ?? options.openaiFetchTimeoutMs,
       apiKeys: ak,
       webSearch: options.openaiWebSearch === true,
+      temperature: options.temperature,
     });
     return toLlm(r);
   }
@@ -149,6 +157,7 @@ export async function llmCompleteConversation(
       apiKeys: ak,
       googleSearch: options.geminiGoogleSearch === true,
       fetchTimeoutMs: httpMs,
+      temperature: options.temperature,
     });
     return toLlm(r);
   }
@@ -158,6 +167,7 @@ export async function llmCompleteConversation(
       model: options.deepseekModel,
       apiKeys: ak,
       fetchTimeoutMs: httpMs,
+      temperature: options.temperature,
     });
     return toLlm(r);
   }
@@ -167,6 +177,7 @@ export async function llmCompleteConversation(
     tools: options.claudeTools,
     apiKeys: ak,
     fetchTimeoutMs: httpMs,
+    temperature: options.temperature,
   });
 }
 

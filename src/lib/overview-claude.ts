@@ -44,7 +44,8 @@ async function llmComplete(
   userContent: string,
   maxTokens = 1500,
   models?: OverviewLlmModels,
-  apiKeys?: LlmCallApiKeys
+  apiKeys?: LlmCallApiKeys,
+  temperature?: number
 ): Promise<string> {
   const m = models ?? defaultOverviewModels();
   const result = await llmCompleteSingle(provider, system, userContent, {
@@ -54,6 +55,7 @@ async function llmComplete(
     geminiModel: m.geminiModel,
     deepseekModel: m.deepseekModel,
     apiKeys,
+    temperature,
   });
   if (!result.ok) throw new Error(result.error);
   return result.text.trim();
@@ -66,11 +68,12 @@ export async function summarizeBusinessOverview(
   item1Text: string,
   provider: AiProvider,
   models?: OverviewLlmModels,
-  apiKeys?: LlmCallApiKeys
+  apiKeys?: LlmCallApiKeys,
+  temperature?: number
 ): Promise<string> {
   const truncated = item1Text.length > 26000 ? item1Text.slice(0, 26000) + "\n\n[Text truncated.]" : item1Text;
   const userContent = BUSINESS_OVERVIEW_USER_PREFIX + truncated;
-  return llmComplete(provider, BUSINESS_OVERVIEW_SYSTEM, userContent, 1200, models, apiKeys);
+  return llmComplete(provider, BUSINESS_OVERVIEW_SYSTEM, userContent, 1200, models, apiKeys, temperature);
 }
 
 export type SegmentSummary = {
@@ -91,7 +94,8 @@ export async function summarizeBusinessLines(
   totalRevenue: number | null = null,
   provider: AiProvider = "claude",
   models?: OverviewLlmModels,
-  apiKeys?: LlmCallApiKeys
+  apiKeys?: LlmCallApiKeys,
+  temperature?: number
 ): Promise<SegmentSummary[]> {
   if (segmentNames.length === 0) return [];
 
@@ -105,7 +109,7 @@ Use the following 10-K Item 1 text to write one short paragraph per segment expl
 ---
 ${truncated}`;
 
-  const raw = await llmComplete(provider, SEGMENT_SUMMARY_SYSTEM, userContent, 2000, models, apiKeys);
+  const raw = await llmComplete(provider, SEGMENT_SUMMARY_SYSTEM, userContent, 2000, models, apiKeys, temperature);
 
   const paragraphs = raw
     .split(/\n\s*\n+/)

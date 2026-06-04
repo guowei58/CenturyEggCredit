@@ -8,6 +8,7 @@ import remarkLinkify from "remark-linkify";
 import remarkBreaks from "remark-breaks";
 import DOMPurify from "dompurify";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
+import { linkifyBareUrlsInElement } from "@/lib/linkify-bare-urls-in-html";
 import { saveRemoteUrlForTicker } from "@/lib/save-remote-url-client";
 
 let domPurifyLinkHookInstalled = false;
@@ -50,6 +51,7 @@ function SavedHtmlContentWithSaveButtons({
     if (!root) return;
     /** Set HTML here only — not via `dangerouslySetInnerHTML` in JSX — so parent re-renders do not wipe injected Save/Analyze controls. */
     root.innerHTML = html;
+    linkifyBareUrlsInElement(root);
     if (!ticker.trim()) return;
     const anchors = root.querySelectorAll("a[href]");
     anchors.forEach((node) => {

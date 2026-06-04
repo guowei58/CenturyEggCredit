@@ -81,8 +81,31 @@ export function RichPasteTextarea({
       return;
     }
 
+    const plain = clipboardData.getData("text/plain");
     const html = clipboardData.getData("text/html");
-    if (html && /<!doctype html>|<html\b|<head\b|<body\b/i.test(html)) {
+    const isFullHtmlDoc = Boolean(html && /<!doctype html>|<html\b|<head\b|<body\b/i.test(html));
+    const isHtmlFragment = Boolean(
+      html &&
+        !isFullHtmlDoc &&
+        /<(div|p|table|section|span|ul|ol|li|h[1-6])\b/i.test(html)
+    );
+    const plainHasLinks = Boolean(
+      plain &&
+        plain.trim() &&
+        (/\[[^\]]*\]\(https?:\/\//i.test(plain) || /https?:\/\/\S+/i.test(plain))
+    );
+    /** Claude often copies styled HTML fragments without <a> tags; plain text keeps markdown links and bare URLs. */
+    if (isHtmlFragment && plainHasLinks) {
+      e.preventDefault();
+      const el = textareaRef.current;
+      const start = el?.selectionStart ?? value.length;
+      const end = el?.selectionEnd ?? value.length;
+      const next = value.slice(0, start) + plain + value.slice(end);
+      onChange(next);
+      return;
+    }
+
+    if (html && isFullHtmlDoc) {
       // Many AI report generators copy as full HTML documents; inserting that raw blob is unreadable.
       // Instead, store only <style> + <body> so our viewer can render it.
       e.preventDefault();

@@ -33,7 +33,8 @@ export async function synthesizeKpiCommentaryMarkdown(
   companyName: string | undefined,
   provider: AiProvider,
   models: CovenantResolvedModels,
-  apiKeys: LlmCallApiKeys
+  apiKeys: LlmCallApiKeys,
+  temperature?: number
 ): Promise<
   | {
       ok: true;
@@ -63,6 +64,7 @@ export async function synthesizeKpiCommentaryMarkdown(
     geminiModel: models.geminiModel,
     deepseekModel: models.deepseekModel,
     apiKeys,
+    temperature,
   });
 
   if (!result.ok) return { ok: false, error: result.error };

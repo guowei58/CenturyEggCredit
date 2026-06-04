@@ -18,7 +18,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   try {
     const llmAuth = await getAuthenticatedLlmContext();
     if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const { userId, bundle } = llmAuth.ctx;
+    const { userId, bundle, llmTemperature } = llmAuth.ctx;
 
     const id = params.id?.trim();
     if (!id) return NextResponse.json({ error: "Missing project id" }, { status: 400 });
@@ -55,6 +55,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       companyName: companyName || undefined,
       models: resolveLmeAnalysisModels(body),
       apiKeys: bundle,
+    temperature: llmTemperature,
     });
 
     if (!result.ok) {

@@ -125,7 +125,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!llmAuth.ok) {
     return NextResponse.json({ error: "Sign in to run recommendation." }, { status: 401 });
   }
-  const { userId, bundle } = llmAuth.ctx;
+  const { userId, bundle, llmTemperature } = llmAuth.ctx;
   if (!isProviderConfigured(provider, bundle)) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
@@ -141,7 +141,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   }
 
   const userPayload = formatSourcesForCsRecommendation(sym, bundled.parts);
-  const syn = await synthesizeCapStructureRecommendationMarkdown(userPayload, provider, resolveLmeAnalysisModels(modelBody), bundle);
+  const syn = await synthesizeCapStructureRecommendationMarkdown(
+    userPayload,
+    provider,
+    resolveLmeAnalysisModels(modelBody),
+    bundle,
+    llmTemperature
+  );
   if (!syn.ok) {
     return NextResponse.json({ error: syn.error }, { status: 502 });
   }

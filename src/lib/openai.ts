@@ -6,6 +6,7 @@ import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multi
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS } from "@/lib/llm-xbrl-consolidate-timeouts";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
+import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -128,7 +129,8 @@ function openAiChatRequestBody(
   model: string,
   messages: unknown[],
   maxTokens: number,
-  webSearch?: boolean
+  webSearch?: boolean,
+  temperature?: number
 ): Record<string, unknown> {
   const body: Record<string, unknown> = { model, messages };
   if (usesGpt5ChatCompletionShape(model)) {
@@ -142,6 +144,7 @@ function openAiChatRequestBody(
   if (webSearch) {
     body.web_search_options = {};
   }
+  applyChatCompletionsTemperature(body, temperature);
   return body;
 }
 
@@ -222,6 +225,7 @@ export async function callOpenAI(
     apiKeys?: LlmCallApiKeys;
     /** Use OpenAI Chat Completions web search (switches to a search-capable model). */
     webSearch?: boolean;
+    temperature?: number;
   } = {}
 ): Promise<OpenAIResult> {
   const resolved = resolveOpenAiKey(options.apiKeys);
@@ -253,7 +257,8 @@ export async function callOpenAI(
             { role: "user", content: userMessage },
           ],
           maxTokens,
-          webSearch
+          webSearch,
+          options.temperature
         )
       ),
       signal: AbortSignal.timeout(waitMs),
@@ -324,6 +329,7 @@ export async function callOpenAIConversation(
     fetchTimeoutMs?: number;
     apiKeys?: LlmCallApiKeys;
     webSearch?: boolean;
+    temperature?: number;
   } = {}
 ): Promise<OpenAIResult> {
   const resolved = resolveOpenAiKey(options.apiKeys);
@@ -361,7 +367,9 @@ export async function callOpenAIConversation(
         "Content-Type": "application/json",
         Authorization: `Bearer ${key}`,
       },
-      body: JSON.stringify(openAiChatRequestBody(model, apiMessages, maxTokens, webSearch)),
+      body: JSON.stringify(
+        openAiChatRequestBody(model, apiMessages, maxTokens, webSearch, options.temperature)
+      ),
       signal: AbortSignal.timeout(waitMs),
     });
 

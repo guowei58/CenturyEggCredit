@@ -8,6 +8,7 @@
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
+import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
@@ -100,7 +101,8 @@ async function callGeminiGenerateContentWithGoogleSearch(
   contents: Array<{ role: string; parts: Array<Record<string, unknown>> }>,
   modelId: string,
   maxTokens: number,
-  apiKey: string
+  apiKey: string,
+  temperature?: number
 ): Promise<GeminiResult> {
   const mid = normalizeGeminiModelId(modelId);
   const url = `${GEMINI_GENERATE_BASE}/${encodeURIComponent(mid)}:generateContent`;
@@ -117,6 +119,9 @@ async function callGeminiGenerateContentWithGoogleSearch(
         tools: [{ google_search: {} }],
         generationConfig: {
           maxOutputTokens: maxTokens,
+          ...(temperature != null && Number.isFinite(temperature)
+            ? { temperature: Math.min(2, Math.max(0, temperature)) }
+            : {}),
         },
       }),
       signal: AbortSignal.timeout(GEMINI_GROUNDING_TIMEOUT_MS),
@@ -175,6 +180,7 @@ export async function callGemini(
     googleSearch?: boolean;
     /** Override OpenAI-compat chat HTTP wait (ms). */
     fetchTimeoutMs?: number;
+    temperature?: number;
   } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
@@ -192,9 +198,20 @@ export async function callGemini(
       [{ role: "user", parts: [{ text: userMessage }] }],
       model,
       maxTokens,
-      key
+      key,
+      options.temperature
     );
   }
+
+  const chatBody: Record<string, unknown> = {
+    model,
+    messages: [
+      { role: "system", content: systemAug },
+      { role: "user", content: userMessage },
+    ],
+    max_tokens: maxTokens,
+  };
+  applyChatCompletionsTemperature(chatBody, options.temperature);
 
   try {
     const res = await fetch(GEMINI_OPENAI_CHAT_URL, {
@@ -203,14 +220,7 @@ export async function callGemini(
         "Content-Type": "application/json",
         Authorization: `Bearer ${key.trim()}`,
       },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: systemAug },
-          { role: "user", content: userMessage },
-        ],
-        max_tokens: maxTokens,
-      }),
+      body: JSON.stringify(chatBody),
       signal: AbortSignal.timeout(geminiOpenAiCompatTimeoutMs(options.fetchTimeoutMs)),
     });
 
@@ -271,6 +281,7 @@ export async function callGeminiConversation(
     apiKeys?: LlmCallApiKeys;
     googleSearch?: boolean;
     fetchTimeoutMs?: number;
+    temperature?: number;
   } = {}
 ): Promise<GeminiResult> {
   const resolved = resolveGeminiKey(options.apiKeys);
@@ -292,7 +303,8 @@ export async function callGeminiConversation(
       geminiNativeContentsFromMessages(messages),
       model,
       maxTokens,
-      key
+      key,
+      options.temperature
     );
   }
 
@@ -317,11 +329,13 @@ export async function callGeminiConversation(
         "Content-Type": "application/json",
         Authorization: `Bearer ${key.trim()}`,
       },
-      body: JSON.stringify({
-        model,
-        messages: apiMessages,
-        max_tokens: maxTokens,
-      }),
+      body: JSON.stringify(
+        (() => {
+          const body: Record<string, unknown> = { model, messages: apiMessages, max_tokens: maxTokens };
+          applyChatCompletionsTemperature(body, options.temperature);
+          return body;
+        })()
+      ),
       signal: AbortSignal.timeout(geminiOpenAiCompatTimeoutMs(options.fetchTimeoutMs)),
     });
 

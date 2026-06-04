@@ -2,7 +2,7 @@
  * Collect http(s) URLs from saved-response markdown/HTML/plain text and from rendered anchor elements.
  */
 
-function normalizeHttpUrl(raw: string): string | null {
+export function normalizeHttpUrl(raw: string): string | null {
   let u = raw.trim().replace(/^<+|>+$/g, "").replace(/[),.;]+$/g, "");
   if (!/^https?:\/\//i.test(u)) return null;
   try {

@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
 import {
+  clampLlmCreativity,
+  DEFAULT_LLM_CREATIVITY,
+  llmCreativityStyleHint,
+  llmTemperatureFromCreativity,
+} from "@/lib/llm-temperature";
+import {
   analyzePreferencesPayloadSize,
   formatPreferencesOversizeMessage,
   MAX_PREFS_CHARS,
@@ -58,6 +64,9 @@ export function UserSettingsModal({
   const [openaiKey, setOpenaiKey] = useState(preferences.userLlmApiKeys?.openaiApiKey ?? "");
   const [geminiKey, setGeminiKey] = useState(preferences.userLlmApiKeys?.geminiApiKey ?? "");
   const [deepseekKey, setDeepseekKey] = useState(preferences.userLlmApiKeys?.deepseekApiKey ?? "");
+  const [llmCreativity, setLlmCreativity] = useState(
+    clampLlmCreativity(preferences.llmCreativity ?? DEFAULT_LLM_CREATIVITY)
+  );
   const [savedToast, setSavedToast] = useState(false);
   const [keysSavedToast, setKeysSavedToast] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -72,11 +81,12 @@ export function UserSettingsModal({
     setOpenaiKey(preferences.userLlmApiKeys?.openaiApiKey ?? "");
     setGeminiKey(preferences.userLlmApiKeys?.geminiApiKey ?? "");
     setDeepseekKey(preferences.userLlmApiKeys?.deepseekApiKey ?? "");
+    setLlmCreativity(clampLlmCreativity(preferences.llmCreativity ?? DEFAULT_LLM_CREATIVITY));
     setSavedToast(false);
     setKeysSavedToast(false);
     setSaveError(null);
     setKeysSaveError(null);
-  }, [open, initial, preferences.userLlmApiKeys]);
+  }, [open, initial, preferences.userLlmApiKeys, preferences.llmCreativity]);
 
   useEffect(() => {
     if (!open || initialFocus !== "api-keys") return;
@@ -337,6 +347,37 @@ export function UserSettingsModal({
               </>
             )}
 
+            <div className="mt-4">
+              <label className="block text-sm font-medium" style={{ color: "var(--muted2)" }}>
+                Response style (temperature)
+              </label>
+              <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+                Applies to Claude, ChatGPT, Gemini, and DeepSeek calls from OREO. Lower = more rigorous and
+                evidence-oriented; higher = more creative exploration (models still must not invent facts).
+              </p>
+              <div className="mt-3 flex items-center justify-between gap-3 text-xs font-semibold uppercase tracking-wide">
+                <span style={{ color: "var(--accent)" }}>Engineer</span>
+                <span className="font-mono normal-case" style={{ color: "var(--muted2)" }}>
+                  {llmTemperatureFromCreativity(llmCreativity).toFixed(2)}
+                </span>
+                <span style={{ color: "var(--warn)" }}>Artist</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={llmCreativity}
+                onChange={(e) => setLlmCreativity(clampLlmCreativity(Number(e.target.value)))}
+                disabled={!canSave}
+                className="mt-2 w-full accent-[var(--accent)]"
+                aria-valuetext={llmCreativityStyleHint(llmCreativity)}
+              />
+              <p className="mt-2 text-sm" style={{ color: "var(--muted2)" }}>
+                {llmCreativityStyleHint(llmCreativity)}
+              </p>
+            </div>
+
             <div className="mt-4 grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium" style={{ color: "var(--muted2)" }}>
@@ -458,6 +499,7 @@ export function UserSettingsModal({
                     const nextPrefs: UserPreferencesData = {
                       ...preferences,
                       userLlmApiKeys: Object.keys(userLlmApiKeys).length > 0 ? userLlmApiKeys : undefined,
+                      llmCreativity: clampLlmCreativity(llmCreativity),
                     };
                     if (prefsSerializedLength(nextPrefs) > MAX_PREFS_CHARS) {
                       throw new Error(formatPreferencesOversizeMessage(nextPrefs));
@@ -479,7 +521,7 @@ export function UserSettingsModal({
                   }
                 }}
               >
-                {savingKeys ? "Saving…" : "Save API keys"}
+                {savingKeys ? "Saving…" : "Save LLM settings"}
               </button>
               {keysSavedToast ? (
                 <span className="text-sm" style={{ color: "var(--accent)" }}>

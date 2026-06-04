@@ -96,6 +96,7 @@ export async function runMemoGeneration(params: {
   voiceSystemPrompt?: string | null;
   models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
+  temperature?: number;
 }): Promise<
   | {
       ok: true;
@@ -185,6 +186,7 @@ The user is using an uploaded Word template. The user message lists **VERBATIM S
     geminiModel,
     deepseekModel,
     apiKeys: params.apiKeys,
+    temperature: params.temperature,
   });
 
   if (!result.ok) {

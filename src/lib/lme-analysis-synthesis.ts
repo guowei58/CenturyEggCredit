@@ -23,7 +23,8 @@ export async function synthesizeLmeAnalysisMarkdown(
   sourcesFormatted: string,
   provider: AiProvider,
   models: CovenantResolvedModels,
-  apiKeys: LlmCallApiKeys
+  apiKeys: LlmCallApiKeys,
+  temperature?: number
 ): Promise<
   | {
       ok: true;
@@ -49,6 +50,7 @@ export async function synthesizeLmeAnalysisMarkdown(
     geminiModel: models.geminiModel,
     deepseekModel: models.deepseekModel,
     apiKeys,
+    temperature,
   });
 
   if (!result.ok) return { ok: false, error: result.error };

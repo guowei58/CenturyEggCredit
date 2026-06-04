@@ -12,6 +12,7 @@ import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
 import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
 import { isOpenAiWebSearchEnabled } from "@/lib/openai";
+import { resolveLlmTemperatureFromPrefs } from "@/lib/llm-temperature";
 import { getUserPreferences } from "@/lib/user-preferences-store";
 import {
   buildLlmApiKeyBundle,
@@ -91,12 +92,15 @@ export async function POST(request: Request) {
   const provider = resolveProvider(b.provider);
   const session = await auth();
 
+  const prefs =
+    session?.user?.id != null ? await getUserPreferences(session.user.id) : null;
+  const llmTemperature = resolveLlmTemperatureFromPrefs(prefs ?? {});
   const apiKeysForCall =
-    session?.user?.id != null
+    session?.user?.id != null && prefs != null
       ? mergeLlmCallApiKeysWithProcessEnv(
           buildLlmApiKeyBundle(
             typeof session.user?.email === "string" ? session.user.email : null,
-            await getUserPreferences(session.user.id)
+            prefs
           )
         )
       : undefined;
@@ -149,6 +153,7 @@ export async function POST(request: Request) {
       provider === "claude" && isClaudeWebSearchToolEnabled() ? [WEB_SEARCH_TOOL] : undefined,
     openaiWebSearch: provider === "openai" && isOpenAiWebSearchEnabled(),
     geminiGoogleSearch: provider === "gemini" && isGeminiGoogleSearchEnabled(),
+    temperature: llmTemperature,
   };
 
   const RATE_LIMIT_RETRIES = 2;

@@ -5,6 +5,7 @@
 import type { ChatConversationTurn } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { DEEPSEEK_MAX_OUTPUT_TOKENS, LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
+import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/v1/chat/completions";
@@ -82,7 +83,13 @@ function normalizeError(status: number, raw: string): DeepSeekResult {
 export async function callDeepSeek(
   systemPrompt: string,
   userMessage: string,
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys; fetchTimeoutMs?: number } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    apiKeys?: LlmCallApiKeys;
+    fetchTimeoutMs?: number;
+    temperature?: number;
+  } = {}
 ): Promise<DeepSeekResult> {
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
@@ -91,6 +98,16 @@ export async function callDeepSeek(
   const waitMs = deepSeekFetchTimeoutMs(options.fetchTimeoutMs);
   const systemAug = augmentLlmFullSystemPrompt(systemPrompt);
 
+  const body: Record<string, unknown> = {
+    model,
+    messages: [
+      { role: "system", content: systemAug },
+      { role: "user", content: userMessage },
+    ],
+    max_tokens: maxTokens,
+  };
+  applyChatCompletionsTemperature(body, options.temperature);
+
   try {
     const res = await fetch(DEEPSEEK_CHAT_URL, {
       method: "POST",
@@ -98,14 +115,7 @@ export async function callDeepSeek(
         "Content-Type": "application/json",
         Authorization: `Bearer ${resolved.key}`,
       },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: systemAug },
-          { role: "user", content: userMessage },
-        ],
-        max_tokens: maxTokens,
-      }),
+      body: JSON.stringify(body),
       signal: AbortSignal.timeout(waitMs),
     });
     const raw = await res.text();
@@ -130,7 +140,13 @@ export async function callDeepSeek(
 export async function callDeepSeekConversation(
   systemPrompt: string,
   messages: ChatConversationTurn[],
-  options: { maxTokens?: number; model?: string; apiKeys?: LlmCallApiKeys; fetchTimeoutMs?: number } = {}
+  options: {
+    maxTokens?: number;
+    model?: string;
+    apiKeys?: LlmCallApiKeys;
+    fetchTimeoutMs?: number;
+    temperature?: number;
+  } = {}
 ): Promise<DeepSeekResult> {
   const resolved = resolveDeepSeekKey(options.apiKeys);
   if ("error" in resolved) return { ok: false, error: resolved.error };
@@ -165,7 +181,13 @@ export async function callDeepSeekConversation(
         "Content-Type": "application/json",
         Authorization: `Bearer ${resolved.key}`,
       },
-      body: JSON.stringify({ model, messages: apiMessages, max_tokens: maxTokens }),
+      body: JSON.stringify(
+        (() => {
+          const body: Record<string, unknown> = { model, messages: apiMessages, max_tokens: maxTokens };
+          applyChatCompletionsTemperature(body, options.temperature);
+          return body;
+        })()
+      ),
       signal: AbortSignal.timeout(waitMs),
     });
     const raw = await res.text();

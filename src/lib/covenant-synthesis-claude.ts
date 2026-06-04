@@ -19,7 +19,8 @@ export async function synthesizeCovenantsMarkdown(
   userContent: string,
   provider: AiProvider,
   models: CovenantResolvedModels,
-  apiKeys: LlmCallApiKeys
+  apiKeys: LlmCallApiKeys,
+  temperature?: number
 ): Promise<{ ok: true; markdown: string } | { ok: false; error: string }> {
   const result = await llmCompleteSingle(
     provider,
@@ -32,6 +33,7 @@ export async function synthesizeCovenantsMarkdown(
       geminiModel: models.geminiModel,
       deepseekModel: models.deepseekModel,
       apiKeys,
+      temperature,
     }
   );
 

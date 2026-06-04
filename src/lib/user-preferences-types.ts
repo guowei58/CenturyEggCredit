@@ -32,6 +32,11 @@ export type UserPreferencesData = {
     geminiApiKey?: string;
     deepseekApiKey?: string;
   };
+  /**
+   * LLM sampling style: 0 = Engineer (low temperature), 100 = Artist (high temperature).
+   * @see llm-temperature.ts
+   */
+  llmCreativity?: number;
   /** When true, the app may auto-open settings once to prompt for API keys (non-hosted accounts). */
   apiKeysSetupPending?: boolean;
   /** Tab id → custom prompt template text */

@@ -19,7 +19,7 @@ export const maxDuration = 600;
 export async function POST(req: Request, { params }: { params: { ticker: string } }) {
   const llmAuth = await getAuthenticatedLlmContext();
   if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { userId, bundle } = llmAuth.ctx;
+  const { userId, bundle, llmTemperature } = llmAuth.ctx;
 
   const sym = sanitizeTicker(params.ticker ?? "");
   if (!sym) return NextResponse.json({ error: "Invalid ticker" }, { status: 400 });
@@ -61,6 +61,7 @@ export async function POST(req: Request, { params }: { params: { ticker: string 
     provider,
     models,
     apiKeys: bundle,
+    temperature: llmTemperature,
   });
 
   if (!result.ok) {

@@ -24,7 +24,8 @@ Output format only: one line per item with a short title and a full URL. No intr
 export async function discoverPresentationsWithClaude(
   ticker: string,
   claudeModel: string,
-  apiKeys: LlmCallApiKeys
+  apiKeys: LlmCallApiKeys,
+  temperature?: number
 ): Promise<ClaudeResult> {
   const safeTicker = ticker.trim().toUpperCase();
   if (!safeTicker) return { ok: false, error: "Ticker required" };
@@ -36,6 +37,7 @@ export async function discoverPresentationsWithClaude(
     model: claudeModel,
     tools: [WEB_SEARCH_TOOL],
     apiKeys,
+    temperature,
   });
 }
 
@@ -50,10 +52,11 @@ export async function discoverPresentations(
   ticker: string,
   provider: AiProvider,
   models: PresentationLlmModels,
-  apiKeys: LlmCallApiKeys
+  apiKeys: LlmCallApiKeys,
+  temperature?: number
 ): Promise<ClaudeResult> {
   if (provider === "claude") {
-    return discoverPresentationsWithClaude(ticker, models.claudeModel, apiKeys);
+    return discoverPresentationsWithClaude(ticker, models.claudeModel, apiKeys, temperature);
   }
   const safeTicker = ticker.trim().toUpperCase();
   if (!safeTicker) return { ok: false, error: "Ticker required" };
@@ -63,6 +66,7 @@ export async function discoverPresentations(
       maxTokens: LLM_MAX_OUTPUT_TOKENS,
       deepseekModel: models.deepseekModel,
       apiKeys,
+      temperature,
     });
   }
   if (provider === "gemini") {
@@ -70,11 +74,13 @@ export async function discoverPresentations(
       maxTokens: LLM_MAX_OUTPUT_TOKENS,
       geminiModel: models.geminiModel,
       apiKeys,
+      temperature,
     });
   }
   return llmCompleteSingle("openai", OPENAI_SYSTEM, userMessage, {
     maxTokens: LLM_MAX_OUTPUT_TOKENS,
     openaiModel: models.openaiModel,
     apiKeys,
+    temperature,
   });
 }
