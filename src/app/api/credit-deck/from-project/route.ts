@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
   const project = await getProject(userId, projectId);
   if (!project) {
-    return NextResponse.json({ error: "Project not found â€?run ingest again." }, { status: 404 });
+    return NextResponse.json({ error: "Project not found - run ingest again." }, { status: 404 });
   }
 
   const DEFAULT_TARGET_WORDS = 10_000;
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   const memoTitle =
     typeof body.memoTitle === "string" && body.memoTitle.trim()
       ? body.memoTitle.trim()
-      : `${project.ticker} â€?Credit Memo`;
+      : `${project.ticker} - Credit Memo`;
 
   const deckTitle =
     typeof body.deckTitle === "string" && body.deckTitle.trim()
