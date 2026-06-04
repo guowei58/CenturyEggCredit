@@ -42,6 +42,67 @@ export function normalizeAccessionKey(a: string): string {
   return (a ?? "").replace(/-/g, "").trim().toLowerCase();
 }
 
+/** Match accession with or without dashes (bulk ?acc= must resolve the same row as the filings list). */
+export function findPresentedFilingByAccession<T extends { accessionNumber: string }>(
+  filings: T[],
+  acc: string
+): T | undefined {
+  const key = normalizeAccessionKey(acc);
+  if (!key) return undefined;
+  return filings.find((f) => normalizeAccessionKey(f.accessionNumber) === key);
+}
+
+export function buildTestAsPresentedFilingUrl(ticker: string, filing: PresentedFiling, opts?: { skipSubmissions?: boolean }): string {
+  const params = new URLSearchParams({
+    acc: filing.accessionNumber,
+    form: filing.form,
+    primaryDocument: filing.primaryDocument,
+    _: String(Date.now()),
+  });
+  if (opts?.skipSubmissions) params.set("skipSubmissions", "1");
+  return `/api/sec/xbrl/test-as-presented/${encodeURIComponent(ticker)}?${params.toString()}`;
+}
+
+export function buildAsPresentedFilingUrl(ticker: string, filing: PresentedFiling, opts?: { skipSubmissions?: boolean }): string {
+  const params = new URLSearchParams({
+    acc: filing.accessionNumber,
+    form: filing.form,
+    primaryDocument: filing.primaryDocument,
+    _: String(Date.now()),
+  });
+  if (opts?.skipSubmissions) params.set("skipSubmissions", "1");
+  return `/api/sec/xbrl/as-presented/${encodeURIComponent(ticker)}?${params.toString()}`;
+}
+
+/** Newest SEC filing date first; same-day 10-K before 10-Q so the annual is not queued behind a same-day quarter. */
+export function sortPresentedFilingsNewestFirst<T extends { form: string; filingDate: string }>(
+  filings: T[]
+): T[] {
+  return [...filings].sort((a, b) => {
+    const byDate = (b.filingDate || "").localeCompare(a.filingDate || "");
+    if (byDate !== 0) return byDate;
+    const rank = (form: string) => (form.toUpperCase().includes("10-K") ? 0 : 1);
+    return rank(a.form) - rank(b.form);
+  });
+}
+
+/** 10-K / 10-Q in the last ~20 years, newest first (bulk save / list APIs). */
+export function prepareBulkPresentedFilings<
+  T extends { form: string; filingDate: string; accessionNumber: string; primaryDocument: string },
+>(filings: T[], opts?: { lookbackYears?: number; maxCount?: number }): T[] {
+  const lookbackYears = opts?.lookbackYears ?? 20;
+  const maxCount = opts?.maxCount ?? 600;
+  const cutoffYear = new Date().getFullYear() - lookbackYears;
+  return sortPresentedFilingsNewestFirst(
+    filings
+      .filter((f) => f.form === "10-K" || f.form === "10-Q")
+      .filter((f) => {
+        const y = parseInt((f.filingDate ?? "").slice(0, 4), 10);
+        return Number.isFinite(y) ? y >= cutoffYear : true;
+      })
+  ).slice(0, maxCount);
+}
+
 /** Drop period columns where only a tiny fraction of lines have facts (one-off tags); used for Excel export. */
 const SPARSE_PERIOD_MIN_LINE_FILL_RATIO = 0.05;
 
@@ -284,6 +345,7 @@ export async function savePresentedStatementsXlsxToServer(
     fd.append("accessionNumber", filing.accessionNumber);
     const res = await fetch(`/api/saved-documents/${encodeURIComponent(tk)}`, {
       method: "POST",
+      credentials: "include",
       body: fd,
     });
     const j = (await res.json().catch(() => null)) as {

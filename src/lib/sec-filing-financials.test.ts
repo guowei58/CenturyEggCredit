@@ -464,6 +464,108 @@ describe("parsePrimaryFilingStatementHtml", () => {
     expect(cfParsed?.rows.some((row) => row.label.toLowerCase() === "net income")).toBe(true);
   });
 
+  it("rejects MD&A percentage-of-revenue tables and uses Part IV exhibits when Item 8 incorporates by reference (GEN-style 10-K)", () => {
+    const html = `
+      <html><body>
+        <p>ITEM 7. MANAGEMENT'S DISCUSSION AND ANALYSIS</p>
+        <p>Consolidated Statements of Operations data as a percentage of net revenues for the periods indicated:</p>
+        <table>
+          <tr><td></td><td>Fiscal Year 2026</td><td>Fiscal Year 2025</td></tr>
+          <tr><td>Net revenues</td><td>100 %</td><td>100 %</td></tr>
+          <tr><td>Cost of revenues</td><td>22</td><td>20</td></tr>
+          <tr><td>Gross profit</td><td>78</td><td>80</td></tr>
+          <tr><td>Sales and marketing</td><td>25</td><td>19</td></tr>
+          <tr><td>Research and development</td><td>10</td><td>9</td></tr>
+          <tr><td>Operating income</td><td>30</td><td>28</td></tr>
+          <tr><td>Net income (loss)</td><td>20</td><td>18</td></tr>
+        </table>
+
+        <p>ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA</p>
+        <p>The Consolidated Financial Statements included in Part IV, Item 15 of this Annual Report are incorporated by reference into this Item 8.</p>
+        <p>ITEM 9. CHANGES IN AND DISAGREEMENTS WITH ACCOUNTANTS</p>
+
+        <p>PART IV</p>
+        <p>ITEM 15. EXHIBITS AND FINANCIAL STATEMENT SCHEDULES</p>
+        <p>Consolidated Financial Statements:</p>
+        <table>
+          <tr><td>Page</td><td></td></tr>
+          <tr><td>Consolidated Balance Sheets</td><td>48</td></tr>
+          <tr><td>Consolidated Statements of Operations</td><td>50</td></tr>
+          <tr><td>Consolidated Statements of Cash Flows</td><td>52</td></tr>
+        </table>
+
+        <p>CONSOLIDATED STATEMENTS OF OPERATIONS</p>
+        <p>(In millions, except per share amounts)</p>
+        <table>
+          <tr><td></td><td>Year Ended Apr 3, 2026</td><td>Year Ended Mar 28, 2025</td><td>Year Ended Mar 29, 2024</td></tr>
+          <tr><td>Net revenues</td><td>5000</td><td>3935</td><td>3800</td></tr>
+          <tr><td>Cost of revenues</td><td>1077</td><td>776</td><td>731</td></tr>
+          <tr><td>Gross profit</td><td>3923</td><td>3159</td><td>3069</td></tr>
+          <tr><td>Sales and marketing</td><td>1200</td><td>900</td><td>850</td></tr>
+          <tr><td>Research and development</td><td>400</td><td>350</td><td>320</td></tr>
+          <tr><td>Operating income</td><td>1500</td><td>1200</td><td>1100</td></tr>
+          <tr><td>Net income</td><td>1100</td><td>900</td><td>850</td></tr>
+        </table>
+
+        <p>CONSOLIDATED BALANCE SHEETS</p>
+        <table>
+          <tr><td></td><td>Apr 3, 2026</td><td>Mar 28, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>500</td><td>450</td></tr>
+          <tr><td>Total current assets</td><td>1200</td><td>1100</td></tr>
+          <tr><td>Total assets</td><td>8000</td><td>7500</td></tr>
+          <tr><td>Total liabilities</td><td>4000</td><td>3800</td></tr>
+          <tr><td>Total stockholders' equity</td><td>4000</td><td>3700</td></tr>
+        </table>
+
+        <p>CONSOLIDATED STATEMENTS OF CASH FLOWS</p>
+        <table>
+          <tr><td></td><td>Year Ended Apr 3, 2026</td><td>Year Ended Mar 28, 2025</td></tr>
+          <tr><td>Net income</td><td>1100</td><td>900</td></tr>
+          <tr><td>Depreciation</td><td>200</td><td>180</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>1300</td><td>1000</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-400</td><td>-350</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-200</td><td>-150</td></tr>
+        </table>
+      </body></html>
+    `;
+
+    const acc = __test_flatAccFromHtml(html);
+    const section = __test_findPrimaryFinancialStatementsItemSectionBounds(acc, "10-K");
+    const partIv = acc.indexOf("PART IV");
+    expect(section).not.toBeNull();
+    expect(section!.start).toBeGreaterThanOrEqual(partIv);
+
+    const isParsed = parseFixtureStatementHtml(html, { kind: "is", form: "10-K", primaryDocument: "gen-sample.htm" });
+    expect(isParsed?.periods.length).toBeGreaterThanOrEqual(2);
+    expect(Number(isParsed?.rows.find((row) => /net revenues/i.test(row.label))?.values.p1 ?? 0)).toBeGreaterThan(1000);
+    expect(isParsed?.rows.some((row) => /%\s*$/i.test(row.displayValues?.p1 ?? ""))).toBe(false);
+  });
+
+  it("findPresentedFilingByAccession matches with or without dashes", async () => {
+    const { findPresentedFilingByAccession } = await import("@/lib/sec-xbrl-as-presented-save-client");
+    const filings = [
+      { form: "10-K", filingDate: "2026-05-21", accessionNumber: "0000849399-26-000017", primaryDocument: "a.htm" },
+    ];
+    expect(findPresentedFilingByAccession(filings, "000084939926000017")?.accessionNumber).toBe(
+      "0000849399-26-000017"
+    );
+  });
+
+  it("sortPresentedFilingsNewestFirst puts latest 10-K before older filings and 10-K before same-day 10-Q", async () => {
+    const { sortPresentedFilingsNewestFirst, prepareBulkPresentedFilings } = await import(
+      "@/lib/sec-xbrl-as-presented-save-client"
+    );
+    const raw = [
+      { form: "10-Q", filingDate: "2026-02-06", accessionNumber: "a", primaryDocument: "q.htm" },
+      { form: "10-K", filingDate: "2026-05-21", accessionNumber: "b", primaryDocument: "k.htm" },
+      { form: "10-K", filingDate: "2025-05-15", accessionNumber: "c", primaryDocument: "k2.htm" },
+    ];
+    const sorted = sortPresentedFilingsNewestFirst(raw);
+    expect(sorted[0]?.accessionNumber).toBe("b");
+    expect(sorted[1]?.accessionNumber).toBe("a");
+    expect(prepareBulkPresentedFilings(raw)[0]?.accessionNumber).toBe("b");
+  });
+
   it("anchors primary 10-Q section bounds at Part I Item 1 before Item 2", () => {
     const html = `
       <html><body>

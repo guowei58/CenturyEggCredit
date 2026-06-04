@@ -502,6 +502,7 @@ function isPhantomCashFlowHeadingHtmlRawMatch(html: string, index: number): bool
 function isLikelyStatementIndexTableText(text: string): boolean {
   const normalized = normalizeSpace(text).toLowerCase();
   if (!normalized) return false;
+  if (isLikelyConsolidatedFinancialStatementsIndexTable(normalized)) return true;
   const statementHits =
     [
       /condensed consolidated balance sheets?/,
@@ -753,7 +754,35 @@ function simpleStatementKindScore(text: string, kind: StatementKind): number {
 /** Minimum positive score before a table can be tagged IS / BS / CF. */
 const MIN_STATEMENT_KIND_SCORE = 3;
 
+/** MD&A “operations data as a percentage of net revenues” — not the consolidated income statement face. */
+function isLikelyPercentageOfRevenueIncomeTable(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (/\b(?:as\s+a\s+)?percentage\s+of\s+net\s+revenues?\b/.test(t)) return true;
+  if (/\boperations\s+data\s+as\s+a\s+percentage\b/.test(t)) return true;
+  if (/\bnet revenues?\s+100\s*%/.test(t) && /\bcost of revenues?\s+\d{1,2}\b/.test(t)) return true;
+  if (/\b100\s*%\s*100\s*%/.test(t) && /\bgross profit\s+\d{1,2}\b/.test(t) && !/\$\s*[\d,]/.test(t)) return true;
+  return false;
+}
+
+/** Part IV exhibit index listing statement names + page numbers (no face amounts). */
+function isLikelyConsolidatedFinancialStatementsIndexTable(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if ((t.match(/\bpage\b/g) ?? []).length >= 2 && /\bconsolidated\s+financial\s+statements\b/.test(t)) return true;
+  if (
+    (t.match(/\bpage\b/g) ?? []).length >= 1 &&
+    /\bconsolidated\s+balance\s+sheets?\b/.test(t) &&
+    /\bconsolidated\s+statements?\s+of\s+(?:operations|cash\s+flows)\b/.test(t) &&
+    !/\bnet revenues?\b/.test(t) &&
+    !/\btotal assets\b/.test(t)
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function statementTableContentLooksLikePrimaryFace(text: string, kind: StatementKind): boolean {
+  if (isLikelyStatementIndexTableText(text)) return false;
+  if (kind === "is" && isLikelyPercentageOfRevenueIncomeTable(text)) return false;
   return simpleStatementKindScore(text, kind) >= MIN_STATEMENT_KIND_SCORE;
 }
 
@@ -995,12 +1024,24 @@ function parsePrimaryFinancialStatementsInItemSection(
 ): FilingHtmlStatement[] {
   const form = opts.form.toUpperCase();
   const scanCap = primaryItemSectionMaxScanTables(form);
-  let section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, form);
+  const section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, form);
+
+  const clusterHit = findStatementClusterInPrimaryItemSection(ctx, form);
+  if (clusterHit) {
+    const fromCluster = parseAllStatementsFromCluster(ctx, clusterHit.cluster, clusterHit.section, opts);
+    if (
+      fromCluster.length >= 3 &&
+      fromCluster.every((stmt) => validateSinglePrimaryStatementShape(stmt, form))
+    ) {
+      return fromCluster;
+    }
+  }
+
   const pickCtx = { form, section: section ?? { start: 0, end: ctx.acc.length }, shapeTemplates: opts.shapeTemplates };
 
   let candidateTables: Array<{ el: Element; offset: number }>;
   if (section) {
-    candidateTables = ctx.tables.filter((table) => table.offset >= section!.start && table.offset < section!.end);
+    candidateTables = ctx.tables.filter((table) => table.offset >= section.start && table.offset < section.end);
   } else {
     candidateTables = [];
   }
@@ -1014,10 +1055,25 @@ function parsePrimaryFinancialStatementsInItemSection(
       section: { start: 0, end: ctx.acc.length },
     });
   } else if (needsMore && section && Object.keys(picked).length === 0) {
-    picked = pickPrimaryFaceTablesFromCandidates(ctx, ctx.tables, scanCap, {
+    const item8Start = section.start;
+    const alt =
+      form.includes("10-K") && isTenKItem8FinancialsIncorporatedByReference(ctx.acc, item8Start)
+        ? findTenKPartIvFinancialStatementsSection(ctx.acc, item8Start)
+        : null;
+    const retrySection = alt ?? section;
+    const retryTables = ctx.tables.filter(
+      (table) => table.offset >= retrySection.start && table.offset < retrySection.end
+    );
+    picked = pickPrimaryFaceTablesFromCandidates(ctx, retryTables, scanCap, {
       ...pickCtx,
-      section: { start: 0, end: ctx.acc.length },
+      section: retrySection,
     });
+    if (!picked.is || !picked.bs || !picked.cf) {
+      picked = pickPrimaryFaceTablesFromCandidates(ctx, ctx.tables, scanCap, {
+        ...pickCtx,
+        section: { start: 0, end: ctx.acc.length },
+      });
+    }
   }
 
   const sectionStart = section?.start ?? 0;
@@ -1025,19 +1081,34 @@ function parsePrimaryFinancialStatementsInItemSection(
   return (["is", "bs", "cf"] as StatementKind[])
     .map((kind) => {
       const hit = picked[kind];
-      if (!hit) return null;
-      const unitsHint = extractUnitsFromText(
-        ctx.acc.slice(Math.max(sectionStart, hit.offset - 500), hit.offset)
-      );
-      return parsePrimaryStatementTable(
-        ctx.$,
-        ctx.$(hit.el),
-        kind,
-        unitsHint,
-        opts.primaryDocument,
-        opts.sourceUrl,
-        hit.offset
-      );
+      let stmt: FilingHtmlStatement | null = null;
+      if (hit) {
+        const unitsHint = extractUnitsFromText(
+          ctx.acc.slice(Math.max(sectionStart, hit.offset - 500), hit.offset)
+        );
+        stmt = returnParsedPrimaryStatementIfValid(
+          parsePrimaryStatementTable(
+            ctx.$,
+            ctx.$(hit.el),
+            kind,
+            unitsHint,
+            opts.primaryDocument,
+            opts.sourceUrl,
+            hit.offset
+          ),
+          form
+        );
+      }
+      if (!stmt) {
+        stmt = parseBestStatementTableFromContext(ctx, {
+          kind,
+          form,
+          primaryDocument: opts.primaryDocument,
+          sourceUrl: opts.sourceUrl,
+          shapeTemplates: opts.shapeTemplates,
+        });
+      }
+      return stmt;
     })
     .filter((stmt): stmt is FilingHtmlStatement => Boolean(stmt));
 }
@@ -1465,9 +1536,45 @@ function resolvePrimaryFinancialStatementsItemStart(acc: string, form: string): 
   return itemStarts[0] ?? null;
 }
 
+function isTenKItem8FinancialsIncorporatedByReference(acc: string, item8Start: number): boolean {
+  const preview = acc.slice(item8Start, Math.min(acc.length, item8Start + 4_000));
+  if (!/\bincorporat(?:ed|ion)\b/i.test(preview)) return false;
+  return /\bpart\s+iv\b/i.test(preview) || /\bitem\s+15\b/i.test(preview);
+}
+
+/** When Item 8 only incorporates Part IV / Item 15 exhibits, scan that block for face tables. */
+function findTenKPartIvFinancialStatementsSection(acc: string, item8Start: number): FilingSectionBounds | null {
+  const partIvHits = collectMatches(acc, [/\bPART\s+IV\b/gi], item8Start).filter((p) => p >= item8Start);
+  let best: { start: number; score: number } | null = null;
+  for (const partStart of partIvHits) {
+    const window = acc.slice(partStart, Math.min(acc.length, partStart + 30_000));
+    const cues = tenQStatementHeadingPreviewCues(window);
+    if (!cues.hasIs || !cues.hasBs || !cues.hasCf) continue;
+    const score =
+      30 +
+      (/\breport\s+of\s+independent\s+registered\s+public\s+accounting\s+firm\b/i.test(window) ? 50 : 0) +
+      (/\bconsolidated\s+statements?\s+of\s+operations\b/i.test(window) ? 40 : 0) -
+      (/\bincorporat(?:ed|ion)\s+by\s+reference\b/i.test(window.slice(0, 2_500)) ? 80 : 0);
+    if (!best || score > best.score) best = { start: partStart, score };
+  }
+  if (best) return { start: best.start, end: acc.length };
+  const lastPartIv = partIvHits[partIvHits.length - 1];
+  if (lastPartIv != null) return { start: lastPartIv, end: acc.length };
+  const item15 = collectMatches(acc, [/\bITEM\s+15\b/gi], item8Start);
+  const bodyItem15 = item15.filter((idx) => idx > item8Start + 500).sort((a, b) => a - b)[0];
+  if (bodyItem15 != null) return { start: bodyItem15, end: acc.length };
+  return null;
+}
+
 function findPrimaryFinancialStatementsItemSectionBounds(acc: string, form: string): FilingSectionBounds | null {
   const start = resolvePrimaryFinancialStatementsItemStart(acc, form);
   if (start == null) return null;
+
+  if (form.toUpperCase().includes("10-K") && isTenKItem8FinancialsIncorporatedByReference(acc, start)) {
+    const partIv = findTenKPartIvFinancialStatementsSection(acc, start);
+    if (partIv) return partIv;
+  }
+
   const end = findSectionEnd(acc, form, start);
   if (end <= start) return null;
   return { start, end };
@@ -2092,6 +2199,8 @@ function scoreStatementTableText(text: string, kind: StatementKind): number {
   }
   if (kind === "is") {
     let score = is * 20 - bs * 8 - cf * 6 - summaryPenalty - epsNotePenalty;
+    if (isLikelyPercentageOfRevenueIncomeTable(t)) score -= 520;
+    if (isLikelyConsolidatedFinancialStatementsIndexTable(t)) score -= 480;
     if (isLikelyOtherComprehensiveIncomeOnlyTable(t)) score -= 520;
     if (/\bmanagement fees\b/.test(t) || /\badvisory (and transaction )?fees\b/.test(t) || /\btotal revenues?,?\s*net\b/.test(t)) {
       score += 24;
@@ -2154,6 +2263,8 @@ function validateSinglePrimaryStatementShape(stmt: FilingHtmlStatement, form: st
     if (isLikelyOtherComprehensiveIncomeOnlyTable(labels)) return false;
     if (isLikelyHighLevelIncomeSummaryTable(labels)) return false;
     if (isLikelyMinimalOperatingResultsIncomeTable(labels)) return false;
+    if (isLikelyPercentageOfRevenueIncomeTable(labels)) return false;
+    if (isLikelyConsolidatedFinancialStatementsIndexTable(labels)) return false;
     const revenueCue =
       primaryFaceOperatingRevenueCue(labels) ||
       /\bnet sales\b/.test(labels) ||
@@ -2293,38 +2404,58 @@ function scoreTableCandidate(
   return score;
 }
 
-function parseBestStatementTableFromHtml(
-  html: string,
-  opts: { kind: StatementKind; form: string; primaryDocument?: string; sourceUrl?: string }
+function parseBestStatementTableFromContext(
+  ctx: ParsedFilingHtmlContext,
+  opts: {
+    kind: StatementKind;
+    form: string;
+    primaryDocument?: string;
+    sourceUrl?: string;
+    shapeTemplates?: PrimaryFaceShapeTemplates;
+  }
 ): FilingHtmlStatement | null {
-  const $ = cheerio.load(html);
-  const { acc, tables } = buildFlatTextAndTableOffsets($);
   const formUpper = opts.form.toUpperCase();
-  const section = findPrimaryFinancialStatementsItemSectionBounds(acc, formUpper) ?? { start: 0, end: acc.length };
-  const ceiling = primaryFaceTablePickCeiling(acc, section, formUpper);
+  const section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, formUpper) ?? {
+    start: 0,
+    end: ctx.acc.length,
+  };
+  const ceiling = primaryFaceTablePickCeiling(ctx.acc, section, formUpper);
   let best: { table: { el: Element; offset: number }; score: number } | null = null;
 
-  for (const table of tables) {
+  for (const table of ctx.tables) {
     if (table.offset < section.start || table.offset >= ceiling) continue;
-    if (!statementTableTextLooksLikePrimaryFace($, table, opts.kind)) continue;
-    const score = scoreTableCandidate($, acc, table, section, opts.kind, formUpper);
+    if (!statementTableTextLooksLikePrimaryFace(ctx.$, table, opts.kind)) continue;
+    const score = scoreTableCandidate(
+      ctx.$,
+      ctx.acc,
+      table,
+      section,
+      opts.kind,
+      formUpper,
+      opts.shapeTemplates
+    );
     if (!best || score > best.score) best = { table, score };
   }
 
   let usedFaceFallback = false;
   if (!best || best.score < 40) {
-    const earliest = earliestPrimaryFaceTableInSection($, tables, section.start, ceiling, opts.kind);
+    const earliest = earliestPrimaryFaceTableInSection(ctx.$, ctx.tables, section.start, ceiling, opts.kind);
     if (!earliest) return null;
-    best = { table: earliest, score: scoreTableCandidate($, acc, earliest, section, opts.kind, formUpper) };
+    best = {
+      table: earliest,
+      score: scoreTableCandidate(ctx.$, ctx.acc, earliest, section, opts.kind, formUpper, opts.shapeTemplates),
+    };
     usedFaceFallback = true;
   }
   if (!best) return null;
   if (!usedFaceFallback && best.score < 40) return null;
-  const unitsHint = extractUnitsFromText(acc.slice(Math.max(0, best.table.offset - 500), best.table.offset));
+  const unitsHint = extractUnitsFromText(
+    ctx.acc.slice(Math.max(0, best.table.offset - 500), best.table.offset)
+  );
   return returnParsedPrimaryStatementIfValid(
     parsePrimaryStatementTable(
-      $,
-      $(best.table.el),
+      ctx.$,
+      ctx.$(best.table.el),
       opts.kind,
       unitsHint,
       opts.primaryDocument,
@@ -2333,6 +2464,15 @@ function parseBestStatementTableFromHtml(
     ),
     formUpper
   );
+}
+
+function parseBestStatementTableFromHtml(
+  html: string,
+  opts: { kind: StatementKind; form: string; primaryDocument?: string; sourceUrl?: string }
+): FilingHtmlStatement | null {
+  const ctx = buildParsedFilingHtmlContext(html);
+  if (!ctx) return null;
+  return parseBestStatementTableFromContext(ctx, opts);
 }
 
 export function __test_parseBestStatementTableFromHtml(

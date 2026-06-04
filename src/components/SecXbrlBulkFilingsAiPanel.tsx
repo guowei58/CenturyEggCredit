@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui";
 import { ProviderPublicLimitsSidePanel } from "@/components/credit-memo/ProviderPublicLimitsSidePanel";
@@ -13,12 +13,22 @@ import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { fetchSavedTabContent } from "@/lib/saved-data-client";
 import { downloadMarkdownConsolidationAsXlsx } from "@/lib/markdown-tables-to-xlsx";
 import {
+  buildAsPresentedFilingUrl,
+  buildTestAsPresentedFilingUrl,
   normalizeAccessionKey,
   savePresentedStatementsXlsxToServer,
+  sortPresentedFilingsNewestFirst,
   type PresentedFiling,
   type SecXbrlAsPresentedApiResponse,
 } from "@/lib/sec-xbrl-as-presented-save-client";
+import {
+  saveFacePresentedStatementsXlsxToServer,
+  type FacePresentedStatementForSave,
+  type SecIxbrlFacePresentedApiResponse,
+} from "@/lib/sec-ixbrl-face-save-client";
 import { hasBlockingXbrlExportFailures } from "@/lib/sec-xbrl-export-validation";
+
+export type BulkWorkbookSource = "sec-xbrl" | "test-html-face";
 
 const XBRL_AI_SAVE_KEY = "xbrl-consolidated-financials-ai" as const;
 
@@ -44,12 +54,15 @@ const DEFAULT_CONSOLIDATE_MODELS: Record<AiProvider, ModelRunChoice> = {
  */
 export function SecXbrlBulkFilingsAiPanel({
   ticker,
+  workbookSource = "sec-xbrl",
   showBulkSave = true,
   showAiConsolidation = true,
   showProviderPublicLimits = true,
   onAfterBulkSave,
 }: {
   ticker: string;
+  /** `test-html-face` uses TEST tab HTML extraction; `sec-xbrl` uses XBRL linkbase as-presented. */
+  workbookSource?: BulkWorkbookSource;
   /** SEC XBRL bulk save list + button. Default true. */
   showBulkSave?: boolean;
   /** AI consolidation card (ingests saved workbooks). Default true. */
@@ -59,19 +72,28 @@ export function SecXbrlBulkFilingsAiPanel({
   /** Called when bulk save finishes (success or partial failure) so other UI can refresh Saved Documents lists. */
   onAfterBulkSave?: () => void;
 }) {
+  const useTestHtmlFace = workbookSource === "test-html-face";
   const tk = (ticker ?? "").trim().toUpperCase();
   const { status: authStatus } = useSession();
   const { ready: prefsReady, preferences } = useUserPreferences();
   const [consolidateModelChoice, setConsolidateModelChoice] =
     useState<Record<AiProvider, ModelRunChoice>>(DEFAULT_CONSOLIDATE_MODELS);
   const lastModelHydrateTickerRef = useRef<string | null>(null);
-  const [listData, setListData] = useState<SecXbrlAsPresentedApiResponse | null>(null);
+  const [listData, setListData] = useState<SecXbrlAsPresentedApiResponse | SecIxbrlFacePresentedApiResponse | null>(
+    null
+  );
   const [listLoading, setListLoading] = useState(false);
   const [listErr, setListErr] = useState<string | null>(null);
   const [bulkSaving, setBulkSaving] = useState(false);
-  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number; label: string } | null>(null);
+  const [bulkProgress, setBulkProgress] = useState<{
+    done: number;
+    total: number;
+    label: string;
+    outcome?: string;
+  } | null>(null);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
   const tabAliveRef = useRef(true);
+  const bulkAbortRef = useRef<AbortController | null>(null);
   const [consolidatedMd, setConsolidatedMd] = useState<string>("");
   const [aiBusy, setAiBusy] = useState<AiProvider | null>(null);
   const [aiErr, setAiErr] = useState<string | null>(null);
@@ -128,8 +150,11 @@ export function SecXbrlBulkFilingsAiPanel({
     setListErr(null);
     void (async () => {
       try {
-        const res = await fetch(`/api/sec/xbrl/as-presented/${encodeURIComponent(tk)}`, { cache: "no-store" });
-        const j = (await res.json()) as SecXbrlAsPresentedApiResponse;
+        const listUrl = useTestHtmlFace
+          ? `/api/sec/xbrl/test-as-presented/${encodeURIComponent(tk)}`
+          : `/api/sec/xbrl/as-presented/${encodeURIComponent(tk)}`;
+        const res = await fetch(listUrl, { cache: "no-store" });
+        const j = (await res.json()) as SecXbrlAsPresentedApiResponse | SecIxbrlFacePresentedApiResponse;
         if (!res.ok) throw new Error(j.error || "Failed to load filings list");
         if (!cancelled) setListData(j);
       } catch (e) {
@@ -141,10 +166,13 @@ export function SecXbrlBulkFilingsAiPanel({
     return () => {
       cancelled = true;
     };
-  }, [tk, showBulkSave]);
+  }, [tk, showBulkSave, useTestHtmlFace]);
 
-  const filings: PresentedFiling[] = listData?.filings ?? [];
-  const selectedAcc = listData?.selected?.accessionNumber ?? "";
+  const filings: PresentedFiling[] = useMemo(() => {
+    const raw = listData?.filings ?? [];
+    return raw.length ? sortPresentedFilingsNewestFirst(raw) : raw;
+  }, [listData?.filings]);
+  const selectedAcc = listData?.selected?.accessionNumber ?? filings[0]?.accessionNumber ?? "";
 
   if (!tk) {
     return (
@@ -173,12 +201,12 @@ export function SecXbrlBulkFilingsAiPanel({
             <div className="flex flex-wrap items-end justify-between gap-2">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                  All XBRL filings (10-K / 10-Q)
+                  {useTestHtmlFace ? "All filings (10-K / 10-Q) — TEST tab extraction" : "All XBRL filings (10-K / 10-Q)"}
                 </p>
                 <p className="mt-0.5 text-[11px]" style={{ color: "var(--muted2)" }}>
-                  {filings.length} filing{filings.length === 1 ? "" : "s"} in the last ~20 years. Each saved workbook matches
-                  the as-presented view: Meta, display + raw sheets, Validation, very sparse period columns omitted (~5% line
-                  fill), zero-only rows omitted.
+                  {useTestHtmlFace
+                    ? `${filings.length} filing${filings.length === 1 ? "" : "s"} in the last ~20 years (newest first — ${filings[0] ? `${filings[0].filingDate} ${filings[0].form}` : "latest"} runs before older files). Saves go to Saved Documents, not your Downloads folder. Each workbook uses HTML face tables (same as the TEST tab).`
+                    : `${filings.length} filing${filings.length === 1 ? "" : "s"} in the last ~20 years (newest first). Saves go to Saved Documents. Each workbook matches the as-presented view: Meta, display + raw sheets, Validation, very sparse period columns omitted (~5% line fill), zero-only rows omitted.`}
                 </p>
               </div>
               <button
@@ -189,54 +217,48 @@ export function SecXbrlBulkFilingsAiPanel({
                 title={
                   authStatus !== "authenticated"
                     ? "Sign in to save workbooks to Saved Documents."
-                    : "Fetch each filing and save one .xlsx per accession. Re-running replaces the same file for each filing."
+                    : "Fetch each filing newest-first and save one .xlsx per accession under Saved Documents. Re-running replaces the same file for each filing."
                 }
                 onClick={() => {
                   if (authStatus !== "authenticated" || bulkSaving || !tk) return;
+                  bulkAbortRef.current?.abort();
+                  const bulkAbort = new AbortController();
+                  bulkAbortRef.current = bulkAbort;
                   setBulkMsg(null);
                   setBulkSaving(true);
-                  setBulkProgress({ done: 0, total: filings.length, label: "" });
+                  const ordered = sortPresentedFilingsNewestFirst(filings);
+                  const latest = ordered[0];
+                  const SEC_BULK_PACE_MS = 450;
+                  const MAX_ATTEMPTS = 3;
+                  const sleepMs = (ms: number) => new Promise((r) => setTimeout(r, ms));
+                  setBulkProgress({
+                    done: 0,
+                    total: ordered.length,
+                    label: latest ? `${latest.filingDate} ${latest.form}` : "",
+                    outcome: "starting",
+                  });
                   void (async () => {
                     let saved = 0;
                     let skipped = 0;
                     let failed = 0;
                     const failNotes: string[] = [];
+                    let latestOutcome: "saved" | "skipped" | "failed" | "pending" = "pending";
                     const companyName = listData?.companyName;
                     const cik = listData?.cik;
 
-                    try {
-                      for (let i = 0; i < filings.length; i++) {
-                        if (!tabAliveRef.current) break;
-                        const f = filings[i]!;
-                        setBulkProgress({
-                          done: i,
-                          total: filings.length,
-                          label: `${f.filingDate} ${f.form}`,
-                        });
-                        try {
-                          const res = await fetch(
-                            `/api/sec/xbrl/as-presented/${encodeURIComponent(tk)}?acc=${encodeURIComponent(f.accessionNumber)}`,
-                            { cache: "no-store" }
-                          );
-                          const j = (await res.json()) as SecXbrlAsPresentedApiResponse;
-                          const stmts = j.statements ?? [];
-                          if (!res.ok || j.ok === false) {
-                            failed++;
-                            failNotes.push(`${f.accessionNumber}: ${j.error ?? res.statusText}`);
-                            continue;
-                          }
-                          if (!stmts.length) {
-                            skipped++;
-                            continue;
-                          }
-                          if (hasBlockingXbrlExportFailures(j.validation)) {
-                            failed++;
-                            failNotes.push(
-                              `${f.accessionNumber}: statement validation failed (not saved — open SEC XBRL Financials for details)`
-                            );
-                            continue;
-                          }
-                          const r = await savePresentedStatementsXlsxToServer(
+                    const saveStatements = async (
+                      f: PresentedFiling,
+                      stmts: FacePresentedStatementForSave[] | SecXbrlAsPresentedApiResponse["statements"],
+                      j: SecXbrlAsPresentedApiResponse | SecIxbrlFacePresentedApiResponse
+                    ): Promise<"saved" | "failed"> => {
+                      if (!useTestHtmlFace && hasBlockingXbrlExportFailures(j.validation)) {
+                        failNotes.push(
+                          `${f.accessionNumber}: statement validation failed (not saved — open SEC XBRL Financials for details)`
+                        );
+                        return "failed";
+                      }
+                      const r = useTestHtmlFace
+                        ? await saveFacePresentedStatementsXlsxToServer(
                             tk,
                             {
                               form: f.form,
@@ -245,43 +267,151 @@ export function SecXbrlBulkFilingsAiPanel({
                             },
                             companyName ?? j.companyName,
                             cik ?? j.cik,
-                            stmts,
+                            stmts as FacePresentedStatementForSave[],
+                            j.validation,
+                            j.calculationLinkbaseLoaded
+                          )
+                        : await savePresentedStatementsXlsxToServer(
+                            tk,
+                            {
+                              form: f.form,
+                              filingDate: f.filingDate,
+                              accessionNumber: f.accessionNumber,
+                            },
+                            companyName ?? j.companyName,
+                            cik ?? j.cik,
+                            stmts ?? [],
                             j.validation,
                             j.calculationLinkbaseLoaded
                           );
-                          if (r.ok) saved++;
-                          else {
-                            failed++;
-                            failNotes.push(`${f.accessionNumber}: ${r.error}`);
+                      if (r.ok) return "saved";
+                      failNotes.push(`${f.filingDate} ${f.form}: ${r.error}`);
+                      return "failed";
+                    };
+
+                    const processOne = async (
+                      f: PresentedFiling,
+                      attempt: number,
+                      logOnFailure: boolean
+                    ): Promise<"saved" | "skipped" | "failed"> => {
+                      const selectedAcc = listData?.selected?.accessionNumber ?? "";
+                      const canReuseList =
+                        attempt === 0 &&
+                        listData &&
+                        normalizeAccessionKey(f.accessionNumber) === normalizeAccessionKey(selectedAcc) &&
+                        (listData.statements?.length ?? 0) > 0;
+                      if (canReuseList) {
+                        return saveStatements(f, listData!.statements!, listData!);
+                      }
+
+                      const filingUrl = useTestHtmlFace
+                        ? buildTestAsPresentedFilingUrl(tk, f, { skipSubmissions: true })
+                        : buildAsPresentedFilingUrl(tk, f, { skipSubmissions: true });
+                      const res = await fetch(filingUrl, {
+                        cache: "no-store",
+                        credentials: "include",
+                        signal: bulkAbort.signal,
+                      });
+                      const j = (await res.json()) as
+                        | SecXbrlAsPresentedApiResponse
+                        | SecIxbrlFacePresentedApiResponse;
+                      const stmts = j.statements ?? [];
+                      if (!res.ok || j.ok === false) {
+                        if (logOnFailure) {
+                          failNotes.push(
+                            `${f.filingDate} ${f.form}: ${j.error ?? res.statusText}${attempt > 0 ? ` (after ${attempt + 1} attempts)` : ""}`
+                          );
+                        }
+                        return "failed";
+                      }
+                      if (!stmts.length) {
+                        if (logOnFailure) {
+                          failNotes.push(
+                            `${f.filingDate} ${f.form}: no primary statements extracted${attempt > 0 ? ` (after ${attempt + 1} attempts)` : ""}`
+                          );
+                        }
+                        return "skipped";
+                      }
+                      return saveStatements(f, stmts, j);
+                    };
+
+                    try {
+                      for (let i = 0; i < ordered.length; i++) {
+                        if (bulkAbort.signal.aborted) break;
+                        const f = ordered[i]!;
+                        setBulkProgress({
+                          done: i,
+                          total: ordered.length,
+                          label: `${f.filingDate} ${f.form}`,
+                          outcome: "extracting",
+                        });
+                        let outcome: "saved" | "skipped" | "failed" = "failed";
+                        try {
+                          for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
+                            if (bulkAbort.signal.aborted) break;
+                            if (attempt > 0) await sleepMs(SEC_BULK_PACE_MS * attempt);
+                            outcome = await processOne(f, attempt, attempt === MAX_ATTEMPTS - 1);
+                            if (outcome === "saved") break;
+                            if (outcome === "skipped" && attempt < MAX_ATTEMPTS - 1) continue;
+                            if (outcome === "failed" && attempt < MAX_ATTEMPTS - 1) continue;
+                            break;
                           }
+                          if (f === latest) latestOutcome = outcome;
+                          if (outcome === "saved") saved++;
+                          else if (outcome === "skipped") skipped++;
+                          else failed++;
                         } catch (e) {
+                          if (bulkAbort.signal.aborted) break;
                           failed++;
-                          failNotes.push(`${f.accessionNumber}: ${e instanceof Error ? e.message : "error"}`);
+                          if (f === latest) latestOutcome = "failed";
+                          failNotes.push(`${f.filingDate} ${f.form}: ${e instanceof Error ? e.message : "error"}`);
+                        }
+                        setBulkProgress({
+                          done: i + 1,
+                          total: ordered.length,
+                          label: `${f.filingDate} ${f.form}`,
+                          outcome,
+                        });
+                        if (i < ordered.length - 1 && !bulkAbort.signal.aborted) {
+                          await sleepMs(SEC_BULK_PACE_MS);
                         }
                       }
 
-                      if (tabAliveRef.current) {
+                      if (!bulkAbort.signal.aborted && tabAliveRef.current) {
                         const tail = failNotes.length
-                          ? ` Errors (first 5): ${failNotes.slice(0, 5).join(" · ")}${failNotes.length > 5 ? "…" : ""}`
+                          ? ` Details (first 8): ${failNotes.slice(0, 8).join(" · ")}${failNotes.length > 8 ? "…" : ""}`
                           : "";
+                        const latestNote =
+                          latest && latestOutcome !== "saved"
+                            ? ` Latest filing (${latest.filingDate} ${latest.form}) was not saved.`
+                            : latest && latestOutcome === "saved"
+                              ? ` Latest: ${latest.filingDate} ${latest.form} saved.`
+                              : "";
                         setBulkMsg(
-                          `Saved ${saved} workbook(s). Skipped ${skipped} (no as-presented statements). Failed ${failed}.${tail}`
+                          `Saved ${saved} workbook(s). Skipped ${skipped} (no statements). Failed ${failed}.${latestNote}${tail}`
                         );
                       }
                     } finally {
                       setBulkSaving(false);
                       setBulkProgress(null);
+                      if (bulkAbortRef.current === bulkAbort) bulkAbortRef.current = null;
                       onAfterBulkSave?.();
                     }
                   })();
                 }}
               >
-                {bulkSaving ? "Saving…" : "Bulk Save SEC XBRL Data"}
+                {bulkSaving
+                  ? "Saving…"
+                  : useTestHtmlFace
+                    ? "Bulk Save HTML Face Workbooks"
+                    : "Bulk Save SEC XBRL Data"}
               </button>
             </div>
             {bulkProgress && bulkSaving ? (
               <p className="mt-2 text-[10px] font-mono" style={{ color: "var(--muted2)" }}>
-                {bulkProgress.done + 1}/{bulkProgress.total} · {bulkProgress.label}
+                {bulkProgress.done}/{bulkProgress.total} · {bulkProgress.label}
+                {bulkProgress.outcome ? ` · ${bulkProgress.outcome}` : ""}
+                {bulkProgress.done === 0 ? " (newest filing)" : ""}
               </p>
             ) : null}
             {bulkMsg ? (
@@ -294,7 +424,7 @@ export function SecXbrlBulkFilingsAiPanel({
               style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
             >
               <ul className="divide-y p-0" style={{ borderColor: "var(--border2)" }}>
-                {filings.map((f) => {
+                {filings.map((f, idx) => {
                   const isSel = normalizeAccessionKey(f.accessionNumber) === normalizeAccessionKey(selectedAcc);
                   return (
                     <li
@@ -305,6 +435,14 @@ export function SecXbrlBulkFilingsAiPanel({
                         borderColor: "var(--border2)",
                       }}
                     >
+                      {idx === 0 ? (
+                        <span
+                          className="shrink-0 rounded px-1 py-0.5 text-[9px] font-bold uppercase tracking-wide"
+                          style={{ background: "var(--accent)", color: "#fff" }}
+                        >
+                          Latest
+                        </span>
+                      ) : null}
                       <span className="shrink-0 font-mono text-[10px]" style={{ color: "var(--muted)" }}>
                         {f.filingDate}
                       </span>

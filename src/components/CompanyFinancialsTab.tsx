@@ -16,7 +16,7 @@ export function CompanyFinancialsTab({
   scrollToBadSection?: boolean;
 }) {
   const safeTicker = ticker?.trim() ?? "";
-  /** Bumps after SEC XBRL bulk save so the deterministic compiler reloads Saved Documents without a full page refresh. */
+  /** Bumps after bulk save so the deterministic compiler reloads Saved Documents without a full page refresh. */
   const [savedDocumentsRev, setSavedDocumentsRev] = useState(0);
 
   useEffect(() => {
@@ -35,7 +35,9 @@ export function CompanyFinancialsTab({
           Historical Financial Statements
         </h1>
         <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Work in two steps: save each filing as an Excel workbook, then compile those files into consolidated statements.
+          Work in two steps: bulk-save each 10-K/10-Q using the same HTML face extraction as the{" "}
+          <strong style={{ color: "var(--text)" }}>TEST</strong> tab, then compile those workbooks into quarterly and
+          annual statements.
         </p>
       </header>
 
@@ -54,16 +56,17 @@ export function CompanyFinancialsTab({
               Save bulk filing workbooks
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-              Pull SEC as-presented numbers for each 10-K and 10-Q and store them under{" "}
+              For each 10-K and 10-Q (newest filing first, e.g. FY 2026 10-K before older quarters), extract primary
+              statements from filed HTML tables (TEST tab methodology) and save under{" "}
               <strong style={{ color: "var(--text)" }}>Saved Documents</strong> as{" "}
-              <span className="font-mono text-xs">.xlsx</span> files (same source as the{" "}
-              <strong style={{ color: "var(--text)" }}>SEC XBRL Financials</strong> tab). Run bulk save before compiling—you
-              need those files in step 2.
+              <span className="font-mono text-xs">.xlsx</span> files—not to your Downloads folder. Open Saved Documents to
+              download individual files. Run bulk save before compiling.
             </p>
           </div>
         </div>
         <SecXbrlBulkFilingsAiPanel
           ticker={safeTicker}
+          workbookSource="test-html-face"
           showAiConsolidation={false}
           onAfterBulkSave={() => setSavedDocumentsRev((n) => n + 1)}
         />
@@ -89,7 +92,7 @@ export function CompanyFinancialsTab({
               Compile into financials
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-              Merge the saved SEC-XBRL workbooks into quarterly and annual income statement, balance sheet, and cash flow
+              Merge the saved HTML-face workbooks into quarterly and annual income statement, balance sheet, and cash flow
               views. Select files, run the compiler, then review or download Excel from the Statements tab.
             </p>
           </div>

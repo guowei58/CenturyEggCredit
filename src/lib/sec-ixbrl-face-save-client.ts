@@ -7,10 +7,14 @@ import type { XbrlExportValidationIssue } from "@/lib/sec-xbrl-export-validation
 import { faceStatementCellNumeric, type FaceStatementId } from "@/lib/sec-ixbrl-face-display";
 import type { FacePresentedStatement, FaceStatementExtractionQa } from "@/lib/sec-ixbrl-face-extract";
 
-export type FacePresentedFiling = {
+export type FacePresentedFilingMeta = {
   form: string;
   filingDate: string;
   accessionNumber: string;
+  primaryDocument?: string;
+};
+
+export type FacePresentedFiling = FacePresentedFilingMeta & {
   primaryDocument: string;
 };
 
@@ -61,6 +65,82 @@ export function faceStatementToWorkbookShape(stmt: FacePresentedStatement) {
   };
 }
 
+const FACE_WORKBOOK_GRID_CAPTION =
+  "HTML face extraction — numeric cells match the TEST tab grid (faceStatementCellNumeric: $ millions, native EPS, share counts in millions of shares)";
+
+export function buildFacePresentedStatementsWorkbook(params: {
+  ticker: string;
+  companyName?: string;
+  cik?: string;
+  filing: FacePresentedFilingMeta;
+  statements: FacePresentedStatementForSave[];
+  validation?: XbrlExportValidationIssue[];
+  calculationLinkbaseLoaded?: boolean;
+}) {
+  return buildAsPresentedStatementsWorkbook({
+    ticker: params.ticker,
+    companyName: params.companyName,
+    cik: params.cik,
+    filing: params.filing,
+    statements: params.statements.map(faceStatementToWorkbookShape),
+    validation: params.validation,
+    calculationLinkbaseLoaded: params.calculationLinkbaseLoaded,
+    workbookGridCaption: FACE_WORKBOOK_GRID_CAPTION,
+  });
+}
+
+/** Save TEST-tab HTML-face workbooks to Saved Documents (compiler-ready filename slug). */
+export async function saveFacePresentedStatementsXlsxToServer(
+  tk: string,
+  filing: { form: string; filingDate: string; accessionNumber: string },
+  companyName: string | undefined,
+  cik: string | undefined,
+  statements: FacePresentedStatementForSave[],
+  validation?: XbrlExportValidationIssue[],
+  calculationLinkbaseLoaded?: boolean
+): Promise<{ ok: true; filename?: string } | { ok: false; error: string }> {
+  if (!statements.length) {
+    return { ok: false, error: "No statements to export" };
+  }
+  try {
+    const wb = buildFacePresentedStatementsWorkbook({
+      ticker: tk,
+      companyName,
+      cik,
+      filing,
+      statements,
+      validation,
+      calculationLinkbaseLoaded,
+    });
+    const u8 = workbookToXlsxUint8Array(wb);
+    const blob = new Blob([new Uint8Array(u8)], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const fd = new FormData();
+    fd.append("action", "save-xbrl-as-presented-xlsx");
+    fd.append("file", blob, "SEC-XBRL-financials.xlsx");
+    fd.append("filingForm", filing.form);
+    fd.append("filingDate", filing.filingDate);
+    fd.append("accessionNumber", filing.accessionNumber);
+    const res = await fetch(`/api/saved-documents/${encodeURIComponent(tk)}`, {
+      method: "POST",
+      credentials: "include",
+      body: fd,
+    });
+    const j = (await res.json().catch(() => null)) as {
+      ok?: boolean;
+      error?: string;
+      item?: { filename?: string };
+    } | null;
+    if (!res.ok || j?.ok !== true) {
+      return { ok: false, error: j?.error ?? `Save failed (HTTP ${res.status})` };
+    }
+    return { ok: true, filename: j.item?.filename };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Save failed" };
+  }
+}
+
 export function triggerBrowserDownloadFacePresentedWorkbook(params: {
   ticker: string;
   companyName?: string;
@@ -70,18 +150,7 @@ export function triggerBrowserDownloadFacePresentedWorkbook(params: {
   validation?: XbrlExportValidationIssue[];
   calculationLinkbaseLoaded?: boolean;
 }): void {
-  const wb = buildAsPresentedStatementsWorkbook({
-    ticker: params.ticker,
-    companyName: params.companyName,
-    cik: params.cik,
-    filing: params.filing,
-    statements: params.statements.map(faceStatementToWorkbookShape),
-    validation: params.validation,
-    calculationLinkbaseLoaded: params.calculationLinkbaseLoaded,
-    workbookGridCaption:
-      "HTML face extraction — numeric cells match the TEST tab grid (faceStatementCellNumeric: $ millions, native EPS, share counts in millions of shares)",
-  });
-  const bytes = workbookToXlsxUint8Array(wb);
+  const bytes = workbookToXlsxUint8Array(buildFacePresentedStatementsWorkbook(params));
   const blob = new Blob([new Uint8Array(bytes)], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });

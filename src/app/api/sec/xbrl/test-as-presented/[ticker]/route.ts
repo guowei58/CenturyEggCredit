@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { fetchFacePresentedStatements } from "@/lib/sec-ixbrl-face-extract";
+import {
+  findPresentedFilingByAccession,
+  prepareBulkPresentedFilings,
+} from "@/lib/sec-xbrl-as-presented-save-client";
 import { getAllFilingsByTickerCached, peekCachedFilingsByTicker } from "@/lib/sec-submissions-cache";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+/** Large 10-K HTML (e.g. GEN Part IV exhibits) can exceed 60s on cold starts. */
+export const maxDuration = 180;
 
 export async function GET(req: Request, { params }: { params: Promise<{ ticker: string }> }) {
   const { ticker } = await params;
@@ -13,6 +18,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
 
   const url = new URL(req.url);
   const acc = (url.searchParams.get("acc") ?? "").trim();
+  const formHint = (url.searchParams.get("form") ?? "").trim();
+  const primaryDocumentHint = (url.searchParams.get("primaryDocument") ?? "").trim();
   const skipSubmissions = url.searchParams.get("skipSubmissions") === "1";
 
   let filingsRes = skipSubmissions ? peekCachedFilingsByTicker(sym) : null;
@@ -21,16 +28,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
   }
   if (!filingsRes) return NextResponse.json({ error: "SEC submissions not found for ticker" }, { status: 404 });
 
-  const cutoffYear = new Date().getFullYear() - 20;
-  const filings = filingsRes.filings
-    .filter((f) => f.form === "10-K" || f.form === "10-Q")
-    .filter((f) => {
-      const y = parseInt((f.filingDate ?? "").slice(0, 4), 10);
-      return Number.isFinite(y) ? y >= cutoffYear : true;
-    })
-    .slice(0, 600);
+  const filings = prepareBulkPresentedFilings(filingsRes.filings);
 
-  const chosen = (acc ? filings.find((f) => f.accessionNumber === acc) : filings[0]) ?? null;
+  /** Newest-first list; default selection is the latest 10-K or 10-Q. */
+  let chosen = acc ? findPresentedFilingByAccession(filings, acc) : (filings[0] ?? null);
+  if (!chosen && formHint && primaryDocumentHint) {
+    chosen = filings.find((f) => f.form === formHint && f.primaryDocument === primaryDocumentHint) ?? null;
+  }
 
   if (!chosen) {
     return NextResponse.json({ error: "No 10-K/10-Q filings found" }, { status: 404 });

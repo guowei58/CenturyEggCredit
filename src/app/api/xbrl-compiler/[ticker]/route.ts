@@ -101,7 +101,7 @@ async function materializeFiles(
   if (!xbrl.length) {
     return {
       ok: false,
-      error: `No XBRL workbooks found for ${sym}. Save statements via "SEC XBRL Financials" (or bulk save on Historical Financial Statements) first.`,
+      error: `No XBRL workbooks found for ${sym}. Bulk-save on Historical Financial Statements (TEST tab HTML face) or SEC XBRL Financials first.`,
     };
   }
 
