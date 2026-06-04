@@ -31,9 +31,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
   const filings = prepareBulkPresentedFilings(filingsRes.filings);
 
   /** Newest-first list; default selection is the latest 10-K or 10-Q. */
-  let chosen = acc ? findPresentedFilingByAccession(filings, acc) : (filings[0] ?? null);
+  let chosen = acc ? findPresentedFilingByAccession(filings, acc) : filings[0];
   if (!chosen && formHint && primaryDocumentHint) {
-    chosen = filings.find((f) => f.form === formHint && f.primaryDocument === primaryDocumentHint) ?? null;
+    chosen = filings.find((f) => f.form === formHint && f.primaryDocument === primaryDocumentHint);
   }
 
   if (!chosen) {
