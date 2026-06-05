@@ -3,7 +3,11 @@
  */
 
 import { compilerPeriodColumnHeader } from "@/lib/sec-xbrl-compiler-period-headers";
-import { buildAsPresentedStatementsWorkbook, workbookToXlsxUint8Array } from "@/lib/sec-xbrl-presented-excel";
+import {
+  buildAsPresentedStatementsWorkbook,
+  type AsPresentedStatementForExcel,
+  workbookToXlsxUint8Array,
+} from "@/lib/sec-xbrl-presented-excel";
 import type { XbrlExportValidationIssue } from "@/lib/sec-xbrl-export-validation";
 import { faceStatementCellNumeric, type FaceStatementId } from "@/lib/sec-ixbrl-face-display";
 import type { FacePresentedStatement, FaceStatementExtractionQa } from "@/lib/sec-ixbrl-face-extract";
@@ -47,13 +51,22 @@ function faceStatementId(stmt: FacePresentedStatement): FaceStatementId {
   return stmt.id as FaceStatementId;
 }
 
+const FACE_STATEMENT_KIND: Record<FaceStatementId, NonNullable<AsPresentedStatementForExcel["statementKind"]>> = {
+  "income-statement": "is",
+  "balance-sheet": "bs",
+  "cash-flow": "cf",
+};
+
 /** Workbook rows use the same numeric resolver as the on-screen grid (no formatted strings). */
-export function faceStatementToWorkbookShape(stmt: FacePresentedStatement, filing: FacePresentedFilingMeta) {
+export function faceStatementToWorkbookShape(
+  stmt: FacePresentedStatement,
+  filing: FacePresentedFilingMeta
+): AsPresentedStatementForExcel {
   const statementId = faceStatementId(stmt);
   return {
     title: FACE_COMPILER_SHEET_TITLE[statementId] ?? stmt.title,
     role: stmt.role,
-    statementKind: statementId === "income-statement" ? "is" : statementId === "balance-sheet" ? "bs" : "cf",
+    statementKind: FACE_STATEMENT_KIND[statementId],
     workbookValueScale: "face_millions" as const,
     periods: stmt.periods.map((p) => ({
       key: p.key,

@@ -80,7 +80,15 @@ type Result = {
 
 const COMPILER_SCHEMA_VERSION = 2;
 
-function isRenderableCompiledResult(result: Result | null | undefined): result is Result {
+type RenderableCompiledResult = Result & {
+  ok: true;
+  compiler_schema_version: typeof COMPILER_SCHEMA_VERSION;
+  models: Models;
+};
+
+function isRenderableCompiledResult(
+  result: Result | null | undefined
+): result is RenderableCompiledResult {
   return Boolean(
     result &&
       result.ok &&
