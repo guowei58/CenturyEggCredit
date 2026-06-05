@@ -3,6 +3,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { withTransientPgRetry } from "@/lib/pg-connection-retry";
 import { assertUserStorageAllowsNetDelta } from "@/lib/user-storage-quota";
 import {
   defaultUserPreferences,
@@ -25,9 +26,11 @@ function normalizeChatDisplayId(raw: unknown): string | null {
 }
 
 export async function getUserPreferences(userId: string): Promise<UserPreferencesData> {
-  const row = await prisma.userPreferences.findUnique({
-    where: { userId },
-  });
+  const row = await withTransientPgRetry("getUserPreferences", () =>
+    prisma.userPreferences.findUnique({
+      where: { userId },
+    })
+  );
   return parseUserPreferencesPayload(row?.payload ?? null);
 }
 

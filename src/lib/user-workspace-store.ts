@@ -35,19 +35,23 @@ export async function writeUserTickerDocument(
   if (!sym) return { ok: false, error: "Invalid ticker" };
   if (!(key in SAVED_DATA_FILES)) return { ok: false, error: "Invalid save key" };
   try {
-    const prev = await prisma.userTickerDocument.findUnique({
-      where: { userId_ticker_dataKey: { userId, ticker: sym, dataKey: key } },
-      select: { content: true },
-    });
+    const prev = await withTransientPgRetry("writeUserTickerDocument.read", () =>
+      prisma.userTickerDocument.findUnique({
+        where: { userId_ticker_dataKey: { userId, ticker: sym, dataKey: key } },
+        select: { content: true },
+      })
+    );
     const oldOctets = prev ? Buffer.byteLength(prev.content, "utf8") : 0;
     const newOctets = Buffer.byteLength(content, "utf8");
     const quota = await assertUserStorageAllowsNetDelta(userId, newOctets - oldOctets);
     if (!quota.ok) return quota;
-    await prisma.userTickerDocument.upsert({
-      where: { userId_ticker_dataKey: { userId, ticker: sym, dataKey: key } },
-      create: { userId, ticker: sym, dataKey: key, content },
-      update: { content },
-    });
+    await withTransientPgRetry("writeUserTickerDocument.upsert", () =>
+      prisma.userTickerDocument.upsert({
+        where: { userId_ticker_dataKey: { userId, ticker: sym, dataKey: key } },
+        create: { userId, ticker: sym, dataKey: key, content },
+        update: { content },
+      })
+    );
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Write failed" };

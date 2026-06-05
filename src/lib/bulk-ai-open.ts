@@ -413,7 +413,9 @@ export async function runBulkUpdateViaApi(
           const saved = await saveToServerWithRetries(tk, e.saveKey, trimmed);
           if (!saved) {
             fail++;
-            errors.push(`${e.label}: model replied but save failed after retries`);
+            errors.push(
+              `${e.label}: ChatGPT replied but save to server failed after retries (often Postgres timeout — retry bulk when the app is stable)`
+            );
           } else {
             ok++;
           }

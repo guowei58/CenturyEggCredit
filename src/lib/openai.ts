@@ -93,6 +93,15 @@ function openAiModelAcceptsReasoningEffort(model: string): boolean {
   return true;
 }
 
+/** GPT-5 / search / o-series models reject `temperature` on Chat Completions. */
+export function openAiModelAcceptsTemperature(model: string): boolean {
+  const m = model.toLowerCase();
+  if (m.startsWith("gpt-5")) return false;
+  if (m.includes("search")) return false;
+  if (m.startsWith("o1") || m.startsWith("o3") || m.startsWith("o4")) return false;
+  return true;
+}
+
 function openAiCompletionTokenCap(model: string): number {
   return usesGpt5ChatCompletionShape(model) ? OPENAI_GPT5_MAX_COMPLETION_TOKENS : OPENAI_LEGACY_MAX_COMPLETION_TOKENS;
 }
@@ -144,7 +153,9 @@ function openAiChatRequestBody(
   if (webSearch) {
     body.web_search_options = {};
   }
-  applyChatCompletionsTemperature(body, temperature);
+  if (openAiModelAcceptsTemperature(model)) {
+    applyChatCompletionsTemperature(body, temperature);
+  }
   return body;
 }
 
@@ -156,6 +167,14 @@ function normalizeOpenAiApiError(status: number, raw: string): OpenAIResult {
     const code = (parsed?.error?.code || "").toLowerCase();
     if (t === "overloaded_error" || code === "overloaded" || msg.includes("overloaded")) {
       return { ok: false, error: "OpenAI is overloaded right now — wait ~30–60s and retry.", status };
+    }
+    if (msg.includes("temperature") && (msg.includes("incompatible") || msg.includes("unsupported"))) {
+      return {
+        ok: false,
+        error:
+          "This OpenAI model does not accept temperature (common with GPT-5 and web-search models). The app now omits temperature for those models — retry the request.",
+        status,
+      };
     }
     if (
       (msg.includes("max_tokens") || msg.includes("max_completion_tokens")) &&
