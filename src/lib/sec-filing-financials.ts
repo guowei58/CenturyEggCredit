@@ -427,7 +427,9 @@ function looksLikeFinancialStatementPeriodPreambleAhead(ahead: string): boolean 
     /\bmonths\s+ended\b/i.test(ahead) ||
     /\bquarter(?:s)?\s+ended\b/i.test(ahead) ||
     /\byear(?:s)?\s+ended\b/i.test(ahead) ||
-    /\bas\s+of\b/i.test(ahead)
+    /\bas\s+of\b/i.test(ahead) ||
+    /\(\s*in\s+millions/i.test(ahead) ||
+    /\(\s*in\s+thousands/i.test(ahead)
   );
 }
 
@@ -1077,6 +1079,10 @@ function parsePrimaryFinancialStatementsInItemSection(
   }
 
   const sectionStart = section?.start ?? 0;
+  const largeTenKExhibit =
+    form.includes("10-K") &&
+    section != null &&
+    section.end - section.start > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
 
   return (["is", "bs", "cf"] as StatementKind[])
     .map((kind) => {
@@ -1108,9 +1114,48 @@ function parsePrimaryFinancialStatementsInItemSection(
           shapeTemplates: opts.shapeTemplates,
         });
       }
+      if (!stmt && largeTenKExhibit && section) {
+        stmt = findStatementTableInLargeTenKExhibit(ctx, kind, section, form, opts);
+      }
       return stmt;
     })
     .filter((stmt): stmt is FilingHtmlStatement => Boolean(stmt));
+}
+
+/** GEN-style Part IV: face tables start ~15k+ chars into the exhibit; scan scored candidates there. */
+function findStatementTableInLargeTenKExhibit(
+  ctx: ParsedFilingHtmlContext,
+  kind: StatementKind,
+  section: FilingSectionBounds,
+  form: string,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement | null {
+  const minOffset = section.start + 12_000;
+  let best: { stmt: FilingHtmlStatement; score: number } | null = null;
+
+  for (const table of ctx.tables) {
+    if (table.offset < minOffset || table.offset >= section.end) continue;
+    if (!isPrimaryFaceTableCandidate(ctx.$, table, kind)) continue;
+    const unitsHint = extractUnitsFromText(
+      ctx.acc.slice(Math.max(section.start, table.offset - 500), table.offset)
+    );
+    const stmt = returnParsedPrimaryStatementIfValid(
+      parsePrimaryStatementTable(
+        ctx.$,
+        ctx.$(table.el),
+        kind,
+        unitsHint,
+        opts.primaryDocument,
+        opts.sourceUrl,
+        table.offset
+      ),
+      form
+    );
+    if (!stmt) continue;
+    const score = scoreTableCandidate(ctx.$, ctx.acc, table, section, kind, form, opts.shapeTemplates);
+    if (!best || score > best.score) best = { stmt, score };
+  }
+  return best?.stmt ?? null;
 }
 
 /** Unified gate: per-kind numeric floor plus primary-face content checks (OCI, parenthetical, etc.). */
@@ -1182,6 +1227,7 @@ function primaryFaceOperatingRevenueCue(text: string): boolean {
   if (/\bsegment revenues?\b/.test(t)) return false;
   return (
     tableTextHasCue(t, /(?:^|\s)(?:total )?revenues?/) ||
+    /\bnet revenues?\b/.test(t) ||
     tableTextHasCue(t, /net sales/) ||
     tableTextHasCue(t, /total net sales/) ||
     /\boperating revenues?\b/.test(t) ||
@@ -1641,8 +1687,11 @@ const NOTES_HEADING_PATTERNS: RegExp[] = [
   /\bnotes\s+to\s+(?:the\s+)?financial\s+statements\b/gi,
 ];
 
-/** Max chars after Item 8 start to scan for decoy clusters in 10-K filings. */
+/** Max chars after Item 8 start to scan for decoy clusters in compact 10-K Item 8 tables. */
 const PRIMARY_FACE_CHAR_WINDOW_10K = 28_000;
+/** Part IV exhibit bodies (GEN-style incorporate-by-reference) can be 100k+ chars before face tables. */
+const PRIMARY_FACE_CHAR_WINDOW_10K_LARGE_EXHIBIT = 140_000;
+const PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS = 60_000;
 /** Max `<table>` anchors to scan as cluster anchors in 10-K Item 8. */
 const PRIMARY_FACE_MAX_TABLES_10K = 10;
 /** Max offset span between first and last primary statement table in 10-K. */
@@ -1715,7 +1764,13 @@ function primaryFaceClusterScanCeiling(
     .filter((t) => t.offset >= section.start && t.offset < notesCeiling)
     .sort((a, b) => a.offset - b.offset);
 
-  const charCap = section.start + PRIMARY_FACE_CHAR_WINDOW_10K;
+  const sectionLen = section.end - section.start;
+  const largeExhibit = sectionLen > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
+  const charCap =
+    section.start +
+    (largeExhibit
+      ? Math.min(PRIMARY_FACE_CHAR_WINDOW_10K_LARGE_EXHIBIT, sectionLen)
+      : PRIMARY_FACE_CHAR_WINDOW_10K);
   const tableCap =
     localTables.length >= PRIMARY_FACE_MAX_TABLES_10K
       ? localTables[PRIMARY_FACE_MAX_TABLES_10K - 1]!.offset + 8_000
@@ -2267,6 +2322,7 @@ function validateSinglePrimaryStatementShape(stmt: FilingHtmlStatement, form: st
     if (isLikelyConsolidatedFinancialStatementsIndexTable(labels)) return false;
     const revenueCue =
       primaryFaceOperatingRevenueCue(labels) ||
+      /\bnet revenues?\b/.test(labels) ||
       /\bnet sales\b/.test(labels) ||
       /\btotal net sales\b/.test(labels);
     const earningsCue =
@@ -2700,8 +2756,10 @@ function findHeadingLinkedStatementClusterInSection(
 
   if (headings.length < 3) return null;
 
-  const headingWindow = form.includes("10-Q") ? 40_000 : 25_000;
-  const maxSpan = form.includes("10-Q") ? 55_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
+  const sectionLen = section.end - section.start;
+  const largeTenKExhibit = form.includes("10-K") && sectionLen > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
+  const headingWindow = form.includes("10-Q") ? 40_000 : largeTenKExhibit ? 45_000 : 25_000;
+  const maxSpan = form.includes("10-Q") ? 55_000 : largeTenKExhibit ? 110_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
   const scoreFloor = form.includes("10-Q") ? 15 : 20;
   const groupedLookaheadTables = form.includes("10-Q") ? 5 : 4;
 
@@ -2781,7 +2839,7 @@ function findHeadingLinkedStatementClusterInSection(
         const cf = groupedPicks.cf;
         const start = Math.min(bs.table.offset, is.table.offset, cf.table.offset);
         const end = Math.max(bs.table.offset, is.table.offset, cf.table.offset);
-        if (end - start <= maxSpan && (form.includes("10-Q") || end < scanCeiling)) {
+        if (end - start <= maxSpan && (form.includes("10-Q") || largeTenKExhibit || end < scanCeiling)) {
           const cluster = {
             bs,
             is,
@@ -2807,7 +2865,7 @@ function findHeadingLinkedStatementClusterInSection(
     const start = Math.min(bs.table.offset, is.table.offset, cf.table.offset);
     const end = Math.max(bs.table.offset, is.table.offset, cf.table.offset);
     if (end - start > maxSpan) continue;
-    if (form.includes("10-K") && end >= scanCeiling) continue;
+    if (form.includes("10-K") && !largeTenKExhibit && end >= scanCeiling) continue;
     const cluster = {
       bs,
       is,
@@ -2867,10 +2925,16 @@ function findStatementClusterInSection(
   const headingCluster = findHeadingLinkedStatementClusterInSection($, acc, tables, section, form);
   if (headingCluster) return headingCluster;
 
-  const maxSpan = form.includes("10-Q") ? 55_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
+  const sectionLen = section.end - section.start;
+  const largeTenKExhibit = form.includes("10-K") && sectionLen > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
+  const maxSpan = form.includes("10-Q") ? 55_000 : largeTenKExhibit ? 110_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
   const scoreFloor = 10;
   const acceptScore = form.includes("10-Q") ? 90 : 80;
-  const anchorLimit = form.includes("10-K") ? Math.min(localTables.length, PRIMARY_FACE_MAX_TABLES_10K) : localTables.length;
+  const anchorLimit = form.includes("10-K")
+    ? largeTenKExhibit
+      ? localTables.length
+      : Math.min(localTables.length, PRIMARY_FACE_MAX_TABLES_10K)
+    : localTables.length;
   let fallbackBest: StatementCluster | null = null;
   const rankedClusters: StatementCluster[] = [];
 
@@ -2890,7 +2954,7 @@ function findStatementClusterInSection(
     if (!cluster) continue;
     cluster.ceiling = pickCeiling;
     if (!statementClusterTablesLookValid($, cluster)) continue;
-    if (form.includes("10-K") && cluster.end >= scanCeiling) continue;
+    if (form.includes("10-K") && !largeTenKExhibit && cluster.end >= scanCeiling) continue;
     if (cluster.score >= acceptScore) rankedClusters.push(cluster);
     if (
       !fallbackBest ||

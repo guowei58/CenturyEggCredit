@@ -57,22 +57,22 @@ async function runPython(
         resolve({ ok: false, error: stderr || `Exit code ${code}` });
         return;
       }
+      const trimmed = stdout.trim();
       try {
-        let jsonStr = "";
-        let depth = 0;
-        let capturing = false;
-        for (const line of stdout.trim().split("\n")) {
-          if (!capturing && line.trim().startsWith("{")) capturing = true;
-          if (capturing) {
-            jsonStr += line + "\n";
-            depth += (line.match(/{/g) || []).length;
-            depth -= (line.match(/}/g) || []).length;
-            if (depth <= 0) break;
+        // Pipeline prints one JSON object; parse the full stdout (brace-depth scanning breaks on "{" inside strings).
+        resolve(JSON.parse(trimmed) as Record<string, unknown>);
+      } catch {
+        const start = trimmed.indexOf("{");
+        const end = trimmed.lastIndexOf("}");
+        if (start >= 0 && end > start) {
+          try {
+            resolve(JSON.parse(trimmed.slice(start, end + 1)) as Record<string, unknown>);
+            return;
+          } catch {
+            /* fall through */
           }
         }
-        resolve(JSON.parse(jsonStr));
-      } catch {
-        resolve({ ok: false, error: `Parse error: ${stdout.slice(-500)}` });
+        resolve({ ok: false, error: `Parse error: ${trimmed.slice(-500)}` });
       }
     });
 
@@ -101,7 +101,7 @@ async function materializeFiles(
   if (!xbrl.length) {
     return {
       ok: false,
-      error: `No XBRL workbooks found for ${sym}. Bulk-save on Historical Financial Statements (TEST tab HTML face) or SEC XBRL Financials first.`,
+      error: `No XBRL workbooks found for ${sym}. Bulk-save on Historical Financial Statements (Period Financials HTML face) or SEC XBRL Financials first.`,
     };
   }
 
@@ -201,7 +201,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ ticker:
   try {
     const result = await runPython(mat.dir, outDir);
     const merged = { ...result, inputFileCount: mat.count } as Record<string, unknown>;
-    if ((result as { ok?: boolean }).ok) {
+    const ok = (result as { ok?: boolean }).ok === true;
+    const models = merged.models as Record<string, unknown> | undefined;
+    const modelKeys =
+      models && typeof models === "object" ? Object.keys(models).filter((k) => models[k]) : [];
+    if (ok && modelKeys.length === 0) {
+      const built = (merged.statements_built as string[] | undefined)?.join(", ") ?? "none";
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `Compiler finished but produced no statement grids (built: ${built}). Check workbook sheet names (Income Statement, Balance Sheet, Cash Flow) and period columns.`,
+          inputFileCount: mat.count,
+          compiler_schema_version: merged.compiler_schema_version,
+        },
+        { status: 500 }
+      );
+    }
+    if (ok) {
       const saved = await writeUserTickerDocument(
         userId,
         sym,
@@ -212,7 +228,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ ticker:
         console.warn("[xbrl-compiler] Could not persist last compiled result:", saved.error);
       }
     }
-    return NextResponse.json(merged, { status: (result as { ok?: boolean }).ok ? 200 : 500 });
+    return NextResponse.json(merged, { status: ok ? 200 : 500 });
   } finally {
     await cleanup(mat.dir);
   }

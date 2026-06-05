@@ -539,6 +539,16 @@ describe("parsePrimaryFilingStatementHtml", () => {
     expect(isParsed?.periods.length).toBeGreaterThanOrEqual(2);
     expect(Number(isParsed?.rows.find((row) => /net revenues/i.test(row.label))?.values.p1 ?? 0)).toBeGreaterThan(1000);
     expect(isParsed?.rows.some((row) => /%\s*$/i.test(row.displayValues?.p1 ?? ""))).toBe(false);
+
+    const all = parseFixtureStatementsFromHtml(html, {
+      form: "10-K",
+      primaryDocument: "gen-sample.htm",
+    });
+    expect(all.some((s) => s.id === "income-statement")).toBe(true);
+    expect(all.some((s) => s.id === "balance-sheet")).toBe(true);
+    expect(all.find((s) => s.id === "income-statement")?.rows.some((r) => /net revenues/i.test(r.label))).toBe(
+      true
+    );
   });
 
   it("findPresentedFilingByAccession matches with or without dashes", async () => {
@@ -564,6 +574,19 @@ describe("parsePrimaryFilingStatementHtml", () => {
     expect(sorted[0]?.accessionNumber).toBe("b");
     expect(sorted[1]?.accessionNumber).toBe("a");
     expect(prepareBulkPresentedFilings(raw)[0]?.accessionNumber).toBe("b");
+  });
+
+  it("prepareBulkPresentedFilings respects minFilingYear for HTML-face bulk", async () => {
+    const { prepareBulkPresentedFilings, FACE_BULK_MIN_FILING_YEAR } = await import(
+      "@/lib/sec-xbrl-as-presented-save-client"
+    );
+    const raw = [
+      { form: "10-K", filingDate: "2018-05-15", accessionNumber: "old", primaryDocument: "k.htm" },
+      { form: "10-K", filingDate: "2019-05-15", accessionNumber: "y19", primaryDocument: "k.htm" },
+      { form: "10-Q", filingDate: "2020-08-01", accessionNumber: "q20", primaryDocument: "q.htm" },
+    ];
+    const out = prepareBulkPresentedFilings(raw, { minFilingYear: FACE_BULK_MIN_FILING_YEAR });
+    expect(out.map((f) => f.accessionNumber)).toEqual(["q20", "y19"]);
   });
 
   it("anchors primary 10-Q section bounds at Part I Item 1 before Item 2", () => {

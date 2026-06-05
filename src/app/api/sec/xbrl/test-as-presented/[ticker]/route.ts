@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { fetchFacePresentedStatements } from "@/lib/sec-ixbrl-face-extract";
 import {
   findPresentedFilingByAccession,
+  FACE_BULK_MIN_FILING_YEAR,
   prepareBulkPresentedFilings,
 } from "@/lib/sec-xbrl-as-presented-save-client";
 import { getAllFilingsByTickerCached, peekCachedFilingsByTicker } from "@/lib/sec-submissions-cache";
@@ -28,7 +29,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
   }
   if (!filingsRes) return NextResponse.json({ error: "SEC submissions not found for ticker" }, { status: 404 });
 
-  const filings = prepareBulkPresentedFilings(filingsRes.filings);
+  const filings = prepareBulkPresentedFilings(filingsRes.filings, {
+    minFilingYear: FACE_BULK_MIN_FILING_YEAR,
+  });
 
   /** Newest-first list; default selection is the latest 10-K or 10-Q. */
   let chosen = acc ? findPresentedFilingByAccession(filings, acc) : filings[0];

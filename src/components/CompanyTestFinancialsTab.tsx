@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import DOMPurify from "dompurify";
-import { Card } from "@/components/ui";
+import { Card, TabBar } from "@/components/ui";
 import {
   triggerBrowserDownloadFacePresentedWorkbook,
   type FacePresentedStatementForSave,
@@ -30,6 +30,9 @@ type NarrativeBatchDiagnosticsResponse =
     }
   | { ok: false; error?: string; ticker?: string };
 
+/** Set true to show the MD&A/Earnings Check batch button in the toolbar. */
+const SHOW_MDNA_EARNINGS_CHECK_BUTTON = false;
+
 /** Failures as returned by the narrative batch API (includes full findings for detail blocks). */
 type AnalyzedNarrativeBatchFailure = {
   accessionNumber: string;
@@ -42,6 +45,14 @@ type AnalyzedNarrativeBatchFailure = {
   mdnaFindings: NarrativeDiagFinding[];
   earningsFindings: NarrativeDiagFinding[];
 };
+
+type TestSubTabId = "financials" | "press-release" | "mdna";
+
+const TEST_SUB_TABS: readonly { id: TestSubTabId; label: string }[] = [
+  { id: "financials", label: "Financials" },
+  { id: "press-release", label: "Press release (8-K)" },
+  { id: "mdna", label: "MD&A" },
+];
 
 /** Calendar filing-date years included: current year minus this value through present (inclusive). */
 const XBRL_AS_PRESENTED_DIAG_LOOKBACK_YEARS = 20;
@@ -361,12 +372,14 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
   const [narrativeBatch, setNarrativeBatch] = useState<Extract<NarrativeBatchDiagnosticsResponse, { ok: true }> | null>(
     null
   );
+  const [activeSubTab, setActiveSubTab] = useState<TestSubTabId>("financials");
   const lastAsPresentedTkRef = useRef<string>("");
 
 
   useEffect(() => {
     setNarrativeBatch(null);
     setNarrativeBatchErr(null);
+    setActiveSubTab("financials");
   }, [tk]);
 
   useEffect(() => {
@@ -400,7 +413,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
         const qs = params.toString() ? `?${params.toString()}` : "";
         const res = await fetch(`/api/sec/xbrl/test-as-presented/${encodeURIComponent(tk)}${qs}`, { cache: "no-store" });
         const j = (await res.json()) as ApiResponse;
-        const msg = (j.error ?? "").trim() || "Failed to load TEST HTML-face financials";
+        const msg = (j.error ?? "").trim() || "Failed to load Period Financials HTML-face data";
 
         if (cancelled) return;
 
@@ -492,7 +505,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
 
   if (!tk) {
     return (
-      <Card title="TEST — HTML face financials">
+      <Card title="Period Financials — HTML face financials">
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
           Select a company with a ticker.
         </p>
@@ -550,7 +563,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           className="shrink-0 whitespace-nowrap text-[10px] font-semibold uppercase"
           style={{ color: "var(--muted)" }}
         >
-          TEST (HTML face) — {tk}
+          Period Financials — {tk}
         </span>
         <select
           className="min-w-0 max-w-[min(420px,70vw)] shrink m-0 rounded border px-1.5 py-0.5 text-xs leading-tight"
@@ -575,7 +588,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
               className="m-0 rounded border px-2 py-0.5 text-[11px] font-semibold leading-tight disabled:opacity-50"
               style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
               disabled={loading || !statements.length || !selectedFiling}
-              title="Download TEST HTML-face workbook (Meta + Validation + IS/BS/CF)"
+              title="Download HTML-face workbook (Meta + Validation + IS/BS/CF)"
               onClick={() => {
                 if (!selectedFiling || !statements.length) return;
                 triggerBrowserDownloadFacePresentedWorkbook({
@@ -631,37 +644,39 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           </span>
         ) : null}
         <span className="ml-auto flex shrink-0 flex-nowrap items-center gap-1">
-          <button
-            type="button"
-            className="shrink-0 whitespace-nowrap rounded border px-2 py-0.5 text-[11px] font-semibold leading-tight disabled:opacity-50"
-            style={{ borderColor: "var(--border2)", color: "var(--text)", background: "var(--card2)" }}
-            disabled={loading || narrativeBatchBusy || diagBusy || !tk}
-            title="Run MD&A bounds/HTML and adjacent 8-K earnings linkage for each 10-K/10-Q (same filing window as Run self-diagnostic)"
-            onClick={() => {
-              setNarrativeBatchBusy(true);
-              setNarrativeBatchErr(null);
-              void (async () => {
-                try {
-                  const minYear = new Date().getFullYear() - XBRL_AS_PRESENTED_DIAG_LOOKBACK_YEARS;
-                  const res = await fetch(
-                    `/api/sec/xbrl/as-presented/${encodeURIComponent(tk)}/narrative-diagnostics?max=${XBRL_AS_PRESENTED_DIAG_MAX_FILINGS}&sinceYear=${minYear}`,
-                    { cache: "no-store" }
-                  );
-                  const j = (await res.json()) as NarrativeBatchDiagnosticsResponse;
-                  if (!res.ok || j.ok === false) {
-                    throw new Error(("error" in j ? j.error : undefined) || "Failed to run MD&A / earnings check");
+          {SHOW_MDNA_EARNINGS_CHECK_BUTTON ? (
+            <button
+              type="button"
+              className="shrink-0 whitespace-nowrap rounded border px-2 py-0.5 text-[11px] font-semibold leading-tight disabled:opacity-50"
+              style={{ borderColor: "var(--border2)", color: "var(--text)", background: "var(--card2)" }}
+              disabled={loading || narrativeBatchBusy || diagBusy || !tk}
+              title="Run MD&A bounds/HTML and adjacent 8-K earnings linkage for each 10-K/10-Q (same filing window as Run self-diagnostic)"
+              onClick={() => {
+                setNarrativeBatchBusy(true);
+                setNarrativeBatchErr(null);
+                void (async () => {
+                  try {
+                    const minYear = new Date().getFullYear() - XBRL_AS_PRESENTED_DIAG_LOOKBACK_YEARS;
+                    const res = await fetch(
+                      `/api/sec/xbrl/as-presented/${encodeURIComponent(tk)}/narrative-diagnostics?max=${XBRL_AS_PRESENTED_DIAG_MAX_FILINGS}&sinceYear=${minYear}`,
+                      { cache: "no-store" }
+                    );
+                    const j = (await res.json()) as NarrativeBatchDiagnosticsResponse;
+                    if (!res.ok || j.ok === false) {
+                      throw new Error(("error" in j ? j.error : undefined) || "Failed to run MD&A/Earnings Check");
+                    }
+                    setNarrativeBatch(j);
+                  } catch (e) {
+                    setNarrativeBatchErr(e instanceof Error ? e.message : "Failed to run MD&A/Earnings Check");
+                  } finally {
+                    setNarrativeBatchBusy(false);
                   }
-                  setNarrativeBatch(j);
-                } catch (e) {
-                  setNarrativeBatchErr(e instanceof Error ? e.message : "Failed to run MD&A / earnings check");
-                } finally {
-                  setNarrativeBatchBusy(false);
-                }
-              })();
-            }}
-          >
-            {narrativeBatchBusy ? "Checking…" : "MD&amp;A / earnings check"}
-          </button>
+                })();
+              }}
+            >
+              {narrativeBatchBusy ? "Checking…" : "MD&A/Earnings Check"}
+            </button>
+          ) : null}
           <button
             type="button"
             className="shrink-0 whitespace-nowrap rounded border px-2 py-0.5 text-[11px] font-semibold leading-tight disabled:opacity-50"
@@ -698,8 +713,17 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
         </span>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto space-y-4 px-5 pb-4 sm:px-8 sm:pb-5">
-      <Card title="TEST tab — HTML face extraction">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div
+          className="shrink-0 border-b border-[var(--border)] px-5 sm:px-8"
+          style={{ background: "var(--panel)" }}
+        >
+          <TabBar tabs={TEST_SUB_TABS} activeId={activeSubTab} onSelect={setActiveSubTab} variant="company" />
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto space-y-4 px-5 pb-4 sm:px-8 sm:pb-5">
+      {activeSubTab === "financials" ? (
+        <>
+      <Card title="Period Financials — HTML face extraction">
         <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
           Compare against <span className="font-medium" style={{ color: "var(--text)" }}>SEC XBRL Financials</span> on
           the adjacent tab. This path builds primary statements from the{" "}
@@ -847,7 +871,15 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           </p>
         </Card>
       ) : null}
+        </>
+      ) : null}
 
+      {activeSubTab === "press-release" ? (
+        <>
+      <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
+        Earnings press release and related exhibits (Form 8-K, usually Exhibit 99) aligned with the filing selected
+        above.
+      </p>
       <Card title={earningsMainCardTitle}>
         {ixLoading ? (
           <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
@@ -1004,7 +1036,14 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           </div>
         </Card>
       ) : null}
+        </>
+      ) : null}
 
+      {activeSubTab === "mdna" ? (
+        <>
+      <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
+        Management&apos;s discussion and analysis (Item 7 / Item 2) from the selected periodic filing HTML.
+      </p>
       <Card title={`MD&A (filing HTML) — ${tk}`}>
         {ixLoading ? (
           <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
@@ -1104,7 +1143,10 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           </p>
         )}
       </Card>
-    </div>
+        </>
+      ) : null}
+        </div>
+      </div>
     </div>
   );
 }

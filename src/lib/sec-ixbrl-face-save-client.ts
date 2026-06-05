@@ -2,10 +2,18 @@
  * Browser helpers for TEST tab — HTML-first as-presented workbooks.
  */
 
+import { compilerPeriodColumnHeader } from "@/lib/sec-xbrl-compiler-period-headers";
 import { buildAsPresentedStatementsWorkbook, workbookToXlsxUint8Array } from "@/lib/sec-xbrl-presented-excel";
 import type { XbrlExportValidationIssue } from "@/lib/sec-xbrl-export-validation";
 import { faceStatementCellNumeric, type FaceStatementId } from "@/lib/sec-ixbrl-face-display";
 import type { FacePresentedStatement, FaceStatementExtractionQa } from "@/lib/sec-ixbrl-face-extract";
+
+/** Short Excel tab names (31-char limit) so the Python compiler classifies sheets reliably. */
+const FACE_COMPILER_SHEET_TITLE: Record<FaceStatementId, string> = {
+  "income-statement": "Income Statement",
+  "balance-sheet": "Balance Sheet",
+  "cash-flow": "Cash Flow",
+};
 
 export type FacePresentedFilingMeta = {
   form: string;
@@ -40,12 +48,21 @@ function faceStatementId(stmt: FacePresentedStatement): FaceStatementId {
 }
 
 /** Workbook rows use the same numeric resolver as the on-screen grid (no formatted strings). */
-export function faceStatementToWorkbookShape(stmt: FacePresentedStatement) {
+export function faceStatementToWorkbookShape(stmt: FacePresentedStatement, filing: FacePresentedFilingMeta) {
   const statementId = faceStatementId(stmt);
   return {
-    title: `${stmt.title} (HTML face)`,
+    title: FACE_COMPILER_SHEET_TITLE[statementId] ?? stmt.title,
     role: stmt.role,
-    periods: stmt.periods.map((p) => ({ key: p.key, label: p.label, shortLabel: p.shortLabel })),
+    statementKind: statementId === "income-statement" ? "is" : statementId === "balance-sheet" ? "bs" : "cf",
+    workbookValueScale: "face_millions" as const,
+    periods: stmt.periods.map((p) => ({
+      key: p.key,
+      label: p.label,
+      shortLabel: compilerPeriodColumnHeader(
+        { label: p.label, shortLabel: p.shortLabel, end: p.end, start: p.start },
+        filing.form
+      ),
+    })),
     rows: stmt.rows.map((r) => ({
       concept:
         stmt.periods.map((p) => r.cellIxByPeriod[p.key]?.xbrlConcept).find(Boolean) ?? r.concept,
@@ -82,7 +99,7 @@ export function buildFacePresentedStatementsWorkbook(params: {
     companyName: params.companyName,
     cik: params.cik,
     filing: params.filing,
-    statements: params.statements.map(faceStatementToWorkbookShape),
+    statements: params.statements.map((s) => faceStatementToWorkbookShape(s, params.filing)),
     validation: params.validation,
     calculationLinkbaseLoaded: params.calculationLinkbaseLoaded,
     workbookGridCaption: FACE_WORKBOOK_GRID_CAPTION,

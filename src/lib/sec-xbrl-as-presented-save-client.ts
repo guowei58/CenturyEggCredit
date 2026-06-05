@@ -86,13 +86,18 @@ export function sortPresentedFilingsNewestFirst<T extends { form: string; filing
   });
 }
 
+/** Earliest calendar filing-date year for HTML-face bulk save (inline XBRL era; matches compiler floor). */
+export const FACE_BULK_MIN_FILING_YEAR = 2019;
+
 /** 10-K / 10-Q in the last ~20 years, newest first (bulk save / list APIs). */
 export function prepareBulkPresentedFilings<
   T extends { form: string; filingDate: string; accessionNumber: string; primaryDocument: string },
->(filings: T[], opts?: { lookbackYears?: number; maxCount?: number }): T[] {
+>(filings: T[], opts?: { lookbackYears?: number; maxCount?: number; minFilingYear?: number }): T[] {
   const lookbackYears = opts?.lookbackYears ?? 20;
   const maxCount = opts?.maxCount ?? 600;
-  const cutoffYear = new Date().getFullYear() - lookbackYears;
+  const lookbackCutoff = new Date().getFullYear() - lookbackYears;
+  const minYear = opts?.minFilingYear ?? lookbackCutoff;
+  const cutoffYear = Math.max(lookbackCutoff, minYear);
   return sortPresentedFilingsNewestFirst(
     filings
       .filter((f) => f.form === "10-K" || f.form === "10-Q")

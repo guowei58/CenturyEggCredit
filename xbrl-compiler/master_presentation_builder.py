@@ -117,6 +117,25 @@ _CONDENSER_RULES: list[tuple[re.Pattern, str]] = [
 ]
 
 
+def _label_token_set(label: str) -> frozenset[str]:
+    norm = _normalize_label(label)
+    return frozenset(w for w in norm.split() if w)
+
+
+def _labels_similar_for_merge(a: str, b: str) -> bool:
+    """Fuzzy label match for IS/CF (e.g. restructuring line wording drift across filings)."""
+    ta, tb = _label_token_set(a), _label_token_set(b)
+    if not ta or not tb:
+        return False
+    if ta == tb:
+        return True
+    if ta.issubset(tb) or tb.issubset(ta):
+        return True
+    inter = len(ta & tb)
+    union = len(ta | tb)
+    return union > 0 and inter / union >= 0.58
+
+
 def _normalize_label(label: str) -> str:
     """Deterministic label normalization for matching.
 
@@ -310,6 +329,29 @@ def build_master_presentation(
                                 concept_to_canon[key] = canon
                                 last_mapped_canon = canon
                                 matched_label += 1
+                                continue
+                            # Fuzzy label: same economic line, slightly different wording
+                            for row in master_rows:
+                                if row.statement_type != st:
+                                    continue
+                                if sheet.concept_to_depth.get(concept, 0) != row.depth:
+                                    continue
+                                if _labels_similar_for_merge(raw_label, row.display_label):
+                                    concept_map.append(ConceptMapping(
+                                        statement_type=st,
+                                        raw_concept=concept,
+                                        canonical_row_id=row.canonical_row_id,
+                                        mapping_status="auto_label_match",
+                                        notes=(
+                                            f"Fuzzy label match to {row.canonical_row_id} "
+                                            f"(from {wb.filename})"
+                                        ),
+                                    ))
+                                    concept_to_canon[key] = row.canonical_row_id
+                                    last_mapped_canon = row.canonical_row_id
+                                    matched_label += 1
+                                    break
+                            if key in concept_to_canon:
                                 continue
 
                     # ─ Collect for Phase 3 with anchor ────────

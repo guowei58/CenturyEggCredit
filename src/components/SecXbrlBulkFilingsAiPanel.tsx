@@ -15,6 +15,7 @@ import { downloadMarkdownConsolidationAsXlsx } from "@/lib/markdown-tables-to-xl
 import {
   buildAsPresentedFilingUrl,
   buildTestAsPresentedFilingUrl,
+  FACE_BULK_MIN_FILING_YEAR,
   normalizeAccessionKey,
   savePresentedStatementsXlsxToServer,
   sortPresentedFilingsNewestFirst,
@@ -201,11 +202,11 @@ export function SecXbrlBulkFilingsAiPanel({
             <div className="flex flex-wrap items-end justify-between gap-2">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                  {useTestHtmlFace ? "All filings (10-K / 10-Q) — TEST tab extraction" : "All XBRL filings (10-K / 10-Q)"}
+                  {useTestHtmlFace ? "All filings (10-K / 10-Q) — Period Financials extraction" : "All XBRL filings (10-K / 10-Q)"}
                 </p>
                 <p className="mt-0.5 text-[11px]" style={{ color: "var(--muted2)" }}>
                   {useTestHtmlFace
-                    ? `${filings.length} filing${filings.length === 1 ? "" : "s"} in the last ~20 years (newest first — ${filings[0] ? `${filings[0].filingDate} ${filings[0].form}` : "latest"} runs before older files). Saves go to Saved Documents, not your Downloads folder. Each workbook uses HTML face tables (same as the TEST tab).`
+                    ? `${filings.length} filing${filings.length === 1 ? "" : "s"} with filing date ${FACE_BULK_MIN_FILING_YEAR}–present (newest first — ${filings[0] ? `${filings[0].filingDate} ${filings[0].form}` : "latest"} runs before older files). Pre-${FACE_BULK_MIN_FILING_YEAR} 10-K/10-Q are omitted. Saves go to Saved Documents, not your Downloads folder.`
                     : `${filings.length} filing${filings.length === 1 ? "" : "s"} in the last ~20 years (newest first). Saves go to Saved Documents. Each workbook matches the as-presented view: Meta, display + raw sheets, Validation, very sparse period columns omitted (~5% line fill), zero-only rows omitted.`}
                 </p>
               </div>
@@ -217,7 +218,9 @@ export function SecXbrlBulkFilingsAiPanel({
                 title={
                   authStatus !== "authenticated"
                     ? "Sign in to save workbooks to Saved Documents."
-                    : "Fetch each filing newest-first and save one .xlsx per accession under Saved Documents. Re-running replaces the same file for each filing."
+                    : useTestHtmlFace
+                      ? `Fetch each 10-K/10-Q with filing date ${FACE_BULK_MIN_FILING_YEAR}–present (newest first) and save one HTML-face .xlsx per accession to Saved Documents.`
+                      : "Fetch each filing newest-first and save one .xlsx per accession under Saved Documents. Re-running replaces the same file for each filing."
                 }
                 onClick={() => {
                   if (authStatus !== "authenticated" || bulkSaving || !tk) return;

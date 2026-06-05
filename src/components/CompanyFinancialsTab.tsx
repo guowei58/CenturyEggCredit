@@ -35,8 +35,8 @@ export function CompanyFinancialsTab({
           Historical Financial Statements
         </h1>
         <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Work in two steps: bulk-save each 10-K/10-Q using the same HTML face extraction as the{" "}
-          <strong style={{ color: "var(--text)" }}>TEST</strong> tab, then compile those workbooks into quarterly and
+          Work in two steps: bulk-save each 10-K/10-Q (filing date 2019–present) using the same HTML face extraction as the{" "}
+          <strong style={{ color: "var(--text)" }}>Period Financials</strong> tab, then compile those workbooks into quarterly and
           annual statements.
         </p>
       </header>
@@ -57,7 +57,7 @@ export function CompanyFinancialsTab({
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
               For each 10-K and 10-Q (newest filing first, e.g. FY 2026 10-K before older quarters), extract primary
-              statements from filed HTML tables (TEST tab methodology) and save under{" "}
+              statements from filed HTML tables (Period Financials methodology) and save under{" "}
               <strong style={{ color: "var(--text)" }}>Saved Documents</strong> as{" "}
               <span className="font-mono text-xs">.xlsx</span> files—not to your Downloads folder. Open Saved Documents to
               download individual files. Run bulk save before compiling.
@@ -93,7 +93,8 @@ export function CompanyFinancialsTab({
             </h2>
             <p className="text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
               Merge the saved HTML-face workbooks into quarterly and annual income statement, balance sheet, and cash flow
-              views. Select files, run the compiler, then review or download Excel from the Statements tab.
+              views. Open <strong style={{ color: "var(--text)" }}>Run compile</strong>, select workbooks, click compile,
+              then open <strong style={{ color: "var(--text)" }}>View statements</strong> to review or download Excel.
             </p>
           </div>
         </div>

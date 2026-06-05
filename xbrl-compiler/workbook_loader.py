@@ -9,7 +9,12 @@ from typing import Any
 
 from openpyxl import load_workbook as _xl_open
 
-from period_parser import Period, parse_period
+from period_parser import (
+    Period,
+    collect_dates,
+    parse_period,
+    period_from_end_date,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +42,7 @@ _KEYWORD_RULES: list[tuple[str, str]] = [
 def classify_tab(raw_name: str) -> str | None:
     """Map a worksheet name to a statement type, or None to skip."""
     norm = re.sub(r"[^a-z0-9\s]", "", raw_name.lower()).strip()
+    norm = re.sub(r"\bhtml\s*face\b", "", norm).strip()
     if norm in _EXACT_TAB:
         return _EXACT_TAB[norm]
     for kw, st in _KEYWORD_RULES:
@@ -254,6 +260,19 @@ def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
                     source_column=period.column_label, depth=depth,
                 ))
 
+        from xbrl_periods import XBRL_PERIOD_MIN_FISCAL_YEAR, filter_facts_to_xbrl_periods
+
+        before = len(facts)
+        facts = filter_facts_to_xbrl_periods(facts)
+        if before != len(facts):
+            logger.info(
+                "  '%s': kept %d/%d facts (XBRL-tagged period columns, FY>=%d)",
+                tab_name,
+                len(facts),
+                before,
+                XBRL_PERIOD_MIN_FISCAL_YEAR,
+            )
+
         sheets.append(SheetData(
             source_file=fname, source_sheet=tab_name,
             statement_type=stmt, facts=facts, row_order=order,
@@ -354,24 +373,113 @@ def _detect_quarter_offset(workbooks: list[WorkbookInfo]) -> bool:
     return False
 
 
+def _infer_fy_end_month(workbooks: list[WorkbookInfo]) -> int | None:
+    """Infer fiscal year-end month from FY column headers (SEC prose dates)."""
+    from collections import Counter
+
+    months: list[int] = []
+    for wb in workbooks:
+        for sheet in wb.sheets:
+            for fact in sheet.facts:
+                if fact.period.period_type != "FY":
+                    continue
+                dates = collect_dates(fact.period.column_label)
+                if dates:
+                    months.append(dates[-1][1])
+    if not months:
+        return None
+    c = Counter(months)
+    fy_m, count = c.most_common(1)[0]
+    if fy_m == 12 and count >= max(2, len(months) // 2):
+        return None
+    if count >= 1:
+        return fy_m
+    return None
+
+
+def _cumulative_kind_from_label(low: str) -> str | None:
+    if "nine month" in low:
+        return "9M"
+    if "six month" in low:
+        return "6M"
+    if "twelve month" in low or "year ended" in low or "years ended" in low:
+        return "FY"
+    return None
+
+
+def _remap_fact_period_from_dates(fact: FactRecord, fy_end_month: int) -> bool:
+    """Re-label a fact using period-end date + inferred FY end month (any non-Dec FYE)."""
+    lbl = fact.period.column_label
+    dates = collect_dates(lbl)
+    if not dates:
+        return False
+    y, mo, d = dates[-1]
+    low = lbl.lower()
+    from period_parser import is_balance_sheet_instant_header
+
+    cum = _cumulative_kind_from_label(low)
+    if cum is None:
+        bs_instant = (
+            fact.statement_type == "balance_sheet"
+            and is_balance_sheet_instant_header(lbl)
+        )
+        if bs_instant:
+            cum = None
+        elif fact.period.is_annual() or "year ended" in low or "twelve month" in low:
+            cum = "FY"
+        elif fact.period.is_cumulative():
+            pass
+        elif fact.period.is_quarterly() or any(
+            x in low for x in ("three month", "quarter ended", "one quarter", "as of")
+        ):
+            cum = None
+        else:
+            return False
+    new_p = period_from_end_date(y, mo, d, fy_end_month, lbl, cumulative=cum)
+    if (
+        new_p.period_type == fact.period.period_type
+        and new_p.fiscal_year == fact.period.fiscal_year
+    ):
+        return False
+    fact.period = new_p
+    return True
+
+
+def _normalize_by_fy_end_month(workbooks: list[WorkbookInfo], fy_end_month: int) -> int:
+    """Re-label periods from SEC prose dates + FY end month (canonical 1Q24 stays fiscal)."""
+    remapped = 0
+    for wb in workbooks:
+        for sheet in wb.sheets:
+            for fact in sheet.facts:
+                if _remap_fact_period_from_dates(fact, fy_end_month):
+                    remapped += 1
+    return remapped
+
+
 def normalize_fiscal_periods(workbooks: list[WorkbookInfo]) -> None:
-    """Detect and fix calendar-based quarter labels for non-December FY end.
+    """Map period columns to **fiscal** Q1–Q4 / FY for non-December year ends.
 
-    When the XBRL-to-Excel conversion falls back to calendar quarters for
-    some periods (due to end-of-month mismatch), the result is a mix of
-    correct fiscal labels (3Q, 4Q) and mislabeled calendar labels (4Q of
-    prior year = fiscal Q1, 1Q = fiscal Q2).
+    Uses FY column header dates to learn the FY close month, then relabels every
+    fact whose header contains a period-end date.  Face-save canonicals (``2Q24``)
+    are already fiscal and are not rewritten as calendar quarters.
 
-    This function detects the pattern and remaps on a per-sheet basis so
-    that legitimate fiscal Q4 labels (in sheets with their own FY) are
-    preserved while mislabeled ones are corrected.
+    Legacy September-FY sheet rules apply only when FY-end month cannot be inferred.
     """
+    fy_end_month = _infer_fy_end_month(workbooks)
+    if fy_end_month is not None:
+        remapped = _normalize_by_fy_end_month(workbooks, fy_end_month)
+        logger.info(
+            "Fiscal period normalization (FY end month=%d): remapped %d facts",
+            fy_end_month,
+            remapped,
+        )
+        return
+
     if not _detect_quarter_offset(workbooks):
         return
 
-    logger.info("Applying per-sheet fiscal quarter normalization")
+    logger.info("Applying per-sheet September-FY fiscal quarter normalization")
 
-    # Collect all FY years across all data to know valid fiscal years
     all_fy_years: set[int] = set()
     for wb in workbooks:
         for sheet in wb.sheets:

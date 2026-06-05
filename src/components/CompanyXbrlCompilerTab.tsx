@@ -105,7 +105,10 @@ const SHOW_DIAGNOSTIC_PANELS = false;
 
 const TAB_BAR_PANELS = SHOW_DIAGNOSTIC_PANELS
   ? PANELS
-  : PANELS.filter((p) => p.id === "compile" || p.id === "statements");
+  : ([
+      { id: "compile" as const, label: "Run compile" },
+      { id: "statements" as const, label: "View statements" },
+    ] as const);
 
 const STMT_LABEL: Record<string, string> = {
   income_statement: "Income Statement",
@@ -359,8 +362,17 @@ function Table({ title, model }: { title: string; model: StmtModel }) {
 /* ── compile panel ─────────────────────────────────────────────────────── */
 
 function CompilePanel({
-  ticker, result, status, onRun,
-  savedFiles, loadingFiles, selected, toggleFile, selectAll, deselectAll,
+  ticker,
+  result,
+  status,
+  onRun,
+  savedFiles,
+  loadingFiles,
+  filesLoadError,
+  selected,
+  toggleFile,
+  selectAll,
+  deselectAll,
 }: {
   ticker: string;
   result: Result | null;
@@ -368,6 +380,7 @@ function CompilePanel({
   onRun: () => void;
   savedFiles: SavedFile[];
   loadingFiles: boolean;
+  filesLoadError: string | null;
   selected: Set<string>;
   toggleFile: (f: string) => void;
   selectAll: () => void;
@@ -382,11 +395,19 @@ function CompilePanel({
         <h3 className="text-xs font-bold mb-2" style={{ color: "var(--text)" }}>
           XBRL As-Presented Workbooks
         </h3>
+        {filesLoadError ? (
+          <p className="text-xs leading-snug" style={{ color: "var(--warn)" }}>
+            {filesLoadError}
+          </p>
+        ) : null}
         {loadingFiles ? (
-          <div className="text-xs" style={{ color: "var(--muted)" }}>Loading…</div>
+          <div className="text-xs" style={{ color: "var(--muted)" }}>Loading saved workbooks…</div>
         ) : !xbrl.length ? (
-          <div className="text-xs" style={{ color: "var(--muted2)" }}>
-            No XBRL workbooks found for {ticker}.
+          <div className="text-xs leading-snug" style={{ color: "var(--muted2)" }}>
+            No compiler-ready workbooks for {ticker}. Complete{" "}
+            <strong style={{ color: "var(--text)" }}>Step 1</strong> above (bulk save HTML face workbooks to Saved
+            Documents). Filenames must contain{" "}
+            <span className="font-mono">SEC-XBRL-financials_as-presented</span>.
           </div>
         ) : (
           <>
@@ -412,11 +433,20 @@ function CompilePanel({
         )}
       </div>
 
-      <button type="button" disabled={status === "running" || !n} onClick={onRun}
+      <button
+        type="button"
+        disabled={status === "running" || !n || Boolean(filesLoadError)}
+        onClick={onRun}
         className="rounded-lg px-4 py-2 text-xs font-bold text-white transition-colors disabled:opacity-40"
-        style={{ background: "var(--accent)" }}>
+        style={{ background: "var(--accent)" }}
+      >
         {status === "running" ? "Compiling…" : `Compile ${n} workbook${n !== 1 ? "s" : ""}`}
       </button>
+      {!loadingFiles && !filesLoadError && n === 0 ? (
+        <p className="text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
+          Select at least one workbook above, then click compile. Large histories can take several minutes.
+        </p>
+      ) : null}
 
       {result && (
         <div className="rounded-lg border p-4"
@@ -480,7 +510,15 @@ function CompilePanel({
 
 /* ── statements panel ──────────────────────────────────────────────────── */
 
-function StatementsPanel({ result, ticker }: { result: Result | null; ticker: string }) {
+function StatementsPanel({
+  result,
+  ticker,
+  onOpenCompilePanel,
+}: {
+  result: Result | null;
+  ticker: string;
+  onOpenCompilePanel: () => void;
+}) {
   const { data: session } = useSession();
   const [mode, setMode] = useState<ViewMode>("quarterly");
   const [active, setActive] = useState("");
@@ -524,10 +562,22 @@ function StatementsPanel({ result, ticker }: { result: Result | null; ticker: st
   }, [result, ticker, session?.user]);
 
   if (!result?.ok || !models || !stmts.length) {
-    return <div className="rounded-lg border border-dashed p-8 text-center text-xs"
-      style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-      No compiled statements yet.
-    </div>;
+    return (
+      <div
+        className="rounded-lg border border-dashed p-8 text-center text-xs space-y-3"
+        style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+      >
+        <p>No compiled statements yet. Open the Run compile tab, select saved workbooks, and click compile.</p>
+        <button
+          type="button"
+          onClick={onOpenCompilePanel}
+          className="rounded-lg px-4 py-2 text-xs font-bold text-white"
+          style={{ background: "var(--accent)" }}
+        >
+          Go to Run compile
+        </button>
+      </div>
+    );
   }
 
   const m = models[active]?.[mode];
@@ -848,12 +898,13 @@ export function CompanyXbrlCompilerTab({
   /** Override main compiler card heading (default: Deterministic XBRL Statement Compiler). */
   compilerTitle?: string;
 }) {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const [panel, setPanel] = useState<Panel>("compile");
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<Result | null>(() => _resultCache.get(ticker) ?? null);
   const [files, setFiles] = useState<SavedFile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filesLoadError, setFilesLoadError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const loadedRef = useRef("");
 
@@ -885,19 +936,37 @@ export function CompanyXbrlCompilerTab({
   }, [panel]);
 
   useEffect(() => {
+    if (sessionStatus === "loading") return;
     const uid = session?.user?.id;
     if (!uid || !ticker) {
-      if (!uid) loadedRef.current = "";
+      loadedRef.current = "";
+      setLoading(false);
+      setFiles([]);
+      setSelected(new Set());
+      setFilesLoadError(
+        !uid ? "Sign in to load saved workbooks and run the compiler." : null
+      );
       return;
     }
     const slot = `${uid}:${ticker}:${savedDocumentsRev}`;
     if (loadedRef.current === slot) return;
     loadedRef.current = slot;
     setLoading(true);
-    fetch(`/api/xbrl-compiler/${encodeURIComponent(ticker)}`)
-      .then((r) => r.json())
-      .then((j) => {
-        const list: SavedFile[] = (j.allFiles ?? []).map((f: Record<string, unknown>) => ({
+    setFilesLoadError(null);
+    void fetch(`/api/xbrl-compiler/${encodeURIComponent(ticker)}`, { credentials: "include", cache: "no-store" })
+      .then(async (r) => {
+        const j = (await r.json()) as {
+          error?: string;
+          allFiles?: Record<string, unknown>[];
+          lastCompiledResult?: Result;
+        };
+        if (!r.ok) {
+          setFiles([]);
+          setSelected(new Set());
+          setFilesLoadError(j.error ?? `Could not load saved workbooks (HTTP ${r.status})`);
+          return;
+        }
+        const list: SavedFile[] = (j.allFiles ?? []).map((f) => ({
           filename: String(f.filename ?? ""),
           title: String(f.title ?? ""),
           savedAt: String(f.savedAt ?? ""),
@@ -907,7 +976,7 @@ export function CompanyXbrlCompilerTab({
         setFiles(list);
         setSelected(new Set(list.filter((f) => f.isXbrl).map((f) => f.filename)));
 
-        const last = j.lastCompiledResult as Result | null | undefined;
+        const last = j.lastCompiledResult;
         // Only hydrate compiled statements from server on first load per rev cycle — not after bulk-save refetch (would jump tabs).
         if (savedDocumentsRev === 0 && isRenderableCompiledResult(last)) {
           setResult(last);
@@ -916,9 +985,13 @@ export function CompanyXbrlCompilerTab({
           setPanel("statements");
         }
       })
-      .catch(() => {})
+      .catch((e) => {
+        setFiles([]);
+        setSelected(new Set());
+        setFilesLoadError(e instanceof Error ? e.message : "Could not load saved workbooks");
+      })
       .finally(() => setLoading(false));
-  }, [session?.user?.id, ticker, savedDocumentsRev]);
+  }, [session?.user?.id, sessionStatus, ticker, savedDocumentsRev]);
 
   const toggle = useCallback((f: string) => {
     setSelected((prev) => {
@@ -935,27 +1008,53 @@ export function CompanyXbrlCompilerTab({
   const deselectAll = useCallback(() => setSelected(new Set()), []);
 
   const compile = useCallback(async () => {
+    if (filesLoadError) return;
+    const xbrlSelected = [...selected].filter((f) =>
+      files.some((file) => file.isXbrl && file.filename === f)
+    );
+    if (!xbrlSelected.length) return;
+
+    setPanel("compile");
     setStatus("running");
     setResult(null);
     _resultCache.delete(ticker);
     try {
       const res = await fetch(`/api/xbrl-compiler/${encodeURIComponent(ticker)}`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ selectedFiles: [...selected] }),
+        body: JSON.stringify({ selectedFiles: xbrlSelected }),
       });
-      const j = (await res.json()) as Result;
-      setResult(j);
-      setStatus(j.ok ? "done" : "error");
-      if (j.ok) {
-        _resultCache.set(ticker, j);
+      const j = (await res.json()) as Result & { error?: string };
+      let outcome: Result = j;
+      if (!res.ok && !outcome.ok) {
+        outcome = { ok: false, error: outcome.error ?? `Compile request failed (HTTP ${res.status})` };
+      } else if (outcome.ok && !isRenderableCompiledResult(outcome)) {
+        const built = outcome.statements_built?.length
+          ? outcome.statements_built.join(", ")
+          : "none";
+        const schema =
+          outcome.compiler_schema_version != null
+            ? ` (schema v${outcome.compiler_schema_version})`
+            : "";
+        outcome = {
+          ok: false,
+          error:
+            outcome.error ??
+            `Compiler finished but returned no statement grids${schema} (statements built: ${built}). This often means the server could not read the full compile result — try fewer workbooks or re-run. If it persists, re-save workbooks in Step 1.`,
+        };
+      }
+      setResult(outcome);
+      setStatus(outcome.ok ? "done" : "error");
+      if (outcome.ok) {
+        _resultCache.set(ticker, outcome);
         setPanel("statements");
       }
     } catch (e) {
-      setResult({ ok: false, error: e instanceof Error ? e.message : "Failed" });
+      setResult({ ok: false, error: e instanceof Error ? e.message : "Compile failed" });
       setStatus("error");
     }
-  }, [ticker, selected]);
+  }, [ticker, selected, files, filesLoadError]);
 
   const hasStmts = result?.ok && result.models && Object.keys(result.models).length > 0;
 
@@ -986,12 +1085,30 @@ export function CompanyXbrlCompilerTab({
           ))}
         </div>
 
+        {status === "running" ? (
+          <p className="mb-3 text-xs font-medium" style={{ color: "var(--accent)" }}>
+            Compiling {ticker}… This may take a few minutes for many workbooks. Stay on this page.
+          </p>
+        ) : null}
+
         {panel === "compile" && (
-          <CompilePanel ticker={ticker} result={result} status={status} onRun={compile}
-            savedFiles={files} loadingFiles={loading} selected={selected}
-            toggleFile={toggle} selectAll={selectAll} deselectAll={deselectAll} />
+          <CompilePanel
+            ticker={ticker}
+            result={result}
+            status={status}
+            onRun={compile}
+            savedFiles={files}
+            loadingFiles={loading}
+            filesLoadError={filesLoadError}
+            selected={selected}
+            toggleFile={toggle}
+            selectAll={selectAll}
+            deselectAll={deselectAll}
+          />
         )}
-        {panel === "statements" && <StatementsPanel result={result} ticker={ticker} />}
+        {panel === "statements" && (
+          <StatementsPanel result={result} ticker={ticker} onOpenCompilePanel={() => setPanel("compile")} />
+        )}
         {SHOW_DIAGNOSTIC_PANELS && panel === "conflicts" && <ConflictsPanel result={result} />}
         {SHOW_DIAGNOSTIC_PANELS && panel === "diagnostics" && <DiagnosticsPanel result={result} />}
       </Card>

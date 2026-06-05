@@ -146,10 +146,12 @@ export function CompanyAnalysis({
   const resolvedTab =
     activeTab === "edgartools-sec"
       ? "sec-filings"
-      : activeTab === "20-year-look-back" ||
-          activeTab === "sec-xbrl-financials" ||
-          activeTab === "sec-filing-financials"
-        ? "historical-financial-statements"
+      : activeTab === "test"
+        ? "period-financials"
+        : activeTab === "20-year-look-back" ||
+            activeTab === "sec-xbrl-financials" ||
+            activeTab === "sec-filing-financials"
+          ? "historical-financial-statements"
         : activeTab === tabLabelToId("Other Regulatory Filings - Manual")
           ? "other-regulatory-filings"
         : activeTab === tabLabelToId("NHTSA") || activeTab === tabLabelToId("NHTSA Filings")
@@ -252,7 +254,7 @@ export function CompanyAnalysis({
               <div className="flex h-full min-h-0 flex-col">
                 <CompanySecXbrlFinancialsTab ticker={ticker!} />
               </div>
-            ) : resolvedTab === "test" ? (
+            ) : resolvedTab === "test" || resolvedTab === "period-financials" ? (
               <div className="flex h-full min-h-0 flex-col">
                 <CompanyTestFinancialsTab ticker={ticker!} />
               </div>
@@ -333,7 +335,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "sec-xbrl-financials") {
     return <CompanySecXbrlFinancialsTab ticker={ticker} />;
   }
-  if (tabId === "test") {
+  if (tabId === "test" || tabId === "period-financials") {
     return <CompanyTestFinancialsTab ticker={ticker} />;
   }
   if (tabId === "sec-filing-financials") {

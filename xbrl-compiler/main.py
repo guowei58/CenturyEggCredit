@@ -20,7 +20,7 @@ logger = logging.getLogger("xbrl_compiler")
 # Frontend / API ``models`` only: optional extra floor on top of the **first fiscal
 # year that has all four quarters** (1Q–4Q) in consolidated data. ``None`` = no
 # extra floor (still starts at the first complete fiscal year when one exists).
-DISPLAY_MODEL_MIN_FISCAL_YEAR: int | None = None
+DISPLAY_MODEL_MIN_FISCAL_YEAR: int | None = 2019
 COMPILER_SCHEMA_VERSION = 2
 
 
@@ -65,12 +65,25 @@ def run(
         return {"ok": False, "error": f"No workbooks found in {input_dir}",
                 "elapsed_s": round(time.time() - t0, 2)}
 
-    total_facts = sum(len(f) for w in workbooks for s in w.sheets for f in [s.facts])
-    _log(f"Loaded {len(workbooks)} workbooks, {total_facts} facts")
+    total_facts = sum(len(s.facts) for w in workbooks for s in w.sheets)
+    sheets_with_facts = sum(1 for w in workbooks for s in w.sheets if s.facts)
+    _log(f"Loaded {len(workbooks)} workbooks, {sheets_with_facts} statement sheets, {total_facts} facts")
+    if total_facts == 0:
+        return {
+            "ok": False,
+            "error": (
+                "No facts extracted from saved workbooks. Each file needs sheets named "
+                "Income Statement / Balance Sheet / Cash Flow with Concept + period columns "
+                "(1Q25, FY25, or SEC date headers). Re-run Step 1 bulk save after deploying the latest build."
+            ),
+            "elapsed_s": round(time.time() - t0, 2),
+            "files_processed": len(workbooks),
+        }
 
     # 2 – Pick latest 10-K as master
     _log("Step 2: Identifying master 10-K")
-    master_wb = pick_latest_10k(workbooks)
+    with_sheets = [w for w in workbooks if w.sheets]
+    master_wb = pick_latest_10k(with_sheets) if with_sheets else None
     if master_wb is None:
         return {"ok": False, "error": "No workbook with statement sheets found",
                 "elapsed_s": round(time.time() - t0, 2)}
@@ -193,8 +206,47 @@ def run(
 
     elapsed = round(time.time() - t0, 2)
 
+    from period_parser import parse_period
+    from xbrl_periods import xbrl_backed_period_canonicals_by_statement
+
+    xbrl_by_stmt: dict[str, set[str]] = {
+        st: set(keys) for st, keys in xbrl_backed_period_canonicals_by_statement(workbooks).items()
+    }
+    _DERIVED_METHODS = frozenset({
+        "derived",
+        "copied_from_fy_for_wacs",
+        "copied_from_fy_for_bs",
+        "summed_within_file",
+    })
+    for ae in all_audit:
+        if ae.source_method not in _DERIVED_METHODS:
+            continue
+        st = ae.statement_type
+        p = parse_period(ae.output_period)
+        if not p or p.fiscal_year < (DISPLAY_MODEL_MIN_FISCAL_YEAR or 0):
+            continue
+        stmt_years = {
+            parse_period(pl).fiscal_year
+            for pl in xbrl_by_stmt.get(st, ())
+            if parse_period(pl) is not None
+        }
+        if stmt_years and p.fiscal_year in stmt_years:
+            xbrl_by_stmt.setdefault(st, set()).add(ae.output_period)
+    xbrl_by_stmt_frozen = {st: frozenset(keys) for st, keys in xbrl_by_stmt.items()}
+    _log(
+        f"XBRL-backed display periods by statement (FY>={DISPLAY_MODEL_MIN_FISCAL_YEAR}): "
+        + ", ".join(f"{st}={len(keys)}" for st, keys in sorted(xbrl_by_stmt_frozen.items()))
+    )
+
     # Build frontend models (include cell failures for red highlighting)
-    models = _models_json(consolidated, master_rows, cell_failures)
+    models, display_starts = _models_json(
+        consolidated,
+        master_rows,
+        cell_failures,
+        allowed_periods_by_statement=xbrl_by_stmt_frozen,
+    )
+    for st, yr in sorted(display_starts.items()):
+        _log(f"Display column start: {st} fiscal year {yr}")
 
     # Build concept-map diagnostics grouped by statement
     concept_map_summary: list[dict] = []
@@ -218,6 +270,9 @@ def run(
         "ok": True,
         "compiler_schema_version": COMPILER_SCHEMA_VERSION,
         "display_models_min_fiscal_year": DISPLAY_MODEL_MIN_FISCAL_YEAR,
+        "xbrl_backed_period_count": sum(len(v) for v in xbrl_by_stmt_frozen.values()),
+        "xbrl_backed_periods_by_statement": {st: sorted(v) for st, v in xbrl_by_stmt_frozen.items()},
+        "display_column_start_fiscal_year": display_starts,
         "elapsed_s": elapsed,
         "master_file": master_wb.filename,
         "files_processed": len(workbooks),
@@ -294,14 +349,101 @@ def run(
     return summary
 
 
+def _cell_for_period(vals: dict, lbl: str) -> float | None:
+    """Lookup a cell; match by canonical period when keys use prose vs FY24."""
+    from period_parser import parse_period
+
+    if lbl in vals:
+        return vals.get(lbl)
+    p = parse_period(lbl)
+    if p is None:
+        return None
+    for k, v in vals.items():
+        if k.startswith("_"):
+            continue
+        pk = parse_period(k)
+        if pk and pk.canonical == p.canonical:
+            return v
+    return None
+
+
+def _collect_fy_column_labels(
+    concepts: dict,
+    display_floor: int | None,
+    allowed: frozenset[str] | None,
+) -> list[str]:
+    """Canonical FY column keys (FY24) present in consolidated balance-sheet data."""
+    from period_parser import parse_period, sort_period_labels
+
+    canon_keys: set[str] = set()
+    for vals in concepts.values():
+        for lbl in vals:
+            if lbl.startswith("_"):
+                continue
+            p = parse_period(lbl)
+            if not p or not p.is_annual():
+                continue
+            if display_floor is not None and p.fiscal_year < display_floor:
+                continue
+            if allowed is not None and p.canonical not in allowed:
+                yy = str(p.fiscal_year % 100).zfill(2)
+                if not any(f"{qi}Q{yy}" in allowed for qi in "1234"):
+                    continue
+            canon_keys.add(p.canonical)
+    return sort_period_labels(list(canon_keys))
+
+
+def _balance_sheet_cell(vals: dict, period_lbl: str) -> float | None:
+    """BS year-end FY often equals 4Q; derivation may only populate 4Q."""
+    from period_parser import parse_period
+
+    v = _cell_for_period(vals, period_lbl)
+    if v is not None:
+        return v
+    p = parse_period(period_lbl)
+    if p and p.is_annual():
+        yy = str(p.fiscal_year % 100).zfill(2)
+        return _cell_for_period(vals, f"4Q{yy}")
+    return None
+
+
 def _models_json(
     data: dict,
     master_rows: list,
     cell_failures: dict[tuple[str, str, str], list[str]] | None = None,
     *,
     display_min_fiscal_year: int | None = None,
-) -> dict:
-    from period_parser import parse_period, sort_period_labels
+    allowed_periods: frozenset[str] | None = None,
+    allowed_periods_by_statement: dict[str, frozenset[str]] | None = None,
+) -> tuple[dict, dict[str, int]]:
+    from period_parser import (
+        ensure_quarter_and_fy_columns,
+        interleave_annual_after_q4,
+        parse_period,
+        sort_period_labels,
+    )
+
+    def _period_allowed(lbl: str, st: str) -> bool:
+        p = parse_period(lbl)
+        if p is None:
+            return False
+        if allowed_periods_by_statement is not None:
+            allowed = allowed_periods_by_statement.get(st)
+            if allowed is not None:
+                if p.canonical in allowed:
+                    return True
+                # Keep FY / 4Q when any quarter of that year is tagged (derived or filed)
+                if p.is_annual() or (p.is_quarterly() and p.period_type == "Q4"):
+                    yy = str(p.fiscal_year % 100).zfill(2)
+                    return any(f"{qi}Q{yy}" in allowed for qi in "1234")
+        if allowed_periods is None:
+            return True
+        if p.canonical in allowed_periods:
+            return True
+        if p.is_annual() or (p.is_quarterly() and p.period_type == "Q4"):
+            yy = str(p.fiscal_year % 100).zfill(2)
+            return any(f"{qi}Q{yy}" in allowed_periods for qi in "1234")
+        return False
 
     floor_eff = (
         display_min_fiscal_year
@@ -334,10 +476,12 @@ def _models_json(
             stmt_keys.append(s)
 
     models: dict = {}
+    display_starts: dict[str, int] = {}
     for st in stmt_keys:
         concepts = data.get(st, {})
         q_set: set[str] = set()
         a_set: set[str] = set()
+        cum_fiscal_years: set[int] = set()
         for vals in concepts.values():
             for lbl in vals:
                 p = parse_period(lbl)
@@ -345,6 +489,21 @@ def _models_json(
                     q_set.add(lbl)
                 if p and p.is_annual():
                     a_set.add(lbl)
+                if p and p.is_cumulative():
+                    cum_fiscal_years.add(p.fiscal_year)
+
+        def _seed_ytd_only_years(period_list: list[str]) -> list[str]:
+            """6M/9M facts are not display columns; seed years so 1Q–4Q/FY slots still appear."""
+            if not cum_fiscal_years:
+                return period_list
+            out = list(period_list)
+            present = set(out)
+            for yr in sorted(cum_fiscal_years):
+                seed = f"1Q{str(yr % 100).zfill(2)}"
+                if seed not in present:
+                    out.append(seed)
+                    present.add(seed)
+            return sort_period_labels(out)
 
         qs_all = sort_period_labels(list(q_set))
         ays_all = sort_period_labels(list(a_set))
@@ -365,17 +524,19 @@ def _models_json(
                 first_complete_year = yr
                 break
 
-        if floor_eff is None:
-            display_floor = first_complete_year
-        elif first_complete_year is None:
+        # When a minimum display year is configured (2019 for inline XBRL era), show
+        # every tagged period from that year — do not wait for the first fiscal year
+        # with all four quarters (GEN IS/CF often lack a complete early year until ~FY24).
+        if floor_eff is not None:
             display_floor = floor_eff
         else:
-            display_floor = max(first_complete_year, floor_eff)
+            display_floor = first_complete_year
 
         if display_floor is None:
             qs = qs_all
             ays = ays_all
         else:
+            display_starts[st] = display_floor
             qs = [
                 lbl for lbl in qs_all
                 if (p := parse_period(lbl)) is not None and p.fiscal_year >= display_floor
@@ -384,6 +545,27 @@ def _models_json(
                 lbl for lbl in ays_all
                 if (p := parse_period(lbl)) is not None and p.fiscal_year >= display_floor
             ]
+
+        if allowed_periods is not None or allowed_periods_by_statement is not None:
+            qs = [lbl for lbl in qs if _period_allowed(lbl, st)]
+            ays = [lbl for lbl in ays if _period_allowed(lbl, st)]
+
+        if st == "balance_sheet":
+            allowed_bs = (
+                allowed_periods_by_statement.get(st)
+                if allowed_periods_by_statement is not None
+                else allowed_periods
+            )
+            fy_cols = _collect_fy_column_labels(concepts, display_floor, allowed_bs)
+            qs_quarters = [
+                lbl
+                for lbl in qs
+                if (p := parse_period(lbl)) is not None and p.is_quarterly()
+            ]
+            qs = interleave_annual_after_q4(qs_quarters, fy_cols)
+            qs = ensure_quarter_and_fy_columns(_seed_ytd_only_years(qs))
+        else:
+            qs = ensure_quarter_and_fy_columns(_seed_ytd_only_years(qs))
 
         seen: set[str] = set()
         ordered: list[str] = []
@@ -413,7 +595,10 @@ def _models_json(
             q_fails: list[str] = []
             a_fails: list[str] = []
             for p in qs:
-                q[p] = vals.get(p)
+                if st == "balance_sheet":
+                    q[p] = _balance_sheet_cell(vals, p)
+                else:
+                    q[p] = _cell_for_period(vals, p)
                 if f"{crid}::{p}" in fail_set:
                     q_fails.append(p)
             for p in ays:
@@ -431,7 +616,7 @@ def _models_json(
             "quarterly": {"periods": qs, "rows": qr},
             "annual": {"periods": ays, "rows": ar},
         }
-    return models
+    return models, display_starts
 
 
 def main() -> None:
@@ -456,7 +641,8 @@ def main() -> None:
         logger.error("Pipeline failed: %s", result.get("error"))
         sys.exit(1)
 
-    print(json.dumps(result, indent=2))
+    # Single-line JSON so the Node API can JSON.parse(stdout) reliably (pretty-print breaks naive brace scanners).
+    print(json.dumps(result, separators=(",", ":")))
 
 
 if __name__ == "__main__":

@@ -69,7 +69,27 @@ def _month_num_from_token(tok: str) -> int | None:
         return None
 
 
-def _collect_dates(s: str) -> list[tuple[int, int, int]]:
+_BS_INSTANT_MARKERS = (
+    "assets",
+    "liabilities",
+    "stockholders",
+    "shareholders",
+    "total equity",
+    "equity and",
+)
+
+
+def is_balance_sheet_instant_header(header: str) -> bool:
+    """GEN-style BS columns: ``December 31, 2021 ASSETS`` (point-in-time, not duration FY)."""
+    low = header.lower()
+    if "year ended" in low or "years ended" in low or "twelve month" in low:
+        return False
+    if "three month" in low or "quarter ended" in low or "nine month" in low or "six month" in low:
+        return False
+    return any(m in low for m in _BS_INSTANT_MARKERS)
+
+
+def collect_dates(s: str) -> list[tuple[int, int, int]]:
     """Return dates as (year, month, day) in order of appearance."""
     out: list[tuple[int, int, int]] = []
     for m in _SEC_DATE_RE.finditer(s):
@@ -86,16 +106,123 @@ def _collect_dates(s: str) -> list[tuple[int, int, int]]:
     return out
 
 
-def _parse_sec_prose_period(header: str) -> Period | None:
+def fiscal_quarter_from_end_month(end_month: int, fy_end_month: int) -> int:
+    """Map period *end* calendar month to **fiscal** quarter (1–4) for any FY end month.
+
+    Uses the fiscal month's position within the year (FY starts the month after
+    ``fy_end_month``).  GEN-style March FYE quarter **closes** in Jun/Jul (Q1),
+    Sep/Oct (Q2), Dec/Jan (Q3), Mar/Apr (Q4) — not calendar Jan–Mar buckets.
+    """
+    if fy_end_month == 12:
+        delta = (end_month - 12) % 12
+        if delta == 0:
+            return 4
+        return (delta - 1) // 3 + 1
+
+    fy_start = (fy_end_month % 12) + 1
+    if end_month >= fy_start:
+        pos = end_month - fy_start + 1
+    else:
+        pos = (12 - fy_start + 1) + end_month
+    return min(4, max(1, (pos + 1) // 3))
+
+
+def _months_after_fy_end(end_month: int, fy_end_month: int) -> int:
+    """Months from the FY close month to ``end_month`` (0 = same month as FY end)."""
+    return (end_month - fy_end_month) % 12
+
+
+def fiscal_year_from_end_date(
+    end_year: int,
+    end_month: int,
+    fy_end_month: int,
+    *,
+    is_annual: bool = False,
+) -> int:
+    """Fiscal year label (calendar year the fiscal year **ends**) from period end date."""
+    after = _months_after_fy_end(end_month, fy_end_month)
+    if is_annual:
+        # 10-K FY column: ends on or within ~2 months after FY close (Mar/Apr, Sep/Oct, …)
+        if after <= 2:
+            return end_year
+        if end_month <= fy_end_month:
+            return end_year
+        return end_year + 1
+    # Quarterly / YTD: H1 of fiscal year spans two calendar years when FYE is not Dec
+    if after == 0:
+        return end_year
+    if end_month <= fy_end_month:
+        return end_year
+    return end_year + 1
+
+
+def period_from_end_date(
+    end_year: int,
+    end_month: int,
+    end_day: int,
+    fy_end_month: int,
+    header: str,
+    *,
+    cumulative: str | None = None,
+) -> Period:
+    """Build a Period from an explicit period-end date and inferred FY end month."""
+    if cumulative == "9M":
+        return Period(
+            "9M",
+            fiscal_year_from_end_date(end_year, end_month, fy_end_month, is_annual=False),
+            header,
+        )
+    if cumulative == "6M":
+        return Period(
+            "6M",
+            fiscal_year_from_end_date(end_year, end_month, fy_end_month, is_annual=False),
+            header,
+        )
+    if cumulative == "FY":
+        return Period(
+            "FY",
+            fiscal_year_from_end_date(end_year, end_month, fy_end_month, is_annual=True),
+            header,
+        )
+    fq = fiscal_quarter_from_end_month(end_month, fy_end_month)
+    fy = fiscal_year_from_end_date(end_year, end_month, fy_end_month, is_annual=False)
+    return Period(f"Q{fq}", fy, header)
+
+
+def _parse_sec_prose_period(
+    header: str,
+    *,
+    fy_end_month: int | None = None,
+) -> Period | None:
     """Infer FY / Q / 6M / 9M from SEC HTML-style column headers."""
     s = header.strip()
     if not s:
         return None
     low = s.lower()
-    dates = _collect_dates(s)
+    dates = collect_dates(s)
     if not dates:
         return None
     y, mo, d = dates[-1]
+
+    def _from_fy_end(cumulative: str | None = None) -> Period:
+        assert fy_end_month is not None
+        return period_from_end_date(y, mo, d, fy_end_month, header, cumulative=cumulative)
+
+    if fy_end_month is not None:
+        if is_balance_sheet_instant_header(s):
+            return _from_fy_end(None)
+        if "nine month" in low:
+            return _from_fy_end("9M")
+        if "six month" in low:
+            return _from_fy_end("6M")
+        if "twelve month" in low or "year ended" in low or "years ended" in low:
+            return _from_fy_end("FY")
+        if "three month" in low or "one quarter" in low or "quarter ended" in low:
+            return _from_fy_end(None)
+        if "as of" in low:
+            if mo == 12 and d == 31 and fy_end_month == 12:
+                return Period("FY", y, header)
+            return _from_fy_end(None)
 
     if "nine month" in low:
         return Period("9M", y, header)
@@ -116,6 +243,11 @@ def _parse_sec_prose_period(header: str) -> Period | None:
         return Period(f"Q{q}", y, header)
 
     if not any(x in low for x in ("month", "quarter", "year", "as of")):
+        if is_balance_sheet_instant_header(s):
+            if fy_end_month is not None:
+                return _from_fy_end(None)
+            q = (mo - 1) // 3 + 1
+            return Period(f"Q{q}", y, header)
         if mo == 12 and d == 31:
             return Period("FY", y, header)
         q = (mo - 1) // 3 + 1
@@ -127,8 +259,12 @@ def _parse_sec_prose_period(header: str) -> Period | None:
     return Period(f"Q{q}", y, header)
 
 
-def parse_period(header: str) -> Period | None:
-    """Return a Period for recognised header strings, else None."""
+def parse_period(header: str, *, fy_end_month: int | None = None) -> Period | None:
+    """Return a Period for recognised header strings, else None.
+
+    Pass ``fy_end_month`` (1–12) when known so SEC prose headers map to **fiscal**
+    Q1–Q4 / FY instead of calendar Jan–Mar / Apr–Jun buckets.
+    """
     s = header.strip()
 
     m = _Q_RE.match(s)
@@ -143,7 +279,7 @@ def parse_period(header: str) -> Period | None:
     if m:
         return Period(f"{m.group(1)}M", _year(m.group(2)), s)
 
-    prose = _parse_sec_prose_period(s)
+    prose = _parse_sec_prose_period(s, fy_end_month=fy_end_month)
     if prose:
         return prose
 
@@ -156,3 +292,69 @@ def sort_period_labels(labels: list[str]) -> list[str]:
         p = parse_period(lbl)
         return p.sort_key if p else (9999, 99)
     return sorted(labels, key=_key)
+
+
+def ensure_quarter_and_fy_columns(period_labels: list[str]) -> list[str]:
+    """Ensure 1Q, 2Q, 3Q, 4Q, and FY columns for every fiscal year in the grid.
+
+    Slots are added even when no line has data (UI shows empty cells). Applies to
+    any fiscal year referenced by a quarter, annual, or YTD (6M/9M) column label.
+    """
+    present = set()
+    fy_years: set[int] = set()
+    for lbl in period_labels:
+        p = parse_period(lbl)
+        if p:
+            present.add(p.canonical)
+            fy_years.add(p.fiscal_year)
+
+    extra: list[str] = []
+    for yr in fy_years:
+        yy = str(yr % 100).zfill(2)
+        for qi in "1234":
+            canon = f"{qi}Q{yy}"
+            if canon not in present:
+                extra.append(canon)
+                present.add(canon)
+        fy_canon = f"FY{yy}"
+        if fy_canon not in present:
+            extra.append(fy_canon)
+
+    return sort_period_labels(period_labels + extra)
+
+
+def interleave_annual_after_q4(
+    quarterly_labels: list[str],
+    annual_labels: list[str],
+) -> list[str]:
+    """Insert each FY column immediately after that year's 4Q (balance sheet grid)."""
+    fy_by_year: dict[int, str] = {}
+    for lbl in annual_labels:
+        p = parse_period(lbl)
+        if p and p.is_annual():
+            fy_by_year[p.fiscal_year] = p.canonical
+
+    q_only = [
+        lbl
+        for lbl in quarterly_labels
+        if (p := parse_period(lbl)) is not None and p.is_quarterly()
+    ]
+
+    out: list[str] = []
+    seen_fy: set[str] = set()
+    for lbl in sort_period_labels(q_only):
+        p = parse_period(lbl)
+        if not p:
+            continue
+        out.append(lbl)
+        if p and p.period_type == "Q4":
+            fy_lbl = fy_by_year.get(p.fiscal_year)
+            if fy_lbl and fy_lbl not in seen_fy:
+                out.append(fy_lbl)
+                seen_fy.add(fy_lbl)
+
+    for yr in sorted(fy_by_year):
+        fy_lbl = fy_by_year[yr]
+        if fy_lbl not in seen_fy:
+            out.append(fy_lbl)
+    return out

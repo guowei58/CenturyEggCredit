@@ -24,6 +24,7 @@ from master_presentation_builder import (
     ConceptMapping,
     MasterRow,
     _extract_local_name,
+    _labels_similar_for_merge,
     _normalize_label,
     _renumber_display_order,
 )
@@ -111,13 +112,16 @@ def _merge_pair_allowed(
             return _investing_or_security_line(la, ca) or _investing_or_security_line(lb, cb)
         return len(shorter) >= 10
 
+    if _norm_display_label(la) == _norm_display_label(lb) and _norm_display_label(la):
+        return True
+
+    if st in ("income_statement", "cash_flow") and _labels_similar_for_merge(la, lb):
+        return True
+
     inv_a = _investing_or_security_line(la, ca)
     inv_b = _investing_or_security_line(lb, cb)
     if not (inv_a and inv_b):
         return False
-
-    if _norm_display_label(la) == _norm_display_label(lb) and _norm_display_label(la):
-        return True
 
     ta, tb = _label_tokens_fixed(la), _label_tokens_fixed(lb)
     if _strict_subset_words(ta, tb) or _strict_subset_words(tb, ta):
@@ -212,6 +216,39 @@ def apply_row_deduplication(
                 if drop == keep:
                     continue
                 merges.append((st, keep, drop, "value_signature_equivalence"))
+
+    # Label-similar IS/CF rows where one side has no values (wording drift, sparse filings)
+    by_label: dict[tuple[str, int], list[str]] = defaultdict(list)
+    for r in master_rows:
+        if r.statement_type not in ("income_statement", "cash_flow"):
+            continue
+        by_label[(r.statement_type, r.depth)].append(r.canonical_row_id)
+
+    for (st, depth), canon_list in by_label.items():
+        uniq = sorted(set(canon_list))
+        for i, ca in enumerate(uniq):
+            ra = rowmap.get((st, ca))
+            if ra is None:
+                continue
+            for cb in uniq[i + 1 :]:
+                rb = rowmap.get((st, cb))
+                if rb is None:
+                    continue
+                if not _merge_pair_allowed(st, ca, cb, ra, rb):
+                    continue
+                sig_a = _value_signature(consolidated, st, ca)
+                sig_b = _value_signature(consolidated, st, cb)
+                if sig_a and sig_b:
+                    continue
+                if sig_a is None and sig_b is None:
+                    keep = _pick_representative([ca, cb])
+                    drop = cb if keep == ca else ca
+                    merges.append((st, keep, drop, "similar_label_empty"))
+                    continue
+                if sig_a and sig_b:
+                    continue
+                keep, drop = (ca, cb) if sig_a else (cb, ca)
+                merges.append((st, keep, drop, "similar_label_sparse"))
 
     if not merges:
         return res

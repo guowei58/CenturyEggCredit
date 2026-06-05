@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { compilerPeriodColumnHeader } from "@/lib/sec-xbrl-compiler-period-headers";
 import { faceStatementToWorkbookShape } from "@/lib/sec-ixbrl-face-save-client";
 import {
   faceStatementCellNumeric,
@@ -93,6 +94,21 @@ describe("formatFaceStatementCell", () => {
     expect(formatFaceStatementCell(bsRow, "p1", "balance-sheet")).toBe("$19,165.00M");
   });
 
+  it("compiler period headers prefer canonical short labels, else SEC prose", () => {
+    expect(
+      compilerPeriodColumnHeader(
+        { label: "Year ended December 31, 2025", shortLabel: "FY25", end: "2025-12-31", start: null },
+        "10-K"
+      )
+    ).toBe("FY25");
+    expect(
+      compilerPeriodColumnHeader(
+        { label: "Three months ended June 28, 2024", end: "2024-06-28", start: "2024-04-01" },
+        "10-Q"
+      )
+    ).toBe("Three months ended June 28, 2024");
+  });
+
   it("workbook cells are numeric at the same scale as the on-screen grid", () => {
     const stmt = {
       id: "balance-sheet" as const,
@@ -111,7 +127,8 @@ describe("formatFaceStatementCell", () => {
       ],
     };
     const r = stmt.rows[0]!;
-    const wbRow = faceStatementToWorkbookShape(stmt).rows[0]!;
+    const wbRow = faceStatementToWorkbookShape(stmt, { form: "10-K", filingDate: "2025-12-31", accessionNumber: "x" })
+      .rows[0]!;
     expect(faceStatementCellNumeric(r, "p1", "balance-sheet")).toBe(10_542);
     expect(wbRow.workbookCells?.p1).toBe(10_542);
     expect(formatFaceStatementCell(r, "p1", "balance-sheet")).toBe("$10,542.00M");

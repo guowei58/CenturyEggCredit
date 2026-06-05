@@ -65,7 +65,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         // SEC XBRL Financials + SEC Filing Financials hidden for now; tab components remain for bookmarks / bulk-save.
-        tabs: ["TEST", "Historical Financial Statements"],
+        tabs: ["Period Financials", "Historical Financial Statements"],
       },
     ],
   },

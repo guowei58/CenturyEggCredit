@@ -114,6 +114,18 @@ class TestPeriodParsing:
         assert sort_period_labels(["FY16", "1Q15", "FY15", "1Q16"]) == [
             "1Q15", "FY15", "1Q16", "FY16"]
 
+    def test_ensure_quarter_and_fy_columns_fills_missing_slots(self):
+        from period_parser import ensure_quarter_and_fy_columns
+
+        out = ensure_quarter_and_fy_columns(["2Q22", "6M22"])
+        assert out == ["1Q22", "2Q22", "3Q22", "4Q22", "FY22", "6M22"]
+
+    def test_ensure_quarter_and_fy_columns_fy_only_year(self):
+        from period_parser import ensure_quarter_and_fy_columns
+
+        out = ensure_quarter_and_fy_columns(["FY15"])
+        assert out == ["1Q15", "2Q15", "3Q15", "4Q15", "FY15"]
+
 
 class TestHeadlinePeriods:
     def test_10q_newest_quarter_is_headline(self):
@@ -357,6 +369,121 @@ class TestFiscalYearNormalization:
 
         periods = {f.period.canonical: f.value for f in wbs[0].sheets[0].facts}
         assert periods.get("6M24") == 30, "6M24 should stay (Sep FY: 6M ends in March, same cal year)"
+
+    def test_march_fye_prose_quarters(self):
+        """GEN-style March FYE: calendar quarter from prose is remapped to fiscal."""
+        fy_hdr = "Year ended March 29, 2024"
+        fy_prior = "Year ended April 1, 2023"
+        q1_hdr = "Three months ended June 28, 2024"
+        facts = [
+            _fact(concept="us-gaap:Revenue", plabel=fy_hdr, value=100, stmt="income_statement"),
+            _fact(concept="us-gaap:Revenue", plabel=fy_prior, value=90, stmt="income_statement"),
+            _fact(concept="us-gaap:Revenue", plabel=q1_hdr, value=25, stmt="income_statement"),
+        ]
+        # Before normalize, June is mislabeled as calendar Q2 2024
+        assert facts[2].period.period_type == "Q2"
+        sheet = _sheet(facts, stmt="income_statement", src="gen_10k.xlsx")
+        wbs = [_wb([sheet], filename="gen_10k.xlsx", is_10k=True, fy=2024)]
+        normalize_fiscal_periods(wbs)
+        by_label = {f.period.column_label: f.period.canonical for f in wbs[0].sheets[0].facts}
+        assert by_label[q1_hdr] == "1Q25", "June 2024 should be fiscal Q1 of FY25 (March FYE)"
+        assert by_label[fy_hdr] == "FY24"
+
+    def test_march_fye_april_year_end_stays_same_fy(self):
+        """GEN often closes in early April; must not become FY(end_year+1)."""
+        fy_april = "Year ended April 3, 2026"
+        fy_march = "Year ended March 29, 2025"
+        facts = [
+            _fact(concept="us-gaap:Revenue", plabel=fy_march, value=90, stmt="income_statement"),
+            _fact(concept="us-gaap:Revenue", plabel=fy_april, value=100, stmt="income_statement"),
+        ]
+        sheet = _sheet(facts, stmt="income_statement", src="gen_10k.xlsx")
+        wbs = [_wb([sheet], filename="gen_10k.xlsx", is_10k=True, fy=2026)]
+        normalize_fiscal_periods(wbs)
+        by_label = {f.period.column_label: f.period.canonical for f in wbs[0].sheets[0].facts}
+        assert by_label[fy_april] == "FY26", "April 2026 year-end is fiscal FY26, not FY27"
+        assert by_label[fy_march] == "FY25"
+
+    def test_gen_bs_december_instant_maps_to_fiscal_3q(self):
+        """GEN BS face: 'December 31, 2021 ASSETS' is fiscal 3Q22 (March FYE), not FY22."""
+        from period_parser import parse_period
+
+        dec_hdr = "December 31, 2021 ASSETS"
+        fy_hdr = "Year ended April 1, 2022"
+        facts = [
+            _fact(
+                concept="us-gaap:Cash",
+                plabel=dec_hdr,
+                value=100.0,
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+            ),
+            _fact(
+                concept="us-gaap:Cash",
+                plabel=fy_hdr,
+                value=90.0,
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+            ),
+        ]
+        assert parse_period(dec_hdr).canonical in ("FY21", "4Q21")
+        sheet = _sheet(facts, stmt="balance_sheet", src="gen_10q.xlsx")
+        wbs = [_wb([sheet], filename="gen_10q.xlsx", is_10k=False, fy=2022)]
+        normalize_fiscal_periods(wbs)
+        by_label = {f.period.column_label: f.period.canonical for f in wbs[0].sheets[0].facts}
+        assert by_label[dec_hdr] == "3Q22"
+        assert by_label[fy_hdr] == "FY22"
+
+    def test_gen_is_quarter_ends_do_not_collide(self):
+        """GEN March FYE: Jul / Oct / Dec 10-Q ends map to 1Q22 / 2Q22 / 3Q22 (distinct)."""
+        from period_parser import period_from_end_date, collect_dates
+
+        cases = [
+            ("Three Months Ended July 2, 2021", "1Q22"),
+            ("Three Months Ended October 1, 2021", "2Q22"),
+            ("Three Months Ended December 31, 2021", "3Q22"),
+            ("Three Months Ended July 1, 2022", "1Q23"),
+            ("Three Months Ended September 30, 2022", "2Q23"),
+            ("Three Months Ended December 30, 2022", "3Q23"),
+        ]
+        seen: dict[str, str] = {}
+        for hdr, want in cases:
+            y, mo, d = collect_dates(hdr)[-1]
+            got = period_from_end_date(y, mo, d, 3, hdr, cumulative=None).canonical
+            assert got == want, f"{hdr}: got {got}, want {want}"
+            assert got not in seen.values(), f"collision on {got} from {seen.get(got)} and {hdr}"
+            seen[hdr] = got
+
+    def test_september_fye_prose_quarters(self):
+        """FICO-style Sep FYE: Dec/Q1 calendar prose → fiscal Q1 of following FY label year."""
+        from period_parser import fiscal_quarter_from_end_month, period_from_end_date
+
+        assert fiscal_quarter_from_end_month(12, 9) == 1
+        assert fiscal_quarter_from_end_month(6, 9) == 3
+        assert fiscal_quarter_from_end_month(9, 9) == 4
+
+        p = period_from_end_date(2023, 12, 31, 9, "Three months ended December 31, 2023")
+        assert p.period_type == "Q1" and p.fiscal_year == 2024
+
+        fy_hdr = "Year ended September 30, 2023"
+        q1_hdr = "Three months ended December 31, 2023"
+        facts = [
+            _fact(concept="us-gaap:Revenue", plabel=fy_hdr, value=100, stmt="income_statement"),
+            _fact(concept="us-gaap:Revenue", plabel=q1_hdr, value=25, stmt="income_statement"),
+        ]
+        sheet = _sheet(facts, stmt="income_statement", src="fico_10k.xlsx")
+        wbs = [_wb([sheet], filename="fico_10k.xlsx", is_10k=True, fy=2023)]
+        normalize_fiscal_periods(wbs)
+        by_label = {f.period.column_label: f.period.canonical for f in wbs[0].sheets[0].facts}
+        assert by_label[fy_hdr] == "FY23"
+        assert by_label[q1_hdr] == "1Q24"
+
+    def test_june_fye_prose_quarter(self):
+        """June FYE: Q1 ends September (not calendar Q3)."""
+        from period_parser import period_from_end_date
+
+        p = period_from_end_date(2024, 9, 30, 6, "Three months ended September 30, 2024")
+        assert p.period_type == "Q1" and p.fiscal_year == 2025
 
 
 # ===========================================================================
@@ -855,6 +982,62 @@ class TestRowMapping:
 
 
 # ===========================================================================
+# XBRL-tagged periods only
+# ===========================================================================
+
+class TestXbrlPeriods:
+    def test_is_xbrl_tagged_concept(self):
+        from xbrl_periods import is_xbrl_tagged_concept
+
+        assert is_xbrl_tagged_concept("us-gaap:Revenues")
+        assert is_xbrl_tagged_concept("gen:Foo")
+        assert not is_xbrl_tagged_concept("html:revenues")
+        assert not is_xbrl_tagged_concept("_:lineonly:file|sheet|R1")
+
+    def test_filter_facts_drops_html_only_columns(self):
+        from xbrl_periods import filter_facts_to_xbrl_periods
+
+        facts = [
+            _fact(concept="html:revenues", plabel="1Q20", value=1.0),
+            _fact(concept="us-gaap:Revenues", plabel="2Q20", value=2.0),
+            _fact(concept="us-gaap:Revenues", plabel="FY18", value=3.0),
+        ]
+        out = filter_facts_to_xbrl_periods(facts)
+        labels = {f.period.canonical for f in out}
+        assert "2Q20" in labels
+        assert "1Q20" not in labels
+        assert "FY18" not in labels
+
+    def test_models_json_allowed_periods(self):
+        from main import _models_json
+
+        consolidated = {
+            "income_statement": {
+                "us-gaap:Revenue": {
+                    "1Q20": 1.0,
+                    "2Q20": 2.0,
+                    "FY19": 9.0,
+                    "FY15": 5.0,
+                },
+            },
+        }
+        rows = [
+            MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
+        ]
+        models, _ = _models_json(
+            consolidated,
+            rows,
+            None,
+            display_min_fiscal_year=1900,
+            allowed_periods=frozenset({"1Q20", "2Q20", "FY19"}),
+        )
+        qtr = models["income_statement"]["quarterly"]["periods"]
+        ann = models["income_statement"]["annual"]["periods"]
+        assert "1Q20" in qtr and "FY19" in ann
+        assert "FY15" not in ann and "FY15" not in qtr
+
+
+# ===========================================================================
 # Income statement 4Q derivation
 # ===========================================================================
 
@@ -892,12 +1075,19 @@ class TestIS4Q:
         assert len(audit_4q) == 1
         assert "not reported" in audit_4q[0].derivation_formula
 
-    def test_derive_4q_only_fy_exists(self):
-        """If only FY exists, 4Q = FY - 0 - 0 - 0 = FY."""
+    def test_does_not_derive_1q_from_fy_minus_other_quarters(self):
+        rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
+        data = {"income_statement": {"R": {"FY20": 100.0, "2Q20": 20.0, "3Q20": 30.0, "4Q20": 40.0}}}
+        da = derive_quarters(data, rows, [])
+        assert "1Q20" not in data["income_statement"]["R"]
+        assert not any(a.output_period == "1Q20" for a in da)
+
+    def test_derive_4q_skipped_when_only_fy_exists(self):
+        """FY-only years must not spawn a duplicate 4Q column equal to FY."""
         rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
         data = {"income_statement": {"R": {"FY15": 500.0}}}
         derive_quarters(data, rows, [])
-        assert data["income_statement"]["R"]["4Q15"] == 500.0
+        assert "4Q15" not in data["income_statement"]["R"]
 
 
 # ===========================================================================
@@ -995,48 +1185,23 @@ class TestDispositionFYHarmonize:
 # ===========================================================================
 
 class TestCFDerivation:
-    def test_2q(self):
+    def test_does_not_derive_2q_from_6m_minus_1q(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
         data = {"cash_flow": {"C": {"1Q15": 50.0, "6M15": 130.0}}}
         derive_quarters(data, rows, [])
-        assert data["cash_flow"]["C"]["2Q15"] == 80.0
+        assert "2Q15" not in data["cash_flow"]["C"]
 
-    def test_3q(self):
+    def test_does_not_derive_3q_from_9m_minus_6m(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
         data = {"cash_flow": {"C": {"6M15": 130.0, "9M15": 200.0}}}
         derive_quarters(data, rows, [])
-        assert data["cash_flow"]["C"]["3Q15"] == 70.0
+        assert "3Q15" not in data["cash_flow"]["C"]
 
     def test_4q(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
         data = {"cash_flow": {"C": {"9M15": 200.0, "FY15": 280.0}}}
         derive_quarters(data, rows, [])
         assert data["cash_flow"]["C"]["4Q15"] == 80.0
-
-    def test_2q_missing_6m(self):
-        """Cannot derive 2Q without the cumulative 6M — that stays missing."""
-        rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
-        data = {"cash_flow": {"C": {"1Q15": 50.0}}}
-        derive_quarters(data, rows, [])
-        assert "2Q15" not in data["cash_flow"]["C"]
-
-    def test_2q_missing_1q_treated_as_zero(self):
-        """6M exists but 1Q absent → 2Q = 6M - 0 = 6M (the CABO scenario)."""
-        rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
-        data = {"cash_flow": {"C": {"6M15": 20.0}}}
-        da = derive_quarters(data, rows, [])
-        assert data["cash_flow"]["C"]["2Q15"] == 20.0
-        audit_2q = [a for a in da if a.output_period == "2Q15"]
-        assert len(audit_2q) == 1
-        assert "not reported" in audit_2q[0].derivation_formula
-
-    def test_3q_missing_6m_treated_as_zero(self):
-        """9M exists but 6M absent → 3Q = 9M - 0 = 9M."""
-        rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
-        data = {"cash_flow": {"C": {"9M15": 35.0}}}
-        da = derive_quarters(data, rows, [])
-        assert data["cash_flow"]["C"]["3Q15"] == 35.0
-        assert "not reported" in da[0].derivation_formula
 
     def test_4q_missing_9m_treated_as_zero(self):
         """FY exists but 9M absent → 4Q = FY - 0 = FY."""
@@ -1046,12 +1211,12 @@ class TestCFDerivation:
         assert data["cash_flow"]["C"]["4Q15"] == 50.0
         assert "not reported" in da[0].derivation_formula
 
-    def test_cf_full_chain_with_sporadic_item(self):
-        """A line item only in 6M and FY → derives 2Q=6M, 3Q=0, 4Q=FY-0."""
+    def test_cf_ytd_only_does_not_derive_2q_or_3q(self):
         rows = [MasterRow("cash_flow", "C", "C", "Debt investment", 0, 0)]
         data = {"cash_flow": {"C": {"6M15": 20.0, "FY15": 45.0}}}
         derive_quarters(data, rows, [])
-        assert data["cash_flow"]["C"]["2Q15"] == 20.0
+        assert "2Q15" not in data["cash_flow"]["C"]
+        assert "3Q15" not in data["cash_flow"]["C"]
         assert data["cash_flow"]["C"]["4Q15"] == 45.0
 
 
@@ -1688,7 +1853,7 @@ class TestFullMasterPresentationInExports:
         """If no fiscal year has Q1–Q4, the grid still lists every period (legacy behavior)."""
         from main import _models_json, DISPLAY_MODEL_MIN_FISCAL_YEAR
 
-        assert DISPLAY_MODEL_MIN_FISCAL_YEAR is None
+        assert DISPLAY_MODEL_MIN_FISCAL_YEAR == 2019
         consolidated = {
             "income_statement": {
                 "us-gaap:Revenue": {
@@ -1703,19 +1868,119 @@ class TestFullMasterPresentationInExports:
         rows = [
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
-        models = _models_json(consolidated, rows, None)
+        models, _ = _models_json(consolidated, rows, None, display_min_fiscal_year=1900)
         ann = models["income_statement"]["annual"]["periods"]
         qtr = models["income_statement"]["quarterly"]["periods"]
         assert "FY15" in ann and "FY16" in ann and "FY17" in ann
         assert "1Q16" in qtr and "1Q17" in qtr
+        for yy in ("15", "16", "17"):
+            for slot in ("1Q", "2Q", "3Q", "4Q", "FY"):
+                assert f"{slot}{yy}" in qtr
         r = models["income_statement"]["annual"]["rows"][0]
         assert r.get("FY15") == 100.0 and r.get("FY16") == 110.0
         assert r.get("FY17") == 120.0
+        qr = models["income_statement"]["quarterly"]["rows"][0]
+        assert qr.get("2Q16") is None and qr.get("FY15") == 100.0
 
-    def test_models_json_starts_at_first_fiscal_year_with_four_quarters(self):
+    def test_models_json_ytd_only_year_gets_full_quarter_grid(self):
+        from main import _models_json
+
+        consolidated = {
+            "cash_flow": {
+                "us-gaap:NetCashProvidedByUsedInOperatingActivities": {
+                    "6M22": 10.0,
+                    "9M22": 25.0,
+                    "FY22": 40.0,
+                },
+            },
+        }
+        rows = [
+            MasterRow(
+                "cash_flow",
+                "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+                "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+                "Operating cash flow",
+                0,
+                0,
+            ),
+        ]
+        models, _ = _models_json(consolidated, rows, None, display_min_fiscal_year=1900)
+        qtr = models["cash_flow"]["quarterly"]["periods"]
+        assert qtr == ["1Q22", "2Q22", "3Q22", "4Q22", "FY22"]
+        row = models["cash_flow"]["quarterly"]["rows"][0]
+        assert row.get("1Q22") is None and row.get("2Q22") is None
+
+    def test_models_json_bs_interleaves_fy_after_q4(self):
+        from main import _models_json
+
+        consolidated = {
+            "balance_sheet": {
+                "us-gaap:Cash": {
+                    "4Q20": 100.0,
+                    "1Q21": 110.0,
+                    "FY20": 100.0,
+                    "FY21": 110.0,
+                },
+            },
+        }
+        rows = [MasterRow("balance_sheet", "us-gaap:Cash", "us-gaap:Cash", "Cash", 0, 0)]
+        models, _ = _models_json(consolidated, rows, None, display_min_fiscal_year=1900)
+        qtr = models["balance_sheet"]["quarterly"]["periods"]
+        assert qtr.index("4Q20") < qtr.index("FY20")
+        assert "FY20" in qtr
+
+    def test_models_json_bs_fy_from_4q_when_fy_key_missing(self):
+        from main import _models_json
+
+        consolidated = {
+            "balance_sheet": {
+                "us-gaap:Cash": {
+                    "1Q20": 90.0,
+                    "2Q20": 95.0,
+                    "3Q20": 98.0,
+                    "4Q20": 100.0,
+                },
+            },
+        }
+        rows = [MasterRow("balance_sheet", "us-gaap:Cash", "us-gaap:Cash", "Cash", 0, 0)]
+        models, _ = _models_json(consolidated, rows, None, display_min_fiscal_year=1900)
+        qtr = models["balance_sheet"]["quarterly"]["periods"]
+        assert "FY20" in qtr
+        row = models["balance_sheet"]["quarterly"]["rows"][0]
+        assert row["FY20"] == 100.0
+
+    def test_models_json_uses_2019_floor_not_first_complete_year(self):
+        """With DISPLAY_MODEL_MIN_FISCAL_YEAR=2019, partial years before first Q1–Q4 set still show."""
+        from main import _models_json
+
+        consolidated = {
+            "income_statement": {
+                "us-gaap:Revenue": {
+                    "1Q19": 1.0,
+                    "2Q19": 2.0,
+                    "FY19": 9.0,
+                    "1Q24": 10.0,
+                    "2Q24": 11.0,
+                    "3Q24": 12.0,
+                    "4Q24": 13.0,
+                    "FY24": 50.0,
+                },
+            },
+        }
+        rows = [
+            MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
+        ]
+        models, starts = _models_json(consolidated, rows, None)
+        qtr = models["income_statement"]["quarterly"]["periods"]
+        assert starts["income_statement"] == 2019
+        assert "1Q19" in qtr
+        assert "1Q24" in qtr
+
+    def test_models_json_starts_at_first_fiscal_year_with_four_quarters(self, monkeypatch):
         from main import _models_json, DISPLAY_MODEL_MIN_FISCAL_YEAR
 
-        assert DISPLAY_MODEL_MIN_FISCAL_YEAR is None
+        assert DISPLAY_MODEL_MIN_FISCAL_YEAR == 2019
+        monkeypatch.setattr("main.DISPLAY_MODEL_MIN_FISCAL_YEAR", None)
         consolidated = {
             "income_statement": {
                 "us-gaap:Revenue": {
@@ -1732,9 +1997,10 @@ class TestFullMasterPresentationInExports:
         rows = [
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
-        models = _models_json(consolidated, rows, None)
+        models, starts = _models_json(consolidated, rows, None)
         qtr = models["income_statement"]["quarterly"]["periods"]
         ann = models["income_statement"]["annual"]["periods"]
+        assert starts["income_statement"] == 2016
         assert "1Q15" not in qtr
         assert "1Q16" in qtr and "4Q16" in qtr
         assert "FY15" not in ann
@@ -1766,7 +2032,7 @@ class TestFullMasterPresentationInExports:
         rows = [
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
-        models = _models_json(consolidated, rows, None, display_min_fiscal_year=2017)
+        models, _ = _models_json(consolidated, rows, None, display_min_fiscal_year=2017)
         qtr = models["income_statement"]["quarterly"]["periods"]
         ann = models["income_statement"]["annual"]["periods"]
         assert "1Q16" not in qtr
@@ -1791,7 +2057,7 @@ class TestFullMasterPresentationInExports:
         rows = [
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
-        models = _models_json(consolidated, rows, None, display_min_fiscal_year=2017)
+        models, _ = _models_json(consolidated, rows, None, display_min_fiscal_year=2017)
         ann = models["income_statement"]["annual"]["periods"]
         assert "FY15" not in ann and "FY16" not in ann
         assert "FY17" in ann
@@ -1816,7 +2082,7 @@ class TestFullMasterPresentationInExports:
                 0,
             ),
         ]
-        models = _models_json(consolidated, rows, None)
+        models, _ = _models_json(consolidated, rows, None)
         bs_a = models["balance_sheet"]["annual"]["rows"]
         concepts = [r["concept"] for r in bs_a]
         assert "us-gaap:FiniteLivedIntangibleAssetsNet" in concepts

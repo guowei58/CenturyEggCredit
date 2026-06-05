@@ -1,26 +1,16 @@
-"""Derive missing quarterly values using fixed arithmetic rules.
+"""Derive **fourth-quarter (4Q) only** — never invent 1Q, 2Q, or 3Q.
 
 Income Statement : Before deriving 4Q, optional **FY display-sign harmonization** for
                    gain/loss/disposition-style rows when FY ≈ −(1Q+2Q+3Q) with the same
-                   zero-fill as the bridge. That pattern usually means the annual (10-K)
-                   and quarterly (10-Q) saved workbooks used opposite presentation sign
-                   for the same economic total—not calendar Dec-31 filers only (TS
-                   ``harmonizeCrossFilingAccrualSigns`` in the AI path is Dec-YE only).
-                   Matching uses **display label keywords** and, when the label is empty or
-                   generic, the **canonical concept local name** (e.g.
-                   ``GainLossOnDispositionOfBusiness``) so harmonization still runs.
+                   zero-fill as the bridge. **4Q = FY − 1Q − 2Q − 3Q** when FY exists
+                   (missing Q1–Q3 treated as 0 for the bridge only). **Exception:**
+                   weighted-average share counts → **4Q = FY**.
+Balance Sheet    : 4Q = FY when the year-end instant is missing (point-in-time).
+Cash Flow        : **4Q = FY − 9M** only (9M treated as 0 if absent). No 2Q/3Q/1Q
+                   derivation from 6M/9M YTD columns.
 
-                   4Q is then **FY − 1Q − 2Q − 3Q** whenever FY exists (missing Q1–Q3
-                   treated as 0). Any value already in the 4Q slot from consolidation
-                   is overwritten — raw IS workbooks do not supply authoritative
-                   standalone 4Q facts. **Exception:** weighted-average share counts
-                   are period averages, not summable flows — **4Q = FY** (same
-                   full‑year weighted average) instead of subtracting prior quarters.
-Balance Sheet    : 4Q = FY  (same instant balance)
-Cash Flow        : 2Q = 6M − 1Q ;  3Q = 9M − 6M ;  4Q = FY − 9M
-                   (missing component treated as 0 when the cumulative exists).
-                   **Exception:** weighted-average share rows skip 2Q/3Q/4Q cumulative
-                   bridges and use **4Q = FY** when 4Q is missing.
+Reported 1Q–3Q and 6M/9M from filings are never overwritten. Empty quarter/FY
+column slots in the UI are handled in ``period_parser.ensure_quarter_and_fy_columns``.
 """
 from __future__ import annotations
 
@@ -170,7 +160,7 @@ def derive_quarters(
                 elif st == "balance_sheet":
                     _bs_4q(st, crid, disp, vals, yy, reported, new_audit)
                 elif st == "cash_flow":
-                    _cf(st, crid, disp, vals, yy, reported, new_audit)
+                    _cf_4q(st, crid, disp, vals, yy, reported, new_audit)
 
     logger.info("Derived %d quarterly values", len(new_audit))
     return new_audit
@@ -242,6 +232,14 @@ def _is_4q(st, crid, disp, vals, yy, audit):
             "copied_from_fy_for_wacs", audit,
         )
         return
+    if (
+        _g(vals, f"1Q{yy}") is None
+        and _g(vals, f"2Q{yy}") is None
+        and _g(vals, f"3Q{yy}") is None
+    ):
+        # FY-only year (no quarterly filings merged) — do not clone FY into 4Q.
+        _log_miss(st, crid, lbl, [f"1Q{yy}", f"2Q{yy}", f"3Q{yy}"])
+        return
     q1 = _z(vals, f"1Q{yy}")
     q2 = _z(vals, f"2Q{yy}")
     q3 = _z(vals, f"3Q{yy}")
@@ -271,54 +269,24 @@ def _bs_4q(st, crid, disp, vals, yy, reported, audit):
 
 # ── Cash Flow ─────────────────────────────────────────────────────────────
 
-def _cf(st, crid, disp, vals, yy, reported, audit):
-    wacs = is_weighted_average_shares_row(crid, disp)
-    # 2Q = 6M − 1Q  (1Q defaults to 0 if absent)
-    lbl = f"2Q{yy}"
-    if not wacs and not _skip(vals, lbl, reported, st, crid):
-        sm = _g(vals, f"6M{yy}")
-        if sm is not None:
-            q1 = _z(vals, f"1Q{yy}")
-            q1_note = f"1Q{yy}" if _g(vals, f"1Q{yy}") is not None else f"1Q{yy}(=0, not reported)"
-            _put(vals, lbl, sm - q1,
-                 f"6M{yy} - {q1_note} = {sm} - {q1}",
-                 st, crid, disp, "derived", audit)
-        else:
-            _log_miss(st, crid, lbl, [f"6M{yy}"])
-    elif wacs:
-        pass  # cumulative bridges do not apply to weighted-average shares
-
-    # 3Q = 9M − 6M  (6M defaults to 0 if absent)
-    lbl = f"3Q{yy}"
-    if not wacs and not _skip(vals, lbl, reported, st, crid):
-        nm = _g(vals, f"9M{yy}")
-        if nm is not None:
-            sm = _z(vals, f"6M{yy}")
-            sm_note = f"6M{yy}" if _g(vals, f"6M{yy}") is not None else f"6M{yy}(=0, not reported)"
-            _put(vals, lbl, nm - sm,
-                 f"9M{yy} - {sm_note} = {nm} - {sm}",
-                 st, crid, disp, "derived", audit)
-        else:
-            _log_miss(st, crid, lbl, [f"9M{yy}"])
-    elif wacs:
-        pass  # cumulative bridges do not apply to weighted-average shares
-
-    # 4Q = FY − 9M  (9M defaults to 0 if absent)
+def _cf_4q(st, crid, disp, vals, yy, reported, audit):
+    """Derive 4Q = FY − 9M only (never 1Q/2Q/3Q from YTD cumulatives)."""
     lbl = f"4Q{yy}"
-    if not _skip(vals, lbl, reported, st, crid):
-        fy = _g(vals, f"FY{yy}")
-        if fy is not None:
-            if wacs:
-                _put(
-                    vals, lbl, float(fy),
-                    f"4Q{yy} = FY{yy} (weighted-average shares: not FY−9M)",
-                    st, crid, disp, "copied_from_fy_for_wacs", audit,
-                )
-            else:
-                nm = _z(vals, f"9M{yy}")
-                nm_note = f"9M{yy}" if _g(vals, f"9M{yy}") is not None else f"9M{yy}(=0, not reported)"
-                _put(vals, lbl, fy - nm,
-                     f"FY{yy} - {nm_note} = {fy} - {nm}",
-                     st, crid, disp, "derived", audit)
-        else:
-            _log_miss(st, crid, lbl, [f"FY{yy}"])
+    if _skip(vals, lbl, reported, st, crid):
+        return
+    fy = _g(vals, f"FY{yy}")
+    if fy is None:
+        _log_miss(st, crid, lbl, [f"FY{yy}"])
+        return
+    if is_weighted_average_shares_row(crid, disp):
+        _put(
+            vals, lbl, float(fy),
+            f"4Q{yy} = FY{yy} (weighted-average shares: not FY−9M)",
+            st, crid, disp, "copied_from_fy_for_wacs", audit,
+        )
+        return
+    nm = _z(vals, f"9M{yy}")
+    nm_note = f"9M{yy}" if _g(vals, f"9M{yy}") is not None else f"9M{yy}(=0, not reported)"
+    _put(vals, lbl, fy - nm,
+         f"FY{yy} - {nm_note} = {fy} - {nm}",
+         st, crid, disp, "derived", audit)
