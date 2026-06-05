@@ -6,7 +6,7 @@ import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multi
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS } from "@/lib/llm-xbrl-consolidate-timeouts";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
-import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
+import { applyProviderChatTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
@@ -93,15 +93,6 @@ function openAiModelAcceptsReasoningEffort(model: string): boolean {
   return true;
 }
 
-/** GPT-5 / search / o-series models reject `temperature` on Chat Completions. */
-export function openAiModelAcceptsTemperature(model: string): boolean {
-  const m = model.toLowerCase();
-  if (m.startsWith("gpt-5")) return false;
-  if (m.includes("search")) return false;
-  if (m.startsWith("o1") || m.startsWith("o3") || m.startsWith("o4")) return false;
-  return true;
-}
-
 function openAiCompletionTokenCap(model: string): number {
   return usesGpt5ChatCompletionShape(model) ? OPENAI_GPT5_MAX_COMPLETION_TOKENS : OPENAI_LEGACY_MAX_COMPLETION_TOKENS;
 }
@@ -153,9 +144,7 @@ function openAiChatRequestBody(
   if (webSearch) {
     body.web_search_options = {};
   }
-  if (openAiModelAcceptsTemperature(model)) {
-    applyChatCompletionsTemperature(body, temperature);
-  }
+  applyProviderChatTemperature("openai", model, body, temperature);
   return body;
 }
 

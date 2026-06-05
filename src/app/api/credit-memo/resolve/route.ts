@@ -5,6 +5,7 @@ import { resolveTickerFolder } from "@/lib/creditMemo/tickerFolderResolver";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 600;
 
 export async function POST(req: Request) {
   let body: { ticker?: string };

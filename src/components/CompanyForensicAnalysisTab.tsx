@@ -9,6 +9,7 @@ import { modelOverridePayloadForProvider, resolvedUserModelIdForProvider } from 
 import { AiModelPicker } from "@/components/AiModelPicker";
 import { ProviderPublicLimitsSidePanel } from "@/components/credit-memo/ProviderPublicLimitsSidePanel";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { formatLongRunningJobFetchError } from "@/lib/client-long-running-fetch-error";
 
 type SourceRow = {
   label: string;
@@ -170,7 +171,7 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
       }
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Generation failed");
+      setError(formatLongRunningJobFetchError(e, "Forensic analysis"));
     } finally {
       setGenerating(false);
     }

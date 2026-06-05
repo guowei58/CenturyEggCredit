@@ -8,7 +8,7 @@
 import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
-import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
+import { applyProviderChatTemperature, geminiNativeTemperatureField } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 function resolveGeminiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } | { error: string } {
@@ -119,9 +119,7 @@ async function callGeminiGenerateContentWithGoogleSearch(
         tools: [{ google_search: {} }],
         generationConfig: {
           maxOutputTokens: maxTokens,
-          ...(temperature != null && Number.isFinite(temperature)
-            ? { temperature: Math.min(2, Math.max(0, temperature)) }
-            : {}),
+          ...geminiNativeTemperatureField(modelId, temperature),
         },
       }),
       signal: AbortSignal.timeout(GEMINI_GROUNDING_TIMEOUT_MS),
@@ -211,7 +209,7 @@ export async function callGemini(
     ],
     max_tokens: maxTokens,
   };
-  applyChatCompletionsTemperature(chatBody, options.temperature);
+  applyProviderChatTemperature("gemini", model, chatBody, options.temperature);
 
   try {
     const res = await fetch(GEMINI_OPENAI_CHAT_URL, {
@@ -332,7 +330,7 @@ export async function callGeminiConversation(
       body: JSON.stringify(
         (() => {
           const body: Record<string, unknown> = { model, messages: apiMessages, max_tokens: maxTokens };
-          applyChatCompletionsTemperature(body, options.temperature);
+          applyProviderChatTemperature("gemini", model, body, options.temperature);
           return body;
         })()
       ),

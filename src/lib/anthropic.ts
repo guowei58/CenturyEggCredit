@@ -6,7 +6,7 @@
 import { conversationHasPdf, type ChatConversationTurn, type ChatUserContentPart } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
-import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
+import { applyProviderChatTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -100,7 +100,7 @@ export async function callClaude(
     system: systemAug,
     messages: [{ role: "user", content: userMessage }],
   };
-  applyChatCompletionsTemperature(body, options.temperature);
+  applyProviderChatTemperature("claude", model, body, options.temperature);
   if (tools && tools.length > 0) {
     body.tools = tools;
   }
@@ -216,7 +216,7 @@ export async function callClaudeConversation(
       content: m.role === "assistant" ? m.content : normalizeUserContentForApi(m.content),
     })),
   };
-  applyChatCompletionsTemperature(body, options.temperature);
+  applyProviderChatTemperature("claude", model, body, options.temperature);
   if (tools && tools.length > 0) {
     body.tools = tools;
   }

@@ -10,8 +10,9 @@ import { resolveLmeAnalysisModels } from "@/lib/ai-model-from-request";
 import { getDeepSeekModel } from "@/lib/deepseek";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 type MetaJson = { fingerprint: string; updatedAt: string };
 
@@ -60,40 +61,46 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
     );
   }
 
-  const bundled = await gatherLmeSources(sym, undefined, userId, { useRetrieval: false, inventoryOnly: true });
-  const fp = bundled.sourceFingerprint;
-  const meta = parseMeta(await readSavedContent(sym, "lme-analysis-meta", userId));
-  const cached = (await readSavedContent(sym, "lme-analysis", userId)) ?? "";
-  const llmAuth = await getAuthenticatedLlmContext();
-  const kb = llmAuth.ok ? llmAuth.ctx.bundle : {};
+  try {
+    const bundled = await gatherLmeSources(sym, undefined, userId, { useRetrieval: false, inventoryOnly: true });
+    const fp = bundled.sourceFingerprint;
+    const meta = parseMeta(await readSavedContent(sym, "lme-analysis-meta", userId));
+    const cached = (await readSavedContent(sym, "lme-analysis", userId)) ?? "";
+    const llmAuth = await getAuthenticatedLlmContext();
+    const kb = llmAuth.ok ? llmAuth.ctx.bundle : {};
 
-  const sourceInventory = bundled.parts.map((p) => ({
-    label: p.label,
-    key: p.key,
-    charsInitial: p.charsInitial,
-    truncated: p.truncated,
-    isBinaryPlaceholder: p.content.startsWith("[Binary"),
-  }));
-  const totalChars = bundled.parts.reduce((s, p) => s + p.charsInitial, 0);
+    const sourceInventory = bundled.parts.map((p) => ({
+      label: p.label,
+      key: p.key,
+      charsInitial: p.charsInitial,
+      truncated: p.truncated,
+      isBinaryPlaceholder: p.content.startsWith("[Binary"),
+    }));
+    const totalChars = bundled.parts.reduce((s, p) => s + p.charsInitial, 0);
 
-  return NextResponse.json({
-    ticker: sym,
-    sourceInventory,
-    retrievalUsed: bundled.retrievalUsed,
-    totalChars,
-    hasSubstantiveText: bundled.hasSubstantiveText,
-    currentFingerprint: fp,
-    cacheFingerprint: meta?.fingerprint ?? null,
-    cacheStale: meta ? meta.fingerprint !== fp : true,
-    cacheUpdatedAt: meta?.updatedAt ?? null,
-    cachedMarkdown: cached.trim().length > 0 ? cached : null,
-    anthropicConfigured: isProviderConfigured("claude", kb),
-    openaiConfigured: isProviderConfigured("openai", kb),
-    geminiConfigured: isProviderConfigured("gemini", kb),
-    deepseekConfigured: isProviderConfigured("deepseek", kb),
-    deepseekDefaultModel: getDeepSeekModel(),
-    needsSignIn: false,
-  });
+    return NextResponse.json({
+      ticker: sym,
+      sourceInventory,
+      retrievalUsed: bundled.retrievalUsed,
+      totalChars,
+      hasSubstantiveText: bundled.hasSubstantiveText,
+      currentFingerprint: fp,
+      cacheFingerprint: meta?.fingerprint ?? null,
+      cacheStale: meta ? meta.fingerprint !== fp : true,
+      cacheUpdatedAt: meta?.updatedAt ?? null,
+      cachedMarkdown: cached.trim().length > 0 ? cached : null,
+      anthropicConfigured: isProviderConfigured("claude", kb),
+      openaiConfigured: isProviderConfigured("openai", kb),
+      geminiConfigured: isProviderConfigured("gemini", kb),
+      deepseekConfigured: isProviderConfigured("deepseek", kb),
+      deepseekDefaultModel: getDeepSeekModel(),
+      needsSignIn: false,
+    });
+  } catch (e) {
+    console.error("[lme-analysis] GET error:", e);
+    const msg = e instanceof Error ? e.message : "Failed to load LME analysis";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ ticker: string }> }) {
@@ -128,47 +135,53 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   if (!isProviderConfigured(provider, bundle)) {
     return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
   }
-  const bundled = await gatherLmeSources(sym, undefined, userId, { apiKeys: bundle, useRetrieval: true });
-  if (!bundled.hasSubstantiveText) {
-    return NextResponse.json(
-      {
-        error:
-          "No substantive sources found. Save responses under Capital Structure, Org Chart, Subsidiary List, and Credit Agreements & Indentures (or upload .txt/.md covenant excerpts and Capital Structure / Org Chart / Subsidiary List Excel files), then try again.",
-      },
-      { status: 400 }
+  try {
+    const bundled = await gatherLmeSources(sym, undefined, userId, { apiKeys: bundle, useRetrieval: true });
+    if (!bundled.hasSubstantiveText) {
+      return NextResponse.json(
+        {
+          error:
+            "No substantive sources found. Save responses under Capital Structure, Org Chart, Subsidiary List, and Credit Agreements & Indentures (or upload .txt/.md covenant excerpts and Capital Structure / Org Chart / Subsidiary List Excel files), then try again.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const userPayload = formatSourcesForLme(sym, bundled.parts);
+    const syn = await synthesizeLmeAnalysisMarkdown(
+      userPayload,
+      provider,
+      resolveLmeAnalysisModels(modelBody),
+      bundle,
+      llmTemperature
     );
+    if (!syn.ok) {
+      return NextResponse.json({ error: syn.error }, { status: 502 });
+    }
+
+    const fp = bundled.sourceFingerprint;
+    const now = new Date().toISOString();
+    const metaStr = JSON.stringify({ fingerprint: fp, updatedAt: now } satisfies MetaJson, null, 2);
+
+    const w1 = await writeSavedContent(sym, "lme-analysis", syn.markdown, userId);
+    const w2 = await writeSavedContent(sym, "lme-analysis-meta", metaStr, userId);
+    if (!w1.ok) return NextResponse.json({ error: w1.error }, { status: 500 });
+    if (!w2.ok) return NextResponse.json({ error: w2.error }, { status: 500 });
+
+    return NextResponse.json({
+      ok: true,
+      markdown: syn.markdown,
+      fingerprint: fp,
+      updatedAt: now,
+      retrievalUsed: bundled.retrievalUsed,
+      sentSystemMessage: syn.sentSystemMessage,
+      sentUserMessage: syn.sentUserMessage,
+      packingStats: bundled.packingStats ?? null,
+      userMessageBreakdown: syn.userMessageBreakdown,
+    });
+  } catch (e) {
+    console.error("[lme-analysis] POST error:", e);
+    const msg = e instanceof Error ? e.message : "LME analysis failed";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
-
-  const userPayload = formatSourcesForLme(sym, bundled.parts);
-  const syn = await synthesizeLmeAnalysisMarkdown(
-    userPayload,
-    provider,
-    resolveLmeAnalysisModels(modelBody),
-    bundle,
-    llmTemperature
-  );
-  if (!syn.ok) {
-    return NextResponse.json({ error: syn.error }, { status: 502 });
-  }
-
-  const fp = bundled.sourceFingerprint;
-  const now = new Date().toISOString();
-  const metaStr = JSON.stringify({ fingerprint: fp, updatedAt: now } satisfies MetaJson, null, 2);
-
-  const w1 = await writeSavedContent(sym, "lme-analysis", syn.markdown, userId);
-  const w2 = await writeSavedContent(sym, "lme-analysis-meta", metaStr, userId);
-  if (!w1.ok) return NextResponse.json({ error: w1.error }, { status: 500 });
-  if (!w2.ok) return NextResponse.json({ error: w2.error }, { status: 500 });
-
-  return NextResponse.json({
-    ok: true,
-    markdown: syn.markdown,
-    fingerprint: fp,
-    updatedAt: now,
-    retrievalUsed: bundled.retrievalUsed,
-    sentSystemMessage: syn.sentSystemMessage,
-    sentUserMessage: syn.sentUserMessage,
-    packingStats: bundled.packingStats ?? null,
-    userMessageBreakdown: syn.userMessageBreakdown,
-  });
 }

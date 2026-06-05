@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 600;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  try {
   const llmAuth = await getAuthenticatedLlmContext();
   if (!llmAuth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { userId, bundle, llmTemperature } = llmAuth.ctx;
@@ -193,4 +194,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     evidenceDiagnostics: result.evidenceDiagnostics,
     retrievalUsed: result.retrievalUsed,
   });
+  } catch (e) {
+    console.error("[credit-memo/memo] POST error:", e);
+    const msg = e instanceof Error ? e.message : "Credit memo generation failed";
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+  }
 }

@@ -25,6 +25,7 @@ import {
 } from "@/lib/creditMemo/clientDraftStorage";
 import type { MemoDeckLibraryEntry } from "@/lib/ai-memo-deck-library";
 import { fetchSavedFromServer } from "@/lib/saved-data-client";
+import { formatLongRunningJobFetchError } from "@/lib/client-long-running-fetch-error";
 import type {
   CreditMemoProject,
   CreditMemoTemplate,
@@ -699,19 +700,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       const np = await fetchCreditMemoProjectClient(project.id);
       if (np) setProject(np);
     } catch (e) {
-      if (e instanceof Error) {
-        const msg = e.message || "Generation failed";
-        if (msg.toLowerCase().includes("fetch failed") || msg.toLowerCase().includes("failed to fetch")) {
-          const origin = typeof window !== "undefined" ? window.location.origin : "";
-          setGenError(
-            `Server unreachable (network error). Make sure \`npm run dev\` is running and you're on the correct port${origin ? ` (${origin})` : ""}.`
-          );
-          return;
-        }
-        setGenError(msg);
-      } else {
-        setGenError("Generation failed");
-      }
+      setGenError(formatLongRunningJobFetchError(e, "Credit memo generation"));
     } finally {
       setMemoGenPhase(null);
     }
@@ -811,19 +800,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       a.remove();
       URL.revokeObjectURL(url);
     } catch (e) {
-      if (e instanceof Error) {
-        const msg = e.message || "Deck generation failed";
-        if (msg.toLowerCase().includes("fetch failed") || msg.toLowerCase().includes("failed to fetch")) {
-          const origin = typeof window !== "undefined" ? window.location.origin : "";
-          setDeckGenError(
-            `Server unreachable (network error). Make sure the dev server is running${origin ? ` (${origin})` : ""}.`
-          );
-          return;
-        }
-        setDeckGenError(msg);
-      } else {
-        setDeckGenError("Deck generation failed");
-      }
+      setDeckGenError(formatLongRunningJobFetchError(e, "Credit deck generation"));
     } finally {
       setDeckGenLoading(false);
     }

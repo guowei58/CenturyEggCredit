@@ -1,3 +1,4 @@
+import type { AiProvider } from "@/lib/ai-provider";
 import type { UserPreferencesData } from "@/lib/user-preferences-types";
 
 /** 0 = Engineer (rigorous), 100 = Artist (creative). */
@@ -26,6 +27,60 @@ export function resolveLlmTemperatureFromPrefs(
 export function applyChatCompletionsTemperature(body: Record<string, unknown>, temperature?: number): void {
   if (temperature == null || !Number.isFinite(temperature)) return;
   body.temperature = Math.min(2, Math.max(0, temperature));
+}
+
+function normalizeModelId(model: string): string {
+  return model.trim().toLowerCase().replace(/^models\//, "");
+}
+
+/**
+ * Whether the provider/model pair accepts a sampling `temperature` (Engineer ↔ Artist slider).
+ * When false, callers must omit temperature — sending it causes hard API errors on some models.
+ */
+export function modelAcceptsTemperature(provider: AiProvider, model: string): boolean {
+  const m = normalizeModelId(model);
+  if (!m) return true;
+
+  switch (provider) {
+    case "openai":
+      if (m.startsWith("gpt-5")) return false;
+      if (m.includes("search")) return false;
+      if (m.startsWith("o1") || m.startsWith("o3") || m.startsWith("o4")) return false;
+      return true;
+    case "deepseek":
+      if (m.includes("reasoner")) return false;
+      return true;
+    case "claude":
+      return true;
+    case "gemini":
+      if (m.includes("thinking")) return false;
+      if (m.includes("-exp") || m.endsWith("-exp")) return false;
+      return true;
+    default:
+      return true;
+  }
+}
+
+/** Chat Completions / Messages JSON bodies — skips temperature when the model rejects it. */
+export function applyProviderChatTemperature(
+  provider: AiProvider,
+  model: string,
+  body: Record<string, unknown>,
+  temperature?: number
+): void {
+  if (modelAcceptsTemperature(provider, model)) {
+    applyChatCompletionsTemperature(body, temperature);
+  }
+}
+
+/** Gemini native `generateContent` `generationConfig` temperature field (omit when unsupported). */
+export function geminiNativeTemperatureField(
+  model: string,
+  temperature?: number
+): { temperature?: number } {
+  if (!modelAcceptsTemperature("gemini", model)) return {};
+  if (temperature == null || !Number.isFinite(temperature)) return {};
+  return { temperature: Math.min(2, Math.max(0, temperature)) };
 }
 
 export function llmCreativityStyleHint(creativity: number): string {

@@ -5,7 +5,7 @@
 import type { ChatConversationTurn } from "@/lib/chat-multimodal-types";
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { DEEPSEEK_MAX_OUTPUT_TOKENS, LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
-import { applyChatCompletionsTemperature } from "@/lib/llm-temperature";
+import { applyProviderChatTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/v1/chat/completions";
@@ -106,7 +106,7 @@ export async function callDeepSeek(
     ],
     max_tokens: maxTokens,
   };
-  applyChatCompletionsTemperature(body, options.temperature);
+  applyProviderChatTemperature("deepseek", model, body, options.temperature);
 
   try {
     const res = await fetch(DEEPSEEK_CHAT_URL, {
@@ -184,7 +184,7 @@ export async function callDeepSeekConversation(
       body: JSON.stringify(
         (() => {
           const body: Record<string, unknown> = { model, messages: apiMessages, max_tokens: maxTokens };
-          applyChatCompletionsTemperature(body, options.temperature);
+          applyProviderChatTemperature("deepseek", model, body, options.temperature);
           return body;
         })()
       ),

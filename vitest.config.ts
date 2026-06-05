@@ -17,6 +17,7 @@ export default defineConfig({
       "src/lib/reddit/*.test.ts",
       "src/lib/xbrl-ai-consolidation/**/*.test.ts",
       "src/lib/xbrl-saved-history/**/*.test.ts",
+      "src/lib/llm-temperature.test.ts",
       "src/lib/sec-edgar.test.ts",
       "src/lib/sec/filingIndex.test.ts",
       "src/lib/sec-filing-exhibits.test.ts",

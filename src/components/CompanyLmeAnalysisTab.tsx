@@ -10,6 +10,7 @@ import { AiModelPicker } from "@/components/AiModelPicker";
 import { ProviderPublicLimitsSidePanel } from "@/components/credit-memo/ProviderPublicLimitsSidePanel";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { resolvedUserModelIdForProvider } from "@/lib/ai-model-prefs-client";
+import { formatLongRunningJobFetchError } from "@/lib/client-long-running-fetch-error";
 
 type SourceRow = {
   label: string;
@@ -166,7 +167,7 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
       }
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Generation failed");
+      setError(formatLongRunningJobFetchError(e, "LME analysis"));
     } finally {
       setGenerating(false);
     }
