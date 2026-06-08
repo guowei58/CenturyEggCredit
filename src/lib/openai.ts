@@ -6,6 +6,13 @@ import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multi
 import { augmentLlmFullSystemPrompt } from "@/lib/llm-datetime-context";
 import { XBRL_CONSOLIDATE_LLM_FETCH_TIMEOUT_MS } from "@/lib/llm-xbrl-consolidate-timeouts";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
+import {
+  isOpenAiRateLimitHttp,
+  openAiRateLimitMaxAttempts,
+  openAiRateLimitUserMessage,
+  parseOpenAiRetryAfterMs,
+  sleepMs,
+} from "@/lib/openai-rate-limit-retry";
 import { applyProviderChatTemperature } from "@/lib/llm-temperature";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
@@ -119,10 +126,11 @@ function clampOpenAIMaxTokens(requested: number, model: string): number {
   return Math.min(Math.round(requested), cap);
 }
 
+/** Default `medium` — `high` often burns the full completion budget on internal reasoning with no visible text on large forensic/memo prompts. */
 function reasoningEffortForGpt5(): string {
   const raw = process.env.OPENAI_REASONING_EFFORT?.trim().toLowerCase();
   if (raw && REASONING_EFFORTS.has(raw)) return raw;
-  return "high";
+  return "medium";
 }
 
 function openAiChatRequestBody(
@@ -130,13 +138,16 @@ function openAiChatRequestBody(
   messages: unknown[],
   maxTokens: number,
   webSearch?: boolean,
-  temperature?: number
+  temperature?: number,
+  reasoningEffort?: string
 ): Record<string, unknown> {
   const body: Record<string, unknown> = { model, messages };
   if (usesGpt5ChatCompletionShape(model)) {
     body.max_completion_tokens = maxTokens;
     if (openAiModelAcceptsReasoningEffort(model)) {
-      body.reasoning_effort = reasoningEffortForGpt5();
+      const effort = reasoningEffort?.trim().toLowerCase();
+      body.reasoning_effort =
+        effort && REASONING_EFFORTS.has(effort) ? effort : reasoningEffortForGpt5();
     }
   } else {
     body.max_tokens = maxTokens;
@@ -146,6 +157,112 @@ function openAiChatRequestBody(
   }
   applyProviderChatTemperature("openai", model, body, temperature);
   return body;
+}
+
+function openAiEmptyReasoningBudgetError(result: OpenAIResult): boolean {
+  if (result.ok) return false;
+  const m = result.error.toLowerCase();
+  return (
+    m.includes("no visible text") ||
+    m.includes("empty response from openai") ||
+    m.includes("completion budget was used up")
+  );
+}
+
+async function postOpenAiChatCompletion(params: {
+  key: string;
+  model: string;
+  messages: unknown[];
+  maxTokens: number;
+  webSearch: boolean;
+  temperature?: number;
+  waitMs: number;
+}): Promise<OpenAIResult> {
+  const efforts: string[] = [];
+  const primary = reasoningEffortForGpt5();
+  efforts.push(primary);
+  if (
+    usesGpt5ChatCompletionShape(params.model) &&
+    openAiModelAcceptsReasoningEffort(params.model) &&
+    primary !== "low"
+  ) {
+    efforts.push("low");
+  }
+
+  let last: OpenAIResult = { ok: false, error: "OpenAI request failed" };
+  const max429 = openAiRateLimitMaxAttempts();
+
+  for (let r429 = 0; r429 < max429; r429++) {
+    let retry429 = false;
+    for (let i = 0; i < efforts.length; i++) {
+      const effort = efforts[i]!;
+      try {
+        const res = await fetch(OPENAI_CHAT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${params.key}`,
+          },
+          body: JSON.stringify(
+            openAiChatRequestBody(
+              params.model,
+              params.messages,
+              params.maxTokens,
+              params.webSearch,
+              params.temperature,
+              effort
+            )
+          ),
+          signal: AbortSignal.timeout(params.waitMs),
+        });
+
+        const raw = await res.text();
+        if (!res.ok) {
+          last = normalizeOpenAiApiError(res.status, raw);
+          if (isOpenAiRateLimitHttp(res.status, raw) && r429 < max429 - 1) {
+            await sleepMs(parseOpenAiRetryAfterMs(res.headers, r429));
+            retry429 = true;
+            break;
+          }
+          return last;
+        }
+
+        let data: OpenAiChatParsed;
+        try {
+          data = JSON.parse(raw) as OpenAiChatParsed;
+        } catch {
+          return { ok: false, error: "Invalid JSON from OpenAI" };
+        }
+        const parsed = openAiResultFromParsedChat(data);
+        if (parsed.ok) return parsed;
+        last = parsed;
+        if (i < efforts.length - 1 && openAiEmptyReasoningBudgetError(parsed)) {
+          continue;
+        }
+        return last;
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "OpenAI network error";
+        const code = typeof e === "object" && e && "code" in e ? String((e as { code?: unknown }).code) : "";
+        if (code === "UND_ERR_HEADERS_TIMEOUT" || msg.toLowerCase().includes("headers timeout")) {
+          return { ok: false, error: "OpenAI request timed out (provider slow/overloaded). Retry in ~30–60s.", status: 504 };
+        }
+        if (msg.toLowerCase().includes("aborted")) {
+          const sec = Math.round(params.waitMs / 1000);
+          return {
+            ok: false,
+            error: `OpenAI request timed out after ${sec}s (client wait limit). For XBRL consolidation, raise OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS (up to 900) and ensure your host route allows a matching maxDuration — or retry; the model may still have been working.`,
+            status: 504,
+          };
+        }
+        return { ok: false, error: openAiFetchFailureMessage(msg, params.waitMs) };
+      }
+    }
+    if (!retry429) break;
+  }
+  if (last.status === 429) {
+    return { ok: false, error: openAiRateLimitUserMessage("chat"), status: 429 };
+  }
+  return last;
 }
 
 function normalizeOpenAiApiError(status: number, raw: string): OpenAIResult {
@@ -179,7 +296,9 @@ function normalizeOpenAiApiError(status: number, raw: string): OpenAIResult {
     // ignore
   }
   if (status === 401) return { ok: false, error: "Invalid OpenAI API key", status: 401 };
-  if (status === 429) return { ok: false, error: "OpenAI rate limit exceeded", status: 429 };
+  if (status === 429) {
+    return { ok: false, error: openAiRateLimitUserMessage("chat"), status: 429 };
+  }
   return { ok: false, error: raw?.slice(0, 400) || `HTTP ${status}`, status };
 }
 
@@ -250,56 +369,18 @@ export async function callOpenAI(
       ? Math.min(OPENAI_FETCH_MS_MAX, Math.max(OPENAI_FETCH_MS_MIN, Math.round(options.fetchTimeoutMs)))
       : openAiFetchTimeoutMs();
 
-  try {
-    const res = await fetch(OPENAI_CHAT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify(
-        openAiChatRequestBody(
-          model,
-          [
-            { role: "system", content: systemAug },
-            { role: "user", content: userMessage },
-          ],
-          maxTokens,
-          webSearch,
-          options.temperature
-        )
-      ),
-      signal: AbortSignal.timeout(waitMs),
-    });
-
-    const raw = await res.text();
-    if (!res.ok) {
-      return normalizeOpenAiApiError(res.status, raw);
-    }
-
-    let data: OpenAiChatParsed;
-    try {
-      data = JSON.parse(raw) as OpenAiChatParsed;
-    } catch {
-      return { ok: false, error: "Invalid JSON from OpenAI" };
-    }
-    return openAiResultFromParsedChat(data);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "OpenAI network error";
-    const code = typeof e === "object" && e && "code" in e ? String((e as { code?: unknown }).code) : "";
-    if (code === "UND_ERR_HEADERS_TIMEOUT" || msg.toLowerCase().includes("headers timeout")) {
-      return { ok: false, error: "OpenAI request timed out (provider slow/overloaded). Retry in ~30–60s.", status: 504 };
-    }
-    if (msg.toLowerCase().includes("aborted")) {
-      const sec = Math.round(waitMs / 1000);
-      return {
-        ok: false,
-        error: `OpenAI request timed out after ${sec}s (client wait limit). For XBRL consolidation, raise OPENAI_XBRL_CONSOLIDATE_FETCH_TIMEOUT_MS (up to 900) and ensure your host route allows a matching maxDuration — or retry; the model may still have been working.`,
-        status: 504,
-      };
-    }
-    return { ok: false, error: openAiFetchFailureMessage(msg, waitMs) };
-  }
+  return postOpenAiChatCompletion({
+    key,
+    model,
+    messages: [
+      { role: "system", content: systemAug },
+      { role: "user", content: userMessage },
+    ],
+    maxTokens,
+    webSearch,
+    temperature: options.temperature,
+    waitMs,
+  });
 }
 
 type OpenAIMultimodalUserPart =
@@ -368,45 +449,13 @@ export async function callOpenAIConversation(
     }
   }
 
-  try {
-    const res = await fetch(OPENAI_CHAT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify(
-        openAiChatRequestBody(model, apiMessages, maxTokens, webSearch, options.temperature)
-      ),
-      signal: AbortSignal.timeout(waitMs),
-    });
-
-    const raw = await res.text();
-    if (!res.ok) {
-      return normalizeOpenAiApiError(res.status, raw);
-    }
-
-    let data: OpenAiChatParsed;
-    try {
-      data = JSON.parse(raw) as OpenAiChatParsed;
-    } catch {
-      return { ok: false, error: "Invalid JSON from OpenAI" };
-    }
-    return openAiResultFromParsedChat(data);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "OpenAI network error";
-    const code = typeof e === "object" && e && "code" in e ? String((e as { code?: unknown }).code) : "";
-    if (code === "UND_ERR_HEADERS_TIMEOUT" || msg.toLowerCase().includes("headers timeout")) {
-      return { ok: false, error: "OpenAI request timed out (provider slow/overloaded). Retry in ~30–60s.", status: 504 };
-    }
-    if (msg.toLowerCase().includes("aborted")) {
-      const sec = Math.round(waitMs / 1000);
-      return {
-        ok: false,
-        error: `OpenAI request timed out after ${sec}s (client wait limit). Raise OPENAI_FETCH_TIMEOUT_MS (max 900) or retry.`,
-        status: 504,
-      };
-    }
-    return { ok: false, error: openAiFetchFailureMessage(msg, waitMs) };
-  }
+  return postOpenAiChatCompletion({
+    key,
+    model,
+    messages: apiMessages,
+    maxTokens,
+    webSearch,
+    temperature: options.temperature,
+    waitMs,
+  });
 }

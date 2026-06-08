@@ -519,12 +519,12 @@ describe("parsePrimaryFilingStatementHtml", () => {
 
         <p>CONSOLIDATED STATEMENTS OF CASH FLOWS</p>
         <table>
-          <tr><td></td><td>Year Ended Apr 3, 2026</td><td>Year Ended Mar 28, 2025</td></tr>
-          <tr><td>Net income</td><td>1100</td><td>900</td></tr>
-          <tr><td>Depreciation</td><td>200</td><td>180</td></tr>
-          <tr><td>Net cash provided by operating activities</td><td>1300</td><td>1000</td></tr>
-          <tr><td>Net cash used in investing activities</td><td>-400</td><td>-350</td></tr>
-          <tr><td>Net cash used in financing activities</td><td>-200</td><td>-150</td></tr>
+          <tr><td></td><td>Year Ended Apr 3, 2026</td><td>Year Ended Mar 28, 2025</td><td>Year Ended Mar 29, 2024</td></tr>
+          <tr><td>Net income</td><td>1100</td><td>900</td><td>850</td></tr>
+          <tr><td>Depreciation</td><td>200</td><td>180</td><td>160</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>1300</td><td>1000</td><td>950</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-400</td><td>-350</td><td>-300</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-200</td><td>-150</td><td>-100</td></tr>
         </table>
       </body></html>
     `;
@@ -643,6 +643,53 @@ describe("parsePrimaryFilingStatementHtml", () => {
     expect(is?.rows.some((row) => /revenues/i.test(row.label))).toBe(true);
   });
 
+  it("finds 10-K face statements buried after Item 8 preamble beyond the old 28k scan cap", () => {
+    const preamble = "<p>Auditor report and index filler</p>\n".repeat(900);
+    const html = `
+      <html><body>
+        <p>PART II</p>
+        <p>ITEM 8. FINANCIAL STATEMENTS AND SUPPLEMENTARY DATA</p>
+        ${preamble}
+        <p>Consolidated Statements of Income</p>
+        <table>
+          <tr><td></td><td>Year Ended December 31, 2025</td><td>Year Ended December 31, 2024</td><td>Year Ended December 31, 2023</td></tr>
+          <tr><td>Revenues</td><td>5000</td><td>4500</td><td>4000</td></tr>
+          <tr><td>Cost of revenues</td><td>2000</td><td>1800</td><td>1700</td></tr>
+          <tr><td>Gross profit</td><td>3000</td><td>2700</td><td>2600</td></tr>
+          <tr><td>Operating income</td><td>1500</td><td>1300</td><td>1200</td></tr>
+          <tr><td>Net income</td><td>1000</td><td>900</td><td>800</td></tr>
+        </table>
+        <p>Consolidated Balance Sheets</p>
+        <table>
+          <tr><td></td><td>December 31, 2025</td><td>December 31, 2024</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>500</td><td>450</td></tr>
+          <tr><td>Total current assets</td><td>1200</td><td>1100</td></tr>
+          <tr><td>Total assets</td><td>8000</td><td>7500</td></tr>
+          <tr><td>Total liabilities</td><td>4000</td><td>3800</td></tr>
+          <tr><td>Total stockholders' equity</td><td>4000</td><td>3700</td></tr>
+        </table>
+        <p>Consolidated Statements of Cash Flows</p>
+        <table>
+          <tr><td></td><td>Year Ended December 31, 2025</td><td>Year Ended December 31, 2024</td><td>Year Ended December 31, 2023</td></tr>
+          <tr><td>Net income</td><td>1000</td><td>900</td><td>800</td></tr>
+          <tr><td>Depreciation</td><td>200</td><td>180</td><td>160</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>1300</td><td>1000</td><td>900</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-400</td><td>-350</td><td>-300</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-200</td><td>-150</td><td>-100</td></tr>
+        </table>
+        <p>ITEM 9. CHANGES IN AND DISAGREEMENTS WITH ACCOUNTANTS</p>
+      </body></html>
+    `;
+
+    const statements = parseFixtureStatementsFromHtml(html, {
+      form: "10-K",
+      primaryDocument: "buried-item8.htm",
+    });
+    expect(statements).toHaveLength(3);
+    const is = statements.find((s) => s.id === "income-statement");
+    expect(is?.rows.some((r) => /revenues/i.test(r.label) && r.values.p1 === 5000)).toBe(true);
+  });
+
   it("picks the first size-qualified IS/BS/CF tables in Item 8 order", () => {
     const html = `
       <html><body>
@@ -755,10 +802,10 @@ describe("parsePrimaryFilingStatementHtml", () => {
         <p>ITEM 8. Consolidated Financial Statements and Supplementary Data</p>
         <p>Consolidated Statements of Operations</p>
         <table>
-          <tr><td></td><td>Year Ended December 31, 2025</td><td>Year Ended December 31, 2024</td></tr>
-          <tr><td>Total revenues</td><td>200</td><td>180</td></tr>
-          <tr><td>Cost of revenues</td><td>80</td><td>75</td></tr>
-          <tr><td>Net income</td><td>40</td><td>35</td></tr>
+          <tr><td></td><td>Year Ended December 31, 2025</td><td>Year Ended December 31, 2024</td><td>Year Ended December 31, 2023</td></tr>
+          <tr><td>Total revenues</td><td>200</td><td>180</td><td>170</td></tr>
+          <tr><td>Cost of revenues</td><td>80</td><td>75</td><td>70</td></tr>
+          <tr><td>Net income</td><td>40</td><td>35</td><td>30</td></tr>
         </table>
         <p>Consolidated Balance Sheets</p>
         <table>
@@ -771,11 +818,11 @@ describe("parsePrimaryFilingStatementHtml", () => {
         </table>
         <p>Consolidated Statements of Cash Flows</p>
         <table>
-          <tr><td></td><td>Year Ended December 31, 2025</td><td>Year Ended December 31, 2024</td></tr>
-          <tr><td>Net income</td><td>40</td><td>35</td></tr>
-          <tr><td>Net cash provided by operating activities</td><td>50</td><td>45</td></tr>
-          <tr><td>Net cash used in investing activities</td><td>-10</td><td>-8</td></tr>
-          <tr><td>Net cash used in financing activities</td><td>-5</td><td>-4</td></tr>
+          <tr><td></td><td>Year Ended December 31, 2025</td><td>Year Ended December 31, 2024</td><td>Year Ended December 31, 2023</td></tr>
+          <tr><td>Net income</td><td>40</td><td>35</td><td>30</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>50</td><td>45</td><td>40</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-10</td><td>-8</td><td>-7</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-5</td><td>-4</td><td>-3</td></tr>
         </table>
         <p>ITEM 9. CHANGES IN AND DISAGREEMENTS WITH ACCOUNTANTS</p>
       </body></html>
@@ -1094,7 +1141,7 @@ describe("parsePrimaryFilingStatementHtml", () => {
       </body></html>
     `;
 
-    const parsed = parseFixtureStatementHtml(html, {
+    const parsed = parsePrimaryFilingStatementHtml(html, {
       kind: "bs",
       form: "10-K",
       primaryDocument: "R5.htm",
@@ -1472,11 +1519,11 @@ describe("primary face numeric density gates", () => {
     expect(__test_statementTableMeetsMinNumbersPerPeriodColumn($, tables[0]!)).toBe(false);
     expect(__test_statementTableMeetsMinNumbersPerPeriodColumn($, tables[1]!)).toBe(true);
 
-    const statements = parseFixtureStatementsFromHtml(html, {
+    const bs = parseFixtureStatementHtml(html, {
+      kind: "bs",
       form: "10-K",
       primaryDocument: "numeric-gate.htm",
     });
-    const bs = statements.find((s) => s.id === "balance-sheet");
     expect(bs?.rows.some((r) => /lease liabilities/i.test(r.label))).toBe(false);
     expect(bs?.rows.some((r) => /total assets/i.test(r.label))).toBe(true);
   });
@@ -1791,11 +1838,11 @@ describe("FilingSummary merge guards", () => {
         <p>Index to Consolidated Financial Statements</p>
         <p>Consolidated Statements of Operations</p>
         <table>
-          <tr><td></td><td>Year Ended December 31, 2006</td><td>Year Ended December 31, 2005</td></tr>
-          <tr><td>Operating revenues</td><td>1000</td><td>900</td></tr>
-          <tr><td>Cost of services</td><td>400</td><td>380</td></tr>
-          <tr><td>Operating income</td><td>200</td><td>180</td></tr>
-          <tr><td>Net income</td><td>120</td><td>100</td></tr>
+          <tr><td></td><td>Year Ended December 31, 2006</td><td>Year Ended December 31, 2005</td><td>Year Ended December 31, 2004</td></tr>
+          <tr><td>Total revenues</td><td>1000</td><td>900</td><td>850</td></tr>
+          <tr><td>Cost of revenues</td><td>400</td><td>380</td><td>360</td></tr>
+          <tr><td>Operating income</td><td>200</td><td>180</td><td>170</td></tr>
+          <tr><td>Net income</td><td>120</td><td>100</td><td>90</td></tr>
         </table>
         <p>Consolidated Balance Sheets</p>
         <table>
@@ -1808,11 +1855,11 @@ describe("FilingSummary merge guards", () => {
         </table>
         <p>Consolidated Statements of Cash Flows</p>
         <table>
-          <tr><td></td><td>Year Ended December 31, 2006</td><td>Year Ended December 31, 2005</td></tr>
-          <tr><td>Net income</td><td>120</td><td>100</td></tr>
-          <tr><td>Net cash provided by operating activities</td><td>150</td><td>130</td></tr>
-          <tr><td>Net cash used in investing activities</td><td>-40</td><td>-35</td></tr>
-          <tr><td>Net cash used in financing activities</td><td>-20</td><td>-15</td></tr>
+          <tr><td></td><td>Year Ended December 31, 2006</td><td>Year Ended December 31, 2005</td><td>Year Ended December 31, 2004</td></tr>
+          <tr><td>Net income</td><td>120</td><td>100</td><td>90</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>150</td><td>130</td><td>120</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-40</td><td>-35</td><td>-30</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-20</td><td>-15</td><td>-10</td></tr>
         </table>
       </body></html>
     `;
@@ -1831,8 +1878,9 @@ describe("FilingSummary merge guards", () => {
         <p>Consolidated Statements of Operations</p>
         <table>
           <tr><td></td><td>Three months ended September 30, 2006</td><td>Three months ended September 30, 2005</td></tr>
-          <tr><td>Operating revenues</td><td>1000</td><td>900</td></tr>
-          <tr><td>Cost of services</td><td>400</td><td>380</td></tr>
+          <tr><td>Total revenues</td><td>1000</td><td>900</td></tr>
+          <tr><td>Cost of revenues</td><td>400</td><td>380</td></tr>
+          <tr><td>Gross profit</td><td>600</td><td>520</td></tr>
           <tr><td>Operating income</td><td>200</td><td>180</td></tr>
           <tr><td>Net income</td><td>120</td><td>100</td></tr>
         </table>
@@ -1843,6 +1891,7 @@ describe("FilingSummary merge guards", () => {
           <tr><td>Total current assets</td><td>120</td><td>110</td></tr>
           <tr><td>Total assets</td><td>500</td><td>480</td></tr>
           <tr><td>Total liabilities</td><td>200</td><td>190</td></tr>
+          <tr><td>Total stockholders' equity</td><td>300</td><td>290</td></tr>
         </table>
         <p>Consolidated Statements of Cash Flows</p>
         <table>

@@ -13,8 +13,8 @@ import { isOpenAiWebSearchEnabled } from "@/lib/openai";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 export const dynamic = "force-dynamic";
-/** Align with `anthropicFetchTimeoutMs()` default (300s) so Claude can finish large tab prompts. */
-export const maxDuration = 300;
+/** Large tab prompts (GPT-5 web search, Opus) can exceed 5 minutes on heavy tickers like MAGN. */
+export const maxDuration = 600;
 
 const MAX_USER_CHARS = 400_000;
 const MAX_SYSTEM_CHARS = 24_000;

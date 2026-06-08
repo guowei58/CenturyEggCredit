@@ -1,5 +1,6 @@
 /**
- * KPI chunk/query embeddings: prefer OpenAI, then Gemini. Anthropic (Claude) has no first-party
+ * KPI chunk/query embeddings: prefer Gemini when both Gemini+OpenAI keys exist (spares OpenAI for chat).
+ * Anthropic (Claude) has no first-party
  * text-embeddings API for this use case — skipped. DeepSeek is attempted via OpenAI-compatible
  * /v1/embeddings when configured (see DEEPSEEK_EMBEDDING_MODEL).
  */
@@ -45,7 +46,34 @@ function resolveDeepSeekKey(apiKeys: LlmCallApiKeys | undefined): string | null 
   return apiKeys?.deepseekApiKey?.trim() || process.env.DEEPSEEK_API_KEY?.trim() || null;
 }
 
-/** Provider order: OpenAI → (Anthropic skipped) → Gemini → DeepSeek. */
+function kpiEmbeddingProviderOrder(apiKeys: LlmCallApiKeys | undefined): KpiEmbeddingProviderId[] {
+  const pref = process.env.KPI_EMBEDDING_PROVIDER?.trim().toLowerCase();
+  if (pref === "openai" || pref === "gemini" || pref === "deepseek") {
+    const rest: KpiEmbeddingProviderId[] = ["openai", "gemini", "deepseek"].filter((p) => p !== pref) as KpiEmbeddingProviderId[];
+    return [pref, ...rest];
+  }
+  const hasGemini = Boolean(resolveGeminiKey(apiKeys));
+  const hasOpenAi = Boolean(resolveOpenAiKey(apiKeys));
+  const hasDeepSeek = Boolean(resolveDeepSeekKey(apiKeys));
+  // When both Gemini and OpenAI are configured, prefer Gemini for embeddings so OpenAI RPM/TPM
+  // stays available for ChatGPT tab prompts and forensic/LME/memo completions.
+  if (hasGemini && hasOpenAi) return ["gemini", "openai", "deepseek"];
+  if (hasOpenAi) return ["openai", "gemini", "deepseek"];
+  if (hasGemini) return ["gemini", "deepseek", "openai"];
+  if (hasDeepSeek) return ["deepseek", "gemini", "openai"];
+  return [];
+}
+
+function providerHasEmbeddingKey(
+  provider: KpiEmbeddingProviderId,
+  apiKeys: LlmCallApiKeys | undefined
+): boolean {
+  if (provider === "openai") return Boolean(resolveOpenAiKey(apiKeys));
+  if (provider === "gemini") return Boolean(resolveGeminiKey(apiKeys));
+  return Boolean(resolveDeepSeekKey(apiKeys));
+}
+
+/** Provider order: Gemini (when both Gemini+OpenAI) → OpenAI → DeepSeek; override with KPI_EMBEDDING_PROVIDER. */
 export function hasAnyKpiEmbeddingKey(apiKeys: LlmCallApiKeys | undefined): boolean {
   return resolveKpiEmbeddingBackendMetadata(apiKeys) != null;
 }
@@ -58,14 +86,15 @@ export function resolveKpiEmbeddingBackendMetadata(
   apiKeys: LlmCallApiKeys | undefined
 ): { provider: KpiEmbeddingProviderId; model: string; dimensions: number } | null {
   const dimensions = DEFAULT_EMBEDDING_DIMENSIONS;
-  if (resolveOpenAiKey(apiKeys)) {
-    return { provider: "openai", model: DEFAULT_EMBEDDING_MODEL, dimensions };
-  }
-  if (resolveGeminiKey(apiKeys)) {
-    return { provider: "gemini", model: GEMINI_KPI_EMBEDDING_MODEL, dimensions };
-  }
-  if (resolveDeepSeekKey(apiKeys)) {
-    return { provider: "deepseek", model: deepSeekKpiEmbeddingModel(), dimensions };
+  for (const provider of kpiEmbeddingProviderOrder(apiKeys)) {
+    if (!providerHasEmbeddingKey(provider, apiKeys)) continue;
+    if (provider === "openai") {
+      return { provider, model: DEFAULT_EMBEDDING_MODEL, dimensions };
+    }
+    if (provider === "gemini") {
+      return { provider, model: GEMINI_KPI_EMBEDDING_MODEL, dimensions };
+    }
+    return { provider, model: deepSeekKpiEmbeddingModel(), dimensions };
   }
   return null;
 }
@@ -200,7 +229,7 @@ async function embedTextsDeepSeekOpenAICompat(
 }
 
 /**
- * Embed texts for KPI retrieval using the first available backend (OpenAI → Gemini → DeepSeek).
+ * Embed texts for KPI retrieval. Default order prefers Gemini when both Gemini and OpenAI keys exist.
  */
 export async function embedTextsForKpiRetrieval(
   texts: string[],
@@ -218,34 +247,43 @@ export async function embedTextsForKpiRetrieval(
   const timeoutMs = options?.timeoutMs ?? 120_000;
   const geminiConcurrency = Math.min(16, Math.max(1, options?.geminiConcurrency ?? 8));
 
-  const openaiKey = resolveOpenAiKey(apiKeys);
-  if (openaiKey) {
-    const model = options?.model?.trim() || DEFAULT_EMBEDDING_MODEL;
-    const r = await embedTextsOpenAI(texts, apiKeys, {
-      model,
-      dimensions,
-      batchSize,
-      timeoutMs,
-    });
-    return toEmbeddingsResult(r, "openai", model, dimensions);
-  }
+  const errors: string[] = [];
+  for (const provider of kpiEmbeddingProviderOrder(apiKeys)) {
+    if (!providerHasEmbeddingKey(provider, apiKeys)) continue;
 
-  /** Anthropic: no public text-embeddings API compatible with this flow — continue to Gemini. */
+    if (provider === "openai") {
+      const model = options?.model?.trim() || DEFAULT_EMBEDDING_MODEL;
+      const r = await embedTextsOpenAI(texts, apiKeys, {
+        model,
+        dimensions,
+        batchSize,
+        timeoutMs,
+      });
+      if (r.ok) return toEmbeddingsResult(r, "openai", model, dimensions);
+      errors.push(`OpenAI embeddings: ${r.error}`);
+      continue;
+    }
 
-  const geminiKey = resolveGeminiKey(apiKeys);
-  if (geminiKey) {
-    const r = await embedTextsGemini(texts, geminiKey, dimensions, timeoutMs, geminiConcurrency);
-    return toEmbeddingsResult(r, "gemini", GEMINI_KPI_EMBEDDING_MODEL, dimensions);
-  }
+    if (provider === "gemini") {
+      const geminiKey = resolveGeminiKey(apiKeys)!;
+      const r = await embedTextsGemini(texts, geminiKey, dimensions, timeoutMs, geminiConcurrency);
+      if (r.ok) return toEmbeddingsResult(r, "gemini", GEMINI_KPI_EMBEDDING_MODEL, dimensions);
+      errors.push(`Gemini embeddings: ${r.error}`);
+      continue;
+    }
 
-  const deepseekKey = resolveDeepSeekKey(apiKeys);
-  if (deepseekKey) {
+    const deepseekKey = resolveDeepSeekKey(apiKeys)!;
     const r = await embedTextsDeepSeekOpenAICompat(texts, deepseekKey, {
       dimensions,
       batchSize,
       timeoutMs,
     });
-    return toEmbeddingsResult(r, "deepseek", deepSeekKpiEmbeddingModel(), dimensions);
+    if (r.ok) return toEmbeddingsResult(r, "deepseek", deepSeekKpiEmbeddingModel(), dimensions);
+    errors.push(`DeepSeek embeddings: ${r.error}`);
+  }
+
+  if (errors.length > 0) {
+    return { ok: false, error: errors.join(" | ") };
   }
 
   return {

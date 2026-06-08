@@ -1025,101 +1025,24 @@ function parsePrimaryFinancialStatementsInItemSection(
   opts: PrimaryStatementParseOptions
 ): FilingHtmlStatement[] {
   const form = opts.form.toUpperCase();
-  const scanCap = primaryItemSectionMaxScanTables(form);
-  const section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, form);
 
-  const clusterHit = findStatementClusterInPrimaryItemSection(ctx, form);
-  if (clusterHit) {
-    const fromCluster = parseAllStatementsFromCluster(ctx, clusterHit.cluster, clusterHit.section, opts);
-    if (
-      fromCluster.length >= 3 &&
-      fromCluster.every((stmt) => validateSinglePrimaryStatementShape(stmt, form))
-    ) {
+  const clusterAttempts: Array<{ cluster: StatementCluster; section: FilingSectionBounds }> = [];
+  const primaryHit = findStatementClusterInPrimaryItemSection(ctx, form);
+  if (primaryHit) clusterAttempts.push(primaryHit);
+
+  const lateCrossRefHit = findLateCrossReferenceStatementCluster(ctx, form);
+  if (lateCrossRefHit) clusterAttempts.push(lateCrossRefHit);
+
+  clusterAttempts.sort((a, b) => b.cluster.score - a.cluster.score);
+
+  for (const hit of clusterAttempts) {
+    const fromCluster = parseAllStatementsFromCluster(ctx, hit.cluster, hit.section, opts);
+    if (primaryStatementsShapeValid(fromCluster, form)) {
       return fromCluster;
     }
   }
 
-  const pickCtx = { form, section: section ?? { start: 0, end: ctx.acc.length }, shapeTemplates: opts.shapeTemplates };
-
-  let candidateTables: Array<{ el: Element; offset: number }>;
-  if (section) {
-    candidateTables = ctx.tables.filter((table) => table.offset >= section.start && table.offset < section.end);
-  } else {
-    candidateTables = [];
-  }
-
-  let picked = pickPrimaryFaceTablesFromCandidates(ctx, candidateTables, scanCap, pickCtx);
-
-  const needsMore = !picked.is || !picked.bs || !picked.cf;
-  if (needsMore && !section && collectMatches(ctx.acc, startPatternsForForm(form), 0).length > 0) {
-    picked = pickPrimaryFaceTablesFromCandidates(ctx, ctx.tables, scanCap, {
-      ...pickCtx,
-      section: { start: 0, end: ctx.acc.length },
-    });
-  } else if (needsMore && section && Object.keys(picked).length === 0) {
-    const item8Start = section.start;
-    const alt =
-      form.includes("10-K") && isTenKItem8FinancialsIncorporatedByReference(ctx.acc, item8Start)
-        ? findTenKPartIvFinancialStatementsSection(ctx.acc, item8Start)
-        : null;
-    const retrySection = alt ?? section;
-    const retryTables = ctx.tables.filter(
-      (table) => table.offset >= retrySection.start && table.offset < retrySection.end
-    );
-    picked = pickPrimaryFaceTablesFromCandidates(ctx, retryTables, scanCap, {
-      ...pickCtx,
-      section: retrySection,
-    });
-    if (!picked.is || !picked.bs || !picked.cf) {
-      picked = pickPrimaryFaceTablesFromCandidates(ctx, ctx.tables, scanCap, {
-        ...pickCtx,
-        section: { start: 0, end: ctx.acc.length },
-      });
-    }
-  }
-
-  const sectionStart = section?.start ?? 0;
-  const largeTenKExhibit =
-    form.includes("10-K") &&
-    section != null &&
-    section.end - section.start > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
-
-  return (["is", "bs", "cf"] as StatementKind[])
-    .map((kind) => {
-      const hit = picked[kind];
-      let stmt: FilingHtmlStatement | null = null;
-      if (hit) {
-        const unitsHint = extractUnitsFromText(
-          ctx.acc.slice(Math.max(sectionStart, hit.offset - 500), hit.offset)
-        );
-        stmt = returnParsedPrimaryStatementIfValid(
-          parsePrimaryStatementTable(
-            ctx.$,
-            ctx.$(hit.el),
-            kind,
-            unitsHint,
-            opts.primaryDocument,
-            opts.sourceUrl,
-            hit.offset
-          ),
-          form
-        );
-      }
-      if (!stmt) {
-        stmt = parseBestStatementTableFromContext(ctx, {
-          kind,
-          form,
-          primaryDocument: opts.primaryDocument,
-          sourceUrl: opts.sourceUrl,
-          shapeTemplates: opts.shapeTemplates,
-        });
-      }
-      if (!stmt && largeTenKExhibit && section) {
-        stmt = findStatementTableInLargeTenKExhibit(ctx, kind, section, form, opts);
-      }
-      return stmt;
-    })
-    .filter((stmt): stmt is FilingHtmlStatement => Boolean(stmt));
+  return [];
 }
 
 /** GEN-style Part IV: face tables start ~15k+ chars into the exhibit; scan scored candidates there. */
@@ -1670,15 +1593,48 @@ function parseAllStatementsFromCluster(
     .filter((stmt): stmt is FilingHtmlStatement => Boolean(stmt));
 }
 
+export function __test_findStatementClusterInPrimaryItemSection(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): { cluster: StatementCluster; section: FilingSectionBounds } | null {
+  return findStatementClusterInPrimaryItemSection(ctx, form);
+}
+
 function findStatementClusterInPrimaryItemSection(
   ctx: ParsedFilingHtmlContext,
   form: string
 ): { cluster: StatementCluster; section: FilingSectionBounds } | null {
   const section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, form);
   if (!section) return null;
-  const cluster = findStatementClusterInSection(ctx.$, ctx.acc, ctx.tables, section, form);
+  const clusterSection = buildStatementClusterSectionBounds(ctx.acc, section, form);
+  const cluster = findStatementClusterInSection(ctx.$, ctx.acc, ctx.tables, clusterSection, form);
   if (!cluster) return null;
-  return { cluster, section };
+  return { cluster, section: clusterSection };
+}
+
+function findLateCrossReferenceStatementCluster(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): { cluster: StatementCluster; section: FilingSectionBounds } | null {
+  const normalized = form.toUpperCase();
+  const searchStart = partSectionSearchStart(ctx.acc, normalized);
+  const itemStarts = collectMatches(ctx.acc, startPatternsForForm(normalized), searchStart);
+  if (itemStarts.length === 0) return null;
+  if (!hasLateCrossReferenceStart(ctx.acc, normalized, itemStarts, ctx.tables)) return null;
+
+  const lateItemStart = itemStarts[0]!;
+  const cluster =
+    findFirstEmbeddedHeadingStatementClusterBeforeLateItemStart(
+      ctx.$,
+      ctx.acc,
+      ctx.tables,
+      normalized,
+      lateItemStart
+    ) ??
+    findEmbeddedHeadingClusterBeforeLateItemStart(ctx.$, ctx.acc, ctx.tables, normalized, lateItemStart);
+  if (!cluster) return null;
+  cluster.ceiling = lateItemStart;
+  return { cluster, section: { start: 0, end: lateItemStart } };
 }
 
 const NOTES_HEADING_PATTERNS: RegExp[] = [
@@ -1687,16 +1643,15 @@ const NOTES_HEADING_PATTERNS: RegExp[] = [
   /\bnotes\s+to\s+(?:the\s+)?financial\s+statements\b/gi,
 ];
 
-/** Max chars after Item 8 start to scan for decoy clusters in compact 10-K Item 8 tables. */
-const PRIMARY_FACE_CHAR_WINDOW_10K = 28_000;
+/** Chars to scan forward from the first income-statement heading in 10-K Item 8 (dynamic window). */
+const PRIMARY_FACE_DYNAMIC_WINDOW_AFTER_IS_10K = 120_000;
 /** Part IV exhibit bodies (GEN-style incorporate-by-reference) can be 100k+ chars before face tables. */
 const PRIMARY_FACE_CHAR_WINDOW_10K_LARGE_EXHIBIT = 140_000;
 const PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS = 60_000;
-/** Max `<table>` anchors to scan as cluster anchors in 10-K Item 8. */
-const PRIMARY_FACE_MAX_TABLES_10K = 10;
 /** Max offset span between first and last primary statement table in 10-K. */
-const PRIMARY_FACE_CLUSTER_MAX_SPAN_10K = 32_000;
-
+const PRIMARY_FACE_CLUSTER_MAX_SPAN_10K = 80_000;
+/** Heading match window after the first IS anchor in 10-K Item 8. */
+const PRIMARY_FACE_HEADING_WINDOW_10K = 90_000;
 function isPrimaryFaceStatementHeading(acc: string, offset: number, form: string): boolean {
   if (isLikelyIndexListingContext(acc, offset)) return false;
   const preview = acc.slice(offset, Math.min(acc.length, offset + 160));
@@ -1717,8 +1672,23 @@ function isPrimaryFaceStatementHeading(acc: string, offset: number, form: string
   return true;
 }
 
+function firstIncomeStatementHeadingAnchor(
+  acc: string,
+  section: FilingSectionBounds,
+  form: string
+): number | null {
+  const raw = collectMatches(acc, statementHeadingPatterns("is"), section.start);
+  const hits = raw.filter(
+    (offset) => offset < section.end && isPrimaryFaceStatementHeading(acc, offset, form)
+  );
+  return hits[0] ?? null;
+}
+
 function firstPrimaryFaceStatementAnchor(acc: string, section: FilingSectionBounds, form: string): number {
-  const hits = (["is", "bs", "cf"] as StatementKind[])
+  const isAnchor = firstIncomeStatementHeadingAnchor(acc, section, form);
+  if (isAnchor != null) return isAnchor;
+
+  const hits = (["bs", "cf"] as StatementKind[])
     .flatMap((kind) => {
       const raw = collectMatches(acc, statementHeadingPatterns(kind), section.start);
       const offs = kind === "cf" ? dropPhantomCashFlowHeadingMatches(acc, raw) : raw;
@@ -1726,6 +1696,15 @@ function firstPrimaryFaceStatementAnchor(acc: string, section: FilingSectionBoun
     })
     .sort((a, b) => a - b);
   return hits[0] ?? section.start;
+}
+
+function buildStatementClusterSectionBounds(
+  acc: string,
+  section: FilingSectionBounds,
+  form: string
+): FilingSectionBounds {
+  const scanEnd = primaryFaceClusterScanCeiling(acc, section, form);
+  return { start: section.start, end: scanEnd };
 }
 
 function primaryStatementsCeiling(acc: string, section: FilingSectionBounds, form: string): number {
@@ -1750,39 +1729,31 @@ function primaryStatementsCeiling(acc: string, section: FilingSectionBounds, for
   return notes ?? section.end;
 }
 
-/** Tighter window for cluster scan anchors — not for heading→table binding. */
+/** Dynamic scan ceiling anchored on the first income-statement heading in 10-K Item 8. */
 function primaryFaceClusterScanCeiling(
   acc: string,
   section: FilingSectionBounds,
-  form: string,
-  tables: Array<{ el: Element; offset: number }>
+  form: string
 ): number {
   const notesCeiling = primaryStatementsCeiling(acc, section, form);
   if (!form.includes("10-K")) return notesCeiling;
 
-  const localTables = tables
-    .filter((t) => t.offset >= section.start && t.offset < notesCeiling)
-    .sort((a, b) => a.offset - b.offset);
-
   const sectionLen = section.end - section.start;
   const largeExhibit = sectionLen > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
-  const charCap =
-    section.start +
-    (largeExhibit
-      ? Math.min(PRIMARY_FACE_CHAR_WINDOW_10K_LARGE_EXHIBIT, sectionLen)
-      : PRIMARY_FACE_CHAR_WINDOW_10K);
-  const tableCap =
-    localTables.length >= PRIMARY_FACE_MAX_TABLES_10K
-      ? localTables[PRIMARY_FACE_MAX_TABLES_10K - 1]!.offset + 8_000
-      : notesCeiling;
+  const dynamicWindow = largeExhibit
+    ? PRIMARY_FACE_CHAR_WINDOW_10K_LARGE_EXHIBIT
+    : PRIMARY_FACE_DYNAMIC_WINDOW_AFTER_IS_10K;
 
-  const consolidatedIsHeadings = collectMatches(acc, statementHeadingPatterns("is"), section.start).filter(
-    (offset) => offset < notesCeiling && isPrimaryFaceStatementHeading(acc, offset, form)
+  const firstIs = firstIncomeStatementHeadingAnchor(acc, section, form);
+  if (firstIs != null) {
+    return Math.min(notesCeiling, section.end, firstIs + dynamicWindow);
+  }
+
+  return Math.min(
+    notesCeiling,
+    section.end,
+    section.start + dynamicWindow
   );
-  const fromFirstIs =
-    consolidatedIsHeadings[0] != null ? consolidatedIsHeadings[0]! + 28_000 : notesCeiling;
-
-  return Math.min(notesCeiling, charCap, tableCap, fromFirstIs);
 }
 
 function primaryFaceTablePickCeiling(acc: string, section: FilingSectionBounds, form: string): number {
@@ -2570,9 +2541,9 @@ function pickBestStatementCluster(
         const cluster: StatementCluster = { bs, is, cf, score, start, end, ceiling: end };
         if (
           !best ||
-          end < best.end ||
-          (end === best.end && start < best.start) ||
-          (end === best.end && start === best.start && score > best.score)
+          score > best.score ||
+          (score === best.score && end < best.end) ||
+          (score === best.score && end === best.end && start < best.start)
         ) {
           best = cluster;
         }
@@ -2740,8 +2711,7 @@ function findHeadingLinkedStatementClusterInSection(
   section: FilingSectionBounds,
   form: string
 ): StatementCluster | null {
-  const ceiling = primaryFaceTablePickCeiling(acc, section, form);
-  const scanCeiling = primaryFaceClusterScanCeiling(acc, section, form, tables);
+  const ceiling = section.end;
   const headings = collapseNearbySameKindHeadingHits(
     (["bs", "is", "cf"] as StatementKind[])
       .flatMap((kind) => {
@@ -2758,12 +2728,18 @@ function findHeadingLinkedStatementClusterInSection(
 
   const sectionLen = section.end - section.start;
   const largeTenKExhibit = form.includes("10-K") && sectionLen > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
-  const headingWindow = form.includes("10-Q") ? 40_000 : largeTenKExhibit ? 45_000 : 25_000;
+  const headingWindow = form.includes("10-Q") ? 40_000 : largeTenKExhibit ? 45_000 : PRIMARY_FACE_HEADING_WINDOW_10K;
   const maxSpan = form.includes("10-Q") ? 55_000 : largeTenKExhibit ? 110_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
   const scoreFloor = form.includes("10-Q") ? 15 : 20;
   const groupedLookaheadTables = form.includes("10-Q") ? 5 : 4;
+  let bestCluster: StatementCluster | null = null;
 
-  for (let startIdx = 0; startIdx < headings.length; startIdx += 1) {
+  const isAnchorIndices = headings
+    .map((entry, idx) => (entry.kind === "is" ? idx : -1))
+    .filter((idx) => idx >= 0);
+  const anchorIndices = isAnchorIndices.length > 0 ? isAnchorIndices : [0];
+
+  for (const startIdx of anchorIndices) {
     const anchor = headings[startIdx]!;
     const inWindow = headings.filter((entry) => entry.offset >= anchor.offset && entry.offset <= anchor.offset + headingWindow);
     const firstByKind = {
@@ -2839,7 +2815,7 @@ function findHeadingLinkedStatementClusterInSection(
         const cf = groupedPicks.cf;
         const start = Math.min(bs.table.offset, is.table.offset, cf.table.offset);
         const end = Math.max(bs.table.offset, is.table.offset, cf.table.offset);
-        if (end - start <= maxSpan && (form.includes("10-Q") || largeTenKExhibit || end < scanCeiling)) {
+        if (end - start <= maxSpan && end <= ceiling) {
           const cluster = {
             bs,
             is,
@@ -2849,7 +2825,9 @@ function findHeadingLinkedStatementClusterInSection(
             end,
             ceiling,
           };
-          if (statementClusterTablesLookValid($, cluster)) return cluster;
+          if (statementClusterTablesLookValid($, cluster) && (!bestCluster || cluster.score > bestCluster.score)) {
+            bestCluster = cluster;
+          }
         }
       }
     }
@@ -2865,7 +2843,7 @@ function findHeadingLinkedStatementClusterInSection(
     const start = Math.min(bs.table.offset, is.table.offset, cf.table.offset);
     const end = Math.max(bs.table.offset, is.table.offset, cf.table.offset);
     if (end - start > maxSpan) continue;
-    if (form.includes("10-K") && !largeTenKExhibit && end >= scanCeiling) continue;
+    if (end > ceiling) continue;
     const cluster = {
       bs,
       is,
@@ -2875,10 +2853,12 @@ function findHeadingLinkedStatementClusterInSection(
       end,
       ceiling,
     };
-    if (statementClusterTablesLookValid($, cluster)) return cluster;
+    if (statementClusterTablesLookValid($, cluster) && (!bestCluster || cluster.score > bestCluster.score)) {
+      bestCluster = cluster;
+    }
   }
 
-  return null;
+  return bestCluster;
 }
 
 function refineKindCandidates(
@@ -2917,8 +2897,7 @@ function findStatementClusterInSection(
   section: FilingSectionBounds,
   form: string
 ): StatementCluster | null {
-  const pickCeiling = primaryFaceTablePickCeiling(acc, section, form);
-  const scanCeiling = primaryFaceClusterScanCeiling(acc, section, form, tables);
+  const pickCeiling = section.end;
   const localTables = tables.filter((table) => table.offset >= section.start && table.offset < pickCeiling);
   if (localTables.length === 0) return null;
 
@@ -2930,17 +2909,11 @@ function findStatementClusterInSection(
   const maxSpan = form.includes("10-Q") ? 55_000 : largeTenKExhibit ? 110_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
   const scoreFloor = 10;
   const acceptScore = form.includes("10-Q") ? 90 : 80;
-  const anchorLimit = form.includes("10-K")
-    ? largeTenKExhibit
-      ? localTables.length
-      : Math.min(localTables.length, PRIMARY_FACE_MAX_TABLES_10K)
-    : localTables.length;
   let fallbackBest: StatementCluster | null = null;
   const rankedClusters: StatementCluster[] = [];
 
-  for (let startIdx = 0; startIdx < anchorLimit; startIdx += 1) {
+  for (let startIdx = 0; startIdx < localTables.length; startIdx += 1) {
     const anchor = localTables[startIdx]!;
-    if (form.includes("10-K") && anchor.offset >= scanCeiling) break;
     const windowTables = localTables.filter((table) => table.offset >= anchor.offset && table.offset <= anchor.offset + maxSpan);
     if (windowTables.length === 0) continue;
 
@@ -2954,18 +2927,18 @@ function findStatementClusterInSection(
     if (!cluster) continue;
     cluster.ceiling = pickCeiling;
     if (!statementClusterTablesLookValid($, cluster)) continue;
-    if (form.includes("10-K") && !largeTenKExhibit && cluster.end >= scanCeiling) continue;
+    if (cluster.end > pickCeiling) continue;
     if (cluster.score >= acceptScore) rankedClusters.push(cluster);
     if (
       !fallbackBest ||
-      cluster.start < fallbackBest.start ||
-      (cluster.start === fallbackBest.start && cluster.score > fallbackBest.score)
+      cluster.score > fallbackBest.score ||
+      (cluster.score === fallbackBest.score && cluster.start < fallbackBest.start)
     ) {
       fallbackBest = cluster;
     }
   }
 
-  rankedClusters.sort((a, b) => a.start - b.start || b.score - a.score || a.end - b.end);
+  rankedClusters.sort((a, b) => b.score - a.score || a.start - b.start || a.end - b.end);
   if (rankedClusters[0]) return rankedClusters[0];
 
   return fallbackBest &&
@@ -3540,15 +3513,28 @@ export function parsePrimaryFilingStatementFromContext(
     sourceUrl?: string;
     disableHeadingSnippetFallback?: boolean;
     html?: string;
+    shapeTemplates?: PrimaryFaceShapeTemplates;
   }
 ): FilingHtmlStatement | null {
-  return (
-    parsePrimaryFinancialStatementsInItemSection(ctx, opts).find(
-      (stmt) =>
-        stmt.id ===
-        (opts.kind === "is" ? "income-statement" : opts.kind === "bs" ? "balance-sheet" : "cash-flow")
-    ) ?? null
+  const targetId =
+    opts.kind === "is" ? "income-statement" : opts.kind === "bs" ? "balance-sheet" : "cash-flow";
+  const fromCluster = parsePrimaryFinancialStatementsInItemSection(ctx, opts).find(
+    (stmt) => stmt.id === targetId
   );
+  if (fromCluster) return fromCluster;
+
+  // FilingSummary R*.htm pages and other single-statement excerpts have no IS+BS+CF cluster.
+  if (isFilingSummaryReportDocument(opts.primaryDocument) && !findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, opts.form)) {
+    return null;
+  }
+
+  return parseBestStatementTableFromContext(ctx, {
+    kind: opts.kind,
+    form: opts.form,
+    primaryDocument: opts.primaryDocument,
+    sourceUrl: opts.sourceUrl,
+    shapeTemplates: opts.shapeTemplates,
+  });
 }
 
 export function parsePrimaryFilingStatementHtml(

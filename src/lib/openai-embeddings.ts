@@ -3,6 +3,13 @@
  * Server-only; uses the same API key resolution as Chat Completions.
  */
 
+import {
+  isOpenAiRateLimitHttp,
+  openAiRateLimitMaxAttempts,
+  openAiRateLimitUserMessage,
+  parseOpenAiRetryAfterMs,
+  sleepMs,
+} from "@/lib/openai-rate-limit-retry";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 export const OPENAI_EMBEDDINGS_URL = "https://api.openai.com/v1/embeddings";
@@ -42,6 +49,7 @@ export async function embedTextsOpenAI(
   const timeoutMs = options?.timeoutMs ?? 120_000;
 
   const out: number[][] = [];
+  const max429 = openAiRateLimitMaxAttempts();
   for (let i = 0; i < texts.length; i += batchSize) {
     const batch = texts.slice(i, i + batchSize);
     const body: Record<string, unknown> = {
@@ -53,37 +61,52 @@ export async function embedTextsOpenAI(
       body.dimensions = dimensions;
     }
 
-    const res = await fetch(OPENAI_EMBEDDINGS_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(timeoutMs),
-    });
+    let batchOk = false;
+    for (let r429 = 0; r429 < max429; r429++) {
+      const res = await fetch(OPENAI_EMBEDDINGS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
 
-    const raw = await res.text();
-    if (!res.ok) {
-      return { ok: false, error: raw.slice(0, 500) || `Embeddings HTTP ${res.status}` };
-    }
-
-    let data: { data?: Array<{ embedding?: number[]; index?: number }> };
-    try {
-      data = JSON.parse(raw) as typeof data;
-    } catch {
-      return { ok: false, error: "Invalid JSON from OpenAI embeddings" };
-    }
-
-    const rows = [...(data.data ?? [])].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
-    if (rows.length !== batch.length) {
-      return { ok: false, error: `Embedding batch: expected ${batch.length} rows, got ${rows.length}` };
-    }
-    for (const row of rows) {
-      if (!row.embedding?.length) {
-        return { ok: false, error: "Missing embedding vector in OpenAI response" };
+      const raw = await res.text();
+      if (!res.ok) {
+        if (isOpenAiRateLimitHttp(res.status, raw) && r429 < max429 - 1) {
+          await sleepMs(parseOpenAiRetryAfterMs(res.headers, r429));
+          continue;
+        }
+        if (res.status === 429) {
+          return { ok: false, error: openAiRateLimitUserMessage("embeddings") };
+        }
+        return { ok: false, error: raw.slice(0, 500) || `Embeddings HTTP ${res.status}` };
       }
-      out.push(row.embedding);
+
+      let data: { data?: Array<{ embedding?: number[]; index?: number }> };
+      try {
+        data = JSON.parse(raw) as typeof data;
+      } catch {
+        return { ok: false, error: "Invalid JSON from OpenAI embeddings" };
+      }
+
+      const rows = [...(data.data ?? [])].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+      if (rows.length !== batch.length) {
+        return { ok: false, error: `Embedding batch: expected ${batch.length} rows, got ${rows.length}` };
+      }
+      for (const row of rows) {
+        if (!row.embedding?.length) {
+          return { ok: false, error: "Missing embedding vector in OpenAI response" };
+        }
+        out.push(row.embedding);
+      }
+      batchOk = true;
+      break;
+    }
+    if (!batchOk) {
+      return { ok: false, error: openAiRateLimitUserMessage("embeddings") };
     }
   }
 
