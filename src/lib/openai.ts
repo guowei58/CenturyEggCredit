@@ -259,7 +259,7 @@ async function postOpenAiChatCompletion(params: {
     }
     if (!retry429) break;
   }
-  if (last.status === 429) {
+  if (!last.ok && last.status === 429) {
     return { ok: false, error: openAiRateLimitUserMessage("chat"), status: 429 };
   }
   return last;
