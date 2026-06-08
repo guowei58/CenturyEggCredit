@@ -31,6 +31,7 @@ export default defineConfig({
       "src/lib/sec-ixbrl-mdna-tables.test.ts",
       "src/lib/sec-ixbrl-narrative-self-diagnostics.test.ts",
       "src/lib/sec-filing-financials.test.ts",
+      "src/lib/sec-statement-locator/**/*.test.ts",
       "src/lib/sec-ixbrl-inline-cell.test.ts",
       "src/lib/sec-ixbrl-face-display.test.ts",
       "src/lib/sec-ixbrl-face-extract.test.ts",

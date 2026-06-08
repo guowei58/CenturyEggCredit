@@ -1,4 +1,4 @@
-"""Derive **fourth-quarter (4Q) only** — never invent 1Q, 2Q, or 3Q.
+"""Derive missing **cash-flow quarters from YTD** and **income-statement 4Q**.
 
 Income Statement : Before deriving 4Q, optional **FY display-sign harmonization** for
                    gain/loss/disposition-style rows when FY ≈ −(1Q+2Q+3Q) with the same
@@ -6,8 +6,9 @@ Income Statement : Before deriving 4Q, optional **FY display-sign harmonization*
                    (missing Q1–Q3 treated as 0 for the bridge only). **Exception:**
                    weighted-average share counts → **4Q = FY**.
 Balance Sheet    : 4Q = FY when the year-end instant is missing (point-in-time).
-Cash Flow        : **4Q = FY − 9M** only (9M treated as 0 if absent). No 2Q/3Q/1Q
-                   derivation from 6M/9M YTD columns.
+Cash Flow        : **2Q = 6M − 1Q**, **3Q = 9M − 6M**, **4Q = FY − 9M** when the
+                   target quarter is absent (9M treated as 0 for 4Q only when missing).
+                   Requires reported operands; never overwrites filed quarters or YTD.
 
 Reported 1Q–3Q and 6M/9M from filings are never overwritten. Empty quarter/FY
 column slots in the UI are handled in ``period_parser.ensure_quarter_and_fy_columns``.
@@ -160,6 +161,8 @@ def derive_quarters(
                 elif st == "balance_sheet":
                     _bs_4q(st, crid, disp, vals, yy, reported, new_audit)
                 elif st == "cash_flow":
+                    _cf_2q(st, crid, disp, vals, yy, reported, new_audit)
+                    _cf_3q(st, crid, disp, vals, yy, reported, new_audit)
                     _cf_4q(st, crid, disp, vals, yy, reported, new_audit)
 
     logger.info("Derived %d quarterly values", len(new_audit))
@@ -269,8 +272,50 @@ def _bs_4q(st, crid, disp, vals, yy, reported, audit):
 
 # ── Cash Flow ─────────────────────────────────────────────────────────────
 
+def _cf_2q(st, crid, disp, vals, yy, reported, audit):
+    """Derive 2Q = 6M − 1Q when 2Q is absent and both YTD operands exist."""
+    lbl = f"2Q{yy}"
+    if _skip(vals, lbl, reported, st, crid):
+        return
+    sm = _g(vals, f"6M{yy}")
+    if sm is None:
+        _log_miss(st, crid, lbl, [f"6M{yy}"])
+        return
+    q1 = _g(vals, f"1Q{yy}")
+    if q1 is None:
+        _log_miss(st, crid, lbl, [f"1Q{yy}"])
+        return
+    d = float(sm) - float(q1)
+    _put(
+        vals, lbl, d,
+        f"6M{yy} - 1Q{yy} = {sm} - {q1}",
+        st, crid, disp, "derived", audit,
+    )
+
+
+def _cf_3q(st, crid, disp, vals, yy, reported, audit):
+    """Derive 3Q = 9M − 6M when 3Q is absent and both YTD operands exist."""
+    lbl = f"3Q{yy}"
+    if _skip(vals, lbl, reported, st, crid):
+        return
+    nm = _g(vals, f"9M{yy}")
+    if nm is None:
+        _log_miss(st, crid, lbl, [f"9M{yy}"])
+        return
+    sm = _g(vals, f"6M{yy}")
+    if sm is None:
+        _log_miss(st, crid, lbl, [f"6M{yy}"])
+        return
+    d = float(nm) - float(sm)
+    _put(
+        vals, lbl, d,
+        f"9M{yy} - 6M{yy} = {nm} - {sm}",
+        st, crid, disp, "derived", audit,
+    )
+
+
 def _cf_4q(st, crid, disp, vals, yy, reported, audit):
-    """Derive 4Q = FY − 9M only (never 1Q/2Q/3Q from YTD cumulatives)."""
+    """Derive 4Q = FY − 9M (9M treated as 0 when absent)."""
     lbl = f"4Q{yy}"
     if _skip(vals, lbl, reported, st, crid):
         return

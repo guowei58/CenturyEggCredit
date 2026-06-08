@@ -1185,17 +1185,31 @@ class TestDispositionFYHarmonize:
 # ===========================================================================
 
 class TestCFDerivation:
-    def test_does_not_derive_2q_from_6m_minus_1q(self):
+    def test_derive_2q_from_6m_minus_1q(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
         data = {"cash_flow": {"C": {"1Q15": 50.0, "6M15": 130.0}}}
-        derive_quarters(data, rows, [])
-        assert "2Q15" not in data["cash_flow"]["C"]
+        da = derive_quarters(data, rows, [])
+        assert data["cash_flow"]["C"]["2Q15"] == 80.0
+        assert any("6M15 - 1Q15" in a.derivation_formula for a in da)
 
-    def test_does_not_derive_3q_from_9m_minus_6m(self):
+    def test_derive_3q_from_9m_minus_6m(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
         data = {"cash_flow": {"C": {"6M15": 130.0, "9M15": 200.0}}}
+        da = derive_quarters(data, rows, [])
+        assert data["cash_flow"]["C"]["3Q15"] == 70.0
+        assert any("9M15 - 6M15" in a.derivation_formula for a in da)
+
+    def test_cf_full_ytd_chain(self):
+        rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
+        data = {
+            "cash_flow": {
+                "C": {"1Q15": 50.0, "6M15": 130.0, "9M15": 200.0, "FY15": 280.0},
+            },
+        }
         derive_quarters(data, rows, [])
-        assert "3Q15" not in data["cash_flow"]["C"]
+        assert data["cash_flow"]["C"]["2Q15"] == 80.0
+        assert data["cash_flow"]["C"]["3Q15"] == 70.0
+        assert data["cash_flow"]["C"]["4Q15"] == 80.0
 
     def test_4q(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
@@ -1211,13 +1225,41 @@ class TestCFDerivation:
         assert data["cash_flow"]["C"]["4Q15"] == 50.0
         assert "not reported" in da[0].derivation_formula
 
-    def test_cf_ytd_only_does_not_derive_2q_or_3q(self):
+    def test_cf_without_1q_skips_2q_derivation(self):
         rows = [MasterRow("cash_flow", "C", "C", "Debt investment", 0, 0)]
         data = {"cash_flow": {"C": {"6M15": 20.0, "FY15": 45.0}}}
         derive_quarters(data, rows, [])
         assert "2Q15" not in data["cash_flow"]["C"]
         assert "3Q15" not in data["cash_flow"]["C"]
         assert data["cash_flow"]["C"]["4Q15"] == 45.0
+
+    def test_cf_does_not_overwrite_reported_2q_or_3q(self):
+        rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
+        data = {
+            "cash_flow": {
+                "C": {
+                    "1Q15": 50.0,
+                    "2Q15": 99.0,
+                    "3Q15": 88.0,
+                    "6M15": 130.0,
+                    "9M15": 200.0,
+                    "FY15": 280.0,
+                },
+            },
+        }
+        reported = [
+            AuditEntry(
+                "cash_flow", "C", "NetCash", "2Q15", 99.0,
+                "f.xlsx", "", "", "", "", "reported", "",
+            ),
+            AuditEntry(
+                "cash_flow", "C", "NetCash", "3Q15", 88.0,
+                "f.xlsx", "", "", "", "", "reported", "",
+            ),
+        ]
+        derive_quarters(data, rows, reported)
+        assert data["cash_flow"]["C"]["2Q15"] == 99.0
+        assert data["cash_flow"]["C"]["3Q15"] == 88.0
 
 
 # ===========================================================================

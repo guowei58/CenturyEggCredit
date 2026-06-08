@@ -18,6 +18,8 @@ import {
   scoreShapeTemplateSimilarity,
   type PrimaryFaceShapeTemplates,
 } from "@/lib/sec-filing-financials-shape-templates";
+import { locatePrimaryStatementPacket, type LocatedPacket } from "@/lib/sec-statement-locator";
+import { validateStatementPacket } from "@/lib/sec-statement-locator/validate";
 
 export type { PrimaryFaceShapeTemplate, PrimaryFaceShapeTemplates } from "@/lib/sec-filing-financials-shape-templates";
 export {
@@ -1020,11 +1022,64 @@ function pickPrimaryFaceTablesFromCandidates(
   return picked;
 }
 
+function parseStatementsFromLocatedPacket(
+  ctx: ParsedFilingHtmlContext,
+  packet: LocatedPacket,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement[] {
+  const form = opts.form.toUpperCase();
+  const kinds: Array<{ kind: StatementKind; id: FilingHtmlStatement["id"] }> = [
+    { kind: "is", id: "income-statement" },
+    { kind: "bs", id: "balance-sheet" },
+    { kind: "cf", id: "cash-flow" },
+  ];
+  const section = { start: 0, end: ctx.acc.length };
+  const statements: FilingHtmlStatement[] = [];
+
+  for (const { kind, id } of kinds) {
+    const block = kind === "is" ? packet.is : kind === "bs" ? packet.bs : packet.cf;
+    let parsed: FilingHtmlStatement | null = null;
+    for (const table of block.tables) {
+      const unitsHint = extractUnitsFromText(
+        ctx.acc.slice(Math.max(section.start, table.offset - 500), table.offset)
+      );
+      const candidate = returnParsedPrimaryStatementIfValid(
+        parsePrimaryStatementTable(
+          ctx.$,
+          ctx.$(table.el),
+          kind,
+          unitsHint || block.unitsText || undefined,
+          opts.primaryDocument,
+          opts.sourceUrl,
+          table.offset
+        ),
+        form
+      );
+      if (candidate && (!parsed || candidate.rows.length > parsed.rows.length)) parsed = candidate;
+    }
+    if (parsed) statements.push({ ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) });
+  }
+
+  return statements;
+}
+
 function parsePrimaryFinancialStatementsInItemSection(
   ctx: ParsedFilingHtmlContext,
   opts: PrimaryStatementParseOptions
 ): FilingHtmlStatement[] {
   const form = opts.form.toUpperCase();
+
+  const locatorResult = locatePrimaryStatementPacket(ctx, {
+    form,
+    shapeTemplates: opts.shapeTemplates,
+  });
+  if (locatorResult.packet) {
+    const fromLocator = parseStatementsFromLocatedPacket(ctx, locatorResult.packet, opts);
+    if (primaryStatementsShapeValid(fromLocator, form)) {
+      const packetValidation = validateStatementPacket(fromLocator, form);
+      if (packetValidation.ok || fromLocator.length >= 3) return fromLocator;
+    }
+  }
 
   const clusterAttempts: Array<{ cluster: StatementCluster; section: FilingSectionBounds }> = [];
   const primaryHit = findStatementClusterInPrimaryItemSection(ctx, form);
@@ -1040,6 +1095,11 @@ function parsePrimaryFinancialStatementsInItemSection(
     if (primaryStatementsShapeValid(fromCluster, form)) {
       return fromCluster;
     }
+  }
+
+  if (locatorResult.packet) {
+    const fromLocator = parseStatementsFromLocatedPacket(ctx, locatorResult.packet, opts);
+    if (fromLocator.length >= 3) return fromLocator;
   }
 
   return [];
