@@ -18,6 +18,7 @@ export function locatePrimaryStatementPacket(ctx: LocatorContext, opts: LocateOp
     return {
       section: { start: 0, end: ctx.acc.length },
       packet: null,
+      packetAlternates: [],
       rejected: [],
       nearMisses: [{ kinds: {}, clusterScore: 0, span: 0, reason: "section_not_found" }],
       audit: { sectionStrategy: "none", blocksBuilt: 0, blocksScored: 0, packetsConsidered: 0 },
@@ -27,18 +28,20 @@ export function locatePrimaryStatementPacket(ctx: LocatorContext, opts: LocateOp
   const { section, strategy, scanCeiling } = sectionHit;
   const rawBlocks = buildStatementBlocks(ctx, section, scanCeiling);
   const scoredBlocks = scoreStatementBlocks(rawBlocks, section, form);
-  const { packet, rejected, nearMisses } = findBestStatementPacket(scoredBlocks, section, form);
+  const { packet, alternates, rejected, nearMisses } = findBestStatementPacket(scoredBlocks, section, form);
+  const allPackets = [packet, ...alternates].filter((p): p is LocatedPacket => p != null);
 
   return {
     section,
     packet,
+    packetAlternates: alternates,
     rejected,
     nearMisses,
     audit: {
       sectionStrategy: strategy,
       blocksBuilt: rawBlocks.length,
       blocksScored: scoredBlocks.length,
-      packetsConsidered: packet ? 1 : 0,
+      packetsConsidered: allPackets.length,
     },
   };
 }

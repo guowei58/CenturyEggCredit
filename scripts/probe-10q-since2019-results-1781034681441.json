@@ -1,0 +1,514 @@
+{
+  "since": "2019-01-01",
+  "tickers": [
+    "WFC"
+  ],
+  "rows": [
+    {
+      "ticker": "WFC",
+      "filingDate": "2019-05-03",
+      "reportDate": "2019-03-31",
+      "accession": "0000072971-19-000254",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 5,
+      "blocksScored": 5,
+      "rows": {
+        "income-statement": 41,
+        "balance-sheet": 10,
+        "cash-flow": 61
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2019-08-02",
+      "reportDate": "2019-06-30",
+      "accession": "0000072971-19-000331",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 41,
+        "balance-sheet": 10,
+        "cash-flow": 62
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2019-11-01",
+      "reportDate": "2019-09-30",
+      "accession": "0000072971-19-000406",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 41,
+        "balance-sheet": 10,
+        "cash-flow": 64
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2020-05-05",
+      "reportDate": "2020-03-31",
+      "accession": "0000072971-20-000236",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 41,
+        "balance-sheet": 10,
+        "cash-flow": 64
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2020-08-04",
+      "reportDate": "2020-06-30",
+      "accession": "0000072971-20-000288",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 41,
+        "balance-sheet": 10,
+        "cash-flow": 64
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2020-11-02",
+      "reportDate": "2020-09-30",
+      "accession": "0000072971-20-000338",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 41,
+        "balance-sheet": 10,
+        "cash-flow": 62
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2021-05-05",
+      "reportDate": "2021-03-31",
+      "accession": "0000072971-21-000221",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 35,
+        "balance-sheet": 51,
+        "cash-flow": 63
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2021-07-28",
+      "reportDate": "2021-06-30",
+      "accession": "0000072971-21-000267",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 52,
+        "balance-sheet": 44,
+        "cash-flow": 65
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2021-11-01",
+      "reportDate": "2021-09-30",
+      "accession": "0000072971-21-000317",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 35,
+        "balance-sheet": 51,
+        "cash-flow": 64
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2022-05-03",
+      "reportDate": "2022-03-31",
+      "accession": "0000072971-22-000113",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 35,
+        "balance-sheet": 54,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2022-08-01",
+      "reportDate": "2022-06-30",
+      "accession": "0000072971-22-000174",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 35,
+        "balance-sheet": 54,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2022-10-31",
+      "reportDate": "2022-09-30",
+      "accession": "0000072971-22-000205",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 34,
+        "balance-sheet": 54,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2023-05-02",
+      "reportDate": "2023-03-31",
+      "accession": "0000072971-23-000102",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 34,
+        "balance-sheet": 52,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2023-08-01",
+      "reportDate": "2023-06-30",
+      "accession": "0000072971-23-000138",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 43,
+        "balance-sheet": 52,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2023-10-31",
+      "reportDate": "2023-09-30",
+      "accession": "0000072971-23-000170",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 34,
+        "balance-sheet": 52,
+        "cash-flow": 60
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2024-05-02",
+      "reportDate": "2024-03-31",
+      "accession": "0000072971-24-000129",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 34,
+        "balance-sheet": 52,
+        "cash-flow": 57
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2024-08-01",
+      "reportDate": "2024-06-30",
+      "accession": "0000072971-24-000185",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 43,
+        "balance-sheet": 52,
+        "cash-flow": 57
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2024-10-31",
+      "reportDate": "2024-09-30",
+      "accession": "0000072971-24-000243",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 34,
+        "balance-sheet": 52,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2025-04-29",
+      "reportDate": "2025-03-31",
+      "accession": "0000072971-25-000129",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 34,
+        "balance-sheet": 50,
+        "cash-flow": 56
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2025-08-05",
+      "reportDate": "2025-06-30",
+      "accession": "0000072971-25-000201",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 43,
+        "balance-sheet": 50,
+        "cash-flow": 56
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2025-10-31",
+      "reportDate": "2025-09-30",
+      "accession": "0000072971-25-000253",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 43,
+        "balance-sheet": 50,
+        "cash-flow": 57
+      }
+    },
+    {
+      "ticker": "WFC",
+      "filingDate": "2026-04-29",
+      "reportDate": "2026-03-31",
+      "accession": "0000072971-26-000217",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-notes-preceding-face",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 33,
+        "balance-sheet": 46,
+        "cash-flow": 56
+      }
+    }
+  ]
+}

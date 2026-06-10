@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
+import { formatWorkspaceBadge, isCikWorkspaceKey } from "@/lib/company-workspace-key";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
 function reorderList<T>(list: T[], fromIndex: number, toIndex: number): T[] {
@@ -36,6 +37,13 @@ async function persistWatchlistServer(list: string[]): Promise<boolean> {
   }
 }
 
+function normalizeWorkspaceKey(raw: string): string | null {
+  const t = raw.trim();
+  if (!t) return null;
+  if (isCikWorkspaceKey(t)) return t;
+  return sanitizeTicker(t);
+}
+
 export function LeftSidebar({
   onTickerSelect,
   currentTicker,
@@ -49,10 +57,12 @@ export function LeftSidebar({
   const [names, setNames] = useState<Record<string, string>>({});
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [resolveBusy, setResolveBusy] = useState(false);
+  const [resolveError, setResolveError] = useState<string | null>(null);
   const activeWatchlistRowRef = useRef<HTMLDivElement | null>(null);
   const sidebarScrollAreaRef = useRef<HTMLDivElement | null>(null);
 
-  const normalizedCurrentTicker = sanitizeTicker(currentTicker ?? "");
+  const normalizedCurrentTicker = normalizeWorkspaceKey(currentTicker ?? "");
 
   const persistWatchlist = useCallback(async (list: string[]) => {
     await persistWatchlistServer(list);
@@ -116,18 +126,40 @@ export function LeftSidebar({
     });
   }, [normalizedCurrentTicker, watchlist]);
 
-  function handleGo() {
-    const sym = sanitizeTicker(search);
-    if (!sym) return;
-    setWatchlist((prev) => {
-      const alreadyHas = prev.some((t) => sanitizeTicker(t) === sym);
-      if (alreadyHas) return prev;
-      const next = [...prev, sym];
-      void persistWatchlist(next);
-      return next;
-    });
-    onTickerSelect(sym);
-    setSearch("");
+  async function handleGo() {
+    const raw = search.trim();
+    if (!raw || resolveBusy) return;
+    setResolveBusy(true);
+    setResolveError(null);
+    try {
+      const res = await fetch(`/api/company/resolve?q=${encodeURIComponent(raw)}`, { cache: "no-store" });
+      const body = (await res.json()) as {
+        workspaceKey?: string;
+        companyName?: string;
+        error?: string;
+      };
+      if (!res.ok || !body.workspaceKey) {
+        throw new Error(body.error ?? "Could not resolve company");
+      }
+      const sym = body.workspaceKey;
+      setWatchlist((prev) => {
+        const norm = normalizeWorkspaceKey(sym);
+        const alreadyHas = prev.some((t) => normalizeWorkspaceKey(t) === norm);
+        if (alreadyHas) return prev;
+        const next = [...prev, sym];
+        void persistWatchlist(next);
+        return next;
+      });
+      if (body.companyName?.trim()) {
+        setNames((prev) => ({ ...prev, [sym]: body.companyName!.trim() }));
+      }
+      onTickerSelect(sym);
+      setSearch("");
+    } catch (e) {
+      setResolveError(e instanceof Error ? e.message : "Could not resolve company");
+    } finally {
+      setResolveBusy(false);
+    }
   }
 
   function removeFromWatchlist(ticker: string) {
@@ -186,24 +218,34 @@ export function LeftSidebar({
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="Ticker"
-            maxLength={10}
+            placeholder="Ticker or CIK"
+            maxLength={14}
             value={search}
-            onChange={(e) => setSearch(e.target.value.toUpperCase())}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleGo();
+            onChange={(e) => {
+              setSearch(e.target.value);
+              if (resolveError) setResolveError(null);
             }}
-            className="min-w-0 flex-1 rounded-md border bg-[var(--card)] px-3 py-2 font-mono text-xs uppercase tracking-wide text-[var(--text)] placeholder:font-sans placeholder:normal-case placeholder:tracking-normal placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") void handleGo();
+            }}
+            disabled={resolveBusy}
+            className="min-w-0 flex-1 rounded-md border bg-[var(--card)] px-3 py-2 font-mono text-xs tracking-wide text-[var(--text)] placeholder:font-sans placeholder:normal-case placeholder:tracking-normal placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
             style={{ borderColor: "var(--border)" }}
           />
           <button
             type="button"
-            onClick={handleGo}
-            className="flex-shrink-0 rounded-md bg-[var(--accent)] px-3 py-2 font-mono text-xs font-semibold text-black hover:opacity-90"
+            onClick={() => void handleGo()}
+            disabled={resolveBusy || !search.trim()}
+            className="flex-shrink-0 rounded-md bg-[var(--accent)] px-3 py-2 font-mono text-xs font-semibold text-black hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            GO
+            {resolveBusy ? "…" : "GO"}
           </button>
         </div>
+        {resolveError ? (
+          <p className="text-[10px] leading-snug" style={{ color: "var(--danger)" }}>
+            {resolveError}
+          </p>
+        ) : null}
       </div>
       <div ref={sidebarScrollAreaRef} className="flex-1 overflow-y-auto">
         <div
@@ -219,12 +261,12 @@ export function LeftSidebar({
           >
             No companies saved.
             <br />
-            Enter a ticker and press GO to add.
+            Enter a ticker or SEC CIK and press GO to add.
           </div>
         ) : (
           <div className="space-y-1 px-2.5 pb-3">
             {watchlist.map((tk, index) => {
-              const normalizedRow = sanitizeTicker(tk);
+              const normalizedRow = normalizeWorkspaceKey(tk);
               const isSelected =
                 normalizedCurrentTicker !== null &&
                 normalizedRow !== null &&
@@ -264,7 +306,7 @@ export function LeftSidebar({
                     className={`font-mono text-xs ${isSelected ? "font-semibold" : "font-medium"}`}
                     style={{ color: isSelected ? "var(--accent)" : "var(--text)" }}
                   >
-                    {tk}
+                    {formatWorkspaceBadge(tk)}
                   </span>
                   <span
                     className="line-clamp-2 text-[11px] leading-snug"

@@ -5,6 +5,10 @@ import { tabLabelToId } from "@/lib/tabs";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
 import { companyNav, companyTopSections } from "@/data/company-navigation";
 import {
+  formatWorkspaceBadge,
+  isCikWorkspaceKey,
+} from "@/lib/company-workspace-key";
+import {
   MOCK_TICKER,
   PLACEHOLDER_COMPANY_DISPLAY_NAME,
   PLACEHOLDER_DEFAULT_TICKER,
@@ -76,15 +80,22 @@ import {
 import { DownloadAllUserDataButton } from "@/components/DownloadAllUserDataButton";
 import { Card, EmptyState, TabBar } from "@/components/ui";
 
-/** Build company bar data: full mock for LUMN, else ticker + fetched name. */
+/** Build company bar data: full mock for LUMN, else ticker/CIK + fetched name. */
 function getCompanyBarData(ticker: string, companyName: string | null) {
   if (ticker === MOCK_TICKER) return mockCompanyBar;
   if (ticker === PLACEHOLDER_DEFAULT_TICKER) {
     return { ticker: PLACEHOLDER_DEFAULT_TICKER, name: PLACEHOLDER_COMPANY_DISPLAY_NAME };
   }
+  const badge = formatWorkspaceBadge(ticker);
+  const resolvedName =
+    companyName && companyName.toUpperCase() !== ticker && companyName.toUpperCase() !== badge
+      ? companyName
+      : isCikWorkspaceKey(ticker)
+        ? "SEC filer"
+        : ticker;
   return {
     ticker,
-    name: companyName && companyName.toUpperCase() !== ticker ? companyName : ticker,
+    name: resolvedName,
   };
 }
 

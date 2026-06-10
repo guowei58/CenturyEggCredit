@@ -23,6 +23,7 @@ export default defineConfig({
       "src/lib/sec-filing-exhibits.test.ts",
       "src/lib/exhibit21GridExtract.test.ts",
       "src/lib/buildPublicRecordsProfileFromSec.test.ts",
+      "src/lib/company-workspace-key.test.ts",
       "src/lib/subsidiary-name-hints.test.ts",
       "src/lib/debt-map/**/*.test.ts",
       "src/lib/secDebtFootnoteExtract.test.ts",

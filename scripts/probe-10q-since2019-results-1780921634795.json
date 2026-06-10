@@ -1,0 +1,2702 @@
+{
+  "since": "2019-01-01",
+  "tickers": [
+    "AAPL",
+    "BHC",
+    "BLCO",
+    "NXST",
+    "OPTU",
+    "CABO"
+  ],
+  "rows": [
+    {
+      "ticker": "AAPL",
+      "filingDate": "2019-05-01",
+      "reportDate": "2019-03-30",
+      "accession": "0000320193-19-000066",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 40
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2019-07-31",
+      "reportDate": "2019-06-29",
+      "accession": "0000320193-19-000076",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 42
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2020-01-29",
+      "reportDate": "2019-12-28",
+      "accession": "0000320193-20-000010",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2020-05-01",
+      "reportDate": "2020-03-28",
+      "accession": "0000320193-20-000052",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 42
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2020-07-31",
+      "reportDate": "2020-06-27",
+      "accession": "0000320193-20-000062",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2021-01-28",
+      "reportDate": "2020-12-26",
+      "accession": "0000320193-21-000010",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 40
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2021-04-29",
+      "reportDate": "2021-03-27",
+      "accession": "0000320193-21-000056",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2021-07-28",
+      "reportDate": "2021-06-26",
+      "accession": "0000320193-21-000065",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2022-01-28",
+      "reportDate": "2021-12-25",
+      "accession": "0000320193-22-000007",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2022-04-29",
+      "reportDate": "2022-03-26",
+      "accession": "0000320193-22-000059",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 39
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2022-07-29",
+      "reportDate": "2022-06-25",
+      "accession": "0000320193-22-000070",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 39
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2023-02-03",
+      "reportDate": "2022-12-31",
+      "accession": "0000320193-23-000006",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 36
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2023-05-05",
+      "reportDate": "2023-04-01",
+      "accession": "0000320193-23-000064",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 35
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2023-08-04",
+      "reportDate": "2023-07-01",
+      "accession": "0000320193-23-000077",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 36
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2024-02-02",
+      "reportDate": "2023-12-30",
+      "accession": "0000320193-24-000006",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 34
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2024-05-03",
+      "reportDate": "2024-03-30",
+      "accession": "0000320193-24-000069",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 34
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2024-08-02",
+      "reportDate": "2024-06-29",
+      "accession": "0000320193-24-000081",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 35
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2025-01-31",
+      "reportDate": "2024-12-28",
+      "accession": "0000320193-25-000008",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 34
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2025-05-02",
+      "reportDate": "2025-03-29",
+      "accession": "0000320193-25-000057",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 34
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2025-08-01",
+      "reportDate": "2025-06-28",
+      "accession": "0000320193-25-000073",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 35
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2026-01-30",
+      "reportDate": "2025-12-27",
+      "accession": "0000320193-26-000006",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 34
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "filingDate": "2026-05-01",
+      "reportDate": "2026-03-28",
+      "accession": "0000320193-26-000013",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 34,
+        "cash-flow": 34
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2019-05-06",
+      "reportDate": "2019-03-31",
+      "accession": "0000885590-19-000017",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 30,
+        "balance-sheet": 33,
+        "cash-flow": 46
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2019-08-06",
+      "reportDate": "2019-06-30",
+      "accession": "0000885590-19-000026",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 25,
+        "balance-sheet": 33,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2019-11-04",
+      "reportDate": "2019-09-30",
+      "accession": "0000885590-19-000037",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 25,
+        "balance-sheet": 33,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2020-05-07",
+      "reportDate": "2020-03-31",
+      "accession": "0000885590-20-000031",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 33,
+        "cash-flow": 45
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2020-08-06",
+      "reportDate": "2020-06-30",
+      "accession": "0000885590-20-000042",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {}
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2020-11-03",
+      "reportDate": "2020-09-30",
+      "accession": "0000885590-20-000060",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 28,
+        "balance-sheet": 33,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2021-05-04",
+      "reportDate": "2021-03-31",
+      "accession": "0000885590-21-000030",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 2,
+      "blocksScored": 2,
+      "rows": {}
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2021-08-03",
+      "reportDate": "2021-06-30",
+      "accession": "0000885590-21-000041",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {}
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2021-11-02",
+      "reportDate": "2021-09-30",
+      "accession": "0000885590-21-000055",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 28,
+        "balance-sheet": 32,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2022-05-10",
+      "reportDate": "2022-03-31",
+      "accession": "0000885590-22-000025",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 2,
+      "blocksScored": 2,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 47
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2022-08-09",
+      "reportDate": "2022-06-30",
+      "accession": "0000885590-22-000039",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 33,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2022-11-03",
+      "reportDate": "2022-09-30",
+      "accession": "0000885590-22-000061",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 28,
+        "balance-sheet": 33,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2023-05-04",
+      "reportDate": "2023-03-31",
+      "accession": "0000885590-23-000018",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 1,
+      "blocksBuilt": 3,
+      "blocksScored": 3,
+      "rows": {
+        "income-statement": 22,
+        "balance-sheet": 33,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2023-08-03",
+      "reportDate": "2023-06-30",
+      "accession": "0000885590-23-000028",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 28,
+        "balance-sheet": 33,
+        "cash-flow": 50
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2023-11-02",
+      "reportDate": "2023-09-30",
+      "accession": "0000885590-23-000035",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 28,
+        "balance-sheet": 33,
+        "cash-flow": 50
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2024-05-02",
+      "reportDate": "2024-03-31",
+      "accession": "0000885590-24-000019",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 48
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2024-08-01",
+      "reportDate": "2024-06-30",
+      "accession": "0000885590-24-000029",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 27,
+        "balance-sheet": 33,
+        "cash-flow": 47
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2024-10-31",
+      "reportDate": "2024-09-30",
+      "accession": "0000885590-24-000036",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 33,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2025-05-01",
+      "reportDate": "2025-03-31",
+      "accession": "0000885590-25-000020",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 33,
+        "cash-flow": 46
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2025-07-31",
+      "reportDate": "2025-06-30",
+      "accession": "0000885590-25-000032",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 5,
+      "blocksScored": 5,
+      "rows": {
+        "income-statement": 27,
+        "balance-sheet": 33,
+        "cash-flow": 47
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2025-10-30",
+      "reportDate": "2025-09-30",
+      "accession": "0000885590-25-000051",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 5,
+      "blocksScored": 5,
+      "rows": {
+        "income-statement": 27,
+        "balance-sheet": 33,
+        "cash-flow": 47
+      }
+    },
+    {
+      "ticker": "BHC",
+      "filingDate": "2026-04-30",
+      "reportDate": "2026-03-31",
+      "accession": "0000885590-26-000053",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 3,
+      "blocksScored": 3,
+      "rows": {}
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2022-06-08",
+      "reportDate": "2022-03-31",
+      "accession": "0001860742-22-000012",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 19,
+        "balance-sheet": 32,
+        "cash-flow": 31
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2022-08-04",
+      "reportDate": "2022-06-30",
+      "accession": "0001860742-22-000019",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 20,
+        "balance-sheet": 33,
+        "cash-flow": 35
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2022-11-02",
+      "reportDate": "2022-09-30",
+      "accession": "0001860742-22-000026",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 20,
+        "balance-sheet": 33,
+        "cash-flow": 38
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2023-05-03",
+      "reportDate": "2023-03-31",
+      "accession": "0001860742-23-000015",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {}
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2023-08-02",
+      "reportDate": "2023-06-30",
+      "accession": "0001860742-23-000021",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 20,
+        "balance-sheet": 32,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2023-11-01",
+      "reportDate": "2023-09-30",
+      "accession": "0001860742-23-000029",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 32,
+        "cash-flow": 42
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2024-05-01",
+      "reportDate": "2024-03-31",
+      "accession": "0001860742-24-000008",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 32,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2024-08-01",
+      "reportDate": "2024-06-30",
+      "accession": "0001860742-24-000014",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 20,
+        "balance-sheet": 32,
+        "cash-flow": 38
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2024-10-30",
+      "reportDate": "2024-09-30",
+      "accession": "0001860742-24-000018",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 32,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2025-04-30",
+      "reportDate": "2025-03-31",
+      "accession": "0001860742-25-000008",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 32,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2025-07-30",
+      "reportDate": "2025-06-30",
+      "accession": "0001860742-25-000018",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {}
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2025-10-29",
+      "reportDate": "2025-09-30",
+      "accession": "0001860742-25-000023",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 22,
+        "balance-sheet": 32,
+        "cash-flow": 44
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "filingDate": "2026-04-29",
+      "reportDate": "2026-03-31",
+      "accession": "0001860742-26-000062",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 3,
+      "blocksBuilt": 4,
+      "blocksScored": 4,
+      "rows": {
+        "income-statement": 22,
+        "balance-sheet": 32,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2019-05-09",
+      "reportDate": "2019-03-31",
+      "accession": "0001564590-19-017485",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 25,
+        "balance-sheet": 38,
+        "cash-flow": 50
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2019-08-07",
+      "reportDate": "2019-06-30",
+      "accession": "0001564590-19-030206",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 5,
+      "blocksScored": 5,
+      "rows": {
+        "income-statement": 25,
+        "balance-sheet": 38,
+        "cash-flow": 53
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2019-11-12",
+      "reportDate": "2019-09-30",
+      "accession": "0001564590-19-042435",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 28,
+        "balance-sheet": 42,
+        "cash-flow": 59
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2020-05-08",
+      "reportDate": "2020-03-31",
+      "accession": "0001564590-20-023663",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 7,
+      "blocksScored": 7,
+      "rows": {
+        "income-statement": 27,
+        "balance-sheet": 42,
+        "cash-flow": 55
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2020-08-06",
+      "reportDate": "2020-06-30",
+      "accession": "0001564590-20-037661",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 7,
+      "blocksScored": 7,
+      "rows": {
+        "income-statement": 29,
+        "balance-sheet": 42,
+        "cash-flow": 58
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2020-11-06",
+      "reportDate": "2020-09-30",
+      "accession": "0001564590-20-051920",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 7,
+      "blocksScored": 7,
+      "rows": {
+        "income-statement": 30,
+        "balance-sheet": 44,
+        "cash-flow": 63
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2021-05-05",
+      "reportDate": "2021-03-31",
+      "accession": "0001564590-21-023951",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 5,
+      "blocksScored": 5,
+      "rows": {
+        "income-statement": 27,
+        "balance-sheet": 39,
+        "cash-flow": 52
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2021-08-05",
+      "reportDate": "2021-06-30",
+      "accession": "0001564590-21-041546",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 30,
+        "balance-sheet": 39,
+        "cash-flow": 60
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2021-11-03",
+      "reportDate": "2021-09-30",
+      "accession": "0001564590-21-053847",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 31,
+        "balance-sheet": 40,
+        "cash-flow": 63
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2022-05-10",
+      "reportDate": "2022-03-31",
+      "accession": "0000950170-22-008953",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 11,
+      "blocksScored": 11,
+      "rows": {
+        "income-statement": 25,
+        "balance-sheet": 41,
+        "cash-flow": 39
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2022-08-05",
+      "reportDate": "2022-06-30",
+      "accession": "0000950170-22-015132",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 13,
+      "blocksScored": 13,
+      "rows": {
+        "income-statement": 26,
+        "balance-sheet": 39,
+        "cash-flow": 49
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2022-11-09",
+      "reportDate": "2022-09-30",
+      "accession": "0000950170-22-023394",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 12,
+      "blocksScored": 12,
+      "rows": {
+        "income-statement": 27,
+        "balance-sheet": 41,
+        "cash-flow": 51
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2023-05-09",
+      "reportDate": "2023-03-31",
+      "accession": "0000950170-23-019718",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 15,
+      "blocksScored": 15,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 39,
+        "cash-flow": 38
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2023-08-08",
+      "reportDate": "2023-06-30",
+      "accession": "0000950170-23-039930",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 15,
+      "blocksScored": 15,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 39,
+        "cash-flow": 46
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2023-11-08",
+      "reportDate": "2023-09-30",
+      "accession": "0000950170-23-061149",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 16,
+      "blocksScored": 16,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 39,
+        "cash-flow": 48
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2024-05-09",
+      "reportDate": "2024-03-31",
+      "accession": "0000950170-24-056779",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 15,
+      "blocksScored": 15,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 39,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2024-08-08",
+      "reportDate": "2024-06-30",
+      "accession": "0000950170-24-093776",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 15,
+      "blocksScored": 15,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 39,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2024-11-07",
+      "reportDate": "2024-09-30",
+      "accession": "0000950170-24-123213",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 11,
+      "blocksScored": 11,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 39,
+        "cash-flow": 46
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2025-05-08",
+      "reportDate": "2025-03-31",
+      "accession": "0000950170-25-066784",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 12,
+      "blocksScored": 12,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 39,
+        "cash-flow": 42
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2025-08-08",
+      "reportDate": "2025-06-30",
+      "accession": "0001193125-25-175590",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 11,
+      "blocksScored": 11,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 38,
+        "cash-flow": 46
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2025-11-06",
+      "reportDate": "2025-09-30",
+      "accession": "0001193125-25-269795",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 11,
+      "blocksScored": 11,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 39,
+        "cash-flow": 46
+      }
+    },
+    {
+      "ticker": "NXST",
+      "filingDate": "2026-05-08",
+      "reportDate": "2026-03-31",
+      "accession": "0001193125-26-212539",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": "10q-item1-trio-proof-with-headings",
+      "packet": true,
+      "alternates": 7,
+      "blocksBuilt": 6,
+      "blocksScored": 6,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 40,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2019-05-02",
+      "reportDate": "2019-03-31",
+      "accession": "0001628280-19-005707",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 16,
+        "cash-flow": 18
+      }
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2019-07-31",
+      "reportDate": "2019-06-30",
+      "accession": "0001628280-19-009497",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 26,
+        "balance-sheet": 16,
+        "cash-flow": 21
+      }
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2019-11-05",
+      "reportDate": "2019-09-30",
+      "accession": "0001628280-19-013363",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2020-05-01",
+      "reportDate": "2020-03-31",
+      "accession": "0001628280-20-006001",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2020-07-31",
+      "reportDate": "2020-06-30",
+      "accession": "0001628280-20-011069",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2020-10-30",
+      "reportDate": "2020-09-30",
+      "accession": "0001628280-20-015117",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2021-04-28",
+      "reportDate": "2021-03-31",
+      "accession": "0001628280-21-007975",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2021-07-28",
+      "reportDate": "2021-06-30",
+      "accession": "0001628280-21-014758",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2021-11-05",
+      "reportDate": "2021-09-30",
+      "accession": "0001628280-21-021832",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2022-04-28",
+      "reportDate": "2022-03-31",
+      "accession": "0001628280-22-011195",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2022-08-04",
+      "reportDate": "2022-06-30",
+      "accession": "0001628280-22-020698",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2022-11-02",
+      "reportDate": "2022-09-30",
+      "accession": "0001628280-22-027868",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2023-05-03",
+      "reportDate": "2023-03-31",
+      "accession": "0001628280-23-015294",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2023-08-03",
+      "reportDate": "2023-06-30",
+      "accession": "0001628280-23-026858",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2023-11-01",
+      "reportDate": "2023-09-30",
+      "accession": "0001628280-23-036054",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2024-05-02",
+      "reportDate": "2024-03-31",
+      "accession": "0001628280-24-020031",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2024-08-01",
+      "reportDate": "2024-06-30",
+      "accession": "0001628280-24-034226",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2024-11-05",
+      "reportDate": "2024-09-30",
+      "accession": "0001628280-24-045072",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2025-05-08",
+      "reportDate": "2025-03-31",
+      "accession": "0001628280-25-023913",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2025-08-07",
+      "reportDate": "2025-06-30",
+      "accession": "0001628280-25-038992",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2025-11-06",
+      "reportDate": "2025-09-30",
+      "accession": "0001702780-25-000010",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "OPTU",
+      "filingDate": "2026-05-07",
+      "reportDate": "2026-03-31",
+      "accession": "0001702780-26-000035",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2019-05-10",
+      "reportDate": "2019-03-31",
+      "accession": "0001437749-19-009341",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 30,
+        "cash-flow": 36
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2019-08-08",
+      "reportDate": "2019-06-30",
+      "accession": "0001437749-19-015834",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 30,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2019-11-08",
+      "reportDate": "2019-09-30",
+      "accession": "0001437749-19-022001",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 30,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2020-05-11",
+      "reportDate": "2020-03-31",
+      "accession": "0001437749-20-010296",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 31,
+        "cash-flow": 36
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2020-08-07",
+      "reportDate": "2020-06-30",
+      "accession": "0001437749-20-016925",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 31,
+        "cash-flow": 40
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2020-11-06",
+      "reportDate": "2020-09-30",
+      "accession": "0001437749-20-022839",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 32,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2021-05-07",
+      "reportDate": "2021-03-31",
+      "accession": "0001437749-21-011188",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 32,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2021-08-09",
+      "reportDate": "2021-06-30",
+      "accession": "0001437749-21-019180",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 32,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2021-11-05",
+      "reportDate": "2021-09-30",
+      "accession": "0001437749-21-025340",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 32,
+        "cash-flow": 44
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2022-05-06",
+      "reportDate": "2022-03-31",
+      "accession": "0001437749-22-011164",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 39
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2022-08-05",
+      "reportDate": "2022-06-30",
+      "accession": "0001437749-22-018954",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2022-11-04",
+      "reportDate": "2022-09-30",
+      "accession": "0001437749-22-025850",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2023-05-05",
+      "reportDate": "2023-03-31",
+      "accession": "0001632127-23-000010",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2023-08-04",
+      "reportDate": "2023-06-30",
+      "accession": "0001632127-23-000043",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2023-11-03",
+      "reportDate": "2023-09-30",
+      "accession": "0001632127-23-000072",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2024-05-03",
+      "reportDate": "2024-03-31",
+      "accession": "0001632127-24-000056",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2024-08-02",
+      "reportDate": "2024-06-30",
+      "accession": "0001632127-24-000105",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2024-11-08",
+      "reportDate": "2024-09-30",
+      "accession": "0001632127-24-000133",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2025-05-02",
+      "reportDate": "2025-03-31",
+      "accession": "0001632127-25-000064",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2025-08-01",
+      "reportDate": "2025-06-30",
+      "accession": "0001632127-25-000094",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 30,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2025-11-07",
+      "reportDate": "2025-09-30",
+      "accession": "0001632127-25-000100",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2026-04-30",
+      "reportDate": "2026-03-31",
+      "accession": "0001632127-26-000022",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    }
+  ]
+}

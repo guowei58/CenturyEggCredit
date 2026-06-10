@@ -1,0 +1,482 @@
+{
+  "since": "2019-01-01",
+  "tickers": [
+    "CABO"
+  ],
+  "rows": [
+    {
+      "ticker": "CABO",
+      "filingDate": "2019-05-10",
+      "reportDate": "2019-03-31",
+      "accession": "0001437749-19-009341",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 30,
+        "cash-flow": 36
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2019-08-08",
+      "reportDate": "2019-06-30",
+      "accession": "0001437749-19-015834",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 30,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2019-11-08",
+      "reportDate": "2019-09-30",
+      "accession": "0001437749-19-022001",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 30,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2020-05-11",
+      "reportDate": "2020-03-31",
+      "accession": "0001437749-20-010296",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 31,
+        "cash-flow": 36
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2020-08-07",
+      "reportDate": "2020-06-30",
+      "accession": "0001437749-20-016925",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 31,
+        "cash-flow": 40
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2020-11-06",
+      "reportDate": "2020-09-30",
+      "accession": "0001437749-20-022839",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 21,
+        "balance-sheet": 32,
+        "cash-flow": 41
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2021-05-07",
+      "reportDate": "2021-03-31",
+      "accession": "0001437749-21-011188",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 32,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2021-08-09",
+      "reportDate": "2021-06-30",
+      "accession": "0001437749-21-019180",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 32,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2021-11-05",
+      "reportDate": "2021-09-30",
+      "accession": "0001437749-21-025340",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 23,
+        "balance-sheet": 32,
+        "cash-flow": 44
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2022-05-06",
+      "reportDate": "2022-03-31",
+      "accession": "0001437749-22-011164",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 39
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2022-08-05",
+      "reportDate": "2022-06-30",
+      "accession": "0001437749-22-018954",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2022-11-04",
+      "reportDate": "2022-09-30",
+      "accession": "0001437749-22-025850",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 32,
+        "cash-flow": 43
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2023-05-05",
+      "reportDate": "2023-03-31",
+      "accession": "0001632127-23-000010",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2023-08-04",
+      "reportDate": "2023-06-30",
+      "accession": "0001632127-23-000043",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2023-11-03",
+      "reportDate": "2023-09-30",
+      "accession": "0001632127-23-000072",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2024-05-03",
+      "reportDate": "2024-03-31",
+      "accession": "0001632127-24-000056",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2024-08-02",
+      "reportDate": "2024-06-30",
+      "accession": "0001632127-24-000105",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2024-11-08",
+      "reportDate": "2024-09-30",
+      "accession": "0001632127-24-000133",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2025-05-02",
+      "reportDate": "2025-03-31",
+      "accession": "0001632127-25-000064",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2025-08-01",
+      "reportDate": "2025-06-30",
+      "accession": "0001632127-25-000094",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 24,
+        "balance-sheet": 30,
+        "cash-flow": 37
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2025-11-07",
+      "reportDate": "2025-09-30",
+      "accession": "0001632127-25-000100",
+      "ok": true,
+      "stmts": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "missing": [],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {
+        "income-statement": 6,
+        "balance-sheet": 30,
+        "cash-flow": 39
+      }
+    },
+    {
+      "ticker": "CABO",
+      "filingDate": "2026-04-30",
+      "reportDate": "2026-03-31",
+      "accession": "0001632127-26-000022",
+      "ok": false,
+      "stmts": [],
+      "missing": [
+        "income-statement",
+        "balance-sheet",
+        "cash-flow"
+      ],
+      "section": null,
+      "packet": false,
+      "alternates": 0,
+      "blocksBuilt": 0,
+      "blocksScored": 0,
+      "rows": {}
+    }
+  ]
+}

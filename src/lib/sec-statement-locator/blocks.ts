@@ -2,7 +2,13 @@ import type { ChildNode, Element } from "domhandler";
 import type * as cheerio from "cheerio";
 import { isIxNonFractionTag } from "@/lib/sec-ixbrl-inline-cell";
 import type { FilingSectionBounds, LocatorContext, LocatedTable, StatementBlock } from "./types";
-import { NEGATIVE_CONTEXT_PATTERNS, POSITIVE_HEADINGS, POSITIVE_ROW_ANCHORS, normalizeSpace } from "./signals";
+import {
+  NEGATIVE_CONTEXT_PATTERNS,
+  POSITIVE_HEADINGS,
+  POSITIVE_ROW_ANCHORS,
+  countPatternHits,
+  normalizeSpace,
+} from "./signals";
 import type { StatementKind } from "./types";
 import { extractHeadingBeforeOffset } from "./section";
 
@@ -203,13 +209,18 @@ export function buildStatementBlocks(
     const tableText = normalizeSpace(ctx.$(current.el).text());
     const trCount = ctx.$(current.el).find("tr").length;
     const numericCells = (tableText.match(/-?\(?\d[\d,.\s]{1,}\)?/g) ?? []).length;
-    if (
+    const ixTagCount = countIxTags(ctx.$, current.el);
+    const headingText = extractHeadingBeforeOffset(ctx.acc, current.offset, 1_600);
+    const hasStatementHeading = (["is", "bs", "cf"] as StatementKind[]).some((kind) =>
+      countPatternHits(headingText, POSITIVE_HEADINGS[kind]) > 0
+    );
+    const isTiny =
       stats.dataRowCount < 2 &&
       stats.valueColumnCount < 1 &&
       trCount < 5 &&
       numericCells < 10 &&
-      tableText.length < 400
-    ) {
+      tableText.length < 400;
+    if (isTiny && ixTagCount < 5 && !hasStatementHeading) {
       i += 1;
       continue;
     }

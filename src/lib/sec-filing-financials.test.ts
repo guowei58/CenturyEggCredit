@@ -14,8 +14,21 @@ import {
   __test_extractMonetaryUnitsFromText,
   __test_mergeStatementsById,
   __test_statementTableTextLooksLikePrimaryFace,
+  __test_statementTableContentLooksLikePrimaryFace,
   __test_statementTableMeetsMinNumbersPerPeriodColumn,
   __test_validateSinglePrimaryStatementShape,
+  __test_validateHeadingWindowPrimaryStatementShape,
+  __test_statementKindFromFilingSummaryReport,
+  __test_parseFilingSummaryReportDirectTable,
+  __test_cueLineFromStatementRow,
+  __test_findEmbeddedFaceStatementsSectionBounds,
+  __test_isLikelyEquityRollforwardIncomeTable,
+  __test_isLikelyOtherComprehensiveIncomeOnlyTable,
+  __test_tableTextHasFaceEpsCue,
+  __test_isLikelyBankBalanceSheetShape,
+  __test_isLikelyBankIncomeStatementShape,
+  __test_isLikelyCombinedOperationsAndComprehensiveLossShape,
+  buildParsedFilingHtmlContext,
   buildPrimaryFaceShapeTemplateFromStatement,
   scoreShapeTemplateSimilarity,
 } from "@/lib/sec-filing-financials";
@@ -1923,6 +1936,653 @@ describe("FilingSummary merge guards", () => {
     expect(__test_validateStatementShape(stmt, "10-Q")).not.toContain("cash-flow: top rows look like another statement");
   });
 
+  it("accepts CHTR-style income statements without COGS/gross-profit labels", () => {
+    const stmt = makeIncomeStatement([
+      "REVENUES",
+      "COSTS AND EXPENSES:",
+      "Operating costs and expenses (exclusive of items shown separately below)",
+      "Depreciation and amortization",
+      "Other operating expenses, net",
+      "Income from operations",
+      "OTHER INCOME (EXPENSES):",
+      "Interest expense, net",
+      "Other expenses, net",
+      "Income before income taxes",
+      "Income tax expense",
+      "Consolidated net income",
+      "Less: Net income attributable to noncontrolling interests",
+      "Net income attributable to Charter shareholders",
+      "EARNINGS PER COMMON SHARE ATTRIBUTABLE TO CHARTER SHAREHOLDERS:",
+      "Basic",
+      "Diluted",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("skips OPTU-style TOC Item 1 index and anchors section at embedded face statements", () => {
+    const filler = "<p>Supplemental disclosure paragraph.</p>\n".repeat(200);
+    const html = `
+      <html><body>
+        <p>TABLE OF CONTENTS</p>
+        <p>PART I. FINANCIAL INFORMATION Page</p>
+        <p>Item 1. Financial Statements ALTICE USA, INC. AND SUBSIDIARIES</p>
+        <p>Consolidated Balance Sheets - March 31, 2025 (Unaudited) 4</p>
+        <p>Consolidated Statements of Operations - Three months ended March 31, 2025 (Unaudited) 5</p>
+        <p>Consolidated Statements of Cash Flows - Three months ended March 31, 2025 (Unaudited) 8</p>
+        <p>Item 2. Management's Discussion and Analysis of Financial Condition and Results of Operations 12</p>
+        ${filler}
+        <p>Item 1. Financial Statements ALTICE USA, INC. AND SUBSIDIARIES</p>
+        <p>CONSOLIDATED BALANCE SHEETS (Unaudited)</p>
+        <table>
+          <tr><td>Cash and cash equivalents</td><td>100</td><td>90</td></tr>
+          <tr><td>Total current assets</td><td>500</td><td>450</td></tr>
+          <tr><td>Total assets</td><td>2000</td><td>1900</td></tr>
+          <tr><td>Total liabilities and stockholders equity</td><td>2000</td><td>1900</td></tr>
+        </table>
+        <p>CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited)</p>
+        <table>
+          <tr><td>Revenue</td><td>800</td><td>750</td></tr>
+          <tr><td>Operating expenses</td><td>600</td><td>550</td></tr>
+          <tr><td>Operating income</td><td>200</td><td>200</td></tr>
+          <tr><td>Net income</td><td>120</td><td>110</td></tr>
+        </table>
+        <p>CONSOLIDATED STATEMENTS OF CASH FLOWS (Unaudited)</p>
+        <table>
+          <tr><td>Net income</td><td>120</td><td>110</td></tr>
+          <tr><td>Depreciation and amortization</td><td>40</td><td>35</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>150</td><td>140</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-20</td><td>-15</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-10</td><td>-8</td></tr>
+        </table>
+        <p>${"Supplemental interim disclosure note. ".repeat(180)}</p>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION</p>
+      </body></html>
+    `;
+    const acc = __test_flatAccFromHtml(html);
+    const bounds = __test_findPrimaryFinancialStatementsItemSectionBounds(acc, "10-Q");
+    expect(bounds).not.toBeNull();
+    expect(bounds!.end - bounds!.start).toBeGreaterThan(5_000);
+    expect(acc.slice(bounds!.start, bounds!.start + 120)).toMatch(/CONSOLIDATED BALANCE SHEETS/i);
+    const statements = parseFixtureStatementsFromHtml(html, { form: "10-Q", primaryDocument: "optu-toc.htm" });
+    expect(statements.map((s) => s.id).sort()).toEqual(["balance-sheet", "cash-flow", "income-statement"]);
+  });
+
+  it("rejects CABO-style cable product-line revenue disaggregation as income statement", () => {
+    const stmt = makeIncomeStatement([
+      "Data",
+      "Video",
+      "Voice",
+      "Business services",
+      "Other",
+      "Total revenues",
+      "Franchise and other regulatory fees",
+      "Deferred commission amortization",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(false);
+    expect(__test_statementTableContentLooksLikePrimaryFace(stmt.rows.map((r) => r.label).join(" "), "is")).toBe(false);
+  });
+
+  it("accepts PFE-style income statements with income from continuing operations beyond row 16", () => {
+    const stmt = makeIncomeStatement([
+      "Product revenues(a)",
+      "Alliance revenues(a)",
+      "Royalty revenues(a)",
+      "Total revenues",
+      "Costs and expenses:",
+      "Cost of sales(b)",
+      "Selling, informational and administrative expenses(b)",
+      "Research and development expenses(b)",
+      "Acquired in-process research and development expenses",
+      "Amortization of intangible assets",
+      "Restructuring charges and certain acquisition-related costs",
+      "Other (income)/deductions––net",
+      "Income from continuing operations before provision/(benefit) for taxes on income",
+      "Provision/(benefit) for taxes on income",
+      "Income from continuing operations",
+      "Discontinued operations––net of tax",
+      "Net income before allocation to noncontrolling interests",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("accepts MGPI-style income statements when the top line is Sales (Note 2)", () => {
+    const stmt = makeIncomeStatement([
+      "Sales (Note 2)",
+      "Cost of sales",
+      "Gross profit",
+      "Selling, general and administrative expenses",
+      "Operating income",
+      "Interest expense, net",
+      "Income before income taxes",
+      "Income tax expense (Note 4)",
+      "Net income",
+      "Basic and diluted earnings per common share",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("accepts ITT-style indirect cash flow statements with operating activities after row 16", () => {
+    const stmt = makeStatement("cash-flow", [
+      "Income from continuing operations attributable to ITT Inc.",
+      "Adjustments to income from continuing operations:",
+      "Depreciation and amortization",
+      "Equity-based compensation",
+      "Gain on sale of long-lived assets",
+      "Asbestos-related benefit, net",
+      "Other non-cash charges, net",
+      "Asbestos-related payments, net",
+      "Contributions to postretirement plans",
+      "Changes in assets and liabilities:",
+      "Change in receivables",
+      "Change in inventories",
+      "Change in contract assets",
+      "Change in contract liabilities",
+      "Change in accounts payable",
+      "Change in accrued expenses",
+      "Change in income taxes",
+      "Other, net",
+      "Net Cash – Operating activities",
+      "Capital expenditures",
+      "Net Cash – Investing activities",
+      "Dividends paid",
+      "Net Cash – Financing activities",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("rejects degenerate primary face tables with many rows but almost no labels", () => {
+    const stmt = makeStatement("income-statement", ["", "", "", "", " ", "  ", "x", "y", "z", "a"]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(false);
+  });
+
+  it("anchors INTC-style 10-Q sections at embedded face headings when Item 1 is a page-range TOC", () => {
+    const filler = "<p>Supplemental disclosure.</p>\n".repeat(400);
+    const html = `
+      <html><body>
+        ${filler}
+        <p>CONSOLIDATED CONDENSED BALANCE SHEETS (Unaudited)</p>
+        <p>(In millions)</p>
+        <table>
+          <tr><td>Cash and cash equivalents</td><td>100</td><td>90</td></tr>
+          <tr><td>Total current assets</td><td>500</td><td>450</td></tr>
+          <tr><td>Total assets</td><td>2000</td><td>1900</td></tr>
+          <tr><td>Total liabilities and stockholders equity</td><td>2000</td><td>1900</td></tr>
+        </table>
+        <p>CONSOLIDATED CONDENSED STATEMENTS OF INCOME (Unaudited)</p>
+        <p>(In millions)</p>
+        <table>
+          <tr><td>Net revenue</td><td>800</td><td>750</td></tr>
+          <tr><td>Cost of sales</td><td>400</td><td>380</td></tr>
+          <tr><td>Gross margin</td><td>400</td><td>370</td></tr>
+          <tr><td>Operating income</td><td>200</td><td>180</td></tr>
+          <tr><td>Net income</td><td>120</td><td>110</td></tr>
+        </table>
+        <p>CONSOLIDATED CONDENSED STATEMENTS OF CASH FLOWS (Unaudited)</p>
+        <p>(In millions)</p>
+        <table>
+          <tr><td>Net income</td><td>120</td><td>110</td></tr>
+          <tr><td>Depreciation</td><td>40</td><td>35</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>150</td><td>140</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-20</td><td>-15</td></tr>
+          <tr><td>Net cash used in financing activities</td><td>-10</td><td>-8</td></tr>
+        </table>
+        <p>Item 1. Financial Statements Pages 4 - 23 Item 2. Management's Discussion and Analysis of Financial Condition and Results of Operations</p>
+        ${filler}
+      </body></html>
+    `;
+    const acc = __test_flatAccFromHtml(html);
+    const bounds = __test_findPrimaryFinancialStatementsItemSectionBounds(acc, "10-Q");
+    expect(bounds).not.toBeNull();
+    expect(bounds!.end - bounds!.start).toBeGreaterThan(5_000);
+    expect(acc.slice(bounds!.start, bounds!.start + 80)).toMatch(/CONSOLIDATED CONDENSED BALANCE SHEETS/i);
+    const statements = parseFixtureStatementsFromHtml(html, { form: "10-Q", primaryDocument: "intc-style.htm" });
+    expect(statements.map((s) => s.id).sort()).toEqual(["balance-sheet", "cash-flow", "income-statement"]);
+  });
+
+  it("rejects CABO-style stockholders equity rollforward tables as income statements", () => {
+    const stmt = makeIncomeStatement([
+      "Balance at December 31, 2022",
+      "Net income",
+      "Unrealized gain (loss) on cash flow hedges and other, net of tax",
+      "Equity-based compensation",
+      "Issuance of equity awards, net of forfeitures",
+      "Repurchases of common stock",
+      "Withholding tax for equity awards",
+      "Dividends paid to stockholders ($2.85 per common share)",
+      "Balance at March 31, 2023",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(false);
+  });
+
+  it("expands quarterly value columns when header shows two fiscal years (WMT-style)", async () => {
+    const { __test_detectDataStart, __test_inferValueColumnIndices, __test_inferPeriods } = await import(
+      "@/lib/sec-filing-financials"
+    );
+    const matrix = [
+      ["", "", "Three Months Ended April 30,", ""],
+      ["", "(Amounts in millions, except per share data)", "2024", "2023"],
+      ["Revenues:", "", "", ""],
+      ["Net sales", "", "$", "160,610", "", "$", "152,300"],
+      ["Total revenues", "", "", "161,500", "", "", "153,100"],
+      ["Costs and expenses:", "", "", ""],
+      ["Cost of sales", "", "", "96,800", "", "", "91,200"],
+      ["Operating income", "", "", "6,800", "", "", "6,500"],
+      ["Consolidated net income", "", "", "5,100", "", "", "4,900"],
+    ];
+    const dataStart = __test_detectDataStart(matrix);
+    const cols = __test_inferValueColumnIndices(matrix, dataStart);
+    expect(cols.length).toBeGreaterThanOrEqual(2);
+    const periods = __test_inferPeriods(matrix, dataStart, cols);
+    expect(periods.length).toBeGreaterThanOrEqual(2);
+    expect(periods.length).toBe(cols.length);
+  });
+
+  it("accepts Sales-top-line income statements (AVT/NVST-style)", async () => {
+    const { __test_validateSinglePrimaryStatementShape } = await import("@/lib/sec-filing-financials");
+    const stmt = {
+      id: "income-statement" as const,
+      title: "Income Statement",
+      role: "Income Statement",
+      periods: [
+        { key: "p1", label: "Three Months Ended March 30, 2024" },
+        { key: "p2", label: "Three Months Ended April 1, 2023" },
+      ],
+      rows: [
+        { label: "Sales", rowKind: "data" as const, values: { p1: 5_000, p2: 4_800 } },
+        { label: "Cost of sales", rowKind: "data" as const, values: { p1: 3_200, p2: 3_100 } },
+        { label: "Gross profit", rowKind: "data" as const, values: { p1: 1_800, p2: 1_700 } },
+        { label: "Operating income", rowKind: "data" as const, values: { p1: 400, p2: 380 } },
+        { label: "Net income", rowKind: "data" as const, values: { p1: 300, p2: 280 } },
+      ],
+    };
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("resolveFinancialStatementsSectionBounds prefers earliest 10-Q section start", async () => {
+    const { buildParsedFilingHtmlContext, __test_resolveFinancialStatementsSectionBounds } =
+      await import("@/lib/sec-filing-financials");
+    const filler = "<p>Notes and disclosures for minimum section length.</p>\n".repeat(180);
+    const html = `
+      <html><body>
+        <p>ITEM 1. FINANCIAL STATEMENTS</p>
+        ${filler}
+        <p>Condensed Consolidated Balance Sheets (Unaudited)</p>
+        <table>
+          <tr><td></td><td>March 31, 2026</td><td>December 31, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>50</td><td>48</td></tr>
+          <tr><td>Total current assets</td><td>200</td><td>195</td></tr>
+          <tr><td>Total assets</td><td>500</td><td>480</td></tr>
+        </table>
+        <p>See accompanying Notes to Condensed Consolidated Financial Statements.</p>
+        <p>ITEM 1. FINANCIAL STATEMENTS (continued)</p>
+        <p>Condensed Consolidated Statements of Operations (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Total revenues</td><td>100</td><td>90</td></tr>
+          <tr><td>Cost of sales</td><td>40</td><td>35</td></tr>
+          <tr><td>Operating income</td><td>25</td><td>22</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+        </table>
+        <p>Condensed Consolidated Statements of Cash Flows (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Depreciation</td><td>10</td><td>9</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>25</td><td>22</td></tr>
+        </table>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION</p>
+      </body></html>
+    `;
+    const ctx = buildParsedFilingHtmlContext(html)!;
+    const resolved = __test_resolveFinancialStatementsSectionBounds(ctx, "10-Q");
+    expect(resolved).not.toBeNull();
+    const continuedOffset = ctx.acc.indexOf("ITEM 1. FINANCIAL STATEMENTS (continued)");
+    expect(resolved!.start).toBeLessThan(continuedOffset);
+  });
+
+  it("heading-anchored 10-Q parse survives face-table footer notes cross-refs (MANH-style)", async () => {
+    const { parsePrimaryFilingStatementsFromHtml } = await import("@/lib/sec-filing-financials");
+    const filler = "<p>Supplemental disclosure text for section length.</p>\n".repeat(220);
+    const html = `
+      <html><body>
+        <p>ITEM 1. FINANCIAL STATEMENTS</p>
+        ${filler}
+        <p>Condensed Consolidated Balance Sheets (Unaudited)</p>
+        <table>
+          <tr><td></td><td>March 31, 2026</td><td>December 31, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>50</td><td>48</td></tr>
+          <tr><td>Accounts receivable</td><td>80</td><td>75</td></tr>
+          <tr><td>Total current assets</td><td>200</td><td>195</td></tr>
+          <tr><td>Total assets</td><td>500</td><td>480</td></tr>
+          <tr><td>Total liabilities and stockholders equity</td><td>500</td><td>480</td></tr>
+        </table>
+        <p>See accompanying Notes to Condensed Consolidated Financial Statements.</p>
+        <p>ITEM 1. FINANCIAL STATEMENTS (continued)</p>
+        <p>Condensed Consolidated Statements of Operations (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Total revenues</td><td>100</td><td>90</td></tr>
+          <tr><td>Cost of sales</td><td>40</td><td>35</td></tr>
+          <tr><td>Operating income</td><td>25</td><td>22</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+        </table>
+        <p>See notes to unaudited Condensed Consolidated Financial Statements.</p>
+        <p>Condensed Consolidated Statements of Cash Flows (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Depreciation</td><td>10</td><td>9</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>25</td><td>22</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-5</td><td>-4</td></tr>
+        </table>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION</p>
+      </body></html>
+    `;
+    const statements = parsePrimaryFilingStatementsFromHtml(html, {
+      form: "10-Q",
+      primaryDocument: "manh-style.htm",
+    });
+    expect(statements.map((s) => s.id).sort()).toEqual(["balance-sheet", "cash-flow", "income-statement"]);
+  });
+
+  it("resolveFinancialStatementsSectionBounds falls back to locator section when acc bounds miss", async () => {
+    const { buildParsedFilingHtmlContext, __test_findPrimaryFinancialStatementsItemSectionBounds, __test_resolveFinancialStatementsSectionBounds } =
+      await import("@/lib/sec-filing-financials");
+    const { locateFinancialStatementsSection } = await import("@/lib/sec-statement-locator");
+    const filler = "<p>Notes and disclosures for minimum section length.</p>\n".repeat(180);
+    const html = `
+      <html><body>
+        <p>ITEM 1. FINANCIAL STATEMENTS</p>
+        ${filler}
+        <p>Condensed Consolidated Statements of Operations (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Total revenues</td><td>100</td><td>90</td></tr>
+          <tr><td>Cost of sales</td><td>40</td><td>35</td></tr>
+          <tr><td>Operating income</td><td>25</td><td>22</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+        </table>
+        <p>Condensed Consolidated Balance Sheets (Unaudited)</p>
+        <table>
+          <tr><td></td><td>March 31, 2026</td><td>December 31, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>50</td><td>48</td></tr>
+          <tr><td>Total current assets</td><td>200</td><td>195</td></tr>
+          <tr><td>Total assets</td><td>500</td><td>480</td></tr>
+          <tr><td>Total liabilities</td><td>300</td><td>290</td></tr>
+        </table>
+        <p>Condensed Consolidated Statements of Cash Flows (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Depreciation</td><td>10</td><td>9</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>25</td><td>22</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-5</td><td>-4</td></tr>
+        </table>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION</p>
+      </body></html>
+    `;
+    const ctx = buildParsedFilingHtmlContext(html)!;
+    const accBounds = __test_findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, "10-Q");
+    const resolved = __test_resolveFinancialStatementsSectionBounds(ctx, "10-Q");
+    const locator = locateFinancialStatementsSection(ctx, "10-Q");
+    expect(resolved).not.toBeNull();
+    if (accBounds == null && locator?.section) {
+      expect(resolved?.start).toBe(locator.section.start);
+    }
+  });
+
+  it("rejects equity rollforward tables misclassified as cash flow", async () => {
+    const { __test_validateSinglePrimaryStatementShape } = await import("@/lib/sec-filing-financials");
+    const stmt = {
+      id: "cash-flow" as const,
+      title: "Cash Flow",
+      role: "Cash Flow",
+      periods: [
+        { key: "p1", label: "Common Stock Shares" },
+        { key: "p2", label: "Retained Earnings" },
+      ],
+      rows: [
+        { label: "Balances as of February 1, 2024", rowKind: "data" as const, values: { p1: 100, p2: 200 } },
+        { label: "Consolidated net income", rowKind: "data" as const, values: { p1: 10, p2: 20 } },
+        { label: "Dividends declared", rowKind: "data" as const, values: { p1: -5, p2: -5 } },
+        { label: "Purchase of Company stock", rowKind: "data" as const, values: { p1: -2, p2: -2 } },
+        { label: "Balances as of April 30, 2024", rowKind: "data" as const, values: { p1: 103, p2: 213 } },
+      ],
+    };
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(false);
+  });
+
+  it("mergeBestValidatedPrimaryStatements salvages valid BS from partial packet sources", async () => {
+    const { parsePrimaryFilingStatementsFromHtml } = await import("@/lib/sec-filing-financials");
+    const filler = "<p>Supplemental disclosure text for section length.</p>\n".repeat(220);
+    const html = `
+      <html><body>
+        <p>ITEM 1. FINANCIAL STATEMENTS</p>
+        ${filler}
+        <p>Condensed Consolidated Statements of Operations (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Total revenues</td><td>100</td><td>90</td></tr>
+          <tr><td>Cost of sales</td><td>40</td><td>35</td></tr>
+          <tr><td>Operating income</td><td>25</td><td>22</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+        </table>
+        <p>Condensed Consolidated Balance Sheets (Unaudited)</p>
+        <table>
+          <tr><td></td><td>March 31, 2026</td><td>December 31, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>50</td><td>48</td></tr>
+          <tr><td>Total current assets</td><td>200</td><td>195</td></tr>
+          <tr><td>Total assets</td><td>500</td><td>480</td></tr>
+          <tr><td>Total liabilities</td><td>300</td><td>290</td></tr>
+        </table>
+        <p>Condensed Consolidated Statements of Cash Flows (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Depreciation</td><td>10</td><td>9</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>25</td><td>22</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-5</td><td>-4</td></tr>
+        </table>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION</p>
+      </body></html>
+    `;
+    const statements = parsePrimaryFilingStatementsFromHtml(html, {
+      form: "10-Q",
+      primaryDocument: "merge-salvage.htm",
+    });
+    expect(statements.map((s) => s.id).sort()).toEqual(["balance-sheet", "cash-flow", "income-statement"]);
+  });
+
+  it("heading-window shape accepts bank income statements without product revenue cues", () => {
+    const stmt = makeIncomeStatement([
+      "Interest income",
+      "Interest expense",
+      "Net interest income",
+      "Provision for credit losses",
+      "Noninterest income",
+      "Income before income taxes",
+      "Net income",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+    expect(__test_validateHeadingWindowPrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("heading-window shape accepts comprehensive loss statements when strict IS shape fails", () => {
+    const stmt = makeIncomeStatement([
+      "Total revenues",
+      "Operating expenses",
+      "Operating loss",
+      "Other income (expense), net",
+      "Loss before income taxes",
+      "Income tax benefit",
+      "Net loss",
+      "Other comprehensive loss",
+      "Comprehensive loss",
+    ]);
+    expect(__test_validateHeadingWindowPrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("maps FilingSummary comprehensive loss reports to income statement kind", () => {
+    expect(
+      __test_statementKindFromFilingSummaryReport({
+        longName: "CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE LOSS (Unaudited)",
+      })
+    ).toBe("is");
+    expect(
+      __test_statementKindFromFilingSummaryReport({
+        shortName: "Comprehensive Income Statements",
+      })
+    ).toBe("is");
+  });
+
+  it("heading-window fallback picks first substantive IS table after stub fragment", () => {
+    const filler = "<p>Supplemental disclosure paragraph.</p>\n".repeat(200);
+    const html = `
+      <html><body>
+        <p>ITEM 1. FINANCIAL STATEMENTS</p>
+        ${filler}
+        <p>Consolidated Balance Sheets</p>
+        <table>
+          <tr><td></td><td>March 31, 2026</td><td>December 31, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>50</td><td>48</td></tr>
+          <tr><td>Total current assets</td><td>200</td><td>195</td></tr>
+          <tr><td>Total assets</td><td>500</td><td>480</td></tr>
+          <tr><td>Total liabilities</td><td>300</td><td>290</td></tr>
+          <tr><td>Total stockholders equity</td><td>200</td><td>190</td></tr>
+        </table>
+        <p>Consolidated Statements of Operations</p>
+        <table>
+          <tr><td>See accompanying notes</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+        </table>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Total revenues</td><td>100</td><td>90</td></tr>
+          <tr><td>Cost of sales</td><td>40</td><td>35</td></tr>
+          <tr><td>Operating income</td><td>25</td><td>22</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+        </table>
+        <p>Consolidated Statements of Comprehensive Income</p>
+        <table>
+          <tr><td>Other comprehensive income</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+          <tr><td>Comprehensive income</td><td>21</td><td>20</td><td>19</td><td>18</td></tr>
+        </table>
+        <p>Consolidated Statements of Cash Flows</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Depreciation</td><td>10</td><td>9</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>25</td><td>22</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-5</td><td>-4</td></tr>
+        </table>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION</p>
+      </body></html>
+    `;
+    const statements = parseFixtureStatementsFromHtml(html, {
+      form: "10-Q",
+      primaryDocument: "heading-window-stub.htm",
+    });
+    const is = statements.find((s) => s.id === "income-statement");
+    expect(is).toBeDefined();
+    expect(is?.rows.some((r) => /total revenues/i.test(r.label))).toBe(true);
+    expect(is?.rows.some((r) => /see accompanying notes/i.test(r.label))).toBe(false);
+  });
+
+  it("parses FilingSummary R*.htm excerpts via direct first-table parse", () => {
+    const html = `
+      <html><body>
+        <p>CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Total revenues</td><td>100</td><td>90</td></tr>
+          <tr><td>Cost of sales</td><td>40</td><td>35</td></tr>
+          <tr><td>Operating income</td><td>25</td><td>22</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Basic earnings per common share</td><td>1.20</td><td>1.10</td></tr>
+          <tr><td>Diluted earnings per common share</td><td>1.18</td><td>1.08</td></tr>
+        </table>
+      </body></html>
+    `;
+    const parsed = __test_parseFilingSummaryReportDirectTable(densifyPrimaryFaceFixtureHtml(html), {
+      kind: "is",
+      form: "10-Q",
+      primaryDocument: "R4.htm",
+    });
+    expect(parsed).not.toBeNull();
+    expect(parsed?.rows.some((r) => /total revenues/i.test(r.label))).toBe(true);
+    expect(parsed?.rows.some((r) => /basic earnings per/i.test(r.label))).toBe(true);
+  });
+
+  it("salvages IS past notes when BS and CF are already found (segment-style layout)", () => {
+    const filler = "<p>Supplemental disclosure paragraph.</p>\n".repeat(220);
+    const notesFiller = "<p>Note disclosure supporting text.</p>\n".repeat(120);
+    const html = `
+      <html><body>
+        <p>ITEM 1. FINANCIAL STATEMENTS</p>
+        ${filler}
+        <p>Consolidated Balance Sheets</p>
+        <table>
+          <tr><td></td><td>March 31, 2026</td><td>December 31, 2025</td></tr>
+          <tr><td>Cash and cash equivalents</td><td>50</td><td>48</td></tr>
+          <tr><td>Total current assets</td><td>200</td><td>195</td></tr>
+          <tr><td>Total assets</td><td>500</td><td>480</td></tr>
+          <tr><td>Total liabilities</td><td>300</td><td>290</td></tr>
+          <tr><td>Total stockholders equity</td><td>200</td><td>190</td></tr>
+        </table>
+        <p>Consolidated Statements of Operations</p>
+        <table>
+          <tr><td>See accompanying notes</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+        </table>
+        <p>Consolidated Statements of Cash Flows</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net income</td><td>20</td><td>18</td></tr>
+          <tr><td>Depreciation</td><td>10</td><td>9</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>25</td><td>22</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-5</td><td>-4</td></tr>
+        </table>
+        <p>Notes to Consolidated Financial Statements</p>
+        ${notesFiller}
+        <p>Consolidated Statements of Operations (Unaudited)</p>
+        <table>
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Net sales</td><td>500</td><td>480</td></tr>
+          <tr><td>Cost of products sold</td><td>300</td><td>290</td></tr>
+          <tr><td>Gross profit</td><td>200</td><td>190</td></tr>
+          <tr><td>Operating income</td><td>80</td><td>75</td></tr>
+          <tr><td>Net income</td><td>55</td><td>50</td></tr>
+          <tr><td>Basic earnings per common share</td><td>2.10</td><td>1.95</td></tr>
+          <tr><td>Diluted earnings per common share</td><td>2.05</td><td>1.90</td></tr>
+        </table>
+        <p>ITEM 2. MANAGEMENT'S DISCUSSION</p>
+      </body></html>
+    `;
+    const statements = parseFixtureStatementsFromHtml(html, {
+      form: "10-Q",
+      primaryDocument: "post-notes-is.htm",
+    });
+    const is = statements.find((s) => s.id === "income-statement");
+    expect(is).toBeDefined();
+    expect(is?.rows.some((r) => /net sales/i.test(r.label))).toBe(true);
+    expect(is?.rows.some((r) => /basic earnings per/i.test(r.label))).toBe(true);
+    expect(is?.rows.some((r) => /see accompanying notes/i.test(r.label))).toBe(false);
+  });
+
+  it("accepts income statements validated by net income plus basic/diluted EPS rows", () => {
+    const stmt = makeIncomeStatement([
+      "Net sales",
+      "Cost of products sold",
+      "Gross profit",
+      "Selling, general and administrative",
+      "Operating income",
+      "Income before income taxes",
+      "Net income",
+      "Basic earnings per common share",
+      "Diluted earnings per common share",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+    expect(__test_validateHeadingWindowPrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
   it("shape templates score consolidated income statements above segment decoys", () => {
     const template = buildPrimaryFaceShapeTemplateFromStatement({
       id: "income-statement",
@@ -1942,5 +2602,211 @@ describe("FilingSummary merge guards", () => {
     );
     const segmentScore = scoreShapeTemplateSimilarity(["Power", "Aviation", "Renewable Energy"], template!);
     expect(faceScore).toBeGreaterThan(segmentScore + 40);
+  });
+
+  it("treats EPS rows as disqualifying OCI-only classification", () => {
+    const ociWithEps = `
+      net income 100
+      other comprehensive income (loss) 5
+      comprehensive income 105
+      basic earnings per common share 1.20
+      diluted earnings per common share 1.18
+    `;
+    expect(__test_tableTextHasFaceEpsCue(ociWithEps)).toBe(true);
+    expect(__test_isLikelyOtherComprehensiveIncomeOnlyTable(ociWithEps)).toBe(false);
+  });
+
+  it("treats EPS rows as disqualifying equity rollforward classification", () => {
+    const equityWithEps = `
+      balance as of january 1
+      consolidated net income 50
+      dividends declared -5
+      balance as of march 31
+      basic earnings per common share 2.00
+    `;
+    expect(__test_isLikelyEquityRollforwardIncomeTable(equityWithEps)).toBe(false);
+  });
+
+  it("backfills shape cues from ix concept names when visible labels are empty", () => {
+    const cue = __test_cueLineFromStatementRow({
+      concept: "us-gaap:Revenues",
+      label: "",
+      depth: 0,
+      rowKind: "data",
+      valueFormat: "native",
+      values: { p1: 100 },
+      displayValues: { p1: "100" },
+      ixByPeriod: {
+        p1: {
+          visibleText: "100",
+          xbrlConcept: "us-gaap:Revenues",
+          contextRef: "c1",
+          unitRef: "u1",
+          decimals: "0",
+          scale: null,
+          format: null,
+          sign: null,
+          rawValue: 100,
+        },
+      },
+    });
+    expect(cue).toContain("revenues");
+  });
+
+  it("accepts bank balance sheet shape with loans deposits and equity", () => {
+    const labels = `
+      cash and due from banks
+      federal funds sold
+      trading assets
+      total loans
+      total assets
+      deposits
+      short-term borrowings
+      long-term debt
+      total liabilities
+      total stockholders equity
+    `;
+    expect(__test_isLikelyBankBalanceSheetShape(labels)).toBe(true);
+  });
+
+  it("accepts pharma-style sales and R&D labels in strict IS shape", () => {
+    const stmt = makeIncomeStatement([
+      "Sales",
+      "Cost of products sold",
+      "Research and development",
+      "Operating income",
+      "Net income",
+      "Basic earnings per common share",
+      "Diluted earnings per common share",
+    ]);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-Q")).toBe(true);
+  });
+
+  it("resolves section bounds via embedded-face fallback on TOC filings", async () => {
+    const { __test_resolveFinancialStatementsSectionBounds } = await import("@/lib/sec-filing-financials");
+    const filler = "<p>Supplemental disclosure paragraph.</p>\n".repeat(200);
+    const html = `
+      <html><body>
+        <p>TABLE OF CONTENTS</p>
+        <p>Item 1. Financial Statements 4</p>
+        <p>Item 2. MD&A 12</p>
+        ${filler}
+        <p>CONSOLIDATED BALANCE SHEETS (Unaudited)</p>
+        <table>
+          <tr><td>Cash and cash equivalents</td><td>100</td><td>90</td></tr>
+          <tr><td>Total current assets</td><td>500</td><td>450</td></tr>
+          <tr><td>Total assets</td><td>2000</td><td>1900</td></tr>
+          <tr><td>Total liabilities and stockholders equity</td><td>2000</td><td>1900</td></tr>
+        </table>
+        <p>CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited)</p>
+        <table>
+          <tr><td>Revenue</td><td>800</td><td>750</td></tr>
+          <tr><td>Operating income</td><td>200</td><td>200</td></tr>
+          <tr><td>Net income</td><td>120</td><td>110</td></tr>
+        </table>
+        <p>CONSOLIDATED STATEMENTS OF CASH FLOWS (Unaudited)</p>
+        <table>
+          <tr><td>Net income</td><td>120</td><td>110</td></tr>
+          <tr><td>Net cash provided by operating activities</td><td>150</td><td>140</td></tr>
+          <tr><td>Net cash used in investing activities</td><td>-20</td><td>-15</td></tr>
+        </table>
+        <p>${"Supplemental interim disclosure note. ".repeat(180)}</p>
+        <p>ITEM 2. MANAGEMENT DISCUSSION</p>
+      </body></html>
+    `;
+    const ctx = buildParsedFilingHtmlContext(densifyPrimaryFaceFixtureHtml(html))!;
+    const bounds = __test_resolveFinancialStatementsSectionBounds(ctx, "10-Q");
+    expect(bounds).not.toBeNull();
+    expect(bounds!.end - bounds!.start).toBeGreaterThan(5_000);
+    expect(ctx.acc.slice(bounds!.start, bounds!.start + 120)).toMatch(/CONSOLIDATED BALANCE SHEETS/i);
+  });
+});
+
+describe("10-K FilingSummary and shape relaxations", () => {
+  it("maps alternate FilingSummary report titles to statement kinds", () => {
+    expect(
+      __test_statementKindFromFilingSummaryReport({
+        shortName: "CONSOLIDATED CASH FLOWS STATEMENTS",
+        menuCategory: "Statements",
+      })
+    ).toBe("cf");
+    expect(
+      __test_statementKindFromFilingSummaryReport({
+        shortName: "STATEMENT OF EARNINGS (LOSS)",
+        menuCategory: "Statements",
+      })
+    ).toBe("is");
+    expect(
+      __test_statementKindFromFilingSummaryReport({
+        shortName: "CONSOLIDATED STATEMENTS OF OPERATIONS AND COMPREHENSIVE LOSS",
+        menuCategory: "Statements",
+      })
+    ).toBe("is");
+  });
+
+  it("accepts combined operations and comprehensive loss income tables", () => {
+    const stmt = makeStatement(
+      "income-statement",
+      [
+        "Revenue",
+        "Cost of revenues",
+        "Operating loss",
+        "Net loss",
+        "Other comprehensive loss",
+        "Comprehensive loss",
+      ],
+      ["p1", "p2", "p3"]
+    );
+    expect(__test_isLikelyCombinedOperationsAndComprehensiveLossShape(stmt.rows.map((r) => r.label).join("\n"))).toBe(
+      true
+    );
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-K")).toBe(true);
+    expect(__test_validateHeadingWindowPrimaryStatementShape(stmt, "10-K")).toBe(true);
+  });
+
+  it("accepts bank income statement shape in primary validation (10-K)", () => {
+    const stmt = makeStatement(
+      "income-statement",
+      [
+        "Interest income",
+        "Interest expense",
+        "Net interest income",
+        "Provision for credit losses",
+        "Noninterest income",
+        "Income before income taxes",
+        "Net income",
+      ],
+      ["p1", "p2", "p3"]
+    );
+    expect(__test_isLikelyBankIncomeStatementShape(stmt.rows.map((r) => r.label).join("\n"))).toBe(true);
+    expect(__test_validateSinglePrimaryStatementShape(stmt, "10-K")).toBe(true);
+  });
+
+  it("parses FilingSummary exhibit tables with all-table fallback", () => {
+    const html = densifyPrimaryFaceFixtureHtml(`
+      <html><body>
+        <p>CONSOLIDATED INCOME STATEMENTS</p>
+        <table>
+          <tr><td></td><td>2023</td><td>2022</td><td>2021</td></tr>
+          <tr><td>Revenues</td><td>64000</td><td>61000</td><td>58000</td></tr>
+          <tr><td>Cost of services</td><td>43000</td><td>41000</td><td>39000</td></tr>
+          <tr><td>Selling, general and administrative</td><td>10000</td><td>9500</td><td>9000</td></tr>
+          <tr><td>Operating income</td><td>11000</td><td>10500</td><td>10000</td></tr>
+          <tr><td>Income before income taxes</td><td>10500</td><td>10000</td><td>9500</td></tr>
+          <tr><td>Net income</td><td>8000</td><td>7600</td><td>7200</td></tr>
+        </table>
+      </body></html>
+    `);
+    const parsed = __test_parseFilingSummaryReportDirectTable(html, {
+      kind: "is",
+      form: "10-K",
+      primaryDocument: "R5.htm",
+    });
+    expect(parsed?.rows.length).toBeGreaterThanOrEqual(4);
+    expect(parsed?.id).toBe("income-statement");
+    expect(
+      __test_validateSinglePrimaryStatementShape(parsed!, "10-K") ||
+        __test_validateHeadingWindowPrimaryStatementShape(parsed!, "10-K")
+    ).toBe(true);
   });
 });

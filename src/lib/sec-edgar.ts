@@ -164,6 +164,12 @@ export async function getCikFromTicker(ticker: string): Promise<string | null> {
       }
     }
   }
+
+  if (/^\d+$/.test(trimmed)) {
+    const asCik = normalizeCikInput(trimmed);
+    if (asCik) return asCik;
+  }
+
   return null;
 }
 

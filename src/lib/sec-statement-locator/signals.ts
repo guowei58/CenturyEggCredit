@@ -32,15 +32,22 @@ export const POSITIVE_HEADINGS: Record<StatementKind, RegExp[]> = {
 export const POSITIVE_ROW_ANCHORS: Record<StatementKind, RegExp[]> = {
   is: [
     /\b(?:net\s+)?revenues?\b/i,
+    /\btotal\s+revenues?\b/i,
     /\bnet\s+sales\b/i,
+    /\bcontract\s+revenues?\b/i,
     /\bcost\s+of\s+(?:revenue|sales)\b/i,
+    /\boperating\s+costs?\s+and\s+expenses\b/i,
     /\bgross\s+profit\b/i,
     /\boperating\s+(?:income|loss)\b/i,
+    /\bincome\s+from\s+operations\b/i,
     /\binterest\s+expense\b/i,
     /\bincome\s+tax\s+expense\b/i,
     /\bnet\s+(?:income|loss)\b/i,
+    /\bconsolidated\s+net\s+income\b/i,
     /\bearnings\s+per\s+share\b/i,
     /\bweighted\s+average\s+shares\b/i,
+    /\binterest\s+income\b/i,
+    /\bnet\s+interest\s+income\b/i,
   ],
   bs: [
     /\bassets\b/i,
@@ -113,6 +120,12 @@ export const ITEM8_START_PATTERNS: RegExp[] = [
  */
 export const TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START = 42_000;
 
+/** Minimum Item 1 section length before accepting a 10-Q anchor. */
+export const TEN_Q_MIN_SECTION_CHARS = 5_000;
+
+/** Preferred maximum span between the three primary 10-Q statement blocks. */
+export const TEN_Q_TIGHT_CLUSTER_SPAN = 25_000;
+
 /** Bonus band: tables within this distance from Item 1 start are strongly preferred on 10-Q. */
 export const TEN_Q_PRIMARY_FACE_STRONG_EARLY_CHARS = 14_000;
 
@@ -120,6 +133,7 @@ export const TEN_Q_PRIMARY_FACE_STRONG_EARLY_CHARS = 14_000;
 /** Equity rollforward / stockholders' equity tables mistaken for income statements on 10-Q. */
 export const IS_EQUITY_ROLLFORWARD_PATTERNS: RegExp[] = [
   /\bbalance\s+as\s+of\b/i,
+  /\bbalance\s+at\b/i,
   /\bother\s+comprehensive\s+income\b/i,
   /\brepurchases?\s+of\s+common\s+stock\b/i,
   /\bshares\s+withheld\s+for\s+taxes\b/i,
@@ -144,7 +158,98 @@ export const TEN_Q_FOOTNOTE_TABLE_PATTERNS: RegExp[] = [
 export const NOTES_HEADING_PATTERNS: RegExp[] = [
   /\bnotes\s+to\s+(?:the\s+)?(?:unaudited\s+)?(?:condensed\s+)?consolidated\s+financial\s+statements\b/gi,
   /\bnotes\s+to\s+(?:the\s+)?consolidated\s+financial\s+statements\b/gi,
+  /\bnotes\s+to\s+(?:the\s+)?financial\s+statements\b/gi,
+  /\bnotes\s+to\s+(?:the\s+)?interim\s+financial\s+statements\b/gi,
 ];
+
+const NOTES_HEADING_SCAN_PATTERNS: RegExp[] = [
+  ...NOTES_HEADING_PATTERNS,
+  /\bnotes\s+to\s+unaudited\s+condensed\s+consolidated\s+financial\s+statements\b/gi,
+];
+
+function collectPatternMatchesFrom(acc: string, patterns: RegExp[], minIndex: number, maxIndex?: number): number[] {
+  const hits: number[] = [];
+  for (const pattern of patterns) {
+    const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+    const re = new RegExp(pattern.source, flags);
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(acc)) !== null) {
+      if (m.index < minIndex) continue;
+      if (maxIndex != null && m.index >= maxIndex) break;
+      hits.push(m.index);
+    }
+  }
+  return hits.sort((a, b) => a - b);
+}
+
+/** Earliest real notes umbrella heading (filters face-table footers and TOC index lines). */
+export function findFilteredNotesToFinancialStatementsStart(
+  acc: string,
+  minIndex: number,
+  maxIndex?: number
+): number | null {
+  const hits = collectPatternMatchesFrom(acc, NOTES_HEADING_SCAN_PATTERNS, minIndex, maxIndex).filter(
+    (offset) =>
+      !isLikelyFaceStatementFooterNotesReference(acc, offset) &&
+      !isLikelyStatementIndexListingHit(acc, offset)
+  );
+  return hits[0] ?? null;
+}
+
+/** First numbered Note 1 heading after `minIndex` (often immediately after the notes umbrella). */
+export function findFirstNumberedNoteOneStart(
+  acc: string,
+  minIndex: number,
+  maxIndex?: number
+): number | null {
+  const hits = collectPatternMatchesFrom(acc, [/\bnote\s+1\b[\s\.\u2014\u2013\-–:]/gi], minIndex, maxIndex).filter(
+    (offset) => !isLikelyStatementIndexListingHit(acc, offset)
+  );
+  return hits[0] ?? null;
+}
+
+/**
+ * Exclusive end offset for primary face table scans — tables sit immediately before this point.
+ * Prefers umbrella "Notes to … Financial Statements", then numbered Note 1.
+ */
+export function findPrimaryFaceTablesEndBeforeNotes(
+  acc: string,
+  sectionStart: number,
+  sectionEnd: number,
+  notesSearchMin?: number
+): number {
+  const searchMin = Math.max(sectionStart + 800, notesSearchMin ?? sectionStart + 800);
+  const umbrella = findFilteredNotesToFinancialStatementsStart(acc, searchMin, sectionEnd);
+  if (umbrella != null) return umbrella;
+  const note1 = findFirstNumberedNoteOneStart(acc, searchMin, sectionEnd);
+  if (note1 != null) return note1;
+  return sectionEnd;
+}
+
+/** Part I index / TOC lines ("… (unaudited) 8", statement name + page number). */
+export function isLikelyStatementIndexListingHit(acc: string, offset: number): boolean {
+  const line = acc.slice(offset, Math.min(acc.length, offset + 280));
+  const window = line.toLowerCase();
+  if (/\(\s*unaudited\s*\)\s*\d{1,3}\b/.test(window)) return true;
+  if (/\bnotes\s+to\b[^.]{0,140}\.\s*\d{1,3}\s+item\s+1\b/.test(window)) return true;
+  if (/\bnotes\s+to\b[^.]{0,140}\(\s*unaudited\s*\)\s*\d{1,3}\b/.test(window)) return true;
+  if (/\b\d{1,3}\s+item\s+2\b/.test(window)) return true;
+  return false;
+}
+
+/** Face-table footer cross-refs ("See accompanying notes to…") — not the Item 1 notes section. */
+export function isLikelyFaceStatementFooterNotesReference(acc: string, offset: number): boolean {
+  const window = acc.slice(Math.max(0, offset - 220), Math.min(acc.length, offset + 320)).toLowerCase();
+  if (/\bsee\s+(?:accompanying\s+)?notes\s+to\b/.test(window)) return true;
+  if (/\bsee\s+notes\s+to\b/.test(window)) return true;
+  if (/\bnotes\s+to\b[^.]{0,120}\b(?:are\s+an?\s+)?integral\s+part\b/.test(window)) return true;
+  if (/\btotal\s+liabilit(?:y|ies)\s+and\s+(?:stockholders|shareholders)/.test(window)) return true;
+  if (/\bearnings\s+per\s+share\b/.test(window) && /\bdiluted\b/.test(window)) return true;
+  if (/\bitem\s+1\b.*\bcontinued\b/.test(window)) return true;
+  if (/\bback\s+to\s+contents\b/.test(window)) return true;
+  if (/\bform\s+10-q\b/.test(window)) return true;
+  return false;
+}
 
 export function countPatternHits(text: string, patterns: RegExp[]): number {
   let hits = 0;

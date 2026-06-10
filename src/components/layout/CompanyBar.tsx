@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatWorkspaceBadge } from "@/lib/company-workspace-key";
 import { useSession } from "next-auth/react";
 import {
   aiChatShowsUnreadNavDot,
@@ -183,7 +184,7 @@ export function CompanyBar({
             className="inline-flex shrink-0 items-center justify-center rounded-md px-2.5 py-1.5 font-mono text-xs font-bold tracking-wide text-black sm:text-sm"
             style={{ background: "var(--accent)" }}
           >
-            {data.ticker}
+            {formatWorkspaceBadge(data.ticker)}
           </span>
           <div
             className="min-w-0 text-base font-semibold leading-tight tracking-tight sm:text-lg"

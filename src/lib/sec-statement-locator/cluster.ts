@@ -1,7 +1,8 @@
 import type { FilingSectionBounds, LocatedPacket, NearMissPacket, RejectedCandidate, ScoredBlock, StatementKind } from "./types";
-import { TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START } from "./signals";
+import { isTenQEligibleForKindPool } from "./score";
+import { TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START, TEN_Q_TIGHT_CLUSTER_SPAN } from "./signals";
 
-const MAX_CLUSTER_SPAN_10Q = 45_000;
+const MAX_CLUSTER_SPAN_10Q = TEN_Q_TIGHT_CLUSTER_SPAN;
 const MAX_CLUSTER_SPAN_10K = 95_000;
 
 function maxClusterSpan(form: string): number {
@@ -26,8 +27,7 @@ function scorePacket(
     is.kindScores.is.score + bs.kindScores.bs.score + cf.kindScores.cf.score - clusterDistancePenalty(span);
 
   if (is.id === bs.id || is.id === cf.id || bs.id === cf.id) {
-    clusterScore -= 200;
-    reasons.push("duplicate_block_in_packet");
+    return { clusterScore: -1, span, reasons: ["duplicate_block_in_packet"] };
   }
 
   const maxSpan = maxClusterSpan(form);
@@ -57,6 +57,10 @@ function scorePacket(
   }
 
   if (form.includes("10-Q")) {
+    if (bs.startOffset <= is.startOffset && is.startOffset <= cf.startOffset) {
+      clusterScore += 35;
+      reasons.push("canonical_bs_is_cf_order");
+    }
     const earliest = Math.min(is.startOffset, bs.startOffset, cf.startOffset);
     const distFromItemStart = earliest - section.start;
     if (distFromItemStart <= 14_000) {
@@ -93,7 +97,10 @@ function sortKindCandidatesForForm(
       const labels = block.rowLabels.join("\n").toLowerCase();
       return (
         (/\b(?:net\s+)?revenues?\b/.test(labels) ? 30 : 0) +
+        (/\btotal\s+revenues?\b/.test(labels) ? 28 : 0) +
         (/\bgross\s+profit\b/.test(labels) ? 20 : 0) +
+        (/\boperating\s+costs?\s+and\s+expenses\b/.test(labels) ? 18 : 0) +
+        (/\bincome\s+from\s+operations\b/.test(labels) ? 12 : 0) +
         (/\boperating\s+(?:income|expenses)\b/.test(labels) ? 10 : 0)
       );
     };
@@ -136,6 +143,7 @@ function buildCandidatePools(
     const byKind: Record<StatementKind, ScoredBlock[]> = { is: [], bs: [], cf: [] };
     for (const block of source) {
       for (const kind of ["is", "bs", "cf"] as StatementKind[]) {
+        if (isTenQ && !isTenQEligibleForKindPool(block, kind)) continue;
         const ks = block.kindScores[kind];
         if (ks.score >= 35 && ks.penalties.length < 5) {
           byKind[kind].push(block);
@@ -159,12 +167,19 @@ function buildCandidatePools(
   return { pools: poolBlocks(blocks), usedEarlyWindowOnly: false };
 }
 
+function isViableTenQPacket(packet: LocatedPacket, section: FilingSectionBounds): boolean {
+  if (packet.clusterScore < 0) return false;
+  if (packet.span > TEN_Q_TIGHT_CLUSTER_SPAN) return false;
+  return [packet.is, packet.bs, packet.cf].every((block) => inTenQPrimaryWindow(block, section));
+}
+
 export function findBestStatementPacket(
   blocks: ScoredBlock[],
   section: FilingSectionBounds,
   form: string
 ): {
   packet: LocatedPacket | null;
+  alternates: LocatedPacket[];
   rejected: RejectedCandidate[];
   nearMisses: NearMissPacket[];
 } {
@@ -206,7 +221,7 @@ export function findBestStatementPacket(
       span: 0,
       reason: "missing_kind_candidate",
     });
-    return { packet: null, rejected, nearMisses };
+    return { packet: null, alternates: [], rejected, nearMisses };
   }
 
   const bsCandidates = sortKindCandidatesForForm(byKind.bs, "bs", form, section).slice(0, 6);
@@ -223,8 +238,11 @@ export function findBestStatementPacket(
   for (const is of isCandidates) {
     for (const bs of bsCandidates) {
       for (const cf of cfCandidates) {
+        if (is.id === bs.id || is.id === cf.id || bs.id === cf.id) continue;
         const { clusterScore, span, reasons } = scorePacket(is, bs, cf, form, section);
+        if (clusterScore < 0) continue;
         const packet: LocatedPacket = { is, bs, cf, clusterScore, span, reasons };
+        if (form.includes("10-Q") && !isViableTenQPacket(packet, section)) continue;
         considered.push({ packet, score: clusterScore });
         if (!best || clusterScore > best.clusterScore) best = packet;
       }
@@ -241,26 +259,10 @@ export function findBestStatementPacket(
     });
   }
 
-  if (best && form.includes("10-Q")) {
-    const pastWindow = [best.is, best.bs, best.cf].some(
-      (block) => !inTenQPrimaryWindow(block, section)
-    );
-    if (pastWindow) {
-      rejected.push({
-        blockId: best.is.id,
-        kind: "is",
-        score: best.clusterScore,
-        reason: "ten_q_packet_outside_primary_window",
-      });
-      nearMisses.push({
-        kinds: { is: best.is.id, bs: best.bs.id, cf: best.cf.id },
-        clusterScore: best.clusterScore,
-        span: best.span,
-        reason: "ten_q_packet_past_item1_face_tables",
-      });
-      return { packet: null, rejected, nearMisses };
-    }
-  }
+  const alternates = considered
+    .filter((entry) => entry.packet !== best)
+    .slice(0, 7)
+    .map((entry) => entry.packet);
 
   if (best) {
     const isFarFromAnchor =
@@ -279,7 +281,8 @@ export function findBestStatementPacket(
         span: best.span,
         reason: "is_far_from_bs_cf_anchor",
       });
-      return { packet: null, rejected, nearMisses };
+      const fallback = alternates[0] ?? null;
+      return { packet: fallback, alternates: alternates.slice(1), rejected, nearMisses };
     }
   }
 
@@ -290,13 +293,14 @@ export function findBestStatementPacket(
       span: best?.span ?? 0,
       reason: "cluster_score_below_floor",
     });
-    return { packet: null, rejected, nearMisses };
+    const fallback = alternates[0] ?? null;
+    return { packet: fallback, alternates: alternates.slice(1), rejected, nearMisses };
   }
 
   const sectionMid = section.start + (section.end - section.start) * 0.5;
   if (best.span > maxClusterSpan(form) * 1.2) {
     rejected.push({ blockId: best.is.id, kind: "is", score: best.clusterScore, reason: "packet_too_dispersed" });
-    return { packet: null, rejected, nearMisses };
+    return { packet: null, alternates, rejected, nearMisses };
   }
   if (best.is.startOffset > sectionMid + 40_000 && best.bs.startOffset < sectionMid) {
     nearMisses.push({
@@ -307,5 +311,5 @@ export function findBestStatementPacket(
     });
   }
 
-  return { packet: best, rejected, nearMisses };
+  return { packet: best, alternates, rejected, nearMisses };
 }

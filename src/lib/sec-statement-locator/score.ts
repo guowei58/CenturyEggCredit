@@ -120,12 +120,22 @@ function scoreBlockForKind(
   }
 
   if (kind === "is" && IS_EQUITY_ROLLFORWARD_PATTERNS.filter((re) => re.test(labelBlob)).length >= 2) {
-    score -= 150;
+    score -= 500;
     penalties.push("equity_rollforward_not_income_statement");
   }
 
   if (kind === "is") {
-    const hasRevenueCue = /\b(?:net\s+)?revenues?\b|\bnet\s+sales\b|\bgross\s+profit\b/i.test(labelBlob);
+    const headingLow = block.headingText.toLowerCase();
+    const hasOciHeading = /\b(?:statements?\s+of\s+)?comprehensive\s+(?:income|loss)\b/i.test(headingLow);
+    const hasOciRows = /\bother comprehensive income\b/i.test(labelBlob);
+    const hasRevenueCue =
+      /\b(?:net\s+)?revenues?\b|\bnet\s+sales\b|\btotal\s+revenues?\b|\bgross\s+profit\b|\boperating\s+costs?\s+and\s+expenses\b|\bcontract\s+revenues?\b/i.test(
+        labelBlob
+      );
+    if ((hasOciHeading || hasOciRows) && !hasRevenueCue) {
+      score -= 500;
+      penalties.push("oci_not_income_statement");
+    }
     if (hasRevenueCue) {
       score += 35;
       reasons.push("is_revenue_row_anchors");
@@ -170,6 +180,16 @@ export function scoreStatementBlocks(
       bestScore: viable ? kindScores[viable].score : bestScore,
     };
   });
+}
+
+export function isTenQEligibleForKindPool(block: ScoredBlock, kind: StatementKind): boolean {
+  const ks = block.kindScores[kind];
+  if (ks.score < 35 || ks.penalties.length >= 5) return false;
+  if (kind === "is") {
+    if (ks.penalties.includes("oci_not_income_statement")) return false;
+    if (ks.penalties.includes("equity_rollforward_not_income_statement")) return false;
+  }
+  return true;
 }
 
 export function pickBestBlockForKind(blocks: ScoredBlock[], kind: StatementKind, minScore = 35): ScoredBlock | null {

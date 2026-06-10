@@ -70,6 +70,8 @@ export type LocatorAudit = {
 export type LocatorResult = {
   section: FilingSectionBounds;
   packet: LocatedPacket | null;
+  /** Additional ranked packets (10-Q IS fallbacks share BS/CF). */
+  packetAlternates: LocatedPacket[];
   rejected: RejectedCandidate[];
   nearMisses: NearMissPacket[];
   audit: LocatorAudit;

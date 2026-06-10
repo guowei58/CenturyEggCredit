@@ -18,7 +18,19 @@ import {
   scoreShapeTemplateSimilarity,
   type PrimaryFaceShapeTemplates,
 } from "@/lib/sec-filing-financials-shape-templates";
-import { locatePrimaryStatementPacket, type LocatedPacket } from "@/lib/sec-statement-locator";
+import {
+  locateFinancialStatementsSection,
+  locatePrimaryStatementPacket,
+  type LocatedPacket,
+} from "@/lib/sec-statement-locator";
+import { tenQSectionHasFaceTrio } from "@/lib/sec-statement-locator/faceProof";
+import {
+  findFilteredNotesToFinancialStatementsStart,
+  findPrimaryFaceTablesEndBeforeNotes,
+  isLikelyFaceStatementFooterNotesReference,
+  isLikelyStatementIndexListingHit,
+  TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START,
+} from "@/lib/sec-statement-locator/signals";
 import { validateStatementPacket } from "@/lib/sec-statement-locator/validate";
 
 export type { PrimaryFaceShapeTemplate, PrimaryFaceShapeTemplates } from "@/lib/sec-filing-financials-shape-templates";
@@ -290,7 +302,7 @@ function parseHeadingAnchoredStatementTable(
         opts.sourceUrl,
         tableRange.start
       );
-      const validated = returnParsedPrimaryStatementIfValid(parsed, form);
+      const validated = returnParsedPrimaryStatementIfValidOrHeadingWindow(parsed, form);
       if (!validated) continue;
 
       const textSlice = normalizeSpace($table.text()).slice(0, 6_000);
@@ -317,31 +329,31 @@ function parseHeadingAnchoredStatementTable(
 function statementHeadingPatterns(kind: StatementKind): RegExp[] {
   if (kind === "bs") {
     return [
-      /condensed\s+consolidated\s+balance\s+sheets/i,
-      /consolidated\s+balance\s+sheets/i,
-      /condensed\s+consolidated\s+balance\s+sheet/i,
-      /consolidated\s+balance\s+sheet/i,
-      /condensed\s+consolidated\s+statements?\s+of\s+financial\s+position/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+balance\s+sheets?/i,
+      /consolidated\s+balance\s+sheets?/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+financial\s+position/i,
       /consolidated\s+statements?\s+of\s+financial\s+position/i,
     ];
   }
   if (kind === "is") {
     return [
-      /condensed\s+consolidated\s+income\s+statements?/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+income\s+statements?/i,
       /consolidated\s+income\s+statements?/i,
-      /condensed\s+consolidated\s+statements?\s+of\s+operations/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+operations/i,
       /consolidated\s+statements?\s+of\s+operations/i,
-      /condensed\s+consolidated\s+statements?\s+of\s+income/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+income/i,
       /consolidated\s+statements?\s+of\s+income/i,
-      /condensed\s+consolidated\s+statements?\s+of\s+earnings/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+earnings/i,
       /consolidated\s+statements?\s+of\s+earnings/i,
-      /condensed\s+consolidated\s+statements?\s+of\s+operations\s+and\s+comprehensive\s+(?:income|loss)/i,
+      /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+operations\s+and\s+comprehensive\s+(?:income|loss)/i,
       /consolidated\s+statements?\s+of\s+operations\s+and\s+comprehensive\s+(?:income|loss)/i,
     ];
   }
   return [
-    /condensed\s+consolidated\s+statements?\s+of\s+cash\s+flows/i,
-    /consolidated\s+statements?\s+of\s+cash\s+flows/i,
+    /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+cash\s+flows?/i,
+    /consolidated\s+statements?\s+of\s+cash\s+flows?/i,
+    /(?:condensed\s+consolidated|consolidated\s+condensed)\s+cash\s+flows?\s+statements?/i,
+    /consolidated\s+cash\s+flows?\s+statements?/i,
   ];
 }
 
@@ -534,6 +546,24 @@ function isLikelyEpsNoteTableText(text: string): boolean {
   return cues.filter((re) => re.test(normalized)).length >= 2;
 }
 
+/** Liability / deferred-revenue rollups in notes mis-tagged as income statements (CABO-style). */
+function isLikelyLiabilitiesScheduleMisclassifiedAsIncome(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  const liabilityHits = [
+    /\boperating\s+lease\s+liabilities\b/,
+    /\baccrued\s+compensation\b/,
+    /\bnoncurrent\s+liabilities\b/,
+    /\bdeferred\s+revenue\b/,
+    /\ball\s+other\s+noncurrent\s+liabilities\b/,
+  ].filter((re) => re.test(t)).length;
+  if (liabilityHits < 2) return false;
+  return (
+    !primaryFaceOperatingRevenueCue(t) &&
+    !/\b(?:costs?\s+and\s+expenses|operating\s+income|income\s+from\s+operations|gross\s+profit)\b/.test(t)
+  );
+}
+
 function isLikelyRevenueDisaggregationTableText(text: string): boolean {
   const normalized = normalizeSpace(text).toLowerCase();
   if (!normalized) return false;
@@ -545,7 +575,38 @@ function isLikelyRevenueDisaggregationTableText(text: string): boolean {
     /\btotal revenues\b/,
   ];
   const periodCues = [/\blocal media\b/, /\btennis\b/, /\beliminations\b/, /\bother(?: & corporate)?\b/, /\bconsolidated\b/];
-  return rowCues.filter((re) => re.test(normalized)).length >= 3 && periodCues.filter((re) => re.test(normalized)).length >= 2;
+  if (rowCues.filter((re) => re.test(normalized)).length >= 3 && periodCues.filter((re) => re.test(normalized)).length >= 2) {
+    return true;
+  }
+
+  const hasTotalRevenue = /\btotal\s+revenues?\b/.test(normalized);
+  if (!hasTotalRevenue) return false;
+  const hasFullIncomeStatementStack =
+    /\b(?:costs?\s+and\s+expenses|operating\s+income|income\s+from\s+operations|gross\s+profit|consolidated\s+net\s+income)\b/.test(
+      normalized
+    ) ||
+    (/\bnet\s+income\b/.test(normalized) &&
+      /\b(?:costs?\s+and\s+expenses|operating\s+expenses|depreciation\s+and\s+amortization)\b/.test(normalized));
+  if (hasFullIncomeStatementStack) return false;
+
+  const cableServiceLineHits = [
+    /\bdata\b/,
+    /\bvideo\b/,
+    /\bvoice\b/,
+    /\bbusiness\s+services\b/,
+    /\bresidential\b/,
+    /\bcommercial\b/,
+  ].filter((re) => re.test(normalized)).length;
+  if (cableServiceLineHits >= 2) return true;
+
+  if (
+    /\b(?:franchise|regulatory)\s+(?:and\s+other\s+)?fees\b/.test(normalized) &&
+    /\bdeferred\s+commission\b/.test(normalized)
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 /** Cash bridge / summarized cash-movement tables often mistaken for balance sheets when a $ Change column is present. */
@@ -740,8 +801,12 @@ function simpleStatementKindScore(text: string, kind: StatementKind): number {
     );
   }
   if (kind === "is") {
+    const hasOperatingRevenue =
+      (/\b(?:total\s+)?revenues?\b/.test(t) && !/\bdeferred\s+revenue\b/.test(t) && !/\bunearned\s+revenue\b/.test(t)) ||
+      /\bnet sales\b/.test(t) ||
+      /\boperating revenue\b/.test(t);
     return (
-      (/\b(total )?revenues?\b/.test(t) || /\bnet sales\b/.test(t) || /\boperating revenue\b/.test(t) ? 3 : 0) +
+      (hasOperatingRevenue ? 3 : 0) +
       (/\bnet income\b/.test(t) || /\bnet loss\b/.test(t) ? 3 : 0) +
       (/\boperating income\b/.test(t) || /\bgross profit\b/.test(t) ? 2 : 0)
     );
@@ -787,6 +852,10 @@ function isLikelyConsolidatedFinancialStatementsIndexTable(text: string): boolea
 function statementTableContentLooksLikePrimaryFace(text: string, kind: StatementKind): boolean {
   if (isLikelyStatementIndexTableText(text)) return false;
   if (kind === "is" && isLikelyPercentageOfRevenueIncomeTable(text)) return false;
+  if (kind === "is" && isLikelyEquityRollforwardIncomeTable(text)) return false;
+  if (kind === "cf" && isLikelyEquityRollforwardCashFlowTable(text)) return false;
+  if (kind === "is" && isLikelyRevenueDisaggregationTableText(text)) return false;
+  if (kind === "is" && isLikelyLiabilitiesScheduleMisclassifiedAsIncome(text)) return false;
   return simpleStatementKindScore(text, kind) >= MIN_STATEMENT_KIND_SCORE;
 }
 
@@ -1022,6 +1091,831 @@ function pickPrimaryFaceTablesFromCandidates(
   return picked;
 }
 
+function findHeadingTableCandidatesInSection(
+  $: cheerio.CheerioAPI,
+  acc: string,
+  tables: Array<{ el: Element; offset: number }>,
+  section: FilingSectionBounds,
+  kind: StatementKind,
+  form: string,
+  ceilingOverride?: number
+): Array<{ el: Element; offset: number }> {
+  const ceiling = ceilingOverride ?? primaryFaceTablePickCeiling(acc, section, form);
+  const scored: Array<{ table: { el: Element; offset: number }; score: number }> = [];
+
+  const headingHit = findHeadingTableInSection($, acc, tables, section, kind, form);
+  if (headingHit) scored.push({ table: headingHit.table, score: 10_000 });
+
+  for (const table of tables) {
+    if (table.offset < section.start || table.offset >= ceiling) continue;
+    if (!isPrimaryFaceTableCandidate($, table, kind)) continue;
+    const score = scoreTableCandidate($, acc, table, section, kind, form);
+    if (score < 35) continue;
+    scored.push({ table, score });
+  }
+
+  scored.sort((a, b) => b.score - a.score || a.table.offset - b.table.offset);
+  const out: Array<{ el: Element; offset: number }> = [];
+  const seen = new Set<number>();
+  for (const entry of scored) {
+    if (seen.has(entry.table.offset)) continue;
+    seen.add(entry.table.offset);
+    out.push(entry.table);
+  }
+  return out;
+}
+
+/** Standalone OCI / equity rollforward headings that bound the primary face window after IS/BS/CF titles. */
+const FOLLOW_ON_FACE_HEADING_PATTERNS: RegExp[] = [
+  /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+comprehensive\s+(?:income|loss)/i,
+  /consolidated\s+statements?\s+of\s+comprehensive\s+(?:income|loss)/i,
+  /\bstatements?\s+of\s+comprehensive\s+(?:income|loss)\b/i,
+  /(?:condensed\s+consolidated|consolidated\s+condensed)\s+statements?\s+of\s+(?:changes\s+in\s+)?(?:stockholders?|shareholders?)['']?\s+equity/i,
+  /consolidated\s+statements?\s+of\s+(?:changes\s+in\s+)?(?:stockholders?|shareholders?)['']?\s+equity/i,
+];
+
+function collectFaceBoundaryOffsetsAfter(
+  acc: string,
+  afterOffset: number,
+  sectionStart: number,
+  ceiling: number,
+  form: string
+): number[] {
+  const offsets: number[] = [];
+  for (const kind of ["bs", "is", "cf"] as StatementKind[]) {
+    let raw = collectMatches(acc, statementHeadingPatterns(kind), sectionStart);
+    if (kind === "cf") raw = dropPhantomCashFlowHeadingMatches(acc, raw);
+    offsets.push(
+      ...collapseNearbyHeadingOffsets(raw).filter(
+        (offset) => offset > afterOffset && offset < ceiling && isPrimaryFaceStatementHeading(acc, offset, form)
+      )
+    );
+  }
+  for (const re of FOLLOW_ON_FACE_HEADING_PATTERNS) {
+    offsets.push(...collectMatches(acc, [re], afterOffset + 1).filter((offset) => offset > afterOffset && offset < ceiling));
+  }
+  return offsets;
+}
+
+function resolveKindHeadingWindowBounds(
+  acc: string,
+  section: FilingSectionBounds,
+  kind: StatementKind,
+  form: string,
+  ceiling: number
+): { headingOffset: number; windowEnd: number } | null {
+  let raw = collectMatches(acc, statementHeadingPatterns(kind), section.start);
+  if (kind === "cf") raw = dropPhantomCashFlowHeadingMatches(acc, raw);
+  const kindHeadings = collapseNearbyHeadingOffsets(raw).filter(
+    (offset) => offset < ceiling && isPrimaryFaceStatementHeading(acc, offset, form)
+  );
+  if (kindHeadings.length === 0) return null;
+  const headingOffset = kindHeadings[0]!;
+  const boundaryOffsets = collectFaceBoundaryOffsetsAfter(acc, headingOffset, section.start, ceiling, form);
+  const windowEnd = boundaryOffsets.length > 0 ? Math.min(...boundaryOffsets) : ceiling;
+  return { headingOffset, windowEnd: Math.max(headingOffset + 200, windowEnd) };
+}
+
+function isLikelyBankBalanceSheetShape(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  if (isLikelyLeaseFootnoteBalanceSheetTable(t)) return false;
+  if (isLikelyParentheticalOrHeldForSaleBalanceSheetTable(t)) return false;
+  if (/\bparenthetical\b/.test(t)) return false;
+  const hasTotalAssets = /\btotal assets\b/.test(t) && !/\btotal assets held for sale\b/.test(t);
+  const hasBankAssetStack =
+    (/\b(?:total )?loans\b/.test(t) ||
+      /\btrading assets\b/.test(t) ||
+      /\bavailable[- ]for[- ]sale\b/.test(t) ||
+      /\bassets\b/.test(t)) &&
+    (/\bcash and (?:cash equivalents|due from)\b/.test(t) ||
+      /\bcash and due from banks\b/.test(t) ||
+      /\binterest bearing deposits in banks\b/.test(t));
+  const hasBankLiabilityStack =
+    /\btotal liabilities\b/.test(t) ||
+    (/\bdeposits\b/.test(t) &&
+      (/\bshort[- ]term borrowings\b/.test(t) ||
+        /\blong[- ]term debt\b/.test(t) ||
+        /\badvances\b/.test(t)));
+  const hasEquity = /\b(?:total )?(?:stockholders?|shareholders?)\s+equity\b/.test(t);
+  return (hasTotalAssets || hasBankAssetStack) && (hasBankLiabilityStack || hasEquity);
+}
+
+function isLikelyBankIncomeStatementShape(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  const hasInterestStack =
+    /\bnet interest income\b/.test(t) ||
+    (/\b(?:total )?interest income\b/.test(t) && /\b(?:total )?interest expense\b/.test(t)) ||
+    /\bprovision for (?:credit |loan )?losses\b/.test(t) ||
+    /\bnoninterest income\b/.test(t);
+  const hasBottomLine =
+    primaryFaceEarningsCue(t) ||
+    /\bincome before income taxes\b/.test(t) ||
+    /\bnet interest income after provision\b/.test(t);
+  return hasInterestStack && hasBottomLine;
+}
+
+function isLikelyComprehensiveIncomeStatementShape(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  if (isLikelyEquityRollforwardIncomeTable(t)) return false;
+  if (isLikelyOtherComprehensiveIncomeOnlyTable(t)) return false;
+  const hasEarnings = /\bnet (?:income|loss)\b/.test(t);
+  const hasOperatingStack =
+    primaryFaceOperatingRevenueCue(t) ||
+    /\b(?:total\s+)?(?:revenues?|sales)\b/.test(t) ||
+    /\boperating (?:income|loss|expenses)\b/.test(t) ||
+    /\bcomprehensive (?:income|loss)\b/.test(t);
+  return hasEarnings && hasOperatingStack && !isLikelyConsolidatedFinancialStatementsIndexTable(t);
+}
+
+/** DUOL-style combined operations + comprehensive loss on a single face table. */
+function isLikelyCombinedOperationsAndComprehensiveLossShape(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  if (isLikelyEquityRollforwardIncomeTable(t)) return false;
+  if (isLikelyOtherComprehensiveIncomeOnlyTable(t)) return false;
+  const hasOps =
+    primaryFaceOperatingRevenueCue(t) ||
+    /\b(?:total\s+)?(?:revenues?|sales)\b/.test(t) ||
+    /\boperating (?:income|loss|expenses)\b/.test(t) ||
+    /\bcost of (?:revenues?|sales)\b/.test(t);
+  const hasComprehensive =
+    /\b(?:other\s+)?comprehensive (?:income|loss)\b/.test(t) ||
+    /\bcomprehensive (?:income|loss)\b/.test(t);
+  const hasEarnings = primaryFaceEarningsCue(t) || /\bnet (?:income|loss)\b/.test(t);
+  return hasOps && hasComprehensive && hasEarnings && !isLikelyConsolidatedFinancialStatementsIndexTable(t);
+}
+
+/** Face IS tables are usually revenue+profit stacks or net income with basic/diluted EPS rows. */
+function isLikelyFaceIncomeStatementByEpsOrProfitStack(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  if (isLikelyOtherComprehensiveIncomeOnlyTable(t)) return false;
+  if (isLikelyEquityRollforwardIncomeTable(t)) return false;
+  if (isLikelyEpsNoteTableText(t)) return false;
+  if (isLikelyConsolidatedFinancialStatementsIndexTable(t)) return false;
+  const hasProfitLine = primaryFaceEarningsCue(t);
+  const hasEps =
+    /\bearnings per (?:common )?share\b/.test(t) ||
+    (/\b(?:basic|diluted)\b/.test(t) && /\bper (?:common )?share\b/.test(t));
+  const hasRevenueStack =
+    primaryFaceOperatingRevenueCue(t) ||
+    /\b(?:total )?(?:revenues?|sales)\b/.test(t) ||
+    /\bgross profit\b/.test(t) ||
+    /\b(?:cost of (?:revenues?|sales)|cost of goods sold)\b/.test(t);
+  return hasProfitLine && (hasEps || hasRevenueStack);
+}
+
+function isLikelyHeadingWindowSubstantiveTable(
+  $: cheerio.CheerioAPI,
+  table: { el: Element },
+  kind: StatementKind
+): boolean {
+  const text = normalizeSpace($(table.el).text()).slice(0, 6_000);
+  if (isLikelyConsolidatedFinancialStatementsIndexTable(text)) return false;
+  if (isLikelyStatementIndexTableText(text)) return false;
+  if (kind === "is" && isLikelyEquityRollforwardIncomeTable(text)) return false;
+  if (kind === "cf" && isLikelyEquityRollforwardCashFlowTable(text)) return false;
+  return statementTableMeetsMinNumericDensity($, table, kind);
+}
+
+function validateHeadingWindowPrimaryStatementShape(stmt: FilingHtmlStatement, form: string): boolean {
+  if (stmt.rows.length < 4) return false;
+  if (stmt.periods.length < expectedMinPeriodsForStatement(stmt.id, form.toUpperCase())) return false;
+  if (isLikelyDegeneratePrimaryFaceTable(stmt)) return false;
+
+  const labelsShallow = primaryFaceLabelLinesForCue(stmt, 16);
+  const labelsDeep = primaryFaceLabelLinesForCue(stmt, 28);
+
+  if (stmt.id === "income-statement") {
+    if (validateSinglePrimaryStatementShape(stmt, form)) return true;
+    const labelsBank = primaryFaceLabelLinesForCue(stmt, 45);
+    if (isLikelyBankIncomeStatementShape(labelsBank)) return true;
+    if (isLikelyComprehensiveIncomeStatementShape(labelsDeep)) return true;
+    const labelsCombined = primaryFaceLabelLinesForCue(stmt, 50);
+    if (isLikelyCombinedOperationsAndComprehensiveLossShape(labelsCombined)) return true;
+    const labelsEps = primaryFaceLabelLinesForCue(stmt, 50);
+    if (isLikelyFaceIncomeStatementByEpsOrProfitStack(labelsEps)) return true;
+    if (isLikelyEquityRollforwardIncomeTable(labelsDeep)) return false;
+    if (isLikelyConsolidatedFinancialStatementsIndexTable(labelsDeep)) return false;
+    return (
+      primaryFaceOperatingRevenueCue(labelsDeep) &&
+      primaryFaceEarningsCue(labelsDeep) &&
+      stmt.rows.length >= 6
+    );
+  }
+
+  if (stmt.id === "balance-sheet") {
+    if (validateSinglePrimaryStatementShape(stmt, form)) return true;
+    const labelsBank = primaryFaceLabelLinesForCue(stmt, 55);
+    if (isLikelyBankBalanceSheetShape(labelsBank)) return true;
+    if (isLikelyLeaseFootnoteBalanceSheetTable(labelsShallow)) return false;
+    if (isLikelyParentheticalOrHeldForSaleBalanceSheetTable(labelsShallow)) return false;
+    if (
+      /\btotal liabilities\b/.test(labelsShallow) &&
+      /\b(?:stockholders?|shareholders?)\s+equity\b/.test(labelsShallow)
+    ) {
+      return true;
+    }
+    if (/\bcash and cash equivalents\b/.test(labelsShallow) && /\b(?:total )?loans\b/.test(labelsShallow)) {
+      return true;
+    }
+    return false;
+  }
+
+  if (stmt.id === "cash-flow") {
+    return cashFlowShapeLooksValid(labelsShallow, primaryFaceLabelLinesForCue(stmt, 40));
+  }
+
+  return false;
+}
+
+function returnParsedHeadingWindowStatementIfValid(
+  parsed: FilingHtmlStatement | null,
+  form: string
+): FilingHtmlStatement | null {
+  if (!parsed || isLikelyDegeneratePrimaryFaceTable(parsed)) return null;
+  return validateHeadingWindowPrimaryStatementShape(parsed, form) ? parsed : null;
+}
+
+function returnParsedPrimaryStatementIfValidOrHeadingWindow(
+  parsed: FilingHtmlStatement | null,
+  form: string
+): FilingHtmlStatement | null {
+  return returnParsedPrimaryStatementIfValid(parsed, form) ?? returnParsedHeadingWindowStatementIfValid(parsed, form);
+}
+
+function sourceStatementPassesMergeGate(stmt: FilingHtmlStatement, form: string): boolean {
+  return (
+    validateSinglePrimaryStatementShape(stmt, form) || validateHeadingWindowPrimaryStatementShape(stmt, form)
+  );
+}
+
+function pickFirstSubstantiveTableAfterKindHeading(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  kind: StatementKind,
+  id: FilingHtmlStatement["id"],
+  form: string,
+  opts: PrimaryStatementParseOptions,
+  ceilingOverride?: number
+): FilingHtmlStatement | null {
+  const ceiling = ceilingOverride ?? primaryFaceTablePickCeiling(ctx.acc, section, form);
+  const window = resolveKindHeadingWindowBounds(ctx.acc, section, kind, form, ceiling);
+  if (!window) return null;
+
+  const tablesInWindow = ctx.tables
+    .filter(
+      (t) =>
+        t.offset >= Math.max(section.start, window.headingOffset) &&
+        t.offset < window.windowEnd &&
+        t.offset - window.headingOffset < 40_000
+    )
+    .filter((t) => isLikelyHeadingWindowSubstantiveTable(ctx.$, t, kind))
+    .sort((a, b) => a.offset - b.offset);
+
+  for (const table of tablesInWindow) {
+    const unitsHint = extractUnitsFromText(
+      ctx.acc.slice(Math.max(section.start, table.offset - 500), table.offset)
+    );
+    const parsed = returnParsedHeadingWindowStatementIfValid(
+      parsePrimaryStatementTable(
+        ctx.$,
+        ctx.$(table.el),
+        kind,
+        unitsHint,
+        opts.primaryDocument,
+        opts.sourceUrl,
+        table.offset
+      ),
+      form
+    );
+    if (parsed) return { ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) };
+  }
+  return null;
+}
+
+function parseStatementTableAtOffset(
+  ctx: ParsedFilingHtmlContext,
+  table: { el: Element; offset: number },
+  kind: StatementKind,
+  form: string,
+  opts: { primaryDocument?: string; sourceUrl?: string },
+  sectionStart = 0
+): FilingHtmlStatement | null {
+  const unitsHint = extractUnitsFromText(
+    ctx.acc.slice(Math.max(sectionStart, table.offset - 500), table.offset)
+  );
+  return returnParsedPrimaryStatementIfValidOrHeadingWindow(
+    parsePrimaryStatementTable(
+      ctx.$,
+      ctx.$(table.el),
+      kind,
+      unitsHint,
+      opts.primaryDocument,
+      opts.sourceUrl,
+      table.offset
+    ),
+    form
+  );
+}
+
+function postNotesIncomeStatementRescanWindows(
+  acc: string,
+  section: FilingSectionBounds,
+  form: string
+): FilingSectionBounds[] {
+  const notesStart = findFilteredNotesToFinancialStatementsStart(
+    acc,
+    Math.max(section.start + 800, 1_800),
+    section.end
+  );
+  if (notesStart == null) return [];
+
+  const windows: FilingSectionBounds[] = [];
+  let cfRaw = collectMatches(acc, statementHeadingPatterns("cf"), section.start);
+  cfRaw = dropPhantomCashFlowHeadingMatches(acc, cfRaw);
+  const cfBeforeNotes = collapseNearbyHeadingOffsets(cfRaw).filter(
+    (offset) => offset < notesStart && isPrimaryFaceStatementHeading(acc, offset, form)
+  );
+  if (cfBeforeNotes.length > 0) {
+    windows.push({ start: cfBeforeNotes[cfBeforeNotes.length - 1]!, end: notesStart });
+  }
+  windows.push({ start: notesStart, end: Math.min(section.end, notesStart + 120_000) });
+  return windows;
+}
+
+function pickBestIncomeStatementTableInWindow(
+  ctx: ParsedFilingHtmlContext,
+  window: FilingSectionBounds,
+  form: string,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement | null {
+  const tablesInWindow = ctx.tables
+    .filter((t) => t.offset >= window.start && t.offset < window.end)
+    .filter((t) => isLikelyHeadingWindowSubstantiveTable(ctx.$, t, "is"))
+    .sort((a, b) => a.offset - b.offset);
+
+  for (const table of tablesInWindow) {
+    const parsed = parseStatementTableAtOffset(ctx, table, "is", form, opts, window.start);
+    if (parsed) {
+      return { ...parsed, id: "income-statement", title: tableTitle("is"), role: tableTitle("is") };
+    }
+  }
+
+  let best: { table: { el: Element; offset: number }; score: number } | null = null;
+  for (const table of tablesInWindow) {
+    const score = scoreTableCandidate(ctx.$, ctx.acc, table, window, "is", form, opts.shapeTemplates);
+    if (score < 15) continue;
+    if (!best || score > best.score || (score === best.score && table.offset < best.table.offset)) {
+      best = { table, score };
+    }
+  }
+  if (!best) return null;
+  const parsed = parseStatementTableAtOffset(ctx, best.table, "is", form, opts, window.start);
+  if (!parsed) return null;
+  return { ...parsed, id: "income-statement", title: tableTitle("is"), role: tableTitle("is") };
+}
+
+function pickIncomeStatementPastNotesWhenPeersValid(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  form: string,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement | null {
+  for (const window of postNotesIncomeStatementRescanWindows(ctx.acc, section, form)) {
+    const picked = pickBestIncomeStatementTableInWindow(ctx, window, form, opts);
+    if (picked) return picked;
+  }
+  return null;
+}
+
+function isHeadingWindowIncomeStatementStub(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  form: string
+): boolean {
+  const ceiling = primaryFaceTablePickCeiling(ctx.acc, section, form);
+  const window = resolveKindHeadingWindowBounds(ctx.acc, section, "is", form, ceiling);
+  if (!window) return false;
+
+  const tablesInWindow = ctx.tables
+    .filter(
+      (t) =>
+        t.offset >= Math.max(section.start, window.headingOffset) &&
+        t.offset < window.windowEnd
+    )
+    .sort((a, b) => a.offset - b.offset)
+    .slice(0, 3);
+
+  if (tablesInWindow.length === 0) return false;
+  let sawSubstantiveCandidate = false;
+  for (const table of tablesInWindow) {
+    const text = normalizeSpace(ctx.$(table.el).text()).slice(0, 4_000).toLowerCase();
+    if (/see accompanying notes/i.test(text)) return true;
+    const parsed = parsePrimaryStatementTable(ctx.$, ctx.$(table.el), "is", undefined, undefined, undefined, table.offset);
+    if (!parsed) continue;
+    if (isLikelyDegeneratePrimaryFaceTable(parsed)) return true;
+    if (sourceStatementPassesMergeGate(parsed, form)) {
+      sawSubstantiveCandidate = true;
+      break;
+    }
+  }
+  return !sawSubstantiveCandidate && tablesInWindow.length > 0;
+}
+
+function pickIncomeStatementBetweenPeerTables(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  form: string,
+  opts: PrimaryStatementParseOptions,
+  peers: FilingHtmlStatement[]
+): FilingHtmlStatement | null {
+  const offsets = peers
+    .filter((stmt) => stmt.id === "balance-sheet" || stmt.id === "cash-flow")
+    .map((stmt) => stmt.sourceTableOffset)
+    .filter((offset): offset is number => typeof offset === "number" && offset >= 0);
+  if (offsets.length < 2) return null;
+
+  const window: FilingSectionBounds = {
+    start: Math.max(section.start, Math.min(...offsets) - 2_500),
+    end: Math.min(section.end, Math.max(...offsets) + 45_000),
+  };
+  return pickBestIncomeStatementTableInWindow(ctx, window, form, opts);
+}
+
+function shouldRunPostNotesIncomeStatementRescan(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  form: string,
+  peerIds: Set<FilingHtmlStatement["id"]>
+): boolean {
+  if (peerIds.size >= 2) return true;
+  if (peerIds.size === 0) return false;
+  if (isHeadingWindowIncomeStatementStub(ctx, section, form)) return true;
+  return (
+    findFilteredNotesToFinancialStatementsStart(
+      ctx.acc,
+      Math.max(section.start + 800, 1_800),
+      section.end
+    ) != null
+  );
+}
+
+function findEmbeddedFaceStatementsSectionBounds(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): FilingSectionBounds | null {
+  if (!form.includes("10-Q")) return null;
+
+  const headingOffsets: number[] = [];
+  for (const kind of ["bs", "is", "cf"] as StatementKind[]) {
+    let raw = collectMatches(ctx.acc, statementHeadingPatterns(kind), 0);
+    if (kind === "cf") raw = dropPhantomCashFlowHeadingMatches(ctx.acc, raw);
+    headingOffsets.push(
+      ...collapseNearbyHeadingOffsets(raw).filter((offset) =>
+        isPrimaryFaceStatementHeading(ctx.acc, offset, form)
+      )
+    );
+  }
+  const tocEnd = collectMatches(ctx.acc, [/item\s+1\.\s+financial\s+statements/i], 0)
+    .map((offset) => offset + 1_500)
+    .sort((a, b) => b - a)[0];
+  const filteredHeadings = headingOffsets.filter((offset) => offset > (tocEnd ?? 3_000));
+  if (filteredHeadings.length < 2) return null;
+
+  const start = Math.max(0, Math.min(...filteredHeadings) - 800);
+  const scanEnd = Math.min(ctx.acc.length, start + TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START);
+  const preview = ctx.acc.slice(start, scanEnd);
+  const cues = tenQStatementHeadingPreviewCues(preview);
+  const hasFaceEvidence =
+    (cues.hasIs && cues.hasBs && cues.hasCf) ||
+    ((cues.hasIs || cues.hasBs || cues.hasCf) && filteredHeadings.length >= 2) ||
+    tenQSectionHasFaceTrio(ctx.$, ctx.tables, start, scanEnd) ||
+    (/\bbalance\s+sheets?\b/i.test(preview) &&
+      /\bstatements?\s+of\s+(?:operations|income|cash\s+flows?)\b/i.test(preview));
+  if (!hasFaceEvidence) return null;
+
+  const sectionEnd = findSectionEnd(ctx.acc, form, start);
+  const end = Math.max(sectionEnd, scanEnd);
+  if (end <= start + TEN_Q_MIN_SECTION_CHARS) return null;
+  return { start, end: Math.min(end, ctx.acc.length) };
+}
+
+function salvageMissingPrimaryStatementsFromHtml(
+  ctx: ParsedFilingHtmlContext,
+  statements: FilingHtmlStatement[],
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement[] {
+  const form = opts.form.toUpperCase();
+  if (primaryStatementsShapeValid(statements, form)) return statements;
+
+  const kindMap: Array<{ id: FilingHtmlStatement["id"]; kind: StatementKind }> = [
+    { id: "income-statement", kind: "is" },
+    { id: "balance-sheet", kind: "bs" },
+    { id: "cash-flow", kind: "cf" },
+  ];
+  const section = resolveFinancialStatementsSectionBounds(ctx, form) ?? {
+    start: 0,
+    end: ctx.acc.length,
+  };
+  const salvaged = [...statements];
+
+  for (const { id, kind } of kindMap) {
+    const existing = salvaged.find((stmt) => stmt.id === id);
+    if (existing && sourceStatementPassesMergeGate(existing, form)) continue;
+
+    const validPeers = salvaged.filter((stmt) => sourceStatementPassesMergeGate(stmt, form));
+    let stmt: FilingHtmlStatement | null = null;
+
+    if (kind === "is") {
+      const peerIds = new Set(validPeers.map((s) => s.id));
+      if (shouldRunPostNotesIncomeStatementRescan(ctx, section, form, peerIds)) {
+        stmt = pickIncomeStatementPastNotesWhenPeersValid(ctx, section, form, opts);
+      }
+      if (!stmt && validPeers.length >= 1) {
+        stmt = pickIncomeStatementBetweenPeerTables(ctx, section, form, opts, validPeers);
+      }
+    }
+
+    if (!stmt) {
+      stmt = pickFirstValidatedStatementFromSubstantiveTables(ctx, section, kind, form, opts);
+    }
+    if (!stmt) {
+      stmt = parseBestStatementTableFromContext(ctx, {
+        kind,
+        form,
+        primaryDocument: opts.primaryDocument,
+        sourceUrl: opts.sourceUrl,
+        shapeTemplates: opts.shapeTemplates,
+        ceilingOverride: section.end,
+      });
+    }
+
+    if (stmt && sourceStatementPassesMergeGate(stmt, form)) {
+      salvaged.push({ ...stmt, id, title: tableTitle(kind), role: tableTitle(kind) });
+    }
+  }
+
+  return mergeStatementsById(statements, salvaged, form);
+}
+
+function pickFirstValidatedStatementFromSubstantiveTables(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  kind: StatementKind,
+  form: string,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement | null {
+  const tables = ctx.tables
+    .filter((t) => t.offset >= section.start && t.offset < section.end)
+    .filter((t) => isLikelyHeadingWindowSubstantiveTable(ctx.$, t, kind))
+    .sort((a, b) => a.offset - b.offset);
+
+  for (const table of tables) {
+    const parsed = parseStatementTableAtOffset(ctx, table, kind, form, opts, section.start);
+    if (parsed && sourceStatementPassesMergeGate(parsed, form)) return parsed;
+  }
+
+  let best: { table: { el: Element; offset: number }; score: number } | null = null;
+  for (const table of tables) {
+    const score = scoreTableCandidate(
+      ctx.$,
+      ctx.acc,
+      table,
+      section,
+      kind,
+      form,
+      opts.shapeTemplates
+    );
+    if (score < 15) continue;
+    if (!best || score > best.score || (score === best.score && table.offset < best.table.offset)) {
+      best = { table, score };
+    }
+  }
+  if (!best) return null;
+  const parsed = parseStatementTableAtOffset(ctx, best.table, kind, form, opts, section.start);
+  if (parsed && sourceStatementPassesMergeGate(parsed, form)) return parsed;
+  return null;
+}
+
+function statementIdForKind(kind: StatementKind): FilingHtmlStatement["id"] {
+  return kind === "is" ? "income-statement" : kind === "bs" ? "balance-sheet" : "cash-flow";
+}
+
+function withStatementKindIdentity(stmt: FilingHtmlStatement, kind: StatementKind): FilingHtmlStatement {
+  const id = statementIdForKind(kind);
+  return { ...stmt, id, title: tableTitle(kind), role: tableTitle(kind) };
+}
+
+function parseFilingSummaryReportDirectTableFromContext(
+  ctx: ParsedFilingHtmlContext,
+  opts: {
+    kind: StatementKind;
+    form: string;
+    primaryDocument?: string;
+    sourceUrl?: string;
+    shapeTemplates?: PrimaryFaceShapeTemplates;
+  }
+): FilingHtmlStatement | null {
+  const formUpper = opts.form.toUpperCase();
+  const section: FilingSectionBounds = { start: 0, end: ctx.acc.length };
+  const substantive = ctx.tables.filter((t) => isLikelyHeadingWindowSubstantiveTable(ctx.$, t, opts.kind));
+
+  for (const table of substantive) {
+    const parsed = parseStatementTableAtOffset(ctx, table, opts.kind, formUpper, opts);
+    if (parsed) return withStatementKindIdentity(parsed, opts.kind);
+  }
+
+  let best: { table: { el: Element; offset: number }; score: number } | null = null;
+  for (const table of substantive) {
+    const score = scoreTableCandidate(
+      ctx.$,
+      ctx.acc,
+      table,
+      section,
+      opts.kind,
+      formUpper,
+      opts.shapeTemplates
+    );
+    if (score < 15) continue;
+    if (!best || score > best.score || (score === best.score && table.offset < best.table.offset)) {
+      best = { table, score };
+    }
+  }
+  if (best) {
+    const parsed = parseStatementTableAtOffset(ctx, best.table, opts.kind, formUpper, opts);
+    if (parsed) return withStatementKindIdentity(parsed, opts.kind);
+  }
+
+  let bestAny: { stmt: FilingHtmlStatement; score: number } | null = null;
+  for (const table of ctx.tables) {
+    const unitsHint = extractUnitsFromText(ctx.acc.slice(Math.max(0, table.offset - 500), table.offset));
+    const raw = parsePrimaryStatementTable(
+      ctx.$,
+      ctx.$(table.el),
+      opts.kind,
+      unitsHint,
+      opts.primaryDocument,
+      opts.sourceUrl,
+      table.offset
+    );
+    if (!raw) continue;
+    const candidate = withStatementKindIdentity(raw, opts.kind);
+    if (!sourceStatementPassesMergeGate(candidate, formUpper)) continue;
+    const score = scoreTableCandidate(
+      ctx.$,
+      ctx.acc,
+      table,
+      section,
+      opts.kind,
+      formUpper,
+      opts.shapeTemplates
+    );
+    if (!bestAny || score > bestAny.score || (score === bestAny.score && table.offset < (bestAny.stmt.sourceTableOffset ?? 0))) {
+      bestAny = { stmt: candidate, score };
+    }
+  }
+  return bestAny?.stmt ?? null;
+}
+
+function parseFilingSummaryReportDirectTable(
+  html: string,
+  opts: {
+    kind: StatementKind;
+    form: string;
+    primaryDocument?: string;
+    sourceUrl?: string;
+    shapeTemplates?: PrimaryFaceShapeTemplates;
+  }
+): FilingHtmlStatement | null {
+  const ctx = buildParsedFilingHtmlContext(html);
+  if (!ctx) return null;
+  return parseFilingSummaryReportDirectTableFromContext(ctx, opts);
+}
+
+function notesPrecedingFaceSectionBounds(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): FilingSectionBounds | null {
+  if (!form.includes("10-Q")) return null;
+  const notesStart = findFilteredNotesToFinancialStatementsStart(ctx.acc, 1_800, ctx.acc.length);
+  if (notesStart == null) return null;
+  const lookback = Math.max(1_800, notesStart - 90_000);
+  const scanEnd = Math.min(notesStart, lookback + TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START);
+  const preview = ctx.acc.slice(lookback, notesStart);
+  const cues = tenQStatementHeadingPreviewCues(preview);
+  const hasFaceEvidence =
+    (cues.hasIs && cues.hasBs && cues.hasCf) ||
+    tenQSectionHasFaceTrio(ctx.$, ctx.tables, lookback, scanEnd) ||
+    (/\bbalance\s+sheets?\b/i.test(preview) &&
+      /\bstatements?\s+of\s+(?:operations|income|cash\s+flows?)\b/i.test(preview));
+  if (!hasFaceEvidence) return null;
+  const end = findSectionEnd(ctx.acc, form, lookback);
+  if (end <= lookback + 2_000) return null;
+  return { start: lookback, end };
+}
+
+function parseStatementsFromNotesPrecedingFaceWindow(
+  ctx: ParsedFilingHtmlContext,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement[] {
+  const form = opts.form.toUpperCase();
+  const section = notesPrecedingFaceSectionBounds(ctx, form);
+  if (!section) return [];
+
+  const faceEnd = findPrimaryFaceTablesEndBeforeNotes(ctx.acc, section.start, section.end);
+  const window: FilingSectionBounds = { start: section.start, end: faceEnd };
+  const fromHeadings = parseStatementsFromHeadingAnchoredTables(ctx, window, opts);
+  if (fromHeadings.length >= 3 && primaryStatementsShapeValid(fromHeadings, form)) return fromHeadings;
+
+  const kinds: Array<{ kind: StatementKind; id: FilingHtmlStatement["id"] }> = [
+    { kind: "is", id: "income-statement" },
+    { kind: "bs", id: "balance-sheet" },
+    { kind: "cf", id: "cash-flow" },
+  ];
+  const tablesInWindow = ctx.tables.filter((t) => t.offset >= window.start && t.offset < window.end);
+  const picked = pickPrimaryFaceTablesFromCandidates(ctx, tablesInWindow, tablesInWindow.length, {
+    form,
+    section: window,
+    shapeTemplates: opts.shapeTemplates,
+  });
+  const statements: FilingHtmlStatement[] = [];
+  for (const { kind, id } of kinds) {
+    const table = picked[kind];
+    if (!table) continue;
+    const unitsHint = extractUnitsFromText(
+      ctx.acc.slice(Math.max(window.start, table.offset - 500), table.offset)
+    );
+    const parsed = returnParsedPrimaryStatementIfValid(
+      parsePrimaryStatementTable(
+        ctx.$,
+        ctx.$(table.el),
+        kind,
+        unitsHint,
+        opts.primaryDocument,
+        opts.sourceUrl,
+        table.offset
+      ),
+      form
+    );
+    if (parsed) statements.push({ ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) });
+  }
+  return statements;
+}
+
+function pickValidatedStatementFromHeadingCandidates(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  kind: StatementKind,
+  id: FilingHtmlStatement["id"],
+  form: string,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement | null {
+  const candidates = findHeadingTableCandidatesInSection(ctx.$, ctx.acc, ctx.tables, section, kind, form);
+  for (const table of candidates) {
+    const unitsHint = extractUnitsFromText(
+      ctx.acc.slice(Math.max(section.start, table.offset - 500), table.offset)
+    );
+    const parsed = parseStatementTableAtOffset(ctx, table, kind, form, opts, section.start);
+    if (parsed) return { ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) };
+  }
+  const fromHeadingWindow = pickFirstSubstantiveTableAfterKindHeading(ctx, section, kind, id, form, opts);
+  if (fromHeadingWindow) return fromHeadingWindow;
+
+  if (
+    kind === "is" &&
+    form.includes("10-Q") &&
+    shouldRunPostNotesIncomeStatementRescan(ctx, section, form, new Set())
+  ) {
+    return pickIncomeStatementPastNotesWhenPeersValid(ctx, section, form, opts);
+  }
+  return null;
+}
+
+function parseStatementsFromHeadingAnchoredTables(
+  ctx: ParsedFilingHtmlContext,
+  section: FilingSectionBounds,
+  opts: PrimaryStatementParseOptions
+): FilingHtmlStatement[] {
+  const form = opts.form.toUpperCase();
+  const kinds: Array<{ kind: StatementKind; id: FilingHtmlStatement["id"] }> = [
+    { kind: "is", id: "income-statement" },
+    { kind: "bs", id: "balance-sheet" },
+    { kind: "cf", id: "cash-flow" },
+  ];
+  const statements: FilingHtmlStatement[] = [];
+
+  for (const { kind, id } of kinds) {
+    const parsed = pickValidatedStatementFromHeadingCandidates(ctx, section, kind, id, form, opts);
+    if (parsed) statements.push(parsed);
+  }
+
+  return statements;
+}
+
 function parseStatementsFromLocatedPacket(
   ctx: ParsedFilingHtmlContext,
   packet: LocatedPacket,
@@ -1043,7 +1937,7 @@ function parseStatementsFromLocatedPacket(
       const unitsHint = extractUnitsFromText(
         ctx.acc.slice(Math.max(section.start, table.offset - 500), table.offset)
       );
-      const candidate = returnParsedPrimaryStatementIfValid(
+      const candidate = returnParsedPrimaryStatementIfValidOrHeadingWindow(
         parsePrimaryStatementTable(
           ctx.$,
           ctx.$(table.el),
@@ -1063,18 +1957,224 @@ function parseStatementsFromLocatedPacket(
   return statements;
 }
 
+function mergeBestValidatedPrimaryStatements(
+  ctx: ParsedFilingHtmlContext,
+  form: string,
+  opts: PrimaryStatementParseOptions,
+  sources: FilingHtmlStatement[][]
+): FilingHtmlStatement[] {
+  const kindMap: Array<{ id: FilingHtmlStatement["id"]; kind: StatementKind }> = [
+    { id: "income-statement", kind: "is" },
+    { id: "balance-sheet", kind: "bs" },
+    { id: "cash-flow", kind: "cf" },
+  ];
+  const merged: FilingHtmlStatement[] = [];
+
+  for (const { id, kind } of kindMap) {
+    let best: FilingHtmlStatement | null = null;
+    for (const stmts of sources) {
+      const candidate = stmts.find((stmt) => stmt.id === id);
+      if (!candidate || !sourceStatementPassesMergeGate(candidate, form)) continue;
+      best = candidate;
+      break;
+    }
+    if (!best) {
+      const fromTable = parseBestStatementTableFromContext(ctx, {
+        kind,
+        form,
+        primaryDocument: opts.primaryDocument,
+        sourceUrl: opts.sourceUrl,
+        shapeTemplates: opts.shapeTemplates,
+      });
+      if (fromTable && sourceStatementPassesMergeGate(fromTable, form)) best = fromTable;
+    }
+    if (!best) {
+      const sectionBounds = resolveFinancialStatementsSectionBounds(ctx, form);
+      if (sectionBounds) {
+        const fromHeadingWindow = pickFirstSubstantiveTableAfterKindHeading(
+          ctx,
+          sectionBounds,
+          kind,
+          id,
+          form,
+          opts
+        );
+        if (fromHeadingWindow) best = fromHeadingWindow;
+      }
+    }
+    if (!best && form.includes("10-Q")) {
+      const notesSection = notesPrecedingFaceSectionBounds(ctx, form);
+      if (notesSection) {
+        const faceEnd = findPrimaryFaceTablesEndBeforeNotes(ctx.acc, notesSection.start, notesSection.end);
+        const window: FilingSectionBounds = { start: notesSection.start, end: faceEnd };
+        const candidates = findHeadingTableCandidatesInSection(
+          ctx.$,
+          ctx.acc,
+          ctx.tables,
+          window,
+          kind,
+          form
+        );
+        for (const table of candidates) {
+          const unitsHint = extractUnitsFromText(
+            ctx.acc.slice(Math.max(window.start, table.offset - 500), table.offset)
+          );
+          const parsed = returnParsedPrimaryStatementIfValid(
+            parsePrimaryStatementTable(
+              ctx.$,
+              ctx.$(table.el),
+              kind,
+              unitsHint,
+              opts.primaryDocument,
+              opts.sourceUrl,
+              table.offset
+            ),
+            form
+          );
+          if (parsed) {
+            best = { ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) };
+            break;
+          }
+        }
+      }
+    }
+    if (!best && form.includes("10-Q")) {
+      const sectionBounds = resolveFinancialStatementsSectionBounds(ctx, form);
+      const validatedPeerKinds = new Set(
+        [...merged, ...sources.flat()]
+          .filter((stmt) => sourceStatementPassesMergeGate(stmt, form))
+          .map((stmt) => stmt.id)
+      );
+      const notesUmbrellaFound =
+        sectionBounds != null &&
+        findFilteredNotesToFinancialStatementsStart(
+          ctx.acc,
+          Math.max(sectionBounds.start + 800, 1_800),
+          sectionBounds.end
+        ) != null;
+      const canExtendScan =
+        sectionBounds != null &&
+        notesUmbrellaFound &&
+        (validatedPeerKinds.size >= 2 ||
+          (kind === "is" &&
+            validatedPeerKinds.size >= 1 &&
+            shouldRunPostNotesIncomeStatementRescan(ctx, sectionBounds, form, validatedPeerKinds)));
+      if (canExtendScan && sectionBounds) {
+        const fromExtended = parseBestStatementTableFromContext(ctx, {
+          kind,
+          form,
+          primaryDocument: opts.primaryDocument,
+          sourceUrl: opts.sourceUrl,
+          shapeTemplates: opts.shapeTemplates,
+          ceilingOverride: sectionBounds.end,
+        });
+        if (fromExtended && sourceStatementPassesMergeGate(fromExtended, form)) best = fromExtended;
+        if (!best) {
+          const candidates = findHeadingTableCandidatesInSection(
+            ctx.$,
+            ctx.acc,
+            ctx.tables,
+            sectionBounds,
+            kind,
+            form,
+            sectionBounds.end
+          );
+          for (const table of candidates) {
+            const parsed = parseStatementTableAtOffset(
+              ctx,
+              table,
+              kind,
+              form,
+              opts,
+              sectionBounds.start
+            );
+            if (parsed) {
+              best = { ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) };
+              break;
+            }
+          }
+        }
+        if (!best) {
+          const fromHeadingWindow = pickFirstSubstantiveTableAfterKindHeading(
+            ctx,
+            sectionBounds,
+            kind,
+            id,
+            form,
+            opts,
+            sectionBounds.end
+          );
+          if (fromHeadingWindow) best = fromHeadingWindow;
+        }
+      }
+    }
+    if (!best && kind === "is" && form.includes("10-Q")) {
+      const sectionBounds = resolveFinancialStatementsSectionBounds(ctx, form);
+      const peerIds = new Set(
+        [...merged, ...sources.flat()]
+          .filter((stmt) => sourceStatementPassesMergeGate(stmt, form))
+          .map((stmt) => stmt.id)
+      );
+      if (sectionBounds && shouldRunPostNotesIncomeStatementRescan(ctx, sectionBounds, form, peerIds)) {
+        const fromPostNotes = pickIncomeStatementPastNotesWhenPeersValid(ctx, sectionBounds, form, opts);
+        if (fromPostNotes) best = fromPostNotes;
+      }
+      if (!best && sectionBounds && peerIds.size >= 1) {
+        const validPeers = [...merged, ...sources.flat()].filter((stmt) =>
+          sourceStatementPassesMergeGate(stmt, form)
+        );
+        const fromPeerWindow = pickIncomeStatementBetweenPeerTables(ctx, sectionBounds, form, opts, validPeers);
+        if (fromPeerWindow) best = fromPeerWindow;
+      }
+    }
+    if (best) merged.push(best);
+  }
+
+  return merged;
+}
+
 function parsePrimaryFinancialStatementsInItemSection(
   ctx: ParsedFilingHtmlContext,
   opts: PrimaryStatementParseOptions
 ): FilingHtmlStatement[] {
   const form = opts.form.toUpperCase();
+  const partialSources: FilingHtmlStatement[][] = [];
 
   const locatorResult = locatePrimaryStatementPacket(ctx, {
     form,
     shapeTemplates: opts.shapeTemplates,
   });
-  if (locatorResult.packet) {
+  const locatorPackets = [
+    locatorResult.packet,
+    ...locatorResult.packetAlternates,
+  ].filter((p): p is NonNullable<typeof p> => p != null);
+
+  if (form.includes("10-Q")) {
+    const section = resolveFinancialStatementsSectionBounds(ctx, form);
+    if (section) {
+      const fromHeadings = parseStatementsFromHeadingAnchoredTables(ctx, section, opts);
+      partialSources.push(fromHeadings);
+      if (primaryStatementsShapeValid(fromHeadings, form)) {
+        return fromHeadings;
+      }
+    }
+
+    const fromNotesWindow = parseStatementsFromNotesPrecedingFaceWindow(ctx, opts);
+    if (fromNotesWindow.length > 0) {
+      partialSources.push(fromNotesWindow);
+      if (primaryStatementsShapeValid(fromNotesWindow, form)) {
+        return fromNotesWindow;
+      }
+    }
+  }
+
+  if (form.includes("10-Q") && locatorPackets.length > 0) {
+    for (const packet of locatorPackets) {
+      partialSources.push(parseStatementsFromLocatedPacket(ctx, packet, opts));
+    }
+  } else if (locatorResult.packet) {
     const fromLocator = parseStatementsFromLocatedPacket(ctx, locatorResult.packet, opts);
+    partialSources.push(fromLocator);
     if (primaryStatementsShapeValid(fromLocator, form)) {
       const packetValidation = validateStatementPacket(fromLocator, form);
       if (packetValidation.ok || fromLocator.length >= 3) return fromLocator;
@@ -1091,16 +2191,12 @@ function parsePrimaryFinancialStatementsInItemSection(
   clusterAttempts.sort((a, b) => b.cluster.score - a.cluster.score);
 
   for (const hit of clusterAttempts) {
-    const fromCluster = parseAllStatementsFromCluster(ctx, hit.cluster, hit.section, opts);
-    if (primaryStatementsShapeValid(fromCluster, form)) {
-      return fromCluster;
-    }
+    partialSources.push(parseAllStatementsFromCluster(ctx, hit.cluster, hit.section, opts));
   }
 
-  if (locatorResult.packet) {
-    const fromLocator = parseStatementsFromLocatedPacket(ctx, locatorResult.packet, opts);
-    if (fromLocator.length >= 3) return fromLocator;
-  }
+  const merged = mergeBestValidatedPrimaryStatements(ctx, form, opts, partialSources);
+  if (primaryStatementsShapeValid(merged, form)) return merged;
+  if (merged.length > 0) return merged;
 
   return [];
 }
@@ -1180,15 +2276,31 @@ function isLikelyMinimalOperatingResultsIncomeTable(text: string): boolean {
   if (!/\brevenues\b/.test(t)) return false;
   if (!/\boperating income\b/.test(t) && !/\bincome from operations\b/.test(t)) return false;
   if (!/\bnet (?:income|loss)\b/.test(t)) return false;
+  // Full consolidated income statements (e.g. CHTR) often skip COGS/gross-profit labels but
+  // still include tax, interest, and EPS — not the short “operating results” summary block.
+  if (/\bincome before income taxes\b/.test(t) || /\bincome tax\b/.test(t)) return false;
+  if (/\binterest expense\b/.test(t)) return false;
+  if (/\bearnings per\b/.test(t) || /\bper common share\b/.test(t)) return false;
   const hasDetail =
-    /\b(cost of (?:revenues?|sales)|gross (?:profit|margin)|research and development|r&d\b|sales, general|\bsg&a\b|general and administrative)\b/i.test(t);
+    /\b(cost of (?:revenues?|sales)|gross (?:profit|margin)|research and development|r&d\b|sales, general|\bsg&a\b|general and administrative|operating costs and expenses)\b/i.test(
+      t
+    );
   return !hasDetail;
 }
 
 /** OCI / comprehensive-income continuation blocks below the consolidated income statement — not the primary IS face. */
+function tableTextHasFaceEpsCue(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  return (
+    /\bearnings per (?:common )?share\b/.test(t) ||
+    (/\b(?:basic|diluted)\b/.test(t) && /\bper (?:common )?share\b/.test(t))
+  );
+}
+
 function isLikelyOtherComprehensiveIncomeOnlyTable(text: string): boolean {
   const t = normalizeSpace(text).toLowerCase();
   if (!t) return false;
+  if (tableTextHasFaceEpsCue(t)) return false;
   const hasOci =
     /\bother comprehensive (?:income|loss)\b/.test(t) ||
     /\btotal other comprehensive income\b/.test(t) ||
@@ -1205,16 +2317,158 @@ function isLikelyOtherComprehensiveIncomeOnlyTable(text: string): boolean {
   return !hasIsStructure;
 }
 
+const EQUITY_ROLLFORWARD_IS_PATTERNS: RegExp[] = [
+  /\bbalance\s+as\s+of\b/i,
+  /\bbalance\s+at\b/i,
+  /\bother\s+comprehensive\s+income\b/i,
+  /\brepurchases?\s+of\s+common\s+stock\b/i,
+  /\bshares\s+withheld\s+for\s+taxes\b/i,
+  /\bwithholding\s+tax\s+for\s+equity\b/i,
+  /\bdividends?\s+(?:paid|declared)\b/i,
+  /\baccumulated\s+other\s+comprehensive\b/i,
+  /\bequity[- ]based\s+compensation\b/i,
+  /\bissuance\s+of\s+equity\s+awards\b/i,
+];
+
+function isLikelyEquityRollforwardIncomeTable(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  if (tableTextHasFaceEpsCue(t)) return false;
+  const rollforwardHits = EQUITY_ROLLFORWARD_IS_PATTERNS.filter((re) => re.test(t)).length;
+  const hasRevenueStack =
+    primaryFaceOperatingRevenueCue(t) ||
+    (/\b(?:total\s+)?revenues?\b/.test(t) && /\b(?:costs?\s+and\s+expenses|operating\s+(?:income|expenses)|gross\s+profit)\b/.test(t));
+  if (hasRevenueStack) return false;
+  if (rollforwardHits >= 2) return true;
+  return (
+    (/\bbalance\s+(?:as\s+of|at)\b/.test(t) || /\bbalance\s+at\b/.test(t)) &&
+    (/\bdividends?\s+(?:paid|declared)\b/.test(t) ||
+      /\brepurchases?\s+of\s+common\s+stock\b/.test(t) ||
+      /\bwithholding\s+tax\b/.test(t))
+  );
+}
+
+/** WMT-style equity rollforwards mis-picked as cash flow when period headers list equity columns. */
+function isLikelyEquityRollforwardCashFlowTable(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+  if (/\b(?:net\s+)?cash\s+(?:provided|used)\s+by\s+operating\s+activities\b/.test(t)) return false;
+  if (/\boperating\s+activities\b/.test(t) && /\binvesting\s+activities\b/.test(t)) return false;
+  if (/\bcommon\s+stock\b/.test(t) && /\bretained\s+earnings\b/.test(t)) return true;
+  if (/\baccumulated\s+other\s+comprehensive\b/.test(t) && /\b(?:total\s+)?(?:stockholders?|shareholders?)\s+equity\b/.test(t)) {
+    return true;
+  }
+  return isLikelyEquityRollforwardIncomeTable(text);
+}
+
+function primaryFaceEarningsCue(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  return (
+    /\bnet income\b/.test(t) ||
+    /\bnet earnings\b/.test(t) ||
+    /\bnet loss\b/.test(t) ||
+    /\bconsolidated net income\b/.test(t) ||
+    /\bgross profit\b/.test(t) ||
+    /\boperating income\b/.test(t) ||
+    /\bincome from operations\b/.test(t) ||
+    /\bincome from continuing operations\b/.test(t) ||
+    /\bnet income before allocation\b/.test(t) ||
+    /\bnet income attributable\b/.test(t) ||
+    /\bearnings per (?:common )?share\b/.test(t) ||
+    (/\b(?:basic|diluted)\b/.test(t) && /\bper (?:common )?share\b/.test(t))
+  );
+}
+
+function stripPrimaryFaceLabelFootnoteSuffix(label: string): string {
+  return normalizeSpace(label)
+    .replace(/\s*\((?:note|notes)\s*[\d,\s&]+[^)]*\)\s*$/i, "")
+    .trim();
+}
+
+function humanizeXbrlConceptLocalName(concept: string | null | undefined): string {
+  if (!concept) return "";
+  const local = concept.includes(":") ? concept.split(":").pop()! : concept;
+  return local
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .toLowerCase();
+}
+
+function cueLineFromStatementRow(row: FilingHtmlStatement["rows"][number]): string {
+  const visible = stripPrimaryFaceLabelFootnoteSuffix(row.label);
+  if (visible.length >= 3) return visible.toLowerCase();
+  for (const meta of Object.values(row.ixByPeriod ?? {})) {
+    const fromConcept = humanizeXbrlConceptLocalName(meta?.xbrlConcept);
+    if (fromConcept.length >= 3) return fromConcept;
+  }
+  return visible.toLowerCase();
+}
+
+function primaryFaceLabelLinesForCue(stmt: FilingHtmlStatement, maxRows: number): string {
+  return stmt.rows
+    .slice(0, maxRows)
+    .map((row) => cueLineFromStatementRow(row))
+    .filter((line) => line.length >= 2)
+    .join("\n");
+}
+
+function meaningfulPrimaryFaceLabelCount(stmt: FilingHtmlStatement): number {
+  return stmt.rows.filter((row) => normalizeSpace(cueLineFromStatementRow(row)).replace(/\s/g, "").length >= 3).length;
+}
+
+function isLikelyDegeneratePrimaryFaceTable(stmt: FilingHtmlStatement): boolean {
+  if (stmt.rows.length < 8) return false;
+  return meaningfulPrimaryFaceLabelCount(stmt) < 4;
+}
+
+function isLikelyConsolidatedIncomeStatementSkeleton(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  return (
+    /\b(?:cost of (?:sales|revenues?)|gross profit)\b/.test(t) &&
+    /\bnet income\b/.test(t) &&
+    (/\b(?:total\s+)?sales\b/.test(t) ||
+      /\b(?:total\s+)?revenues?\b/.test(t) ||
+      /\boperating income\b/.test(t))
+  );
+}
+
+function cashFlowShapeLooksValid(labelShallow: string, labelDeep: string): boolean {
+  if (isLikelyCashRollupCrossReferenceToCashFlowStatement(labelShallow)) return false;
+  if (isLikelyEquityRollforwardCashFlowTable(labelShallow)) return false;
+  const combined = `${labelShallow}\n${labelDeep}`;
+  if (/\boperating activities\b/.test(combined) && /\binvesting activities\b/.test(combined)) return true;
+  if (/\bnet cash (?:provided|used)\b/.test(combined)) return true;
+  if (/\bnet income\b/.test(combined) && /\bdepreciation\b/.test(combined)) return true;
+  return false;
+}
+
 function primaryFaceOperatingRevenueCue(text: string): boolean {
   const t = normalizeSpace(text).toLowerCase();
   if (/\bsegment revenues?\b/.test(t)) return false;
+  const headLines = text
+    .toLowerCase()
+    .split("\n")
+    .map((line) => stripPrimaryFaceLabelFootnoteSuffix(line).toLowerCase())
+    .slice(0, 8);
+  const hasTopSalesLine = headLines.some(
+    (line) =>
+      /^(?:total\s+)?sales$/.test(line) ||
+      /^net sales$/.test(line) ||
+      /^(?:total\s+)?sales\s*\((?:note|notes)\s*[^)]+\)$/i.test(line)
+  );
   return (
     tableTextHasCue(t, /(?:^|\s)(?:total )?revenues?/) ||
     /\bnet revenues?\b/.test(t) ||
     tableTextHasCue(t, /net sales/) ||
     tableTextHasCue(t, /total net sales/) ||
     /\boperating revenues?\b/.test(t) ||
-    /\btotal operating revenues?\b/.test(t)
+    /\btotal operating revenues?\b/.test(t) ||
+    /\b(?:total )?sales\b/.test(t) ||
+    /\bcost of products sold\b/.test(t) ||
+    /\b(?:product|alliance|royalty)\s+revenues?\b/.test(t) ||
+    /\bresearch and development\b/.test(t) ||
+    hasTopSalesLine ||
+    isLikelyConsolidatedIncomeStatementSkeleton(t)
   );
 }
 
@@ -1482,34 +2736,167 @@ function findSectionEnd(acc: string, form: string, start: number): number {
   const minDistance = form.includes("10-Q") ? 1200 : 3000;
   const softMinDistance = form.includes("10-Q") ? 250 : 800;
   const candidates = collectMatches(acc, endPatternsForForm(form), start);
-  const strictEnd = candidates.find((idx) => idx >= start + minDistance);
+  const filtered =
+    form.includes("10-Q")
+      ? candidates.filter((idx) => !isLikelyTenQTocSectionEndMarker(acc, start, idx))
+      : candidates;
+  const strictEnd = filtered.find((idx) => idx >= start + minDistance);
   if (strictEnd != null) return strictEnd;
-  const softEnd = candidates.find((idx) => idx >= start + softMinDistance);
+  const softEnd = filtered.find((idx) => idx >= start + softMinDistance);
   return softEnd ?? acc.length;
+}
+
+/** Intel-style back-matter index: "Item 1. Financial Statements Pages 3 - 20". */
+function isLikelyTenQPageRangeFinancialStatementsTocStart(acc: string, start: number): boolean {
+  const early = acc.slice(start, Math.min(acc.length, start + 600));
+  return /\bfinancial\s+statements\s+pages\s+\d/i.test(early);
+}
+
+const TEN_Q_MIN_SECTION_CHARS = 5_000;
+/** SAIA-style: Item 1 → Item 2 span can be short when face IS+BS+CF tables are already present. */
+const TEN_Q_TRIO_PROVEN_MIN_SECTION_CHARS = 2_000;
+
+function isLikelyTenQFinancialStatementsTocIndexStart(acc: string, start: number): boolean {
+  if (isLikelyTenQPageRangeFinancialStatementsTocStart(acc, start)) return true;
+  const back = acc.slice(Math.max(0, start - 1_000), start);
+  if (/\btable\s+of\s+contents\b/i.test(back)) return true;
+  const early = acc.slice(start, Math.min(acc.length, start + 2_800));
+  if (/\(unaudited\)/i.test(early.slice(0, 2_000))) return false;
+  return isLikelyTenQStatementIndexPreview(early);
+}
+
+function isLikelyTenQStatementIndexPreview(preview: string): boolean {
+  const head = preview.slice(0, 12_000);
+  if (!/\bitem\s+2\b/i.test(head)) return false;
+  if (
+    /\b(?:statements?\s+of\s+operations|balance\s+sheets?|statements?\s+of\s+cash\s+flows?)\b[^.]{0,160}\(unaudited\)/i.test(
+      head
+    ) &&
+    /\b(?:total\s+assets|net\s+revenu|operating\s+activities|cash\s+and\s+cash\s+equivalents)\b/i.test(head)
+  ) {
+    return false;
+  }
+  const t = head.toLowerCase();
+  /** TOC index lines end with a page number after (Unaudited), not face-table amounts. */
+  const indexLineHits = [
+    /\b(?:consolidated\s+)?balance\s+sheets?\b[^.]{0,160}\(\s*unaudited\s*\)\s*\d{1,3}\b/,
+    /\bstatements?\s+of\s+operations\b[^.]{0,160}\(\s*unaudited\s*\)\s*\d{1,3}\b/,
+    /\bstatements?\s+of\s+cash\s+flows?\b[^.]{0,160}\(\s*unaudited\s*\)\s*\d{1,3}\b/,
+  ].filter((re) => re.test(t)).length;
+  return indexLineHits >= 2;
 }
 
 function isLikelyTocItemMarker(acc: string, start: number, form: string): boolean {
   const earlyPreview = acc.slice(start, Math.min(acc.length, start + 1200));
   const previewItemCount = earlyPreview.match(/\bitem\s+\d+[a-z]?\b/gi)?.length ?? 0;
   if (/\b(index\s+page|table\s+of\s+contents)\b/i.test(earlyPreview)) return true;
+  if (form.includes("10-Q")) {
+    const back = acc.slice(Math.max(0, start - 700), start);
+    if (/\btable\s+of\s+contents\b/i.test(back)) return true;
+    if (/\bpage\b/i.test(back) && /\bpart\s+i\b/i.test(back)) return true;
+  }
   /** TOC lines often list consecutive items with a page number between them. */
-  if (previewItemCount >= 2) return true;
+  if (previewItemCount >= 2) {
+    if (form.includes("10-Q")) {
+      const cues = tenQStatementHeadingPreviewCues(earlyPreview);
+      const hasBodyFaceHeading =
+        /\b(?:statements?\s+of\s+(?:operations|income)|balance\s+sheets?|statements?\s+of\s+cash\s+flows?)\b[^.]{0,160}\(unaudited\)/i.test(
+          earlyPreview
+        );
+      if (
+        (cues.hasIs && cues.hasBs && cues.hasCf) ||
+        hasBodyFaceHeading ||
+        (!isLikelyTenQStatementIndexPreview(earlyPreview) &&
+          /\b(?:total\s+assets|net\s+(?:income|revenu)|operating\s+activities|cash\s+and\s+cash\s+equivalents)\b/i.test(
+            earlyPreview
+          ))
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
   if (/\bfinancial\s+statements\b[\s\S]{0,48}?\b\d{1,3}\b[\s\S]{0,48}?\bitem\s+\d+\b/i.test(earlyPreview)) return true;
   if (form.includes("10-K") && /\bpart\s+iii\b/i.test(earlyPreview)) return true;
   return false;
 }
 
+function isLikelyTenQTocSectionEndMarker(acc: string, sectionStart: number, hit: number): boolean {
+  const gap = hit - sectionStart;
+  if (gap > 12_000) return false;
+  const window = acc.slice(sectionStart, Math.min(acc.length, hit + 250));
+  const itemMarkers = window.match(/\bitem\s+\d+[a-z]?\b/gi) ?? [];
+  if (itemMarkers.length >= 2) return true;
+  if (/\bpage\b/i.test(acc.slice(sectionStart, sectionStart + 600))) return true;
+  const hitPreview = acc.slice(hit, Math.min(acc.length, hit + 160));
+  if (/\bpart\s+ii\b/i.test(hitPreview) && /\bother\s+information\b/i.test(hitPreview)) return true;
+  return false;
+}
+
 function tenQStatementHeadingPreviewCues(preview: string): { hasIs: boolean; hasBs: boolean; hasCf: boolean } {
   const hasIs =
-    /\b(?:condensed\s+)?consolidated\s+statements?\s+of\s+(?:operations|income)\b/i.test(preview) ||
-    /\bconsolidated\s+statements?\s+of\s+operations\b/i.test(preview);
+    /\b(?:condensed\s+consolidated|consolidated\s+condensed|consolidated)\s+statements?\s+of\s+(?:operations|income|earnings)\b/i.test(
+      preview
+    ) || /\bconsolidated\s+income\s+statements?\b/i.test(preview);
   const hasBs =
-    /\b(?:condensed\s+)?consolidated\s+balance\s+sheets?\b/i.test(preview) ||
-    /\bconsolidated\s+balance\s+sheets?\b/i.test(preview);
+    /\b(?:condensed\s+consolidated|consolidated\s+condensed|consolidated)\s+balance\s+sheets?\b/i.test(preview) ||
+    /\bconsolidated\s+statements?\s+of\s+financial\s+position\b/i.test(preview);
   const hasCf =
-    /\b(?:condensed\s+)?consolidated\s+statements?\s+of\s+cash\s+flows?\b/i.test(preview) ||
-    /\bconsolidated\s+statements?\s+of\s+cash\s+flows?\b/i.test(preview);
+    /\b(?:condensed\s+consolidated|consolidated\s+condensed|consolidated)\s+statements?\s+of\s+cash\s+flows?\b/i.test(
+      preview
+    );
   return { hasIs, hasBs, hasCf };
+}
+
+/** When Item 1 is only a page-range TOC (INTC-style), anchor at the first face heading trio in Part I. */
+function resolveTenQHeadingAnchoredItemStart(acc: string): number | null {
+  const searchEnd = Math.min(acc.length, 200_000);
+  const form = "10-Q";
+  const maxSpan = 55_000;
+
+  const headingOffsets = (kind: StatementKind): number[] => {
+    let raw = collectMatches(acc, statementHeadingPatterns(kind), 0);
+    if (kind === "cf") raw = dropPhantomCashFlowHeadingMatches(acc, raw);
+    return raw.filter((offset) => {
+      if (offset >= searchEnd) return false;
+      const preview = acc.slice(offset, Math.min(acc.length, offset + 160));
+      if (!statementHeadingPatterns(kind).some((re) => (re.lastIndex = 0, re.test(preview)))) return false;
+      if (/\bfinancial\s+statements\s+pages\s+\d/i.test(preview)) return false;
+      if (isLikelyIndexListingContext(acc, offset)) {
+        const ahead = acc.slice(offset, Math.min(acc.length, offset + 900));
+        return /\b(total\s+assets|cash\s+and\s+cash|net\s+(?:income|revenue|loss)|operating\s+activities)/i.test(
+          ahead
+        );
+      }
+      return isPrimaryFaceStatementHeading(acc, offset, form);
+    });
+  };
+
+  const bsHits = headingOffsets("bs");
+  const isHits = headingOffsets("is");
+  const cfHits = headingOffsets("cf");
+  if (bsHits.length === 0 || isHits.length === 0 || cfHits.length === 0) return null;
+
+  let best: number | null = null;
+  for (const bs of bsHits) {
+    const is = isHits.find((offset) => offset >= bs - 5_000 && offset <= bs + maxSpan);
+    const cf = cfHits.find((offset) => offset >= bs - 5_000 && offset <= bs + maxSpan);
+    if (is == null || cf == null) continue;
+    const start = Math.min(bs, is, cf);
+    if (best == null || start < best) best = start;
+  }
+  if (best == null) return null;
+
+  const end = findSectionEnd(acc, form, best);
+  if (end - best < TEN_Q_MIN_SECTION_CHARS) return null;
+  const preview = acc.slice(best, Math.min(end, best + 90_000));
+  const cues = tenQStatementHeadingPreviewCues(preview);
+  const trioProof =
+    (cues.hasIs && cues.hasBs && cues.hasCf) ||
+    (/\bbalance\s+sheets?\b/i.test(preview) &&
+      /\bstatements?\s+of\s+(?:operations|income|cash\s+flows?)\b/i.test(preview));
+  if (!trioProof) return null;
+  return best;
 }
 
 /** Canonical Part I Item 1 (10-Q) or Part II Item 8 (10-K) bounds for primary statements. */
@@ -1548,15 +2935,29 @@ function resolvePrimaryFinancialStatementsItemStart(acc: string, form: string): 
   }
 
   if (normalized.includes("10-Q")) {
+    let bestItemStart: number | null = null;
     for (let idx = 0; idx < itemStarts.length; idx += 1) {
       const start = itemStarts[idx]!;
       if (isLikelyTocItemMarker(acc, start, normalized)) continue;
+      if (isLikelyTenQPageRangeFinancialStatementsTocStart(acc, start)) continue;
+      if (isLikelyTenQFinancialStatementsTocIndexStart(acc, start)) continue;
       const nextItem = itemStarts[idx + 1] ?? acc.length;
       const preview = acc.slice(start, Math.min(nextItem, start + 15_000));
       const { hasIs, hasBs, hasCf } = tenQStatementHeadingPreviewCues(preview);
-      if (hasIs && hasBs && hasCf) return start;
-      if (hasIs) return start;
+      const hasBodyFaceHeading =
+        /\b(?:statements?\s+of\s+(?:operations|income)|balance\s+sheets?|statements?\s+of\s+cash\s+flows?)\b[^.]{0,160}\(unaudited\)/i.test(
+          preview
+        );
+      const valid =
+        (hasBodyFaceHeading && !isLikelyTenQStatementIndexPreview(preview)) ||
+        (hasIs && hasBs && hasCf && !isLikelyTenQStatementIndexPreview(preview));
+      if (valid) bestItemStart = bestItemStart == null ? start : Math.min(bestItemStart, start);
     }
+    const headingStart = resolveTenQHeadingAnchoredItemStart(acc);
+    if (headingStart != null) {
+      return bestItemStart == null ? headingStart : Math.min(bestItemStart, headingStart);
+    }
+    return bestItemStart;
   }
 
   for (const start of itemStarts) {
@@ -1596,17 +2997,107 @@ function findTenKPartIvFinancialStatementsSection(acc: string, item8Start: numbe
 }
 
 function findPrimaryFinancialStatementsItemSectionBounds(acc: string, form: string): FilingSectionBounds | null {
-  const start = resolvePrimaryFinancialStatementsItemStart(acc, form);
-  if (start == null) return null;
+  const formUpper = form.toUpperCase();
+  const resolveBounds = (start: number): FilingSectionBounds | null => {
+    const end = findSectionEnd(acc, form, start);
+    if (end <= start) return null;
+    return { start, end };
+  };
 
-  if (form.toUpperCase().includes("10-K") && isTenKItem8FinancialsIncorporatedByReference(acc, start)) {
+  let start = resolvePrimaryFinancialStatementsItemStart(acc, form);
+
+  if (formUpper.includes("10-K") && start != null && isTenKItem8FinancialsIncorporatedByReference(acc, start)) {
     const partIv = findTenKPartIvFinancialStatementsSection(acc, start);
     if (partIv) return partIv;
   }
 
-  const end = findSectionEnd(acc, form, start);
-  if (end <= start) return null;
-  return { start, end };
+  if (formUpper.includes("10-Q")) {
+    const pageRangeToc = start != null && isLikelyTenQPageRangeFinancialStatementsTocStart(acc, start);
+    const tocIndex = start != null && isLikelyTenQFinancialStatementsTocIndexStart(acc, start);
+    let bounds =
+      start != null && !pageRangeToc && !tocIndex ? resolveBounds(start) : null;
+    const tooShort = bounds != null && bounds.end - bounds.start < TEN_Q_MIN_SECTION_CHARS;
+
+    if (bounds == null || pageRangeToc || tocIndex || tooShort) {
+      const headingStart = resolveTenQHeadingAnchoredItemStart(acc);
+      if (headingStart != null) {
+        const headingBounds = resolveBounds(headingStart);
+        if (
+          headingBounds != null &&
+          headingBounds.end - headingBounds.start >= TEN_Q_MIN_SECTION_CHARS
+        ) {
+          bounds = headingBounds;
+        }
+      }
+    }
+
+    if (bounds == null && start != null && !pageRangeToc && !tocIndex) {
+      bounds = resolveBounds(start);
+    }
+
+    const headingStart = resolveTenQHeadingAnchoredItemStart(acc);
+    if (headingStart != null && bounds != null && headingStart < bounds.start) {
+      const headingBounds = resolveBounds(headingStart);
+      if (
+        headingBounds != null &&
+        headingBounds.end - headingBounds.start >= TEN_Q_MIN_SECTION_CHARS
+      ) {
+        bounds = headingBounds;
+      }
+    }
+
+    return bounds;
+  }
+
+  if (start == null) return null;
+  return resolveBounds(start);
+}
+
+function findRelaxedTenQHeadingSectionBounds(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): FilingSectionBounds | null {
+  const headingStart = resolveTenQHeadingAnchoredItemStart(ctx.acc);
+  if (headingStart != null) {
+    const end = findSectionEnd(ctx.acc, form, headingStart);
+    if (end > headingStart) {
+      const span = end - headingStart;
+      const scanEnd = Math.min(end, headingStart + TEN_Q_PRIMARY_FACE_MAX_CHARS_FROM_ITEM_START);
+      if (
+        span >= TEN_Q_TRIO_PROVEN_MIN_SECTION_CHARS &&
+        (span >= TEN_Q_MIN_SECTION_CHARS || tenQSectionHasFaceTrio(ctx.$, ctx.tables, headingStart, scanEnd))
+      ) {
+        return { start: headingStart, end };
+      }
+    }
+  }
+  return notesPrecedingFaceSectionBounds(ctx, form);
+}
+
+function resolveFinancialStatementsSectionBounds(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): FilingSectionBounds | null {
+  const formUpper = form.toUpperCase();
+  const accBounds = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, formUpper);
+  const locatorBounds = locateFinancialStatementsSection(ctx, formUpper)?.section ?? null;
+  const relaxedBounds = formUpper.includes("10-Q")
+    ? findRelaxedTenQHeadingSectionBounds(ctx, formUpper)
+    : null;
+
+  if (formUpper.includes("10-Q")) {
+    const notesBounds = notesPrecedingFaceSectionBounds(ctx, formUpper);
+    const embeddedBounds = findEmbeddedFaceStatementsSectionBounds(ctx, formUpper);
+    const candidates = [accBounds, locatorBounds, relaxedBounds, notesBounds, embeddedBounds].filter(
+      (bounds): bounds is FilingSectionBounds => bounds != null && bounds.end > bounds.start
+    );
+    if (candidates.length === 0) return null;
+    const start = Math.min(...candidates.map((bounds) => bounds.start));
+    const end = Math.max(...candidates.map((bounds) => bounds.end));
+    return { start, end };
+  }
+
+  return accBounds ?? locatorBounds ?? relaxedBounds;
 }
 
 export function __test_findPrimaryFinancialStatementsItemSectionBounds(
@@ -1614,6 +3105,20 @@ export function __test_findPrimaryFinancialStatementsItemSectionBounds(
   form: string
 ): FilingSectionBounds | null {
   return findPrimaryFinancialStatementsItemSectionBounds(acc, form);
+}
+
+export function __test_resolveFinancialStatementsSectionBounds(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): FilingSectionBounds | null {
+  return resolveFinancialStatementsSectionBounds(ctx, form);
+}
+
+export function __test_resolvePrimaryFinancialStatementsItemStart(
+  acc: string,
+  form: string
+): number | null {
+  return resolvePrimaryFinancialStatementsItemStart(acc, form);
 }
 
 export function __test_flatAccFromHtml(html: string): string {
@@ -1632,7 +3137,7 @@ function statementFromClusterHit(
   sourceUrl?: string
 ): FilingHtmlStatement | null {
   const unitsHint = extractUnitsFromText(acc.slice(Math.max(section.start, hit.table.offset - 500), hit.table.offset));
-  return returnParsedPrimaryStatementIfValid(
+  return returnParsedPrimaryStatementIfValidOrHeadingWindow(
     parsePrimaryStatementTable($, $(hit.table.el), kind, unitsHint, primaryDocument, sourceUrl, hit.table.offset),
     form
   );
@@ -1664,7 +3169,7 @@ function findStatementClusterInPrimaryItemSection(
   ctx: ParsedFilingHtmlContext,
   form: string
 ): { cluster: StatementCluster; section: FilingSectionBounds } | null {
-  const section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, form);
+  const section = resolveFinancialStatementsSectionBounds(ctx, form);
   if (!section) return null;
   const clusterSection = buildStatementClusterSectionBounds(ctx.acc, section, form);
   const cluster = findStatementClusterInSection(ctx.$, ctx.acc, ctx.tables, clusterSection, form);
@@ -1714,6 +3219,7 @@ const PRIMARY_FACE_CLUSTER_MAX_SPAN_10K = 80_000;
 const PRIMARY_FACE_HEADING_WINDOW_10K = 90_000;
 function isPrimaryFaceStatementHeading(acc: string, offset: number, form: string): boolean {
   if (isLikelyIndexListingContext(acc, offset)) return false;
+  if (isLikelyStatementIndexListingHit(acc, offset)) return false;
   const preview = acc.slice(offset, Math.min(acc.length, offset + 160));
   const matchesKnownHeading = (["is", "bs", "cf"] as StatementKind[]).some((kind) =>
     statementHeadingPatterns(kind).some((re) => {
@@ -1724,7 +3230,7 @@ function isPrimaryFaceStatementHeading(acc: string, offset: number, form: string
   if (!matchesKnownHeading) return false;
   if (form.includes("10-Q")) {
     return (
-      /\bcondensed\s+consolidated\b/i.test(preview) ||
+      /\b(?:condensed\s+consolidated|consolidated\s+condensed)\b/i.test(preview) ||
       /\bconsolidated\s+(?:balance\s+sheets?|statements?\s+of)\b/i.test(preview)
     );
   }
@@ -1783,10 +3289,7 @@ function primaryStatementsCeiling(acc: string, section: FilingSectionBounds, for
       isPrimaryFaceStatementHeading(acc, offset, form)
     ) ??
     Math.max(section.start + 800, firstStatementAnchor);
-  const notes = collectMatches(acc, NOTES_HEADING_PATTERNS, notesSearchStart).find(
-    (offset) => offset < section.end && !isLikelyIndexListingContext(acc, offset)
-  );
-  return notes ?? section.end;
+  return findPrimaryFaceTablesEndBeforeNotes(acc, section.start, section.end, notesSearchStart);
 }
 
 /** Dynamic scan ceiling anchored on the first income-statement heading in 10-K Item 8. */
@@ -1834,7 +3337,12 @@ function findHeadingTableInSection(
   const cfH = collapseNearbyHeadingOffsets(
     dropPhantomCashFlowHeadingMatches(acc, collectMatches(acc, statementHeadingPatterns("cf"), section.start))
   );
-  const allHeadings = [...bsH, ...isH, ...cfH].filter((offset) => offset < statementCeiling).sort((a, b) => a - b);
+  const followOnH = FOLLOW_ON_FACE_HEADING_PATTERNS.flatMap((re) =>
+    collectMatches(acc, [re], section.start).filter((offset) => offset < statementCeiling)
+  );
+  const allHeadings = [...bsH, ...isH, ...cfH, ...followOnH]
+    .filter((offset) => offset < statementCeiling)
+    .sort((a, b) => a - b);
   const headings = (
     kind === "cf" ? cfH : collapseNearbyHeadingOffsets(collectMatches(acc, statementHeadingPatterns(kind), section.start))
   )
@@ -2015,6 +3523,13 @@ function extractTableMatrix($: cheerio.CheerioAPI, $table: cheerio.Cheerio<Eleme
   return grid;
 }
 
+export function __test_extractTableMatrix(
+  $: cheerio.CheerioAPI,
+  table: { el: Element }
+): string[][] {
+  return extractTableMatrix($, $(table.el));
+}
+
 function amountToken(value: string): string {
   return normalizeSpace(value).replace(/\$/g, "").replace(/,/g, "").replace(/\s+/g, "");
 }
@@ -2140,10 +3655,16 @@ function detectDataStartWithValueColumns(matrix: string[][]): number {
   return -1;
 }
 
+function cellCountsAsDataAmount(cell: string): boolean {
+  const token = amountToken(cell);
+  if (token && /^(?:19|20)\d{2}$/.test(token)) return false;
+  return looksLikeAmount(cell) && !isBlankCellText(cell);
+}
+
 function detectDataStartClassic(matrix: string[][]): number {
   for (let i = 0; i < matrix.length; i += 1) {
     const row = matrix[i] ?? [];
-    const amountCount = row.filter((cell) => looksLikeAmount(cell) && !isBlankCellText(cell)).length;
+    const amountCount = row.filter((cell) => cellCountsAsDataAmount(cell)).length;
     const labelCell = normalizeSpace(row[0] ?? "");
     if (labelCell && !looksLikeAmount(labelCell) && !isHeaderOnlyLabel(labelCell) && amountCount >= 2) return i;
   }
@@ -2152,6 +3673,106 @@ function detectDataStartClassic(matrix: string[][]): number {
 
 export function __test_detectDataStart(matrix: string[][]): number {
   return detectDataStart(matrix);
+}
+
+function headerScanRowLimit(matrix: string[][], dataStart: number): number {
+  let limit = Math.max(dataStart, 0);
+  for (let r = limit; r < Math.min(matrix.length, limit + 4); r += 1) {
+    const rowText = normalizeSpace((matrix[r] ?? []).join(" "));
+    if (
+      /\b(?:19|20)\d{2}\b/.test(rowText) ||
+      /(?:three|six|nine)\s+months?\s+ended/i.test(rowText) ||
+      /\bamounts?\s+in\s+(?:millions?|thousands?)\b/i.test(rowText)
+    ) {
+      limit = r + 1;
+      continue;
+    }
+    break;
+  }
+  return limit;
+}
+
+function collectHeaderYears(matrix: string[][], dataStart: number): string[] {
+  const years: string[] = [];
+  for (let r = 0; r < headerScanRowLimit(matrix, dataStart); r += 1) {
+    for (const cell of matrix[r] ?? []) {
+      const t = normalizeSpace(cell);
+      if (/^(?:19|20)\d{2}$/.test(t)) {
+        if (!years.includes(t)) years.push(t);
+        continue;
+      }
+      for (const m of t.matchAll(/\b((?:19|20)\d{2})\b/g)) {
+        if (!years.includes(m[1]!)) years.push(m[1]!);
+      }
+    }
+  }
+  return years;
+}
+
+function headerYearForColumn(matrix: string[][], dataStart: number, col: number): string | null {
+  /** WMT-style tables place the fiscal year one or two columns left of the amount column (past a "$" marker). */
+  for (const probe of [col, col - 1, col - 2]) {
+    if (probe < 0) continue;
+    for (let r = 0; r < headerScanRowLimit(matrix, dataStart); r += 1) {
+      const direct = normalizeSpace(matrix[r]?.[probe] ?? "");
+      const exact = direct.match(/^(19|20)\d{2}$/);
+      if (exact) return exact[1]!;
+      const embedded = direct.match(/\b((?:19|20)\d{2})\b/);
+      if (embedded) return embedded[1]!;
+    }
+  }
+  return null;
+}
+
+/** WMT-style IS/CF tables: one substantial column detected but header shows two fiscal periods. */
+function expandValueColumnsForQuarterlyHeaders(
+  matrix: string[][],
+  dataStart: number,
+  cols: number[]
+): number[] {
+  const headerEnd = Math.max(dataStart, 0);
+  const hasQuarterHeader = matrix.slice(0, headerEnd).some((row) =>
+    row.some((cell) => /(?:three|six|nine)\s+months?\s+ended/i.test(normalizeSpace(cell)))
+  );
+  const headerYears = collectHeaderYears(matrix, dataStart);
+  if (!hasQuarterHeader && headerYears.length < 2) return cols;
+
+  const width = Math.max(...matrix.map((row) => row.length), 0);
+  const numericCols: number[] = [];
+  for (let c = 1; c < width; c += 1) {
+    let count = 0;
+    for (let r = dataStart; r < matrix.length; r += 1) {
+      const cell = matrix[r]?.[c] ?? "";
+      if (looksLikeAmount(cell) && !isBlankCellText(cell)) count += 1;
+    }
+    if (count >= 1) numericCols.push(c);
+  }
+
+  const seed = cols[0] ?? numericCols[0];
+  if (seed == null) return cols;
+
+  const merged = [
+    ...new Set([...cols, ...numericCols.filter((c) => c >= seed - 1 && c <= seed + 5)]),
+  ].sort((a, b) => a - b);
+  return merged.length >= 2 ? merged : cols.length > 0 ? cols : merged;
+}
+
+/** SEC HTML often puts a standalone "$" in the column before each amount (WMT-style). */
+function isDollarMarkerColumn(matrix: string[][], dataStart: number, col: number): boolean {
+  let markers = 0;
+  let values = 0;
+  for (let r = dataStart; r < matrix.length; r += 1) {
+    const cell = normalizeSpace(matrix[r]?.[col] ?? "");
+    if (cell === "$") markers += 1;
+    else if (looksLikeSubstantialAmount(cell)) values += 1;
+  }
+  return markers > 0 && markers >= values;
+}
+
+function stripDollarMarkerColumns(matrix: string[][], dataStart: number, cols: number[]): number[] {
+  if (cols.length <= 2) return cols;
+  const filtered = cols.filter((col) => !isDollarMarkerColumn(matrix, dataStart, col));
+  return filtered.length >= 2 ? filtered : cols;
 }
 
 function inferValueColumnIndices(matrix: string[][], dataStart: number): number[] {
@@ -2165,23 +3786,33 @@ function inferValueColumnIndices(matrix: string[][], dataStart: number): number[
       if (looksLikeSubstantialAmount(cell) && !isBlankCellText(cell)) substantialCounts[c] += 1;
     }
   }
-  const cols = counts
+  let cols = counts
     .map((count, idx) => ({ count, substantial: substantialCounts[idx] ?? 0, idx }))
     .filter(({ count, substantial }) => count >= 2 && substantial >= 2)
     .map(({ idx }) => idx);
   /* Condensed filings often state amounts under $100m (still real statement columns — EVC-scale fixtures). Prefer substantial columns when any exist; otherwise use consistent numeric columns. */
-  if (cols.length > 0) return cols;
-  return counts
-    .map((count, idx) => ({ count, idx }))
-    .filter(({ count }) => count >= 2)
-    .map(({ idx }) => idx);
+  if (cols.length === 0) {
+    cols = counts
+      .map((count, idx) => ({ count, idx }))
+      .filter(({ count }) => count >= 2)
+      .map(({ idx }) => idx);
+  }
+  if (cols.length <= 1) {
+    const expanded = expandValueColumnsForQuarterlyHeaders(matrix, dataStart, cols);
+    if (expanded.length > cols.length) cols = expanded;
+  }
+  return stripDollarMarkerColumns(matrix, dataStart, cols);
+}
+
+export function __test_inferValueColumnIndices(matrix: string[][], dataStart: number): number[] {
+  return inferValueColumnIndices(matrix, dataStart);
 }
 
 function inferPeriods(matrix: string[][], dataStart: number, valueCols: number[]): Array<{ key: string; label: string; shortLabel?: string }> {
   const inferred = valueCols.map((col, idx) => {
     const parts = dedupeAdjacent(
       matrix
-        .slice(0, Math.max(dataStart, 0))
+        .slice(0, headerScanRowLimit(matrix, dataStart))
         .map((row) => {
           const direct = normalizeSpace(row[col] ?? "");
           if (direct && direct !== "$" && (looksLikePeriodText(direct) || !looksLikeAmount(direct))) return direct;
@@ -2196,20 +3827,22 @@ function inferPeriods(matrix: string[][], dataStart: number, valueCols: number[]
         })
         .filter(Boolean)
     );
-    const label = parts.join(" ").trim() || `Period ${idx + 1}`;
+    let label = parts.join(" ").trim() || `Period ${idx + 1}`;
+    const colYear = headerYearForColumn(matrix, dataStart, col);
+    if (colYear && !/\b(?:19|20)\d{2}\b/.test(label)) {
+      label = `${label} ${colYear}`.trim();
+    }
     return { key: `p${idx + 1}`, label, shortLabel: label };
   });
 
-  const headerYears = dedupeAdjacent(
-    matrix
-      .slice(0, Math.max(dataStart, 0))
-      .flatMap((row) => row.map((cell) => normalizeSpace(cell)))
-      .filter((cell) => /^(?:19|20)\d{2}$/.test(cell))
-  );
-  if (headerYears.length >= inferred.length) {
+  const headerYears = collectHeaderYears(matrix, dataStart);
+  const needsYearAssignment =
+    headerYears.length >= 2 &&
+    inferred.some((period) => !/\b(?:19|20)\d{2}\b/.test(period.label));
+  if (needsYearAssignment) {
     return inferred.map((period, idx) => {
       if (/\b(?:19|20)\d{2}\b/.test(period.label)) return period;
-      const year = headerYears[idx];
+      const year = headerYears[idx] ?? headerYears[Math.min(idx, headerYears.length - 1)];
       if (!year) return period;
       const label = `${period.label} ${year}`.trim();
       return { ...period, label, shortLabel: label };
@@ -2217,6 +3850,14 @@ function inferPeriods(matrix: string[][], dataStart: number, valueCols: number[]
   }
 
   return inferred;
+}
+
+export function __test_inferPeriods(
+  matrix: string[][],
+  dataStart: number,
+  valueCols: number[]
+): Array<{ key: string; label: string; shortLabel?: string }> {
+  return inferPeriods(matrix, dataStart, valueCols);
 }
 
 function rowKeepsNativeUnits(label: string, kind: StatementKind): boolean {
@@ -2288,6 +3929,8 @@ function scoreStatementTableText(text: string, kind: StatementKind): number {
     if (isLikelyPercentageOfRevenueIncomeTable(t)) score -= 520;
     if (isLikelyConsolidatedFinancialStatementsIndexTable(t)) score -= 480;
     if (isLikelyOtherComprehensiveIncomeOnlyTable(t)) score -= 520;
+    if (isLikelyEquityRollforwardIncomeTable(t)) score -= 560;
+    if (isLikelyRevenueDisaggregationTableText(t)) score -= 540;
     if (/\bmanagement fees\b/.test(t) || /\badvisory (and transaction )?fees\b/.test(t) || /\btotal revenues?,?\s*net\b/.test(t)) {
       score += 24;
     }
@@ -2334,54 +3977,120 @@ function validateSinglePrimaryStatementShape(stmt: FilingHtmlStatement, form: st
     .join("\n");
 
   if (stmt.id === "balance-sheet") {
-    if (isLikelyLeaseFootnoteBalanceSheetTable(labels)) return false;
-    if (isLikelyCashRollupCrossReferenceToCashFlowStatement(labels)) return false;
-    if (isLikelyParentheticalOrHeldForSaleBalanceSheetTable(labels)) return false;
+    const labelsShallow = primaryFaceLabelLinesForCue(stmt, 16);
+    const labelsDeep = primaryFaceLabelLinesForCue(stmt, 55);
+    if (isLikelyLeaseFootnoteBalanceSheetTable(labelsShallow)) return false;
+    if (isLikelyCashRollupCrossReferenceToCashFlowStatement(labelsShallow)) return false;
+    if (isLikelyParentheticalOrHeldForSaleBalanceSheetTable(labelsShallow)) return false;
+    if (isLikelyBankBalanceSheetShape(labelsDeep)) return true;
     return (
-      (/\btotal assets\b/.test(labels) && !/\btotal assets held for sale\b/.test(labels)) ||
-      /\btotal current assets\b/.test(labels) ||
-      (/\bcash and cash equivalents\b/.test(labels) &&
-        (/\baccounts receivable\b/.test(labels) || /\binventory\b/.test(labels)))
+      (/\btotal assets\b/.test(labelsDeep) && !/\btotal assets held for sale\b/.test(labelsDeep)) ||
+      /\btotal current assets\b/.test(labelsDeep) ||
+      (/\bcash and cash equivalents\b/.test(labelsDeep) &&
+        (/\baccounts receivable\b/.test(labelsDeep) || /\binventory\b/.test(labelsDeep)))
     );
   }
 
   if (stmt.id === "income-statement") {
     if (isLikelyOtherComprehensiveIncomeOnlyTable(labels)) return false;
+    if (isLikelyEquityRollforwardIncomeTable(labels)) return false;
+    if (isLikelyRevenueDisaggregationTableText(labels)) return false;
+    if (isLikelyLiabilitiesScheduleMisclassifiedAsIncome(labels)) return false;
     if (isLikelyHighLevelIncomeSummaryTable(labels)) return false;
     if (isLikelyMinimalOperatingResultsIncomeTable(labels)) return false;
     if (isLikelyPercentageOfRevenueIncomeTable(labels)) return false;
     if (isLikelyConsolidatedFinancialStatementsIndexTable(labels)) return false;
+    const labelHead = primaryFaceLabelLinesForCue(stmt, 16);
+    const labelEarnings = primaryFaceLabelLinesForCue(stmt, 28);
+    const labelEps = primaryFaceLabelLinesForCue(stmt, 50);
+    const labelBank = primaryFaceLabelLinesForCue(stmt, 45);
+    const labelCombined = primaryFaceLabelLinesForCue(stmt, 50);
+    if (isLikelyBankIncomeStatementShape(labelBank)) return true;
+    if (isLikelyComprehensiveIncomeStatementShape(labelEarnings)) return true;
+    if (isLikelyCombinedOperationsAndComprehensiveLossShape(labelCombined)) return true;
+    if (isLikelyFaceIncomeStatementByEpsOrProfitStack(labelEps)) return true;
     const revenueCue =
-      primaryFaceOperatingRevenueCue(labels) ||
-      /\bnet revenues?\b/.test(labels) ||
-      /\bnet sales\b/.test(labels) ||
-      /\btotal net sales\b/.test(labels);
-    const earningsCue =
-      /\bnet income\b/.test(labels) ||
-      /\bnet loss\b/.test(labels) ||
-      /\bgross profit\b/.test(labels) ||
-      /\boperating income\b/.test(labels);
+      primaryFaceOperatingRevenueCue(labelHead) ||
+      /\b(?:product|alliance|royalty)\s+revenues?\b/.test(labelHead) ||
+      /\bnet revenues?\b/.test(labelHead) ||
+      /\bnet sales\b/.test(labelHead) ||
+      /\btotal net sales\b/.test(labelHead);
+    const earningsCue = primaryFaceEarningsCue(labelEarnings);
     return revenueCue && earningsCue;
   }
 
-  if (isLikelyCashRollupCrossReferenceToCashFlowStatement(labels)) return false;
-  return (
-    /\boperating activities\b/.test(labels) ||
-    /\bnet cash (?:provided|used)\b/.test(labels) ||
-    (/\bnet income\b/.test(labels) && /\bdepreciation\b/.test(labels))
-  );
+  if (stmt.id === "cash-flow") {
+    const labelDeep = primaryFaceLabelLinesForCue(stmt, 40);
+    return cashFlowShapeLooksValid(labels, labelDeep);
+  }
+
+  return false;
 }
 
 function returnParsedPrimaryStatementIfValid(
   parsed: FilingHtmlStatement | null,
   form: string
 ): FilingHtmlStatement | null {
-  if (!parsed) return null;
+  if (!parsed || isLikelyDegeneratePrimaryFaceTable(parsed)) return null;
   return validateSinglePrimaryStatementShape(parsed, form) ? parsed : null;
 }
 
 export function __test_validateSinglePrimaryStatementShape(stmt: FilingHtmlStatement, form: string): boolean {
   return validateSinglePrimaryStatementShape(stmt, form);
+}
+
+export function __test_validateHeadingWindowPrimaryStatementShape(stmt: FilingHtmlStatement, form: string): boolean {
+  return validateHeadingWindowPrimaryStatementShape(stmt, form);
+}
+
+export function __test_statementKindFromFilingSummaryReport(report: {
+  shortName?: string;
+  longName?: string;
+  menuCategory?: string;
+}): StatementKind | null {
+  return statementKindFromFilingSummaryReport(report);
+}
+
+export function __test_parseFilingSummaryReportDirectTable(
+  html: string,
+  opts: { kind: StatementKind; form: string; primaryDocument?: string; sourceUrl?: string }
+): FilingHtmlStatement | null {
+  return parseFilingSummaryReportDirectTable(html, opts);
+}
+
+export function __test_tableTextHasFaceEpsCue(text: string): boolean {
+  return tableTextHasFaceEpsCue(text);
+}
+
+export function __test_isLikelyOtherComprehensiveIncomeOnlyTable(text: string): boolean {
+  return isLikelyOtherComprehensiveIncomeOnlyTable(text);
+}
+
+export function __test_isLikelyEquityRollforwardIncomeTable(text: string): boolean {
+  return isLikelyEquityRollforwardIncomeTable(text);
+}
+
+export function __test_cueLineFromStatementRow(row: FilingHtmlStatement["rows"][number]): string {
+  return cueLineFromStatementRow(row);
+}
+
+export function __test_findEmbeddedFaceStatementsSectionBounds(
+  ctx: ParsedFilingHtmlContext,
+  form: string
+): FilingSectionBounds | null {
+  return findEmbeddedFaceStatementsSectionBounds(ctx, form);
+}
+
+export function __test_isLikelyBankBalanceSheetShape(text: string): boolean {
+  return isLikelyBankBalanceSheetShape(text);
+}
+
+export function __test_isLikelyCombinedOperationsAndComprehensiveLossShape(text: string): boolean {
+  return isLikelyCombinedOperationsAndComprehensiveLossShape(text);
+}
+
+export function __test_isLikelyBankIncomeStatementShape(text: string): boolean {
+  return isLikelyBankIncomeStatementShape(text);
 }
 
 function primaryStatementsShapeValid(statements: FilingHtmlStatement[], form: string): boolean {
@@ -2461,10 +4170,12 @@ function scoreTableCandidate(
   if (kind === "is" && isLikelyEpsNoteTableText(text)) return -500;
   if (kind === "is" && isLikelySegmentReportingIncomeTable(text)) return -520;
   if (kind === "is" && isLikelyRevenueDisaggregationTableText(text)) return -520;
+  if (kind === "is" && isLikelyLiabilitiesScheduleMisclassifiedAsIncome(text)) return -540;
   if (kind === "is" && isLikelyHighLevelIncomeSummaryTable(text)) return -480;
   if (kind === "is" && isLikelyMinimalOperatingResultsIncomeTable(text)) return -460;
   if (kind === "is" && isLikelySupplementalEarningsMetricsIncomeTable(text)) return -420;
   if (kind === "is" && isLikelyOtherComprehensiveIncomeOnlyTable(text)) return -540;
+  if (kind === "is" && isLikelyEquityRollforwardIncomeTable(text)) return -560;
   if (kind === "bs" && isLikelyLeaseFootnoteBalanceSheetTable(text)) return -520;
   if (kind === "bs" && isLikelySelectedFinancialDataBalanceSheetSnippet(text)) return -480;
   if (kind === "bs" && isLikelyCashBridgeTableForBalanceSheet(text)) return -420;
@@ -2473,7 +4184,15 @@ function scoreTableCandidate(
   if (kind === "cf" && isLikelyCashFlowOperatingInvestingHighlightsOnly(text)) return -480;
   if (kind === "cf" && isLikelySupplementalCashFlowDetailTable(text)) return -500;
   if (kind === "cf" && isLikelyRevenueDisaggregationTableText(text)) return -500;
+  if (kind === "cf" && isLikelyEquityRollforwardCashFlowTable(text)) return -560;
   if (!statementTableMeetsMinNumericDensity($, table, kind)) return -500;
+  const matrix = extractTableMatrix($, $(table.el));
+  const dataStart = detectDataStart(matrix);
+  if (dataStart >= 0) {
+    const labelCells = matrix.slice(dataStart).map((row) => normalizeSpace(row[0] ?? ""));
+    const meaningful = labelCells.filter((label) => label.length >= 3).length;
+    if (labelCells.length >= 8 && meaningful / labelCells.length < 0.25) return -500;
+  }
   const context = acc.slice(Math.max(section.start, table.offset - 900), Math.min(acc.length, table.offset + 150));
   const axes = parsedPrimaryStatementAxes($, $(table.el), kind);
   let score =
@@ -2499,14 +4218,27 @@ function parseBestStatementTableFromContext(
     primaryDocument?: string;
     sourceUrl?: string;
     shapeTemplates?: PrimaryFaceShapeTemplates;
+    ceilingOverride?: number;
   }
 ): FilingHtmlStatement | null {
   const formUpper = opts.form.toUpperCase();
-  const section = findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, formUpper) ?? {
+  const section = resolveFinancialStatementsSectionBounds(ctx, formUpper) ?? {
     start: 0,
     end: ctx.acc.length,
   };
-  const ceiling = primaryFaceTablePickCeiling(ctx.acc, section, formUpper);
+  const ceiling = opts.ceilingOverride ?? primaryFaceTablePickCeiling(ctx.acc, section, formUpper);
+
+  if (opts.kind === "is" || opts.kind === "bs" || opts.kind === "cf") {
+    const ordinalCandidates = ctx.tables
+      .filter((table) => table.offset >= section.start && table.offset < ceiling)
+      .filter((table) => isLikelyHeadingWindowSubstantiveTable(ctx.$, table, opts.kind))
+      .sort((a, b) => a.offset - b.offset);
+    for (const table of ordinalCandidates.slice(0, opts.kind === "bs" ? 6 : 4)) {
+      const parsed = parseStatementTableAtOffset(ctx, table, opts.kind, formUpper, opts, section.start);
+      if (parsed && sourceStatementPassesMergeGate(parsed, formUpper)) return parsed;
+    }
+  }
+
   let best: { table: { el: Element; offset: number }; score: number } | null = null;
 
   for (const table of ctx.tables) {
@@ -2539,7 +4271,7 @@ function parseBestStatementTableFromContext(
   const unitsHint = extractUnitsFromText(
     ctx.acc.slice(Math.max(0, best.table.offset - 500), best.table.offset)
   );
-  return returnParsedPrimaryStatementIfValid(
+  return returnParsedPrimaryStatementIfValidOrHeadingWindow(
     parsePrimaryStatementTable(
       ctx.$,
       ctx.$(best.table.el),
@@ -2950,6 +4682,16 @@ function refineKindCandidates(
     .slice(0, limit);
 }
 
+function tenQClusterScoreThresholds(
+  acc: string,
+  section: FilingSectionBounds
+): { acceptScore: number; fallbackMin: number } {
+  const preview = acc.slice(section.start, Math.min(section.end, section.start + 15_000));
+  const cues = tenQStatementHeadingPreviewCues(preview);
+  if (cues.hasIs && cues.hasBs && cues.hasCf) return { acceptScore: 75, fallbackMin: 70 };
+  return { acceptScore: 90, fallbackMin: 90 };
+}
+
 function findStatementClusterInSection(
   $: cheerio.CheerioAPI,
   acc: string,
@@ -2968,7 +4710,9 @@ function findStatementClusterInSection(
   const largeTenKExhibit = form.includes("10-K") && sectionLen > PRIMARY_FACE_LARGE_EXHIBIT_SECTION_CHARS;
   const maxSpan = form.includes("10-Q") ? 55_000 : largeTenKExhibit ? 110_000 : PRIMARY_FACE_CLUSTER_MAX_SPAN_10K;
   const scoreFloor = 10;
-  const acceptScore = form.includes("10-Q") ? 90 : 80;
+  const tenQThresholds = form.includes("10-Q") ? tenQClusterScoreThresholds(acc, section) : null;
+  const acceptScore = tenQThresholds?.acceptScore ?? 80;
+  const fallbackMin = tenQThresholds?.fallbackMin ?? 70;
   let fallbackBest: StatementCluster | null = null;
   const rankedClusters: StatementCluster[] = [];
 
@@ -3002,7 +4746,7 @@ function findStatementClusterInSection(
   if (rankedClusters[0]) return rankedClusters[0];
 
   return fallbackBest &&
-    fallbackBest.score >= (form.includes("10-Q") ? 90 : 70) &&
+    fallbackBest.score >= fallbackMin &&
     statementClusterTablesLookValid($, fallbackBest)
     ? fallbackBest
     : null;
@@ -3030,7 +4774,16 @@ function parseStatementRows(
           .filter((cell) => !isBlankCellText(cell) && cell !== "$")
       ).join(" ")
     );
-    if (!label) continue;
+    let resolvedLabel = label;
+    if (!resolvedLabel && tr) {
+      const rowIxOrdered = listInlineIxOnRow($, tr);
+      const synthesized = rowIxOrdered
+        .map((meta) => humanizeXbrlConceptLocalName(meta.xbrlConcept))
+        .filter((part) => part.length >= 3)
+        .join(" ");
+      if (synthesized) resolvedLabel = synthesized;
+    }
+    if (!resolvedLabel) continue;
 
     const displayValues: Record<string, string> = {};
     const values: Record<string, number | null> = {};
@@ -3064,17 +4817,21 @@ function parseStatementRows(
     });
 
     const rowKind: FilingHtmlStatementRow["rowKind"] =
-      numericCount === 0 ? "heading" : /^total\b/i.test(label) || /\bnet cash\b/i.test(label) ? "total" : "data";
+      numericCount === 0
+        ? "heading"
+        : /^total\b/i.test(resolvedLabel) || /\bnet cash\b/i.test(resolvedLabel)
+          ? "total"
+          : "data";
 
     const firstTaggedConcept = periods.map((p) => ixByPeriod[p.key]?.xbrlConcept).find(Boolean);
     const concept =
       firstTaggedConcept ??
       ((tr ? normalizeSpace($(directRowCells($, tr)[0] as Element).attr("id") ?? "") : "") ||
-        `html:${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || rowIdx}`);
+        `html:${resolvedLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || rowIdx}`);
 
     rows.push({
       concept,
-      label,
+      label: resolvedLabel,
       depth: 0,
       rowKind,
       valueFormat: "native",
@@ -3173,33 +4930,97 @@ function statementKindFromFilingSummaryReport(report: FilingSummaryReportRef): S
   const blob = normalizeSpace([report.shortName, report.longName, report.menuCategory].filter(Boolean).join(" "));
   if (!blob) return null;
   if (/\b(balance\s+sheets?|statement(?:s)?\s+of\s+financial\s+position)\b/i.test(blob)) return "bs";
-  if (/\b(income\s+statements?|statement(?:s)?\s+of\s+(?:operations|income|earnings))\b/i.test(blob)) return "is";
-  if (/\bstatement(?:s)?\s+of\s+cash\s+flows?\b/i.test(blob)) return "cf";
+  if (
+    /\bstatement(?:s)?\s+of\s+operations\s+and\s+comprehensive\s+(?:income|loss)\b/i.test(blob) ||
+    /\boperations\s+and\s+comprehensive\s+(?:income|loss)\b/i.test(blob)
+  ) {
+    return "is";
+  }
+  if (
+    /\b(income\s+statements?|statement(?:s)?\s+of\s+(?:operations|income|earnings)|statements?\s+of\s+earnings?)\b/i.test(
+      blob
+    )
+  ) {
+    return "is";
+  }
+  if (
+    /\bstatement(?:s)?\s+of\s+comprehensive\s+(?:income|loss)\b/i.test(blob) ||
+    /\bcomprehensive\s+(?:income|loss)\s+statements?\b/i.test(blob)
+  ) {
+    return "is";
+  }
+  if (/\bstatement(?:s)?\s+of\s+cash\s+flows?\b/i.test(blob) || /\bcash\s+flows?\s+statements?\b/i.test(blob)) {
+    return "cf";
+  }
   return null;
+}
+
+function scoreFilingSummaryReport(
+  report: FilingSummaryReportRef,
+  kind: StatementKind,
+  hasOperationsIncomeReport: boolean
+): number {
+  const menuCategory = normalizeSpace(report.menuCategory ?? "");
+  const shortName = normalizeSpace(report.shortName ?? "");
+  const longName = normalizeSpace(report.longName ?? "");
+  const blob = `${shortName} ${longName} ${menuCategory}`;
+  let score = 0;
+  if (/^statements?$/i.test(menuCategory) || /^statement$/i.test(menuCategory)) score += 50;
+  if (/statement/i.test(shortName)) score += 20;
+  if (/consolidated/i.test(blob)) score += 10;
+  if (/parenthetical|detail|schedule|equity/i.test(blob)) score -= 25;
+  if (/impact on statement|derivative instrument|parent company|\(details?\)|risk management/i.test(blob)) {
+    score -= 40;
+  }
+  if (/cash\s+flows?/i.test(blob) && kind === "cf") score += 15;
+  if (/\bcash\s+flows?\s+statements?\b/i.test(blob) && kind === "cf") score += 20;
+  if (/balance\s+sheets?/i.test(blob) && kind === "bs") score += 15;
+  if (/\b(?:operations|income|earnings)\b/i.test(blob) && kind === "is") score += 15;
+  if (/\bstatements?\s+of\s+earnings?\b/i.test(blob) && kind === "is") score += 18;
+  if (/\boperations\s+and\s+comprehensive\b/i.test(blob) && kind === "is") score += 22;
+  if (kind === "is" && /\bcomprehensive\s+(?:income|loss)\b/i.test(blob)) score += 12;
+  if (kind === "is" && /parenthetical/i.test(blob)) score -= 35;
+  if (kind === "is" && !hasOperationsIncomeReport && /\bcomprehensive\s+(?:income|loss)\b/i.test(blob)) {
+    score += 28;
+  }
+  return score;
+}
+
+function rankFilingSummaryReportsForKind(
+  reports: FilingSummaryReportRef[],
+  kind: StatementKind,
+  hasOperationsIncomeReport: boolean
+): Array<{ kind: StatementKind; htmlFile: string; score: number }> {
+  const ranked: Array<{ kind: StatementKind; htmlFile: string; score: number }> = [];
+  for (const report of reports) {
+    const mappedKind = statementKindFromFilingSummaryReport(report);
+    const htmlFile = typeof report.htmlFile === "string" ? report.htmlFile.trim() : "";
+    if (mappedKind !== kind || !htmlFile) continue;
+    ranked.push({ kind, htmlFile, score: scoreFilingSummaryReport(report, kind, hasOperationsIncomeReport) });
+  }
+  ranked.sort((a, b) => b.score - a.score || a.htmlFile.localeCompare(b.htmlFile));
+  return ranked;
 }
 
 function pickFilingSummaryStatementReports(
   reports: FilingSummaryReportRef[]
 ): Array<{ kind: StatementKind; htmlFile: string }> {
   const bestByKind = new Map<StatementKind, { htmlFile: string; score: number }>();
+  const hasOperationsIncomeReport = reports.some((report) => {
+    const blob = normalizeSpace([report.shortName, report.longName, report.menuCategory].filter(Boolean).join(" "));
+    return (
+      statementKindFromFilingSummaryReport(report) === "is" &&
+      /\b(?:operations|income|earnings)\b/i.test(blob) &&
+      !/parenthetical/i.test(blob)
+    );
+  });
 
   for (const report of reports) {
     const kind = statementKindFromFilingSummaryReport(report);
     const htmlFile = typeof report.htmlFile === "string" ? report.htmlFile.trim() : "";
     if (!kind || !htmlFile) continue;
 
-    const menuCategory = normalizeSpace(report.menuCategory ?? "");
-    const shortName = normalizeSpace(report.shortName ?? "");
-    const longName = normalizeSpace(report.longName ?? "");
-    const blob = `${shortName} ${longName} ${menuCategory}`;
-    let score = 0;
-    if (/^statements?$/i.test(menuCategory) || /^statement$/i.test(menuCategory)) score += 50;
-    if (/statement/i.test(shortName)) score += 20;
-    if (/consolidated/i.test(blob)) score += 10;
-    if (/parenthetical|detail|schedule|equity/i.test(blob)) score -= 25;
-    if (/cash\s+flows?/i.test(blob) && kind === "cf") score += 15;
-    if (/balance\s+sheets?/i.test(blob) && kind === "bs") score += 15;
-    if (/\b(?:operations|income|earnings)\b/i.test(blob) && kind === "is") score += 15;
+    const score = scoreFilingSummaryReport(report, kind, hasOperationsIncomeReport);
 
     const prev = bestByKind.get(kind);
     if (!prev || score > prev.score) bestByKind.set(kind, { htmlFile, score });
@@ -3213,45 +5034,118 @@ function pickFilingSummaryStatementReports(
     .filter((hit): hit is { kind: StatementKind; htmlFile: string } => hit !== null);
 }
 
+function parseFilingSummaryReportStatement(
+  reportHtml: string,
+  reportOpts: {
+    kind: StatementKind;
+    form: string;
+    primaryDocument?: string;
+    sourceUrl?: string;
+    shapeTemplates?: PrimaryFaceShapeTemplates;
+  }
+): FilingHtmlStatement | null {
+  const formUpper = reportOpts.form.toUpperCase();
+  const attempts: Array<() => FilingHtmlStatement | null> = [
+    () => parseFilingSummaryReportDirectTable(reportHtml, reportOpts),
+    () => parsePrimaryFilingStatementHtml(reportHtml, reportOpts),
+    () => parseHeadingAnchoredStatementTable(reportHtml, reportOpts),
+    () => parseBestStatementTableFromHtml(reportHtml, reportOpts),
+  ];
+  for (const attempt of attempts) {
+    const parsed = attempt();
+    if (!parsed) continue;
+    const withId = withStatementKindIdentity(parsed, reportOpts.kind);
+    if (sourceStatementPassesMergeGate(withId, formUpper)) return withId;
+  }
+
+  const ctx = buildParsedFilingHtmlContext(reportHtml);
+  if (!ctx) return null;
+  const section: FilingSectionBounds = { start: 0, end: ctx.acc.length };
+  let best: { stmt: FilingHtmlStatement; score: number } | null = null;
+  for (const table of ctx.tables) {
+    const unitsHint = extractUnitsFromText(ctx.acc.slice(Math.max(0, table.offset - 500), table.offset));
+    const raw = parsePrimaryStatementTable(
+      ctx.$,
+      ctx.$(table.el),
+      reportOpts.kind,
+      unitsHint,
+      reportOpts.primaryDocument,
+      reportOpts.sourceUrl,
+      table.offset
+    );
+    if (!raw) continue;
+    const candidate = withStatementKindIdentity(raw, reportOpts.kind);
+    if (!sourceStatementPassesMergeGate(candidate, formUpper)) continue;
+    const score = scoreTableCandidate(
+      ctx.$,
+      ctx.acc,
+      table,
+      section,
+      reportOpts.kind,
+      formUpper,
+      reportOpts.shapeTemplates
+    );
+    if (!best || score > best.score) best = { stmt: candidate, score };
+  }
+  return best?.stmt ?? null;
+}
+
 async function fetchFilingSummaryStatements(opts: {
   cik: string;
   accessionNumber: string;
   form: string;
+  kinds?: StatementKind[];
 }): Promise<FilingHtmlStatement[]> {
   const summaryUrl = filingSummaryXmlUrl(opts.cik, opts.accessionNumber);
   const filingSummaryXml = await fetchText(summaryUrl);
-  const reports = pickFilingSummaryStatementReports(parseFilingSummaryReports(filingSummaryXml));
+  const allReports = parseFilingSummaryReports(filingSummaryXml);
+  const hasOperationsIncomeReport = allReports.some((report) => {
+    const blob = normalizeSpace([report.shortName, report.longName, report.menuCategory].filter(Boolean).join(" "));
+    return (
+      statementKindFromFilingSummaryReport(report) === "is" &&
+      /\b(?:operations|income|earnings)\b/i.test(blob) &&
+      !/parenthetical/i.test(blob)
+    );
+  });
+  const wantedKinds = opts.kinds?.length
+    ? opts.kinds
+    : (["is", "bs", "cf"] as StatementKind[]);
   const statements: FilingHtmlStatement[] = [];
 
-  for (const report of reports) {
-    const reportUrl = filingSummaryMemberUrl(opts.cik, opts.accessionNumber, report.htmlFile);
-    const reportHtml = await fetchText(reportUrl);
-    const parsed =
-      parsePrimaryFilingStatementHtml(reportHtml, {
+  for (const kind of wantedKinds) {
+    const candidates = rankFilingSummaryReportsForKind(allReports, kind, hasOperationsIncomeReport);
+    for (const report of candidates) {
+      const reportUrl = filingSummaryMemberUrl(opts.cik, opts.accessionNumber, report.htmlFile);
+      const reportHtml = await fetchText(reportUrl);
+      const reportOpts = {
         kind: report.kind,
         form: opts.form,
         primaryDocument: sourceFileNameFromUrl(reportUrl, report.htmlFile) ?? report.htmlFile,
         sourceUrl: reportUrl,
-      }) ??
-      parseHeadingAnchoredStatementTable(reportHtml, {
-        kind: report.kind,
-        form: opts.form,
-        primaryDocument: sourceFileNameFromUrl(reportUrl, report.htmlFile) ?? report.htmlFile,
-        sourceUrl: reportUrl,
-      }) ??
-      parseBestStatementTableFromHtml(reportHtml, {
-        kind: report.kind,
-        form: opts.form,
-        primaryDocument: sourceFileNameFromUrl(reportUrl, report.htmlFile) ?? report.htmlFile,
-        sourceUrl: reportUrl,
-      });
-    if (parsed) {
-      const validated = returnParsedPrimaryStatementIfValid(parsed, opts.form.toUpperCase());
-      if (validated) statements.push(validated);
+      };
+      const validated = parseFilingSummaryReportStatement(reportHtml, reportOpts);
+      if (validated) {
+        statements.push(validated);
+        break;
+      }
     }
   }
 
   return statements;
+}
+
+function missingPrimaryStatementKinds(statements: FilingHtmlStatement[], form: string): StatementKind[] {
+  const kindMap: Array<{ kind: StatementKind; id: FilingHtmlStatement["id"] }> = [
+    { kind: "is", id: "income-statement" },
+    { kind: "bs", id: "balance-sheet" },
+    { kind: "cf", id: "cash-flow" },
+  ];
+  return kindMap
+    .filter(({ id }) => {
+      const stmt = statements.find((candidate) => candidate.id === id);
+      return !stmt || !sourceStatementPassesMergeGate(stmt, form);
+    })
+    .map(({ kind }) => kind);
 }
 
 function expectedMinPeriodsForStatement(id: FilingHtmlStatement["id"], form: string): number {
@@ -3578,15 +5472,23 @@ export function parsePrimaryFilingStatementFromContext(
 ): FilingHtmlStatement | null {
   const targetId =
     opts.kind === "is" ? "income-statement" : opts.kind === "bs" ? "balance-sheet" : "cash-flow";
+  if (isFilingSummaryReportDocument(opts.primaryDocument) && !findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, opts.form)) {
+    return (
+      parseFilingSummaryReportDirectTableFromContext(ctx, opts) ??
+      parseBestStatementTableFromContext(ctx, {
+        kind: opts.kind,
+        form: opts.form,
+        primaryDocument: opts.primaryDocument,
+        sourceUrl: opts.sourceUrl,
+        shapeTemplates: opts.shapeTemplates,
+      })
+    );
+  }
+
   const fromCluster = parsePrimaryFinancialStatementsInItemSection(ctx, opts).find(
     (stmt) => stmt.id === targetId
   );
   if (fromCluster) return fromCluster;
-
-  // FilingSummary R*.htm pages and other single-statement excerpts have no IS+BS+CF cluster.
-  if (isFilingSummaryReportDocument(opts.primaryDocument) && !findPrimaryFinancialStatementsItemSectionBounds(ctx.acc, opts.form)) {
-    return null;
-  }
 
   return parseBestStatementTableFromContext(ctx, {
     kind: opts.kind,
@@ -3630,13 +5532,51 @@ export async function fetchHtmlFilingStatementsBundle(opts: {
   });
   const sourceUrl = buildPrimaryDocumentUrl(archiveCik, opts.accessionNumber, opts.primaryDocument);
   const html = await fetchText(sourceUrl);
-  const statements = parsePrimaryFilingStatementsFromHtml(html, {
+  const formUpper = opts.form.toUpperCase();
+  let statements = parsePrimaryFilingStatementsFromHtml(html, {
     form: opts.form,
     primaryDocument: opts.primaryDocument,
     sourceUrl,
     shapeTemplates: opts.shapeTemplates,
   });
-  const parsedTables = buildParsedFilingHtmlContext(html)?.tables;
+  const ctx = buildParsedFilingHtmlContext(html);
+  const mergeFilingSummaryStatements = async (kinds?: StatementKind[]) => {
+    const filingSummaryStatements = await fetchFilingSummaryStatements({
+      cik: archiveCik,
+      accessionNumber: opts.accessionNumber,
+      form: opts.form,
+      kinds,
+    });
+    if (filingSummaryStatements.length > 0) {
+      statements = mergeStatementsById(statements, filingSummaryStatements, formUpper);
+    }
+  };
+  if (!primaryStatementsShapeValid(statements, formUpper)) {
+    try {
+      await mergeFilingSummaryStatements();
+    } catch {
+      // Non-iXBRL filings often have no FilingSummary.xml.
+    }
+  }
+  if (formUpper.includes("10-K") && !primaryStatementsShapeValid(statements, formUpper)) {
+    const missingKinds = missingPrimaryStatementKinds(statements, formUpper);
+    if (missingKinds.length > 0) {
+      try {
+        await mergeFilingSummaryStatements(missingKinds);
+      } catch {
+        // Best-effort fill for exhibit-only 10-K face statements.
+      }
+    }
+  }
+  if (ctx && !primaryStatementsShapeValid(statements, formUpper)) {
+    statements = salvageMissingPrimaryStatementsFromHtml(ctx, statements, {
+      form: opts.form,
+      primaryDocument: opts.primaryDocument,
+      sourceUrl,
+      shapeTemplates: opts.shapeTemplates,
+    });
+  }
+  const parsedTables = ctx?.tables;
   return { statements, primaryHtml: html, primarySourceUrl: sourceUrl, parsedTables };
 }
 
