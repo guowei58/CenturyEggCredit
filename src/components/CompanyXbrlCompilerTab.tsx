@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Card } from "@/components/ui";
-
+import { compilerStatementRowEmphasis } from "@/lib/sec-ixbrl-face-display";
 /* ── types ─────────────────────────────────────────────────────────────── */
 
 type Status = "idle" | "running" | "done" | "error";
@@ -98,25 +97,16 @@ function isRenderableCompiledResult(
   );
 }
 
-type Panel = "compile" | "statements" | "conflicts" | "diagnostics";
 type ViewMode = "quarterly" | "annual";
 
-const PANELS: { id: Panel; label: string }[] = [
-  { id: "compile", label: "Compile" },
-  { id: "statements", label: "Financial Statements" },
-  { id: "conflicts", label: "Conflicts & Unresolved" },
-  { id: "diagnostics", label: "Concept Map" },
-];
+export type CompanyXbrlCompilerTabHandle = {
+  startCompile: () => void;
+};
 
-/** Compiler still computes conflicts / concept map; flip to true to show those tabs again. */
-const SHOW_DIAGNOSTIC_PANELS = false;
-
-const TAB_BAR_PANELS = SHOW_DIAGNOSTIC_PANELS
-  ? PANELS
-  : ([
-      { id: "compile" as const, label: "Run compile" },
-      { id: "statements" as const, label: "View statements" },
-    ] as const);
+export type CompileUiState = {
+  canCompile: boolean;
+  compiling: boolean;
+};
 
 const STMT_LABEL: Record<string, string> = {
   income_statement: "Income Statement",
@@ -239,24 +229,8 @@ async function buildCompiledExcelBlob(
 
         const dataRow = ws.addRow(vals);
 
-        const ll = lineLabel.trim().toLowerCase();
-        let isSubtotal = false;
-        if (stmtKey === "income_statement") {
-          isSubtotal = /^operating\s+income/i.test(ll)
-            || /^net\s+income/i.test(ll);
-        } else if (stmtKey === "balance_sheet") {
-          isSubtotal = /^(total\s+)?assets$/i.test(ll)
-            || /^(total\s+)?liabilities$/i.test(ll)
-            || /^liabilities\s+and\s+equity/i.test(ll)
-            || /^total\s+liabilities\s+and/i.test(ll);
-        } else if (stmtKey === "cash_flow") {
-          isSubtotal = /cash\s+provided\s+by.*operating/i.test(ll)
-            || /cash\s+(flow\s+)?from\s+operat/i.test(ll)
-            || /cash\s+provided\s+by.*investing/i.test(ll)
-            || /cash\s+(flow\s+)?from\s+invest/i.test(ll)
-            || /cash\s+provided\s+by.*financing/i.test(ll)
-            || /cash\s+(flow\s+)?from\s+financ/i.test(ll);
-        }
+        const emphasis = compilerStatementRowEmphasis(lineLabel, stmtKey);
+        const isSubtotal = emphasis === "subtotal";
 
         dataRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
           cell.border = borderAll;
@@ -303,7 +277,15 @@ async function buildCompiledExcelBlob(
 
 const STICKY_SHADOW = "4px 0 8px -2px rgba(0,0,0,0.25)";
 
-function Table({ title, model }: { title: string; model: StmtModel }) {
+function Table({
+  title,
+  model,
+  statementKey,
+}: {
+  title: string;
+  model: StmtModel;
+  statementKey: string;
+}) {
   if (!model || !model.rows.length) {
     return (
       <div className="rounded border border-dashed p-4 text-center text-xs"
@@ -337,181 +319,69 @@ function Table({ title, model }: { title: string; model: StmtModel }) {
             </tr>
           </thead>
           <tbody>
-            {model.rows.map((row, i) => (
-              <tr key={`${row.concept}-${i}`} className="border-b hover:bg-[var(--sb)]" style={{ borderColor: "var(--border2)" }}>
-                <td className="sticky left-0 z-10 min-w-[220px] max-w-[280px] px-3 py-1 font-medium border-r truncate"
+            {model.rows.map((row, i) => {
+              const lineLabel = String(row.line || row.concept);
+              const emphasis = compilerStatementRowEmphasis(lineLabel, statementKey);
+              const depth = typeof row.depth === "number" ? row.depth : 0;
+              const rowBg =
+                emphasis === "subtotal"
+                  ? "color-mix(in srgb, var(--accent) 11%, var(--panel))"
+                  : emphasis === "heading"
+                    ? "color-mix(in srgb, var(--muted) 7%, var(--panel))"
+                    : i % 2 === 1
+                      ? "color-mix(in srgb, var(--muted) 4%, var(--panel))"
+                      : "var(--panel)";
+              const labelWeight = emphasis === "normal" ? 400 : 600;
+              const valueWeight = emphasis === "subtotal" ? 600 : 400;
+              const labelColor = emphasis === "heading" ? "var(--muted2)" : "var(--text)";
+              return (
+                <tr
+                  key={`${row.concept}-${i}`}
+                  className="border-b"
                   style={{
-                    background: "var(--card)",
-                    color: "var(--text)",
-                    borderColor: "var(--border)",
-                    boxShadow: STICKY_SHADOW,
+                    borderColor:
+                      emphasis === "subtotal"
+                        ? "color-mix(in srgb, var(--accent) 28%, var(--border2))"
+                        : "var(--border2)",
+                    background: rowBg,
                   }}
-                  title={String(row.line || row.concept)}>
-                  {String(row.line || row.concept)}
-                </td>
-                {model.periods.map((p) => {
-                  const v = row[p];
-                  return (
-                    <td key={p} className="px-2 py-1 text-right tabular-nums whitespace-nowrap"
-                      style={{ color: "var(--text)" }}>
-                      {fmt(v)}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                >
+                  <td
+                    className="sticky left-0 z-10 min-w-[220px] max-w-[280px] border-r truncate px-3 py-1"
+                    style={{
+                      background: rowBg,
+                      color: labelColor,
+                      fontWeight: labelWeight,
+                      borderColor: "var(--border)",
+                      boxShadow: STICKY_SHADOW,
+                      paddingLeft: `${10 + Math.min(10, depth) * 14}px`,
+                      fontStyle: emphasis === "heading" ? "italic" : "normal",
+                    }}
+                    title={lineLabel}
+                  >
+                    {lineLabel}
+                  </td>
+                  {model.periods.map((p) => {
+                    const v = row[p];
+                    return (
+                      <td
+                        key={p}
+                        className="whitespace-nowrap px-2 py-1 text-right tabular-nums"
+                        style={{
+                          color: emphasis === "heading" ? "var(--muted)" : "var(--text)",
+                          fontWeight: valueWeight,
+                        }}
+                      >
+                        {fmt(v)}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-    </div>
-  );
-}
-
-/* ── compile panel ─────────────────────────────────────────────────────── */
-
-function CompilePanel({
-  ticker,
-  result,
-  status,
-  onRun,
-  savedFiles,
-  loadingFiles,
-  filesLoadError,
-  selected,
-  toggleFile,
-  selectAll,
-  deselectAll,
-}: {
-  ticker: string;
-  result: Result | null;
-  status: Status;
-  onRun: () => void;
-  savedFiles: SavedFile[];
-  loadingFiles: boolean;
-  filesLoadError: string | null;
-  selected: Set<string>;
-  toggleFile: (f: string) => void;
-  selectAll: () => void;
-  deselectAll: () => void;
-}) {
-  const xbrl = savedFiles.filter((f) => f.isXbrl);
-  const n = [...selected].filter((f) => xbrl.some((x) => x.filename === f)).length;
-
-  return (
-    <div className="space-y-4">
-      <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-        <h3 className="text-xs font-bold mb-2" style={{ color: "var(--text)" }}>
-          XBRL As-Presented Workbooks
-        </h3>
-        {filesLoadError ? (
-          <p className="text-xs leading-snug" style={{ color: "var(--warn)" }}>
-            {filesLoadError}
-          </p>
-        ) : null}
-        {loadingFiles ? (
-          <div className="text-xs" style={{ color: "var(--muted)" }}>Loading saved workbooks…</div>
-        ) : !xbrl.length ? (
-          <div className="text-xs leading-snug" style={{ color: "var(--muted2)" }}>
-            No compiler-ready workbooks for {ticker}. Complete{" "}
-            <strong style={{ color: "var(--text)" }}>Step 1</strong> above (bulk save HTML face workbooks to Saved
-            Documents). Filenames must contain{" "}
-            <span className="font-mono">SEC-XBRL-financials_as-presented</span>.
-          </div>
-        ) : (
-          <>
-            <div className="flex gap-2 mb-2">
-              <button type="button" onClick={selectAll} className="rounded border px-2 py-0.5 text-[10px]"
-                style={{ borderColor: "var(--border2)", color: "var(--muted)" }}>
-                Select all ({xbrl.length})
-              </button>
-              <button type="button" onClick={deselectAll} className="rounded border px-2 py-0.5 text-[10px]"
-                style={{ borderColor: "var(--border2)", color: "var(--muted)" }}>
-                Deselect all
-              </button>
-            </div>
-            <div className="max-h-48 overflow-y-auto space-y-1">
-              {xbrl.map((f) => (
-                <label key={f.filename} className="flex items-center gap-2 text-[11px] cursor-pointer px-1 py-0.5 rounded hover:bg-[var(--sb)]">
-                  <input type="checkbox" checked={selected.has(f.filename)} onChange={() => toggleFile(f.filename)} className="rounded" />
-                  <span className="truncate" style={{ color: "var(--text)" }} title={f.filename}>{f.title || f.filename}</span>
-                </label>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      <button
-        type="button"
-        disabled={status === "running" || !n || Boolean(filesLoadError)}
-        onClick={onRun}
-        className="rounded-lg px-4 py-2 text-xs font-bold text-white transition-colors disabled:opacity-40"
-        style={{ background: "var(--accent)" }}
-      >
-        {status === "running" ? "Compiling…" : `Compile ${n} workbook${n !== 1 ? "s" : ""}`}
-      </button>
-      {!loadingFiles && !filesLoadError && n === 0 ? (
-        <p className="text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
-          Select at least one workbook above, then click compile. Large histories can take several minutes.
-        </p>
-      ) : null}
-
-      {result && (
-        <div className="rounded-lg border p-4"
-          style={{ borderColor: result.ok ? "var(--border)" : "#ef4444", background: "var(--card)" }}>
-          <h3 className="text-sm font-semibold mb-2"
-            style={{ color: result.ok ? "var(--accent)" : "#ef4444" }}>
-            {result.ok ? "Compilation Complete" : "Compilation Failed"}
-          </h3>
-          {result.ok ? (
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs" style={{ color: "var(--muted)" }}>
-              <div>Master file: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.master_file}</span></div>
-              <div>Workbooks: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.inputFileCount ?? result.files_processed}</span></div>
-              <div>Total facts: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.total_facts?.toLocaleString()}</span></div>
-              <div>Mapped facts: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.mapped_facts?.toLocaleString()}</span></div>
-              <div>Master concepts: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.total_concepts}</span></div>
-              <div>Derived values: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.derived_facts}</span></div>
-              <div>Conflicts: <span className="font-semibold" style={{ color: result.conflicts_count ? "#f59e0b" : "var(--text)" }}>{result.conflicts_count}</span></div>
-              <div>Unresolved: <span className="font-semibold" style={{ color: result.unresolved_count ? "#f59e0b" : "var(--text)" }}>{result.unresolved_count}</span></div>
-              {result.coverage_pass && (
-                <div className="col-span-2 space-y-0.5">
-                  <div>
-                    Coverage: repaired {result.coverage_pass.repaired_mapped_cells} cells; row-order registry +{" "}
-                    {result.coverage_pass.row_order_registry_rows ?? 0} rows; explicit workbook +{" "}
-                    {result.coverage_pass.explicit_workbook_rows ?? 0} rows / +{result.coverage_pass.explicit_workbook_cells ?? 0} cells;
-                    gap fills {result.coverage_pass.workbook_fact_gap_fills ?? 0}; integrated unresolved{" "}
-                    {result.coverage_pass.integrated_unresolved_rows} rows / {result.coverage_pass.integrated_unresolved_cells} cells
-                  </div>
-                  {result.final_raw_reconcile && (
-                    <div>
-                      Final raw reconcile: scanned {result.final_raw_reconcile.raw_keys_scanned} keys; +{result.final_raw_reconcile.rows_added}{" "}
-                      rows, +{result.final_raw_reconcile.maps_repaired} maps, +{result.final_raw_reconcile.orphan_master_rows_recovered}{" "}
-                      orphan rows, +{result.final_raw_reconcile.cells_added} cells
-                    </div>
-                  )}
-                </div>
-              )}
-              <div>Elapsed: <span className="font-semibold" style={{ color: "var(--text)" }}>{result.elapsed_s}s</span></div>
-              <div>Validation: <span className="font-semibold" style={{ color: result.validation_failed ? "#ef4444" : "var(--text)" }}>{result.validation_passed} ok, {result.validation_failed} fail</span></div>
-              <div className="col-span-2">
-                Statements view (tab + Excel download):{" "}
-                <span className="font-semibold" style={{ color: "var(--text)" }}>
-                  {result.display_models_min_fiscal_year != null ? (
-                    <>
-                      fiscal year ≥ {result.display_models_min_fiscal_year} (never earlier than the first full Q1–Q4 year)
-                    </>
-                  ) : (
-                    "first fiscal year with all four quarters (per statement), otherwise every period"
-                  )}
-                </span>
-                <span className="text-[10px] ml-1" style={{ color: "var(--muted2)" }}>(full history in output folder)</span>
-              </div>
-            </div>
-          ) : (
-            <pre className="text-xs whitespace-pre-wrap" style={{ color: "#ef4444" }}>{result.error}</pre>
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -521,11 +391,9 @@ function CompilePanel({
 function StatementsPanel({
   result,
   ticker,
-  onOpenCompilePanel,
 }: {
   result: Result | null;
   ticker: string;
-  onOpenCompilePanel: () => void;
 }) {
   const { data: session } = useSession();
   const [mode, setMode] = useState<ViewMode>("quarterly");
@@ -570,22 +438,7 @@ function StatementsPanel({
   }, [result, ticker, session?.user]);
 
   if (!result?.ok || !models || !stmts.length) {
-    return (
-      <div
-        className="rounded-lg border border-dashed p-8 text-center text-xs space-y-3"
-        style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
-      >
-        <p>No compiled statements yet. Open the Run compile tab, select saved workbooks, and click compile.</p>
-        <button
-          type="button"
-          onClick={onOpenCompilePanel}
-          className="rounded-lg px-4 py-2 text-xs font-bold text-white"
-          style={{ background: "var(--accent)" }}
-        >
-          Go to Run compile
-        </button>
-      </div>
-    );
+    return null;
   }
 
   const m = models[active]?.[mode];
@@ -625,8 +478,11 @@ function StatementsPanel({
           {savedDocLine.text}
         </p>
       ) : null}
-      {m ? <Table title={`${STMT_LABEL[active] || active} – ${mode}`} model={m} /> :
-        <div className="text-xs" style={{ color: "var(--muted2)" }}>No {mode} data.</div>}
+      {m ? (
+        <Table title={`${STMT_LABEL[active] || active} – ${mode}`} model={m} statementKey={active} />
+      ) : (
+        <div className="text-xs" style={{ color: "var(--muted2)" }}>No {mode} data.</div>
+      )}
     </div>
   );
 }
@@ -895,19 +751,16 @@ function DiagnosticsPanel({ result }: { result: Result | null }) {
 
 /* ── main component ────────────────────────────────────────────────────── */
 
-export function CompanyXbrlCompilerTab({
-  ticker,
-  savedDocumentsRev = 0,
-  compilerTitle,
-}: {
-  ticker: string;
-  /** Increment when Saved Documents gain new SEC-XBRL workbooks (e.g. after bulk save). */
-  savedDocumentsRev?: number;
-  /** Override main compiler card heading (default: Deterministic XBRL Statement Compiler). */
-  compilerTitle?: string;
-}) {
+export const CompanyXbrlCompilerTab = forwardRef<
+  CompanyXbrlCompilerTabHandle,
+  {
+    ticker: string;
+    /** Increment when Saved Documents gain new SEC-XBRL workbooks (e.g. after bulk save). */
+    savedDocumentsRev?: number;
+    onCompileUiChange?: (state: CompileUiState) => void;
+  }
+>(function CompanyXbrlCompilerTab({ ticker, savedDocumentsRev = 0, onCompileUiChange }, ref) {
   const { data: session, status: sessionStatus } = useSession();
-  const [panel, setPanel] = useState<Panel>("compile");
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<Result | null>(() => _resultCache.get(ticker) ?? null);
   const [files, setFiles] = useState<SavedFile[]>([]);
@@ -928,20 +781,6 @@ export function CompanyXbrlCompilerTab({
       setStatus("idle");
     }
   }, [ticker]);
-
-  // Auto-switch to statements tab when cached result exists on mount
-  useEffect(() => {
-    const cached = _resultCache.get(ticker);
-    if (isRenderableCompiledResult(cached)) {
-      setPanel("statements");
-    }
-  }, [ticker]);
-
-  useEffect(() => {
-    if (!SHOW_DIAGNOSTIC_PANELS && (panel === "conflicts" || panel === "diagnostics")) {
-      setPanel("statements");
-    }
-  }, [panel]);
 
   useEffect(() => {
     if (sessionStatus === "loading") return;
@@ -990,7 +829,6 @@ export function CompanyXbrlCompilerTab({
           setResult(last);
           _resultCache.set(ticker, last);
           setStatus("done");
-          setPanel("statements");
         }
       })
       .catch((e) => {
@@ -1001,20 +839,6 @@ export function CompanyXbrlCompilerTab({
       .finally(() => setLoading(false));
   }, [session?.user?.id, sessionStatus, ticker, savedDocumentsRev]);
 
-  const toggle = useCallback((f: string) => {
-    setSelected((prev) => {
-      const s = new Set(prev);
-      s.has(f) ? s.delete(f) : s.add(f);
-      return s;
-    });
-  }, []);
-
-  const selectAll = useCallback(() => {
-    setSelected(new Set(files.filter((f) => f.isXbrl).map((f) => f.filename)));
-  }, [files]);
-
-  const deselectAll = useCallback(() => setSelected(new Set()), []);
-
   const compile = useCallback(async () => {
     if (filesLoadError) return;
     const xbrlSelected = [...selected].filter((f) =>
@@ -1022,7 +846,6 @@ export function CompanyXbrlCompilerTab({
     );
     if (!xbrlSelected.length) return;
 
-    setPanel("compile");
     setStatus("running");
     setResult(null);
     _resultCache.delete(ticker);
@@ -1056,7 +879,6 @@ export function CompanyXbrlCompilerTab({
       setStatus(outcome.ok ? "done" : "error");
       if (outcome.ok) {
         _resultCache.set(ticker, outcome);
-        setPanel("statements");
       }
     } catch (e) {
       setResult({ ok: false, error: e instanceof Error ? e.message : "Compile failed" });
@@ -1064,62 +886,58 @@ export function CompanyXbrlCompilerTab({
     }
   }, [ticker, selected, files, filesLoadError]);
 
-  const hasStmts = result?.ok && result.models && Object.keys(result.models).length > 0;
+  useImperativeHandle(ref, () => ({ startCompile: () => void compile() }), [compile]);
+
+  const xbrlSelectedCount = [...selected].filter((f) =>
+    files.some((file) => file.isXbrl && file.filename === f)
+  ).length;
+
+  const canCompile =
+    !filesLoadError &&
+    !loading &&
+    status !== "running" &&
+    xbrlSelectedCount > 0;
+
+  useEffect(() => {
+    onCompileUiChange?.({ canCompile, compiling: status === "running" });
+  }, [canCompile, onCompileUiChange, status]);
+
+  const hasStmts = isRenderableCompiledResult(result);
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-base font-bold tracking-tight" style={{ color: "var(--text)" }}>
-            {compilerTitle ?? "Deterministic XBRL Statement Compiler"}
-          </h2>
-          <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide"
-            style={{ background: "var(--accent)", color: "#fff" }}>{ticker}</span>
-          {hasStmts && (
-            <span className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide bg-green-600 text-white">
-              Compiled
-            </span>
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-1 mb-4 rounded border p-1"
-          style={{ borderColor: "var(--border2)", background: "var(--sb)" }}>
-          {TAB_BAR_PANELS.map((p) => (
-            <button key={p.id} type="button" onClick={() => setPanel(p.id)}
-              className="rounded px-3 py-1.5 text-[10px] font-semibold transition-colors"
-              style={panel === p.id ? { background: "var(--accent)", color: "#fff" } : { color: "var(--muted)" }}>
-              {p.label}
-            </button>
-          ))}
-        </div>
-
-        {status === "running" ? (
-          <p className="mb-3 text-xs font-medium" style={{ color: "var(--accent)" }}>
-            Compiling {ticker}… This may take a few minutes for many workbooks. Stay on this page.
-          </p>
-        ) : null}
-
-        {panel === "compile" && (
-          <CompilePanel
-            ticker={ticker}
-            result={result}
-            status={status}
-            onRun={compile}
-            savedFiles={files}
-            loadingFiles={loading}
-            filesLoadError={filesLoadError}
-            selected={selected}
-            toggleFile={toggle}
-            selectAll={selectAll}
-            deselectAll={deselectAll}
-          />
-        )}
-        {panel === "statements" && (
-          <StatementsPanel result={result} ticker={ticker} onOpenCompilePanel={() => setPanel("compile")} />
-        )}
-        {SHOW_DIAGNOSTIC_PANELS && panel === "conflicts" && <ConflictsPanel result={result} />}
-        {SHOW_DIAGNOSTIC_PANELS && panel === "diagnostics" && <DiagnosticsPanel result={result} />}
-      </Card>
+    <div className="space-y-3">
+      {loading ? (
+        <p className="text-sm" style={{ color: "var(--muted2)" }}>
+          Loading saved workbooks…
+        </p>
+      ) : null}
+      {filesLoadError ? (
+        <p className="text-sm" style={{ color: "var(--warn)" }}>
+          {filesLoadError}
+        </p>
+      ) : null}
+      {!loading && !filesLoadError && xbrlSelectedCount === 0 ? (
+        <p className="text-sm" style={{ color: "var(--muted2)" }}>
+          No saved workbooks yet. Complete step 1 first.
+        </p>
+      ) : null}
+      {status === "running" ? (
+        <p className="text-sm" style={{ color: "var(--accent)" }}>
+          Compiling {ticker}… This may take a few minutes.
+        </p>
+      ) : null}
+      {status === "error" && result?.error ? (
+        <p className="text-sm" style={{ color: "var(--warn)" }}>
+          {result.error}
+        </p>
+      ) : null}
+      {hasStmts ? (
+        <StatementsPanel result={result} ticker={ticker} />
+      ) : status !== "running" && !loading && !filesLoadError && xbrlSelectedCount > 0 ? (
+        <p className="py-8 text-center text-sm" style={{ color: "var(--muted2)" }}>
+          Hit compile to view the statements.
+        </p>
+      ) : null}
     </div>
   );
-}
+});

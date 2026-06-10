@@ -35,6 +35,8 @@ export default defineConfig({
       "src/lib/sec-statement-locator/**/*.test.ts",
       "src/lib/sec-ixbrl-inline-cell.test.ts",
       "src/lib/sec-ixbrl-face-display.test.ts",
+      "src/lib/period-financials-roic.test.ts",
+      "src/lib/presentations/discovery/presentation-discovery.test.ts",
       "src/lib/sec-ixbrl-face-extract.test.ts",
       "src/lib/sec-xbrl-as-presented.test.ts",
       "src/lib/sec-xbrl-balance-sheet-dedupe.test.ts",

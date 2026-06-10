@@ -68,6 +68,105 @@ export function faceEpsValue(row: FacePresentedStatementRow, periodKey: string):
 
 export type FaceStatementId = "income-statement" | "balance-sheet" | "cash-flow";
 
+export type FaceStatementRowEmphasis = "heading" | "subtotal" | "normal";
+
+function normalizedFaceLabel(label: string): string {
+  return label.replace(/\s+/g, " ").trim().toLowerCase().replace(/[.:]+$/g, "").trim();
+}
+
+/** Match compiler / historical workbook emphasis for key subtotals and section headers. */
+export function faceStatementRowEmphasis(
+  row: Pick<FacePresentedStatementRow, "label" | "rowKind">,
+  statementId: FaceStatementId
+): FaceStatementRowEmphasis {
+  if (row.rowKind === "heading") return "heading";
+  if (row.rowKind === "total") return "subtotal";
+
+  const ll = normalizedFaceLabel(row.label);
+  if (!ll) return "normal";
+
+  if (statementId === "income-statement") {
+    if (
+      /^total\b/.test(ll) ||
+      /\bgross profit\b/.test(ll) ||
+      /\boperating income\b/.test(ll) ||
+      /\bloss from operations\b/.test(ll) ||
+      /\bincome from operations\b/.test(ll) ||
+      /\bnet income\b/.test(ll) ||
+      /\bnet loss\b/.test(ll) ||
+      /\bnet earnings\b/.test(ll) ||
+      /\bnet revenues\b/.test(ll) ||
+      /^revenues?$/.test(ll) ||
+      /\btotal revenues\b/.test(ll) ||
+      /\btotal net sales\b/.test(ll) ||
+      /^net sales$/.test(ll) ||
+      /\bcomprehensive income\b/.test(ll) ||
+      /\bincome(?:\s*\(loss\))?\s+before income taxes\b/.test(ll) ||
+      /\bloss(?:\s*\(loss\))?\s+before income taxes\b/.test(ll) ||
+      /\bincome before income taxes\b/.test(ll) ||
+      /\bpretax income\b/.test(ll)
+    ) {
+      return "subtotal";
+    }
+    return "normal";
+  }
+
+  if (statementId === "balance-sheet") {
+    if (
+      /^(total\s+)?assets$/.test(ll) ||
+      /^assets$/.test(ll) ||
+      /^(total\s+)?liabilities$/.test(ll) ||
+      /^liabilities$/.test(ll) ||
+      /\btotal current assets\b/.test(ll) ||
+      /^current assets$/.test(ll) ||
+      /\btotal current liabilities\b/.test(ll) ||
+      /^current liabilities$/.test(ll) ||
+      /\btotal stockholders'? equity\b/.test(ll) ||
+      /\btotal shareholders'? equity\b/.test(ll) ||
+      /^total equity$/.test(ll) ||
+      /\btotal liabilities and stockholders'? equity\b/.test(ll) ||
+      /\btotal liabilities and shareholders'? equity\b/.test(ll) ||
+      /\bliabilities and equity\b/.test(ll)
+    ) {
+      return "subtotal";
+    }
+    return "normal";
+  }
+
+  if (
+    /\bcash\s+(?:flows?\s+)?from\s+operat/i.test(ll) ||
+    /\bcash\s+provided\s+by\s+operating/i.test(ll) ||
+    /\bcash\s+(?:flows?\s+)?from\s+invest/i.test(ll) ||
+    /\bcash\s+provided\s+by\s+investing/i.test(ll) ||
+    /\bcash\s+(?:flows?\s+)?from\s+financ/i.test(ll) ||
+    /\bcash\s+provided\s+by\s+financing/i.test(ll) ||
+    /\bnet increase\b.*\bcash\b/.test(ll) ||
+    /\bnet decrease\b.*\bcash\b/.test(ll) ||
+    /\bcash at end of\b/.test(ll) ||
+    /^net cash\b/.test(ll)
+  ) {
+    return "subtotal";
+  }
+
+  return "normal";
+}
+
+const COMPILER_STMT_TO_FACE_ID: Record<string, FaceStatementId> = {
+  income_statement: "income-statement",
+  balance_sheet: "balance-sheet",
+  cash_flow: "cash-flow",
+};
+
+/** Row emphasis for compiled historical statements (same rules as Period Financials HTML-face grids). */
+export function compilerStatementRowEmphasis(
+  lineLabel: string,
+  compilerStatementKey: string
+): FaceStatementRowEmphasis {
+  const faceId = COMPILER_STMT_TO_FACE_ID[compilerStatementKey];
+  if (!faceId) return "normal";
+  return faceStatementRowEmphasis({ label: lineLabel, rowKind: "data" }, faceId);
+}
+
 /** Share-count lines only appear on the income statement (EPS note / weighted-average shares). */
 export function isFaceShareCountRow(row: FacePresentedStatementRow, statementId?: FaceStatementId): boolean {
   if (statementId != null && statementId !== "income-statement") return false;

@@ -89,7 +89,13 @@ export function sortPresentedFilingsNewestFirst<T extends { form: string; filing
 /** Earliest calendar filing-date year for HTML-face bulk save (inline XBRL era; matches compiler floor). */
 export const FACE_BULK_MIN_FILING_YEAR = 2019;
 
-/** 10-K / 10-Q in the last ~20 years, newest first (bulk save / list APIs). */
+/**
+ * Period Financials filing picker — long SEC history, no inline-XBRL-era floor.
+ * (Bulk save still uses {@link FACE_BULK_MIN_FILING_YEAR}.)
+ */
+export const PERIOD_FINANCIALS_FILING_LOOKBACK_YEARS = 50;
+
+/** 10-K / 10-Q, newest first (bulk save / list APIs). */
 export function prepareBulkPresentedFilings<
   T extends { form: string; filingDate: string; accessionNumber: string; primaryDocument: string },
 >(filings: T[], opts?: { lookbackYears?: number; maxCount?: number; minFilingYear?: number }): T[] {

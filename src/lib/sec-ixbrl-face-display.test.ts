@@ -4,6 +4,8 @@ import { compilerPeriodColumnHeader } from "@/lib/sec-xbrl-compiler-period-heade
 import { faceStatementToWorkbookShape } from "@/lib/sec-ixbrl-face-save-client";
 import {
   faceStatementCellNumeric,
+  compilerStatementRowEmphasis,
+  faceStatementRowEmphasis,
   formatFaceEpsNative,
   formatFaceMonetaryMillions,
   formatFaceShareCountMillions,
@@ -150,6 +152,49 @@ describe("formatFaceMonetaryMillions", () => {
   it("handles negatives", () => {
     expect(formatFaceMonetaryMillions(-12.5)).toBe("-$12.50M");
     expect(formatFaceMonetaryMillions(100)).toBe("$100.00M");
+  });
+});
+
+describe("faceStatementRowEmphasis", () => {
+  it("highlights income statement subtotals", () => {
+    expect(faceStatementRowEmphasis({ label: "Gross profit", rowKind: "data" }, "income-statement")).toBe("subtotal");
+    expect(faceStatementRowEmphasis({ label: "Net revenues", rowKind: "data" }, "income-statement")).toBe("subtotal");
+    expect(faceStatementRowEmphasis({ label: "Total operating expenses", rowKind: "data" }, "income-statement")).toBe(
+      "subtotal"
+    );
+    expect(faceStatementRowEmphasis({ label: "Operating income (loss)", rowKind: "data" }, "income-statement")).toBe(
+      "subtotal"
+    );
+    expect(
+      faceStatementRowEmphasis({ label: "Income (loss) before income taxes", rowKind: "data" }, "income-statement")
+    ).toBe("subtotal");
+    expect(faceStatementRowEmphasis({ label: "Sales and marketing", rowKind: "data" }, "income-statement")).toBe("normal");
+  });
+
+  it("highlights balance sheet and cash flow anchors", () => {
+    expect(faceStatementRowEmphasis({ label: "Total assets", rowKind: "data" }, "balance-sheet")).toBe("subtotal");
+    expect(faceStatementRowEmphasis({ label: "Current assets", rowKind: "data" }, "balance-sheet")).toBe("subtotal");
+    expect(faceStatementRowEmphasis({ label: "Current liabilities", rowKind: "data" }, "balance-sheet")).toBe("subtotal");
+    expect(
+      faceStatementRowEmphasis(
+        { label: "Net cash provided by operating activities", rowKind: "data" },
+        "cash-flow"
+      )
+    ).toBe("subtotal");
+  });
+
+  it("treats parser headings separately from subtotals", () => {
+    expect(faceStatementRowEmphasis({ label: "Operating expenses", rowKind: "heading" }, "income-statement")).toBe(
+      "heading"
+    );
+  });
+});
+
+describe("compilerStatementRowEmphasis", () => {
+  it("maps compiler statement keys to face emphasis rules", () => {
+    expect(compilerStatementRowEmphasis("Gross profit", "income_statement")).toBe("subtotal");
+    expect(compilerStatementRowEmphasis("Total assets", "balance_sheet")).toBe("subtotal");
+    expect(compilerStatementRowEmphasis("Net cash provided by operating activities", "cash_flow")).toBe("subtotal");
   });
 });
 

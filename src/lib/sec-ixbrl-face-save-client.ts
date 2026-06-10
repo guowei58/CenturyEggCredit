@@ -22,6 +22,8 @@ const FACE_COMPILER_SHEET_TITLE: Record<FaceStatementId, string> = {
 export type FacePresentedFilingMeta = {
   form: string;
   filingDate: string;
+  /** Period end from SEC submissions when available (used for filing picker labels). */
+  reportDate?: string;
   accessionNumber: string;
   primaryDocument?: string;
 };
