@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { stripLlmCitationArtifacts } from "@/lib/strip-llm-citation-artifacts";
 import {
@@ -63,16 +64,11 @@ export function CompanyIndustryContactsTab({
 
   const safeTicker = ticker?.trim() ?? "";
   const displayName = (companyName?.trim() || safeTicker) || "";
-  const companyNameLine = (companyName?.trim() ?? "").length > 0 ? (companyName ?? "").trim() : "(unknown)";
   const { template: industryContactsTemplate } = usePromptTemplateOverride(
     "industry-contacts",
     INDUSTRY_CONTACTS_PROMPT_TEMPLATE
   );
-  const prompt = safeTicker
-    ? industryContactsTemplate.replace(/\[INSERT TICKER\]/g, safeTicker)
-        .replace(/\[INSERT COMPANY NAME IF KNOWN\]/g, companyNameLine)
-        .replace(/\[INSERT COMPANY NAME\]/g, companyNameLine)
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(industryContactsTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
@@ -288,14 +284,7 @@ export function CompanyIndustryContactsTab({
           <PromptTemplateBox
             tabId="industry-contacts"
             defaultTemplate={INDUSTRY_CONTACTS_PROMPT_TEMPLATE}
-            resolve={(tpl) =>
-              safeTicker
-                ? tpl
-                    .replace(/\[INSERT TICKER\]/g, safeTicker)
-                    .replace(/\[INSERT COMPANY NAME IF KNOWN\]/g, companyNameLine)
-                    .replace(/\[INSERT COMPANY NAME\]/g, companyNameLine)
-                : ""
-            }
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

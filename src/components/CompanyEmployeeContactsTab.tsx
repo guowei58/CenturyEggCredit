@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { stripLlmCitationArtifacts } from "@/lib/strip-llm-citation-artifacts";
 import { parseEmployeeContactsTable } from "@/lib/parse-employee-contacts-table";
@@ -60,17 +61,11 @@ export function CompanyEmployeeContactsTab({
   const safeTicker = ticker?.trim() ?? "";
   const displayName = (companyName?.trim() || safeTicker) || "";
 
-  const companyNameLine = (companyName?.trim() ?? "").length > 0 ? (companyName ?? "").trim() : "(unknown)";
   const { template: employeeContactsTemplate } = usePromptTemplateOverride(
     "employee-contacts",
     EMPLOYEE_CONTACTS_PROMPT_TEMPLATE
   );
-  const prompt = safeTicker
-    ? employeeContactsTemplate.replace(/\[INSERT TICKER\]/g, safeTicker).replace(
-        /\[INSERT COMPANY NAME IF KNOWN\]/g,
-        companyNameLine
-      )
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(employeeContactsTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
@@ -287,7 +282,7 @@ export function CompanyEmployeeContactsTab({
             defaultTemplate={EMPLOYEE_CONTACTS_PROMPT_TEMPLATE}
             resolve={(tpl) =>
               safeTicker
-                ? tpl.replace(/\[INSERT TICKER\]/g, safeTicker).replace(/\[INSERT COMPANY NAME IF KNOWN\]/g, companyNameLine)
+                ? fillCompanyPromptTemplate(tpl, safeTicker, companyName)
                 : ""
             }
             className="mb-3"

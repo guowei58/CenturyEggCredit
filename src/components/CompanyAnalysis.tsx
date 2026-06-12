@@ -7,6 +7,8 @@ import { companyNav, companyTopSections } from "@/data/company-navigation";
 import {
   formatWorkspaceBadge,
   isCikWorkspaceKey,
+  isPrivateWorkspaceKey,
+  privateWorkspaceDisplayName,
 } from "@/lib/company-workspace-key";
 import {
   MOCK_TICKER,
@@ -19,12 +21,12 @@ import { CompanyFilingsTab } from "@/components/CompanyFilingsTab";
 import { CompanyFccFilingsTab } from "@/components/CompanyFccFilingsTab";
 import { CompanyOrgChartTab } from "@/components/CompanyOrgChartTab";
 import { CompanyCapitalStructureTab } from "@/components/CompanyCapitalStructureTab";
-import { CompanyCapitalStructureLatestPeriodicTab } from "@/components/CompanyCapitalStructureLatestPeriodicTab";
 import { CompanyEntityMapperTab } from "@/components/CompanyEntityMapperTab";
 import { CompanyOverviewTab } from "@/components/CompanyOverviewTab";
 import { CompanyRecentEventsTab } from "@/components/CompanyRecentEventsTab";
 import { CompanyHowStuffWorksTab } from "@/components/CompanyHowStuffWorksTab";
 import { CompanyRiskFrom10kTab } from "@/components/CompanyRiskFrom10kTab";
+import { CompanyBusinessRiskAnalysisTab } from "@/components/CompanyBusinessRiskAnalysisTab";
 import { CompanyManagementBoardTab } from "@/components/CompanyManagementBoardTab";
 import { CompanyOutOfTheBoxIdeasTab } from "@/components/CompanyOutOfTheBoxIdeasTab";
 import { CompanyResearchRoadmapTab } from "@/components/CompanyResearchRoadmapTab";
@@ -58,6 +60,7 @@ import { CompanyBiblicalReferencesTab } from "@/components/CompanyBiblicalRefere
 import { CompanyForensicAnalysisTab } from "@/components/CompanyForensicAnalysisTab";
 import { CompanyCreditTimelineTab } from "@/components/CompanyCreditTimelineTab";
 import { CompanySubstackTab } from "@/components/CompanySubstackTab";
+import { CompanyReputationTab } from "@/components/CompanyReputationTab";
 import { CompanyEntitySearchesTab } from "@/components/CompanyEntitySearchesTab";
 import { CompanyCapStackRumorMillTab } from "@/components/CompanyCapStackRumorMillTab";
 import { RatingsResearchLinks } from "@/components/company/RatingsResearchLinks";
@@ -85,6 +88,12 @@ function getCompanyBarData(ticker: string, companyName: string | null) {
   if (ticker === MOCK_TICKER) return mockCompanyBar;
   if (ticker === PLACEHOLDER_DEFAULT_TICKER) {
     return { ticker: PLACEHOLDER_DEFAULT_TICKER, name: PLACEHOLDER_COMPANY_DISPLAY_NAME };
+  }
+  if (isPrivateWorkspaceKey(ticker)) {
+    return {
+      ticker,
+      name: privateWorkspaceDisplayName(ticker, companyName),
+    };
   }
   const badge = formatWorkspaceBadge(ticker);
   const resolvedName =
@@ -368,12 +377,6 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
       <CompanyCapitalStructureTab ticker={ticker ?? ""} companyName={companyName} />
     );
   }
-  if (
-    tabId === tabLabelToId("Debt Footnote From 10K/Q") ||
-    tabId === tabLabelToId("Capital Structure - Latest 10Q/K")
-  ) {
-    return <CompanyCapitalStructureLatestPeriodicTab ticker={ticker} />;
-  }
   if (tabId === tabLabelToId("Entity Mapper")) {
     return <CompanyEntityMapperTab ticker={ticker} companyName={companyName} />;
   }
@@ -514,6 +517,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "substack") {
     return <CompanySubstackTab ticker={ticker} companyName={companyName} />;
   }
+  if (tabId === "company-reputation") {
+    return <CompanyReputationTab ticker={ticker} companyName={companyName} />;
+  }
   if (tabId === "the-cap-stack-rumor-mill") {
     return <CompanyCapStackRumorMillTab ticker={ticker} companyName={companyName} />;
   }
@@ -552,6 +558,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "risk-from-10k") {
     return <CompanyRiskFrom10kTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "business-risk-analysis") {
+    return <CompanyBusinessRiskAnalysisTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "credit-timeline") {
     return <CompanyCreditTimelineTab ticker={ticker} companyName={companyName} />;
@@ -595,6 +604,7 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
     "other-regulatory-filings": "Other Regulatory Filings - Manual",
     [tabLabelToId("Other Regulatory Filings - Manual")]: "Other Regulatory Filings - Manual",
     substack: "Substack",
+    "company-reputation": "Company Reputation",
     "twitter-sentiment": "Twitter Sentiment",
     "dear-diary": "Dear Diary",
     "ai-memo-and-deck": "AI Memo and Deck",

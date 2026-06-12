@@ -13,6 +13,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 /** Best-effort: Claude has used ?q= for prefill; not officially documented and may change. */
@@ -191,9 +192,13 @@ I will now give you the ticker:
 
 [TICKER]`;
 
-export function buildCreditTimelineAiPrompt(ticker: string, template: string = CREDIT_TIMELINE_PROMPT_TEMPLATE): string {
+export function buildCreditTimelineAiPrompt(
+  ticker: string,
+  template: string = CREDIT_TIMELINE_PROMPT_TEMPLATE,
+  companyName?: string | null
+): string {
   const t = ticker.trim();
-  return t ? template.replace("[TICKER]", t) : "";
+  return t ? fillCompanyPromptTemplate(template, t, companyName) : "";
 }
 
 function linkify(text: string): ReactNode[] {
@@ -232,14 +237,12 @@ export function CompanyCreditTimelineTab({
 
   const safeTicker = ticker?.trim() ?? "";
   const { template: creditTimelineTemplate } = usePromptTemplateOverride("credit-timeline", CREDIT_TIMELINE_PROMPT_TEMPLATE);
-  const prompt = safeTicker
-    ? creditTimelineTemplate.replace("[TICKER]", safeTicker)
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(creditTimelineTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -370,7 +373,7 @@ export function CompanyCreditTimelineTab({
           <PromptTemplateBox
             tabId="credit-timeline"
             defaultTemplate={CREDIT_TIMELINE_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace("[TICKER]", safeTicker) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

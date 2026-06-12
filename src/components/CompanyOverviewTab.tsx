@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 function linkify(text: string): ReactNode[] {
@@ -51,16 +52,13 @@ export function CompanyOverviewTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
   const { template: overviewTemplate } = usePromptTemplateOverride("business-overview", OVERVIEW_PROMPT_TEMPLATE);
-  const prompt = safeTicker
-    ? overviewTemplate.replace(/\[COMPANY NAME\]/g, displayName).replace(/\[TICKER\]/g, safeTicker)
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(overviewTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker, displayName]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -193,7 +191,7 @@ export function CompanyOverviewTab({
           <PromptTemplateBox
             tabId="business-overview"
             defaultTemplate={OVERVIEW_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace(/\[COMPANY NAME\]/g, displayName).replace(/\[TICKER\]/g, safeTicker) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

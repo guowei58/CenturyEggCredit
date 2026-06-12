@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { roicPeriodToPresentationPeriod } from "@/lib/presentations/discovery/period";
 
 type DiscoveryBest = {
@@ -16,56 +16,89 @@ type DiscoveryResponse = {
   error: string | null;
 };
 
-export function ManagementPresentationDiscoveryPanel(props: {
+export type ManagementPresentationDiscoveryState = {
+  displayPeriod: string | null;
+  loading: boolean;
+  notFound: boolean;
+  data: DiscoveryResponse | null;
+  retry: () => void;
+};
+
+export function useManagementPresentationDiscovery({
+  ticker,
+  period,
+  reportDate,
+  enabled,
+  onDiscoverySaveUrlChange,
+}: {
   ticker: string;
   period: string | null;
   reportDate?: string | null;
   enabled: boolean;
   onDiscoverySaveUrlChange?: (info: { url: string | null; alreadySaved: boolean }) => void;
-}) {
-  const { ticker, period, reportDate, enabled, onDiscoverySaveUrlChange } = props;
+}): ManagementPresentationDiscoveryState {
   const displayPeriod = roicPeriodToPresentationPeriod(period) ?? period;
 
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [data, setData] = useState<DiscoveryResponse | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const fetchDiscovery = useCallback(async () => {
-    if (!enabled || !displayPeriod) return;
-    setLoading(true);
-    setNotFound(false);
-    try {
-      const qs = new URLSearchParams({
-        period: displayPeriod,
-        save: "1",
-      });
-      if (reportDate?.trim()) qs.set("reportDate", reportDate.trim().slice(0, 10));
-      const res = await fetch(`/api/presentations/discover/${encodeURIComponent(ticker)}?${qs.toString()}`);
-      const json = (await res.json()) as DiscoveryResponse & { error?: string };
-      if (!res.ok || !json.best) {
-        setData(null);
-        setNotFound(true);
-        return;
-      }
-      setData(json);
-      if (!json.ok && !json.best) setNotFound(true);
-    } catch {
-      setData(null);
-      setNotFound(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [displayPeriod, enabled, reportDate, ticker]);
+  const retry = useCallback(() => {
+    setRefreshKey((k) => k + 1);
+  }, []);
 
   useEffect(() => {
-    if (!enabled || !displayPeriod) {
+    if (!enabled || !displayPeriod || !ticker.trim()) {
+      abortRef.current?.abort();
+      abortRef.current = null;
+      setLoading(false);
       setData(null);
       setNotFound(false);
       return;
     }
-    void fetchDiscovery();
-  }, [displayPeriod, enabled, fetchDiscovery, refreshKey]);
+
+    const abort = new AbortController();
+    abortRef.current?.abort();
+    abortRef.current = abort;
+
+    setLoading(true);
+    setNotFound(false);
+
+    void (async () => {
+      try {
+        const qs = new URLSearchParams({
+          period: displayPeriod,
+          save: "1",
+        });
+        if (reportDate?.trim()) qs.set("reportDate", reportDate.trim().slice(0, 10));
+        const res = await fetch(`/api/presentations/discover/${encodeURIComponent(ticker)}?${qs.toString()}`, {
+          signal: abort.signal,
+        });
+        const json = (await res.json()) as DiscoveryResponse & { error?: string };
+        if (abort.signal.aborted) return;
+        if (!res.ok || !json.best) {
+          setData(null);
+          setNotFound(true);
+          return;
+        }
+        setData(json);
+        if (!json.ok && !json.best) setNotFound(true);
+      } catch (e) {
+        if (abort.signal.aborted) return;
+        setData(null);
+        setNotFound(true);
+      } finally {
+        if (!abort.signal.aborted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      abort.abort();
+      if (abortRef.current === abort) abortRef.current = null;
+    };
+  }, [displayPeriod, enabled, refreshKey, reportDate, ticker]);
 
   useEffect(() => {
     if (!onDiscoverySaveUrlChange) return;
@@ -80,7 +113,23 @@ export function ManagementPresentationDiscoveryPanel(props: {
     });
   }, [data, onDiscoverySaveUrlChange]);
 
-  if (!enabled) return null;
+  return {
+    displayPeriod,
+    loading,
+    notFound,
+    data,
+    retry,
+  };
+}
+
+export function ManagementPresentationDiscoveryPanel({
+  ticker,
+  discovery,
+}: {
+  ticker: string;
+  discovery: ManagementPresentationDiscoveryState;
+}) {
+  const { displayPeriod, loading, notFound, data, retry } = discovery;
 
   if (!displayPeriod) {
     return (
@@ -110,7 +159,7 @@ export function ManagementPresentationDiscoveryPanel(props: {
               type="button"
               className="underline underline-offset-2"
               style={{ color: "var(--muted)" }}
-              onClick={() => setRefreshKey((k) => k + 1)}
+              onClick={retry}
             >
               Retry
             </button>

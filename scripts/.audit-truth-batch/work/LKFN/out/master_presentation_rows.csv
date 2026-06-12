@@ -1,0 +1,187 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,lkfn:UsTreasurySecuritiesFairValueDisclosure,lkfn:UsTreasurySecuritiesFairValueDisclosure,U.S. Treasury securities,17,0
+balance_sheet,lkfn:UsGovernmentAgenciesSecuritiesFairValueDisclosure,lkfn:UsGovernmentAgenciesSecuritiesFairValueDisclosure,U.S. government sponsored agency securities 0,18,0
+balance_sheet,lkfn:MortgageBackedSecuritiesResidentialAvailableForSaleFairValueDisclosure,lkfn:MortgageBackedSecuritiesResidentialAvailableForSaleFairValueDisclosure,Mortgage-backed securities: residential 0,19,0
+balance_sheet,lkfn:MortgageBackedSecuritiesCommercialAvailableForSaleFairValueDisclosure,lkfn:MortgageBackedSecuritiesCommercialAvailableForSaleFairValueDisclosure,Mortgage-backed securities: commercial 0,20,0
+balance_sheet,lkfn:StateAndMunicipalSecuritiesFairValueDisclosure,lkfn:StateAndMunicipalSecuritiesFairValueDisclosure,State and municipal securities 0,21,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecurities,us-gaap:AvailableForSaleSecuritiesDebtSecurities,Total Securities 900,22,0
+balance_sheet,us-gaap:DerivativeAssets,us-gaap:DerivativeAssets,Mortgage banking derivative 0,32,0
+balance_sheet,us-gaap:AssetsFairValueDisclosure,us-gaap:AssetsFairValueDisclosure,Total assets,33,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities:,34,0
+balance_sheet,us-gaap:DerivativeLiabilities,us-gaap:DerivativeLiabilities,Mortgage banking derivative,61,0
+balance_sheet,us-gaap:InterestRateDerivativeLiabilitiesAtFairValue,us-gaap:InterestRateDerivativeLiabilitiesAtFairValue,Interest rate swap derivative 0,62,0
+balance_sheet,us-gaap:LiabilitiesFairValueDisclosure,us-gaap:LiabilitiesFairValueDisclosure,Total liabilities,63,0
+income_statement,html:taxable,html:taxable,Taxable,0,0
+income_statement,html:tax-exempt,html:tax-exempt,Tax exempt,1,0
+income_statement,html:interest-and-dividends-on-securities,html:interest-and-dividends-on-securities,Interest and dividends on securities,2,0
+income_statement,html:interest-on-short-term-investments,html:interest-on-short-term-investments,Interest on short-term investments,3,0
+income_statement,html:total-interest-income,html:total-interest-income,Total interest income,4,0
+income_statement,html:interest-on-deposits,html:interest-on-deposits,Interest on deposits,5,0
+income_statement,html:interest-on-borrowings,html:interest-on-borrowings,Interest on borrowings,6,0
+income_statement,html:long-term,html:long-term,Long-term,7,0
+income_statement,html:total-interest-expense,html:total-interest-expense,Total interest expense,8,0
+income_statement,html:net-interest-income,html:net-interest-income,NET INTEREST INCOME,9,0
+income_statement,html:provision-for-credit-losses,html:provision-for-credit-losses,Provision for credit losses,10,0
+income_statement,html:wealth-advisory-fees,html:wealth-advisory-fees,Wealth advisory fees,11,0
+income_statement,html:investment-brokerage-fees,html:investment-brokerage-fees,Investment brokerage fees,12,0
+income_statement,html:service-charges-on-deposit-accounts,html:service-charges-on-deposit-accounts,Service charges on deposit accounts,13,0
+income_statement,html:loan-and-service-fees,html:loan-and-service-fees,Loan and service fees,14,0
+income_statement,html:merchant-and-interchange-fee-income,html:merchant-and-interchange-fee-income,Merchant and interchange fee income,16,0
+income_statement,html:bank-owned-life-insurance-income,html:bank-owned-life-insurance-income,Bank owned life insurance income,17,0
+income_statement,html:interest-rate-swap-fee-income,html:interest-rate-swap-fee-income,Interest rate swap fee income,18,0
+income_statement,html:mortgage-banking-income,html:mortgage-banking-income,Mortgage banking income,19,0
+income_statement,html:net-securities-gains,html:net-securities-gains,Net securities gains,20,0
+income_statement,html:other-income,html:other-income,Other income,21,0
+income_statement,html:total-noninterest-income,html:total-noninterest-income,Total noninterest income,23,0
+income_statement,html:salaries-and-employee-benefits,html:salaries-and-employee-benefits,Salaries and employee benefits,24,0
+income_statement,html:net-occupancy-expense,html:net-occupancy-expense,Net occupancy expense,25,0
+income_statement,html:equipment-costs,html:equipment-costs,Equipment costs,26,0
+income_statement,html:data-processing-fees-and-supplies,html:data-processing-fees-and-supplies,Data processing fees and supplies,27,0
+income_statement,html:corporate-and-business-development,html:corporate-and-business-development,Corporate and business development,29,0
+income_statement,html:fdic-insurance-and-other-regulatory-fees,html:fdic-insurance-and-other-regulatory-fees,FDIC insurance and other regulatory fees,30,0
+income_statement,html:professional-fees,html:professional-fees,Professional fees,31,0
+income_statement,html:other-expense,html:other-expense,Other expense,32,0
+income_statement,html:total-noninterest-expense,html:total-noninterest-expense,Total noninterest expense,33,0
+income_statement,html:income-before-income-tax-expense,html:income-before-income-tax-expense,INCOME BEFORE INCOME TAX EXPENSE,34,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,35,0
+income_statement,html:net-income,html:net-income,NET INCOME,36,0
+income_statement,html:basic-weighted-average-common-shares-in-shares,html:basic-weighted-average-common-shares-in-shares,BASIC WEIGHTED AVERAGE COMMON SHARES (in shares),38,0
+income_statement,html:basic-earnings-per-common-share-in-usd-per-share,html:basic-earnings-per-common-share-in-usd-per-share,BASIC EARNINGS PER COMMON SHARE (in USD per share),39,0
+income_statement,html:diluted-weighted-average-common-shares-in-shares,html:diluted-weighted-average-common-shares-in-shares,DILUTED WEIGHTED AVERAGE COMMON SHARES (in shares),40,0
+income_statement,html:diluted-earnings-per-common-share-in-usd-per-share,html:diluted-earnings-per-common-share-in-usd-per-share,DILUTED EARNINGS PER COMMON SHARE (in USD per share),41,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-from-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-from-operating-activities,Adjustments to reconcile net income to net cash from operating activities:,0,0
+cash_flow,html:depreciation,html:depreciation,Depreciation,1,0
+cash_flow,html:provision-for-credit-losses,html:provision-for-credit-losses,Provision for credit losses,2,0
+cash_flow,html:net-loss-on-sale-and-write-down-of-other-real-estate-owned,html:net-loss-on-sale-and-write-down-of-other-real-estate-owned,Net loss on sale and write down of other real estate owned,3,0
+cash_flow,html:amortization-of-loan-servicing-rights,html:amortization-of-loan-servicing-rights,Amortization of loan servicing rights,4,0
+cash_flow,html:net-change-in-loan-servicing-rights-valuation-allowance,html:net-change-in-loan-servicing-rights-valuation-allowance,Net change in loan servicing rights valuation allowance,5,0
+cash_flow,html:loans-originated-for-sale,html:loans-originated-for-sale,Loans originated for sale,6,0
+cash_flow,html:net-gain-on-sales-of-loans,html:net-gain-on-sales-of-loans,Net gain on sales of loans,7,0
+cash_flow,html:proceeds-from-sale-of-loans,html:proceeds-from-sale-of-loans,Proceeds from sale of loans,8,0
+cash_flow,html:net-gain-loss-on-sale-of-premises-and-equipment,html:net-gain-loss-on-sale-of-premises-and-equipment,Net (gain) loss on sale of premises and equipment,9,0
+cash_flow,html:net-gain-loss-on-sales-and-calls-of-securities-available-for-sale,html:net-gain-loss-on-sales-and-calls-of-securities-available-for-sale,Net (gain) loss on sales and calls of securities available-for-sale,10,0
+cash_flow,html:net-amortization-of-available-for-sale-securities,html:net-amortization-of-available-for-sale-securities,Net amortization of available -for-sale securities,11,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock based compensation expense,12,0
+cash_flow,html:earnings-on-life-insurance,html:earnings-on-life-insurance,Earnings on life insurance,13,0
+cash_flow,html:tax-benefit-of-stock-award-issuances,html:tax-benefit-of-stock-award-issuances,Tax benefit of stock award issuances,14,0
+cash_flow,html:net-change,html:net-change,Net change:,15,0
+cash_flow,html:interest-receivable-and-other-assets,html:interest-receivable-and-other-assets,Interest receivable and other assets,16,0
+cash_flow,html:interest-payable-and-other-liabilities,html:interest-payable-and-other-liabilities,Interest payable and other liabilities,17,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,18,0
+cash_flow,html:proceeds-from-maturities-calls-and-principal-paydowns-of-securities-available-for-sale,html:proceeds-from-maturities-calls-and-principal-paydowns-of-securities-available-for-sale,"Proceeds from maturities, calls and principal paydowns of securities available-for-sale",19,0
+cash_flow,html:purchase-of-life-insurance,html:purchase-of-life-insurance,Purchase of life insurance,20,0
+cash_flow,html:proceeds-from-sales-of-land-premises-and-equipment,html:proceeds-from-sales-of-land-premises-and-equipment,"Proceeds from sales of land, premises and equipment",21,0
+cash_flow,html:purchases-of-land-premises-and-equipment,html:purchases-of-land-premises-and-equipment,"Purchases of land, premises and equipment",22,0
+cash_flow,html:proceeds-from-sales-of-other-real-estate-owned,html:proceeds-from-sales-of-other-real-estate-owned,Proceeds from sales of other real estate owned,23,0
+cash_flow,html:proceeds-from-life-insurance,html:proceeds-from-life-insurance,Proceeds from life insurance,24,0
+cash_flow,html:net-increase-in-total-deposits,html:net-increase-in-total-deposits,Net increase in total deposits,25,0
+cash_flow,html:net-increase-decrease-in-short-term-borrowings,html:net-increase-decrease-in-short-term-borrowings,Net increase (decrease) in short-term borrowings,26,0
+cash_flow,html:payments-on-short-term-fhlb-borrowings,html:payments-on-short-term-fhlb-borrowings,Payments on short-term FHLB borrowings,27,0
+cash_flow,html:proceeds-from-long-term-fhlb-borrowings,html:proceeds-from-long-term-fhlb-borrowings,Proceeds from long-term FHLB borrowings,28,0
+cash_flow,html:payments-on-subordinated-debentures,html:payments-on-subordinated-debentures,Payments on subordinated debentures,29,0
+cash_flow,html:common-dividends-paid,html:common-dividends-paid,Common dividends paid,30,0
+cash_flow,html:preferred-dividends-paid,html:preferred-dividends-paid,Preferred dividends paid,31,0
+cash_flow,html:payments-related-to-equity-incentive-plan,html:payments-related-to-equity-incentive-plan,Payments related to equity incentive plan,32,0
+cash_flow,html:purchase-of-treasury-stock,html:purchase-of-treasury-stock,Purchase of treasury stock,33,0
+cash_flow,html:net-cash-from-financing-activities,html:net-cash-from-financing-activities,Net cash from financing activities,34,0
+cash_flow,html:net-change-in-cash-and-cash-equivalents,html:net-change-in-cash-and-cash-equivalents,Net change in cash and cash equivalents,35,0
+cash_flow,html:beginning-balance,html:beginning-balance,Beginning balance,36,0
+cash_flow,html:ending-balance,html:ending-balance,Ending balance,37,0
+cash_flow,html:cash-paid-during-the-year-for,html:cash-paid-during-the-year-for,Cash paid during the year for:,38,0
+cash_flow,html:interest,html:interest,Interest,39,0
+cash_flow,html:income-taxes,html:income-taxes,Income taxes,40,0
+cash_flow,html:supplemental-non-cash-disclosures,html:supplemental-non-cash-disclosures,Supplemental non-cash disclosures:,41,0
+cash_flow,html:loans-transferred-to-other-real-estate-owned,html:loans-transferred-to-other-real-estate-owned,Loans transferred to other real estate owned,42,0
+cash_flow,html:property-transferred-to-held-for-sale,html:property-transferred-to-held-for-sale,Property transferred to held for sale,43,0
+cash_flow,html:right-of-use-assets-obtained-in-exchange-for-lease-liabilities,html:right-of-use-assets-obtained-in-exchange-for-lease-liabilities,Right-of-use assets obtained in exchange for lease liabilities,44,0
+income_statement,html:total,html:total,Total,22,0
+income_statement,html:net-impact,html:net-impact,Net Impact,28,0
+income_statement,html:comprehensive-income,html:comprehensive-income,Comprehensive income,37,0
+balance_sheet,html:cash-and-due-from-banks,html:cash-and-due-from-banks,Cash and due from banks,0,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,1,0
+balance_sheet,html:total-cash-and-cash-equivalents,html:total-cash-and-cash-equivalents,Total cash and cash equivalents,2,0
+balance_sheet,html:securities-available-for-sale-carried-at-fair-value,html:securities-available-for-sale-carried-at-fair-value,Securities available for sale (carried at fair value),3,0
+balance_sheet,html:real-estate-mortgage-loans-held-for-sale,html:real-estate-mortgage-loans-held-for-sale,Real estate mortgage loans held for sale,4,0
+balance_sheet,html:loans-net-of-allowance-for-loan-losses-of-49-562-and-48-453,html:loans-net-of-allowance-for-loan-losses-of-49-562-and-48-453,"Loans, net of allowance for loan losses of $49,562 and $48,453",5,0
+balance_sheet,html:land-premises-and-equipment-net,html:land-premises-and-equipment-net,"Land, premises and equipment, net",6,0
+balance_sheet,html:bank-owned-life-insurance,html:bank-owned-life-insurance,Bank owned life insurance,7,0
+balance_sheet,html:federal-reserve-and-federal-home-loan-bank-stock,html:federal-reserve-and-federal-home-loan-bank-stock,Federal Reserve and Federal Home Loan Bank stock,8,0
+balance_sheet,html:accrued-interest-receivable,html:accrued-interest-receivable,Accrued interest receivable,9,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,10,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,11,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,12,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS' EQUITY,13,0
+balance_sheet,html:noninterest-bearing-deposits,html:noninterest-bearing-deposits,Noninterest bearing deposits,35,0
+balance_sheet,html:interest-bearing-deposits,html:interest-bearing-deposits,Interest bearing deposits,36,0
+balance_sheet,html:total-deposits,html:total-deposits,Total deposits,37,0
+balance_sheet,html:borrowings,html:borrowings,Borrowings,38,0
+balance_sheet,html:federal-funds-purchased,html:federal-funds-purchased,Federal funds purchased,39,0
+balance_sheet,html:securities-sold-under-agreements-to-repurchase,html:securities-sold-under-agreements-to-repurchase,Securities sold under agreements to repurchase,40,0
+balance_sheet,html:federal-home-loan-bank-advances,html:federal-home-loan-bank-advances,Federal Home Loan Bank advances,41,0
+balance_sheet,html:subordinated-debentures,html:subordinated-debentures,Subordinated debentures,42,0
+balance_sheet,html:total-borrowings,html:total-borrowings,Total borrowings,43,0
+balance_sheet,html:accrued-interest-payable,html:accrued-interest-payable,Accrued interest payable,44,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other liabilities,45,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,46,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,STOCKHOLDERS' EQUITY,47,0
+balance_sheet,html:common-stock-90-000-000-shares-authorized-no-par-value,html:common-stock-90-000-000-shares-authorized-no-par-value,"Common stock: 90,000,000 shares authorized, no par value",48,0
+balance_sheet,html:25-614-665-shares-issued-and-25-442-827-outstanding-as-of-march-31-2019,html:25-614-665-shares-issued-and-25-442-827-outstanding-as-of-march-31-2019,"25,614,665 shares issued and 25,442,827 outstanding as of March 31, 2019",49,0
+balance_sheet,html:25-301-732-shares-issued-and-25-128-773-outstanding-as-of-december-31-2018,html:25-301-732-shares-issued-and-25-128-773-outstanding-as-of-december-31-2018,"25,301,732 shares issued and 25,128,773 outstanding as of December 31, 2018",50,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,51,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),52,0
+balance_sheet,html:treasury-stock-at-cost-2019-171-838-shares-2018-172-959-shares,html:treasury-stock-at-cost-2019-171-838-shares-2018-172-959-shares,"Treasury stock, at cost (2019 - 171,838 shares, 2018 - 172,959 shares)",53,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,54,0
+balance_sheet,html:noncontrolling-interest,html:noncontrolling-interest,Noncontrolling interest,55,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,56,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,57,0
+income_statement,lkfn:FeesAndCommissionsCreditCard,lkfn:FeesAndCommissionsCreditCard,Merchant card fee income,15,0
+balance_sheet,us-gaap:CashAndDueFromBanks,us-gaap:CashAndDueFromBanks,Cash and due from banks,14,0
+balance_sheet,us-gaap:InterestBearingDepositsInBanks,us-gaap:InterestBearingDepositsInBanks,Short-term investments,15,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Total cash and cash equivalents,16,0
+balance_sheet,us-gaap:LoansReceivableHeldForSaleNetNotPartOfDisposalGroup,us-gaap:LoansReceivableHeldForSaleNetNotPartOfDisposalGroup,Real estate mortgage loans held-for-sale,23,0
+balance_sheet,us-gaap:LoansAndLeasesReceivableNetReportedAmount,us-gaap:LoansAndLeasesReceivableNetReportedAmount,"Loans, net of allowance for loan losses of $50,564 and $48,453",24,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Land, premises and equipment, net",25,0
+balance_sheet,us-gaap:BankOwnedLifeInsurance,us-gaap:BankOwnedLifeInsurance,Bank owned life insurance,26,0
+balance_sheet,us-gaap:FederalHomeLoanBankStockAndFederalReserveBankStock,us-gaap:FederalHomeLoanBankStockAndFederalReserveBankStock,Federal Reserve and Federal Home Loan Bank stock,27,0
+balance_sheet,us-gaap:InterestReceivable,us-gaap:InterestReceivable,Accrued interest receivable,28,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,29,0
+balance_sheet,us-gaap:OtherAssets,us-gaap:OtherAssets,Other assets,30,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,31,0
+balance_sheet,us-gaap:NoninterestBearingDepositLiabilities,us-gaap:NoninterestBearingDepositLiabilities,Noninterest bearing deposits,58,0
+balance_sheet,us-gaap:InterestBearingDepositLiabilities,us-gaap:InterestBearingDepositLiabilities,Interest bearing deposits,59,0
+balance_sheet,us-gaap:Deposits,us-gaap:Deposits,Total deposits,60,0
+balance_sheet,us-gaap:FederalFundsPurchased,us-gaap:FederalFundsPurchased,Federal funds purchased,64,0
+balance_sheet,lkfn:SecuritiesSoldUnderAgreementToRepurchase,lkfn:SecuritiesSoldUnderAgreementToRepurchase,Securities sold under agreements to repurchase,75,0
+balance_sheet,us-gaap:FederalHomeLoanBankBorrowingsFairValueDisclosure,us-gaap:FederalHomeLoanBankBorrowingsFairValueDisclosure,Federal Home Loan Bank advances,79,0
+balance_sheet,us-gaap:SubordinatedDebt,us-gaap:SubordinatedDebt,Subordinated debentures,83,0
+balance_sheet,us-gaap:DebtAndCapitalLeaseObligations,us-gaap:DebtAndCapitalLeaseObligations,Total borrowings,85,0
+balance_sheet,us-gaap:InterestPayableCurrentAndNoncurrent,us-gaap:InterestPayableCurrentAndNoncurrent,Accrued interest payable,87,0
+balance_sheet,us-gaap:OtherLiabilities,us-gaap:OtherLiabilities,Other liabilities,89,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,91,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock: 90,000,000 shares authorized, no par value 25,615,216 shares issued and 25,442,300 outstanding as of June 30, 2019 25,301,732 shares issued and 25,128,773 outstanding as of December 31, 2018",65,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,76,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),80,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock at cost (172,916 shares as of June 30, 2019, 172,959 shares as of December 31, 2018)",84,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders’ equity,86,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,88,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,90,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,92,0
+balance_sheet,lkfn:BorrowingsSecuritiesSoldUnderAgreementsToRepurchase,lkfn:BorrowingsSecuritiesSoldUnderAgreementsToRepurchase,Securities sold under agreements to repurchase,93,0
+balance_sheet,us-gaap:SecuredDebt,us-gaap:SecuredDebt,Federal Home Loan Bank advances,95,0
+balance_sheet,us-gaap:LineOfCredit,us-gaap:LineOfCredit,Miscellaneous borrowings,97,0
+balance_sheet,us-gaap:DebtLongtermAndShorttermCombinedAmount,us-gaap:DebtLongtermAndShorttermCombinedAmount,Total borrowings,98,0
+balance_sheet,us-gaap:TreasuryStockCommonValue,us-gaap:TreasuryStockCommonValue,"Treasury stock at cost (466,543 shares as of March 31, 2020, 178,741 shares as of December 31, 2019)",66,0
+balance_sheet,html:25-762-538-shares-issued-and-25-290-908-outstanding-as-of-march-31-2021,html:25-762-538-shares-issued-and-25-290-908-outstanding-as-of-march-31-2021,"25,762,538 shares issued and 25,290,908 outstanding as of March 31, 2021",67,0
+balance_sheet,us-gaap:DebtSecuritiesAvailableForSaleExcludingAccruedInterest,us-gaap:DebtSecuritiesAvailableForSaleExcludingAccruedInterest,Securities available-for-sale (carried at fair value),68,0
+balance_sheet,us-gaap:FinancingReceivableAllowanceForCreditLossExcludingAccruedInterest,us-gaap:FinancingReceivableAllowanceForCreditLossExcludingAccruedInterest,"Loans, net of allowance for credit losses* of $71,713 and $61,408",69,0
+balance_sheet,us-gaap:CommonStockSharesAuthorized,us-gaap:CommonStockSharesAuthorized,"Common stock: 90,000,000 shares authorized, no par value",94,0
+balance_sheet,us-gaap:CommonStockSharesIssued,us-gaap:CommonStockSharesIssued,"25,762,538 shares issued and 25,289,966 outstanding as of June 30, 2021",96,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Treasury stock at cost (472,572 shares as of June 30, 2021, 473,660 shares as of December 31, 2020)",77,0
+balance_sheet,us-gaap:HeldToMaturitySecuritiesFairValue,us-gaap:HeldToMaturitySecuritiesFairValue,"Securities held-to-maturity, at amortized cost (fair value of $113,350 and $0, respectively)",70,0
+balance_sheet,us-gaap:LongTermDebt,us-gaap:LongTermDebt,Total borrowings,71,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Treasury stock at cost (465,847 shares as of March 31, 2023, 475,902 shares as of December 31, 2022)",81,0
+balance_sheet,us-gaap:FederalHomeLoanBankAdvancesLongTerm,us-gaap:FederalHomeLoanBankAdvancesLongTerm,Federal Home Loan Bank advances,72,0
+balance_sheet,us-gaap:AdvancesFromFederalHomeLoanBanks,us-gaap:AdvancesFromFederalHomeLoanBanks,Borrowings - Federal Home Loan Bank advances,73,0
+balance_sheet,us-gaap:OtherBorrowings,us-gaap:OtherBorrowings,Other borrowings,74,0
+balance_sheet,html:borrowings-federal-home-loan-bank-advances,html:borrowings-federal-home-loan-bank-advances,Borrowings - Federal Home Loan Bank advances:,78,0
+balance_sheet,us-gaap:FederalHomeLoanBankAdvancesMaturitiesSummaryDueWithinOneYearOfBalanceSheetDate,us-gaap:FederalHomeLoanBankAdvancesMaturitiesSummaryDueWithinOneYearOfBalanceSheetDate,Short-term advance,82,0

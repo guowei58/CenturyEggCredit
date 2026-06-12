@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 function linkify(text: string): ReactNode[] {
@@ -51,16 +52,13 @@ export function CompanySuppliersTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
   const { template: suppliersTemplate } = usePromptTemplateOverride("suppliers", SUPPLIERS_PROMPT_TEMPLATE);
-  const prompt = safeTicker
-    ? suppliersTemplate.replace(/\[INSERT TICKER\]/g, safeTicker).replace(/\[INSERT COMPANY NAME\]/g, displayName)
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(suppliersTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker, displayName]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -201,7 +199,7 @@ export function CompanySuppliersTab({
             tabId="suppliers"
             defaultTemplate={SUPPLIERS_PROMPT_TEMPLATE}
             resolve={(tpl) =>
-              safeTicker ? tpl.replace(/\[INSERT TICKER\]/g, safeTicker).replace(/\[INSERT COMPANY NAME\]/g, displayName) : ""
+              safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : ""
             }
             className="mb-3"
           />

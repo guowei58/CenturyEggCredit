@@ -1,0 +1,115 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Products and solutions,0,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of sales,1,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Products and solutions,2,0
+income_statement,us-gaap:GrossProfit,us-gaap:GrossProfit,Gross profit,3,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative expenses",4,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Engineering and development,5,0
+income_statement,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Change in fair value of investments,6,0
+income_statement,rok:OtherIncomeExpense,rok:OtherIncomeExpense,Other (expense) income (Note 15),7,0
+income_statement,us-gaap:GoodwillAndIntangibleAssetImpairment,us-gaap:GoodwillAndIntangibleAssetImpairment,Goodwill and intangible asset impairment,8,0
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,Interest expense,9,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before income taxes,10,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax provision (Note 16),11,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,12,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net loss attributable to noncontrolling interests,13,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,"Net income attributable to Rockwell Automation, Inc.",14,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,15,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted,16,0
+income_statement,html:weighted-average-outstanding-shares,html:weighted-average-outstanding-shares,Weighted average outstanding shares:,17,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,18,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,19,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,2,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,Receivables,3,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,4,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,5,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,7,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, net of accumulated depreciation",9,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease right-of-use assets,10,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,11,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Other intangible assets, net",12,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,13,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,15,0
+balance_sheet,html:liabilities-and-shareowners-equity,html:liabilities-and-shareowners-equity,LIABILITIES AND SHAREOWNERS’ EQUITY,16,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,17,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term debt,18,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,19,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,20,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Compensation and benefits,21,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Contract liabilities,23,0
+balance_sheet,rok:CustomerReturnsRebatesAndIncentives,rok:CustomerReturnsRebatesAndIncentives,"Customer returns, rebates, and incentives",24,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,25,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,27,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,29,0
+balance_sheet,us-gaap:PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent,us-gaap:PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent,Retirement benefits,30,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating lease liabilities,31,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other liabilities,32,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingent liabilities (Note 17),33,0
+balance_sheet,html:shareowners-equity,html:shareowners-equity,Shareowners’ equity,34,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock ($1.00 par value, shares issued: 141.4 and 181.4, respectively)",36,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,37,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,38,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,39,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Common stock in treasury, at cost (shares held: 29.0 and 68.3, respectively)",42,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,"Shareowners’ equity attributable to Rockwell Automation, Inc.",43,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,44,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total shareowners’ equity,45,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total,46,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,0,0
+cash_flow,us-gaap:Depreciation,us-gaap:Depreciation,Depreciation,1,0
+cash_flow,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangible assets,2,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Change in fair value of investments,3,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Share-based compensation expense,4,0
+cash_flow,rok:RetirementBenefitsExpenses,rok:RetirementBenefitsExpenses,Retirement benefit expense,5,0
+cash_flow,us-gaap:PensionContributions,us-gaap:PensionContributions,Pension contributions,6,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,7,0
+cash_flow,us-gaap:GainLossOnSaleOfPropertyPlantEquipment,us-gaap:GainLossOnSaleOfPropertyPlantEquipment,Net loss on disposition and impairment of property,9,0
+cash_flow,rok:EnvironmentalRemediationExpenseAfterRecoveryAdjustment,rok:EnvironmentalRemediationExpenseAfterRecoveryAdjustment,Accounting method change for net legacy asbestos-related defense costs,11,0
+cash_flow,us-gaap:GoodwillAndIntangibleAssetImpairment,us-gaap:GoodwillAndIntangibleAssetImpairment,Goodwill and intangible asset impairment,12,0
+cash_flow,html:changes-in-assets-and-liabilities-excluding-effects-of-acquisitions-and-foreign-currency-adjustments,html:changes-in-assets-and-liabilities-excluding-effects-of-acquisitions-and-foreign-currency-adjustments,"Changes in assets and liabilities, excluding effects of acquisitions and foreign currency adjustments",13,0
+cash_flow,us-gaap:IncreaseDecreaseInReceivables,us-gaap:IncreaseDecreaseInReceivables,Receivables,14,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,15,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,Accounts payable,16,0
+cash_flow,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,Contract liabilities,17,0
+cash_flow,us-gaap:IncreaseDecreaseInEmployeeRelatedLiabilities,us-gaap:IncreaseDecreaseInEmployeeRelatedLiabilities,Compensation and benefits,18,0
+cash_flow,us-gaap:IncreaseDecreaseInIncomeTaxes,us-gaap:IncreaseDecreaseInIncomeTaxes,Income taxes,19,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,Other assets and liabilities,20,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Cash provided by operating activities,21,0
+cash_flow,us-gaap:PaymentsToAcquireProductiveAssets,us-gaap:PaymentsToAcquireProductiveAssets,Capital expenditures,22,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisition of businesses, net of cash acquired",23,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Purchases of investments,24,0
+cash_flow,us-gaap:ProceedsFromSaleOfAvailableForSaleSecuritiesDebt,us-gaap:ProceedsFromSaleOfAvailableForSaleSecuritiesDebt,Proceeds from sale of investments,25,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other investing activities,26,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Cash (used for) provided by investing activities,27,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebtMaturingInThreeMonthsOrLess,us-gaap:ProceedsFromRepaymentsOfShortTermDebtMaturingInThreeMonthsOrLess,Net (repayment) issuance of short-term debt,28,0
+cash_flow,us-gaap:ProceedsFromOtherShortTermDebt,us-gaap:ProceedsFromOtherShortTermDebt,"Issuance of short-term debt, net of issuance costs",29,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,"Issuance of long-term debt, net of discount and issuance costs",30,0
+cash_flow,us-gaap:RepaymentsOfShortTermDebt,us-gaap:RepaymentsOfShortTermDebt,Repayment of short-term debt,31,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayment of long-term debt,32,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Cash dividends,33,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Purchases of treasury stock,34,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from the exercise of stock options,35,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other financing activities,36,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Cash used for financing activities,37,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Effect of exchange rate changes on cash,38,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"(Decrease) increase in cash, cash equivalents, and restricted cash",39,0
+cash_flow,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,"Cash, cash equivalents, and restricted cash at beginning of year",40,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Cash, cash equivalents, and restricted cash at end of year",43,0
+cash_flow,html:components-of-cash-cash-equivalents-and-restricted-cash,html:components-of-cash-cash-equivalents-and-restricted-cash,"Components of cash, cash equivalents, and restricted cash",44,0
+cash_flow,us-gaap:RestrictedCashCurrent,us-gaap:RestrictedCashCurrent,"Restricted cash, current (Other current assets)",45,0
+balance_sheet,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,1,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Long-term investments,14,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock ($1.00 par value, shares issued: 181.4)",35,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Common stock in treasury, at cost (shares held: 2019, 65.7; 2018, 60.3)",40,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Gain on sale of business,8,0
+cash_flow,us-gaap:GainLossOnDerivativeInstrumentsNetPretax,us-gaap:GainLossOnDerivativeInstrumentsNetPretax,Settlement of treasury locks,10,0
+cash_flow,us-gaap:RestrictedCashNoncurrent,us-gaap:RestrictedCashNoncurrent,"Restricted cash, noncurrent (Other assets)",41,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,28,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Common stock in treasury, at cost (shares held: 2021, 65.4; 2020, 65.2)",41,0
+cash_flow,us-gaap:GoodwillImpairmentLoss,us-gaap:GoodwillImpairmentLoss,Impairment of goodwill,46,0
+balance_sheet,us-gaap:ContractWithCustomerLiability,us-gaap:ContractWithCustomerLiability,Contract liabilities,22,0
+cash_flow,us-gaap:RestrictedCashAndCashEquivalentsNoncurrent,us-gaap:RestrictedCashAndCashEquivalentsNoncurrent,"Restricted cash, noncurrent (Other assets)",42,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,"Property, net of accumulated depreciation of $1,749.7 and $1,743.6, respectively",8,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current assets held for sale,6,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current liabilities related to assets held for sale,26,0

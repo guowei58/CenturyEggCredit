@@ -1,0 +1,232 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net sales,0,0
+income_statement,shoo:Commissionandlicensingfeeincome,shoo:Commissionandlicensingfeeincome,Commission and licensing fee income,1,0
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Total revenue,2,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales (exclusive of depreciation and amortization),3,0
+income_statement,us-gaap:GrossProfit,us-gaap:GrossProfit,Gross profit,4,0
+income_statement,us-gaap:OperatingCostsAndExpenses,us-gaap:OperatingCostsAndExpenses,Operating expenses,5,0
+income_statement,shoo:ChangeInValuationOfContingentPaymentLiability,shoo:ChangeInValuationOfContingentPaymentLiability,Change in valuation of contingent payment liability,9,0
+income_statement,us-gaap:ImpairmentOfIntangibleAssetsExcludingGoodwill,us-gaap:ImpairmentOfIntangibleAssetsExcludingGoodwill,Impairment of intangibles,10,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Income from operations,11,0
+income_statement,us-gaap:DerivativeGainOnDerivative,us-gaap:DerivativeGainOnDerivative,Gain on derivative,12,0
+income_statement,us-gaap:InterestIncomeExpenseNet,us-gaap:InterestIncomeExpenseNet,Interest and other (expense) / income - net,13,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before provision for income taxes,14,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes,15,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,16,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Less: net income attributable to noncontrolling interest,17,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,"Net income attributable to Steven Madden, Ltd.",18,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic net income per share,19,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted net income per share,20,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesIssuedBasic,us-gaap:WeightedAverageNumberOfSharesIssuedBasic,Basic weighted average common shares outstanding,21,0
+income_statement,us-gaap:WeightedAverageNumberDilutedSharesOutstandingAdjustment,us-gaap:WeightedAverageNumberDilutedSharesOutstandingAdjustment,Effect of dilutive securities – options/restricted stock,22,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted weighted average common shares outstanding,23,0
+income_statement,us-gaap:CommonStockDividendsPerShareCashPaid,us-gaap:CommonStockDividendsPerShareCashPaid,Cash dividends declared per common share,24,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,19,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,22,0
+balance_sheet,us-gaap:AccountsAndOtherReceivablesNetCurrent,us-gaap:AccountsAndOtherReceivablesNetCurrent,"Accounts receivable, net of allowances of $7,115 and $4,670",23,0
+balance_sheet,us-gaap:OtherReceivables,us-gaap:OtherReceivables,Factor accounts receivable,24,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,25,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,27,0
+balance_sheet,us-gaap:PrepaidTaxes,us-gaap:PrepaidTaxes,Income tax receivable and prepaid income taxes,29,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,30,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",35,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease right-of-use asset,36,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,38,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Deposits and other,39,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,43,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangibles, net",44,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,45,0
+balance_sheet,html:liabilities,html:liabilities,LIABILITIES,46,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,50,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,62,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued expenses,63,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Operating leases - current portion,66,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Income taxes payable,69,0
+balance_sheet,us-gaap:AccruedBonusesCurrent,us-gaap:AccruedBonusesCurrent,Accrued incentive compensation,71,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,72,0
+balance_sheet,us-gaap:BusinessCombinationContingentConsiderationLiabilityNoncurrent,us-gaap:BusinessCombinationContingentConsiderationLiabilityNoncurrent,Contingent payment liability - long-term portion,73,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating leases - long-term portion,75,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,78,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities,79,0
+balance_sheet,us-gaap:OtherLiabilities,us-gaap:OtherLiabilities,Other liabilities,80,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total Liabilities,81,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,"Commitments, contingencies and other (Note 15)",88,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,STOCKHOLDERS’ EQUITY,89,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock – $0.0001 par value, 5,000 shares authorized; none issued; Series A Junior Participating preferred stock – $0.0001 par value, 60 shares authorized; none issued",101,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock – $0.0001 par value, 245,000 shares authorized, 138,341 and 137,248 shares issued, 72,674 and 72,157 shares outstanding",102,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,103,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,104,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,105,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock – 65,667 and 65,091 shares at cost",106,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,"Total Steven Madden, Ltd. stockholders’ equity",107,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,108,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total stockholders’ equity,109,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total Liabilities and Stockholders’ Equity,110,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,0,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Stock-based compensation,1,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,2,0
+cash_flow,us-gaap:AmortizationOfFinancingCosts,us-gaap:AmortizationOfFinancingCosts,Amortization of debt issuance costs,3,0
+cash_flow,us-gaap:GainLossOnSaleOfPropertyPlantEquipment,us-gaap:GainLossOnSaleOfPropertyPlantEquipment,(Gain)/loss on disposal of fixed assets,4,0
+cash_flow,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,Impairment of intangibles,6,0
+cash_flow,us-gaap:IncreaseDecreaseInDeferredIncomeTaxes,us-gaap:IncreaseDecreaseInDeferredIncomeTaxes,Deferred taxes,12,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Loss on divestiture of business,13,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedInterestReceivableNet,us-gaap:IncreaseDecreaseInAccruedInterestReceivableNet,Accrued interest on note receivable – related party,14,0
+cash_flow,us-gaap:IncreaseDecreaseInNotesReceivableRelatedParties,us-gaap:IncreaseDecreaseInNotesReceivableRelatedParties,Note receivable - related party,19,0
+cash_flow,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,Change in valuation of contingent payment liability,21,0
+cash_flow,shoo:AmortizationOfInventoryAndOtherAdjustments,shoo:AmortizationOfInventoryAndOtherAdjustments,Amortization of inventory step-up and other,27,0
+cash_flow,html:changes-net-of-acquisitions-in,html:changes-net-of-acquisitions-in,"Changes, net of acquisitions, in:",28,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Accounts receivable,29,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherReceivables,us-gaap:IncreaseDecreaseInOtherReceivables,Factor accounts receivable,30,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,31,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,"Prepaid expenses, income tax receivables, prepaid taxes, and other assets",33,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,Accounts payable and accrued expenses,34,0
+cash_flow,us-gaap:IncreaseDecreaseInEmployeeRelatedLiabilities,us-gaap:IncreaseDecreaseInEmployeeRelatedLiabilities,Accrued incentive compensation,35,0
+cash_flow,shoo:IncreaseDecreaseInLeasesAndOtherLiabilities,shoo:IncreaseDecreaseInLeasesAndOtherLiabilities,Leases and other liabilities,36,0
+cash_flow,us-gaap:PaymentForContingentConsiderationLiabilityOperatingActivities,us-gaap:PaymentForContingentConsiderationLiabilityOperatingActivities,Payment of contingent liability,37,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by operating activities,39,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,40,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,Acquisition of businesses,41,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Capital expenditures,42,0
+cash_flow,us-gaap:PaymentsToAcquireShortTermInvestments,us-gaap:PaymentsToAcquireShortTermInvestments,Purchases of short-term investments,47,0
+cash_flow,us-gaap:ProceedsFromSaleMaturityAndCollectionOfShorttermInvestments,us-gaap:ProceedsFromSaleMaturityAndCollectionOfShorttermInvestments,Maturity/sale of short-term investments,48,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other investing activities,49,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used in investing activities,50,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfDebt,us-gaap:ProceedsFromIssuanceOfDebt,Borrowings under credit facilities,51,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayments under credit facilities,52,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Cash dividends paid on common stock,53,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Common stock repurchased and net settlements of stock awards,56,0
+cash_flow,us-gaap:PaymentsOfFinancingCosts,us-gaap:PaymentsOfFinancingCosts,Financing costs paid,57,0
+cash_flow,us-gaap:ProceedsFromMinorityShareholders,us-gaap:ProceedsFromMinorityShareholders,Investment of noncontrolling interest,58,0
+cash_flow,us-gaap:PaymentsOfDistributionsToAffiliates,us-gaap:PaymentsOfDistributionsToAffiliates,Distributions to noncontrolling interest earnings,59,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from exercise of stock options,61,0
+cash_flow,us-gaap:PaymentsToMinorityShareholders,us-gaap:PaymentsToMinorityShareholders,Acquisition of incremental ownership of joint ventures,62,0
+cash_flow,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,Payment of contingent liability,63,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided by / (used in) financing activities,64,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Effect of exchange rate changes on cash and cash equivalents,65,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net change in cash and cash equivalents,66,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Cash and cash equivalents – beginning of year,67,0
+cash_flow,html:supplemental-disclosure-of-cash-flow-information,html:supplemental-disclosure-of-cash-flow-information,Supplemental disclosure of cash flow information:,69,0
+cash_flow,us-gaap:InterestPaidNet,us-gaap:InterestPaidNet,Cash paid during the year for interest,70,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:accounts-receivable-net-of-allowances-of-10-849-and-1-973,html:accounts-receivable-net-of-allowances-of-10-849-and-1-973,"Accounts receivable, net of allowances of $10,849 and $1,973",1,0
+balance_sheet,html:factor-accounts-receivable,html:factor-accounts-receivable,Factor accounts receivable,2,0
+balance_sheet,html:inventories,html:inventories,Inventories,3,0
+balance_sheet,html:marketable-securities-available-for-sale,html:marketable-securities-available-for-sale,Marketable securities – available for sale,4,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,5,0
+balance_sheet,html:prepaid-taxes,html:prepaid-taxes,Prepaid taxes,6,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,7,0
+balance_sheet,html:note-receivable-related-party,html:note-receivable-related-party,Note receivable – related party,8,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",9,0
+balance_sheet,html:deferred-taxes,html:deferred-taxes,Deferred taxes,10,0
+balance_sheet,html:deposits-and-other,html:deposits-and-other,Deposits and other,11,0
+balance_sheet,html:goodwill-net,html:goodwill-net,Goodwill – net,12,0
+balance_sheet,html:intangibles-net,html:intangibles-net,Intangibles – net,13,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,14,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,51,0
+balance_sheet,html:accrued-expenses,html:accrued-expenses,Accrued expenses,52,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,53,0
+balance_sheet,html:contingent-payment-liability-current-portion,html:contingent-payment-liability-current-portion,Contingent payment liability – current portion,54,0
+balance_sheet,html:accrued-incentive-compensation,html:accrued-incentive-compensation,Accrued incentive compensation,55,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,56,0
+balance_sheet,html:contingent-payment-liability,html:contingent-payment-liability,Contingent payment liability,57,0
+balance_sheet,html:deferred-rent,html:deferred-rent,Deferred rent,58,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other liabilities,59,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,60,0
+balance_sheet,html:commitments-contingencies-and-other-note-o,html:commitments-contingencies-and-other-note-o,"Commitments, contingencies and other (Note O)",61,0
+balance_sheet,html:preferred-stock-0001-par-value-5-000-shares-authorized-none-issued-series-a-junior-participating-preferred-stock-0001-par-value-60-shares-authorized-none-issued,html:preferred-stock-0001-par-value-5-000-shares-authorized-none-issued-series-a-junior-participating-preferred-stock-0001-par-value-60-shares-authorized-none-issued,"Preferred stock – $.0001 par value, 5,000 shares authorized; none issued; Series A Junior Participating preferred stock – $.0001 par value, 60 shares authorized; none issued",90,0
+balance_sheet,html:common-stock-0001-par-value-135-000-shares-authorized-131-991-and-130-960-shares-issued-85-715-and-88-047-shares-outstanding,html:common-stock-0001-par-value-135-000-shares-authorized-131-991-and-130-960-shares-issued-85-715-and-88-047-shares-outstanding,"Common stock – $.0001 par value, 135,000 shares authorized, 131,991 and 130,960 shares issued, 85,715 and 88,047 shares outstanding",91,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,92,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,93,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,94,0
+balance_sheet,html:treasury-stock-46-276-and-42-913-shares-at-cost,html:treasury-stock-46-276-and-42-913-shares-at-cost,"Treasury stock – 46,276 and 42,913 shares at cost",95,0
+balance_sheet,html:total-steven-madden-ltd-stockholders-equity,html:total-steven-madden-ltd-stockholders-equity,"Total Steven Madden, Ltd. stockholders’ equity",96,0
+balance_sheet,html:noncontrolling-interest,html:noncontrolling-interest,Noncontrolling interest,97,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders’ equity,98,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total Liabilities and Stockholders’ Equity,99,0
+cash_flow,html:impairment-charges,html:impairment-charges,Impairment charges,5,0
+cash_flow,html:deferred-rent-benefit-expense,html:deferred-rent-benefit-expense,Deferred rent (benefit)/expense,15,0
+cash_flow,html:change-in-fair-value-of-contingent-liability,html:change-in-fair-value-of-contingent-liability,Change in fair value of contingent liability,16,0
+cash_flow,html:prepaid-expenses-prepaid-taxes-deposits-and-other,html:prepaid-expenses-prepaid-taxes-deposits-and-other,"Prepaid expenses, prepaid taxes, deposits and other",32,0
+cash_flow,html:acquisitions-net-of-cash-acquired,html:acquisitions-net-of-cash-acquired,"Acquisitions, net of cash acquired",43,0
+cash_flow,html:common-stock-purchased-for-treasury,html:common-stock-purchased-for-treasury,Common stock purchased for treasury,38,0
+income_statement,us-gaap:OtherAssetImpairmentCharges,us-gaap:OtherAssetImpairmentCharges,Impairment charges,6,0
+balance_sheet,us-gaap:AccountsReceivableNet,us-gaap:AccountsReceivableNet,"Accounts receivable, net of allowances of $11,066 and $10,849",20,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,Factor accounts receivable,21,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesCurrent,us-gaap:AvailableForSaleSecuritiesCurrent,Marketable securities – available for sale,26,0
+balance_sheet,us-gaap:NotesReceivableRelatedPartiesNoncurrent,us-gaap:NotesReceivableRelatedPartiesNoncurrent,Note receivable – related party,31,0
+balance_sheet,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,Deferred taxes,37,0
+balance_sheet,us-gaap:BusinessCombinationContingentConsiderationLiabilityCurrent,us-gaap:BusinessCombinationContingentConsiderationLiabilityCurrent,Contingent payment liability – current portion,67,0
+balance_sheet,us-gaap:DeferredRentCredit,us-gaap:DeferredRentCredit,Deferred rent,74,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred taxes,76,0
+cash_flow,us-gaap:ImpairmentOfLeasehold,us-gaap:ImpairmentOfLeasehold,Impairment of lease right-of-use asset,7,0
+cash_flow,us-gaap:StraightLineRent,us-gaap:StraightLineRent,Deferred rent (benefit)/expense,17,0
+cash_flow,us-gaap:AvailableForSaleSecuritiesGrossRealizedGainLossNet,us-gaap:AvailableForSaleSecuritiesGrossRealizedGainLossNet,Realized loss/(gain) on sale of marketable securities,18,0
+cash_flow,shoo:NetbenefitinconnectionwithreversalofcontingentliabilitypartiallyoffsetbyaccelerationofamortizationrelatedtoKateSpadelicensetermination,shoo:NetbenefitinconnectionwithreversalofcontingentliabilitypartiallyoffsetbyaccelerationofamortizationrelatedtoKateSpadelicensetermination,Net benefit in connection with the reversal of a contingent liability partially offset by the acceleration of amortization related to the termination of the Kate Spade license agreement,22,0
+cash_flow,us-gaap:ProvisionForDoubtfulAccounts,us-gaap:ProvisionForDoubtfulAccounts,"Provisions for bad debt expense, net of recovery and write-off of an unamortized buying agency agreement support payment associated with the Payless ShoeSource bankruptcies",23,0
+cash_flow,us-gaap:PaymentsToAcquireAvailableForSaleSecurities,us-gaap:PaymentsToAcquireAvailableForSaleSecurities,Purchases of marketable securities,44,0
+cash_flow,us-gaap:ProceedsFromCollectionOfNotesReceivable,us-gaap:ProceedsFromCollectionOfNotesReceivable,Proceeds from notes receivable,45,0
+cash_flow,us-gaap:ProceedsFromMaturitiesPrepaymentsAndCallsOfAvailableForSaleSecurities,us-gaap:ProceedsFromMaturitiesPrepaymentsAndCallsOfAvailableForSaleSecurities,Maturity/sale of marketable securities,46,0
+income_statement,shoo:ImpairmentOfLeaseRightOfUseAssetsAndStoreFixedAssets,shoo:ImpairmentOfLeaseRightOfUseAssetsAndStoreFixedAssets,Impairment of lease right-of-use assets and store fixed assets,25,0
+cash_flow,us-gaap:LineOfCreditAssumed1,us-gaap:LineOfCreditAssumed1,Advances from factor,54,0
+cash_flow,us-gaap:RepaymentsOfLinesOfCredit,us-gaap:RepaymentsOfLinesOfCredit,Repayments of advances from factor,55,0
+cash_flow,us-gaap:MarketableSecuritiesRealizedGainLoss,us-gaap:MarketableSecuritiesRealizedGainLoss,Realized loss on sale of marketable securities,20,0
+cash_flow,us-gaap:GainLossOnDispositionOfIntangibleAssets,us-gaap:GainLossOnDispositionOfIntangibleAssets,Gain on sale of trademark,24,0
+cash_flow,us-gaap:ProceedsFromSaleOfIntangibleAssets,us-gaap:ProceedsFromSaleOfIntangibleAssets,Proceeds from sale of a trademark,72,0
+cash_flow,us-gaap:PaymentsForOtherOperatingActivities,us-gaap:PaymentsForOtherOperatingActivities,Other operating activities,73,0
+cash_flow,us-gaap:PaymentsToAcquireIntangibleAssets,us-gaap:PaymentsToAcquireIntangibleAssets,Purchase/sale of a trademark,75,0
+cash_flow,us-gaap:ProceedsFromSaleOfInterestInPartnershipUnit,us-gaap:ProceedsFromSaleOfInterestInPartnershipUnit,Sale of minority interest of a subsidiary,60,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesGross,us-gaap:PaymentsToAcquireBusinessesGross,Acquisition of Almost Famous,76,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,111,0
+balance_sheet,html:accounts-receivable-net-of-allowances-of-4-828-and-7-721,html:accounts-receivable-net-of-allowances-of-4-828-and-7-721,"Accounts receivable, net of allowances of $4,828 and $7,721",121,0
+balance_sheet,html:income-tax-receivable-and-prepaid-income-taxes,html:income-tax-receivable-and-prepaid-income-taxes,Income tax receivable and prepaid income taxes,112,0
+balance_sheet,html:operating-lease-right-of-use-asset,html:operating-lease-right-of-use-asset,Operating lease right-of-use asset,113,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,122,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,114,0
+balance_sheet,html:operating-leases-current-portion,html:operating-leases-current-portion,Operating leases - current portion,115,0
+balance_sheet,html:contingent-payment-liability-long-term-portion,html:contingent-payment-liability-long-term-portion,Contingent payment liability - long-term portion,116,0
+balance_sheet,html:operating-leases-long-term-portion,html:operating-leases-long-term-portion,Operating leases - long-term portion,123,0
+balance_sheet,html:deferred-tax-liabilities,html:deferred-tax-liabilities,Deferred tax liabilities,126,0
+balance_sheet,html:common-stock-0-0001-par-value-245-000-shares-authorized-136-471-and-134-456-shares-issued-73-681-and-76-796-shares-outstanding,html:common-stock-0-0001-par-value-245-000-shares-authorized-136-471-and-134-456-shares-issued-73-681-and-76-796-shares-outstanding,"Common stock – $0.0001 par value, 245,000 shares authorized, 136,471 and 134,456 shares issued, 73,681 and 76,796 shares outstanding",100,0
+balance_sheet,html:treasury-stock-62-790-and-57-660-shares-at-cost,html:treasury-stock-62-790-and-57-660-shares-at-cost,"Treasury stock – 62,790 and 57,660 shares at cost",117,0
+balance_sheet,html:preferred-stock,html:preferred-stock,Preferred Stock,118,0
+balance_sheet,html:preferred-stock-0-0001-par-value-5-000-shares-authorized-none-issued-series-a-junior-participating-preferred-stock-0-0001-par-value-60-shares-authorized-none-issued,html:preferred-stock-0-0001-par-value-5-000-shares-authorized-none-issued-series-a-junior-participating-preferred-stock-0-0001-par-value-60-shares-authorized-none-issued,"Preferred stock – $0.0001 par value, 5,000 shares authorized; none issued; Series A Junior Participating preferred stock – $0.0001 par value, 60 shares authorized; none issued",124,0
+balance_sheet,us-gaap:ForeignCurrencyContractAssetFairValueDisclosure,us-gaap:ForeignCurrencyContractAssetFairValueDisclosure,Forward contracts,15,0
+balance_sheet,us-gaap:AssetsFairValueDisclosure,us-gaap:AssetsFairValueDisclosure,Total assets,16,0
+balance_sheet,us-gaap:BusinessCombinationContingentConsiderationLiability,us-gaap:BusinessCombinationContingentConsiderationLiability,Contingent payment liability(1)(2),47,0
+balance_sheet,us-gaap:ForeignCurrencyContractsLiabilityFairValueDisclosure,us-gaap:ForeignCurrencyContractsLiabilityFairValueDisclosure,Forward contracts 816,48,0
+balance_sheet,us-gaap:LiabilitiesFairValueDisclosure,us-gaap:LiabilitiesFairValueDisclosure,Total liabilities,49,0
+balance_sheet,html:accounts-receivable-net-of-allowances-of-13-159-10-849-and-884,html:accounts-receivable-net-of-allowances-of-13-159-10-849-and-884,"Accounts receivable, net of allowances of $13,159, $10,849 and $884",127,0
+balance_sheet,html:commitments-contingencies-and-other-note-n,html:commitments-contingencies-and-other-note-n,"Commitments, contingencies and other (Note N)",119,0
+balance_sheet,html:common-stock-0001-par-value-135-000-shares-authorized-132-530-131-991-and-131-261-shares-issued-85-729-85-715-and-87-498-shares-outstanding,html:common-stock-0001-par-value-135-000-shares-authorized-132-530-131-991-and-131-261-shares-issued-85-729-85-715-and-87-498-shares-outstanding,"Common stock – $.0001 par value, 135,000 shares authorized, 132,530, 131,991 and 131,261 shares issued, 85,729, 85,715 and 87,498 shares outstanding",120,0
+balance_sheet,html:treasury-stock-46-801-46-276-and-43-763-shares-at-cost,html:treasury-stock-46-801-46-276-and-43-763-shares-at-cost,"Treasury stock 46,801, 46,276 and 43,763 shares at cost",125,0
+cash_flow,html:cash-and-cash-equivalents-end-of-period,html:cash-and-cash-equivalents-end-of-period,Cash and cash equivalents – end of period,68,0
+income_statement,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,Impairment charges,7,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesNoncurrent,us-gaap:AvailableForSaleSecuritiesNoncurrent,Marketable securities – available for sale,40,0
+balance_sheet,us-gaap:DeferredTaxAssetsNetNoncurrent,us-gaap:DeferredTaxAssetsNetNoncurrent,Deferred taxes,41,0
+cash_flow,shoo:Recoverynetofprovisionforbaddebtexpenserelatedtocustomerbankruptcy,shoo:Recoverynetofprovisionforbaddebtexpenserelatedtocustomerbankruptcy,"Recovery, net of provisions for bad debt expense, related to the Payless ShoeSource bankruptcy",74,0
+balance_sheet,us-gaap:DeferredTaxAssetsLiabilitiesNet,us-gaap:DeferredTaxAssetsLiabilitiesNet,Deferred taxes,42,0
+balance_sheet,us-gaap:LineOfCreditFacilityMaximumMonthendOutstandingAmount,us-gaap:LineOfCreditFacilityMaximumMonthendOutstandingAmount,Advances from factor,68,0
+balance_sheet,us-gaap:DeferredTaxAndOtherLiabilitiesNoncurrent,us-gaap:DeferredTaxAndOtherLiabilitiesNoncurrent,Deferred taxes,77,0
+balance_sheet,html:commitments-contingencies-and-other-note-q,html:commitments-contingencies-and-other-note-q,"Commitments, contingencies and other (Note Q)",82,0
+cash_flow,us-gaap:OperatingLeaseImpairmentLoss,us-gaap:OperatingLeaseImpairmentLoss,Impairment of lease right-of-use asset,8,0
+cash_flow,us-gaap:TangibleAssetImpairmentCharges,us-gaap:TangibleAssetImpairmentCharges,Impairment of store fixed assets,9,0
+cash_flow,us-gaap:AssetImpairmentCharges,us-gaap:AssetImpairmentCharges,Impairment of lease right-of-use asset and store fixed assets,10,0
+income_statement,shoo:ImpairmentOfStoreFixedAssetsAndLeaseRightOfUseAssets,shoo:ImpairmentOfStoreFixedAssetsAndLeaseRightOfUseAssets,Impairment of store fixed assets and lease right-of-use assets,8,0
+balance_sheet,shoo:AdvancesFromFactorCurrent,shoo:AdvancesFromFactorCurrent,Advances from factor,64,0
+balance_sheet,html:commitments-contingencies-and-other-note-p,html:commitments-contingencies-and-other-note-p,"Commitments, contingencies and other (Note P)",83,0
+cash_flow,us-gaap:ImpairmentOfLongLivedAssetsHeldForUse,us-gaap:ImpairmentOfLongLivedAssetsHeldForUse,Impairment of lease right-of-use asset and store fixed assets,11,0
+balance_sheet,us-gaap:CustomerAdvancesCurrent,us-gaap:CustomerAdvancesCurrent,Advances from factor,65,0
+balance_sheet,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Cash and cash equivalents,17,0
+balance_sheet,us-gaap:NotesReceivableRelatedParties,us-gaap:NotesReceivableRelatedParties,Note receivable – related party,32,0
+balance_sheet,html:commitments-contingencies-and-other-note-l,html:commitments-contingencies-and-other-note-l,"Commitments, contingencies and other (Note L)",84,0
+balance_sheet,html:commitments-contingencies-and-other-note-m,html:commitments-contingencies-and-other-note-m,"Commitments, contingencies and other (Note M)",85,0
+balance_sheet,shoo:NoteReceivableRelatedParty,shoo:NoteReceivableRelatedParty,Note receivable – related party,33,0
+cash_flow,us-gaap:ProceedsFromOtherOperatingActivities,us-gaap:ProceedsFromOtherOperatingActivities,Other operating activities,25,0
+balance_sheet,shoo:IncomeTaxesReceivableAndPrepaidTaxes,shoo:IncomeTaxesReceivableAndPrepaidTaxes,Income tax receivable and prepaid income taxes,28,0
+balance_sheet,us-gaap:LoansAndLeasesReceivableRelatedParties,us-gaap:LoansAndLeasesReceivableRelatedParties,Note receivable – related party,34,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,Other operating activities,26,0
+balance_sheet,html:commitments-contingencies-and-other-note-13,html:commitments-contingencies-and-other-note-13,"Commitments, contingencies, and other (Note 13)",86,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,70,0
+cash_flow,shoo:AcquisitionRelatedProceedsToSellers,shoo:AcquisitionRelatedProceedsToSellers,Acquisition-related proceeds to certain sellers,71,0
+balance_sheet,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,Cash and cash equivalents,18,0
+balance_sheet,html:commitments-contingencies-and-other-note-12,html:commitments-contingencies-and-other-note-12,"Commitments, contingencies, and other (Note 12)",87,0

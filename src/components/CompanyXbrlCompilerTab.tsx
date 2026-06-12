@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
+import { filterVisibleCompilerRows } from "@/lib/xbrl-compiler-display";
 import { compilerStatementRowEmphasis } from "@/lib/sec-ixbrl-face-display";
 /* ── types ─────────────────────────────────────────────────────────────── */
 
@@ -74,6 +75,20 @@ type Result = {
     maps_repaired: number;
     orphan_master_rows_recovered: number;
     cells_added: number;
+  };
+  workbook_truth?: {
+    cells_cleared: number;
+    cells_aligned: number;
+    issues_count: number;
+    issues: Array<{
+      statement_type: string;
+      canonical_row_id: string;
+      period: string;
+      line_label: string;
+      issue: string;
+      compiled_value: number | null;
+      workbook_value: number | null;
+    }>;
   };
 };
 
@@ -179,6 +194,8 @@ async function buildCompiledExcelBlob(
       const ws = wb.addWorksheet(sheetName);
 
       const periods = m.periods;
+      const visibleRows = filterVisibleCompilerRows(m.rows, periods);
+      if (!visibleRows.length) continue;
       const colCount = periods.length + 1;
 
       // ── Title row ──
@@ -216,8 +233,8 @@ async function buildCompiledExcelBlob(
       }
 
       // ── Data rows ──
-      for (let ri = 0; ri < m.rows.length; ri++) {
-        const row = m.rows[ri];
+      for (let ri = 0; ri < visibleRows.length; ri++) {
+        const row = visibleRows[ri];
         const lineLabel = String(row.line || row.concept || "");
         const depth = typeof row.depth === "number" ? row.depth : 0;
 
@@ -229,7 +246,10 @@ async function buildCompiledExcelBlob(
 
         const dataRow = ws.addRow(vals);
 
-        const emphasis = compilerStatementRowEmphasis(lineLabel, stmtKey);
+        const rowValues = Object.fromEntries(
+          periods.map((p) => [p, row[p] == null ? null : Number(row[p])])
+        ) as Record<string, number | null>;
+        const emphasis = compilerStatementRowEmphasis(lineLabel, stmtKey, rowValues);
         const isSubtotal = emphasis === "subtotal";
 
         dataRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
@@ -286,7 +306,8 @@ function Table({
   model: StmtModel;
   statementKey: string;
 }) {
-  if (!model || !model.rows.length) {
+  const visibleRows = filterVisibleCompilerRows(model?.rows ?? [], model?.periods ?? []);
+  if (!model || !visibleRows.length) {
     return (
       <div className="rounded border border-dashed p-4 text-center text-xs"
         style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
@@ -319,9 +340,12 @@ function Table({
             </tr>
           </thead>
           <tbody>
-            {model.rows.map((row, i) => {
+            {visibleRows.map((row, i) => {
               const lineLabel = String(row.line || row.concept);
-              const emphasis = compilerStatementRowEmphasis(lineLabel, statementKey);
+              const rowValues = Object.fromEntries(
+                model.periods.map((p) => [p, row[p] == null ? null : Number(row[p])])
+              ) as Record<string, number | null>;
+              const emphasis = compilerStatementRowEmphasis(lineLabel, statementKey, rowValues);
               const depth = typeof row.depth === "number" ? row.depth : 0;
               const rowBg =
                 emphasis === "subtotal"
@@ -491,12 +515,56 @@ function StatementsPanel({
 
 function ValidationPanel({ result }: { result: Result | null }) {
   const vfails = result?.validation_detail ?? [];
+  const wbTruth = result?.workbook_truth;
+  const wbIssues = wbTruth?.issues ?? [];
   if (!result?.ok) {
     return <div className="rounded-lg border border-dashed p-8 text-center text-xs"
       style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>Compile first.</div>;
   }
   return (
-    <div>
+    <div className="space-y-4">
+      {wbTruth != null && (
+        <div>
+          <h4 className="text-xs font-bold mb-2"
+            style={{ color: wbTruth.issues_count ? "#ef4444" : "var(--accent)" }}>
+            Workbook truth check — {wbTruth.issues_count === 0
+              ? "all reported cells match source workbooks"
+              : `${wbTruth.issues_count} mismatch${wbTruth.issues_count !== 1 ? "es" : ""}`}
+          </h4>
+          <p className="text-[10px] mb-2" style={{ color: "var(--muted)" }}>
+            Cleared {wbTruth.cells_cleared} comparative backfill{wbTruth.cells_cleared !== 1 ? "s" : ""};
+            aligned {wbTruth.cells_aligned} reported cell{wbTruth.cells_aligned !== 1 ? "s" : ""}.
+            Derived quarters (2Q = 6M − 1Q, etc.) are excluded.
+          </p>
+          {wbIssues.length > 0 && (
+            <div className="overflow-x-auto rounded-lg border mb-2" style={{ borderColor: "var(--border)" }}>
+              <table className="w-full border-collapse text-[11px]">
+                <thead>
+                  <tr>
+                    {["Issue", "Statement", "Line", "Period", "Compiled", "Workbook"].map((h) => (
+                      <th key={h} className="px-2 py-1.5 text-left font-semibold border-b"
+                        style={{ background: "var(--sb)", borderColor: "var(--border)", color: "var(--muted)" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {wbIssues.slice(0, 50).map((v, i) => (
+                    <tr key={i} className="border-b" style={{ borderColor: "var(--border2)" }}>
+                      <td className="px-2 py-1 font-mono text-[10px]" style={{ color: "#ef4444" }}>{v.issue}</td>
+                      <td className="px-2 py-1" style={{ color: "var(--text)" }}>{STMT_LABEL[v.statement_type] || v.statement_type}</td>
+                      <td className="px-2 py-1 text-[10px]" style={{ color: "var(--text)" }}>{v.line_label}</td>
+                      <td className="px-2 py-1">{v.period}</td>
+                      <td className="px-2 py-1 font-mono">{v.compiled_value ?? "—"}</td>
+                      <td className="px-2 py-1 font-mono">{v.workbook_value ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+      <div>
       <h4 className="text-xs font-bold mb-2"
         style={{ color: vfails.length ? "#ef4444" : "var(--accent)" }}>
         {vfails.length} Tie-out Failure{vfails.length !== 1 ? "s" : ""}
@@ -528,6 +596,7 @@ function ValidationPanel({ result }: { result: Result | null }) {
           </table>
         </div>
       )}
+      </div>
     </div>
   );
 }

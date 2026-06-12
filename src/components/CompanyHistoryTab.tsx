@@ -1,5 +1,6 @@
 "use client";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 
 import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
@@ -162,8 +163,7 @@ export function buildCompanyHistoryAiPrompt(
 ): string {
   const safeTicker = ticker.trim();
   if (!safeTicker) return "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
-  return template.replace(/\[COMPANY NAME\]/g, displayName).replace(/\[TICKER\]/g, safeTicker);
+  return fillCompanyPromptTemplate(template, safeTicker, companyName);
 }
 
 /** Best-effort: Claude has used ?q= for prefill; not officially documented and may change. */

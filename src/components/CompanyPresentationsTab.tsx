@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 /** Best-effort: Claude has used ?q= for prefill; not officially documented and may change. */
@@ -46,20 +47,11 @@ export function CompanyPresentationsTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const companyNameLine = useMemo(() => {
-    const n = companyName?.trim();
-    if (n && n.toUpperCase() !== safeTicker.toUpperCase()) return n;
-    return "Not provided in app - infer from ticker, SEC, and IR.";
-  }, [companyName, safeTicker]);
-
   const { template: presentationsTemplate } = usePromptTemplateOverride("presentations", MGMT_PRESENTATIONS_PROMPT_TEMPLATE);
   const prompt = useMemo(() => {
     if (!safeTicker) return "";
-    return presentationsTemplate.replace(/\{\{TICKER\}\}/g, safeTicker).replace(
-      /\{\{COMPANY_NAME\}\}/g,
-      companyNameLine
-    );
-  }, [safeTicker, companyNameLine, presentationsTemplate]);
+    return fillCompanyPromptTemplate(presentationsTemplate, safeTicker, companyName);
+  }, [safeTicker, companyName, presentationsTemplate]);
 
   useEffect(() => {
     setStatusMessage(null);
@@ -194,7 +186,7 @@ export function CompanyPresentationsTab({
             defaultTemplate={MGMT_PRESENTATIONS_PROMPT_TEMPLATE}
             resolve={(tpl) =>
               safeTicker
-                ? tpl.replace(/\{\{TICKER\}\}/g, safeTicker).replace(/\{\{COMPANY_NAME\}\}/g, companyNameLine)
+                ? fillCompanyPromptTemplate(tpl, safeTicker, companyName)
                 : ""
             }
             className="mb-3"

@@ -2,7 +2,12 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
-import { formatWorkspaceBadge, isCikWorkspaceKey } from "@/lib/company-workspace-key";
+import {
+  formatWorkspaceBadge,
+  isCikWorkspaceKey,
+  isPrivateWorkspaceKey,
+  privateWorkspaceDisplayName,
+} from "@/lib/company-workspace-key";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
 function reorderList<T>(list: T[], fromIndex: number, toIndex: number): T[] {
@@ -99,10 +104,20 @@ export function LeftSidebar({
       watchlist.map(async (tk) => {
         try {
           const res = await fetch(`/api/company/${encodeURIComponent(tk)}`);
-          if (!res.ok || cancelled) return;
-          const body = (await res.json()) as { name?: string };
-          const name = typeof body.name === "string" ? body.name.trim() : "";
-          if (!cancelled && name && name.toUpperCase() !== tk) next[tk] = name;
+          if (cancelled) return;
+          const body = res.ok ? ((await res.json()) as { name?: string }) : null;
+          const fetched = typeof body?.name === "string" ? body.name.trim() : "";
+          const name = isPrivateWorkspaceKey(tk)
+            ? privateWorkspaceDisplayName(tk, fetched || null)
+            : fetched;
+          if (!res.ok && !isPrivateWorkspaceKey(tk)) return;
+          const badge = formatWorkspaceBadge(tk).toUpperCase();
+          const shouldStore =
+            name &&
+            (isPrivateWorkspaceKey(tk)
+              ? name.toUpperCase() !== badge
+              : name.toUpperCase() !== tk.toUpperCase() && name.toUpperCase() !== badge);
+          if (!cancelled && shouldStore) next[tk] = name;
         } catch {
           // ignore
         }
@@ -150,8 +165,9 @@ export function LeftSidebar({
         void persistWatchlist(next);
         return next;
       });
-      if (body.companyName?.trim()) {
-        setNames((prev) => ({ ...prev, [sym]: body.companyName!.trim() }));
+      const resolvedName = privateWorkspaceDisplayName(sym, body.companyName?.trim() ?? null);
+      if (resolvedName && resolvedName !== "Private company") {
+        setNames((prev) => ({ ...prev, [sym]: resolvedName }));
       }
       onTickerSelect(sym);
       setSearch("");
@@ -218,8 +234,8 @@ export function LeftSidebar({
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="Ticker or CIK"
-            maxLength={14}
+            placeholder="Ticker, CIK, or name"
+            maxLength={120}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -261,7 +277,7 @@ export function LeftSidebar({
           >
             No companies saved.
             <br />
-            Enter a ticker or SEC CIK and press GO to add.
+            Enter a ticker, CIK, or company name and press GO to add.
           </div>
         ) : (
           <div className="space-y-1 px-2.5 pb-3">
@@ -313,7 +329,9 @@ export function LeftSidebar({
                     style={{ color: "var(--muted2)" }}
                     title={names[tk] ?? ""}
                   >
-                    {names[tk] || "—"}
+                    {names[tk] ||
+                      (isPrivateWorkspaceKey(tk) ? privateWorkspaceDisplayName(tk) : "") ||
+                      "—"}
                   </span>
                 </button>
                 <button

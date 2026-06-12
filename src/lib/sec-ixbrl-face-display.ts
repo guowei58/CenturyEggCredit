@@ -74,16 +74,30 @@ function normalizedFaceLabel(label: string): string {
   return label.replace(/\s+/g, " ").trim().toLowerCase().replace(/[.:]+$/g, "").trim();
 }
 
+function rowHasNumericData(row: Pick<FacePresentedStatementRow, "values">): boolean {
+  return Object.values(row.values).some((v) => v !== null && Number.isFinite(v));
+}
+
 /** Match compiler / historical workbook emphasis for key subtotals and section headers. */
 export function faceStatementRowEmphasis(
-  row: Pick<FacePresentedStatementRow, "label" | "rowKind">,
+  row: Pick<FacePresentedStatementRow, "label" | "rowKind" | "values">,
   statementId: FaceStatementId
 ): FaceStatementRowEmphasis {
-  if (row.rowKind === "heading") return "heading";
+  if (row.rowKind === "heading") {
+    return statementId === "balance-sheet" ? "normal" : "heading";
+  }
   if (row.rowKind === "total") return "subtotal";
 
   const ll = normalizedFaceLabel(row.label);
   if (!ll) return "normal";
+
+  if (
+    statementId === "balance-sheet" &&
+    Object.keys(row.values ?? {}).length > 0 &&
+    !rowHasNumericData(row)
+  ) {
+    return "normal";
+  }
 
   if (statementId === "income-statement") {
     if (
@@ -113,20 +127,14 @@ export function faceStatementRowEmphasis(
 
   if (statementId === "balance-sheet") {
     if (
-      /^(total\s+)?assets$/.test(ll) ||
-      /^assets$/.test(ll) ||
-      /^(total\s+)?liabilities$/.test(ll) ||
-      /^liabilities$/.test(ll) ||
+      /^total assets$/.test(ll) ||
       /\btotal current assets\b/.test(ll) ||
-      /^current assets$/.test(ll) ||
+      /^total liabilities$/.test(ll) ||
       /\btotal current liabilities\b/.test(ll) ||
-      /^current liabilities$/.test(ll) ||
-      /\btotal stockholders'? equity\b/.test(ll) ||
-      /\btotal shareholders'? equity\b/.test(ll) ||
+      /\btotal (?:stockholders|shareholders)(?:['\u2019])?(?:\s*\([^)]+\))?\s+equity\b/.test(ll) ||
       /^total equity$/.test(ll) ||
-      /\btotal liabilities and stockholders'? equity\b/.test(ll) ||
-      /\btotal liabilities and shareholders'? equity\b/.test(ll) ||
-      /\bliabilities and equity\b/.test(ll)
+      /\btotal liabilities and\b.*\bequity\b/.test(ll) ||
+      /\bliabilities and\b.*\bequity\b/.test(ll)
     ) {
       return "subtotal";
     }
@@ -160,11 +168,18 @@ const COMPILER_STMT_TO_FACE_ID: Record<string, FaceStatementId> = {
 /** Row emphasis for compiled historical statements (same rules as Period Financials HTML-face grids). */
 export function compilerStatementRowEmphasis(
   lineLabel: string,
-  compilerStatementKey: string
+  compilerStatementKey: string,
+  values?: Record<string, number | null | undefined>
 ): FaceStatementRowEmphasis {
   const faceId = COMPILER_STMT_TO_FACE_ID[compilerStatementKey];
   if (!faceId) return "normal";
-  return faceStatementRowEmphasis({ label: lineLabel, rowKind: "data" }, faceId);
+  const normalizedValues: Record<string, number | null> = {};
+  if (values) {
+    for (const [k, v] of Object.entries(values)) {
+      normalizedValues[k] = v == null || !Number.isFinite(Number(v)) ? null : Number(v);
+    }
+  }
+  return faceStatementRowEmphasis({ label: lineLabel, rowKind: "data", values: normalizedValues }, faceId);
 }
 
 /** Share-count lines only appear on the income statement (EPS note / weighted-average shares). */

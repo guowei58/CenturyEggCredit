@@ -13,6 +13,7 @@ import {
   fetchAccessionSubmissionTxt,
   fetchArchivesFilingFileHtml,
   fetchFilingIndexItems,
+  html8KPrimaryDefersEarningsToExhibitAttachment,
   htmlLooksLikePersonnelOnlyPressNotEarningsResults,
   looksLike8kFormCoverShellHtml,
   parseExhibit99HtmlFilenamesFromSubmissionTxt,
@@ -449,21 +450,72 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
       const pick = pickEarningsMainAndDeck(classified.map((c) => ({ filename: c.filename, kind: c.kind })));
       if (pick != null) {
         const mainRow = classified[pick.main]!;
-        earningsPressRelease = buildEarningsDisplayPayload(mainRow.src, mainRow.html, mainRow.kind);
-        if (pick.deck != null) {
-          const deckRow = classified[pick.deck]!;
-          earningsSlideDeck = buildEarningsDisplayPayload(deckRow.src, deckRow.html, "slide_deck");
+        if (mainRow.kind === "press_release") {
+          earningsPressRelease = buildEarningsDisplayPayload(mainRow.src, mainRow.html, mainRow.kind);
+          if (pick.deck != null) {
+            const deckRow = classified[pick.deck]!;
+            earningsSlideDeck = buildEarningsDisplayPayload(deckRow.src, deckRow.html, "slide_deck");
+          }
+        } else {
+          const deckPayload = buildEarningsDisplayPayload(mainRow.src, mainRow.html, "slide_deck");
+          earningsSlideDeck = deckPayload;
+          // Image-based earnings exhibits (e.g. CMPR Workiva JPG decks) are the press-release body when no prose PR exists.
+          earningsPressRelease = deckPayload;
         }
       }
     }
   }
 
+  if (!earningsPressRelease && k8ForEarnings) {
+    const primaryDoc = (k8ForEarnings.primaryDocument ?? "").trim();
+    const primaryUrl = secArchivesPrimaryDocumentUrl(filingsRes.cik, k8ForEarnings);
+    let primaryHtml =
+      pressSrc?.documentRole === "primary" &&
+      secAccessionDedupeKey(pressSrc.accessionNumber) === secAccessionDedupeKey(k8ForEarnings.accessionNumber)
+        ? rawPressHtml
+        : null;
+    if (!primaryHtml && primaryDoc) {
+      await pace();
+      primaryHtml = await fetchEdgarPrimaryDocumentHtml(filingsRes.cik, k8ForEarnings);
+    }
+    if (
+      primaryHtml &&
+      primaryUrl &&
+      !looksLike8kFormCoverShellHtml(primaryHtml) &&
+      !html8KPrimaryDefersEarningsToExhibitAttachment(primaryHtml) &&
+      classifyEarningsExhibitHtml(primaryHtml, primaryDoc) === "press_release"
+    ) {
+      earningsPressRelease = buildEarningsDisplayPayload(
+        {
+          form: k8ForEarnings.form,
+          filingDate: k8ForEarnings.filingDate,
+          accessionNumber: k8ForEarnings.accessionNumber,
+          primaryDocument: primaryDoc,
+          primaryDocumentUrl: primaryUrl,
+          documentRole: "primary",
+        },
+        primaryHtml,
+        "press_release"
+      );
+    }
+  }
+
   if (!earningsPressRelease && pressSrc && rawPressHtml) {
-    const exhibitClass =
-      pressSrc.documentRole === "exhibit_99"
-        ? classifyEarningsExhibitHtml(rawPressHtml, pressSrc.primaryDocument)
-        : ("press_release" as const);
-    earningsPressRelease = buildEarningsDisplayPayload(pressSrc, rawPressHtml, exhibitClass);
+    if (
+      pressSrc.documentRole === "primary" &&
+      (looksLike8kFormCoverShellHtml(rawPressHtml) ||
+        html8KPrimaryDefersEarningsToExhibitAttachment(rawPressHtml))
+    ) {
+      // Keep earningsSlideDeck / empty — do not show the Form 8-K cover in the press-release tab.
+    } else if (earningsSlideDeck) {
+      earningsPressRelease = earningsSlideDeck;
+    } else {
+      const exhibitClass =
+        pressSrc.documentRole === "exhibit_99"
+          ? classifyEarningsExhibitHtml(rawPressHtml, pressSrc.primaryDocument)
+          : ("press_release" as const);
+      earningsPressRelease = buildEarningsDisplayPayload(pressSrc, rawPressHtml, exhibitClass);
+    }
   }
 
   return NextResponse.json({

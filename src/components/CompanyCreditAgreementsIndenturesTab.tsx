@@ -19,6 +19,7 @@ import { CreditAgreementsFilesBox } from "@/components/CreditAgreementsFilesBox"
 import { DistressedLinkAnalyzeModal } from "@/components/DistressedLinkAnalyzeModal";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 export const PROMPT_TEMPLATE = `Find all debt-related documents for {{TICKER}} and provide direct clickable links.
@@ -982,9 +983,13 @@ function SavedResponseBox({
   );
 }
 
-export function buildCreditAgreementsFindDocsAiPrompt(ticker: string, template: string = PROMPT_TEMPLATE): string {
+export function buildCreditAgreementsFindDocsAiPrompt(
+  ticker: string,
+  template: string = PROMPT_TEMPLATE,
+  companyName?: string | null
+): string {
   const t = ticker.trim();
-  return t ? template.replace(/\{\{TICKER\}\}/g, t) : "";
+  return t ? fillCompanyPromptTemplate(template, t, companyName) : "";
 }
 
 export function getCreditAgreementsDocReviewAiPrompt(template: string = DOC_REVIEW_PROMPT): string {
@@ -1028,7 +1033,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
     PROMPT_TEMPLATE
   );
   const prompt = useMemo(
-    () => (safeTicker ? findDocsTemplate.replace(/\{\{TICKER\}\}/g, safeTicker) : ""),
+    () => (safeTicker ? fillCompanyPromptTemplate(findDocsTemplate, safeTicker) : ""),
     [safeTicker, findDocsTemplate]
   );
   const { template: docReviewTemplate } = usePromptTemplateOverride(
@@ -1139,7 +1144,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
             <PromptTemplateBox
               tabId="credit-agreements-find-docs"
               defaultTemplate={PROMPT_TEMPLATE}
-              resolve={(tpl) => (safeTicker ? tpl.replace(/\{\{TICKER\}\}/g, safeTicker) : "")}
+              resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker) : "")}
               className="mb-3"
             />
             <div className="tab-prompt-ai-actions-grid mb-2">

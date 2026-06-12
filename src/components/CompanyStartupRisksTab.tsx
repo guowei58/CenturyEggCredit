@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 
@@ -51,9 +52,7 @@ export function CompanyStartupRisksTab({
 
   const safeTicker = ticker?.trim() ?? "";
   const { template: startupRisksTemplate } = usePromptTemplateOverride("startup-risks", STARTUP_RISKS_PROMPT_TEMPLATE);
-  const prompt = safeTicker
-    ? startupRisksTemplate.replace(/\[TICKER\]/g, safeTicker)
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(startupRisksTemplate, safeTicker) : "";
 
   useEffect(() => {
     setStatusMessage(null);
@@ -191,7 +190,7 @@ export function CompanyStartupRisksTab({
           <PromptTemplateBox
             tabId="startup-risks"
             defaultTemplate={STARTUP_RISKS_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace(/\[TICKER\]/g, safeTicker) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

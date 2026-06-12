@@ -15,6 +15,9 @@ export async function resolveCompanyForDebtMap(input: string): Promise<ResolvedC
 
   const resolved = await resolveCompanyWorkspace(raw);
   if ("error" in resolved) return resolved;
+  if (resolved.isPrivate || !resolved.cik) {
+    return { error: "Debt map requires a public SEC filer (ticker or CIK)." };
+  }
 
   return {
     cik: resolved.cik,

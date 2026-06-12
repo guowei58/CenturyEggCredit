@@ -37,6 +37,8 @@ import {
   fillHowStuffWorksPromptPlaceholders,
 } from "@/data/how-stuff-works-prompt";
 import { RISK_FROM_10K_PROMPT_TEMPLATE } from "@/data/risk-from-10k-prompt";
+import { BUSINESS_RISK_ANALYSIS_PROMPT_TEMPLATE } from "@/data/business-risk-analysis-prompt";
+import { COMPANY_REPUTATION_PROMPT_TEMPLATE } from "@/data/company-reputation-prompt";
 import { ORG_CHART_PROMPT_TEMPLATE, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
 import { INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE } from "@/data/industry-history-drivers-prompt";
 import { PORTERS_FIVE_FORCES_PROMPT_TEMPLATE } from "@/data/porters-five-forces-prompt";
@@ -52,6 +54,7 @@ import {
 import type { AiProvider } from "@/lib/ai-provider";
 import { saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
+import { fillCompanyPromptTemplate, resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
 
 export type BulkOpenContext = {
@@ -60,23 +63,8 @@ export type BulkOpenContext = {
   appOrigin: string;
 };
 
-function displayName(ctx: BulkOpenContext): string {
-  const tk = ctx.ticker.trim();
-  return ctx.companyName?.trim() || tk || "";
-}
-
-/** "Acme (ACME)" when we have a real name; else ticker. */
-function companyParenLabel(ctx: BulkOpenContext): string {
-  const safeTicker = ctx.ticker.trim();
-  const dn = displayName(ctx);
-  return dn && dn.toUpperCase() !== safeTicker.toUpperCase() ? `${dn} (${safeTicker})` : safeTicker || dn;
-}
-
-function earningsCompanyNameLine(ctx: BulkOpenContext): string {
-  const safeTicker = ctx.ticker.trim();
-  const n = ctx.companyName?.trim();
-  if (n && n.toUpperCase() !== safeTicker.toUpperCase()) return n;
-  return "Not provided in app — infer from ticker, SEC, and IR.";
+function promptLabels(ctx: BulkOpenContext) {
+  return resolveCompanyPromptLabels({ workspaceKey: ctx.ticker, companyName: ctx.companyName });
 }
 
 export type BulkPromptEntry = { label: string; prompt: string; saveKey: SavedDataKey };
@@ -84,73 +72,66 @@ export type BulkPromptEntry = { label: string; prompt: string; saveKey: SavedDat
 export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPromptEntry[] {
   const tk = ctx.ticker.trim();
   if (!tk) return [];
-  const dn = displayName(ctx);
+  const labels = promptLabels(ctx);
+  const { displayName: dn, tickerForPrompt, parenLabel: labelParen, earningsCompanyNameLine } = labels;
   const origin = ctx.appOrigin || "";
-  const labelParen = companyParenLabel(ctx);
+  const fill = (template: string) => fillCompanyPromptTemplate(template, tk, ctx.companyName);
   const ov = readPromptTemplateOverride;
   const entries: BulkPromptEntry[] = [
     {
       label: "Business overview",
       saveKey: "overview",
-      prompt: ov("business-overview", OVERVIEW_PROMPT_TEMPLATE).replace(/\[COMPANY NAME\]/g, dn).replace(/\[TICKER\]/g, tk),
+      prompt: fill(ov("business-overview", OVERVIEW_PROMPT_TEMPLATE)),
     },
     {
       label: "Recent events",
       saveKey: "recent-events",
-      prompt: ov("recent-events", RECENT_EVENTS_PROMPT_TEMPLATE)
-        .replace(/\[COMPANY NAME\]/g, dn)
-        .replace(/\[TICKER\]/g, tk),
+      prompt: fill(ov("recent-events", RECENT_EVENTS_PROMPT_TEMPLATE)),
     },
     {
       label: "Business model",
       saveKey: "business-model",
-      prompt: ov("business-model", BUSINESS_MODEL_PROMPT_TEMPLATE).replace("[TICKER / COMPANY NAME]", `${tk} / ${dn}`),
+      prompt: fill(ov("business-model", BUSINESS_MODEL_PROMPT_TEMPLATE)),
     },
     {
       label: "HowStuffWorks",
       saveKey: "how-stuff-works",
-      prompt: fillHowStuffWorksPromptPlaceholders(ov("how-stuff-works", HOW_STUFF_WORKS_PROMPT_TEMPLATE), dn, tk),
+      prompt: fillHowStuffWorksPromptPlaceholders(ov("how-stuff-works", HOW_STUFF_WORKS_PROMPT_TEMPLATE), dn, tickerForPrompt),
     },
     {
       label: "Management & board",
       saveKey: "management-board",
-      prompt: ov("management-board", MANAGEMENT_BOARD_PROMPT_TEMPLATE).replace(/\[INSERT TICKER\]/g, tk),
+      prompt: fill(ov("management-board", MANAGEMENT_BOARD_PROMPT_TEMPLATE)),
     },
     {
       label: "Research roadmap",
       saveKey: "research-roadmap",
-      prompt: ov("research-roadmap", RESEARCH_ROADMAP_PROMPT_TEMPLATE).replace(/\[INSERT TICKER\]/g, tk),
+      prompt: fill(ov("research-roadmap", RESEARCH_ROADMAP_PROMPT_TEMPLATE)),
     },
     {
       label: "Out-of-the-box ideas",
       saveKey: "out-of-the-box-ideas",
-      prompt: ov("out-of-the-box-ideas", OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE).replace(/\[INSERT TICKER\]/g, tk),
+      prompt: fill(ov("out-of-the-box-ideas", OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE)),
     },
     {
       label: "Employee contacts",
       saveKey: "employee-contacts",
-      prompt: ov("employee-contacts", EMPLOYEE_CONTACTS_PROMPT_TEMPLATE)
-        .replace(/\[INSERT TICKER\]/g, tk)
-        .replace(/\[INSERT COMPANY NAME IF KNOWN\]/g, dn),
+      prompt: fill(ov("employee-contacts", EMPLOYEE_CONTACTS_PROMPT_TEMPLATE)),
     },
     {
       label: "Industry contacts",
       saveKey: "industry-contacts",
-      prompt: ov("industry-contacts", INDUSTRY_CONTACTS_PROMPT_TEMPLATE)
-        .replace(/\[INSERT TICKER\]/g, tk)
-        .replace(/\[INSERT COMPANY NAME\]/g, dn),
+      prompt: fill(ov("industry-contacts", INDUSTRY_CONTACTS_PROMPT_TEMPLATE)),
     },
     {
       label: "Industry publications",
       saveKey: "industry-publications",
-      prompt: ov("industry-publications", INDUSTRY_PUBLICATIONS_PROMPT_TEMPLATE)
-        .replace(/\[TICKER\]/g, tk)
-        .replace(/\[COMPANY NAME\]/g, dn),
+      prompt: fill(ov("industry-publications", INDUSTRY_PUBLICATIONS_PROMPT_TEMPLATE)),
     },
     {
       label: "Subsidiary list",
       saveKey: "subsidiary-list",
-      prompt: ov("subsidiary-list", SUBSIDIARY_LIST_PROMPT_TEMPLATE).replace(/\{\{TICKER\}\}/g, tk),
+      prompt: fill(ov("subsidiary-list", SUBSIDIARY_LIST_PROMPT_TEMPLATE)),
     },
     {
       label: "Competitors",
@@ -160,16 +141,12 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
     {
       label: "Customers",
       saveKey: "customers",
-      prompt: ov("customers", CUSTOMERS_PROMPT_TEMPLATE)
-        .replace(/\[INSERT TICKER\]/g, tk)
-        .replace(/\[INSERT COMPANY NAME\]/g, dn),
+      prompt: fill(ov("customers", CUSTOMERS_PROMPT_TEMPLATE)),
     },
     {
       label: "Suppliers",
       saveKey: "suppliers",
-      prompt: ov("suppliers", SUPPLIERS_PROMPT_TEMPLATE)
-        .replace(/\[INSERT TICKER\]/g, tk)
-        .replace(/\[INSERT COMPANY NAME\]/g, dn),
+      prompt: fill(ov("suppliers", SUPPLIERS_PROMPT_TEMPLATE)),
     },
     {
       label: "Porter's Five Forces",
@@ -182,9 +159,7 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
     {
       label: "Industry History and Drivers",
       saveKey: "industry-history-drivers",
-      prompt: ov("industry-history-drivers", INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE)
-        .replace(/\[INSERT COMPANY NAME\]/g, dn)
-        .replace(/\[INSERT TICKER\]/g, tk),
+      prompt: fill(ov("industry-history-drivers", INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE)),
     },
     {
       label: "Industry Value Chain",
@@ -198,33 +173,41 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
     {
       label: "Startup risks",
       saveKey: "startup-risks",
-      prompt: ov("startup-risks", STARTUP_RISKS_PROMPT_TEMPLATE).replace(/\[TICKER\]/g, tk),
+      prompt: fill(ov("startup-risks", STARTUP_RISKS_PROMPT_TEMPLATE)),
     },
     {
       label: "Risk from 10-K",
       saveKey: "risk-from-10k",
-      prompt: ov("risk-from-10k", RISK_FROM_10K_PROMPT_TEMPLATE)
-        .replace(/\[INSERT TICKER\]/g, tk)
-        .replace(/\[INSERT COMPANY NAME\]/g, dn),
+      prompt: fill(ov("risk-from-10k", RISK_FROM_10K_PROMPT_TEMPLATE)),
+    },
+    {
+      label: "Business Risk Analysis",
+      saveKey: "business-risk-analysis",
+      prompt: fill(ov("business-risk-analysis", BUSINESS_RISK_ANALYSIS_PROMPT_TEMPLATE)),
+    },
+    {
+      label: "Company Reputation",
+      saveKey: "company-reputation",
+      prompt: fill(ov("company-reputation", COMPANY_REPUTATION_PROMPT_TEMPLATE)),
     },
     {
       label: "Earnings releases",
       saveKey: "earnings-releases",
       prompt: ov("earnings-releases", EARNINGS_RELEASES_PROMPT_TEMPLATE)
-        .replace(/\{\{TICKER\}\}/g, tk)
-        .replace(/\{\{COMPANY_NAME\}\}/g, earningsCompanyNameLine(ctx)),
+        .replace(/\{\{TICKER\}\}/g, tickerForPrompt)
+        .replace(/\{\{COMPANY_NAME\}\}/g, earningsCompanyNameLine),
     },
     {
       label: "Mgmt Presentations & Transcripts",
       saveKey: "presentations",
       prompt: ov("presentations", MGMT_PRESENTATIONS_PROMPT_TEMPLATE)
-        .replace(/\{\{TICKER\}\}/g, tk)
+        .replace(/\{\{TICKER\}\}/g, tickerForPrompt)
         .replace(/\{\{COMPANY_NAME\}\}/g, dn),
     },
     {
       label: "Historical financials",
       saveKey: "historical-financials-prompt",
-      prompt: fillHistoricalFinancialsPromptPlaceholders(HISTORICAL_FINANCIALS_PROMPT_TEMPLATE, dn, tk),
+      prompt: fillHistoricalFinancialsPromptPlaceholders(HISTORICAL_FINANCIALS_PROMPT_TEMPLATE, dn, tickerForPrompt),
     },
     {
       label: "Capital structure",
@@ -232,6 +215,7 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       prompt: resolveCapitalStructurePrompt({
         template: ov("capital-structure", CAPITAL_STRUCTURE_PROMPT_TEMPLATE),
         ticker: tk,
+        companyName: ctx.companyName,
         appOrigin: origin,
       }),
     },
@@ -257,14 +241,15 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
     {
       label: "Capital allocation",
       saveKey: "capital-allocation",
-      prompt: ov("capital-allocation", CAPITAL_ALLOCATION_PROMPT_TEMPLATE)
-        .replace(/\[COMPANY NAME\]/g, dn)
-        .replace(/\[TICKER\]/g, tk),
+      prompt: fill(ov("capital-allocation", CAPITAL_ALLOCATION_PROMPT_TEMPLATE)),
     },
     {
       label: "Credit agreements — find documents",
       saveKey: "credit-agreements-indentures-other",
-      prompt: buildCreditAgreementsFindDocsAiPrompt(tk, ov("credit-agreements-find-docs", CREDIT_AGREEMENTS_FIND_DOCS_TEMPLATE)),
+      prompt: buildCreditAgreementsFindDocsAiPrompt(
+        tickerForPrompt,
+        ov("credit-agreements-find-docs", CREDIT_AGREEMENTS_FIND_DOCS_TEMPLATE)
+      ),
     },
     {
       label: "Credit agreements — doc review",

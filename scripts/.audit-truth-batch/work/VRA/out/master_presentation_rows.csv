@@ -1,0 +1,194 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net revenues,0,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales,9,0
+income_statement,us-gaap:GrossProfit,us-gaap:GrossProfit,Gross profit,10,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general, and administrative expenses",11,0
+income_statement,us-gaap:GoodwillAndIntangibleAssetImpairment,us-gaap:GoodwillAndIntangibleAssetImpairment,Impairment of goodwill and intangible assets,12,0
+income_statement,us-gaap:OtherRecurringIncome,us-gaap:OtherRecurringIncome,"Other income, net",13,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating (loss) income,15,0
+income_statement,us-gaap:InterestIncomeExpenseNet,us-gaap:InterestIncomeExpenseNet,"Interest expense, net",16,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,(Loss) income before income taxes,17,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax (benefit) expense,20,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net (loss) income,21,0
+income_statement,us-gaap:NetIncomeLossAttributableToRedeemableNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToRedeemableNoncontrollingInterest,Less: Net (loss) income attributable to redeemable noncontrolling interest,24,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,"Net (loss) income attributable to Vera Bradley, Inc.",25,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic weighted-average shares outstanding,26,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted weighted-average shares outstanding,27,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,"Basic net (loss) income per share attributable to Vera Bradley, Inc. common shareholders",29,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,"Diluted net (loss) income per share attributable to Vera Bradley, Inc. common shareholders",30,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,12,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net",14,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,15,0
+balance_sheet,us-gaap:IncomeTaxesReceivable,us-gaap:IncomeTaxesReceivable,Income taxes receivable,17,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,19,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,20,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating right-of-use assets,21,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant, and equipment, net",22,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",24,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,25,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,27,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,28,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,30,0
+balance_sheet,html:liabilities-redeemable-noncontrolling-interest-and-shareholders-equity,html:liabilities-redeemable-noncontrolling-interest-and-shareholders-equity,"Liabilities, Redeemable Noncontrolling Interest, and Shareholders’ Equity",31,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,32,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,41,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued employment costs,42,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Short-term operating lease liabilities,43,0
+balance_sheet,us-gaap:OtherAccruedLiabilitiesCurrent,us-gaap:OtherAccruedLiabilitiesCurrent,Other accrued liabilities,45,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Income taxes payable,46,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,48,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Long-term operating lease liabilities,50,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,52,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,54,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies,55,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,Redeemable noncontrolling interest,56,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ equity:,57,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock; 5,000 shares authorized, no shares issued or outstanding",66,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, without par value; 200,000 shares authorized, 42,846 and 42,429 shares issued and 30,766 and 33,170 outstanding, respectively",67,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,68,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,69,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,70,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,Treasury stock,71,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,"Total shareholders’ equity of Vera Bradley, Inc.",72,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,"Total liabilities, redeemable noncontrolling interest, and shareholders’ equity",73,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net (loss) income,1,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,"Depreciation of property, plant, and equipment",3,0
+cash_flow,us-gaap:OperatingLeaseRightOfUseAssetAmortizationExpense,us-gaap:OperatingLeaseRightOfUseAssetAmortizationExpense,Amortization of operating right-of-use assets,4,0
+cash_flow,us-gaap:GoodwillAndIntangibleAssetImpairment,us-gaap:GoodwillAndIntangibleAssetImpairment,Goodwill and intangible asset impairment,5,0
+cash_flow,us-gaap:OtherAssetImpairmentCharges,us-gaap:OtherAssetImpairmentCharges,Other impairment charges,6,0
+cash_flow,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangible assets,7,0
+cash_flow,us-gaap:ProvisionForDoubtfulAccounts,us-gaap:ProvisionForDoubtfulAccounts,Provision for doubtful accounts,8,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Stock-based compensation,9,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,10,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Gain on investments,12,0
+cash_flow,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,Adjustment of earn-out liability,13,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,"Other non-cash charges (gain), net",14,0
+cash_flow,html:changes-in-assets-and-liabilities,html:changes-in-assets-and-liabilities,Changes in assets and liabilities:,15,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Accounts receivable,16,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,17,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingAssets,us-gaap:IncreaseDecreaseInOtherOperatingAssets,Prepaid expenses and other assets,18,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,Accounts payable,19,0
+cash_flow,us-gaap:IncreaseDecreaseInIncomeTaxesPayableNetOfIncomeTaxesReceivable,us-gaap:IncreaseDecreaseInIncomeTaxesPayableNetOfIncomeTaxesReceivable,Income taxes,20,0
+cash_flow,us-gaap:IncreaseDecreaseInOperatingLeaseLiability,us-gaap:IncreaseDecreaseInOperatingLeaseLiability,"Operating lease liabilities, net",21,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedLiabilitiesAndOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInAccruedLiabilitiesAndOtherOperatingLiabilities,Accrued and other liabilities,22,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash (used in) provided by operating activities,23,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities,24,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,"Purchases of property, plant, and equipment",25,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Purchases of investments,28,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,Proceeds from maturities and sales of investments,29,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Cash received for business acquisition, net of cash acquired",30,0
+cash_flow,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,"Proceeds from disposal of property, plant, and equipment",31,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash (used in) provided by investing activities,32,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Tax withholdings for equity compensation,33,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchase of common stock,34,0
+cash_flow,us-gaap:PaymentsOfDividendsMinorityInterest,us-gaap:PaymentsOfDividendsMinorityInterest,Distributions to redeemable noncontrolling interest,37,0
+cash_flow,us-gaap:ProceedsFromLinesOfCredit,us-gaap:ProceedsFromLinesOfCredit,Borrowings under asset-based revolving credit agreement,38,0
+cash_flow,us-gaap:RepaymentsOfLinesOfCredit,us-gaap:RepaymentsOfLinesOfCredit,Repayment of borrowings under asset-based revolving credit agreement,39,0
+cash_flow,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,Payment of contingent consideration for business acquisition,40,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash used in financing activities,41,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Effect of exchange rate changes on cash and cash equivalents,42,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net (decrease) increase in cash and cash equivalents,43,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Cash and cash equivalents, beginning of period",44,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,1,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",2,0
+balance_sheet,html:inventories,html:inventories,Inventories,3,0
+balance_sheet,html:income-taxes-receivable,html:income-taxes-receivable,Income taxes receivable,4,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,5,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,6,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant, and equipment, net",7,0
+balance_sheet,html:long-term-investments,html:long-term-investments,Long-term investments,8,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,9,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,10,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,11,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,33,0
+balance_sheet,html:accrued-employment-costs,html:accrued-employment-costs,Accrued employment costs,34,0
+balance_sheet,html:other-accrued-liabilities,html:other-accrued-liabilities,Other accrued liabilities,35,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,36,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,37,0
+balance_sheet,html:long-term-liabilities,html:long-term-liabilities,Long-term liabilities,38,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,39,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,40,0
+balance_sheet,html:preferred-stock-5-000-shares-authorized-no-shares-issued-or-outstanding,html:preferred-stock-5-000-shares-authorized-no-shares-issued-or-outstanding,"Preferred stock; 5,000 shares authorized, no shares issued or outstanding",58,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-41-283-and-41-102-shares-issued-and-34-347-and-35-459-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-41-283-and-41-102-shares-issued-and-34-347-and-35-459-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 41,283 and 41,102 shares issued and 34,347 and 35,459 outstanding, respectively",59,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,60,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,61,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,62,0
+balance_sheet,html:treasury-stock,html:treasury-stock,Treasury stock,63,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders’ equity,64,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total liabilities and shareholders’ equity,65,0
+cash_flow,html:payments-of-debt-issuance-costs,html:payments-of-debt-issuance-costs,Payments of debt-issuance costs,35,0
+cash_flow,html:other-financing-activities-net,html:other-financing-activities-net,"Other financing activities, net",36,0
+cash_flow,html:supplemental-disclosure-of-cash-flow-information,html:supplemental-disclosure-of-cash-flow-information,Supplemental disclosure of cash-flow information,45,0
+cash_flow,html:cash-paid-for-interest,html:cash-paid-for-interest,Cash paid for interest,2,0
+income_statement,html:vb-direct,html:vb-direct,VB Direct,1,0
+income_statement,html:vb-indirect,html:vb-indirect,VB Indirect,2,0
+income_statement,html:pura-vida,html:pura-vida,Pura Vida,3,0
+income_statement,html:total,html:total,Total,4,0
+income_statement,html:store-data-6,html:store-data-6,Store Data (6):,5,0
+income_statement,html:total-stores-open-at-end-of-year,html:total-stores-open-at-end-of-year,Total stores open at end of year,6,0
+income_statement,html:comparable-sales-including-e-commerce-increase-decrease-7,html:comparable-sales-including-e-commerce-increase-decrease-7,Comparable sales (including e-commerce) increase (decrease) (7),7,0
+income_statement,html:total-gross-square-footage-at-end-of-year,html:total-gross-square-footage-at-end-of-year,Total gross square footage at end of year,8,0
+balance_sheet,html:working-capital,html:working-capital,Working capital,74,0
+balance_sheet,html:shareholders-equity-of-vera-bradley-inc,html:shareholders-equity-of-vera-bradley-inc,"Shareholders’ equity of Vera Bradley, Inc.",75,0
+cash_flow,html:supplemental-disclosure-of-non-cash-activity,html:supplemental-disclosure-of-non-cash-activity,Supplemental disclosure of non-cash activity,46,0
+cash_flow,html:contingent-consideration-related-to-business-acquisition,html:contingent-consideration-related-to-business-acquisition,Contingent consideration related to business acquisition,47,0
+cash_flow,html:pura-vida,html:pura-vida,Pura Vida,49,0
+balance_sheet,html:operating-right-of-use-assets,html:operating-right-of-use-assets,Operating right-of-use assets,76,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",77,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,90,0
+balance_sheet,html:short-term-operating-lease-liabilities,html:short-term-operating-lease-liabilities,Short-term operating lease liabilities,78,0
+balance_sheet,html:earn-out-liability,html:earn-out-liability,Earn-out liability,91,0
+balance_sheet,html:long-term-operating-lease-liabilities,html:long-term-operating-lease-liabilities,Long-term operating lease liabilities,79,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,92,0
+balance_sheet,html:redeemable-noncontrolling-interest,html:redeemable-noncontrolling-interest,Redeemable noncontrolling interest,80,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-41-808-and-41-515-shares-issued-and-33-414-and-33-503-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-41-808-and-41-515-shares-issued-and-33-414-and-33-503-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 41,808 and 41,515 shares issued and 33,414 and 33,503 outstanding, respectively",81,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,82,0
+balance_sheet,html:total-shareholders-equity-of-vera-bradley-inc,html:total-shareholders-equity-of-vera-bradley-inc,"Total shareholders’ equity of Vera Bradley, Inc.",83,0
+balance_sheet,html:total-liabilities-redeemable-noncontrolling-interest-and-shareholders-equity,html:total-liabilities-redeemable-noncontrolling-interest-and-shareholders-equity,"Total liabilities, redeemable noncontrolling interest, and shareholders’ equity",93,0
+balance_sheet,html:operating-lease-right-of-use-asset,html:operating-lease-right-of-use-asset,"Operating Lease, Right-of-Use Asset",94,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-42-429-and-41-808-shares-issued-and-33-170-and-33-414-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-42-429-and-41-808-shares-issued-and-33-170-and-33-414-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 42,429 and 41,808 shares issued and 33,170 and 33,414 outstanding, respectively",95,0
+balance_sheet,html:accumulated-other-comprehensive-loss-income,html:accumulated-other-comprehensive-loss-income,Accumulated other comprehensive (loss) income,96,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-43-253-and-42-846-shares-issued-and-30-814-and-30-766-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-43-253-and-42-846-shares-issued-and-30-814-and-30-766-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 43,253 and 42,846 shares issued and 30,814 and 30,766 outstanding, respectively",98,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-43-535-and-43-253-shares-issued-and-27-701-and-30-814-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-43-535-and-43-253-shares-issued-and-27-701-and-30-814-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 43,535 and 43,253 shares issued and 27,701 and 30,814 outstanding, respectively",101,0
+income_statement,html:continuing-operations-in-dollars-per-share,html:continuing-operations-in-dollars-per-share,Continuing operations (in dollars per share),22,0
+balance_sheet,html:short-term-contingent-consideration,html:short-term-contingent-consideration,Short-term contingent consideration,84,0
+balance_sheet,html:current-assets-of-discontinued-operations,html:current-assets-of-discontinued-operations,Current assets of discontinued operations,85,0
+balance_sheet,html:long-term-contingent-consideration,html:long-term-contingent-consideration,Long-term contingent consideration,99,0
+balance_sheet,html:long-term-assets-of-discontinued-operations,html:long-term-assets-of-discontinued-operations,Long-term assets of discontinued operations,86,0
+balance_sheet,html:current-liabilities-of-discontinued-operations,html:current-liabilities-of-discontinued-operations,Current liabilities of discontinued operations,87,0
+balance_sheet,html:long-term-liabilities-of-discontinued-operations,html:long-term-liabilities-of-discontinued-operations,Long-term liabilities of discontinued operations,88,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-43-800-and-43-535-shares-issued-and-27-966-and-27-701-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-43-800-and-43-535-shares-issued-and-27-966-and-27-701-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 43,800 and 43,535 shares issued and 27,966 and 27,701 outstanding, respectively",102,0
+income_statement,html:operating-loss,html:operating-loss,Operating loss,14,0
+income_statement,html:income-tax-benefit,html:income-tax-benefit,Income tax benefit,18,0
+income_statement,html:net-loss,html:net-loss,Net loss,19,0
+income_statement,html:diluted-net-loss-per-share,html:diluted-net-loss-per-share,Diluted net loss per share,28,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and Shareholders’ Equity,97,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-41-466-and-41-283-shares-issued-and-34-247-and-34-347-shares-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-41-466-and-41-283-shares-issued-and-34-247-and-34-347-shares-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 41,466 and 41,283 shares issued and 34,247 and 34,347 shares outstanding, respectively",103,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),100,0
+cash_flow,html:non-cash-operating-investing-and-financing-activities,html:non-cash-operating-investing-and-financing-activities,"Non-cash operating, investing, and financing activities",48,0
+cash_flow,html:expenditures-incurred-but-not-yet-paid-as-of-may-4-2019-and-may-5-2018,html:expenditures-incurred-but-not-yet-paid-as-of-may-4-2019-and-may-5-2018,"Expenditures incurred but not yet paid as of May 4, 2019 and May 5, 2018",50,0
+cash_flow,html:expenditures-incurred-but-not-yet-paid-as-of-february-2-2019-and-february-3-2018,html:expenditures-incurred-but-not-yet-paid-as-of-february-2-2019-and-february-3-2018,"Expenditures incurred but not yet paid as of February 2, 2019 and February 3, 2018",51,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-41-507-and-41-283-shares-issued-and-34-090-and-34-347-shares-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-41-507-and-41-283-shares-issued-and-34-090-and-34-347-shares-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 41,507 and 41,283 shares issued and 34,090 and 34,347 shares outstanding, respectively",104,0
+balance_sheet,html:common-stock-without-par-value-200-000-shares-authorized-41-515-and-41-283-shares-issued-and-33-710-and-34-347-shares-outstanding-respectively,html:common-stock-without-par-value-200-000-shares-authorized-41-515-and-41-283-shares-issued-and-33-710-and-34-347-shares-outstanding-respectively,"Common stock, without par value; 200,000 shares authorized, 41,515 and 41,283 shares issued and 33,710 and 34,347 shares outstanding, respectively",105,0
+income_statement,vra:RedeemableNoncontrollingInterestEquityAdjustmentToRedemptionValueExcessPortion,vra:RedeemableNoncontrollingInterestEquityAdjustmentToRedemptionValueExcessPortion,Excess portion of redeemable noncontrolling interest redemption value adjustment,31,0
+income_statement,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,"Net loss available to Vera Bradley, Inc. common shareholders",32,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,13,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Prepaid expenses and other current assets,18,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Long-term investments,26,0
+balance_sheet,us-gaap:BusinessCombinationContingentConsiderationLiability,us-gaap:BusinessCombinationContingentConsiderationLiability,Earn-out liability,44,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,51,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesGross,us-gaap:PaymentsToAcquireBusinessesGross,Cash paid for business acquisition,26,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,"Loss from discontinued operations, net of income tax",23,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,Continuing operations,33,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare,Discontinued operations,34,0
+balance_sheet,vra:ContingentConsiderationCurrent,vra:ContingentConsiderationCurrent,Short-term contingent consideration,16,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current assets of discontinued operations,89,0
+balance_sheet,vra:ContingentConsiderationNonCurrent,vra:ContingentConsiderationNonCurrent,Long-term contingent consideration,23,0
+balance_sheet,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,Long-term assets of discontinued operations,29,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current liabilities of discontinued operations,47,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationNoncurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationNoncurrent,Long-term liabilities of discontinued operations,53,0
+cash_flow,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net loss,0,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Loss on sale of business,11,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinessesNetOfCashDivested,us-gaap:ProceedsFromDivestitureOfBusinessesNetOfCashDivested,"Proceed from sale of business, net of cash disposed",27,0
+balance_sheet,us-gaap:LongTermDebt,us-gaap:LongTermDebt,Long-term debt,49,0

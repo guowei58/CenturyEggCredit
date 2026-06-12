@@ -171,13 +171,24 @@ describe("faceStatementRowEmphasis", () => {
     expect(faceStatementRowEmphasis({ label: "Sales and marketing", rowKind: "data" }, "income-statement")).toBe("normal");
   });
 
-  it("highlights balance sheet and cash flow anchors", () => {
-    expect(faceStatementRowEmphasis({ label: "Total assets", rowKind: "data" }, "balance-sheet")).toBe("subtotal");
-    expect(faceStatementRowEmphasis({ label: "Current assets", rowKind: "data" }, "balance-sheet")).toBe("subtotal");
-    expect(faceStatementRowEmphasis({ label: "Current liabilities", rowKind: "data" }, "balance-sheet")).toBe("subtotal");
+  it("highlights balance sheet totals with data, not bare section headings", () => {
+    const withData = { values: { p0: 100, p1: 200 } };
+    expect(faceStatementRowEmphasis({ label: "Total assets", rowKind: "data", ...withData }, "balance-sheet")).toBe(
+      "subtotal"
+    );
     expect(
       faceStatementRowEmphasis(
-        { label: "Net cash provided by operating activities", rowKind: "data" },
+        { label: "TOTAL LIABILITIES AND STOCKHOLDERS' (DEFICIT) EQUITY", rowKind: "data", ...withData },
+        "balance-sheet"
+      )
+    ).toBe("subtotal");
+    expect(faceStatementRowEmphasis({ label: "Current liabilities:", rowKind: "data", values: { p0: null } }, "balance-sheet")).toBe(
+      "normal"
+    );
+    expect(faceStatementRowEmphasis({ label: "Current assets", rowKind: "heading" }, "balance-sheet")).toBe("normal");
+    expect(
+      faceStatementRowEmphasis(
+        { label: "Net cash provided by operating activities", rowKind: "data", ...withData },
         "cash-flow"
       )
     ).toBe("subtotal");

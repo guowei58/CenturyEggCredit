@@ -26,6 +26,8 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "credit-agreements-indentures-other": "credit-agreements-indentures-other.txt",
   "startup-risks": "startup-risks.txt",
   "risk-from-10k": "risk-from-10k.txt",
+  "business-risk-analysis": "business-risk-analysis.txt",
+  "company-reputation": "company-reputation.txt",
   "overview": "overview.txt",
   "recent-events": "recent-events.txt",
   "how-stuff-works": "how-stuff-works.txt",
@@ -48,6 +50,8 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "xbrl-deterministic-compiler-result": "xbrl-deterministic-compiler-result.json",
   "ai-credit-deck": "ai-credit-deck.txt",
   "employee-contacts": "employee-contacts.html",
+  /** Display name for private (non-SEC) company workspaces. */
+  "private-workspace-meta": "private-workspace-meta.json",
   "industry-contacts": "industry-contacts.html",
   "dear-diary": "dear-diary.txt",
   "covenants-synthesis": "covenants-synthesis.md",
@@ -162,6 +166,8 @@ export const SAVED_TAB_FILENAME_AI_PRIORITY: readonly string[] = [
   "competitors.txt",
   "startup-risks.txt",
   "risk-from-10k.txt",
+  "business-risk-analysis.txt",
+  "company-reputation.txt",
   "news-events.txt",
   "industry-publications.txt",
   "earnings-releases.txt",
@@ -192,7 +198,9 @@ export function isAiChatOreoTxtOrHtmlFilename(filename: string): boolean {
 export type SavedDataKey = keyof typeof SAVED_DATA_FILES;
 
 export function sanitizeTicker(ticker: string): string | null {
-  const t = ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  return t.length > 0 && t.length <= 12 ? t : null;
+  const t = ticker.trim().toUpperCase();
+  if (/^PRIV[A-Z0-9]{1,8}$/.test(t)) return t;
+  const stripped = t.replace(/[^A-Z0-9]/g, "");
+  return stripped.length > 0 && stripped.length <= 12 ? stripped : null;
 }
 

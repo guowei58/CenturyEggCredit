@@ -50,20 +50,21 @@ export function CompanyFinancialsTab({
   }, [scrollToBadSection]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <header>
         <h1 className="text-xl font-semibold tracking-tight sm:text-2xl" style={{ color: "var(--text)" }}>
           Historical Financial Statements
         </h1>
       </header>
 
+      <div className="space-y-2">
       {/* Step 1 */}
       <section
         id="historical-financials-step1"
         className="rounded-xl border p-4 sm:p-6"
         style={{ borderColor: "var(--border2)", background: "var(--card)" }}
       >
-        <div className="mb-5 flex gap-4">
+        <div className="mb-4 flex gap-4">
           <span className={STEP_CIRCLE} style={{ background: "var(--accent)", color: "#fff" }}>
             1
           </span>
@@ -103,8 +104,8 @@ export function CompanyFinancialsTab({
       </section>
 
       {/* Connector */}
-      <div className="flex justify-center sm:justify-start sm:pl-12">
-        <div className="h-8 w-px sm:h-10" style={{ background: "var(--border2)" }} aria-hidden />
+      <div className="flex justify-center sm:justify-start sm:pl-[1.125rem]">
+        <div className="h-3 w-px" style={{ background: "var(--border2)" }} aria-hidden />
       </div>
 
       {/* Step 2 */}
@@ -113,7 +114,7 @@ export function CompanyFinancialsTab({
         className="rounded-xl border p-4 sm:p-6"
         style={{ borderColor: "var(--border2)", background: "var(--card)" }}
       >
-        <div className="mb-5 flex gap-4">
+        <div className="mb-4 flex gap-4">
           <span className={STEP_CIRCLE} style={{ background: "var(--accent)", color: "#fff" }}>
             2
           </span>
@@ -147,6 +148,7 @@ export function CompanyFinancialsTab({
           onCompileUiChange={onCompileUiChange}
         />
       </section>
+      </div>
     </div>
   );
 }

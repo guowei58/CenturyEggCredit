@@ -1,0 +1,122 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:net-sales,html:net-sales,Net sales,0,0
+income_statement,html:cost-of-sales-including-buying-distribution-and-occupancy-costs,html:cost-of-sales-including-buying-distribution-and-occupancy-costs,"Cost of sales (including buying, distribution and occupancy costs)",1,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,2,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",3,0
+income_statement,html:operating-income,html:operating-income,Operating income,4,0
+income_statement,html:interest-income,html:interest-income,Interest income,5,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,6,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,Income before income taxes,7,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,8,0
+income_statement,html:net-income,html:net-income,Net income,9,0
+income_statement,html:net-income-per-share,html:net-income-per-share,Net income per share:,10,0
+income_statement,html:basic,html:basic,Basic,11,0
+income_statement,html:diluted,html:diluted,Diluted,12,0
+income_statement,html:weighted-average-shares,html:weighted-average-shares,Weighted average shares:,13,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,10,0
+balance_sheet,html:accounts-receivable,html:accounts-receivable,Accounts receivable,12,0
+balance_sheet,html:merchandise-inventories,html:merchandise-inventories,Merchandise inventories,13,0
+balance_sheet,html:other,html:other,Other,14,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total Current Assets,15,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,Property and equipment – net,16,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,17,0
+balance_sheet,html:other-noncurrent-assets,html:other-noncurrent-assets,Other noncurrent assets,18,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,20,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and Shareholders’ Equity,21,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities:,22,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,31,0
+balance_sheet,html:accrued-and-other-liabilities,html:accrued-and-other-liabilities,Accrued and other liabilities,32,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total Current Liabilities,34,0
+balance_sheet,html:deferred-lease-incentives,html:deferred-lease-incentives,Deferred lease incentives,36,0
+balance_sheet,html:accrued-rent,html:accrued-rent,Accrued rent,37,0
+balance_sheet,html:deferred-compensation,html:deferred-compensation,Deferred compensation,38,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,39,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ Equity:,40,0
+balance_sheet,html:common-stock-01-par-value-50-000-000-shares-authorized-20-529-227-and-20-529-227-shares-issued-respectively,html:common-stock-01-par-value-50-000-000-shares-authorized-20-529-227-and-20-529-227-shares-issued-respectively,"Common stock, $.01 par value, 50,000,000 shares authorized, 20,529,227 and 20,529,227 shares issued, respectively",52,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,53,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,54,0
+balance_sheet,html:treasury-stock-at-cost-5-154-243-and-3-582-068-shares-respectively,html:treasury-stock-at-cost-5-154-243-and-3-582-068-shares-respectively,"Treasury stock, at cost, 5,154,243 and 3,582,068 shares, respectively",63,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total Shareholders’ Equity,64,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total Liabilities and Shareholders’ Equity,65,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:stock-based-compensation,html:stock-based-compensation,Stock-based compensation,2,0
+cash_flow,html:gain-loss-on-retirement-and-impairment-of-assets-net,html:gain-loss-on-retirement-and-impairment-of-assets-net,"(Gain)/loss on retirement and impairment of assets, net",3,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,4,0
+cash_flow,html:lease-incentives,html:lease-incentives,Lease incentives,6,0
+cash_flow,html:other,html:other,Other,7,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,9,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,10,0
+cash_flow,html:merchandise-inventories,html:merchandise-inventories,Merchandise inventories,11,0
+cash_flow,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,13,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,14,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash Flows From Investing Activities,15,0
+cash_flow,html:purchases-of-property-and-equipment,html:purchases-of-property-and-equipment,Purchases of property and equipment,16,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,19,0
+cash_flow,html:borrowings-under-line-of-credit,html:borrowings-under-line-of-credit,Borrowings under line of credit,20,0
+cash_flow,html:payments-on-line-of-credit,html:payments-on-line-of-credit,Payments on line of credit,21,0
+cash_flow,html:proceeds-from-issuance-of-stock,html:proceeds-from-issuance-of-stock,Proceeds from issuance of stock,22,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,23,0
+cash_flow,html:purchase-of-common-stock-for-treasury,html:purchase-of-common-stock-for-treasury,Purchase of common stock for treasury,25,0
+cash_flow,html:shares-surrendered-by-employees-to-pay-taxes-on-restricted-stock,html:shares-surrendered-by-employees-to-pay-taxes-on-restricted-stock,Shares surrendered by employees to pay taxes on restricted stock,26,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,Net cash used in financing activities,27,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,Net increase (decrease) in cash and cash equivalents,28,0
+cash_flow,html:cash-and-cash-equivalents-at-beginning-of-year,html:cash-and-cash-equivalents-at-beginning-of-year,Cash and cash equivalents at beginning of year,29,0
+cash_flow,html:supplemental-disclosures-of-cash-flow-information,html:supplemental-disclosures-of-cash-flow-information,Supplemental disclosures of cash flow information:,30,0
+cash_flow,html:cash-paid-during-year-for-interest,html:cash-paid-during-year-for-interest,Cash paid during year for interest,31,0
+cash_flow,html:cash-paid-during-year-for-income-taxes,html:cash-paid-during-year-for-income-taxes,Cash paid during year for income taxes,32,0
+cash_flow,html:capital-expenditures-incurred-but-not-yet-paid,html:capital-expenditures-incurred-but-not-yet-paid,Capital expenditures incurred but not yet paid,33,0
+balance_sheet,html:operating-lease-right-of-use-assets,html:operating-lease-right-of-use-assets,Operating lease right-of-use assets,19,0
+balance_sheet,html:current-portion-of-operating-lease-liabilities,html:current-portion-of-operating-lease-liabilities,Current portion of operating lease liabilities,33,0
+balance_sheet,html:long-term-portion-of-operating-lease-liabilities,html:long-term-portion-of-operating-lease-liabilities,Long-term portion of operating lease liabilities,35,0
+balance_sheet,html:common-stock-01-par-value-50-000-000-shares-authorized-20-524-601-and-20-529-227-shares-issued-respectively,html:common-stock-01-par-value-50-000-000-shares-authorized-20-524-601-and-20-529-227-shares-issued-respectively,"Common stock, $.01 par value, 50,000,000 shares authorized, 20,524,601 and 20,529,227 shares issued, respectively",41,0
+balance_sheet,html:treasury-stock-at-cost-6-516-875-and-5-154-243-shares-respectively,html:treasury-stock-at-cost-6-516-875-and-5-154-243-shares-respectively,"Treasury stock, at cost, 6,516,875 and 5,154,243 shares, respectively",55,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,Accounts receivable,1,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Merchandise inventories,2,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other,3,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total Current Assets,4,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,Property and equipment – net,5,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,6,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other noncurrent assets,7,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease right-of-use assets,8,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,9,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,23,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued and other liabilities,24,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Current portion of operating lease liabilities,25,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total Current Liabilities,26,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Long-term portion of operating lease liabilities,27,0
+balance_sheet,us-gaap:DeferredCompensationLiabilityClassifiedNoncurrent,us-gaap:DeferredCompensationLiabilityClassifiedNoncurrent,Deferred compensation,28,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other,29,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total Liabilities,30,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $.01 par value, 50,000,000 shares authorized, 20,524,601 and 20,524,601 shares issued, respectively",42,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,43,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,44,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock, at cost, 6,419,736 and 6,516,875 shares, respectively",45,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Shareholders’ Equity,46,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total Liabilities and Shareholders’ Equity,47,0
+cash_flow,scvl:NonCashOperatingLeaseExpense,scvl:NonCashOperatingLeaseExpense,Non-cash operating lease expense,5,0
+cash_flow,scvl:IncreaseDecreaseInOperatingLeaseLiabilities,scvl:IncreaseDecreaseInOperatingLeaseLiabilities,Operating lease liabilities,12,0
+cash_flow,html:acquisition-net-of-cash-acquired,html:acquisition-net-of-cash-acquired,"Acquisition, net of cash acquired",8,0
+balance_sheet,html:marketable-securities,html:marketable-securities,Marketable securities,11,0
+balance_sheet,html:intangible-assets,html:intangible-assets,Intangible Assets,66,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,70,0
+balance_sheet,html:common-stock-01-par-value-50-000-000-shares-authorized-and-41-049-190-shares-issued-in-each-period,html:common-stock-01-par-value-50-000-000-shares-authorized-and-41-049-190-shares-issued-in-each-period,"Common stock, $.01 par value, 50,000,000 shares authorized and 41,049,190 shares issued in each period",48,0
+balance_sheet,html:treasury-stock-at-cost-13-883-902-and-12-882-789-shares-respectively,html:treasury-stock-at-cost-13-883-902-and-12-882-789-shares-respectively,"Treasury stock, at cost, 13,883,902 and 12,882,789 shares, respectively",56,0
+balance_sheet,html:common-stock-0-01-par-value-50-000-000-shares-authorized-and-41-049-190-shares-issued-in-each-period,html:common-stock-0-01-par-value-50-000-000-shares-authorized-and-41-049-190-shares-issued-in-each-period,"Common stock, $0.01 par value, 50,000,000 shares authorized and 41,049,190 shares issued in each period",49,0
+balance_sheet,html:treasury-stock-at-cost-13-919-326-and-13-883-902-shares-respectively,html:treasury-stock-at-cost-13-919-326-and-13-883-902-shares-respectively,"Treasury stock, at cost, 13,919,326 and 13,883,902 shares, respectively",57,0
+balance_sheet,html:treasury-stock-at-cost-13-874-787-and-13-919-326-shares-respectively,html:treasury-stock-at-cost-13-874-787-and-13-919-326-shares-respectively,"Treasury stock, at cost, 13,874,787 and 13,919,326 shares, respectively",58,0
+cash_flow,html:investments-in-marketable-securities,html:investments-in-marketable-securities,Investments in marketable securities,17,0
+cash_flow,html:contingent-consideration-related-to-business-acquisition,html:contingent-consideration-related-to-business-acquisition,Contingent consideration related to business acquisition,24,0
+balance_sheet,html:treasury-stock-at-cost-13-674-916-and-13-874-787-shares-respectively,html:treasury-stock-at-cost-13-674-916-and-13-874-787-shares-respectively,"Treasury stock, at cost, 13,674,916 and 13,874,787 shares, respectively",59,0
+income_statement,html:cash-dividends-declared-per-share,html:cash-dividends-declared-per-share,Cash dividends declared per share,14,0
+balance_sheet,html:common-stock-01-par-value-50-000-000-shares-authorized-20-527-905-shares-20-529-227-shares-and-20-529-227-shares-issued-respectively,html:common-stock-01-par-value-50-000-000-shares-authorized-20-527-905-shares-20-529-227-shares-and-20-529-227-shares-issued-respectively,"Common stock, $.01 par value, 50,000,000 shares authorized, 20,527,905 shares, 20,529,227 shares and 20,529,227 shares issued, respectively",50,0
+balance_sheet,html:treasury-stock-at-cost-5-837-164-shares-5-154-243-shares-and-4-452-661-shares-respectively,html:treasury-stock-at-cost-5-837-164-shares-5-154-243-shares-and-4-452-661-shares-respectively,"Treasury stock, at cost, 5,837,164 shares, 5,154,243 shares and 4,452,661 shares, respectively",60,0
+cash_flow,html:proceeds-from-sales-of-property-and-equipment,html:proceeds-from-sales-of-property-and-equipment,Proceeds from sales of property and equipment,18,0
+balance_sheet,html:treasury-stock-at-cost-5-821-887-shares-5-154-243-shares-and-4-440-129-shares-respectively,html:treasury-stock-at-cost-5-821-887-shares-5-154-243-shares-and-4-440-129-shares-respectively,"Treasury stock, at cost, 5,821,887 shares, 5,154,243 shares and 4,440,129 shares, respectively",61,0
+balance_sheet,html:common-stock-01-par-value-50-000-000-shares-authorized-20-527-244-shares-20-529-227-shares-and-20-529-227-shares-issued-respectively,html:common-stock-01-par-value-50-000-000-shares-authorized-20-527-244-shares-20-529-227-shares-and-20-529-227-shares-issued-respectively,"Common stock, $.01 par value, 50,000,000 shares authorized, 20,527,244 shares, 20,529,227 shares and 20,529,227 shares issued, respectively",51,0
+balance_sheet,html:treasury-stock-at-cost-6-338-584-shares-5-154-243-shares-and-4-958-854-shares-respectively,html:treasury-stock-at-cost-6-338-584-shares-5-154-243-shares-and-4-958-854-shares-respectively,"Treasury stock, at cost, 6,338,584 shares, 5,154,243 shares and 4,958,854 shares, respectively",62,0
+balance_sheet,us-gaap:MarketableSecuritiesCurrent,us-gaap:MarketableSecuritiesCurrent,Marketable securities,67,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,Intangible assets,68,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,71,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,69,0

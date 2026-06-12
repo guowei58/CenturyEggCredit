@@ -29,6 +29,7 @@ import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { modelOverridePayloadForProvider } from "@/lib/ai-model-prefs-client";
 import { AiModelPicker } from "@/components/AiModelPicker";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
+import { resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import { LOGO_MARK_CELL_BG } from "./logoMarkCellStyle";
 
@@ -69,7 +70,32 @@ export function ChatDrawer({
 }) {
   const { status: authStatus } = useSession();
   const chatSym = useMemo(() => sanitizeTicker(ticker ?? "") ?? "", [ticker]);
+  const [companyName, setCompanyName] = useState<string | null>(null);
+  const promptLabels = useMemo(
+    () => resolveCompanyPromptLabels({ workspaceKey: chatSym, companyName }),
+    [chatSym, companyName]
+  );
   const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
+
+  useEffect(() => {
+    if (!chatSym) {
+      setCompanyName(null);
+      return;
+    }
+    let cancelled = false;
+    void fetch(`/api/company/${encodeURIComponent(chatSym)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: { name?: string } | null) => {
+        if (!cancelled && body && typeof body.name === "string") setCompanyName(body.name.trim());
+        else if (!cancelled) setCompanyName(null);
+      })
+      .catch(() => {
+        if (!cancelled) setCompanyName(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [chatSym]);
   const persistRemoteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** Tracks which ticker the current `sessions` state actually belongs to (prevents cross-ticker overwrites). */
   const hydratedForTickerRef = useRef<string | null>(null);
@@ -459,6 +485,7 @@ export function ChatDrawer({
           body: JSON.stringify({
             messages: historyForApi.map(aiChatMessageToWire),
             ticker: ticker?.trim() || undefined,
+            companyName: promptLabels.displayName || undefined,
             provider: aiProvider,
             includeOreoContext: ticker?.trim() ? includeOreoContext : undefined,
             ...(oreoAlreadyInjected ? { oreoAlreadyInjected: true } : {}),
@@ -513,6 +540,7 @@ export function ChatDrawer({
       input,
       pendingAttachments,
       ticker,
+      promptLabels.displayName,
       aiProvider,
       includeOreoContext,
       patchActiveMessages,
@@ -772,7 +800,7 @@ export function ChatDrawer({
                     className="mt-0.5"
                   />
                   <span>
-                    Include saved OREO data for <span className="font-mono">{ticker.trim().toUpperCase()}</span> (tab saves, credit
+                    Include saved OREO data for <span className="font-mono">{promptLabels.displayName}</span> (tab saves, credit
                     agreement text, .txt/.md in Saved Documents). PDFs are listed but not read automatically.
                   </span>
                 </label>
@@ -821,7 +849,8 @@ export function ChatDrawer({
                       {ticker?.trim() ? (
                         <>
                           {" "}
-                          Sidebar ticker <span className="font-mono">{ticker.trim().toUpperCase()}</span> is sent as context.
+                          Company context: <span className="font-mono">{promptLabels.displayName}</span>
+                          {promptLabels.isPrivate ? " (private company)" : ` (${chatSym})`}.
                         </>
                       ) : (
                         <> Pick a ticker in the sidebar for extra context.</>

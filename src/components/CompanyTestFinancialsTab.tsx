@@ -30,7 +30,15 @@ import type {
   IxbrlEbitdaReconciliation,
 } from "@/lib/sec-ixbrl-mdna-tables";
 import type { NarrativeDiagFinding } from "@/lib/sec-ixbrl-narrative-self-diagnostics";
-import { ManagementPresentationDiscoveryPanel } from "@/components/ManagementPresentationDiscoveryPanel";
+import {
+  ManagementPresentationDiscoveryPanel,
+  useManagementPresentationDiscovery,
+} from "@/components/ManagementPresentationDiscoveryPanel";
+import {
+  DebtFootnoteFilingPanel,
+  type DebtFootnoteFilingPayload,
+} from "@/components/DebtFootnoteFilingPanel";
+import type { DebtFootnoteRollForward } from "@/lib/debt-footnote-display";
 
 type NarrativeBatchDiagnosticsResponse =
   | {
@@ -74,7 +82,8 @@ type TestSubTabId =
   | "press-release"
   | "management-presentation"
   | "earnings-transcript"
-  | "mdna";
+  | "mdna"
+  | "debt-footnote";
 
 const TEST_SUB_TABS: readonly { id: TestSubTabId; label: string }[] = [
   { id: "financials", label: "Financials" },
@@ -82,7 +91,24 @@ const TEST_SUB_TABS: readonly { id: TestSubTabId; label: string }[] = [
   { id: "management-presentation", label: "Management Presentation" },
   { id: "earnings-transcript", label: "Earnings Transcript" },
   { id: "mdna", label: "MD&A" },
+  { id: "debt-footnote", label: "Debt footnote" },
 ];
+
+type DebtFootnoteApiJson =
+  | {
+      ok: true;
+      filing: DebtFootnoteFilingPayload;
+      rollForward?: DebtFootnoteRollForward;
+      selected?: {
+        form?: string;
+        filingDate?: string;
+        reportDate?: string;
+        accessionNumber?: string;
+        primaryDocument?: string;
+      };
+      error?: undefined;
+    }
+  | { ok?: false; error?: string; filing?: DebtFootnoteFilingPayload | null };
 
 type TabSavePhase = "idle" | "saving" | "ok" | "err";
 
@@ -291,6 +317,32 @@ function EarningsExhibitHtmlPanel({
         />
       </div>
     </div>
+  );
+}
+
+/** Warm Roic transcript in the background after financials settle (browser cache for the visible iframe). */
+function PeriodFinancialsTranscriptPrefetch({
+  ticker,
+  period,
+  enabled,
+}: {
+  ticker: string;
+  period: string | null;
+  enabled: boolean;
+}) {
+  if (!enabled || !period) return null;
+  const url = roicTranscriptQuarterUrl(ticker, period);
+  return (
+    <iframe
+      key={url}
+      title=""
+      src={url}
+      tabIndex={-1}
+      aria-hidden
+      className="pointer-events-none fixed -left-[9999px] -top-[9999px] h-px w-px opacity-0"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+      referrerPolicy="no-referrer-when-downgrade"
+    />
   );
 }
 
@@ -598,6 +650,9 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
   const [ixbrl, setIxbrl] = useState<IxbrlMdnaJson | null>(null);
   const [ixLoading, setIxLoading] = useState(false);
   const [ixErr, setIxErr] = useState<string | null>(null);
+  const [debtFootnote, setDebtFootnote] = useState<DebtFootnoteApiJson | null>(null);
+  const [debtLoading, setDebtLoading] = useState(false);
+  const [debtErr, setDebtErr] = useState<string | null>(null);
   const [diagBusy, setDiagBusy] = useState(false);
   const [diagErr, setDiagErr] = useState<string | null>(null);
   const [diag, setDiag] = useState<Extract<TestFaceDiagnosticsResponse, { ok: true }> | null>(null);
@@ -655,10 +710,13 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     setMgmtDiscoveryAlreadySaved(false);
   }, [tk]);
 
-  useEffect(() => {
-    setMgmtDiscoverySaveUrl(null);
-    setMgmtDiscoveryAlreadySaved(false);
-  }, [selectedAcc]);
+  const onMgmtDiscoverySaveUrlChange = useCallback(
+    ({ url, alreadySaved }: { url: string | null; alreadySaved: boolean }) => {
+      setMgmtDiscoverySaveUrl(url);
+      setMgmtDiscoveryAlreadySaved(alreadySaved);
+    },
+    []
+  );
 
   useEffect(() => {
     if (!tk) return;
@@ -736,15 +794,30 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     };
   }, [tk, selectedAcc]);
 
+  /** Clear narrative tab data immediately when the filing period changes (financials load first). */
   useEffect(() => {
     if (!tk) return;
+    setIxbrl(null);
+    setIxErr(null);
+    setIxLoading(false);
+    setDebtFootnote(null);
+    setDebtErr(null);
+    setDebtLoading(false);
+    setMgmtDiscoverySaveUrl(null);
+    setMgmtDiscoveryAlreadySaved(false);
+  }, [tk, selectedAcc]);
+
+  const financialsSettled = !loading;
+
+  useEffect(() => {
+    if (!tk || !financialsSettled || !selectedAcc) return;
     let cancelled = false;
     setIxLoading(true);
     setIxErr(null);
     setIxbrl(null);
     void (async () => {
       try {
-        const qs = selectedAcc ? `?acc=${encodeURIComponent(selectedAcc)}` : "";
+        const qs = `?acc=${encodeURIComponent(selectedAcc)}`;
         const res = await fetch(
           `/api/sec/xbrl/ixbrl-mdna-tables/${encodeURIComponent(tk)}${qs}`,
           { cache: "no-store" }
@@ -766,7 +839,38 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     return () => {
       cancelled = true;
     };
-  }, [tk, selectedAcc]);
+  }, [tk, selectedAcc, financialsSettled]);
+
+  useEffect(() => {
+    if (!tk || !financialsSettled || !selectedAcc) return;
+    let cancelled = false;
+    setDebtLoading(true);
+    setDebtErr(null);
+    setDebtFootnote(null);
+    void (async () => {
+      try {
+        const qs = `?acc=${encodeURIComponent(selectedAcc)}`;
+        const res = await fetch(`/api/sec/xbrl/debt-footnote/${encodeURIComponent(tk)}${qs}`, {
+          cache: "no-store",
+        });
+        const j = (await res.json()) as DebtFootnoteApiJson;
+        if (cancelled) return;
+        if (!res.ok || j.ok === false || !j.filing) {
+          setDebtErr(j.error ?? `Debt footnote fetch failed (${res.status})`);
+          setDebtFootnote(null);
+          return;
+        }
+        setDebtFootnote(j);
+      } catch (e) {
+        if (!cancelled) setDebtErr(e instanceof Error ? e.message : "Debt footnote fetch failed");
+      } finally {
+        if (!cancelled) setDebtLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [tk, selectedAcc, financialsSettled]);
 
   const filings = data?.filings ?? [];
   const filingPeriodLabels = buildPeriodFinancialsFilingLabels(filings);
@@ -779,6 +883,44 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     setSelectedAcc(data.selected.accessionNumber);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.selected?.accessionNumber]);
+
+  const selectedFiling =
+    filings.find((f) => f.accessionNumber === (selectedAcc || selected)) ??
+    filings.find((f) => f.accessionNumber === selected) ??
+    filings[0];
+
+  const managementPresentationPayload =
+    ixbrl?.ok === true
+      ? (ixbrl.earningsSlideDeck ??
+          (ixbrl.earningsPressRelease?.exhibitClass === "slide_deck" ? ixbrl.earningsPressRelease : null))
+      : null;
+
+  const ixbrlReportDate = ixbrl?.ok === true ? ixbrl.selected?.reportDate : undefined;
+  const roicTranscriptPeriod = reportDateToRoicPeriod(
+    ixbrlReportDate ?? selectedFiling?.reportDate,
+    selectedFiling?.filingDate
+  );
+  const managementPresentationDiscoveryPeriod =
+    (selectedFiling?.accessionNumber
+      ? filingPeriodLabels.get(selectedFiling.accessionNumber)
+      : null) ??
+    (roicTranscriptPeriod ? roicPeriodToPresentationPeriod(roicTranscriptPeriod) : null);
+
+  const narrativePrefetchEnabled = financialsSettled && Boolean(selectedAcc);
+  const narrativeTabsLoading = loading || (narrativePrefetchEnabled && ixLoading);
+  const debtTabLoading = loading || (narrativePrefetchEnabled && debtLoading);
+
+  const mgmtDiscoveryPrefetchEnabled =
+    narrativePrefetchEnabled &&
+    Boolean(tk && managementPresentationDiscoveryPeriod && !managementPresentationPayload);
+
+  const mgmtDiscovery = useManagementPresentationDiscovery({
+    ticker: tk,
+    period: managementPresentationDiscoveryPeriod,
+    reportDate: ixbrlReportDate ?? selectedFiling?.reportDate ?? null,
+    enabled: mgmtDiscoveryPrefetchEnabled,
+    onDiscoverySaveUrlChange: onMgmtDiscoverySaveUrlChange,
+  });
 
   if (!tk) {
     return (
@@ -811,36 +953,24 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
       : null;
 
   const pressReleasePayload =
-    ixbrl?.ok === true && ixbrl.earningsPressRelease?.exhibitClass !== "slide_deck"
-      ? ixbrl.earningsPressRelease
-      : null;
-
-  const managementPresentationPayload =
     ixbrl?.ok === true
-      ? (ixbrl.earningsSlideDeck ??
-          (ixbrl.earningsPressRelease?.exhibitClass === "slide_deck" ? ixbrl.earningsPressRelease : null))
+      ? (() => {
+          const pr = ixbrl.earningsPressRelease;
+          if (pr?.exhibitClass === "slide_deck" && pr.source.documentRole === "primary") {
+            return ixbrl.earningsSlideDeck ?? null;
+          }
+          return pr ?? ixbrl.earningsSlideDeck ?? null;
+        })()
       : null;
 
   const managementPresentationSecUrl =
     managementPresentationPayload?.source.primaryDocumentUrl?.trim() ??
     (ixbrl?.ok === true ? ixbrl.earningsSlideDeck?.source.primaryDocumentUrl?.trim() ?? null : null);
 
-  const selectedFiling =
-    filings.find((f) => f.accessionNumber === (selectedAcc || selected)) ??
-    filings.find((f) => f.accessionNumber === selected) ??
-    filings[0];
   const xbrlPrimaryStatementsFilingUrl =
     data?.cik && selectedFiling
       ? secFilingPrimaryDocUrl(data.cik, selectedFiling.accessionNumber, selectedFiling.primaryDocument)
       : null;
-
-  const ixbrlReportDate = ixbrl?.ok === true ? ixbrl.selected?.reportDate : undefined;
-  const roicTranscriptPeriod = reportDateToRoicPeriod(ixbrlReportDate, selectedFiling?.filingDate);
-  const managementPresentationDiscoveryPeriod =
-    (selectedFiling?.accessionNumber
-      ? filingPeriodLabels.get(selectedFiling.accessionNumber)
-      : null) ??
-    (roicTranscriptPeriod ? roicPeriodToPresentationPeriod(roicTranscriptPeriod) : null);
 
   const contentTabId = fullscreenSubTab ?? activeSubTab;
 
@@ -878,6 +1008,14 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           return { kind: "unavailable", reason: "No SEC filing URL for MD&A." };
         }
         return { kind: "url", url: ixMdnaFilingUrl };
+      case "debt-footnote":
+        if (!debtFootnote?.ok || !debtFootnote.filing?.docUrl) {
+          return { kind: "unavailable", reason: "No debt footnote SEC filing URL for this period." };
+        }
+        return {
+          kind: "url",
+          url: debtFootnote.rollForward?.sourceDocUrl ?? debtFootnote.filing.docUrl,
+        };
       default:
         return { kind: "unavailable", reason: "Nothing to save." };
     }
@@ -982,6 +1120,11 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <PeriodFinancialsTranscriptPrefetch
+        ticker={tk}
+        period={roicTranscriptPeriod}
+        enabled={narrativePrefetchEnabled}
+      />
       <div
         className="flex shrink-0 flex-nowrap items-center gap-1 overflow-x-auto border-b border-[var(--border)] px-5 py-1.5 sm:px-8"
         style={{
@@ -1311,13 +1454,13 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
                 payload={pressReleasePayload}
                 secUrl={earningsReleaseSecUrl}
                 showSecLink={false}
-                loading={ixLoading}
+                loading={narrativeTabsLoading}
                 error={ixErr}
                 emptyMessage="No Form 8-K press release could be resolved for this periodic filing (no nearby earnings 8-K in our ranked window, or EDGAR did not return the HTML). Change the filing above or open the periodic report on SEC.gov."
                 suggestedPressRelease={ixbrl.ebitdaReconciliation?.suggestedPressRelease}
                 nearby8KScan={ixbrl.ebitdaReconciliation?.nearby8KScan}
               />
-            ) : ixLoading ? (
+            ) : narrativeTabsLoading ? (
               <EarningsExhibitHtmlPanel
                 payload={null}
                 secUrl={null}
@@ -1346,7 +1489,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
             }
           >
             {ixbrl?.ok === true ? (
-              ixLoading ? (
+              narrativeTabsLoading ? (
                 <p className="text-sm" style={{ color: "var(--muted2)" }}>
                   Loading…
                 </p>
@@ -1360,18 +1503,9 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
                   emptyMessage=""
                 />
               ) : (
-                <ManagementPresentationDiscoveryPanel
-                  ticker={tk}
-                  period={managementPresentationDiscoveryPeriod}
-                  reportDate={ixbrlReportDate}
-                  enabled
-                  onDiscoverySaveUrlChange={({ url, alreadySaved }) => {
-                    setMgmtDiscoverySaveUrl(url);
-                    setMgmtDiscoveryAlreadySaved(alreadySaved);
-                  }}
-                />
+                <ManagementPresentationDiscoveryPanel ticker={tk} discovery={mgmtDiscovery} />
               )
-            ) : ixLoading ? (
+            ) : narrativeTabsLoading ? (
               <EarningsExhibitHtmlPanel payload={null} secUrl={null} loading error={null} emptyMessage="" />
             ) : (
               <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
@@ -1397,7 +1531,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           ) : null
         }
       >
-        {ixLoading ? (
+        {narrativeTabsLoading ? (
           <p className="text-sm" style={{ color: "var(--muted2)" }}>
             Loading filing HTML…
           </p>
@@ -1475,6 +1609,49 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           </p>
         )}
       </Card>
+      ) : null}
+
+      {contentTabId === "debt-footnote" ? (
+        <Card
+          className="!p-3 sm:!p-4 [&_.card-header]:!mb-1.5"
+          title={`Debt footnote — ${tk}`}
+          titleAside={
+            selectedFiling && data?.cik ? (
+              <span className="ml-auto flex flex-wrap items-center gap-2">
+                {selectedFiling.accessionNumber && filingPeriodLabels.has(selectedFiling.accessionNumber) ? (
+                  <span className="text-[10px] text-[var(--muted)]">
+                    {formatPeriodFinancialsFilingLabel(
+                      selectedFiling,
+                      filingPeriodLabels.get(selectedFiling.accessionNumber)!
+                    )}
+                  </span>
+                ) : null}
+                {xbrlPrimaryStatementsFilingUrl ? (
+                  <EarningsExhibitSecLink href={xbrlPrimaryStatementsFilingUrl} />
+                ) : null}
+              </span>
+            ) : null
+          }
+        >
+          {debtTabLoading ? (
+            <p className="text-sm" style={{ color: "var(--muted2)" }}>
+              Loading debt footnote from SEC filing…
+            </p>
+          ) : debtErr ? (
+            <p className="text-sm" style={{ color: "var(--warn)" }}>
+              {debtErr}
+            </p>
+          ) : debtFootnote?.ok === true && debtFootnote.filing ? (
+            <DebtFootnoteFilingPanel
+              filing={debtFootnote.filing}
+              rollForward={debtFootnote.rollForward ?? null}
+            />
+          ) : (
+            <p className="text-sm" style={{ color: "var(--muted2)" }}>
+              No debt footnote extracted for this filing.
+            </p>
+          )}
+        </Card>
       ) : null}
           </div>
         </div>

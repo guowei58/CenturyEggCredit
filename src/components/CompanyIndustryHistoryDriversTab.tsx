@@ -14,12 +14,8 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
-
-
-function fillIndustryHistoryDriversPrompt(template: string, companyName: string, ticker: string): string {
-  return template.replace(/\[INSERT COMPANY NAME\]/g, companyName).replace(/\[INSERT TICKER\]/g, ticker);
-}
 
 export function CompanyIndustryHistoryDriversTab({
   ticker,
@@ -35,18 +31,17 @@ export function CompanyIndustryHistoryDriversTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
 
   const { template: industryHistoryDriversTemplate } = usePromptTemplateOverride(
     "industry-history-drivers",
     INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE
   );
-  const prompt = safeTicker ? fillIndustryHistoryDriversPrompt(industryHistoryDriversTemplate, displayName, safeTicker) : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(industryHistoryDriversTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker, displayName]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -179,7 +174,7 @@ export function CompanyIndustryHistoryDriversTab({
           <PromptTemplateBox
             tabId="industry-history-drivers"
             defaultTemplate={INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? fillIndustryHistoryDriversPrompt(tpl, displayName, safeTicker) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

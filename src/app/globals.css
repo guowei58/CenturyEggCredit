@@ -915,6 +915,24 @@
     border-bottom-color: var(--accent);
   }
 
+  /* Debt footnotes 10-K / 10-Q: prominent equal-width segment tabs */
+  .tab-bar-company.debt-footnote-tab-bar {
+    display: flex;
+    width: 100%;
+    gap: 0.5rem;
+    padding: 0.25rem 0 0.5rem;
+  }
+  .tab-bar-company.debt-footnote-tab-bar .tab-bar-item {
+    flex: 1 1 0;
+    min-width: 6.5rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    border-radius: 6px;
+  }
+
   .tab-bar-company .tab-bar-cell {
     display: inline-flex;
     align-items: center;

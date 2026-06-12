@@ -1,0 +1,95 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,html:cash,html:cash,Cash,7,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,8,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,Accounts receivable - net,9,0
+balance_sheet,html:inventory,html:inventory,Inventory,10,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,12,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,13,0
+balance_sheet,html:property-plant-and-equipment,html:property-plant-and-equipment,"Property, plant and equipment",14,0
+balance_sheet,html:land-and-buildings,html:land-and-buildings,Land and buildings,20,0
+balance_sheet,html:machinery-and-equipment,html:machinery-and-equipment,Machinery and equipment,21,0
+balance_sheet,html:gross-property-plant-and-equipment,html:gross-property-plant-and-equipment,"Gross property, plant and equipment",22,0
+balance_sheet,html:accumulated-depreciation,html:accumulated-depreciation,Accumulated depreciation,23,0
+balance_sheet,html:net-property-plant-and-equipment,html:net-property-plant-and-equipment,"Net property, plant and equipment",24,0
+balance_sheet,html:other-noncurrent-assets,html:other-noncurrent-assets,Other noncurrent assets,25,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,32,0
+balance_sheet,html:other-intangible-assets,html:other-intangible-assets,Other intangible assets,33,0
+balance_sheet,html:operating-lease-assets,html:operating-lease-assets,Operating lease assets,34,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,35,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,36,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,37,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,39,0
+balance_sheet,html:short-term-debt,html:short-term-debt,Short-term debt,46,0
+balance_sheet,html:current-portion-of-long-term-debt,html:current-portion-of-long-term-debt,Current portion of long-term debt,47,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,48,0
+balance_sheet,html:accrued-compensation,html:accrued-compensation,Accrued compensation,49,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,51,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,52,0
+balance_sheet,html:noncurrent-liabilities,html:noncurrent-liabilities,Noncurrent liabilities,53,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,61,0
+balance_sheet,html:pension-liabilities,html:pension-liabilities,Pension liabilities,62,0
+balance_sheet,html:other-postretirement-benefits-liabilities,html:other-postretirement-benefits-liabilities,Other postretirement benefits liabilities,63,0
+balance_sheet,html:operating-lease-liabilities,html:operating-lease-liabilities,Operating lease liabilities,64,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,65,0
+balance_sheet,html:total-noncurrent-liabilities,html:total-noncurrent-liabilities,Total noncurrent liabilities,66,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ equity,67,0
+balance_sheet,html:ordinary-shares-397-8-million-outstanding-in-2022-and-398-8-million-in-2021,html:ordinary-shares-397-8-million-outstanding-in-2022-and-398-8-million-in-2021,Ordinary shares (397.8 million outstanding in 2022 and 398.8 million in 2021),81,0
+balance_sheet,html:capital-in-excess-of-par-value,html:capital-in-excess-of-par-value,Capital in excess of par value,82,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,83,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,84,0
+balance_sheet,html:shares-held-in-trust,html:shares-held-in-trust,Shares held in trust,85,0
+balance_sheet,html:total-eaton-shareholders-equity,html:total-eaton-shareholders-equity,Total Eaton shareholders’ equity,86,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,87,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,88,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,89,0
+balance_sheet,html:assets-held-for-sale,html:assets-held-for-sale,Assets held for sale,11,0
+balance_sheet,html:liabilities-held-for-sale,html:liabilities-held-for-sale,Liabilities held for sale,50,0
+balance_sheet,html:ordinary-shares-413-3-million-outstanding-in-2019-and-423-6-million-in-2018,html:ordinary-shares-413-3-million-outstanding-in-2019-and-423-6-million-in-2018,Ordinary shares (413.3 million outstanding in 2019 and 423.6 million in 2018),68,0
+balance_sheet,html:ordinary-shares-398-1-million-outstanding-in-2020-and-413-3-million-in-2019,html:ordinary-shares-398-1-million-outstanding-in-2020-and-413-3-million-in-2019,Ordinary shares (398.1 million outstanding in 2020 and 413.3 million in 2019),69,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and shareholders’ equity,38,0
+balance_sheet,html:ordinary-shares-423-1-million-outstanding-in-2019-and-423-6-million-in-2018,html:ordinary-shares-423-1-million-outstanding-in-2019-and-423-6-million-in-2018,Ordinary shares (423.1 million outstanding in 2019 and 423.6 million in 2018),70,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash,0,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,1,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,Accounts receivable - net,2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventory,3,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,etn:LandAndBuildings,etn:LandAndBuildings,Land and buildings,15,0
+balance_sheet,us-gaap:MachineryAndEquipmentGross,us-gaap:MachineryAndEquipmentGross,Machinery and equipment,16,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,"Gross property, plant and equipment",17,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Accumulated depreciation,18,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Net property, plant and equipment",19,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,26,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,Other intangible assets,27,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,28,0
+balance_sheet,us-gaap:DeferredTaxAssetsNetNoncurrent,us-gaap:DeferredTaxAssetsNetNoncurrent,Deferred income taxes,29,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,30,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,31,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term debt,40,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term debt,41,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,42,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation,43,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,44,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,45,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,54,0
+balance_sheet,us-gaap:DefinedBenefitPensionPlanLiabilitiesNoncurrent,us-gaap:DefinedBenefitPensionPlanLiabilitiesNoncurrent,Pension liabilities,55,0
+balance_sheet,us-gaap:OtherPostretirementDefinedBenefitPlanLiabilitiesNoncurrent,us-gaap:OtherPostretirementDefinedBenefitPlanLiabilitiesNoncurrent,Other postretirement benefits liabilities,56,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating lease liabilities,57,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,58,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,59,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total noncurrent liabilities,60,0
+balance_sheet,us-gaap:CommonStockValueOutstanding,us-gaap:CommonStockValueOutstanding,Ordinary shares (420.0 million outstanding in 2019 and 423.6 million in 2018),71,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Capital in excess of par value,72,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,73,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,74,0
+balance_sheet,us-gaap:DeferredCompensationEquity,us-gaap:DeferredCompensationEquity,Shares held in trust,75,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Eaton shareholders’ equity,76,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,77,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,78,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,79,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Assets held for sale,90,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,91,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,Liabilities held for sale,92,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,93,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding,us-gaap:CommonStockSharesOutstanding,Ordinary shares (398.6 million outstanding in 2020 and 413.3 million in 2019),80,0
+balance_sheet,us-gaap:Cash,us-gaap:Cash,Cash,6,0

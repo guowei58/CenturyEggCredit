@@ -1331,8 +1331,33 @@ function headingHasHighConfidenceDebtTerm(t: string): boolean {
     /\bsecuritization\s+debt\b/.test(t) ||
     /\bfinancing\s+liabilit/.test(t) ||
     /\bdebentures?\b/.test(t) ||
-    /\bvariable\s+interest\s+entit(?:y|ies)\s+debt\b/.test(t)
+    /\bvariable\s+interest\s+entit(?:y|ies)\s+debt\b/.test(t) ||
+    /\bline\s+of\s+credit\b/.test(t) ||
+    /\bcommercial\s+paper\b/.test(t) ||
+    /\bsenior\s+secured\b/.test(t) ||
+    /\bconvertible\s+debt\b/.test(t)
   );
+}
+
+/** Canonical "Note N — Debt" style titles (including titles that already match {@link headingHasHighConfidenceDebtTerm}). */
+function hasCanonicalDebtNoteHeading(headingNorm: string): boolean {
+  if (headingHasHighConfidenceDebtTerm(headingNorm)) return true;
+  return /\bnote\s+\d{1,2}[a-z]?[\s\-–—.:]{0,6}debt\b/.test(headingNorm);
+}
+
+/** Block Medium when anchor/xbrl paths lack a debt heading and runner-up is too close. */
+function mediumBlockedByWeakAnchorPath(
+  top: ScoredNoteBlock,
+  runnerUp: ScoredNoteBlock | undefined,
+  hiHead: boolean,
+): boolean {
+  const anchorOrXbrl =
+    top.extractionMethod === "debt_table_anchor" || top.extractionMethod === "xbrl_tag_fallback";
+  if (!anchorOrXbrl || hiHead) return false;
+  const gap = runnerUp ? top.totalDebtScore - runnerUp.totalDebtScore : 999;
+  if (gap >= 15) return false;
+  if (countIndependentStrongPaths(top.pathsFired) >= 2) return false;
+  return true;
 }
 
 /** Step 8 — fallback note titles when no dedicated Debt heading exists. */
@@ -2587,7 +2612,11 @@ function detectItemFinancialAnchor(
   return { found: false, kind: "fallback_start" };
 }
 
-function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolean): DebtFootnoteConfidence {
+function classifyDebtFootnoteConfidence(
+  top: ScoredNoteBlock,
+  notesFound: boolean,
+  runnerUp?: ScoredNoteBlock,
+): DebtFootnoteConfidence {
   const hiHead = headingHasHighConfidenceDebtTerm(top.headingNorm);
   const bi = top.segment.bodyIndicators;
   const bodyTerms = top.bodyTermHits;
@@ -2601,10 +2630,17 @@ function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolea
     /\bexhibit\s+index\b/.test(top.headingNorm) ||
     /\bquantitative\s+and\s+qualitative\s+disclosures\s+about\s+market\s+risk\b/.test(top.headingNorm);
 
+  const canonicalDebtHeading =
+    hasCanonicalDebtNoteHeading(top.headingNorm) &&
+    top.totalDebtScore >= 70 &&
+    top.negativeScore < 85 &&
+    !mediumBlockedByWeakAnchorPath(top, runnerUp, hiHead);
+
   if (!notesFound) {
     if (filingSummaryDriven && (hiHead || strongTable) && (bodyTerms >= 3 || bi >= 4)) {
       return pathCount >= 2 ? "High" : "Medium";
     }
+    if (canonicalDebtHeading) return "Medium";
     if (top.totalDebtScore < 28 && bodyTerms < 2 && !strongTable) return "Not Found";
     return "Low";
   }
@@ -2612,7 +2648,10 @@ function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolea
   if (toxicHeading && pathCount < 2) return "Low";
 
   if (top.negativeScore >= 95) {
-    if (bodyTerms >= 5 || strongTable || bi >= 6) return "Medium";
+    if (bodyTerms >= 5 || strongTable || bi >= 6) {
+      if (!mediumBlockedByWeakAnchorPath(top, runnerUp, hiHead)) return "Medium";
+    }
+    if (canonicalDebtHeading) return "Medium";
     return "Low";
   }
 
@@ -2636,11 +2675,21 @@ function classifyDebtFootnoteConfidence(top: ScoredNoteBlock, notesFound: boolea
     strongTable ||
     (top.extractionMethod === "debt_table_anchor" && (strongTable || bi >= 5 || bodyTerms >= 4))
   ) {
-    if (!hiHead && bi < 4 && !strongTable && bodyTerms < 5 && pathCount < 2) return "Low";
+    if (!hiHead && bi < 4 && !strongTable && bodyTerms < 5 && pathCount < 2) {
+      if (canonicalDebtHeading) return "Medium";
+      return "Low";
+    }
+    if (mediumBlockedByWeakAnchorPath(top, runnerUp, hiHead)) {
+      if (canonicalDebtHeading) return "Medium";
+      return "Low";
+    }
     return "Medium";
   }
 
-  if (bodyTerms >= 2 || bi >= 3 || top.totalDebtScore >= 42) return "Low";
+  if (bodyTerms >= 2 || bi >= 3 || top.totalDebtScore >= 42) {
+    if (canonicalDebtHeading) return "Medium";
+    return "Low";
+  }
   return "Not Found";
 }
 
@@ -3009,7 +3058,7 @@ export async function extractDebtFootnote(
   const runnerUp =
     primaryRankIdx >= 0 && primaryRankIdx + 1 < scoredMap.length ? scoredMap[primaryRankIdx + 1] : undefined;
 
-  const confidence = classifyDebtFootnoteConfidence(primary, notesSectionFound);
+  const confidence = classifyDebtFootnoteConfidence(primary, notesSectionFound, runnerUp);
   let extractionMethod = chooseExtractionMethod(primary);
 
   const sliceLeadPlain = stripTagsToPlain(primary.segment.sliceHtml).slice(0, 14_000);

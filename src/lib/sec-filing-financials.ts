@@ -1408,18 +1408,21 @@ function parseStatementTableAtOffset(
   const unitsHint = extractUnitsFromText(
     ctx.acc.slice(Math.max(sectionStart, table.offset - 500), table.offset)
   );
-  return returnParsedPrimaryStatementIfValidOrHeadingWindow(
-    parsePrimaryStatementTable(
-      ctx.$,
-      ctx.$(table.el),
-      kind,
-      unitsHint,
-      opts.primaryDocument,
-      opts.sourceUrl,
-      table.offset
-    ),
-    form
+  const section = { start: sectionStart, end: ctx.acc.length };
+  const parsed = parsePrimaryStatementTable(
+    ctx.$,
+    ctx.$(table.el),
+    kind,
+    unitsHint,
+    opts.primaryDocument,
+    opts.sourceUrl,
+    table.offset
   );
+  const finished =
+    kind === "cf"
+      ? finalizeParsedCashFlowStatement(ctx, parsed, table.offset, section, form, opts)
+      : parsed;
+  return returnParsedPrimaryStatementIfValidOrHeadingWindow(finished, form);
 }
 
 function postNotesIncomeStatementRescanWindows(
@@ -1937,18 +1940,20 @@ function parseStatementsFromLocatedPacket(
       const unitsHint = extractUnitsFromText(
         ctx.acc.slice(Math.max(section.start, table.offset - 500), table.offset)
       );
-      const candidate = returnParsedPrimaryStatementIfValidOrHeadingWindow(
-        parsePrimaryStatementTable(
-          ctx.$,
-          ctx.$(table.el),
-          kind,
-          unitsHint || block.unitsText || undefined,
-          opts.primaryDocument,
-          opts.sourceUrl,
-          table.offset
-        ),
-        form
+      const raw = parsePrimaryStatementTable(
+        ctx.$,
+        ctx.$(table.el),
+        kind,
+        unitsHint || block.unitsText || undefined,
+        opts.primaryDocument,
+        opts.sourceUrl,
+        table.offset
       );
+      const withContinuation =
+        kind === "cf"
+          ? finalizeParsedCashFlowStatement(ctx, raw, table.offset, section, form, opts)
+          : raw;
+      const candidate = returnParsedPrimaryStatementIfValidOrHeadingWindow(withContinuation, form);
       if (candidate && (!parsed || candidate.rows.length > parsed.rows.length)) parsed = candidate;
     }
     if (parsed) statements.push({ ...parsed, id, title: tableTitle(kind), role: tableTitle(kind) });
@@ -2440,6 +2445,185 @@ function cashFlowShapeLooksValid(labelShallow: string, labelDeep: string): boole
   if (/\bnet cash (?:provided|used)\b/.test(combined)) return true;
   if (/\bnet income\b/.test(combined) && /\bdepreciation\b/.test(combined)) return true;
   return false;
+}
+
+/** LUMN-style filings split the CF tail (net change in cash, supplemental) into a follow-on table. */
+function cashFlowContinuationTableHasTailCue(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  return (
+    /\bnet\s+(?:\(decrease\)\s+increase|increase\s*\(decrease\)|decrease\s*\(increase\))\s+in\s+cash\b/.test(t) ||
+    /\bnet\s+(?:increase|decrease)\s+in\s+cash,?\s+cash equivalents\b/.test(t) ||
+    /\bcash,?\s+cash equivalents.*\bat\s+(?:beginning|end)\s+of\s+(?:the\s+)?period\b/.test(t) ||
+    /\bsupplemental cash flow information\b/.test(t)
+  );
+}
+
+function isCashFlowContinuationFragmentTable(
+  $: cheerio.CheerioAPI,
+  table: { el: Element; offset: number },
+  primaryTableOffset: number,
+  sectionEnd: number,
+): boolean {
+  if (table.offset <= primaryTableOffset) return false;
+  if (table.offset - primaryTableOffset > 25_000) return false;
+  if (table.offset >= sectionEnd) return false;
+
+  const text = normalizeSpace($(table.el).text()).slice(0, 6_000);
+  const low = text.toLowerCase();
+  if (!cashFlowContinuationTableHasTailCue(low)) return false;
+
+  // Full primary statement — not a page-break continuation fragment.
+  if (
+    /\bnet\s+(?:income|loss)\b/.test(low) &&
+    /\bdepreciation\b/.test(low) &&
+    /\boperating activities\b/.test(low) &&
+    /\binvesting activities\b/.test(low)
+  ) {
+    return false;
+  }
+
+  if (isLikelyCashRollupCrossReferenceToCashFlowStatement(text)) return false;
+  if (isLikelyEquityRollforwardCashFlowTable(text)) return false;
+  return true;
+}
+
+function normalizeCashFlowRowLabelForDedup(label: string): string {
+  return normalizeSpace(label)
+    .replace(/\s+\d+\s*$/, "")
+    .toLowerCase();
+}
+
+function remapCashFlowRowToPrimaryPeriods(
+  row: FilingHtmlStatementRow,
+  continuationPeriodKeys: string[],
+  primaryPeriodKeys: string[],
+): FilingHtmlStatementRow {
+  const values: Record<string, number | null> = {};
+  const displayValues: Record<string, string> = {};
+  const ixByPeriod: Record<string, InlineIxCellMeta | null> = {};
+  const n = Math.min(continuationPeriodKeys.length, primaryPeriodKeys.length);
+  for (let i = 0; i < n; i += 1) {
+    const from = continuationPeriodKeys[i]!;
+    const to = primaryPeriodKeys[i]!;
+    values[to] = row.values[from] ?? null;
+    displayValues[to] = row.displayValues[from] ?? "";
+    ixByPeriod[to] = row.ixByPeriod?.[from] ?? null;
+  }
+  return { ...row, values, displayValues, ixByPeriod };
+}
+
+function appendCashFlowContinuationTables(
+  ctx: ParsedFilingHtmlContext,
+  primary: FilingHtmlStatement,
+  primaryTableOffset: number,
+  sectionStart: number,
+  sectionEnd: number,
+  opts?: { primaryDocument?: string; sourceUrl?: string },
+): FilingHtmlStatement {
+  const primaryPeriodKeys = primary.periods.map((p) => p.key);
+  const existingLabels = new Set(primary.rows.map((r) => normalizeCashFlowRowLabelForDedup(r.label)));
+  const mergedRows = [...primary.rows];
+
+  const following = ctx.tables
+    .filter(
+      (table) =>
+        table.offset > primaryTableOffset &&
+        table.offset < sectionEnd &&
+        isCashFlowContinuationFragmentTable(ctx.$, table, primaryTableOffset, sectionEnd),
+    )
+    .sort((a, b) => a.offset - b.offset);
+
+  for (const table of following) {
+    const unitsHint = extractUnitsFromText(
+      ctx.acc.slice(Math.max(sectionStart, table.offset - 500), table.offset),
+    );
+    const fragment = parsePrimaryStatementTable(
+      ctx.$,
+      ctx.$(table.el),
+      "cf",
+      unitsHint,
+      opts?.primaryDocument,
+      opts?.sourceUrl,
+      table.offset,
+    );
+    if (!fragment || fragment.rows.length === 0) continue;
+
+    const contPeriodKeys = fragment.periods.map((p) => p.key);
+    for (const row of fragment.rows) {
+      const dedupKey = normalizeCashFlowRowLabelForDedup(row.label);
+      if (existingLabels.has(dedupKey)) continue;
+      const hasNumeric = Object.values(row.values).some((v) => v !== null && Number.isFinite(v));
+      if (!hasNumeric && row.rowKind !== "heading") continue;
+      mergedRows.push(remapCashFlowRowToPrimaryPeriods(row, contPeriodKeys, primaryPeriodKeys));
+      existingLabels.add(dedupKey);
+    }
+  }
+
+  if (mergedRows.length === primary.rows.length) return primary;
+  return { ...primary, rows: mergedRows };
+}
+
+const CF_CONTINUATION_SCAN_AHEAD_CHARS = 25_000;
+
+function finalizeParsedCashFlowStatement(
+  ctx: ParsedFilingHtmlContext,
+  parsed: FilingHtmlStatement | null,
+  primaryTableOffset: number | undefined,
+  section: FilingSectionBounds,
+  _form: string,
+  opts?: { primaryDocument?: string; sourceUrl?: string },
+): FilingHtmlStatement | null {
+  if (!parsed || parsed.id !== "cash-flow" || primaryTableOffset == null) return parsed;
+  // Continuation fragments sit just after the primary CF table; do not use the notes
+  // pick ceiling (it often cuts before page-break tail tables).
+  const scanEnd = Math.min(
+    section.end,
+    primaryTableOffset + CF_CONTINUATION_SCAN_AHEAD_CHARS,
+  );
+  return appendCashFlowContinuationTables(
+    ctx,
+    parsed,
+    primaryTableOffset,
+    section.start,
+    scanEnd,
+    opts,
+  );
+}
+
+function applyCashFlowContinuationPasses(
+  ctx: ParsedFilingHtmlContext,
+  statements: FilingHtmlStatement[],
+  form: string,
+  opts?: { primaryDocument?: string; sourceUrl?: string },
+): FilingHtmlStatement[] {
+  const section = resolveFinancialStatementsSectionBounds(ctx, form) ?? {
+    start: 0,
+    end: ctx.acc.length,
+  };
+  return statements.map((stmt) => {
+    if (stmt.id !== "cash-flow") return stmt;
+    const offset = stmt.sourceTableOffset;
+    if (offset == null) return stmt;
+    return finalizeParsedCashFlowStatement(ctx, stmt, offset, section, form, opts) ?? stmt;
+  });
+}
+
+export function __test_appendCashFlowContinuationTables(
+  html: string,
+  primaryTableIndex: number,
+  form: string,
+): FilingHtmlStatement | null {
+  const ctx = buildParsedFilingHtmlContext(html);
+  if (!ctx) return null;
+  const table = ctx.tables[primaryTableIndex];
+  if (!table) return null;
+  const section = resolveFinancialStatementsSectionBounds(ctx, form) ?? {
+    start: 0,
+    end: ctx.acc.length,
+  };
+  const parsed = parsePrimaryStatementTable(ctx.$, ctx.$(table.el), "cf");
+  if (!parsed) return null;
+  return appendCashFlowContinuationTables(ctx, parsed, table.offset, section.start, section.end);
 }
 
 function primaryFaceOperatingRevenueCue(text: string): boolean {
@@ -3127,8 +3311,7 @@ export function __test_flatAccFromHtml(html: string): string {
 }
 
 function statementFromClusterHit(
-  $: cheerio.CheerioAPI,
-  acc: string,
+  ctx: ParsedFilingHtmlContext,
   section: FilingSectionBounds,
   hit: StatementTableCandidate,
   kind: StatementKind,
@@ -3136,11 +3319,26 @@ function statementFromClusterHit(
   primaryDocument?: string,
   sourceUrl?: string
 ): FilingHtmlStatement | null {
-  const unitsHint = extractUnitsFromText(acc.slice(Math.max(section.start, hit.table.offset - 500), hit.table.offset));
-  return returnParsedPrimaryStatementIfValidOrHeadingWindow(
-    parsePrimaryStatementTable($, $(hit.table.el), kind, unitsHint, primaryDocument, sourceUrl, hit.table.offset),
-    form
+  const unitsHint = extractUnitsFromText(
+    ctx.acc.slice(Math.max(section.start, hit.table.offset - 500), hit.table.offset),
   );
+  const parsed = parsePrimaryStatementTable(
+    ctx.$,
+    ctx.$(hit.table.el),
+    kind,
+    unitsHint,
+    primaryDocument,
+    sourceUrl,
+    hit.table.offset,
+  );
+  const finished =
+    kind === "cf"
+      ? finalizeParsedCashFlowStatement(ctx, parsed, hit.table.offset, section, form, {
+          primaryDocument,
+          sourceUrl,
+        })
+      : parsed;
+  return returnParsedPrimaryStatementIfValidOrHeadingWindow(finished, form);
 }
 
 function parseAllStatementsFromCluster(
@@ -3153,7 +3351,7 @@ function parseAllStatementsFromCluster(
   return (["is", "bs", "cf"] as StatementKind[])
     .map((kind) => {
       const hit = kind === "bs" ? cluster.bs : kind === "is" ? cluster.is : cluster.cf;
-      return statementFromClusterHit(ctx.$, ctx.acc, section, hit, kind, form, opts.primaryDocument, opts.sourceUrl);
+      return statementFromClusterHit(ctx, section, hit, kind, form, opts.primaryDocument, opts.sourceUrl);
     })
     .filter((stmt): stmt is FilingHtmlStatement => Boolean(stmt));
 }
@@ -3530,6 +3728,14 @@ export function __test_extractTableMatrix(
   return extractTableMatrix($, $(table.el));
 }
 
+export function __test_parseDisplayedNumber(text: string): number | null {
+  return parseDisplayedNumber(text);
+}
+
+export function __test_composeRawAmount(row: string[], col: number): string {
+  return composeRawAmount(row, col);
+}
+
 function amountToken(value: string): string {
   return normalizeSpace(value).replace(/\$/g, "").replace(/,/g, "").replace(/\s+/g, "");
 }
@@ -3545,12 +3751,15 @@ function parseDisplayedNumber(text: string): number | null {
   const raw = normalizeSpace(text);
   if (!raw || raw === "—" || raw === "-") return null;
   let normalized = raw.replace(/\$/g, "").replace(/,/g, "").replace(/\s+/g, "");
-  const negative = /^\(.*\)$/.test(normalized);
+  // Accounting negatives: (5,794), $(5,794), or split cells that omit the closing ")".
+  const negative =
+    /^\([^)]*\)$/.test(normalized) ||
+    (/^\(/.test(normalized) && !/\)$/.test(normalized));
   normalized = normalized.replace(/[()]/g, "");
   if (!/^-?\d*\.?\d+$/.test(normalized)) return null;
   const value = Number(normalized);
   if (!Number.isFinite(value)) return null;
-  return negative ? -value : value;
+  return negative ? -Math.abs(value) : value;
 }
 
 function composeRawAmount(row: string[], col: number): string {
@@ -3567,9 +3776,10 @@ function composeRawAmount(row: string[], col: number): string {
   if (curr === "(" && looksLikeAmount(next)) return `(${next})`;
   if (looksLikeAmount(curr)) {
     if (prev === "$" && curr.startsWith("(") && !curr.endsWith(")")) return `($${curr.slice(1)})`;
-    if ((prev === "$(" || prev2 === "$" && prev === "(") && next === ")") return `($${curr})`;
+    if ((prev === "$(" || (prev2 === "$" && prev === "(")) && next === ")") return `($${curr})`;
     if (prev === "(" && next === ")") return `(${curr})`;
     if (prev === "$") return `$${curr}`;
+    if (curr.startsWith("$(") && !curr.endsWith(")")) return `${curr})`;
     if (curr.startsWith("(") && !curr.endsWith(")")) return `${curr})`;
     return curr;
   }
@@ -4271,18 +4481,20 @@ function parseBestStatementTableFromContext(
   const unitsHint = extractUnitsFromText(
     ctx.acc.slice(Math.max(0, best.table.offset - 500), best.table.offset)
   );
-  return returnParsedPrimaryStatementIfValidOrHeadingWindow(
-    parsePrimaryStatementTable(
-      ctx.$,
-      ctx.$(best.table.el),
-      opts.kind,
-      unitsHint,
-      opts.primaryDocument,
-      opts.sourceUrl,
-      best.table.offset
-    ),
-    formUpper
+  const parsed = parsePrimaryStatementTable(
+    ctx.$,
+    ctx.$(best.table.el),
+    opts.kind,
+    unitsHint,
+    opts.primaryDocument,
+    opts.sourceUrl,
+    best.table.offset
   );
+  const finished =
+    opts.kind === "cf"
+      ? finalizeParsedCashFlowStatement(ctx, parsed, best.table.offset, section, formUpper, opts)
+      : parsed;
+  return returnParsedPrimaryStatementIfValidOrHeadingWindow(finished, formUpper);
 }
 
 function parseBestStatementTableFromHtml(
@@ -5455,7 +5667,8 @@ export function parsePrimaryFilingStatementsFromHtml(
 ): FilingHtmlStatement[] {
   const ctx = buildParsedFilingHtmlContext(html);
   if (!ctx) return [];
-  return parsePrimaryFinancialStatementsInItemSection(ctx, opts);
+  const statements = parsePrimaryFinancialStatementsInItemSection(ctx, opts);
+  return applyCashFlowContinuationPasses(ctx, statements, opts.form, opts);
 }
 
 export function parsePrimaryFilingStatementFromContext(
@@ -5574,6 +5787,12 @@ export async function fetchHtmlFilingStatementsBundle(opts: {
       primaryDocument: opts.primaryDocument,
       sourceUrl,
       shapeTemplates: opts.shapeTemplates,
+    });
+  }
+  if (ctx) {
+    statements = applyCashFlowContinuationPasses(ctx, statements, formUpper, {
+      primaryDocument: opts.primaryDocument,
+      sourceUrl,
     });
   }
   const parsedTables = ctx?.tables;

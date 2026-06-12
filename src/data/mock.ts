@@ -46,6 +46,7 @@ export const companyAnalysisTabs = [
   "Credit Timeline",
   "Broker Research Reports",
   "Substack",
+  "Company Reputation",
   "Twitter Sentiment",
   "The Cap Stack Rumor Mill",
   "Porter's Five Forces",
@@ -66,7 +67,7 @@ export const companyAnalysisWorkOutputTabs = [
   "Dear Diary",
 ] as const;
 
-export const companyAnalysisDesktopRisksTabs = ["Risk from 10K"] as const;
+export const companyAnalysisDesktopRisksTabs = ["Risk from 10K", "Business Risk Analysis"] as const;
 
 export const companyAnalysisClaimsTabs = [
   "Environmental Claims",

@@ -98,6 +98,11 @@ describe("classifyEarningsExhibitHtml / pickEarningsMainAndDeck", () => {
     expect(classifyEarningsExhibitHtml(html, "tsla-ex991.htm")).toBe("press_release");
   });
 
+  it("classifies quarterly earnings filenames (e.g. CMPR) as press_release not slide_deck", () => {
+    const html = `<!DOCTYPE html><html><body>${"x".repeat(200)}<p>Cimpress Q3 fiscal 2026 financial results. Revenue was $1.1 billion. Diluted EPS $0.42. Conference call at 5:00 p.m.</p></body></html>`;
+    expect(classifyEarningsExhibitHtml(html, "q3_fy26quarterlyearnings.htm")).toBe("press_release");
+  });
+
   it("picks a separate slide deck when a press release exhibit is first", () => {
     const classified = [
       { filename: "a.htm", kind: "press_release" as const },

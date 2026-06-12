@@ -1,0 +1,148 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:product,html:product,Product,0,0
+income_statement,html:service,html:service,Service,1,0
+income_statement,html:total-revenue,html:total-revenue,Total revenue,2,0
+income_statement,html:total-cost-of-sales,html:total-cost-of-sales,Total cost of sales,3,0
+income_statement,html:gross-margin,html:gross-margin,GROSS MARGIN,4,0
+income_statement,html:operating-expenses,html:operating-expenses,OPERATING EXPENSES:,5,0
+income_statement,html:research-and-development,html:research-and-development,Research and development,6,0
+income_statement,html:sales-and-marketing,html:sales-and-marketing,Sales and marketing,7,0
+income_statement,html:general-and-administrative,html:general-and-administrative,General and administrative,8,0
+income_statement,html:amortization-of-purchased-intangible-assets,html:amortization-of-purchased-intangible-assets,Amortization of purchased intangible assets,9,0
+income_statement,html:restructuring-and-other-charges,html:restructuring-and-other-charges,Restructuring and other charges,10,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,11,0
+income_statement,html:operating-income,html:operating-income,OPERATING INCOME,12,0
+income_statement,html:interest-income,html:interest-income,Interest income,13,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,14,0
+income_statement,html:other-income-loss-net,html:other-income-loss-net,"Other income (loss), net",15,0
+income_statement,html:interest-and-other-income-loss-net,html:interest-and-other-income-loss-net,"Interest and other income (loss), net",16,0
+income_statement,html:income-before-provision-for-income-taxes,html:income-before-provision-for-income-taxes,INCOME BEFORE PROVISION FOR INCOME TAXES,17,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,18,0
+income_statement,html:net-income,html:net-income,NET INCOME,19,0
+income_statement,html:net-income-per-share,html:net-income-per-share,Net income per share:,20,0
+income_statement,html:basic,html:basic,Basic,21,0
+income_statement,html:diluted,html:diluted,Diluted,22,0
+income_statement,html:shares-used-in-per-share-calculation,html:shares-used-in-per-share-calculation,Shares used in per-share calculation:,23,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,14,0
+balance_sheet,html:investments,html:investments,Investments,15,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-136-at-july-27-2019-and-129-at-july-28-2018,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-136-at-july-27-2019-and-129-at-july-28-2018,"Accounts receivable, net of allowance for doubtful accounts of $136 at July 27, 2019 and $129 at July 28, 2018",18,0
+balance_sheet,html:inventories,html:inventories,Inventories,19,0
+balance_sheet,html:financing-receivables-net,html:financing-receivables-net,"Financing receivables, net",20,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,21,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,22,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",23,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,24,0
+balance_sheet,html:purchased-intangible-assets-net,html:purchased-intangible-assets-net,"Purchased intangible assets, net",25,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,26,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,27,0
+balance_sheet,html:total-assets,html:total-assets,TOTAL ASSETS,28,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,LIABILITIES AND EQUITY,29,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,30,0
+balance_sheet,html:short-term-debt,html:short-term-debt,Short-term debt,45,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,46,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,47,0
+balance_sheet,html:accrued-compensation,html:accrued-compensation,Accrued compensation,48,0
+balance_sheet,html:deferred-revenue,html:deferred-revenue,Deferred revenue,49,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,50,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,51,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,52,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,53,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,54,0
+balance_sheet,html:commitments-and-contingencies-note-13,html:commitments-and-contingencies-note-13,Commitments and contingencies (Note 13),55,0
+balance_sheet,html:equity,html:equity,Equity:,56,0
+balance_sheet,html:cisco-shareholders-equity,html:cisco-shareholders-equity,Cisco shareholders’ equity:,60,0
+balance_sheet,html:preferred-stock-no-par-value-5-shares-authorized-none-issued-and-outstanding,html:preferred-stock-no-par-value-5-shares-authorized-none-issued-and-outstanding,"Preferred stock, no par value: 5 shares authorized; none issued and outstanding",68,0
+balance_sheet,html:common-stock-and-additional-paid-in-capital-0-001-par-value-20-000-shares-authorized-4-250-and-4-614-shares-issued-and-outstanding-at-july-27-2019-and-july-28-2018-respectively,html:common-stock-and-additional-paid-in-capital-0-001-par-value-20-000-shares-authorized-4-250-and-4-614-shares-issued-and-outstanding-at-july-27-2019-and-july-28-2018-respectively,"Common stock and additional paid-in capital, $0.001 par value: 20,000 shares authorized; 4,250 and 4,614 shares issued and outstanding at July 27, 2019 and July 28, 2018, respectively",72,0
+balance_sheet,html:accumulated-deficit-retained-earnings,html:accumulated-deficit-retained-earnings,(Accumulated deficit) Retained earnings,73,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),74,0
+balance_sheet,html:total-cisco-shareholders-equity,html:total-cisco-shareholders-equity,Total Cisco shareholders’ equity,75,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,76,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,77,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,TOTAL LIABILITIES AND EQUITY,78,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:depreciation-amortization-and-other,html:depreciation-amortization-and-other,"Depreciation, amortization, and other",1,0
+cash_flow,html:share-based-compensation-expense,html:share-based-compensation-expense,Share-based compensation expense,2,0
+cash_flow,html:provision-benefit-for-receivables,html:provision-benefit-for-receivables,Provision (benefit) for receivables,3,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,4,0
+cash_flow,html:excess-tax-benefits-from-share-based-compensation,html:excess-tax-benefits-from-share-based-compensation,Excess tax benefits from share-based compensation,5,0
+cash_flow,html:gains-losses-on-divestitures-investments-and-other-net,html:gains-losses-on-divestitures-investments-and-other-net,"(Gains) losses on divestitures, investments and other, net",6,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,7,0
+cash_flow,html:inventories,html:inventories,Inventories,8,0
+cash_flow,html:financing-receivables,html:financing-receivables,Financing receivables,9,0
+cash_flow,html:other-assets,html:other-assets,Other assets,10,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,11,0
+cash_flow,html:income-taxes-net,html:income-taxes-net,"Income taxes, net",12,0
+cash_flow,html:accrued-compensation,html:accrued-compensation,Accrued compensation,13,0
+cash_flow,html:deferred-revenue,html:deferred-revenue,Deferred revenue,14,0
+cash_flow,html:other-liabilities,html:other-liabilities,Other liabilities,15,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,16,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,17,0
+cash_flow,html:purchases-of-investments,html:purchases-of-investments,Purchases of investments,18,0
+cash_flow,html:proceeds-from-sales-of-investments,html:proceeds-from-sales-of-investments,Proceeds from sales of investments,19,0
+cash_flow,html:proceeds-from-maturities-of-investments,html:proceeds-from-maturities-of-investments,Proceeds from maturities of investments,20,0
+cash_flow,html:acquisitions-and-divestitures,html:acquisitions-and-divestitures,Acquisitions and divestitures,22,0
+cash_flow,html:purchases-of-investments-in-privately-held-companies,html:purchases-of-investments-in-privately-held-companies,Purchases of investments in privately held companies,23,0
+cash_flow,html:return-of-investments-in-privately-held-companies,html:return-of-investments-in-privately-held-companies,Return of investments in privately held companies,24,0
+cash_flow,html:acquisition-of-property-and-equipment,html:acquisition-of-property-and-equipment,Acquisition of property and equipment,25,0
+cash_flow,html:proceeds-from-sales-of-property-and-equipment,html:proceeds-from-sales-of-property-and-equipment,Proceeds from sales of property and equipment,26,0
+cash_flow,html:other,html:other,Other,27,0
+cash_flow,html:net-cash-provided-by-used-in-investing-activities,html:net-cash-provided-by-used-in-investing-activities,Net cash provided by (used in) investing activities,28,0
+cash_flow,html:issuances-of-common-stock,html:issuances-of-common-stock,Issuances of common stock,29,0
+cash_flow,html:repurchases-of-common-stock-repurchase-program,html:repurchases-of-common-stock-repurchase-program,Repurchases of common stock - repurchase program,30,0
+cash_flow,html:shares-repurchased-for-tax-withholdings-on-vesting-of-restricted-stock-units,html:shares-repurchased-for-tax-withholdings-on-vesting-of-restricted-stock-units,Shares repurchased for tax withholdings on vesting of restricted stock units,31,0
+cash_flow,html:short-term-borrowings-original-maturities-of-90-days-or-less-net,html:short-term-borrowings-original-maturities-of-90-days-or-less-net,"Short-term borrowings, original maturities of 90 days or less, net",32,0
+cash_flow,html:issuances-of-debt,html:issuances-of-debt,Issuances of debt,33,0
+cash_flow,html:repayments-of-debt,html:repayments-of-debt,Repayments of debt,34,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,35,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,Net cash used in financing activities,36,0
+cash_flow,html:net-increase-decrease-in-cash-cash-equivalents-and-restricted-cash,html:net-increase-decrease-in-cash-cash-equivalents-and-restricted-cash,"Net increase (decrease) in cash, cash equivalents, and restricted cash",38,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-beginning-of-fiscal-year,html:cash-cash-equivalents-and-restricted-cash-beginning-of-fiscal-year,"Cash, cash equivalents, and restricted cash, beginning of fiscal year",39,0
+cash_flow,html:supplemental-cash-flow-information,html:supplemental-cash-flow-information,Supplemental cash flow information:,40,0
+cash_flow,html:cash-paid-for-interest,html:cash-paid-for-interest,Cash paid for interest,41,0
+cash_flow,html:cash-paid-for-income-taxes-net,html:cash-paid-for-income-taxes-net,"Cash paid for income taxes, net",42,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Investments,1,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net of allowance for doubtful accounts of $143 at July 25, 2020 and $136 at July 27, 2019",2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,3,0
+balance_sheet,us-gaap:NotesAndLoansReceivableNetCurrent,us-gaap:NotesAndLoansReceivableNetCurrent,"Financing receivables, net",4,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,5,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,6,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",7,0
+balance_sheet,us-gaap:NotesAndLoansReceivableNetNoncurrent,us-gaap:NotesAndLoansReceivableNetNoncurrent,"Financing receivables, net",8,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,9,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Purchased intangible assets, net",10,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,11,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,12,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,TOTAL ASSETS,13,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Short-term debt,31,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,32,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Income taxes payable,33,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation,34,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Deferred revenue,35,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,36,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,37,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,38,0
+balance_sheet,us-gaap:AccruedIncomeTaxesNoncurrent,us-gaap:AccruedIncomeTaxesNoncurrent,Income taxes payable,39,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityNoncurrent,us-gaap:ContractWithCustomerLiabilityNoncurrent,Deferred revenue,40,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,41,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,42,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies (Note 14),43,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock, no par value: 5 shares authorized; none issued and outstanding",61,0
+balance_sheet,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,"Common stock and additional paid-in capital, $0.001 par value: 20,000 shares authorized; 4,237 and 4,250 shares issued and outstanding at July 25, 2020 and July 27, 2019, respectively",62,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated deficit,63,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,64,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total equity,65,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,TOTAL LIABILITIES AND EQUITY,66,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,"Accounts receivable, net of allowance of $109 at July 31, 2021 and $143 at July 25, 2020",79,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Short-term debt,44,0
+balance_sheet,html:cisco-stockholders-equity,html:cisco-stockholders-equity,Cisco stockholders’ equity:,57,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Preferred stock, $0.001 par value: 5 shares authorized; none issued and outstanding",58,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock and additional paid-in capital, $0.001 par value: 20,000 shares authorized; 4,217 and 4,237 shares issued and outstanding at July 31, 2021 and July 25, 2020, respectively",59,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsDisposalGroupIncludingDiscontinuedOperations,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsDisposalGroupIncludingDiscontinuedOperations,"Effect of foreign currency exchange rate changes on cash, cash equivalents, restricted cash and restricted cash equivalents",37,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisitions, net of cash and cash equivalents acquired",21,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-135-at-january-26-2019-and-129-at-july-28-2018,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-135-at-january-26-2019-and-129-at-july-28-2018,"Accounts receivable, net of allowance for doubtful accounts of $135 at January 26, 2019 and $129 at July 28, 2018",16,0
+balance_sheet,html:common-stock-and-additional-paid-in-capital-0-001-par-value-20-000-shares-authorized-4-424-and-4-614-shares-issued-and-outstanding-at-january-26-2019-and-july-28-2018-respectively,html:common-stock-and-additional-paid-in-capital-0-001-par-value-20-000-shares-authorized-4-424-and-4-614-shares-issued-and-outstanding-at-january-26-2019-and-july-28-2018-respectively,"Common stock and additional paid-in capital, $0.001 par value: 20,000 shares authorized; 4,424 and 4,614 shares issued and outstanding at January 26, 2019 and July 28, 2018, respectively",69,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,70,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-124-at-april-27-2019-and-129-at-july-28-2018,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-124-at-april-27-2019-and-129-at-july-28-2018,"Accounts receivable, net of allowance for doubtful accounts of $124 at April 27, 2019 and $129 at July 28, 2018",17,0
+balance_sheet,html:common-stock-and-additional-paid-in-capital-0-001-par-value-20-000-shares-authorized-4-313-and-4-614-shares-issued-and-outstanding-at-april-27-2019-and-july-28-2018-respectively,html:common-stock-and-additional-paid-in-capital-0-001-par-value-20-000-shares-authorized-4-313-and-4-614-shares-issued-and-outstanding-at-april-27-2019-and-july-28-2018-respectively,"Common stock and additional paid-in capital, $0.001 par value: 20,000 shares authorized; 4,313 and 4,614 shares issued and outstanding at April 27, 2019 and July 28, 2018, respectively",71,0
+balance_sheet,us-gaap:PreferredStockSharesAuthorized,us-gaap:PreferredStockSharesAuthorized,"Preferred stock, no par value: 5 shares authorized; none issued and outstanding",67,0

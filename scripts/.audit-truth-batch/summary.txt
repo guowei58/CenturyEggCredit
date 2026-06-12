@@ -1,0 +1,41 @@
+Workbook truth audit — 50 tickers (seed 20260521)
+Clean (0 issues): 43
+With workbook-truth issues: 0
+Pipeline errors (no compile): 7
+
+Issues by type (all tickers):
+
+Issues by statement:
+
+── Tickers with issues ──
+
+── Pipeline failures ──
+  EVCM:  14: changed �� re-derived 454 quarters
+2026-06-12 00:48:07,925 [INFO] workbook_truth: Workbook truth enforce: cleared 0 extra cells, aligned 2 cells
+2026-06-12 00:48:07,925 [INFO] derivation_engine: HARMONIZE IS FY sign (gain/loss row): us-gaap:OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationAdjustmentNetOfTaxPortionAttributableToParent FY23 �� Foreign currency translation gain (loss), net was 2.181, flipped to -2.181 (1Q+2Q+3Q=-1.94 from saved workbooks)
+2026-06-12 00:48:07, (saved=20)
+  ATRO: 1:35,443 [INFO] derivation_engine: HARMONIZE IS FY sign (gain/loss row): us-gaap:GainLossOnSaleOfBusiness FY23 �� Net Gain on Sale of Businesses was 3.427, flipped to -3.427 (1Q+2Q+3Q=-3.427 from saved workbooks)
+2026-06-12 00:51:35,450 [INFO] derivation_engine: Derived 742 quarterly values
+2026-06-12 00:51:35,450 [INFO] workbook_truth: Workbook truth iteration 14: changed �� re-derived 742 quarters
+2026-06-12 00:51:35,454 [INFO] workbook_truth: Workbook truth enforce: cleared 0 extra cells,  (saved=30)
+  TTEC: s, 43 concepts
+2026-06-12 01:20:13,655 [INFO] workbook_loader:   'Cash Flow': kept 0/74 facts (XBRL-tagged period columns, FY>=2019)
+2026-06-12 01:20:13,655 [INFO] workbook_loader:   'Cash Flow' �� cash_flow | 0 facts, 44 concepts
+2026-06-12 01:20:13,656 [INFO] workbook_loader: Loading TTEC_SEC-XBRL-financials_as-presented_10-Q_2025-05-08_0001558370-25-006995.xlsx
+2026-06-12 01:20:13,740 [INFO] workbook_loader:   'Income Statement': kept 0/58 facts (XBRL-tagged period columns, FY>=2019)
+202 (saved=30)
+  PRGS: ngine: Derived 748 quarterly values
+2026-06-12 02:10:40,396 [INFO] workbook_truth: Workbook truth iteration 13: changed �� re-derived 748 quarters
+2026-06-12 02:10:40,399 [INFO] workbook_truth: Workbook truth enforce: cleared 0 extra cells, aligned 1 cells
+2026-06-12 02:10:40,399 [INFO] derivation_engine: HARMONIZE IS FY sign (gain/loss row): us-gaap:GainLossOnSaleOfPropertyPlantEquipment FY21 �� Loss on disposal of property and equipment was 0.007, flipped to -0.007 (1Q+2Q+3Q=0.0 from saved  (saved=30)
+  SPTN: ticker not in SEC cache (saved=0)
+  HUBB: on 13: changed �� re-derived 983 quarters
+2026-06-12 02:22:01,013 [INFO] workbook_truth: Workbook truth enforce: cleared 0 extra cells, aligned 1 cells
+2026-06-12 02:22:01,014 [INFO] derivation_engine: HARMONIZE IS FY sign (gain/loss row): us-gaap:GainLossOnSaleOfBusiness FY25 �� Loss on disposition of business (Note 3) was -0.4, flipped to 0.4 (1Q+2Q+3Q=0.0 from saved workbooks)
+2026-06-12 02:22:01,028 [INFO] derivation_engine: Derived 983 quarterly values
+2026-06-12 02:22:01,028 [INFO] wor (saved=30)
+  PRIM: (1Q+2Q+3Q=-0.14100000000000001 from saved workbooks)
+2026-06-12 02:39:57,112 [INFO] derivation_engine: Derived 796 quarterly values
+2026-06-12 02:39:57,112 [INFO] workbook_truth: Workbook truth iteration 13: changed �� re-derived 796 quarters
+2026-06-12 02:39:57,116 [INFO] workbook_truth: Workbook truth enforce: cleared 0 extra cells, aligned 1 cells
+2026-06-12 02:39:57,117 [INFO] derivation_engine: HARMONIZE IS FY sign (gain/loss row): html:foreign-exchange-loss-gain-net FY20 �� Foreign exc (saved=30)

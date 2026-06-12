@@ -42,6 +42,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Credit Timeline",
           "Out-of-the-Box Ideas",
           "Risk from 10K",
+          "Business Risk Analysis",
         ],
       },
     ],
@@ -80,7 +81,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
     groups: [
       {
         tabs: [
-          "Debt Footnote From 10K/Q",
           "Capital Structure",
           "Org Chart",
           "Credit Agreements & Indentures",
@@ -169,6 +169,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "The Cap Stack Rumor Mill",
           "Twitter Sentiment",
           "Substack",
+          "Company Reputation",
         ],
       },
     ],

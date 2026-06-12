@@ -1,0 +1,179 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:net-revenues,html:net-revenues,Net Revenues,0,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of Sales,1,0
+income_statement,html:gross-profit,html:gross-profit,Gross Profit,2,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, General and Administrative Expenses",3,0
+income_statement,html:restructuring-charges,html:restructuring-charges,Restructuring Charges,4,0
+income_statement,html:litigation-settlement-and-related-costs-net,html:litigation-settlement-and-related-costs-net,"Litigation Settlement and Related Costs, Net",5,0
+income_statement,html:operating-loss-income,html:operating-loss-income,Operating (Loss) Income,6,0
+income_statement,html:interest-expense,html:interest-expense,Interest Expense,7,0
+income_statement,html:loss-on-extinguishment-of-debt,html:loss-on-extinguishment-of-debt,Loss on Extinguishment of Debt,9,0
+income_statement,html:other-income-net,html:other-income-net,"Other Income, Net",11,0
+income_statement,html:loss-income-before-taxes,html:loss-income-before-taxes,(Loss) Income Before Taxes,12,0
+income_statement,html:income-tax-benefit-expense,html:income-tax-benefit-expense,Income Tax (Benefit) Expense,13,0
+income_statement,html:net-loss-income,html:net-loss-income,Net (Loss) Income,14,0
+income_statement,html:basic-loss-earnings-per-share-in-dollars-per-share,html:basic-loss-earnings-per-share-in-dollars-per-share,Basic (loss) earnings per share (in dollars per share),15,0
+income_statement,html:diluted-loss-earnings-per-share-in-dollars-per-share,html:diluted-loss-earnings-per-share-in-dollars-per-share,Diluted (loss) earnings per share (in dollars per share),16,0
+income_statement,html:weighted-average-number-of-shares-outstanding,html:weighted-average-number-of-shares-outstanding,Weighted-Average Number of Shares Outstanding,17,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),18,0
+income_statement,html:diluted-in-shares,html:diluted-in-shares,Diluted (in shares),19,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,14,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-credit-losses-of-1-802-and-2-630-at-december-31-2025-and-2024-respectively,html:accounts-receivable-net-of-allowance-for-credit-losses-of-1-802-and-2-630-at-december-31-2025-and-2024-respectively,"Accounts receivable (net of allowance for credit losses of $1,802 and $2,630 at December 31, 2025 and 2024, respectively)",25,0
+balance_sheet,html:contract-assets,html:contract-assets,Contract assets,26,0
+balance_sheet,html:inventories,html:inventories,Inventories,27,0
+balance_sheet,html:production-cost-of-contracts,html:production-cost-of-contracts,Production cost of contracts,28,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,29,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total Current Assets,30,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and Equipment, Net",34,0
+balance_sheet,html:operating-lease-right-of-use-assets,html:operating-lease-right-of-use-assets,Operating Lease Right-of-Use Assets,35,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,36,0
+balance_sheet,html:intangibles-net,html:intangibles-net,"Intangibles, Net",37,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred Income Taxes,39,0
+balance_sheet,html:other-assets,html:other-assets,Other Assets,40,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,41,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities,43,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,56,0
+balance_sheet,html:contract-liabilities,html:contract-liabilities,Contract liabilities,57,0
+balance_sheet,html:accrued-and-other-liabilities,html:accrued-and-other-liabilities,Accrued and other liabilities,59,0
+balance_sheet,html:operating-lease-liabilities,html:operating-lease-liabilities,Operating lease liabilities,60,0
+balance_sheet,html:current-portion-of-long-term-debt,html:current-portion-of-long-term-debt,Current portion of long-term debt,61,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total Current Liabilities,62,0
+balance_sheet,html:long-term-debt-less-current-portion,html:long-term-debt-less-current-portion,"Long-Term Debt, Less Current Portion",64,0
+balance_sheet,html:non-current-operating-lease-liabilities,html:non-current-operating-lease-liabilities,Non-Current Operating Lease Liabilities,65,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other Long-Term Liabilities,66,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,67,0
+balance_sheet,html:commitments-and-contingencies-notes-13-15,html:commitments-and-contingencies-notes-13-15,"Commitments and Contingencies (Notes 13, 15)",72,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ Equity,73,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-14-949-671-and-14-781-218-shares-issued-and-outstanding-at-december-31-2025-and-2024-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-14-949-671-and-14-781-218-shares-issued-and-outstanding-at-december-31-2025-and-2024-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 14,949,671 and 14,781,218 shares issued and outstanding at December 31, 2025 and 2024, respectively",90,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,91,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,92,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,95,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total Shareholders’ Equity,96,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total Liabilities and Shareholders’ Equity,97,0
+cash_flow,html:net-loss-income,html:net-loss-income,Net (Loss) Income,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:non-cash-operating-lease-cost,html:non-cash-operating-lease-cost,Non-cash operating lease cost,4,0
+cash_flow,html:inventory-write-down-and-property-and-equipment-impairment-due-to-restructuring,html:inventory-write-down-and-property-and-equipment-impairment-due-to-restructuring,Inventory write-down and property and equipment impairment due to restructuring,5,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,6,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,7,0
+cash_flow,html:recovery-of-provision-for-credit-losses,html:recovery-of-provision-for-credit-losses,(Recovery of) provision for credit losses,12,0
+cash_flow,html:noncash-loss-on-extinguishment-of-debt,html:noncash-loss-on-extinguishment-of-debt,Noncash loss on extinguishment of debt,14,0
+cash_flow,html:recognition-of-insurance-recoveries,html:recognition-of-insurance-recoveries,Recognition of insurance recoveries,15,0
+cash_flow,html:gain-on-sale-of-property-and-other-assets,html:gain-on-sale-of-property-and-other-assets,Gain on sale of property and other assets,16,0
+cash_flow,html:litigation-settlement-and-related-costs,html:litigation-settlement-and-related-costs,Litigation settlement and related costs,17,0
+cash_flow,html:other,html:other,Other,18,0
+cash_flow,html:changes-in-assets-and-liabilities,html:changes-in-assets-and-liabilities,Changes in Assets and Liabilities:,19,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,20,0
+cash_flow,html:contract-assets,html:contract-assets,Contract assets,21,0
+cash_flow,html:inventories,html:inventories,Inventories,22,0
+cash_flow,html:production-cost-of-contracts,html:production-cost-of-contracts,Production cost of contracts,23,0
+cash_flow,html:other-assets,html:other-assets,Other assets,24,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,25,0
+cash_flow,html:contract-liabilities,html:contract-liabilities,Contract liabilities,26,0
+cash_flow,html:operating-lease-liabilities,html:operating-lease-liabilities,Operating lease liabilities,27,0
+cash_flow,html:accrued-and-other-liabilities,html:accrued-and-other-liabilities,Accrued and other liabilities,28,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash Flows from Investing Activities,29,0
+cash_flow,html:purchases-of-property-and-equipment,html:purchases-of-property-and-equipment,Purchases of property and equipment,30,0
+cash_flow,html:proceeds-from-sale-of-property-and-other-assets,html:proceeds-from-sale-of-property-and-other-assets,Proceeds from sale of property and other assets,34,0
+cash_flow,html:proceeds-from-sale-of-assets,html:proceeds-from-sale-of-assets,Proceeds from sale of assets,35,0
+cash_flow,html:payments-for-acquisition-of-blr-aerospace-l-l-c-net-of-cash-acquired,html:payments-for-acquisition-of-blr-aerospace-l-l-c-net-of-cash-acquired,"Payments for acquisition of BLR Aerospace L.L.C., net of cash acquired",39,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net Cash Used in Investing Activities,40,0
+cash_flow,html:borrowings-from-senior-secured-revolving-credit-facility,html:borrowings-from-senior-secured-revolving-credit-facility,Borrowings from senior secured revolving credit facility,41,0
+cash_flow,html:repayments-of-senior-secured-revolving-credit-facility,html:repayments-of-senior-secured-revolving-credit-facility,Repayments of senior secured revolving credit facility,42,0
+cash_flow,html:borrowings-from-term-loans,html:borrowings-from-term-loans,Borrowings from term loans,43,0
+cash_flow,html:repayments-of-term-loans,html:repayments-of-term-loans,Repayments of term loans,44,0
+cash_flow,html:repayments-of-other-debt,html:repayments-of-other-debt,Repayments of other debt,45,0
+cash_flow,html:debt-issuance-costs,html:debt-issuance-costs,Debt issuance costs,46,0
+cash_flow,html:proceeds-from-issuance-of-common-stock-in-public-offering-net-of-issuance-costs,html:proceeds-from-issuance-of-common-stock-in-public-offering-net-of-issuance-costs,"Proceeds from issuance of common stock in public offering, net of issuance costs",47,0
+cash_flow,html:net-cash-paid-upon-issuance-of-common-stock-under-stock-plans,html:net-cash-paid-upon-issuance-of-common-stock-under-stock-plans,Net cash paid upon issuance of common stock under stock plans,48,0
+cash_flow,html:net-cash-provided-by-used-in-financing-activities,html:net-cash-provided-by-used-in-financing-activities,Net Cash Provided by (Used in) Financing Activities,49,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,Net Increase (Decrease) in Cash and Cash Equivalents,50,0
+cash_flow,html:cash-and-cash-equivalents-at-beginning-of-year,html:cash-and-cash-equivalents-at-beginning-of-year,Cash and Cash Equivalents at Beginning of Year,51,0
+income_statement,html:gain-on-divestitures-net,html:gain-on-divestitures-net,"Gain on Divestitures, Net",8,0
+balance_sheet,html:accounts-receivable-less-allowance-for-doubtful-accounts-of-1-135-and-868-at-december-31-2018-and-2017-respectively,html:accounts-receivable-less-allowance-for-doubtful-accounts-of-1-135-and-868-at-december-31-2018-and-2017-respectively,"Accounts receivable (less allowance for doubtful accounts of $1,135 and $868 at December 31, 2018 and 2017, respectively)",15,0
+balance_sheet,html:non-current-deferred-income-taxes,html:non-current-deferred-income-taxes,Non-Current Deferred Income Taxes,38,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,58,0
+balance_sheet,html:commitments-and-contingencies-notes-13-16,html:commitments-and-contingencies-notes-13-16,"Commitments and Contingencies (Notes 13, 16)",68,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-417-863-and-11-332-841-shares-issued-and-outstanding-at-december-31-2018-and-2017-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-417-863-and-11-332-841-shares-issued-and-outstanding-at-december-31-2018-and-2017-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,417,863 and 11,332,841 shares issued and outstanding at December 31, 2018 and 2017, respectively",74,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,93,0
+cash_flow,html:gain-on-divestitures-net,html:gain-on-divestitures-net,"Gain on divestitures, net",2,0
+cash_flow,html:excess-tax-benefits-from-stock-based-compensation,html:excess-tax-benefits-from-stock-based-compensation,Excess tax benefits from stock-based compensation,8,0
+cash_flow,html:proceeds-from-divestitures,html:proceeds-from-divestitures,Proceeds from divestitures,36,0
+cash_flow,html:payments-for-acquisition-of-lightning-diversion-systems-llc-net-of-cash-acquired,html:payments-for-acquisition-of-lightning-diversion-systems-llc-net-of-cash-acquired,"Payments for acquisition of Lightning Diversion Systems, LLC, net of cash acquired",37,0
+cash_flow,html:payments-for-acquisition-of-certified-thermoplastics-co-llc-net-of-cash-acquired,html:payments-for-acquisition-of-certified-thermoplastics-co-llc-net-of-cash-acquired,"Payments for acquisition of Certified Thermoplastics Co., LLC, net of cash acquired",38,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-1-321-and-1-135-at-december-31-2019-and-2018-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-1-321-and-1-135-at-december-31-2019-and-2018-respectively,"Accounts receivable (net of allowance for doubtful accounts of $1,321 and $1,135 at December 31, 2019 and 2018, respectively)",16,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-572-668-and-11-417-863-shares-issued-and-outstanding-at-december-31-2019-and-2018-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-572-668-and-11-417-863-shares-issued-and-outstanding-at-december-31-2019-and-2018-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,572,668 and 11,417,863 shares issued and outstanding at December 31, 2019 and 2018, respectively",75,0
+cash_flow,html:payments-for-acquisition-of-nobles-worldwide-inc-net-of-cash-acquired,html:payments-for-acquisition-of-nobles-worldwide-inc-net-of-cash-acquired,"Payments for acquisition of Nobles Worldwide, Inc. net of cash acquired",52,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-credit-losses-of-1-552-and-1-321-at-december-31-2020-and-2019-respectively,html:accounts-receivable-net-of-allowance-for-credit-losses-of-1-552-and-1-321-at-december-31-2020-and-2019-respectively,"Accounts receivable (net of allowance for credit losses of $1,552 and $1,321 at December 31, 2020 and 2019, respectively)",17,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and Contingencies,69,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-728-212-and-11-572-668-shares-issued-and-outstanding-at-december-31-2020-and-2019-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-728-212-and-11-572-668-shares-issued-and-outstanding-at-december-31-2020-and-2019-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,728,212 and 11,572,668 shares issued and outstanding at December 31, 2020 and 2019, respectively",76,0
+income_statement,html:gain-on-sale-leaseback,html:gain-on-sale-leaseback,Gain on Sale-Leaseback,10,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-credit-losses-of-1-098-and-1-552-at-december-31-2021-and-2020-respectively,html:accounts-receivable-net-of-allowance-for-credit-losses-of-1-098-and-1-552-at-december-31-2021-and-2020-respectively,"Accounts receivable (net of allowance for credit losses of $1,098 and $1,552 at December 31, 2021 and 2020, respectively)",18,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-925-087-and-11-728-212-shares-issued-and-outstanding-at-december-31-2021-and-2020-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-925-087-and-11-728-212-shares-issued-and-outstanding-at-december-31-2021-and-2020-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,925,087 and 11,728,212 shares issued and outstanding at December 31, 2021 and 2020, respectively",77,0
+balance_sheet,html:common-stock-shares-authorized-in-shares,html:common-stock-shares-authorized-in-shares,"Common stock, shares authorized (in shares)",98,0
+cash_flow,html:gain-on-sale-leaseback,html:gain-on-sale-leaseback,Gain on sale-leaseback,53,0
+cash_flow,html:proceeds-from-sale-leaseback,html:proceeds-from-sale-leaseback,Proceeds from sale-leaseback,31,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-credit-losses-of-589-and-1-098-at-december-31-2022-and-2021-respectively,html:accounts-receivable-net-of-allowance-for-credit-losses-of-589-and-1-098-at-december-31-2022-and-2021-respectively,"Accounts receivable (net of allowance for credit losses of $589 and $1,098 at December 31, 2022 and 2021, respectively)",19,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-12-106-285-and-11-925-087-shares-issued-and-outstanding-at-december-31-2022-and-2021-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-12-106-285-and-11-925-087-shares-issued-and-outstanding-at-december-31-2022-and-2021-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 12,106,285 and 11,925,087 shares issued and outstanding at December 31, 2022 and 2021, respectively",78,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),94,0
+cash_flow,html:post-closing-cash-received-from-payments-for-acquisition-of-magnetic-seal-llc-net-of-cash-acquired,html:post-closing-cash-received-from-payments-for-acquisition-of-magnetic-seal-llc-net-of-cash-acquired,"Post closing cash received from (payments for acquisition of) Magnetic Seal LLC, net of cash acquired",55,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-credit-losses-of-2-006-and-589-at-december-31-2023-and-2022-respectively,html:accounts-receivable-net-of-allowance-for-credit-losses-of-2-006-and-589-at-december-31-2023-and-2022-respectively,"Accounts receivable (net of allowance for credit losses of $2,006 and $589 at December 31, 2023 and 2022, respectively)",20,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-14-600-766-and-12-106-285-shares-issued-and-outstanding-at-december-31-2023-and-2022-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-14-600-766-and-12-106-285-shares-issued-and-outstanding-at-december-31-2023-and-2022-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 14,600,766 and 12,106,285 shares issued and outstanding at December 31, 2023 and 2022, respectively",79,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-credit-losses-of-2-630-and-2-006-at-december-31-2024-and-2023-respectively,html:accounts-receivable-net-of-allowance-for-credit-losses-of-2-630-and-2-006-at-december-31-2024-and-2023-respectively,"Accounts receivable (net of allowance for credit losses of $2,630 and $2,006 at December 31, 2024 and 2023, respectively)",21,0
+balance_sheet,html:commitments-and-contingencies-notes-14-16,html:commitments-and-contingencies-notes-14-16,"Commitments and Contingencies (Notes 14, 16)",70,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-14-781-218-and-14-600-766-shares-issued-and-outstanding-at-december-31-2024-and-2023-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-14-781-218-and-14-600-766-shares-issued-and-outstanding-at-december-31-2024-and-2023-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 14,781,218 and 14,600,766 shares issued and outstanding at December 31, 2024 and 2023, respectively",80,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-1-239-and-1-135-at-march-30-2019-and-december-31-2018-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-1-239-and-1-135-at-march-30-2019-and-december-31-2018-respectively,"Accounts receivable, net of allowance for doubtful accounts of $1,239 and $1,135 at March 30, 2019 and December 31, 2018, respectively",22,0
+balance_sheet,html:property-and-equipment-net-of-accumulated-depreciation-of-158-308-and-154-840-at-march-30-2019-and-december-31-2018-respectively,html:property-and-equipment-net-of-accumulated-depreciation-of-158-308-and-154-840-at-march-30-2019-and-december-31-2018-respectively,"Property and equipment, net of accumulated depreciation of $158,308 and $154,840 at March 30, 2019 and December 31, 2018, respectively",31,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and Shareholders’ Equity,42,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,63,0
+balance_sheet,html:commitments-and-contingencies-notes-10-12,html:commitments-and-contingencies-notes-10-12,"Commitments and contingencies (Notes 10, 12)",71,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-477-771-and-11-417-863-shares-issued-and-outstanding-at-march-30-2019-and-december-31-2018-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-477-771-and-11-417-863-shares-issued-and-outstanding-at-march-30-2019-and-december-31-2018-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,477,771 and 11,417,863 shares issued and outstanding at March 30, 2019 and December 31, 2018, respectively",81,0
+cash_flow,html:amortization-of-right-of-use-assets,html:amortization-of-right-of-use-assets,Amortization of right-of-use assets,3,0
+balance_sheet,html:restricted-cash,html:restricted-cash,Restricted cash,23,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-744-and-1-135-at-june-29-2019-and-december-31-2018-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-744-and-1-135-at-june-29-2019-and-december-31-2018-respectively,"Accounts receivable, net of allowance for doubtful accounts of $744 and $1,135 at June 29, 2019 and December 31, 2018, respectively",24,0
+balance_sheet,html:property-and-equipment-net-of-accumulated-depreciation-of-161-655-and-154-840-at-june-29-2019-and-december-31-2018-respectively,html:property-and-equipment-net-of-accumulated-depreciation-of-161-655-and-154-840-at-june-29-2019-and-december-31-2018-respectively,"Property and equipment, net of accumulated depreciation of $161,655 and $154,840 at June 29, 2019 and December 31, 2018, respectively",32,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-526-138-and-11-417-863-shares-issued-and-outstanding-at-june-29-2019-and-december-31-2018-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-526-138-and-11-417-863-shares-issued-and-outstanding-at-june-29-2019-and-december-31-2018-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,526,138 and 11,417,863 shares issued and outstanding at June 29, 2019 and December 31, 2018, respectively",82,0
+cash_flow,html:recovery-of-doubtful-accounts,html:recovery-of-doubtful-accounts,Recovery of doubtful accounts,9,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-896-and-1-135-at-september-28-2019-and-december-31-2018-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-896-and-1-135-at-september-28-2019-and-december-31-2018-respectively,"Accounts receivable, net of allowance for doubtful accounts of $896 and $1,135 at September 28, 2019 and December 31, 2018, respectively",99,0
+balance_sheet,html:property-and-equipment-net-of-accumulated-depreciation-of-164-907-and-154-840-at-september-28-2019-and-december-31-2018-respectively,html:property-and-equipment-net-of-accumulated-depreciation-of-164-907-and-154-840-at-september-28-2019-and-december-31-2018-respectively,"Property and equipment, net of accumulated depreciation of $164,907 and $154,840 at September 28, 2019 and December 31, 2018, respectively",33,0
+balance_sheet,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-561-987-and-11-417-863-shares-issued-and-outstanding-at-september-28-2019-and-december-31-2018-respectively,html:common-stock-0-01-par-value-35-000-000-shares-authorized-11-561-987-and-11-417-863-shares-issued-and-outstanding-at-september-28-2019-and-december-31-2018-respectively,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,561,987 and 11,417,863 shares issued and outstanding at September 28, 2019 and December 31, 2018, respectively",83,0
+cash_flow,html:recovery-of-provision-for-doubtful-accounts,html:recovery-of-provision-for-doubtful-accounts,(Recovery of) provision for doubtful accounts,10,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net (allowance for credit losses of $1,418 and $1,321 at March 28, 2020 and December 31, 2019, respectively)",1,0
+balance_sheet,us-gaap:ContractWithCustomerAssetNetCurrent,us-gaap:ContractWithCustomerAssetNetCurrent,Contract assets,2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,3,0
+balance_sheet,dco:ProductionCostOfContractsCurrent,dco:ProductionCostOfContractsCurrent,Production cost of contracts,4,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,5,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total Current Assets,6,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and Equipment, Net of Accumulated Depreciation of $158,711 and $162,920 at March 28, 2020 and December 31, 2019, respectively",7,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating Lease Right-of-Use Assets,8,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,9,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangibles, Net",10,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Non-Current Deferred Income Taxes,11,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other Assets,12,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,13,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,44,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Contract liabilities,45,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued and other liabilities,46,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Operating lease liabilities,47,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term debt,48,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total Current Liabilities,49,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,"Long-Term Debt, Less Current Portion",50,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Non-Current Operating Lease Liabilities,51,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Non-Current Deferred Income Taxes,52,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other Long-Term Liabilities,53,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total Liabilities,54,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,"Commitments and Contingencies (Notes 9, 11)",55,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock - $0.01 par value; 35,000,000 shares authorized; 11,648,617 and 11,572,668 shares issued and outstanding at March 28, 2020 and December 31, 2019, respectively",84,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,85,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,86,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,87,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Shareholders’ Equity,88,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total Liabilities and Shareholders’ Equity,89,0
+cash_flow,us-gaap:ProceedsFromPreviousAcquisition,us-gaap:ProceedsFromPreviousAcquisition,"Post closing cash received from the acquisition of Nobles Worldwide, Inc., net",32,0
+cash_flow,us-gaap:FinancingReceivableAllowanceForCreditLossesRecovery,us-gaap:FinancingReceivableAllowanceForCreditLossesRecovery,Recovery of credit losses,11,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,100,0
+balance_sheet,us-gaap:LongTermDebt,us-gaap:LongTermDebt,"Long-Term Debt, Less Current Portion",101,0
+cash_flow,us-gaap:ProceedsFromInsuranceSettlementOperatingActivities,us-gaap:ProceedsFromInsuranceSettlementOperatingActivities,Insurance recoveries related to loss on operating assets,13,0
+cash_flow,us-gaap:ProceedsFromInsuranceSettlementInvestingActivities,us-gaap:ProceedsFromInsuranceSettlementInvestingActivities,Insurance recoveries related to property and equipment,33,0
+cash_flow,us-gaap:ProceedsFromLifeInsurancePolicies,us-gaap:ProceedsFromLifeInsurancePolicies,Proceeds from life insurance,54,0

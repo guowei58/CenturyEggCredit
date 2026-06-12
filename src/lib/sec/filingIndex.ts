@@ -258,6 +258,9 @@ export function scoreExhibit99HtmlFilename(name: string): number {
   if (/^er\.(?:htm|html)$/i.test(l)) s += 48;
   /** `earnings4thqtr.htm`, `earnings1qtr08.htm` — `qtr` often glued to digits so `\bqtr\b` would miss. */
   if (/\bearnings/i.test(l) && /qtr/i.test(l)) s += 58;
+  /** `q3_fy26quarterlyearnings.htm` and similar issuer-named quarterly earnings HTML. */
+  if (/quarterlyearnings|quarterly_earnings/i.test(l.replace(/[_\s-]/g, ""))) s += 62;
+  if (/q[1-4].*earnings|earnings.*q[1-4]/i.test(l)) s += 56;
   /**
    * Workiva / issuer-styled EX-99.1 HTML with **no** `exhibit` / `ex99` substring — e.g. `rexrex991q1-2026.htm`,
    * `issuer992q3-2025.htm` (`99` + exhibit number + fiscal quarter). Without this, {@link rankExhibit99HtmlFilenames}
@@ -271,6 +274,31 @@ export function scoreExhibit99HtmlFilename(name: string): number {
  * True when HTML looks like the short **Form 8-K cover / item index** page (not the Exhibit 99 press body).
  * Used to skip the primary doc when it is technically the “earnings” filename but renders the SEC shell only.
  */
+/**
+ * True when the Form 8-K **primary** HTML only indexes / links to a separate Exhibit 99 earnings attachment
+ * (common Workiva iXBRL: Item 2.02 prose + exhibit table with `href="…quarterlyearnings.htm"`).
+ * The primary must not be shown as the press-release body when a ranked Exhibit 99 HTML exists.
+ */
+export function html8KPrimaryDefersEarningsToExhibitAttachment(html: string): boolean {
+  if (!html || html.length < 400) return false;
+  const chunk = html.slice(0, 140_000);
+  if (
+    /-sec-extract:\s*exhibit/i.test(chunk) &&
+    /<a\b[^>]*href\s*=\s*["'][^"']+\.(?:htm|html)["']/i.test(chunk)
+  ) {
+    return true;
+  }
+  let t = chunk
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ");
+  t = t.replace(/&#160;|&nbsp;|&#xA0;/gi, " ");
+  t = t.replace(/<[^>]+>/g, " ");
+  t = t.replace(/\s+/g, " ").trim();
+  if (/\bfurnished\s+as\s+exhibit\s+99(?:\.\d+)?\b/i.test(t)) return true;
+  if (/\bfull\s+text\s+of\s+the\s+earnings\b/i.test(t) && /\bexhibit\s+99(?:\.\d+)?\b/i.test(t)) return true;
+  return false;
+}
+
 export function looksLike8kFormCoverShellHtml(html: string): boolean {
   if (!html || html.length < 400 || html.length > 85_000) return false;
   if (detectItem202In8KPrimaryHtml(html)) return false;

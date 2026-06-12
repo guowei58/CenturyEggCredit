@@ -1,0 +1,198 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:net-sales,html:net-sales,Net sales,0,0
+income_statement,html:cost-of-goods-sold,html:cost-of-goods-sold,Cost of goods sold,1,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,2,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",3,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,4,0
+income_statement,html:asset-impairments,html:asset-impairments,Asset impairments,6,0
+income_statement,html:operating-profit,html:operating-profit,Operating profit,7,0
+income_statement,html:interest-and-financing-charges-net,html:interest-and-financing-charges-net,"Interest and financing charges, net",9,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,Income before income taxes,10,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,11,0
+income_statement,html:net-income-loss,html:net-income-loss,Net income (loss),12,0
+income_statement,html:basic,html:basic,Basic:,14,0
+income_statement,html:net-income-per-common-share,html:net-income-per-common-share,Net income per common share,15,0
+income_statement,html:weighted-average-number-of-shares-outstanding-in-shares,html:weighted-average-number-of-shares-outstanding-in-shares,Weighted average number of shares outstanding (in shares),16,0
+income_statement,html:diluted,html:diluted,Diluted:,17,0
+income_statement,html:net-income,html:net-income,Net income,18,0
+income_statement,html:other-comprehensive-income,html:other-comprehensive-income,Other comprehensive income:,19,0
+income_statement,html:foreign-currency-translation-adjustments,html:foreign-currency-translation-adjustments,Foreign currency translation adjustments,20,0
+income_statement,html:comprehensive-income,html:comprehensive-income,Comprehensive income,21,0
+income_statement,html:1-certain-reclassifications-have-been-made-between-the-wholesale-operations-segment-and-the-elimination-column-as-a-result-of-sales-eliminations-within-the-wholesale-operations-segment-being-misclassified-as-inter-segment-eliminations,html:1-certain-reclassifications-have-been-made-between-the-wholesale-operations-segment-and-the-elimination-column-as-a-result-of-sales-eliminations-within-the-wholesale-operations-segment-being-misclassified-as-inter-segment-eliminations,[1] Certain reclassifications have been made between the wholesale operations segment and the elimination column as a result of sales eliminations within the wholesale operations segment being misclassified as inter-segment eliminations.,24,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,15,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-0-9-million-and-2-1-million-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-0-9-million-and-2-1-million-respectively,"Accounts receivable, net of allowance for doubtful accounts of $0.9 million and $2.1 million, respectively",24,0
+balance_sheet,html:inventories,html:inventories,Inventories,25,0
+balance_sheet,html:prepaid-income-taxes,html:prepaid-income-taxes,Prepaid income taxes,26,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,27,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,28,0
+balance_sheet,html:investments-in-unconsolidated-affiliates,html:investments-in-unconsolidated-affiliates,Investments in unconsolidated affiliates,29,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",30,0
+balance_sheet,html:other-assets-net,html:other-assets-net,"Other assets, net",32,0
+balance_sheet,html:other-intangibles-net,html:other-intangibles-net,"Other intangibles, net",33,0
+balance_sheet,html:deferred-income-tax-assets-net,html:deferred-income-tax-assets-net,"Deferred income tax assets, net",34,0
+balance_sheet,html:trademarks,html:trademarks,Trademarks,35,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,36,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,37,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,39,0
+balance_sheet,html:income-tax-payable,html:income-tax-payable,Income tax payable,53,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,54,0
+balance_sheet,html:accrued-expenses,html:accrued-expenses,Accrued expenses,55,0
+balance_sheet,html:customer-refund-liability,html:customer-refund-liability,Customer refund liability,60,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,61,0
+balance_sheet,html:notes-payable-net-of-discount-and-unamortized-issuance-costs,html:notes-payable-net-of-discount-and-unamortized-issuance-costs,"Notes payable, net of discount and unamortized issuance costs",62,0
+balance_sheet,html:deferred-income-tax-liabilities-net,html:deferred-income-tax-liabilities-net,"Deferred income tax liabilities, net",63,0
+balance_sheet,html:other-non-current-liabilities,html:other-non-current-liabilities,Other non-current liabilities,65,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,66,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders' Equity,68,0
+balance_sheet,html:preferred-stock-1-000-shares-authorized-no-shares-issued,html:preferred-stock-1-000-shares-authorized-no-shares-issued,"Preferred stock; 1,000 shares authorized; no shares issued",71,0
+balance_sheet,html:common-stock-0-01-par-value-120-000-shares-authorized-49-387-and-49-219-shares-issued-respectively,html:common-stock-0-01-par-value-120-000-shares-authorized-49-387-and-49-219-shares-issued-respectively,"Common stock - $0.01 par value; 120,000 shares authorized; 49,387 and 49,219 shares issued, respectively",81,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,82,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,84,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,85,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-678-and-106-shares-respectively,html:common-stock-held-in-treasury-at-cost-678-and-106-shares-respectively,"Common stock held in treasury, at cost - 678 and 106 shares, respectively",94,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,95,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders' equity,97,0
+balance_sheet,html:1-also-net-of-accrued-returns-of-61-2-million-and-sales-discounts-of-102-1-million,html:1-also-net-of-accrued-returns-of-61-2-million-and-sales-discounts-of-102-1-million,"[1] Also, net of accrued returns of $61.2 million and sales discounts of $102.1 million",98,0
+balance_sheet,html:1,html:1,[1],99,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-used-in-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-used-in-operating-activities,Adjustments to reconcile net income to net cash used in operating activities:,1,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,2,0
+cash_flow,html:asset-impairments,html:asset-impairments,Asset impairments,3,0
+cash_flow,html:dividend-received-from-unconsolidated-affiliate,html:dividend-received-from-unconsolidated-affiliate,Dividend received from unconsolidated affiliate,4,0
+cash_flow,html:equity-loss-in-unconsolidated-affiliates,html:equity-loss-in-unconsolidated-affiliates,Equity loss in unconsolidated affiliates,5,0
+cash_flow,html:share-based-compensation,html:share-based-compensation,Share-based compensation,7,0
+cash_flow,html:deferred-financing-charges-and-debt-discount-amortization,html:deferred-financing-charges-and-debt-discount-amortization,Deferred financing charges and debt discount amortization,8,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,10,0
+cash_flow,html:loss-on-disposal-of-fixed-assets,html:loss-on-disposal-of-fixed-assets,Loss on disposal of fixed assets,13,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,16,0
+cash_flow,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",17,0
+cash_flow,html:inventories,html:inventories,Inventories,18,0
+cash_flow,html:income-taxes-net,html:income-taxes-net,"Income taxes, net",19,0
+cash_flow,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,20,0
+cash_flow,html:other-assets-net,html:other-assets-net,"Other assets, net",21,0
+cash_flow,html:customer-refund-liabilities,html:customer-refund-liabilities,Customer refund liabilities,22,0
+cash_flow,html:accounts-payable-accrued-expenses-and-other-liabilities,html:accounts-payable-accrued-expenses-and-other-liabilities,"Accounts payable, accrued expenses and other liabilities",25,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities,26,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures,28,0
+cash_flow,html:investment-in-unconsolidated-affiliates,html:investment-in-unconsolidated-affiliates,Investment in unconsolidated affiliates,30,0
+cash_flow,html:return-of-capital-from-unconsolidated-affiliate,html:return-of-capital-from-unconsolidated-affiliate,Return of capital from unconsolidated affiliate,33,0
+cash_flow,html:proceeds-from-sale-of-a-retail-store,html:proceeds-from-sale-of-a-retail-store,Proceeds from sale of a retail store,34,0
+cash_flow,html:acquisition-net-of-cash-acquired,html:acquisition-net-of-cash-acquired,"Acquisition, net of cash acquired",35,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,36,0
+cash_flow,html:proceeds-from-term-loan-net,html:proceeds-from-term-loan-net,"Proceeds from term loan, net",37,0
+cash_flow,html:repayment-of-borrowings-revolving-facility,html:repayment-of-borrowings-revolving-facility,Repayment of borrowings - revolving facility,38,0
+cash_flow,html:proceeds-from-borrowings-revolving-facility,html:proceeds-from-borrowings-revolving-facility,Proceeds from borrowings - revolving facility,39,0
+cash_flow,html:proceeds-from-exercise-of-equity-awards,html:proceeds-from-exercise-of-equity-awards,Proceeds from exercise of equity awards,44,0
+cash_flow,html:purchase-of-treasury-shares,html:purchase-of-treasury-shares,Purchase of treasury shares,45,0
+cash_flow,html:taxes-paid-for-net-share-settlements,html:taxes-paid-for-net-share-settlements,Taxes paid for net share settlements,46,0
+cash_flow,html:net-cash-provided-by-used-in-financing-activities,html:net-cash-provided-by-used-in-financing-activities,Net cash provided by (used in) financing activities,47,0
+cash_flow,html:foreign-currency-translation-adjustments,html:foreign-currency-translation-adjustments,Foreign currency translation adjustments,48,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,Net increase (decrease) in cash and cash equivalents,49,0
+cash_flow,html:cash-and-cash-equivalents-at-beginning-of-period,html:cash-and-cash-equivalents-at-beginning-of-period,Cash and cash equivalents at beginning of period,50,0
+cash_flow,html:cash-payments,html:cash-payments,Cash payments:,52,0
+cash_flow,html:interest-net,html:interest-net,"Interest, net",53,0
+cash_flow,html:income-tax-payments-net,html:income-tax-payments-net,"Income tax payments, net",54,0
+cash_flow,html:non-cash-investing-and-financing-activities,html:non-cash-investing-and-financing-activities,Non-cash investing and financing activities:,57,0
+cash_flow,html:shares-of-common-stock-issued-to-lvmh-in-connection-with-the-acquisition-of-dki,html:shares-of-common-stock-issued-to-lvmh-in-connection-with-the-acquisition-of-dki,Shares of common stock issued to LVMH in connection with the acquisition of DKI,58,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-0-7-million-and-0-9-million-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-0-7-million-and-0-9-million-respectively,"Accounts receivable, net of allowance for doubtful accounts of $0.7 million and $0.9 million, respectively",16,0
+balance_sheet,html:operating-lease-assets,html:operating-lease-assets,Operating lease assets,31,0
+balance_sheet,html:customer-refund-liabilities,html:customer-refund-liabilities,Customer refund liabilities,56,0
+balance_sheet,html:current-operating-lease-liabilities,html:current-operating-lease-liabilities,Current operating lease liabilities,57,0
+balance_sheet,html:current-portion-of-notes-payable,html:current-portion-of-notes-payable,Current portion of notes payable,58,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,59,0
+balance_sheet,html:noncurrent-operating-lease-liabilities,html:noncurrent-operating-lease-liabilities,Noncurrent operating lease liabilities,64,0
+balance_sheet,html:preferred-stock-1-000-shares-authorized-no-shares-issued-and-outstanding,html:preferred-stock-1-000-shares-authorized-no-shares-issued-and-outstanding,"Preferred stock; 1,000 shares authorized; no shares issued and outstanding",69,0
+balance_sheet,html:common-stock-0-01-par-value-120-000-shares-authorized-49-396-and-49-387-shares-issued-respectively,html:common-stock-0-01-par-value-120-000-shares-authorized-49-396-and-49-387-shares-issued-respectively,"Common stock - $0.01 par value; 120,000 shares authorized; 49,396 and 49,387 shares issued, respectively",70,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-1-386-and-678-shares-respectively,html:common-stock-held-in-treasury-at-cost-1-386-and-678-shares-respectively,"Common stock held in treasury, at cost - 1,386 and 678 shares, respectively",86,0
+income_statement,html:net-loss,html:net-loss,Net loss,22,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-17-5-million-and-0-7-million-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-17-5-million-and-0-7-million-respectively,"Accounts receivable, net of allowance for doubtful accounts of $17.5 million and $0.7 million, respectively",17,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,100,0
+balance_sheet,html:redeemable-noncontrolling-interests,html:redeemable-noncontrolling-interests,Redeemable noncontrolling interests,67,0
+balance_sheet,html:common-stock-0-01-par-value-120-000-shares-authorized-49-396-and-49-396-shares-issued-respectively,html:common-stock-0-01-par-value-120-000-shares-authorized-49-396-and-49-396-shares-issued-respectively,"Common stock - $0.01 par value; 120,000 shares authorized; 49,396 and 49,396 shares issued, respectively",72,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-1-019-and-1-386-shares-respectively,html:common-stock-held-in-treasury-at-cost-1-019-and-1-386-shares-respectively,"Common stock held in treasury, at cost - 1,019 and 1,386 shares, respectively",87,0
+balance_sheet,html:total-liabilities-redeemable-noncontrolling-interests-and-stockholders-equity,html:total-liabilities-redeemable-noncontrolling-interests-and-stockholders-equity,"Total liabilities, redeemable noncontrolling interests and stockholders' equity",96,0
+cash_flow,html:extinguishment-of-deferred-financing-costs,html:extinguishment-of-deferred-financing-costs,Extinguishment of deferred financing costs,9,0
+cash_flow,html:non-cash-gains-recorded-in-conjunction-with-fabco-acquisition,html:non-cash-gains-recorded-in-conjunction-with-fabco-acquisition,Non-cash gains recorded in conjunction with Fabco acquisition,11,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-17-4-million-and-17-5-million-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-17-4-million-and-17-5-million-respectively,"Accounts receivable, net of allowance for doubtful accounts of $17.4 million and $17.5 million, respectively",18,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-1-480-and-1-019-shares-respectively,html:common-stock-held-in-treasury-at-cost-1-480-and-1-019-shares-respectively,"Common stock held in treasury, at cost - 1,480 and 1,019 shares, respectively",88,0
+cash_flow,html:minority-investment-in-e-commerce-retailer,html:minority-investment-in-e-commerce-retailer,Minority investment in e-commerce retailer,59,0
+cash_flow,html:sale-of-portion-of-investment-in-e-commerce-retailer,html:sale-of-portion-of-investment-in-e-commerce-retailer,Sale of portion of investment in e-commerce retailer,64,0
+cash_flow,html:repayment-of-loan-from-acquired-brand,html:repayment-of-loan-from-acquired-brand,Repayment of loan from acquired brand,60,0
+income_statement,html:comprehensive-loss-attributable-to-noncontrolling-interests,html:comprehensive-loss-attributable-to-noncontrolling-interests,Comprehensive loss attributable to noncontrolling interests:,23,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-18-3-million-and-17-4-million-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-18-3-million-and-17-4-million-respectively,"Accounts receivable, net of allowance for doubtful accounts of $18.3 million and $17.4 million, respectively",19,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-2-680-and-1-480-shares-respectively,html:common-stock-held-in-treasury-at-cost-2-680-and-1-480-shares-respectively,"Common stock held in treasury, at cost - 2,680 and 1,480 shares, respectively",89,0
+cash_flow,html:non-cash-gain-on-fair-value-of-prior-minority-ownership-of-karl-lagerfeld,html:non-cash-gain-on-fair-value-of-prior-minority-ownership-of-karl-lagerfeld,Non-cash gain on fair value of prior minority ownership of Karl Lagerfeld,12,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-1-471-and-18-297-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-1-471-and-18-297-respectively,"Accounts receivable, net of allowance for doubtful accounts of $1,471 and $18,297, respectively",20,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-3-668-and-2-680-shares-respectively,html:common-stock-held-in-treasury-at-cost-3-668-and-2-680-shares-respectively,"Common stock held in treasury, at cost - 3,668 and 2,680 shares, respectively",90,0
+cash_flow,html:repayment-of-borrowings-lvmh-note,html:repayment-of-borrowings-lvmh-note,Repayment of borrowings - LVMH Note,66,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-7-588-and-1-471-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-7-588-and-1-471-respectively,"Accounts receivable, net of allowance for doubtful accounts of $7,588 and $1,471, respectively",21,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-5-509-and-3-668-shares-respectively,html:common-stock-held-in-treasury-at-cost-5-509-and-3-668-shares-respectively,"Common stock held in treasury, at cost - 5,509 and 3,668 shares, respectively",91,0
+cash_flow,html:repayment-of-borrowings-senior-secured-notes,html:repayment-of-borrowings-senior-secured-notes,Repayment of borrowings - senior secured notes,40,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-19-038-and-7-588-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-19-038-and-7-588-respectively,"Accounts receivable, net of allowance for doubtful accounts of $19,038 and $7,588, respectively",22,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),83,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-7-206-and-5-509-shares-respectively,html:common-stock-held-in-treasury-at-cost-7-206-and-5-509-shares-respectively,"Common stock held in treasury, at cost - 7,206 and 5,509 shares, respectively",92,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts,html:accounts-receivable-net-of-allowance-for-doubtful-accounts,"Accounts receivable, net of allowance for doubtful accounts",23,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS' EQUITY,38,0
+balance_sheet,html:common-stock-0-01-par-value-120-000-shares-authorized-49-393-49-225-and-49-387-shares-issued-respectively,html:common-stock-0-01-par-value-120-000-shares-authorized-49-393-49-225-and-49-387-shares-issued-respectively,"Common stock - $0.01 par value; 120,000 shares authorized; 49,393, 49,225 and, 49,387 shares issued, respectively",73,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-470-72-and-678-shares-respectively,html:common-stock-held-in-treasury-at-cost-470-72-and-678-shares-respectively,"Common stock held in treasury, at cost - 470, 72 and 678 shares, respectively",93,0
+cash_flow,html:supplemental-disclosures-of-cash-flow-information,html:supplemental-disclosures-of-cash-flow-information,Supplemental disclosures of cash flow information,51,0
+income_statement,giii:GainLossFromLeaseAgreementModifications,giii:GainLossFromLeaseAgreementModifications,Gain on lease terminations,5,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Other loss,8,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net of allowance for doubtful accounts",1,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,2,0
+balance_sheet,us-gaap:PrepaidTaxes,us-gaap:PrepaidTaxes,Prepaid income taxes,3,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Investments in unconsolidated affiliates,6,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",7,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,8,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,"Other assets, net",9,0
+balance_sheet,us-gaap:OtherIntangibleAssetsNet,us-gaap:OtherIntangibleAssetsNet,"Other intangibles, net",10,0
+balance_sheet,us-gaap:DeferredTaxAssetsNet,us-gaap:DeferredTaxAssetsNet,"Deferred income tax assets, net",11,0
+balance_sheet,giii:FiniteLivedTrademarksNet,giii:FiniteLivedTrademarksNet,Trademarks,12,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,13,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,14,0
+balance_sheet,us-gaap:TaxesPayableCurrent,us-gaap:TaxesPayableCurrent,Income tax payable,40,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,41,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued expenses,42,0
+balance_sheet,us-gaap:CustomerRefundLiabilityCurrent,us-gaap:CustomerRefundLiabilityCurrent,Customer refund liabilities,43,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Current operating lease liabilities,44,0
+balance_sheet,us-gaap:NotesPayableCurrent,us-gaap:NotesPayableCurrent,Current portion of notes payable,45,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,46,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,47,0
+balance_sheet,us-gaap:LongTermNotesPayable,us-gaap:LongTermNotesPayable,"Notes payable, net of discount and unamortized issuance costs",48,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,"Deferred income tax liabilities, net",49,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Noncurrent operating lease liabilities,50,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,51,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,52,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock - $0.01 par value; 120,000 shares authorized; 49,394, 49,238 and, 49,387 shares issued, respectively",74,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,75,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,76,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,77,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Common stock held in treasury, at cost - 1,649, 59 and 678 shares, respectively",78,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders' equity,79,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders' equity,80,0
+cash_flow,giii:IncreaseDecreaseInOperatingLeaseAsset,giii:IncreaseDecreaseInOperatingLeaseAsset,Non-cash operating lease costs,14,0
+cash_flow,giii:GainLossFromLeaseAgreementModifications,giii:GainLossFromLeaseAgreementModifications,Gain on lease terminations,15,0
+cash_flow,giii:IncreaseDecreaseInOperatingLeaseLiability,giii:IncreaseDecreaseInOperatingLeaseLiability,Operating lease liabilities,23,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Operating lease assets initial direct costs,27,0
+cash_flow,us-gaap:RepaymentsOfUnsecuredDebt,us-gaap:RepaymentsOfUnsecuredDebt,Repayment of borrowings - unsecured term loan,41,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfUnsecuredDebt,us-gaap:ProceedsFromIssuanceOfUnsecuredDebt,Proceeds from borrowings - unsecured term loan,42,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,"Deferred income tax assets, net",101,0
+balance_sheet,us-gaap:IndefiniteLivedTrademarks,us-gaap:IndefiniteLivedTrademarks,Trademarks,102,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfSeniorLongTermDebt,us-gaap:ProceedsFromIssuanceOfSeniorLongTermDebt,Proceeds from borrowings - senior secured notes,61,0
+cash_flow,us-gaap:PaymentsOfFinancingCosts,us-gaap:PaymentsOfFinancingCosts,Payment of financing costs,65,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Less: Income attributable to noncontrolling interests,13,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,Redeemable noncontrolling interests,103,0
+cash_flow,giii:ChangeInFairValueOfEquityInvestment,giii:ChangeInFairValueOfEquityInvestment,Change in fair value of equity investment,6,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,Investment in brand acquisition,29,0
+cash_flow,us-gaap:OtherSignificantNoncashTransactionValueOfConsiderationReceived1,us-gaap:OtherSignificantNoncashTransactionValueOfConsiderationReceived1,Stock received from licensing agreement,55,0
+cash_flow,us-gaap:IncreaseDecreaseInOperatingLeaseLiability,us-gaap:IncreaseDecreaseInOperatingLeaseLiability,Operating lease liabilities,24,0
+cash_flow,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,Investment in equity securities,31,0
+balance_sheet,us-gaap:TreasuryStockCommonValue,us-gaap:TreasuryStockCommonValue,"Common stock held in treasury, at cost - 1,907, 827 and 1,480 shares, respectively",104,0
+cash_flow,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,Sale of equity securities,62,0
+cash_flow,us-gaap:PaymentsToAcquireOtherInvestments,us-gaap:PaymentsToAcquireOtherInvestments,Investment in equity interest of private company,32,0
+cash_flow,us-gaap:ProceedsFromSaleOfProductiveAssets,us-gaap:ProceedsFromSaleOfProductiveAssets,Proceeds from sale of assets,63,0
+cash_flow,giii:ExciseTaxOnStockRepurchases,giii:ExciseTaxOnStockRepurchases,Excise tax liability related to stock repurchases,56,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Dividends paid on common stock,43,0

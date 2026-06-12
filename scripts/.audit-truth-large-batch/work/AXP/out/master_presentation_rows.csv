@@ -1,0 +1,73 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,us-gaap:CashAndDueFromBanks,us-gaap:CashAndDueFromBanks,"Cash and due from banks (includes restricted cash of consolidated variable interest entities: 2026, $6; 2025, nil)",14,0
+balance_sheet,us-gaap:InterestBearingDepositsInBanks,us-gaap:InterestBearingDepositsInBanks,"Interest-bearing deposits in other banks (includes restricted interest-bearing deposits of consolidated variable interest entities: 2026, $19; 2025, nil)",15,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,"Short-term investment securities (includes restricted investments of consolidated variable interest entities: 2026, $85; 2025, $84)",18,0
+balance_sheet,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Total cash and cash equivalents (includes restricted cash: 2026, $199; 2025, $169)",19,0
+balance_sheet,us-gaap:NotesReceivableNet,us-gaap:NotesReceivableNet,"Card balances (includes gross amounts available to settle obligations of consolidated variable interest entities: 2026, $33,386; 2025, $33,378), less reserves for credit losses: 2026, $6,065; 2025, $6,089",20,0
+balance_sheet,us-gaap:LoansReceivableHeldForSaleAmount,us-gaap:LoansReceivableHeldForSaleAmount,Card balances held for sale,22,0
+balance_sheet,axp:DebtAndEquitySecuritiesAvailableForSale,axp:DebtAndEquitySecuritiesAvailableForSale,Investment securities,23,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Premises and equipment, less accumulated depreciation and amortization: 2026, $12,441; 2025, $12,039",24,0
+balance_sheet,us-gaap:OtherAssets,us-gaap:OtherAssets,"Other assets, less reserves for credit losses: 2026, $121; 2025, $86",25,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,26,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and Shareholders’ Equity,27,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities,28,0
+balance_sheet,us-gaap:Deposits,us-gaap:Deposits,Customer deposits,37,0
+balance_sheet,us-gaap:AccountsPayableCurrentAndNoncurrent,us-gaap:AccountsPayableCurrentAndNoncurrent,Accounts payable,39,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term borrowings,40,0
+balance_sheet,us-gaap:LongTermDebt,us-gaap:LongTermDebt,"Long-term debt (includes debt issued by consolidated variable interest entities: 2026, $13,278; 2025, $13,022)",41,0
+balance_sheet,us-gaap:OtherLiabilities,us-gaap:OtherLiabilities,Other liabilities,42,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,43,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Contingencies (Note 7),44,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ Equity,45,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred shares, $1.662/3 par value, authorized 20 million shares; issued and outstanding 1,600 shares as of March 31, 2026 and December 31, 2025",57,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common shares, $0.20 par value, authorized 3.6 billion shares; issued and outstanding 682 million shares as of March 31, 2026 and 686 million shares as of December 31, 2025",58,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,59,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,60,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),62,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total shareholders’ equity,63,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and shareholders’ equity,64,0
+balance_sheet,html:cash-and-due-from-banks,html:cash-and-due-from-banks,Cash and due from banks,0,0
+balance_sheet,html:interest-bearing-deposits-in-other-banks-includes-securities-purchased-under-resale-agreements-2019-308-2018-64,html:interest-bearing-deposits-in-other-banks-includes-securities-purchased-under-resale-agreements-2019-308-2018-64,"Interest-bearing deposits in other banks (includes securities purchased under resale agreements: 2019, $308; 2018, $64)",1,0
+balance_sheet,html:short-term-investment-securities,html:short-term-investment-securities,Short-term investment securities,2,0
+balance_sheet,html:total-cash-and-cash-equivalents,html:total-cash-and-cash-equivalents,Total cash and cash equivalents,3,0
+balance_sheet,html:accounts-receivable,html:accounts-receivable,Accounts receivable,4,0
+balance_sheet,html:card-member-receivables-includes-gross-receivables-available-to-settle-obligations-of-a-consolidated-variable-interest-entity-2019-7-758-2018-8-539-less-reserves-2019-608-2018-573,html:card-member-receivables-includes-gross-receivables-available-to-settle-obligations-of-a-consolidated-variable-interest-entity-2019-7-758-2018-8-539-less-reserves-2019-608-2018-573,"Card Member receivables (includes gross receivables available to settle obligations of a consolidated variable interest entity: 2019, $7,758; 2018, $8,539), less reserves: 2019, $608; 2018, $573",5,0
+balance_sheet,html:other-receivables-less-reserves-2019-25-2018-25,html:other-receivables-less-reserves-2019-25-2018-25,"Other receivables, less reserves: 2019, $25; 2018, $25",6,0
+balance_sheet,html:loans,html:loans,Loans,7,0
+balance_sheet,html:card-member-loans-includes-gross-loans-available-to-settle-obligations-of-a-consolidated-variable-interest-entity-2019-31-495-2018-33-194-less-reserves-2019-2-121-2018-2-134,html:card-member-loans-includes-gross-loans-available-to-settle-obligations-of-a-consolidated-variable-interest-entity-2019-31-495-2018-33-194-less-reserves-2019-2-121-2018-2-134,"Card Member loans (includes gross loans available to settle obligations of a consolidated variable interest entity: 2019, $31,495; 2018, $33,194), less reserves: 2019, $2,121; 2018, $2,134",8,0
+balance_sheet,html:other-loans-less-reserves-2019-129-2018-124,html:other-loans-less-reserves-2019-129-2018-124,"Other loans, less reserves: 2019, $129; 2018, $124",9,0
+balance_sheet,html:investment-securities,html:investment-securities,Investment securities,10,0
+balance_sheet,html:premises-and-equipment-less-accumulated-depreciation-and-amortization-2019-6-315-2018-6-015,html:premises-and-equipment-less-accumulated-depreciation-and-amortization-2019-6-315-2018-6-015,"Premises and equipment, less accumulated depreciation and amortization: 2019, $6,315; 2018, $6,015",11,0
+balance_sheet,html:other-assets-includes-restricted-cash-of-consolidated-variable-interest-entities-2019-84-2018-70,html:other-assets-includes-restricted-cash-of-consolidated-variable-interest-entities-2019-84-2018-70,"Other assets (includes restricted cash of consolidated variable interest entities: 2019, $84; 2018, $70)",12,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,13,0
+balance_sheet,html:customer-deposits,html:customer-deposits,Customer deposits,29,0
+balance_sheet,html:travelers-cheques-and-other-prepaid-products,html:travelers-cheques-and-other-prepaid-products,Travelers Cheques and other prepaid products,30,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,31,0
+balance_sheet,html:short-term-borrowings,html:short-term-borrowings,Short-term borrowings,32,0
+balance_sheet,html:long-term-debt-includes-debt-issued-by-consolidated-variable-interest-entities-2019-19-538-2018-19-509,html:long-term-debt-includes-debt-issued-by-consolidated-variable-interest-entities-2019-19-538-2018-19-509,"Long-term debt (includes debt issued by consolidated variable interest entities: 2019, $19,538; 2018, $19,509)",33,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other liabilities,34,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,35,0
+balance_sheet,html:contingencies-note-8,html:contingencies-note-8,Contingencies (Note 8),36,0
+balance_sheet,html:preferred-shares-1-662-3-par-value-authorized-20-million-shares-issued-and-outstanding-1-600-shares-as-of-march-31-2019-and-december-31-2018,html:preferred-shares-1-662-3-par-value-authorized-20-million-shares-issued-and-outstanding-1-600-shares-as-of-march-31-2019-and-december-31-2018,"Preferred shares, $1.662/3 par value, authorized 20 million shares; issued and outstanding 1,600 shares as of March 31, 2019 and December 31, 2018",46,0
+balance_sheet,html:common-shares-0-20-par-value-authorized-3-6-billion-shares-issued-and-outstanding-837-million-shares-as-of-march-31-2019-and-847-million-shares-as-of-december-31-2018,html:common-shares-0-20-par-value-authorized-3-6-billion-shares-issued-and-outstanding-837-million-shares-as-of-march-31-2019-and-847-million-shares-as-of-december-31-2018,"Common shares, $0.20 par value, authorized 3.6 billion shares; issued and outstanding 837 million shares as of March 31, 2019 and 847 million shares as of December 31, 2018",47,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,48,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,49,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,50,0
+balance_sheet,html:net-unrealized-debt-securities-gains-losses-net-of-tax-of-2019-3-2018-1,html:net-unrealized-debt-securities-gains-losses-net-of-tax-of-2019-3-2018-1,"Net unrealized debt securities gains (losses), net of tax of: 2019, $3; 2018, $(1)",51,0
+balance_sheet,html:foreign-currency-translation-adjustments-net-of-tax-of-2019-336-2018-300,html:foreign-currency-translation-adjustments-net-of-tax-of-2019-336-2018-300,"Foreign currency translation adjustments, net of tax of: 2019, $(336); 2018, $(300)",52,0
+balance_sheet,html:net-unrealized-pension-and-other-postretirement-benefits-net-of-tax-of-2019-181-2018-170,html:net-unrealized-pension-and-other-postretirement-benefits-net-of-tax-of-2019-181-2018-170,"Net unrealized pension and other postretirement benefits, net of tax of: 2019, $(181); 2018, $(170)",53,0
+balance_sheet,html:total-accumulated-other-comprehensive-loss,html:total-accumulated-other-comprehensive-loss,Total accumulated other comprehensive loss,54,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders’ equity,55,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total liabilities and shareholders’ equity,56,0
+balance_sheet,us-gaap:CashEquivalentsAtCarryingValue,us-gaap:CashEquivalentsAtCarryingValue,Short-term investment securities,16,0
+balance_sheet,us-gaap:CashCashEquivalentsAndFederalFundsSold,us-gaap:CashCashEquivalentsAndFederalFundsSold,Total cash and cash equivalents,17,0
+balance_sheet,us-gaap:AccountsReceivableNet,us-gaap:AccountsReceivableNet,"Card Member receivables (includes gross receivables available to settle obligations of a consolidated variable interest entity: 2019, $7,836; 2018, $8,539), less reserves: 2019, $616; 2018, $573",65,0
+balance_sheet,us-gaap:OtherReceivables,us-gaap:OtherReceivables,"Other receivables, less reserves: 2019, $27; 2018, $25",69,0
+balance_sheet,us-gaap:LoansAndLeasesReceivableNetReportedAmount,us-gaap:LoansAndLeasesReceivableNetReportedAmount,"Card Member loans (includes gross loans available to settle obligations of a consolidated variable interest entity: 2019, $31,656; 2018, $33,194), less reserves: 2019, $2,168; 2018, $2,134",66,0
+balance_sheet,axp:DebtandEquitySecuritiesAvailableforsale,axp:DebtandEquitySecuritiesAvailableforsale,Investment securities,21,0
+balance_sheet,axp:TravelersChequesOutstanding,axp:TravelersChequesOutstanding,Travelers Cheques and other prepaid products,38,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax,"Net unrealized debt securities gains (losses), net of tax of: 2019, $12; 2018, $(1)",67,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,"Foreign currency translation adjustments, net of tax of: 2019, $(307); 2018, $(300)",70,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,"Net unrealized pension and other postretirement benefits, net of tax of: 2019, $(177); 2018, $(170)",71,0
+balance_sheet,axp:OtherLoansReceivableNetAmount,axp:OtherLoansReceivableNetAmount,"Other loans, less reserves for credit losses: 2020, $241; 2019, $152",68,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),61,0

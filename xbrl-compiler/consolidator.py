@@ -32,12 +32,11 @@ Two-stage aggregation:
                the master presentation merges into a single row.
 
   Stage 2 – **Across files**, if more than one file supplies a value for the
-            same cell, prefer a file that **headlines** that period (the quarter
-            / YTD / FY the filing primarily reports — see ``headline_periods``).
-            Among headline matches, use the highest ``file_recency`` rank; if no
-            file headlines that period, fall back to **most recent file wins**
-            (highest recency). Identical duplicates are logged quietly; differing
-            values are logged to the conflicts list with the resolution taken.
+            same cell, prefer a file that **headlines** that period (the quarter,
+            YTD, or 10-K primary FY the filing reports — see ``headline_periods``).
+            Among headline matches, use the highest ``file_recency`` rank. If **no**
+            file headlines that period, the cell stays **empty** — comparative
+            columns on later filings must not backfill (workbooks are truth).
 """
 from __future__ import annotations
 
@@ -197,11 +196,12 @@ def consolidate(
     *file_headline_periods* maps ``source_file`` → set of canonical period keys
     that filing **primarily** reports (not comparatives from a later period).
     When multiple files supply a cell, any file that headlines that period is
-    preferred before recency; if none do, recency alone decides (legacy
-    behavior).
+    preferred before recency. If none headline that period, the cell is omitted.
     """
     recency = file_recency or {}
-    headlines = file_headline_periods or {}
+    headlines = file_headline_periods  # None → legacy test fallback; dict → strict headline-only
+    strict_headlines = headlines is not None
+    headline_map = headlines if strict_headlines else {}
     label_map: dict[tuple[str, str], str] = {
         (r.statement_type, r.canonical_row_id): r.display_label for r in master_rows
     }
@@ -263,13 +263,17 @@ def consolidate(
             )
         )
 
-    # ── Stage 2: across files, period-primary headline wins, else recency
+    # ── Stage 2: across files, period-primary headline only (no comparative backfill)
     for (st, crid, plabel), aggs in cell_aggregates.items():
         disp = label_map.get((st, crid), crid)
 
-        pool = [a for a in aggs if plabel in headlines.get(a.source_file, frozenset())]
-        candidates = pool if pool else list(aggs)
-        winner = max(candidates, key=lambda a: (recency.get(a.source_file, 0), a.source_file))
+        pool = [a for a in aggs if plabel in headline_map.get(a.source_file, frozenset())]
+        if strict_headlines:
+            if not pool:
+                continue
+            winner = max(pool, key=lambda a: (recency.get(a.source_file, 0), a.source_file))
+        else:
+            winner = max(aggs, key=lambda a: (recency.get(a.source_file, 0), a.source_file))
 
         data[st][crid][plabel] = winner.value
 
@@ -314,7 +318,7 @@ def consolidate(
             else:
                 resolution = (
                     f"Kept period-primary filing {winner.source_file}"
-                    if pool
+                    if strict_headlines and pool
                     else f"Kept most-recent value from {winner.source_file}"
                 )
                 c = Conflict(
@@ -332,7 +336,7 @@ def consolidate(
                 logger.info(
                     "CONFLICT: %s/%s/%s – %d files, winner %s (%s)",
                     st, crid, plabel, len(aggs), winner.source_file,
-                    "period-primary" if pool else "recency",
+                    "period-primary" if strict_headlines and pool else "recency",
                 )
 
     logger.info(

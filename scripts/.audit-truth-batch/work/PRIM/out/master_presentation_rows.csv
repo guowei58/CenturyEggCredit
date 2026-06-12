@@ -1,0 +1,156 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenue,html:revenue,Revenue,0,0
+income_statement,html:cost-of-revenue,html:cost-of-revenue,Cost of revenue,1,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,2,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",3,0
+income_statement,html:transaction-and-related-costs,html:transaction-and-related-costs,Transaction and related costs,4,0
+income_statement,html:operating-income,html:operating-income,Operating income,7,0
+income_statement,html:foreign-exchange-loss-gain-net,html:foreign-exchange-loss-gain-net,"Foreign exchange (loss) gain, net",9,0
+income_statement,html:other-income-net,html:other-income-net,"Other income, net",10,0
+income_statement,html:interest-expense-net,html:interest-expense-net,"Interest expense, net",12,0
+income_statement,html:income-before-provision-for-income-taxes,html:income-before-provision-for-income-taxes,Income before provision for income taxes,13,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,14,0
+income_statement,html:net-income,html:net-income,Net income,15,0
+income_statement,html:dividends-per-common-share-in-dollars-per-share,html:dividends-per-common-share-in-dollars-per-share,Dividends per common share (in dollars per share),16,0
+income_statement,html:earnings-per-share,html:earnings-per-share,Earnings per share:,17,0
+income_statement,html:basic-in-dollars-per-share,html:basic-in-dollars-per-share,Basic (in dollars per share),18,0
+income_statement,html:diluted-in-dollars-per-share,html:diluted-in-dollars-per-share,Diluted (in dollars per share),19,0
+income_statement,html:weighted-average-common-shares-outstanding,html:weighted-average-common-shares-outstanding,Weighted average common shares outstanding:,20,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,14,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",15,0
+balance_sheet,html:contract-assets,html:contract-assets,Contract assets,16,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,17,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,18,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",19,0
+balance_sheet,html:operating-lease-assets,html:operating-lease-assets,Operating lease assets,21,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",22,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,23,0
+balance_sheet,html:other-long-term-assets,html:other-long-term-assets,Other long-term assets,24,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,25,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,27,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,39,0
+balance_sheet,html:contract-liabilities,html:contract-liabilities,Contract liabilities,40,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,41,0
+balance_sheet,html:dividends-payable,html:dividends-payable,Dividends payable,42,0
+balance_sheet,html:current-portion-of-long-term-debt,html:current-portion-of-long-term-debt,Current portion of long-term debt,43,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,44,0
+balance_sheet,html:long-term-debt-net-of-current-portion,html:long-term-debt-net-of-current-portion,"Long-term debt, net of current portion",45,0
+balance_sheet,html:noncurrent-operating-lease-liabilities-net-of-current-portion,html:noncurrent-operating-lease-liabilities-net-of-current-portion,"Noncurrent operating lease liabilities, net of current portion",46,0
+balance_sheet,html:deferred-tax-liabilities,html:deferred-tax-liabilities,Deferred tax liabilities,47,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,48,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,49,0
+balance_sheet,html:commitments-and-contingencies-see-note-13,html:commitments-and-contingencies-see-note-13,Commitments and contingencies (See Note 13),52,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders' equity,53,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,64,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,65,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,68,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,69,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders' equity,70,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,4,0
+cash_flow,html:gain-on-sale-of-property-and-equipment,html:gain-on-sale-of-property-and-equipment,Gain on sale of property and equipment,6,0
+cash_flow,html:unrealized-loss-gain-on-interest-rate-swap,html:unrealized-loss-gain-on-interest-rate-swap,Unrealized loss (gain) on interest rate swap,8,0
+cash_flow,html:other-non-cash-items,html:other-non-cash-items,Other non-cash items,9,0
+cash_flow,html:changes-in-assets-and-liabilities,html:changes-in-assets-and-liabilities,Changes in assets and liabilities:,10,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,11,0
+cash_flow,html:contract-assets,html:contract-assets,Contract assets,12,0
+cash_flow,html:other-current-assets,html:other-current-assets,Other current assets,13,0
+cash_flow,html:net-deferred-tax-liabilities,html:net-deferred-tax-liabilities,Net deferred tax liabilities,14,0
+cash_flow,html:other-long-term-assets,html:other-long-term-assets,Other long-term assets,15,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,16,0
+cash_flow,html:contract-liabilities,html:contract-liabilities,Contract liabilities,17,0
+cash_flow,html:operating-lease-assets-and-liabilities-net,html:operating-lease-assets-and-liabilities-net,"Operating lease assets and liabilities, net",18,0
+cash_flow,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,19,0
+cash_flow,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,20,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,21,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,22,0
+cash_flow,html:purchase-of-property-and-equipment,html:purchase-of-property-and-equipment,Purchase of property and equipment,23,0
+cash_flow,html:proceeds-from-sale-of-assets,html:proceeds-from-sale-of-assets,Proceeds from sale of assets,28,0
+cash_flow,html:cash-paid-for-acquisitions-net-of-cash-and-restricted-cash-acquired,html:cash-paid-for-acquisitions-net-of-cash-and-restricted-cash-acquired,"Cash paid for acquisitions, net of cash and restricted cash acquired",29,0
+cash_flow,html:proceeds-from-repayment-of-note-receivable,html:proceeds-from-repayment-of-note-receivable,Proceeds from repayment of note receivable,30,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,31,0
+cash_flow,html:borrowings-under-revolving-lines-of-credit,html:borrowings-under-revolving-lines-of-credit,Borrowings under revolving lines of credit,32,0
+cash_flow,html:payments-on-revolving-lines-of-credit,html:payments-on-revolving-lines-of-credit,Payments on revolving lines of credit,33,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt,html:proceeds-from-issuance-of-long-term-debt,Proceeds from issuance of long-term debt,34,0
+cash_flow,html:payments-on-long-term-debt,html:payments-on-long-term-debt,Payments on long-term debt,42,0
+cash_flow,html:proceeds-from-pledge-of-accounts-receivable-under-securitization-facility,html:proceeds-from-pledge-of-accounts-receivable-under-securitization-facility,Proceeds from pledge of accounts receivable under securitization facility,43,0
+cash_flow,html:payments-related-to-tax-withholding-for-stock-based-compensation,html:payments-related-to-tax-withholding-for-stock-based-compensation,Payments related to tax withholding for stock-based compensation,44,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,45,0
+cash_flow,html:other,html:other,Other,46,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-cash-equivalents-and-restricted-cash,html:effect-of-exchange-rate-changes-on-cash-cash-equivalents-and-restricted-cash,"Effect of exchange rate changes on cash, cash equivalents and restricted cash",47,0
+cash_flow,html:net-change-in-cash-cash-equivalents-and-restricted-cash,html:net-change-in-cash-cash-equivalents-and-restricted-cash,"Net change in cash, cash equivalents and restricted cash",48,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-the-period,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-the-period,"Cash, cash equivalents and restricted cash at beginning of the period",49,0
+cash_flow,html:supplemental-disclosures-of-cash-flow-information,html:supplemental-disclosures-of-cash-flow-information,SUPPLEMENTAL DISCLOSURES OF CASH FLOW INFORMATION,50,0
+cash_flow,html:cash-paid-for-interest,html:cash-paid-for-interest,Cash paid for interest,51,0
+cash_flow,html:value-of-transferable-investment-tax-credits-itc-purchased,html:value-of-transferable-investment-tax-credits-itc-purchased,Value of transferable investment tax credits (ITC) purchased,52,0
+cash_flow,html:cash-paid-for-transferable-investment-tax-credits-itc,html:cash-paid-for-transferable-investment-tax-credits-itc,Cash paid for transferable investment tax credits (ITC),53,0
+cash_flow,html:leased-assets-obtained-in-exchange-for-new-operating-leases,html:leased-assets-obtained-in-exchange-for-new-operating-leases,Leased assets obtained in exchange for new operating leases,54,0
+cash_flow,html:supplemental-disclosure-of-noncash-investing-and-financing-activities,html:supplemental-disclosure-of-noncash-investing-and-financing-activities,SUPPLEMENTAL DISCLOSURE OF NONCASH INVESTING AND FINANCING ACTIVITIES,55,0
+income_statement,html:impairment-of-goodwill,html:impairment-of-goodwill,Impairment of goodwill,5,0
+balance_sheet,html:cash-and-cash-equivalents-3-127-and-60-256-related-to-vies-see-note-11,html:cash-and-cash-equivalents-3-127-and-60-256-related-to-vies-see-note-11,"Cash and cash equivalents ($3,127 and $60,256 related to VIEs. See Note 11)",0,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,20,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS’ EQUITY,26,0
+balance_sheet,html:commitments-and-contingencies-see-note-12,html:commitments-and-contingencies-see-note-12,Commitments and contingencies (See Note 12),50,0
+balance_sheet,html:common-stock-0001-par-value-90-000-000-shares-authorized-50-715-518-and-51-448-753-issued-and-outstanding-at-december-31-2018-and-december-31-2017,html:common-stock-0001-par-value-90-000-000-shares-authorized-50-715-518-and-51-448-753-issued-and-outstanding-at-december-31-2018-and-december-31-2017,"Common stock—$.0001 par value; 90,000,000 shares authorized; 50,715,518 and 51,448,753 issued and outstanding at December 31, 2018 and December 31, 2017",54,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,66,0
+balance_sheet,html:noncontrolling-interest,html:noncontrolling-interest,Noncontrolling interest,67,0
+cash_flow,html:gain-on-short-term-investments,html:gain-on-short-term-investments,Gain on short-term investments,5,0
+income_statement,us-gaap:MarketableSecuritiesUnrealizedGainLoss,us-gaap:MarketableSecuritiesUnrealizedGainLoss,Investment income,8,0
+income_statement,us-gaap:InvestmentIncomeNet,us-gaap:InvestmentIncomeNet,Interest income,11,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,1,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,"Accounts receivable, net",2,0
+balance_sheet,us-gaap:ContractWithCustomerAssetNetCurrent,us-gaap:ContractWithCustomerAssetNetCurrent,Contract assets,3,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",6,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,7,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,8,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",9,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,10,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other long-term assets,11,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,12,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,28,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Contract liabilities,29,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,30,0
+balance_sheet,us-gaap:DividendsPayableCurrent,us-gaap:DividendsPayableCurrent,Dividends payable,31,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,32,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,33,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,"Long-term debt, net of current portion",34,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,"Noncurrent operating lease liabilities, net of current portion",35,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities,36,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,37,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,38,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock—$.0001 par value; 90,000,000 shares authorized; 48,665,138 and 50,715,518 issued and outstanding at December 31, 2019 and 2018, respectively",55,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,56,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,57,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),58,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,59,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total stockholders’ equity,60,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders’ equity,61,0
+cash_flow,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangible assets,2,0
+cash_flow,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,Intangible asset impairment,3,0
+cash_flow,us-gaap:PaymentsToAcquireNotesReceivable,us-gaap:PaymentsToAcquireNotesReceivable,Issuance of a note receivable,24,0
+cash_flow,us-gaap:ProceedsFromSaleOfNotesReceivable,us-gaap:ProceedsFromSaleOfNotesReceivable,Proceeds from a note receivable,25,0
+cash_flow,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,Proceeds from sale of property and equipment,26,0
+cash_flow,us-gaap:ProceedsFromSaleOfShortTermInvestments,us-gaap:ProceedsFromSaleOfShortTermInvestments,Sale of short-term investments,27,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayment of long-term debt,35,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfCommonStock,us-gaap:ProceedsFromIssuanceOfCommonStock,Proceeds from issuance of common stock purchased under a long-term incentive plan,36,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Payment of taxes on conversion of Restricted Stock Units,37,0
+cash_flow,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,Payment of contingent earnout liability,38,0
+cash_flow,us-gaap:PaymentsToMinorityShareholders,us-gaap:PaymentsToMinorityShareholders,Cash distribution to noncontrolling interest holders,39,0
+cash_flow,prim:PaymentsForRepurchaseOfCommonStockFromRelatedParty,prim:PaymentsForRepurchaseOfCommonStockFromRelatedParty,Repurchase of common stock from a related party,40,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchase of common stock,41,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNetExcludingCapitalLeasedAssets,us-gaap:PropertyPlantAndEquipmentNetExcludingCapitalLeasedAssets,"Property and equipment, net",71,0
+cash_flow,us-gaap:PaymentsOfDebtIssuanceCosts,us-gaap:PaymentsOfDebtIssuanceCosts,Debt issuance costs,56,0
+income_statement,us-gaap:SaleAndLeasebackTransactionGainLossNet,us-gaap:SaleAndLeasebackTransactionGainLossNet,Gain on sale and leaseback transaction,6,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders’ equity,72,0
+cash_flow,us-gaap:SaleAndLeasebackTransactionGainLossNet,us-gaap:SaleAndLeasebackTransactionGainLossNet,Gain on sale and leaseback transaction,7,0
+cash_flow,prim:SaleAndLeasebackTransactionNetProceedsInvestingActivities,prim:SaleAndLeasebackTransactionNetProceedsInvestingActivities,"Proceeds from sale and leaseback transaction, net of related expenses",57,0
+balance_sheet,html:common-stock-0-0001-par-value-90-000-000-shares-authorized-53-740-729-and-53-366-327-issued-and-outstanding-as-of-december-31-2024-and-december-31-2023-respectively,html:common-stock-0-0001-par-value-90-000-000-shares-authorized-53-740-729-and-53-366-327-issued-and-outstanding-as-of-december-31-2024-and-december-31-2023-respectively,"Common stock-$0.0001 par value; 90,000,000 shares authorized: 53,740,729 and 53,366,327 issued and outstanding as of December 31, 2024, and December 31, 2023, respectively",62,0
+balance_sheet,html:cash-and-cash-equivalents-9-213-and-3-127-related-to-vies-see-note-11,html:cash-and-cash-equivalents-9-213-and-3-127-related-to-vies-see-note-11,"Cash and cash equivalents ($9,213 and $3,127 related to VIEs. See Note 11)",13,0
+balance_sheet,html:commitments-and-contingencies-see-note-17,html:commitments-and-contingencies-see-note-17,Commitments and contingencies (See Note 17),51,0
+balance_sheet,html:common-stock-0001-par-value-90-000-000-shares-authorized-50-842-902-and-51-715-518-issued-and-outstanding-at-march-31-2019-and-december-31-2018,html:common-stock-0001-par-value-90-000-000-shares-authorized-50-842-902-and-51-715-518-issued-and-outstanding-at-march-31-2019-and-december-31-2018,"Common stock—$.0001 par value; 90,000,000 shares authorized; 50,842,902 and 51,715,518 issued and outstanding at March 31, 2019 and December 31, 2018",63,0
+balance_sheet,html:commitments-and-contingencies-see-note-16,html:commitments-and-contingencies-see-note-16,Commitments and contingencies (See Note 16),73,0
+balance_sheet,html:commitments-and-contingencies-see-note-15,html:commitments-and-contingencies-see-note-15,Commitments and contingencies (See Note 15),74,0
+balance_sheet,html:commitments-and-contingencies-see-note-14,html:commitments-and-contingencies-see-note-14,Commitments and contingencies (See Note 14),75,0

@@ -1,3 +1,5 @@
+import { resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
+
 /**
  * Capital Structure tab prompt.
  * The UI inserts the real ticker into the `{{TICKER}}` placeholder at runtime.
@@ -497,11 +499,18 @@ function capitalStructureSampleImageUrlsBlock(appOrigin: string): string {
 export function resolveCapitalStructurePrompt(params: {
   template: string;
   ticker: string;
+  companyName?: string | null;
   appOrigin: string;
 }): string {
   const safeTicker = params.ticker.trim();
   if (!safeTicker) return "";
+  const { tickerForPrompt } = resolveCompanyPromptLabels({
+    workspaceKey: safeTicker,
+    companyName: params.companyName,
+  });
   const urls = capitalStructureSampleImageUrlsBlock(params.appOrigin);
-  return params.template.replace(/\{\{TICKER\}\}/g, safeTicker).replace(/\[SAMPLE_IMAGE_URLS\]/g, urls);
+  return params.template
+    .replace(/\{\{TICKER\}\}/g, tickerForPrompt)
+    .replace(/\[SAMPLE_IMAGE_URLS\]/g, urls);
 }
 

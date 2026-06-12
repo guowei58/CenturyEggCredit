@@ -1,0 +1,218 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenue,html:revenue,Revenue,0,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,1,0
+income_statement,html:general-and-administrative-expenses,html:general-and-administrative-expenses,General and administrative expenses,2,0
+income_statement,html:sales-and-marketing-expenses,html:sales-and-marketing-expenses,Sales and marketing expenses,3,0
+income_statement,html:research-and-development-expenses,html:research-and-development-expenses,Research and development expenses,4,0
+income_statement,html:gain-loss-on-sale-of-businesses,html:gain-loss-on-sale-of-businesses,(Gain) loss on sale of businesses,11,0
+income_statement,html:operating-income,html:operating-income,Operating income,13,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,17,0
+income_statement,html:interest-income,html:interest-income,Interest income,19,0
+income_statement,html:other-non-operating-income-net,html:other-non-operating-income-net,"Other non-operating income, net",20,0
+income_statement,html:income-from-continuing-operations-before-income-tax,html:income-from-continuing-operations-before-income-tax,Income from continuing operations before income tax,21,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,22,0
+income_statement,html:income-from-continuing-operations,html:income-from-continuing-operations,Income from continuing operations,23,0
+income_statement,html:loss-from-discontinued-operations-net-of-tax-benefit-of-0-0-0-0-and-0-3-respectively,html:loss-from-discontinued-operations-net-of-tax-benefit-of-0-0-0-0-and-0-3-respectively,"Loss from discontinued operations, net of tax benefit of $0.0, $0.0, and $0.3, respectively",25,0
+income_statement,html:net-income,html:net-income,Net income,26,0
+income_statement,html:net-income-attributable-to-itt-inc,html:net-income-attributable-to-itt-inc,Net income attributable to ITT Inc.,27,0
+income_statement,html:amounts-attributable-to-itt-inc,html:amounts-attributable-to-itt-inc,Amounts attributable to ITT Inc.:,28,0
+income_statement,html:basic,html:basic,Basic:,29,0
+income_statement,html:continuing-operations,html:continuing-operations,Continuing operations,30,0
+income_statement,html:discontinued-operations,html:discontinued-operations,Discontinued operations,31,0
+income_statement,html:diluted,html:diluted,Diluted:,32,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,14,0
+balance_sheet,html:receivables-net,html:receivables-net,"Receivables, net",15,0
+balance_sheet,html:inventories,html:inventories,Inventories,18,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,19,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,21,0
+balance_sheet,html:non-current-assets,html:non-current-assets,Non-current assets:,22,0
+balance_sheet,html:plant-property-and-equipment-net,html:plant-property-and-equipment-net,"Plant, property and equipment, net",23,0
+balance_sheet,html:goodwill-a,html:goodwill-a,Goodwill(a),25,0
+balance_sheet,html:other-intangible-assets-net,html:other-intangible-assets-net,"Other intangible assets, net",26,0
+balance_sheet,html:other-non-current-assets,html:other-non-current-assets,Other non-current assets,29,0
+balance_sheet,html:total-non-current-assets,html:total-non-current-assets,Total non-current assets,31,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,32,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,33,0
+balance_sheet,html:short-term-borrowings,html:short-term-borrowings,Short-term borrowings,45,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,46,0
+balance_sheet,html:accrued-and-other-current-liabilities,html:accrued-and-other-current-liabilities,Accrued and other current liabilities,48,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,50,0
+balance_sheet,html:non-current-liabilities,html:non-current-liabilities,Non-current liabilities:,53,0
+balance_sheet,html:non-current-maturities-of-long-term-debt,html:non-current-maturities-of-long-term-debt,Non-current maturities of long-term debt,55,0
+balance_sheet,html:postretirement-benefits,html:postretirement-benefits,Postretirement benefits,56,0
+balance_sheet,html:other-non-current-liabilities,html:other-non-current-liabilities,Other non-current liabilities,57,0
+balance_sheet,html:total-non-current-liabilities,html:total-non-current-liabilities,Total non-current liabilities,59,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,60,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ equity:,63,0
+balance_sheet,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-85-9-and-81-5-respectively,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-85-9-and-81-5-respectively,"Common Stock: Authorized 250.0 shares, $1 par value per share, Issued and Outstanding 85.9 and 81.5, respectively",81,0
+balance_sheet,html:capital-in-excess-of-par-value,html:capital-in-excess-of-par-value,Capital in excess of par value,82,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,83,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss:,85,0
+balance_sheet,html:cumulative-translation-adjustments,html:cumulative-translation-adjustments,Cumulative translation adjustments,89,0
+balance_sheet,html:total-accumulated-other-comprehensive-loss,html:total-accumulated-other-comprehensive-loss,Total accumulated other comprehensive loss,92,0
+balance_sheet,html:total-itt-inc-shareholders-equity,html:total-itt-inc-shareholders-equity,Total ITT Inc. shareholders' equity,94,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,95,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders’ equity,96,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total liabilities and shareholders’ equity,97,0
+cash_flow,html:income-from-continuing-operations-net-of-tax,html:income-from-continuing-operations-net-of-tax,"Income from continuing operations, net of tax",0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:equity-based-compensation,html:equity-based-compensation,Equity-based compensation,2,0
+cash_flow,html:deferred-income-tax-expense-benefit,html:deferred-income-tax-expense-benefit,Deferred income tax expense (benefit),10,0
+cash_flow,html:gain-loss-on-sale-of-businesses,html:gain-loss-on-sale-of-businesses,(Gain) loss on sale of businesses,13,0
+cash_flow,html:other-non-cash-charges-net,html:other-non-cash-charges-net,"Other non-cash charges, net",14,0
+cash_flow,html:changes-in-assets-and-liabilities,html:changes-in-assets-and-liabilities,Changes in assets and liabilities:,17,0
+cash_flow,html:change-in-receivables,html:change-in-receivables,Change in receivables,18,0
+cash_flow,html:change-in-inventories,html:change-in-inventories,Change in inventories,19,0
+cash_flow,html:change-in-contract-assets,html:change-in-contract-assets,Change in contract assets,20,0
+cash_flow,html:change-in-contract-liabilities,html:change-in-contract-liabilities,Change in contract liabilities,21,0
+cash_flow,html:change-in-accounts-payable,html:change-in-accounts-payable,Change in accounts payable,22,0
+cash_flow,html:change-in-accrued-expenses,html:change-in-accrued-expenses,Change in accrued expenses,23,0
+cash_flow,html:change-in-income-taxes,html:change-in-income-taxes,Change in income taxes,24,0
+cash_flow,html:other-net,html:other-net,"Other, net",25,0
+cash_flow,html:net-cash-operating-activities,html:net-cash-operating-activities,Net Cash – Operating activities,26,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures,27,0
+cash_flow,html:proceeds-from-government-incentives,html:proceeds-from-government-incentives,Proceeds from government incentives,31,0
+cash_flow,html:acquisitions-net-of-cash-acquired,html:acquisitions-net-of-cash-acquired,"Acquisitions, net of cash acquired",32,0
+cash_flow,html:payments-to-acquire-interest-in-unconsolidated-subsidiaries,html:payments-to-acquire-interest-in-unconsolidated-subsidiaries,Payments to acquire interest in unconsolidated subsidiaries,35,0
+cash_flow,html:net-cash-investing-activities,html:net-cash-investing-activities,Net Cash – Investing activities,36,0
+cash_flow,html:commercial-paper-net-borrowings,html:commercial-paper-net-borrowings,"Commercial paper, net borrowings",38,0
+cash_flow,html:long-term-debt-issued-net-of-debt-issuance-costs,html:long-term-debt-issued-net-of-debt-issuance-costs,"Long-term debt issued, net of debt issuance costs",43,0
+cash_flow,html:long-term-debt-repayments,html:long-term-debt-repayments,Long-term debt repayments,44,0
+cash_flow,html:share-repurchases-under-repurchase-plan,html:share-repurchases-under-repurchase-plan,Share repurchases under repurchase plan,46,0
+cash_flow,html:payments-for-taxes-related-to-net-share-settlement-of-stock-incentive-plans,html:payments-for-taxes-related-to-net-share-settlement-of-stock-incentive-plans,Payments for taxes related to net share settlement of stock incentive plans,48,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,49,0
+cash_flow,html:proceeds-from-issuance-of-common-stock,html:proceeds-from-issuance-of-common-stock,Proceeds from issuance of common stock,50,0
+cash_flow,html:net-cash-financing-activities,html:net-cash-financing-activities,Net Cash – Financing activities,52,0
+cash_flow,html:exchange-rate-effects-on-cash-and-cash-equivalents,html:exchange-rate-effects-on-cash-and-cash-equivalents,Exchange rate effects on cash and cash equivalents,53,0
+cash_flow,html:net-change-in-cash-and-cash-equivalents,html:net-change-in-cash-and-cash-equivalents,Net change in cash and cash equivalents,54,0
+cash_flow,html:cash-and-cash-equivalents-beginning-of-year-includes-restricted-cash-of-0-7-0-7-and-0-7-respectively,html:cash-and-cash-equivalents-beginning-of-year-includes-restricted-cash-of-0-7-0-7-and-0-7-respectively,"Cash and cash equivalents – beginning of year (includes restricted cash of $0.7, $0.7, and $0.7, respectively)",57,0
+cash_flow,html:supplemental-disclosures-of-cash-flow-and-non-cash-information,html:supplemental-disclosures-of-cash-flow-and-non-cash-information,Supplemental Disclosures of Cash Flow and Non-Cash Information:,59,0
+cash_flow,html:cash-paid-for-interest,html:cash-paid-for-interest,Cash paid for Interest,60,0
+cash_flow,html:cash-paid-for-income-taxes-net-of-refunds-received,html:cash-paid-for-income-taxes-net-of-refunds-received,"Cash paid for Income taxes, net of refunds received",61,0
+balance_sheet,html:inventories-net,html:inventories-net,"Inventories, net",16,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,24,0
+balance_sheet,html:asbestos-related-assets,html:asbestos-related-assets,Asbestos-related assets,27,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,28,0
+balance_sheet,html:short-term-loans-and-current-maturities-of-long-term-debt,html:short-term-loans-and-current-maturities-of-long-term-debt,Short-term loans and current maturities of long-term debt,34,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,47,0
+balance_sheet,html:asbestos-related-liabilities,html:asbestos-related-liabilities,Asbestos-related liabilities,51,0
+balance_sheet,html:common-stock-authorized-250-shares-1-par-value-per-share-issued-and-outstanding-88-2-and-88-4-respectively,html:common-stock-authorized-250-shares-1-par-value-per-share-issued-and-outstanding-88-2-and-88-4-respectively,"Common stock: authorized – 250 shares, $1 par value per share; issued and outstanding 88.2 and 88.4, respectively",64,0
+balance_sheet,html:postretirement-benefit-plans,html:postretirement-benefit-plans,Postretirement benefit plans,86,0
+balance_sheet,html:unrealized-loss-on-investment-securities,html:unrealized-loss-on-investment-securities,Unrealized loss on investment securities,90,0
+balance_sheet,html:retained-earnings-member,html:retained-earnings-member,Retained Earnings [Member],98,0
+balance_sheet,html:noncontrolling-interest-member,html:noncontrolling-interest-member,Noncontrolling Interest [Member],99,0
+cash_flow,html:income-loss-from-discontinued-operations-net-of-tax-including-portion-attributable-to-noncontrolling-interest,html:income-loss-from-discontinued-operations-net-of-tax-including-portion-attributable-to-noncontrolling-interest,"Income (Loss) from Discontinued Operations, Net of Tax, Including Portion Attributable to Noncontrolling Interest",62,0
+cash_flow,html:less-income-loss-attributable-to-noncontrolling-interests,html:less-income-loss-attributable-to-noncontrolling-interests,Less: Income (loss) attributable to noncontrolling interests,63,0
+cash_flow,html:asbestos-related-expense-benefit-net,html:asbestos-related-expense-benefit-net,"Asbestos-related expense (benefit), net",3,0
+cash_flow,html:asbestos-related-payments-net,html:asbestos-related-payments-net,"Asbestos-related payments, net",11,0
+cash_flow,html:contributions-to-postretirement-plans,html:contributions-to-postretirement-plans,Contributions to postretirement plans,12,0
+cash_flow,html:proceeds-from-sale-of-businesses-and-other-assets,html:proceeds-from-sale-of-businesses-and-other-assets,Proceeds from sale of businesses and other assets,28,0
+cash_flow,html:purchases-of-investments,html:purchases-of-investments,Purchases of investments,33,0
+cash_flow,html:maturities-of-investments,html:maturities-of-investments,Maturities of investments,34,0
+cash_flow,html:short-term-revolving-loans-repayments,html:short-term-revolving-loans-repayments,"Short-term revolving loans, repayments",39,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt,html:proceeds-from-issuance-of-long-term-debt,Proceeds from Issuance of Long-term Debt,40,0
+cash_flow,html:excess-tax-benefit-from-equity-compensation-activity,html:excess-tax-benefit-from-equity-compensation-activity,Excess tax benefit from equity compensation activity,51,0
+cash_flow,html:cash-paid-received-during-the-year-for,html:cash-paid-received-during-the-year-for,Cash paid (received) during the year for:,58,0
+income_statement,html:loss-gain-on-sale-or-disposal-of-long-lived-assets,html:loss-gain-on-sale-or-disposal-of-long-lived-assets,Loss (gain) on sale or disposal of long-lived assets,5,0
+balance_sheet,html:commercial-paper-and-current-maturities-of-long-term-debt,html:commercial-paper-and-current-maturities-of-long-term-debt,Commercial paper and current maturities of long-term debt,35,0
+balance_sheet,html:common-stock-authorized-250-shares-1-par-value-per-share-issued-and-outstanding-87-8-and-87-6-respectively,html:common-stock-authorized-250-shares-1-par-value-per-share-issued-and-outstanding-87-8-and-87-6-respectively,"Common stock: authorized – 250 shares, $1 par value per share; issued and outstanding 87.8 and 87.6, respectively",65,0
+cash_flow,html:loss-gain-on-sale-or-disposal-of-long-lived-assets,html:loss-gain-on-sale-or-disposal-of-long-lived-assets,Loss (gain) on sale or disposal of long-lived assets,4,0
+cash_flow,html:proceeds-from-sale-of-long-lived-assets,html:proceeds-from-sale-of-long-lived-assets,Proceeds from sale of long-lived assets,29,0
+income_statement,html:interest-income-net,html:interest-income-net,"Interest (income), net",14,0
+income_statement,html:miscellaneous-income-net,html:miscellaneous-income-net,"Miscellaneous (income), net",15,0
+balance_sheet,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-85-5-and-86-5-respectively,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-85-5-and-86-5-respectively,"Common Stock: Authorized 250.0 shares, $1 par value per share, Issued and Outstanding 85.5 and 86.5, respectively",66,0
+cash_flow,html:pension-settlement-charges,html:pension-settlement-charges,Pension settlement charges,5,0
+cash_flow,html:contribution-to-divest-asbestos-related-assets-and-liabilities,html:contribution-to-divest-asbestos-related-assets-and-liabilities,Contribution to divest asbestos-related assets and liabilities,65,0
+income_statement,html:non-operating-postretirement-costs-benefit-net,html:non-operating-postretirement-costs-benefit-net,"Non-operating postretirement costs (benefit), net",18,0
+balance_sheet,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-82-7-and-85-5-respectively,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-82-7-and-85-5-respectively,"Common Stock: Authorized 250.0 shares, $1 par value per share, Issued and Outstanding 82.7 and 85.5, respectively",67,0
+balance_sheet,html:1-a-during-the-year-ended-december-31-2022-we-recorded-inventory-write-downs-of-5-2-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-a-during-the-year-ended-december-31-2022-we-recorded-inventory-write-downs-of-5-2-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] (a) During the year ended December 31, 2022, we recorded inventory write-downs of $5.2 related to inventories held by entities impacted by the Russia-Ukraine war. See Note 1, Description of Business and Basis of Presentation, for further information.",100,0
+balance_sheet,html:1,html:1,[1],101,0
+income_statement,html:asbestos-related-benefit-net,html:asbestos-related-benefit-net,"Asbestos-related benefit, net",34,0
+income_statement,html:1-the-2021-period-includes-a-pre-tax-gain-of-88-8-resulting-from-the-intelco-divestiture-transaction-see-note-19-commitments-and-contingencies-for-further-information,html:1-the-2021-period-includes-a-pre-tax-gain-of-88-8-resulting-from-the-intelco-divestiture-transaction-see-note-19-commitments-and-contingencies-for-further-information,"[1] The 2021 period includes a pre-tax gain of $88.8 resulting from the InTelCo divestiture transaction. See Note 19, Commitments and Contingencies, for further information.",33,0
+balance_sheet,html:1-a-during-the-years-ended-december-31-2023-and-2022-we-recorded-inventory-write-downs-of-1-1-and-5-2-respectively-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-a-during-the-years-ended-december-31-2023-and-2022-we-recorded-inventory-write-downs-of-1-1-and-5-2-respectively-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] (a) During the years ended December 31, 2023 and 2022, we recorded inventory write-downs of $1.1 and $5.2, respectively, related to inventories held by entities impacted by the Russia-Ukraine war. See Note 1, Description of Business and Basis of Presentation, for further information.",102,0
+cash_flow,html:asbestos-related-benefit-net,html:asbestos-related-benefit-net,"Asbestos-related benefit, net",6,0
+cash_flow,html:repayments-of-proceeds-from-commercial-paper-net,html:repayments-of-proceeds-from-commercial-paper-net,"(Repayments of)/Proceeds from commercial paper, net",37,0
+cash_flow,html:1-the-2021-period-includes-a-pre-tax-gain-of-88-8-resulting-from-the-intelco-divestiture-transaction-see-note-19-commitments-and-contingencies-for-further-information,html:1-the-2021-period-includes-a-pre-tax-gain-of-88-8-resulting-from-the-intelco-divestiture-transaction-see-note-19-commitments-and-contingencies-for-further-information,"[1] The 2021 period includes a pre-tax gain of $88.8 resulting from the InTelCo divestiture transaction. See Note 19, Commitments and Contingencies, for further information.",64,0
+income_statement,html:gain-loss-on-disposition-of-property-plant-equipment,html:gain-loss-on-disposition-of-property-plant-equipment,Gain (Loss) on Disposition of Property Plant Equipment,12,0
+balance_sheet,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-81-5-and-82-1-respectively,html:common-stock-authorized-250-0-shares-1-par-value-per-share-issued-and-outstanding-81-5-and-82-1-respectively,"Common Stock: Authorized 250.0 shares, $1 par value per share, Issued and Outstanding 81.5 and 82.1, respectively",68,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,"Receivables, net",1,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,"Inventories, net",2,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,3,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,4,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Plant, property and equipment, net",5,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,6,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Other intangible assets, net",7,0
+balance_sheet,itt:AsbestosRelatedAssets,itt:AsbestosRelatedAssets,Asbestos-related assets,8,0
+balance_sheet,us-gaap:DeferredTaxAssetsNetNoncurrent,us-gaap:DeferredTaxAssetsNetNoncurrent,Deferred income taxes,9,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other non-current assets,10,0
+balance_sheet,us-gaap:AssetsNoncurrent,us-gaap:AssetsNoncurrent,Total non-current assets,11,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,12,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and Shareholders’ Equity,13,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Commercial paper and current maturities of long-term debt,36,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,37,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,38,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,39,0
+balance_sheet,us-gaap:LossContingencyAccrualCarryingValueNoncurrent,us-gaap:LossContingencyAccrualCarryingValueNoncurrent,Asbestos-related liabilities,40,0
+balance_sheet,us-gaap:PensionAndOtherPostretirementAndPostemploymentBenefitPlansLiabilitiesNoncurrent,us-gaap:PensionAndOtherPostretirementAndPostemploymentBenefitPlansLiabilitiesNoncurrent,Postretirement benefits,41,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other non-current liabilities,42,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total non-current liabilities,43,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,44,0
+balance_sheet,html:common-stock,html:common-stock,Common stock:,69,0
+balance_sheet,html:authorized-250-0-shares-1-par-value-per-share,html:authorized-250-0-shares-1-par-value-per-share,"Authorized – 250.0 shares, $1 par value per share",70,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Issued and outstanding – 87.8 shares and 87.6 shares, respectively",71,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,72,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Total accumulated other comprehensive loss,73,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total ITT Inc. shareholders’ equity,74,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,75,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total shareholders’ equity,76,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and shareholders’ equity,77,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,108,0
+balance_sheet,us-gaap:CommonStockSharesAuthorized,us-gaap:CommonStockSharesAuthorized,"Authorized – 250.0 shares, $1 par value per share",109,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding,us-gaap:CommonStockSharesOutstanding,"Issued and outstanding – 86.3 shares and 87.8 shares, respectively",113,0
+balance_sheet,us-gaap:CommonStockSharesIssued,us-gaap:CommonStockSharesIssued,"Issued and outstanding – 86.1 shares and 86.5 shares, respectively",110,0
+income_statement,itt:AsbestosRelatedCostsNet,itt:AsbestosRelatedCostsNet,"Asbestos-related (benefit) costs, net (76.8)",6,0
+income_statement,us-gaap:RestructuringCharges,us-gaap:RestructuringCharges,Restructuring costs 0.1,7,0
+income_statement,us-gaap:AssetImpairmentCharges,us-gaap:AssetImpairmentCharges,Asset impairment charges,8,0
+cash_flow,itt:AsbestosRelatedCostsNet,itt:AsbestosRelatedCostsNet,"Asbestos-related benefit, net",7,0
+cash_flow,us-gaap:AssetImpairmentCharges,us-gaap:AssetImpairmentCharges,Asset impairment charges,8,0
+cash_flow,itt:AsbestosRelatedPayments,itt:AsbestosRelatedPayments,"Asbestos-related payments, net",15,0
+cash_flow,us-gaap:PaymentsForOtherOperatingActivities,us-gaap:PaymentsForOtherOperatingActivities,Divestiture of asbestos-related assets and liabilities,16,0
+cash_flow,us-gaap:ProceedsFromShortTermDebt,us-gaap:ProceedsFromShortTermDebt,"Short-term revolving loans, borrowings",41,0
+cash_flow,us-gaap:RepaymentsOfShortTermDebt,us-gaap:RepaymentsOfShortTermDebt,"Short-term revolving loans, repayments",42,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchase of common stock,45,0
+income_statement,html:earnings-loss-per-share-attributable-to-itt-inc,html:earnings-loss-per-share-attributable-to-itt-inc,Earnings (loss) per share attributable to ITT Inc.:,24,0
+balance_sheet,html:issued-and-outstanding-83-6-shares-and-85-5-shares-respectively,html:issued-and-outstanding-83-6-shares-and-85-5-shares-respectively,"Issued and outstanding – 83.6 shares and 85.5 shares, respectively",78,0
+cash_flow,html:share-repurchases-from-net-settlement-of-employee-stock-incentive-plans,html:share-repurchases-from-net-settlement-of-employee-stock-incentive-plans,Share repurchases from net settlement of employee stock incentive plans,47,0
+balance_sheet,html:issued-and-outstanding-82-7-shares-and-85-5-shares-respectively,html:issued-and-outstanding-82-7-shares-and-85-5-shares-respectively,"Issued and outstanding – 82.7 shares and 85.5 shares, respectively",79,0
+balance_sheet,html:1-during-the-six-months-ended-july-2-2022-we-recorded-inventory-reserves-of-5-7-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-conflict-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-during-the-six-months-ended-july-2-2022-we-recorded-inventory-reserves-of-5-7-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-conflict-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] During the six months ended July 2, 2022, we recorded inventory reserves of $5.7 related to inventories held by entities impacted by the Russia-Ukraine conflict. See Note 1, Description of Business and Basis of Presentation, for further information.",103,0
+balance_sheet,html:1-during-the-nine-months-ended-october-1-2022-we-recorded-inventory-write-downs-of-5-6-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-during-the-nine-months-ended-october-1-2022-we-recorded-inventory-write-downs-of-5-6-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] During the nine months ended October 1, 2022, we recorded inventory write-downs of $5.6 related to inventories held by entities impacted by the Russia-Ukraine war. See Note 1, Description of Business and Basis of Presentation, for further information.",104,0
+balance_sheet,html:inventories-1,html:inventories-1,Inventories [1],17,0
+balance_sheet,html:issued-and-outstanding-82-4-shares-and-82-7-shares-respectively,html:issued-and-outstanding-82-4-shares-and-82-7-shares-respectively,"Issued and outstanding – 82.4 shares and 82.7 shares, respectively",80,0
+balance_sheet,html:1-we-recorded-inventory-write-downs-of-0-2-and-5-4-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-during-the-three-months-ended-april-1-2023-and-april-2-2022-respectively-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-we-recorded-inventory-write-downs-of-0-2-and-5-4-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-during-the-three-months-ended-april-1-2023-and-april-2-2022-respectively-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] We recorded inventory write-downs of $0.2 and $5.4 related to inventories held by entities impacted by the Russia-Ukraine war during the three months ended April 1, 2023 and April 2, 2022, respectively. See Note 1, Description of Business and Basis of Presentation, for further information.",105,0
+cash_flow,html:restricted-cash,html:restricted-cash,Restricted Cash,55,0
+balance_sheet,html:common-stock-abstract,html:common-stock-abstract,Common stock: [Abstract],61,0
+balance_sheet,html:issued-and-outstanding-82-1-shares-and-82-7-shares-respectively,html:issued-and-outstanding-82-1-shares-and-82-7-shares-respectively,"Issued and outstanding – 82.1 shares and 82.7 shares, respectively",62,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss-abstract,html:accumulated-other-comprehensive-income-loss-abstract,Accumulated other comprehensive income (loss): [Abstract],84,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss):,91,0
+balance_sheet,html:1-we-recorded-inventory-write-downs-of-1-2-and-5-7-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-during-the-six-months-ended-july-1-2023-and-july-2-2022-respectively-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-we-recorded-inventory-write-downs-of-1-2-and-5-7-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-during-the-six-months-ended-july-1-2023-and-july-2-2022-respectively-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] We recorded inventory write-downs of $1.2 and $5.7 related to inventories held by entities impacted by the Russia-Ukraine war during the six months ended July 1, 2023 and July 2, 2022, respectively. See Note 1, Description of Business and Basis of Presentation, for further information.",106,0
+cash_flow,html:gain-loss-on-disposition-of-business,html:gain-loss-on-disposition-of-business,Gain (Loss) on Disposition of Business,9,0
+balance_sheet,html:1-we-recorded-inventory-write-downs-of-1-6-and-5-6-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-during-the-nine-months-ended-september-30-2023-and-october-1-2022-respectively-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,html:1-we-recorded-inventory-write-downs-of-1-6-and-5-6-related-to-inventories-held-by-entities-impacted-by-the-russia-ukraine-war-during-the-nine-months-ended-september-30-2023-and-october-1-2022-respectively-see-note-1-description-of-business-and-basis-of-presentation-for-further-information,"[1] We recorded inventory write-downs of $1.6 and $5.6 related to inventories held by entities impacted by the Russia-Ukraine war during the nine months ended September 30, 2023 and October 1, 2022, respectively. See Note 1, Description of Business and Basis of Presentation, for further information.",107,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-Term Debt,52,0
+balance_sheet,html:issued-and-outstanding-82-3-shares-and-82-1-shares-respectively,html:issued-and-outstanding-82-3-shares-and-82-1-shares-respectively,"Issued and outstanding – 82.3 shares and 82.1 shares, respectively",111,0
+income_statement,html:other-nonoperating-income-expense,html:other-nonoperating-income-expense,Other Nonoperating Income (Expense),16,0
+balance_sheet,html:total-current-assets-held-for-sale,html:total-current-assets-held-for-sale,Total current assets held for sale,20,0
+balance_sheet,html:total-non-current-assets-held-for-sale,html:total-non-current-assets-held-for-sale,Total non-current assets held for sale,30,0
+balance_sheet,html:total-current-liabilities-held-for-sale,html:total-current-liabilities-held-for-sale,Total current liabilities held for sale,49,0
+balance_sheet,html:total-non-current-liabilities-held-for-sale,html:total-non-current-liabilities-held-for-sale,Total non-current liabilities held for sale,58,0
+balance_sheet,html:issued-and-outstanding-81-7-shares-and-82-1-shares-respectively,html:issued-and-outstanding-81-7-shares-and-82-1-shares-respectively,"Issued and outstanding – 81.7 shares and 82.1 shares, respectively",114,0
+balance_sheet,html:equity-attributable-to-parent-total,html:equity-attributable-to-parent-total,"Equity, Attributable to Parent, Total",93,0
+income_statement,html:gain-on-sale-of-business,html:gain-on-sale-of-business,Gain on sale of business,9,0
+balance_sheet,html:issued-and-outstanding-81-5-shares-and-82-1-shares-respectively,html:issued-and-outstanding-81-5-shares-and-82-1-shares-respectively,"Issued and outstanding – 81.5 shares and 82.1 shares, respectively",115,0
+balance_sheet,us-gaap:LongTermDebt,us-gaap:LongTermDebt,Non-current portion of long-term debt,54,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,Postretirement benefits,87,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,Cumulative translation adjustments,88,0
+cash_flow,us-gaap:DisposalGroupIncludingDiscontinuedOperationCashAndCashEquivalents,us-gaap:DisposalGroupIncludingDiscontinuedOperationCashAndCashEquivalents,Less: Cash classified within current assets held for sale,56,0
+income_statement,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Intangible amortization,10,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Capital in excess of par value,112,0
+cash_flow,us-gaap:StockIssued1,us-gaap:StockIssued1,Equity value of common stock issued to acquire SPX FLOW,30,0

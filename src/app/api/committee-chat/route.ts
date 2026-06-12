@@ -5,7 +5,10 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { resolveProvider } from "@/lib/ai-provider";
 import { parseCommitteeChatMessages } from "@/lib/committee-chat-parse";
 import { COMMITTEE_CHAT_SYSTEM } from "@/data/committee-chat-prompt";
+import { resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { buildCommitteeOreoContext } from "@/lib/committee-ticker-context";
+import { readPrivateWorkspaceMeta } from "@/lib/private-workspace-meta";
+import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import { isProviderConfigured, llmCompleteConversation } from "@/lib/llm-router";
 import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
@@ -22,13 +25,6 @@ import {
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
-
-function sanitizeTicker(raw: unknown): string | null {
-  if (raw == null) return null;
-  const s = String(raw).trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  if (!s || s.length > 12) return null;
-  return s;
-}
 
 function providerAvailableForUi(provider: AiProvider, userBundle: ReturnType<typeof buildLlmApiKeyBundle> | null): boolean {
   if (isProviderConfigured(provider)) return true;
@@ -81,6 +77,7 @@ export async function POST(request: Request) {
   const b = body as {
     messages?: unknown;
     ticker?: unknown;
+    companyName?: unknown;
     provider?: unknown;
     includeOreoContext?: unknown;
     oreoAlreadyInjected?: unknown;
@@ -128,15 +125,27 @@ export async function POST(request: Request) {
   let system = COMMITTEE_CHAT_SYSTEM;
   let didInjectOreo = false;
   if (sym != null) {
-    system += `\n\nThe user currently has ticker **${sym}** selected in the sidebar (context only; they may ask about other names).`;
+    const bodyCompanyName = typeof b.companyName === "string" ? b.companyName.trim() : "";
+    const privateMeta =
+      session?.user?.id != null ? await readPrivateWorkspaceMeta(session.user.id, sym) : null;
+    const labels = resolveCompanyPromptLabels({
+      workspaceKey: sym,
+      companyName: bodyCompanyName || privateMeta?.displayName,
+    });
+    const companyContextLine = labels.isPrivate
+      ? `The user is researching **${labels.displayName}**, a **private company** (no SEC ticker or CIK). Do not treat internal workspace codes as stock symbols.`
+      : `The user currently has **${labels.displayName}** (${sym}) selected in the sidebar (context only; they may ask about other names).`;
+    system += `\n\n${companyContextLine}`;
     if (includeOreo && !oreoAlreadyInjected) {
       const oreoBlock = await buildCommitteeOreoContext(sym, session?.user?.id, provider);
       if (oreoBlock) {
-        system += `\n\n---\n## OREO saved workspace (ticker ${sym})\nThe following was read from this ticker's folder in OREO—saved tab responses, Credit Agreements text, and text files under Saved Documents. Use it when relevant.\n\n${oreoBlock}`;
+        const oreoSubject = labels.isPrivate ? labels.displayName : sym;
+        system += `\n\n---\n## OREO saved workspace (${oreoSubject})\nThe following was read from this company's saved workspace in OREO—saved tab responses, Credit Agreements text, and text files under Saved Documents. Use it when relevant.\n\n${oreoBlock}`;
         didInjectOreo = true;
       }
     } else if (includeOreo && oreoAlreadyInjected) {
-      system += `\n\nThe user's full OREO workspace data for ${sym} was provided in the first exchange of this conversation. Reference the earlier assistant response(s) for that data. If the user asks about something not covered there, let them know they can re-send the OREO data.`;
+      const oreoSubject = labels.isPrivate ? labels.displayName : sym;
+      system += `\n\nThe user's full OREO workspace data for ${oreoSubject} was provided in the first exchange of this conversation. Reference the earlier assistant response(s) for that data. If the user asks about something not covered there, let them know they can re-send the OREO data.`;
     }
   }
 

@@ -25,6 +25,8 @@ export type SavedDataKey =
   | "credit-agreements-indentures-other"
   | "startup-risks"
   | "risk-from-10k"
+  | "business-risk-analysis"
+  | "company-reputation"
   | "overview"
   | "recent-events"
   | "how-stuff-works"

@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 
@@ -47,7 +48,7 @@ export function CompanyManagementBoardTab({ ticker }: { ticker: string }) {
 
   const safeTicker = ticker?.trim() ?? "";
   const { template: mgmtBoardTemplate } = usePromptTemplateOverride("management-board", MANAGEMENT_BOARD_PROMPT_TEMPLATE);
-  const prompt = safeTicker ? mgmtBoardTemplate.replace(/\[INSERT TICKER\]/g, safeTicker) : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(mgmtBoardTemplate, safeTicker) : "";
 
   useEffect(() => {
     setStatusMessage(null);
@@ -185,7 +186,7 @@ export function CompanyManagementBoardTab({ ticker }: { ticker: string }) {
           <PromptTemplateBox
             tabId="management-board"
             defaultTemplate={MANAGEMENT_BOARD_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace(/\[INSERT TICKER\]/g, safeTicker) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

@@ -6,8 +6,10 @@ Income Statement : Before deriving 4Q, optional **FY display-sign harmonization*
                    (missing Q1–Q3 treated as 0 for the bridge only). **Exception:**
                    weighted-average share counts → **4Q = FY**.
 Balance Sheet    : 4Q = FY when the year-end instant is missing (point-in-time).
-Cash Flow        : **2Q = 6M − 1Q**, **3Q = 9M − 6M**, **4Q = FY − 9M** when the
-                   target quarter is absent (9M treated as 0 for 4Q only when missing).
+Cash Flow        : **2Q = 6M − 1Q** (1Q treated as 0 when absent), **3Q = 9M − 6M**
+                   (6M treated as 0 when absent — lines that debut mid-year on a Q3
+                   9M face), **4Q = FY − 9M** when the target quarter is absent
+                   (9M treated as 0 when missing or explicitly zero).
                    Requires reported operands; never overwrites filed quarters or YTD.
 
 Reported 1Q–3Q and 6M/9M from filings are never overwritten. Empty quarter/FY
@@ -100,12 +102,19 @@ def _row_matches_gain_loss_disposition_harmon(display_label: str, crid: str) -> 
 def harmonize_income_statement_fy_display_sign_before_4q(
     data: ConsolidatedData,
     label_map: dict[tuple[str, str], str],
+    *,
+    skip: bool = False,
 ) -> None:
     """If FY is the negation of (1Q+2Q+3Q) on a gain/loss/disposition row, flip FY.
 
     Otherwise ``4Q = FY - Q1 - Q2 - Q3`` double-applies opposite conventions and blows
     up 4Q (e.g. FICO FY2021 disposition activity).
+
+    When ``skip`` is True (workbook-truth loop), reported FY cells are already aligned
+    to saved filings — flipping them fights ``enforce_workbook_truth`` and oscillates.
     """
+    if skip:
+        return
     rows = data.get("income_statement")
     if not rows:
         return
@@ -135,13 +144,17 @@ def derive_quarters(
     data: ConsolidatedData,
     master_rows: list[MasterRow],
     existing_audit: list[AuditEntry],
+    *,
+    skip_fy_harmonization: bool = False,
 ) -> list[AuditEntry]:
     """Fill missing quarters in-place.  Returns new audit entries for derived cells."""
     label_map: dict[tuple[str, str], str] = {
         (r.statement_type, r.canonical_row_id): r.display_label for r in master_rows
     }
 
-    harmonize_income_statement_fy_display_sign_before_4q(data, label_map)
+    harmonize_income_statement_fy_display_sign_before_4q(
+        data, label_map, skip=skip_fy_harmonization,
+    )
 
     reported: set[tuple[str, str, str]] = set()
     for ae in existing_audit:
@@ -273,7 +286,7 @@ def _bs_4q(st, crid, disp, vals, yy, reported, audit):
 # ── Cash Flow ─────────────────────────────────────────────────────────────
 
 def _cf_2q(st, crid, disp, vals, yy, reported, audit):
-    """Derive 2Q = 6M − 1Q when 2Q is absent and both YTD operands exist."""
+    """Derive 2Q = 6M − 1Q when 2Q is absent (1Q treated as 0 when not reported)."""
     lbl = f"2Q{yy}"
     if _skip(vals, lbl, reported, st, crid):
         return
@@ -281,20 +294,18 @@ def _cf_2q(st, crid, disp, vals, yy, reported, audit):
     if sm is None:
         _log_miss(st, crid, lbl, [f"6M{yy}"])
         return
-    q1 = _g(vals, f"1Q{yy}")
-    if q1 is None:
-        _log_miss(st, crid, lbl, [f"1Q{yy}"])
-        return
+    q1 = _z(vals, f"1Q{yy}")
+    q1_note = f"1Q{yy}" if _g(vals, f"1Q{yy}") is not None else f"1Q{yy}(=0, not reported)"
     d = float(sm) - float(q1)
     _put(
         vals, lbl, d,
-        f"6M{yy} - 1Q{yy} = {sm} - {q1}",
+        f"6M{yy} - {q1_note} = {sm} - {q1}",
         st, crid, disp, "derived", audit,
     )
 
 
 def _cf_3q(st, crid, disp, vals, yy, reported, audit):
-    """Derive 3Q = 9M − 6M when 3Q is absent and both YTD operands exist."""
+    """Derive 3Q = 9M − 6M when 3Q is absent (6M treated as 0 when not reported)."""
     lbl = f"3Q{yy}"
     if _skip(vals, lbl, reported, st, crid):
         return
@@ -302,20 +313,18 @@ def _cf_3q(st, crid, disp, vals, yy, reported, audit):
     if nm is None:
         _log_miss(st, crid, lbl, [f"9M{yy}"])
         return
-    sm = _g(vals, f"6M{yy}")
-    if sm is None:
-        _log_miss(st, crid, lbl, [f"6M{yy}"])
-        return
+    sm = _z(vals, f"6M{yy}")
+    sm_note = f"6M{yy}" if _g(vals, f"6M{yy}") is not None else f"6M{yy}(=0, not reported)"
     d = float(nm) - float(sm)
     _put(
         vals, lbl, d,
-        f"9M{yy} - 6M{yy} = {nm} - {sm}",
+        f"9M{yy} - {sm_note} = {nm} - {sm}",
         st, crid, disp, "derived", audit,
     )
 
 
 def _cf_4q(st, crid, disp, vals, yy, reported, audit):
-    """Derive 4Q = FY − 9M (9M treated as 0 when absent)."""
+    """Derive 4Q = FY − 9M (9M treated as 0 when absent or explicitly zero)."""
     lbl = f"4Q{yy}"
     if _skip(vals, lbl, reported, st, crid):
         return

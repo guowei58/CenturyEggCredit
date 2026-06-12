@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatWorkspaceBadge } from "@/lib/company-workspace-key";
+import { resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { useSession } from "next-auth/react";
 import {
   aiChatShowsUnreadNavDot,
@@ -106,6 +107,11 @@ export function CompanyBar({
     };
   }, [sessionStatus, data.ticker, aiChatOpen, onOpenAiChat]);
 
+  const promptLabels = resolveCompanyPromptLabels({
+    workspaceKey: data.ticker,
+    companyName: companyNameForPrompts ?? data.name,
+  });
+
   function bulkCtx() {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     return {
@@ -130,8 +136,9 @@ export function CompanyBar({
           : provider === "gemini"
             ? "Gemini API"
             : "DeepSeek API";
+    const targetLabel = promptLabels.isPrivate ? promptLabels.displayName : data.ticker.toUpperCase();
     const ok = window.confirm(
-      `${who} will run all research prompts for ${data.ticker.toUpperCase()} and overwrite (save over) any existing saved answers in those tabs.\n\nThis usually takes a long time—about 20–30 minutes in most situations—because each tab is run separately with pauses to respect API rate limits.\n\nContinue?`
+      `${who} will run all research prompts for ${targetLabel} and overwrite (save over) any existing saved answers in those tabs.\n\nThis usually takes a long time—about 20–30 minutes in most situations—because each tab is run separately with pauses to respect API rate limits.\n\nContinue?`
     );
     if (!ok) return;
     setBulkApiBusy(provider);

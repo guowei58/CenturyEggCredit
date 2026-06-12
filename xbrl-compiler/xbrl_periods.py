@@ -93,8 +93,17 @@ def filter_facts_to_xbrl_periods(
             continue
         if is_xbrl_tagged_concept(f.concept):
             backed.add(f.period.canonical)
-    return [
+    filtered = [
         f
         for f in facts
         if f.period.fiscal_year >= min_fiscal_year and f.period.canonical in backed
+    ]
+    if filtered:
+        return filtered
+    # HTML-only face workbooks (no QName columns): keep all in-range facts rather than
+    # dropping the entire sheet (e.g. TTEC as-presented exports).
+    return [
+        f
+        for f in facts
+        if f.value is not None and f.period.fiscal_year >= min_fiscal_year
     ]

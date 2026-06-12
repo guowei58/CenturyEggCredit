@@ -1,0 +1,28 @@
+Pipeline start  input=C:\Users\admin\Desktop\CenturyEggCredit\scripts\.audit-truth-batch\work\EVCM\in  output=C:\Users\admin\Desktop\CenturyEggCredit\scripts\.audit-truth-batch\work\EVCM\out
+Step 1: Loading workbooks
+Loaded 20 workbooks, 46 statement sheets, 2668 facts
+Step 2: Identifying master 10-K
+Master workbook: EVCM_SEC-XBRL-financials_as-presented_10-K_2026-03-12_0001853145-26-000010.xlsx  (is_10k=True, latest_fy=2025)
+Step 3: Building master presentation
+Master rows: 135, concept mappings: 145, AI matches: 0, interest netting aliases: 0
+Step 4: Mapping facts to canonical rows
+Mapped: 2668, unresolved: 0
+File recency order (oldest→newest): ['EVCM_SEC-XBRL-financials_as-presented_10-Q_2021-08-12_0001853145-21-000011.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2021-11-09_0001853145-21-000019.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-K_2022-03-15_0001853145-22-000011.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2022-05-09_0001853145-22-000018.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2022-08-09_0001853145-22-000026.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2022-11-10_0001853145-22-000034.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-K_2023-03-16_0001853145-23-000011.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2023-05-10_0001853145-23-000018.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2023-08-08_0001853145-23-000024.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2023-11-07_0001853145-23-000032.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-K_2024-03-14_0001853145-24-000026.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2024-05-09_0001853145-24-000035.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2024-08-06_0001853145-24-000047.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2024-11-12_0001853145-24-000054.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-K_2025-03-13_0001853145-25-000009.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2025-05-08_0001853145-25-000017.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2025-08-06_0001853145-25-000037.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2025-11-06_0001853145-25-000047.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-K_2026-03-12_0001853145-26-000010.xlsx', 'EVCM_SEC-XBRL-financials_as-presented_10-Q_2026-05-07_0001853145-26-000021.xlsx']
+Headline periods (period-primary source): EVCM_SEC-XBRL-financials_as-presented_10-K_2022-03-15_0001853145-22-000011.xlsx=['FY21'], EVCM_SEC-XBRL-financials_as-presented_10-K_2023-03-16_0001853145-23-000011.xlsx=['FY22'], EVCM_SEC-XBRL-financials_as-presented_10-K_2024-03-14_0001853145-24-000026.xlsx=['FY23'], EVCM_SEC-XBRL-financials_as-presented_10-K_2025-03-13_0001853145-25-000009.xlsx=['FY24'], EVCM_SEC-XBRL-financials_as-presented_10-K_2026-03-12_0001853145-26-000010.xlsx=['FY25'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2021-08-12_0001853145-21-000011.xlsx=['2Q21'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2021-11-09_0001853145-21-000019.xlsx=['3Q21'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2022-05-09_0001853145-22-000018.xlsx=['1Q22'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2022-08-09_0001853145-22-000026.xlsx=['2Q22'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2022-11-10_0001853145-22-000034.xlsx=['3Q22'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2023-05-10_0001853145-23-000018.xlsx=['1Q23'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2023-08-08_0001853145-23-000024.xlsx=['2Q23'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2023-11-07_0001853145-23-000032.xlsx=['3Q23', '9M23'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2024-05-09_0001853145-24-000035.xlsx=['1Q24'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2024-08-06_0001853145-24-000047.xlsx=['2Q24', '6M24'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2024-11-12_0001853145-24-000054.xlsx=['3Q24', '9M24'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2025-05-08_0001853145-25-000017.xlsx=['1Q25'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2025-08-06_0001853145-25-000037.xlsx=['2Q25', '6M25'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2025-11-06_0001853145-25-000047.xlsx=['3Q25', '9M25'], EVCM_SEC-XBRL-financials_as-presented_10-Q_2026-05-07_0001853145-26-000021.xlsx=['1Q26']
+Step 5: Consolidating across files
+Consolidated cells: 1179, conflicts: 85
+Step 5b: Coverage pass
+Coverage: repaired 0 mapped cells; row_order registry +0 rows; explicit workbook +0 rows / +0 cells; workbook gap fills 0; integrated 0 unresolved rows, 0 cells; unresolved remaining 0
+Step 6: Deriving missing quarters
+Derived 455 quarterly values
+Step 6b: Final raw XBRL reconcile (add any missing lines / cells)
+Final reconcile: scanned 145 raw keys; +0 rows, +0 map repairs, +0 orphan master rows, +0 cells
+Step 6c: Row deduplication (merge duplicate canonical rows)
+Row deduplication: removed 16 duplicate canonical rows; re-derived 56 values
+Step 6d: Workbook truth loop (lines + cells vs headline workbooks)
+Workbook truth: 15 iteration(s); cleared 0, aligned 29, +27 rows, +0 cells, re-derived 454 quarters
+Workbook truth validation: 2 issue(s) remain
+  [value_mismatch] income_statement Foreign currency translation gain (loss), net @ FY23 compiled=-2.181 workbook=2.181
+  [value_mismatch] income_statement Loss on sale and impairments @ FY25 compiled=-0.085 workbook=0.085
+Step 7: Validating
+Step 8: Exporting

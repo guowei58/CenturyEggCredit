@@ -147,7 +147,8 @@ class TestHeadlinePeriods:
         h = headline_periods_for_workbook(wb)
         assert "2Q25" in h and "6M25" in h
 
-    def test_10k_fy_columns_headline(self):
+    def test_10k_only_primary_fy_headline(self):
+        """Later 10-K comparatives (FY23 on a FY24 10-K) must not headline FY23."""
         facts = [
             _fact(plabel="FY24", value=10, src="k.xlsx"),
             _fact(plabel="FY23", value=9, src="k.xlsx"),
@@ -155,7 +156,14 @@ class TestHeadlinePeriods:
         sh = _sheet(facts, src="k.xlsx")
         wb = _wb([sh], filename="co_10K_2025.xlsx", is_10k=True, fy=2024)
         h = headline_periods_for_workbook(wb)
-        assert h == frozenset({"FY24", "FY23"})
+        assert h == frozenset({"FY24"})
+
+    def test_10k_single_fy_column_headline(self):
+        facts = [_fact(plabel="FY23", value=9, src="k.xlsx")]
+        sh = _sheet(facts, src="k.xlsx")
+        wb = _wb([sh], filename="co_10K_2024.xlsx", is_10k=True, fy=2023)
+        h = headline_periods_for_workbook(wb)
+        assert h == frozenset({"FY23"})
 
 
 # ===========================================================================
@@ -1008,6 +1016,19 @@ class TestXbrlPeriods:
         assert "1Q20" not in labels
         assert "FY18" not in labels
 
+    def test_filter_facts_keeps_html_only_sheet(self):
+        """When every fact is html:, keep in-range periods instead of zeroing the sheet."""
+        from xbrl_periods import filter_facts_to_xbrl_periods
+
+        facts = [
+            _fact(concept="html:revenues", plabel="1Q20", value=1.0),
+            _fact(concept="html:revenues", plabel="FY20", value=4.0),
+            _fact(concept="html:revenues", plabel="FY18", value=3.0),
+        ]
+        out = filter_facts_to_xbrl_periods(facts)
+        labels = {f.period.canonical for f in out}
+        assert labels == {"1Q20", "FY20"}
+
     def test_models_json_allowed_periods(self):
         from main import _models_json
 
@@ -1179,6 +1200,45 @@ class TestDispositionFYHarmonize:
         assert abs(data["income_statement"][canon]["FY21"] - 100.14) < 0.02
         assert abs(data["income_statement"][canon]["4Q21"]) < 0.02
 
+    def test_workbook_truth_skips_fy_harmonization(self):
+        """Gain/loss FY on workbook must not flip during truth loop (ATRO-style)."""
+        from workbook_truth import run_workbook_truth_until_clean
+        from derivation_engine import derive_quarters
+
+        canon = "us-gaap:GainLossOnSaleOfBusiness"
+        rows = [
+            MasterRow(
+                "income_statement",
+                canon,
+                canon,
+                "Net Gain on Sale of Businesses",
+                0,
+                0,
+            ),
+        ]
+        cmap = [ConceptMapping("income_statement", canon, canon, "auto", "")]
+        k10 = _sheet([
+            _fact(canon, value=3.427, line="Net Gain on Sale of Businesses", plabel="FY23", src="k10.xlsx"),
+        ], src="k10.xlsx", stmt="income_statement", sheet_name="Income Statement")
+        q1 = _sheet([
+            _fact(canon, value=-3.427, line="Net Gain on Sale of Businesses", plabel="1Q23", src="q1.xlsx"),
+            _fact(canon, value=0.0, line="Net Gain on Sale of Businesses", plabel="2Q23", src="q1.xlsx"),
+            _fact(canon, value=0.0, line="Net Gain on Sale of Businesses", plabel="3Q23", src="q1.xlsx"),
+        ], src="q1.xlsx", stmt="income_statement", sheet_name="Income Statement")
+        workbooks = [_wb([k10], "k10.xlsx", True, 2023), _wb([q1], "q1.xlsx", False, 2023)]
+        headlines = {"k10.xlsx": frozenset({"FY23"}), "q1.xlsx": frozenset({"1Q23", "2Q23", "3Q23"})}
+        recency = {"k10.xlsx": 0, "q1.xlsx": 1}
+
+        mapped, _ = map_all_facts(workbooks, cmap, rows)
+        data, audit, _ = consolidate(mapped, rows, recency, headlines)
+        derived = derive_quarters(data, rows, audit)
+
+        result, _ = run_workbook_truth_until_clean(
+            data, workbooks, cmap, rows, headlines, audit, derived, derive_quarters,
+        )
+        assert result.issues == []
+        assert abs(data["income_statement"][canon]["FY23"] - 3.427) < 0.001
+
 
 # ===========================================================================
 # Cash flow derivations
@@ -1225,13 +1285,45 @@ class TestCFDerivation:
         assert data["cash_flow"]["C"]["4Q15"] == 50.0
         assert "not reported" in da[0].derivation_formula
 
-    def test_cf_without_1q_skips_2q_derivation(self):
+    def test_4q_fy_minus_9m_when_9m_explicitly_zero(self):
+        """FY − 9M when 9M YTD is explicitly zero on the Q3 face (not just absent)."""
+        canon = "us-gaap:IncreaseDecreaseInDeferredRevenue"
+        rows = [MasterRow("cash_flow", canon, canon, "Change in deferred revenue", 0, 0)]
+        data = {"cash_flow": {canon: {"9M24": 0.0, "FY24": 1763.0}}}
+        da = derive_quarters(data, rows, [])
+        assert data["cash_flow"][canon]["4Q24"] == 1763.0
+        assert data["cash_flow"][canon]["3Q24"] == 0.0
+        a4 = [a for a in da if a.output_period == "4Q24"]
+        assert len(a4) == 1
+        assert "FY24 - 9M24" in a4[0].derivation_formula
+        assert "not reported" not in a4[0].derivation_formula
+
+    def test_derive_3q_from_9m_when_6m_absent(self):
+        """Lines that debut on a Q3 9M face (no 6M on earlier filings) → 3Q = 9M − 0."""
+        canon = "us-gaap:IncreaseDecreaseInDeferredRevenue"
+        rows = [MasterRow("cash_flow", canon, canon, "Change in deferred revenue", 0, 0)]
+        data = {"cash_flow": {canon: {"9M24": 1572.0, "FY24": 1763.0}}}
+        da = derive_quarters(data, rows, [])
+        assert data["cash_flow"][canon]["3Q24"] == 1572.0
+        assert any("6M24(=0, not reported)" in a.derivation_formula for a in da)
+
+    def test_cf_without_1q_derives_2q_from_6m(self):
+        """Episodic CF lines (e.g. goodwill impairment) may only appear in 6M YTD."""
         rows = [MasterRow("cash_flow", "C", "C", "Debt investment", 0, 0)]
         data = {"cash_flow": {"C": {"6M15": 20.0, "FY15": 45.0}}}
-        derive_quarters(data, rows, [])
-        assert "2Q15" not in data["cash_flow"]["C"]
+        da = derive_quarters(data, rows, [])
+        assert data["cash_flow"]["C"]["2Q15"] == 20.0
         assert "3Q15" not in data["cash_flow"]["C"]
         assert data["cash_flow"]["C"]["4Q15"] == 45.0
+        assert any("1Q15(=0, not reported)" in a.derivation_formula for a in da)
+
+    def test_cf_goodwill_style_6m_only_maps_to_2q(self):
+        """LUMN-style: large goodwill charge only in 2Q filing 6M column, no 1Q line."""
+        canon = "us-gaap:GoodwillImpairmentLoss"
+        rows = [MasterRow("cash_flow", canon, canon, "Goodwill impairment", 0, 0)]
+        data = {"cash_flow": {canon: {"6M23": 8793.0}}}
+        derive_quarters(data, rows, [])
+        assert data["cash_flow"][canon]["2Q23"] == 8793.0
 
     def test_cf_does_not_overwrite_reported_2q_or_3q(self):
         rows = [MasterRow("cash_flow", "C", "C", "NetCash", 0, 0)]
@@ -1323,7 +1415,51 @@ class TestConflicts:
         assert len(conflicts) == 1
         assert "period-primary" in conflicts[0].resolution.lower()
 
-    def test_fallback_to_recency_when_no_headline_owner(self):
+    def test_period_primary_fy23_original_10k_wins_over_later_comparative(self):
+        """FY23 on a FY24 10-K is comparative; keep the dedicated FY2023 10-K value."""
+        canon = "us-gaap:ImpairmentOfLongLivedAssetsToBeDisposedOf"
+        rows = [MasterRow("cash_flow", canon, canon, "Impairment", 0, 0)]
+        facts = [
+            MappedFact("cash_flow", canon, "Impairment", _p("FY23"), 10693.0,
+                       "lumn_10K_2024.xlsx", "CF", "FY23", "Impairment", canon),
+            MappedFact("cash_flow", canon, "Impairment", _p("FY23"), 27.0,
+                       "lumn_10K_2025.xlsx", "CF", "FY23", "Impairment", canon),
+        ]
+        recency = {"lumn_10K_2024.xlsx": 0, "lumn_10K_2025.xlsx": 1}
+        k24_facts = [
+            _fact(concept=canon, stmt="cash_flow", plabel="FY23", value=10693.0,
+                  line="Impairment", src="lumn_10K_2024.xlsx", sheet="Cash Flow"),
+            _fact(concept=canon, stmt="cash_flow", plabel="FY22", value=1.0,
+                  line="Impairment", src="lumn_10K_2024.xlsx", sheet="Cash Flow"),
+        ]
+        k25_facts = [
+            _fact(concept=canon, stmt="cash_flow", plabel="FY24", value=1.0,
+                  line="Impairment", src="lumn_10K_2025.xlsx", sheet="Cash Flow"),
+            _fact(concept=canon, stmt="cash_flow", plabel="FY23", value=27.0,
+                  line="Impairment", src="lumn_10K_2025.xlsx", sheet="Cash Flow"),
+        ]
+        headlines = {
+            "lumn_10K_2024.xlsx": headline_periods_for_workbook(
+                _wb([_sheet(k24_facts, stmt="cash_flow", src="lumn_10K_2024.xlsx",
+                            sheet_name="Cash Flow")],
+                    filename="lumn_10K_2024.xlsx", is_10k=True, fy=2023),
+            ),
+            "lumn_10K_2025.xlsx": headline_periods_for_workbook(
+                _wb([_sheet(k25_facts, stmt="cash_flow", src="lumn_10K_2025.xlsx",
+                            sheet_name="Cash Flow")],
+                    filename="lumn_10K_2025.xlsx", is_10k=True, fy=2024),
+            ),
+        }
+        assert headlines["lumn_10K_2024.xlsx"] == frozenset({"FY23"})
+        assert headlines["lumn_10K_2025.xlsx"] == frozenset({"FY24"})
+        data, audit, conflicts = consolidate(facts, rows, recency, headlines)
+        assert data["cash_flow"][canon]["FY23"] == 10693.0
+        assert audit[0].source_file == "lumn_10K_2024.xlsx"
+        assert len(conflicts) == 1
+        assert "period-primary" in conflicts[0].resolution.lower()
+
+    def test_no_cell_when_no_headline_owner(self):
+        """Comparative-only facts must not populate a period slot."""
         rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
         facts = [
             MappedFact("income_statement", "R", "Revenue", _p("1Q25"), 100.0,
@@ -1334,11 +1470,11 @@ class TestConflicts:
         recency = {"old.xlsx": 0, "new.xlsx": 1}
         headlines = {"old.xlsx": frozenset(), "new.xlsx": frozenset()}
         data, _, conflicts = consolidate(facts, rows, recency, headlines)
-        assert data["income_statement"]["R"]["1Q25"] == 250.0
-        assert len(conflicts) == 1
+        assert "1Q25" not in data.get("income_statement", {}).get("R", {})
+        assert conflicts == []
 
-    def test_most_recent_file_wins(self):
-        """When two files differ, the one with the higher recency rank is used."""
+    def test_most_recent_file_wins_among_headline_owners(self):
+        """When two files headline the same period, higher recency wins."""
         rows = [MasterRow("income_statement", "R", "R", "Revenue", 0, 0)]
         facts = [
             MappedFact("income_statement", "R", "Revenue", _p("FY15"), 100.0,
@@ -1347,7 +1483,8 @@ class TestConflicts:
                        "new_10K.xlsx", "IS", "FY15", "Revenue", "R"),
         ]
         recency = {"old_10Q.xlsx": 0, "new_10K.xlsx": 1}
-        data, audit, conflicts = consolidate(facts, rows, file_recency=recency)
+        headlines = {"old_10Q.xlsx": frozenset({"FY15"}), "new_10K.xlsx": frozenset({"FY15"})}
+        data, audit, conflicts = consolidate(facts, rows, recency, headlines)
         assert data["income_statement"]["R"]["FY15"] == 250.0
         assert audit[0].source_file == "new_10K.xlsx"
         assert len(conflicts) == 1
@@ -1782,6 +1919,7 @@ class TestFinalRawReconcile:
         audit: list = []
         res = reconcile_final_statements_with_raw_xbrl(
             [wb], master_rows, cmap, consolidated, {"f.xlsx": 0}, audit,
+            {"f.xlsx": frozenset({"FY20"})},
         )
         assert res.orphan_master_rows_recovered == 1
         assert any(r.canonical_row_id == "us-gaap:OrphanTag" for r in master_rows)
@@ -1990,6 +2128,10 @@ class TestFullMasterPresentationInExports:
         assert "FY20" in qtr
         row = models["balance_sheet"]["quarterly"]["rows"][0]
         assert row["FY20"] == 100.0
+        ann = models["balance_sheet"]["annual"]["periods"]
+        assert ann == ["FY20"]
+        ann_row = models["balance_sheet"]["annual"]["rows"][0]
+        assert ann_row["FY20"] == 100.0
 
     def test_models_json_uses_2019_floor_not_first_complete_year(self):
         """With DISPLAY_MODEL_MIN_FISCAL_YEAR=2019, partial years before first Q1–Q4 set still show."""
@@ -2104,7 +2246,7 @@ class TestFullMasterPresentationInExports:
         assert "FY15" not in ann and "FY16" not in ann
         assert "FY17" in ann
 
-    def test_models_json_includes_master_rows_without_consolidated_cells(self):
+    def test_models_json_omits_master_rows_without_numeric_cells(self):
         from main import _models_json
         from master_presentation_builder import MasterRow
 
@@ -2127,12 +2269,8 @@ class TestFullMasterPresentationInExports:
         models, _ = _models_json(consolidated, rows, None)
         bs_a = models["balance_sheet"]["annual"]["rows"]
         concepts = [r["concept"] for r in bs_a]
-        assert "us-gaap:FiniteLivedIntangibleAssetsNet" in concepts
-        int_row = next(
-            r for r in bs_a
-            if r["concept"] == "us-gaap:FiniteLivedIntangibleAssetsNet"
-        )
-        assert int_row.get("FY20") is None
+        assert "us-gaap:Cash" in concepts
+        assert "us-gaap:FiniteLivedIntangibleAssetsNet" not in concepts
 
     def test_exporter_row_order_includes_master_without_data(self):
         from exporter import _row_order
@@ -2504,7 +2642,10 @@ class TestCoveragePass:
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
         audit: list = []
-        n = repair_mapped_gaps(consolidated, [mf], {"a.xlsx": 1}, rows, audit)
+        n = repair_mapped_gaps(
+            consolidated, [mf], {"a.xlsx": 1}, rows, audit,
+            {"a.xlsx": frozenset({"FY15"})},
+        )
         assert n == 1
         assert consolidated["income_statement"]["us-gaap:Revenue"]["FY15"] == 123.0
         assert any(a.source_method == "coverage_repair" for a in audit)
@@ -2544,6 +2685,7 @@ class TestCoveragePass:
         audit: list = []
         rem, nrows, ncells = integrate_unresolved_facts(
             wbs, rows, cmap, consolidated, {"f.xlsx": 1}, unresolved, audit,
+            {"f.xlsx": frozenset({"FY15"})},
         )
         assert nrows == 1
         assert ncells == 1
@@ -2565,9 +2707,9 @@ class TestExplicitWorkbookCoverage:
         )
 
         sh = _sheet([
-            _fact("us-gaap:Revenue", value=1.0, plabel="FY15"),
-            _fact("us-gaap:InterestIncome", value=7.5, line="Interest income", plabel="FY15"),
-        ])
+            _fact("us-gaap:Revenue", value=1.0, plabel="FY15", src="extra.xlsx"),
+            _fact("us-gaap:InterestIncome", value=7.5, line="Interest income", plabel="FY15", src="extra.xlsx"),
+        ], src="extra.xlsx")
         wb = _wb([sh], "extra.xlsx", False, 2015)
         workbooks = [wb]
         groups = _group_facts_by_statement_concept(workbooks)
@@ -2590,6 +2732,7 @@ class TestExplicitWorkbookCoverage:
             consolidated,
             {"extra.xlsx": 1},
             audit,
+            {"extra.xlsx": frozenset({"FY15"})},
         )
         assert nr == 1
         assert nc >= 1
@@ -2602,7 +2745,7 @@ class TestExplicitWorkbookCoverage:
             fill_consolidated_gaps_from_workbook_groups,
         )
 
-        sh = _sheet([_fact("us-gaap:Revenue", value=42.0, plabel="FY15")])
+        sh = _sheet([_fact("us-gaap:Revenue", value=42.0, plabel="FY15", src="f.xlsx")], src="f.xlsx")
         wb = _wb([sh], "f.xlsx", False, 2015)
         groups = _group_facts_by_statement_concept([wb])
         rows = [MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "R", 0, 0)]
@@ -2616,9 +2759,118 @@ class TestExplicitWorkbookCoverage:
         audit: list = []
         n = fill_consolidated_gaps_from_workbook_groups(
             groups, cmap, consolidated, {"f.xlsx": 1}, rows, audit,
+            {"f.xlsx": frozenset({"FY15"})},
         )
         assert n == 1
         assert consolidated["income_statement"]["us-gaap:Revenue"]["FY15"] == 42.0
+
+
+class TestWorkbookTruth:
+    def test_truth_loop_clears_extra_and_converges(self):
+        """Iterative enforce removes comparative backfill; validate returns clean."""
+        from workbook_truth import run_workbook_truth_until_clean
+        from derivation_engine import derive_quarters
+
+        canon = "us-gaap:IncreaseDecreaseInDeferredRevenue"
+        rows = [MasterRow("cash_flow", canon, canon, "Change in deferred revenue", 1, 0)]
+        cmap = [ConceptMapping("cash_flow", canon, canon, "auto_from_master", "")]
+        q1_24 = _sheet([
+            _fact("us-gaap:NetIncomeLoss", value=57.0, line="Net income", plabel="1Q24", src="q1_24.xlsx"),
+        ], src="q1_24.xlsx", stmt="cash_flow", sheet_name="Cash Flow")
+        q1_25 = _sheet([
+            _fact(canon, value=52.0, line="Change in deferred revenue", plabel="1Q24", src="q1_25.xlsx"),
+            _fact(canon, value=493.0, line="Change in deferred revenue", plabel="1Q25", src="q1_25.xlsx"),
+        ], src="q1_25.xlsx", stmt="cash_flow", sheet_name="Cash Flow")
+        workbooks = [_wb([q1_24], "q1_24.xlsx", False, 2024), _wb([q1_25], "q1_25.xlsx", False, 2025)]
+        headlines = {"q1_24.xlsx": frozenset({"1Q24"}), "q1_25.xlsx": frozenset({"1Q25"})}
+        recency = {"q1_24.xlsx": 0, "q1_25.xlsx": 1}
+
+        mapped, _ = map_all_facts(workbooks, cmap, rows)
+        data, audit, _ = consolidate(mapped, rows, recency, headlines)
+        derived = derive_quarters(data, rows, audit)
+        data.setdefault("cash_flow", {})[canon] = {"1Q24": 52.0, "1Q25": 493.0}
+
+        result, _ = run_workbook_truth_until_clean(
+            data, workbooks, cmap, rows, headlines, audit, derived, derive_quarters,
+        )
+        assert data["cash_flow"][canon].get("1Q24") is None
+        assert data["cash_flow"][canon]["1Q25"] == 493.0
+        assert result.issues == []
+        assert result.iterations >= 1
+
+    def test_truth_loop_restores_missing_line(self):
+        """Workbook line missing from consolidated is added during the truth loop."""
+        from workbook_truth import run_workbook_truth_until_clean
+        from derivation_engine import derive_quarters
+
+        canon = "us-gaap:IncreaseDecreaseInDeferredRevenue"
+        rows = [MasterRow("cash_flow", "us-gaap:NetIncomeLoss", "us-gaap:NetIncomeLoss", "Net income", 0, 0)]
+        cmap = [
+            ConceptMapping("cash_flow", "us-gaap:NetIncomeLoss", "us-gaap:NetIncomeLoss", "auto", ""),
+            ConceptMapping("cash_flow", canon, canon, "auto", ""),
+        ]
+        q3 = _sheet([
+            _fact(canon, value=1572.0, line="Change in deferred revenue", plabel="9M24", src="q3.xlsx"),
+        ], src="q3.xlsx", stmt="cash_flow", sheet_name="Cash Flow")
+        workbooks = [_wb([q3], "q3.xlsx", False, 2024)]
+        headlines = {"q3.xlsx": frozenset({"9M24"})}
+        recency = {"q3.xlsx": 0}
+
+        mapped, _ = map_all_facts(workbooks, cmap, rows)
+        data, audit, _ = consolidate(mapped, rows, recency, headlines)
+        derived = derive_quarters(data, rows, audit)
+        assert canon not in data.get("cash_flow", {})
+
+        result, post = run_workbook_truth_until_clean(
+            data, workbooks, cmap, rows, headlines, audit, derived, derive_quarters,
+        )
+        assert canon in data["cash_flow"]
+        assert data["cash_flow"][canon]["9M24"] == 1572.0
+        assert result.issues == []
+        assert any(a.output_period == "3Q24" for a in post)
+
+    def test_comparative_does_not_backfill_missing_line(self):
+        """Later 10-Q comparative must not populate a period the primary workbook omitted."""
+        from workbook_truth import (
+            build_workbook_truth_index,
+            derived_cells_from_audit,
+            enforce_workbook_truth,
+            validate_compiled_against_workbooks,
+        )
+
+        canon = "us-gaap:IncreaseDecreaseInDeferredRevenue"
+        rows = [
+            MasterRow("cash_flow", canon, canon, "Change in deferred revenue", 1, 0),
+        ]
+        cmap = [
+            ConceptMapping("cash_flow", canon, canon, "auto_from_master", ""),
+        ]
+        q1_24 = _sheet([
+            _fact("us-gaap:NetIncomeLoss", value=57.0, line="Net income", plabel="1Q24", src="q1_24.xlsx"),
+        ], src="q1_24.xlsx", stmt="cash_flow", sheet_name="Cash Flow")
+        q1_25 = _sheet([
+            _fact(canon, value=52.0, line="Change in deferred revenue", plabel="1Q24", src="q1_25.xlsx"),
+            _fact(canon, value=493.0, line="Change in deferred revenue", plabel="1Q25", src="q1_25.xlsx"),
+        ], src="q1_25.xlsx", stmt="cash_flow", sheet_name="Cash Flow")
+        wb24 = _wb([q1_24], "q1_24.xlsx", False, 2024)
+        wb25 = _wb([q1_25], "q1_25.xlsx", False, 2025)
+        workbooks = [wb24, wb25]
+        headlines = {
+            "q1_24.xlsx": frozenset({"1Q24"}),
+            "q1_25.xlsx": frozenset({"1Q25"}),
+        }
+        recency = {"q1_24.xlsx": 0, "q1_25.xlsx": 1}
+
+        mapped, _ = map_all_facts(workbooks, cmap, rows)
+        data, audit, _ = consolidate(mapped, rows, recency, headlines)
+        truth = build_workbook_truth_index(workbooks, cmap, rows, headlines)
+        assert (("cash_flow", canon, "1Q24")) not in truth
+
+        derived = derived_cells_from_audit(audit)
+        cleared, _ = enforce_workbook_truth(data, truth, derived)
+        assert cleared >= 1 or data.get("cash_flow", {}).get(canon, {}).get("1Q24") is None
+        issues = validate_compiled_against_workbooks(data, truth, rows, derived)
+        assert not any(i.issue == "extra_value" and i.period == "1Q24" for i in issues)
 
 
 if __name__ == "__main__":

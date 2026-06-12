@@ -8,6 +8,8 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import math
+import re
 import sys
 import time
 
@@ -146,6 +148,7 @@ def run(
         mapped,
         unresolved,
         audit_entries,
+        file_headline_periods,
     )
     cov_msg = (
         f"Coverage: repaired {coverage_stats.repaired_mapped_cells} mapped cells; "
@@ -168,6 +171,7 @@ def run(
     _log("Step 6b: Final raw XBRL reconcile (add any missing lines / cells)")
     final_reconcile = reconcile_final_statements_with_raw_xbrl(
         workbooks, master_rows, concept_map, consolidated, file_recency, audit_entries,
+        file_headline_periods,
     )
     _log(
         f"Final reconcile: scanned {final_reconcile.raw_keys_scanned} raw keys; "
@@ -194,6 +198,51 @@ def run(
         _log("Row deduplication: no duplicate canonical rows merged")
 
     all_audit = audit_entries + derived_audit + derived_audit_2 + derived_audit_3
+
+    # 6d – Workbook truth: iterate enforce + validate until statements match workbooks
+    _log("Step 6d: Workbook truth loop (lines + cells vs headline workbooks)")
+    from workbook_truth import (
+        DERIVED_SOURCE_METHODS,
+        collect_workbook_canonical_concepts,
+        run_workbook_truth_until_clean,
+    )
+
+    prior_derived_audit = derived_audit + derived_audit_2 + derived_audit_3
+    wb_pass, post_truth_derived = run_workbook_truth_until_clean(
+        consolidated,
+        workbooks,
+        concept_map,
+        master_rows,
+        file_headline_periods,
+        all_audit,
+        prior_derived_audit,
+        derive_quarters,
+    )
+    pre_truth_audit = all_audit
+    if wb_pass.derived_cells_cleared:
+        all_audit = [
+            ae for ae in pre_truth_audit
+            if ae.source_method not in DERIVED_SOURCE_METHODS
+        ] + post_truth_derived
+    elif post_truth_derived:
+        all_audit = pre_truth_audit + post_truth_derived
+    workbook_truth_issues = wb_pass.issues
+    _log(
+        f"Workbook truth: {wb_pass.iterations} iteration(s); "
+        f"cleared {wb_pass.cells_cleared}, aligned {wb_pass.cells_aligned}, "
+        f"+{wb_pass.rows_added} rows, +{wb_pass.cells_filled} cells, "
+        f"re-derived {wb_pass.post_truth_derived} quarters"
+    )
+    if workbook_truth_issues:
+        _log(f"Workbook truth validation: {len(workbook_truth_issues)} issue(s) remain")
+        for issue in workbook_truth_issues[:20]:
+            _log(
+                f"  [{issue.issue}] {issue.statement_type} {issue.line_label} "
+                f"@ {issue.period or '(line)'} "
+                f"compiled={issue.compiled_value} workbook={issue.workbook_value}"
+            )
+    else:
+        _log("Workbook truth validation: all lines and reported cells match headline workbooks")
 
     # 7 – Validate
     _log("Step 7: Validating")
@@ -238,12 +287,17 @@ def run(
         + ", ".join(f"{st}={len(keys)}" for st, keys in sorted(xbrl_by_stmt_frozen.items()))
     )
 
+    workbook_canons_by_statement = {
+        st: frozenset(canon) for st, canon in collect_workbook_canonical_concepts(workbooks, concept_map).items()
+    }
+
     # Build frontend models (include cell failures for red highlighting)
     models, display_starts = _models_json(
         consolidated,
         master_rows,
         cell_failures,
         allowed_periods_by_statement=xbrl_by_stmt_frozen,
+        workbook_canons_by_statement=workbook_canons_by_statement,
     )
     for st, yr in sorted(display_starts.items()):
         _log(f"Display column start: {st} fiscal year {yr}")
@@ -267,7 +321,7 @@ def run(
                 bs_file_concepts[wb.filename] = list(sh.row_order)
 
     summary = {
-        "ok": True,
+        "ok": len(workbook_truth_issues) == 0,
         "compiler_schema_version": COMPILER_SCHEMA_VERSION,
         "display_models_min_fiscal_year": DISPLAY_MODEL_MIN_FISCAL_YEAR,
         "xbrl_backed_period_count": sum(len(v) for v in xbrl_by_stmt_frozen.values()),
@@ -281,7 +335,10 @@ def run(
         "total_concepts": len(master_rows),
         "mapped_facts": len(mapped),
         "statements_built": list(consolidated.keys()),
-        "derived_facts": len(derived_audit) + len(derived_audit_2) + len(derived_audit_3),
+        "derived_facts": (
+            len(derived_audit) + len(derived_audit_2) + len(derived_audit_3)
+            + len(post_truth_derived)
+        ),
         "row_deduplication": {
             "changed": dedup_res.changed,
             "rows_removed": dedup_res.rows_removed,
@@ -305,6 +362,28 @@ def run(
             "explicit_workbook_rows": coverage_stats.explicit_workbook_rows,
             "explicit_workbook_cells": coverage_stats.explicit_workbook_cells,
             "workbook_fact_gap_fills": coverage_stats.workbook_fact_gap_fills,
+        },
+        "workbook_truth": {
+            "iterations": wb_pass.iterations,
+            "cells_cleared": wb_pass.cells_cleared,
+            "cells_aligned": wb_pass.cells_aligned,
+            "rows_added": wb_pass.rows_added,
+            "cells_filled": wb_pass.cells_filled,
+            "derived_cells_cleared": wb_pass.derived_cells_cleared,
+            "post_truth_derived": wb_pass.post_truth_derived,
+            "issues_count": len(workbook_truth_issues),
+            "issues": [
+                {
+                    "statement_type": i.statement_type,
+                    "canonical_row_id": i.canonical_row_id,
+                    "period": i.period,
+                    "line_label": i.line_label,
+                    "issue": i.issue,
+                    "compiled_value": i.compiled_value,
+                    "workbook_value": i.workbook_value,
+                }
+                for i in workbook_truth_issues[:100]
+            ],
         },
         "validation_passed": sum(v.passed for v in validations),
         "validation_failed": sum(not v.passed for v in validations),
@@ -407,6 +486,52 @@ def _balance_sheet_cell(vals: dict, period_lbl: str) -> float | None:
     return None
 
 
+_FOOTNOTE_NARRATIVE_LINE_RE = re.compile(
+    r"^(\[\d+\]|amounts may not add due to rounding|the (decrease|increase|change) (in|from)|"
+    r"as a result of the reorganization|note \d+ (in|to) our consolidated financial|"
+    r"note \d+ for further information)",
+    re.I,
+)
+
+
+def _row_grid_has_numeric(row_dict: dict, periods: list[str]) -> bool:
+    for p in periods:
+        v = row_dict.get(p)
+        if v is not None and isinstance(v, (int, float)) and math.isfinite(v):
+            return True
+    return False
+
+
+def _looks_like_footnote_narrative_line(label: str) -> bool:
+    t = (label or "").strip()
+    if not t:
+        return False
+    return bool(_FOOTNOTE_NARRATIVE_LINE_RE.match(t))
+
+
+def _include_compiler_model_row(
+    crid: str,
+    disp: str,
+    q_row: dict,
+    a_row: dict,
+    qs: list[str],
+    ays: list[str],
+    workbook_canons: frozenset[str] | None = None,
+) -> bool:
+    """Keep rows with grid numbers, or any line that appears on a saved workbook."""
+    if workbook_canons and crid in workbook_canons:
+        return True
+    q_ok = _row_grid_has_numeric(q_row, qs)
+    a_ok = _row_grid_has_numeric(a_row, ays)
+    if q_ok or a_ok:
+        return True
+    if crid.startswith("_:lineonly:"):
+        return False
+    if _looks_like_footnote_narrative_line(disp):
+        return False
+    return False
+
+
 def _models_json(
     data: dict,
     master_rows: list,
@@ -415,6 +540,7 @@ def _models_json(
     display_min_fiscal_year: int | None = None,
     allowed_periods: frozenset[str] | None = None,
     allowed_periods_by_statement: dict[str, frozenset[str]] | None = None,
+    workbook_canons_by_statement: dict[str, frozenset[str]] | None = None,
 ) -> tuple[dict, dict[str, int]]:
     from period_parser import (
         ensure_quarter_and_fy_columns,
@@ -477,8 +603,11 @@ def _models_json(
 
     models: dict = {}
     display_starts: dict[str, int] = {}
+    wb_canons_all = workbook_canons_by_statement or {}
+
     for st in stmt_keys:
         concepts = data.get(st, {})
+        wb_canons = wb_canons_all.get(st, frozenset())
         q_set: set[str] = set()
         a_set: set[str] = set()
         cum_fiscal_years: set[int] = set()
@@ -557,6 +686,18 @@ def _models_json(
                 else allowed_periods
             )
             fy_cols = _collect_fy_column_labels(concepts, display_floor, allowed_bs)
+            for lbl in qs_all:
+                p = parse_period(lbl)
+                if not p or not p.is_quarterly() or p.period_type != "Q4":
+                    continue
+                if display_floor is not None and p.fiscal_year < display_floor:
+                    continue
+                if allowed_bs is not None:
+                    yy = str(p.fiscal_year % 100).zfill(2)
+                    if not any(f"{qi}Q{yy}" in allowed_bs for qi in "1234"):
+                        continue
+                fy_cols.append(f"FY{str(p.fiscal_year % 100).zfill(2)}")
+            fy_cols = sort_period_labels(list(dict.fromkeys(fy_cols)))
             qs_quarters = [
                 lbl
                 for lbl in qs
@@ -564,13 +705,14 @@ def _models_json(
             ]
             qs = interleave_annual_after_q4(qs_quarters, fy_cols)
             qs = ensure_quarter_and_fy_columns(_seed_ytd_only_years(qs))
+            # BS year-end is often stored as 4Q only; annual view still needs FY columns.
+            ays = sort_period_labels(list(dict.fromkeys(list(ays) + fy_cols)))
         else:
             qs = ensure_quarter_and_fy_columns(_seed_ytd_only_years(qs))
 
         seen: set[str] = set()
         ordered: list[str] = []
-        # Include every master row even when consolidated has no key for that
-        # canonical id (otherwise BS lines like intangibles vanish from the UI).
+        # Walk master row order first, then any extra consolidated concepts.
         for crid in orders.get(st, []):
             if crid not in seen:
                 ordered.append(crid)
@@ -602,15 +744,22 @@ def _models_json(
                 if f"{crid}::{p}" in fail_set:
                     q_fails.append(p)
             for p in ays:
-                a[p] = vals.get(p)
+                if st == "balance_sheet":
+                    a[p] = _balance_sheet_cell(vals, p)
+                else:
+                    a[p] = vals.get(p)
                 if f"{crid}::{p}" in fail_set:
                     a_fails.append(p)
             if q_fails:
                 q["_fails"] = q_fails
             if a_fails:
                 a["_fails"] = a_fails
-            qr.append(q)
-            ar.append(a)
+            if crid in wb_canons:
+                q["_workbookLine"] = True
+                a["_workbookLine"] = True
+            if _include_compiler_model_row(crid, disp, q, a, qs, ays, wb_canons):
+                qr.append(q)
+                ar.append(a)
 
         models[st] = {
             "quarterly": {"periods": qs, "rows": qr},

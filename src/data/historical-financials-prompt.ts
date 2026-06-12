@@ -1,3 +1,4 @@
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import HISTORICAL_FINANCIALS_PROMPT_TEMPLATE_RAW from "./historical-financials-llm.prompt.txt";
 
 /**
@@ -9,13 +10,7 @@ export const HISTORICAL_FINANCIALS_PROMPT_TEMPLATE = HISTORICAL_FINANCIALS_PROMP
 export function fillHistoricalFinancialsPromptPlaceholders(
   template: string,
   companyName: string,
-  ticker: string
+  tickerOrWorkspaceKey: string
 ): string {
-  const dn = (companyName || "").trim() || ticker.trim();
-  const tk = ticker.trim();
-  return template
-    .replace(/\[company name\]/gi, dn)
-    .replace(/\[ticker\]/gi, tk)
-    .replace(/\[COMPANY NAME\]/g, dn)
-    .replace(/\[TICKER\]/g, tk);
+  return fillCompanyPromptTemplate(template, tickerOrWorkspaceKey, companyName);
 }

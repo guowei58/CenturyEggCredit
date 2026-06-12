@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 
@@ -52,24 +53,16 @@ export function CompanyPortersFiveForcesTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
-  const companyLabel =
-    displayName && displayName.toUpperCase() !== safeTicker.toUpperCase()
-      ? `${displayName} (${safeTicker})`
-      : safeTicker || displayName;
-
   const { template: portersTemplate } = usePromptTemplateOverride(
     "porters-five-forces",
     PORTERS_FIVE_FORCES_PROMPT_TEMPLATE
   );
-  const prompt = safeTicker
-    ? portersTemplate.replace(/\[COMPANY NAME \/ TICKER\]/g, companyLabel)
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(portersTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker, displayName]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -202,7 +195,7 @@ export function CompanyPortersFiveForcesTab({
           <PromptTemplateBox
             tabId="porters-five-forces"
             defaultTemplate={PORTERS_FIVE_FORCES_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace(/\[COMPANY NAME \/ TICKER\]/g, companyLabel) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

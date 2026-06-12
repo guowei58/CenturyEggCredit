@@ -259,14 +259,27 @@ function scoreSpacedHeadingSlideSignal(rawText: string): number {
   return 0;
 }
 
+/** Filenames like `q3_fy26quarterlyearnings.htm` are earnings releases, not slide decks. */
+function filenameLooksLikeEarningsPressReleaseNotDeck(filename: string): boolean {
+  const fn = (filename ?? "").toLowerCase().replace(/[_\s-]+/g, "");
+  if (/quarterlyearnings|earningsrelease|pressrelease|financialresults|earningspr/i.test(fn)) return true;
+  if (/q[1-4].*earnings|earnings.*q[1-4]/i.test(fn)) return true;
+  if (/fy\d{2,4}.*earnings|earnings.*fy\d{2,4}/i.test(fn)) return true;
+  return false;
+}
+
 /** Exported for unit tests / tuning. */
 export function scoreEarningsHtmlSlideDeckLikelihood(html: string, filename: string): number {
   const $ = cheerio.load(html);
   const fn = (filename ?? "").toLowerCase();
   const imgHeavySig = scoreImageHeavySlideDeckSignals(html);
   let s = imgHeavySig;
-  if (/slide|slides|deck|presentation|investor(?:deck|[-_]deck)|graphic|supplement|webcast|q\d|fy\d/i.test(fn))
+  if (
+    !filenameLooksLikeEarningsPressReleaseNotDeck(fn) &&
+    /slide|slides|deck|presentation|investor(?:deck|[-_]deck)|graphic|supplement|webcast/i.test(fn)
+  ) {
     s += 42;
+  }
 
   const imgs = $("img").length;
   if (imgs >= 10) s += 34;
@@ -316,6 +329,7 @@ export function scoreEarningsHtmlPressReleaseLikelihood(html: string, filename: 
   const tl = t.toLowerCase();
   let s = 0;
   if (/press|release|news|prerelease|earnings_?release/i.test(fn)) s += 16;
+  if (filenameLooksLikeEarningsPressReleaseNotDeck(fn)) s += 36;
   if (/press release|news release|earnings release/i.test(tl)) s += 24;
   if (/\b(?:today|yesterday)\b.*\bannounc/.test(tl)) s += 14;
   if (/\bfinancial results\b|\bresults for the\b|\bearnings call\b|\bconference call\b|\binvestor call\b/i.test(tl)) s += 32;

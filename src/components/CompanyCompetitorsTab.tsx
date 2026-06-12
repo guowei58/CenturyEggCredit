@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 
@@ -31,21 +32,15 @@ export function CompanyCompetitorsTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
-  const companyLabel =
-    displayName && displayName.toUpperCase() !== safeTicker.toUpperCase()
-      ? `${displayName} (${safeTicker})`
-      : safeTicker || displayName;
+  const parenLabel = resolveCompanyPromptLabels({ workspaceKey: safeTicker, companyName }).parenLabel;
 
   const { template: competitorsTemplate } = usePromptTemplateOverride("competitors", COMPETITORS_PROMPT_TEMPLATE);
-  const prompt = safeTicker
-    ? competitorsTemplate.replace(/\[INSERT TICKER\]/g, companyLabel)
-    : "";
+  const prompt = safeTicker ? competitorsTemplate.replace(/\[INSERT TICKER\]/g, parenLabel) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker, displayName]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -178,7 +173,14 @@ export function CompanyCompetitorsTab({
           <PromptTemplateBox
             tabId="competitors"
             defaultTemplate={COMPETITORS_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace(/\[INSERT TICKER\]/g, companyLabel) : "")}
+            resolve={(tpl) =>
+              safeTicker
+                ? tpl.replace(
+                    /\[INSERT TICKER\]/g,
+                    resolveCompanyPromptLabels({ workspaceKey: safeTicker, companyName }).parenLabel
+                  )
+                : ""
+            }
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

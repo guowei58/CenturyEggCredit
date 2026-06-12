@@ -255,30 +255,30 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
 
   const relatedSubsidiariesPanel = (
     <div
-      className="mb-4 rounded-lg border p-3"
+      className="mb-2 rounded border px-2 py-1.5"
       style={{ borderColor: "var(--border2)", background: "var(--panel)" }}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--muted)" }}>
+      <p className="mb-1 text-[9px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
         Entity
       </p>
       {relatedLoading && relatedRows.length === 0 && !relatedError ? (
-        <div className="flex items-center gap-2 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
-          Loading EDGAR search entities…
+        <div className="flex items-center gap-1.5 py-0.5 text-[10px]" style={{ color: "var(--muted)" }}>
+          <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
+          Loading entities…
         </div>
       ) : null}
       {relatedError ? (
-        <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+        <p className="text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
           {relatedError}
         </p>
       ) : null}
       {!relatedLoading && !relatedError && relatedRows.length === 0 ? (
-        <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+        <p className="text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
           No related entities for this CIK.
         </p>
       ) : null}
       {relatedRows.length > 0 ? (
-        <ul className="mt-2 max-h-[13rem] overflow-y-auto rounded border" style={{ borderColor: "var(--border2)" }}>
+        <ul className="max-h-[5.75rem] overflow-y-auto rounded border" style={{ borderColor: "var(--border2)" }}>
           {relatedRows.map((r) => (
             <li
               key={`${r.cik}::${r.entityName}`}
@@ -288,21 +288,21 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
               <button
                 type="button"
                 title={`${r.filingCount.toLocaleString()} indexed hit(s) with this entity label alongside CIK ${facetParentCik ?? data?.cik ?? ""}. Open ${r.cik}’s filings.`}
-                className="flex w-full items-start gap-2 px-2 py-2 text-left text-xs transition-colors hover:bg-white/[0.05]"
+                className="flex w-full items-center gap-1.5 px-1.5 py-1 text-left text-[11px] leading-tight transition-colors hover:bg-white/[0.05]"
                 onClick={() => void loadFilingsByCik(r.cik)}
               >
                 <span
-                  className="shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold tabular-nums"
+                  className="shrink-0 rounded px-1 py-px text-[9px] font-semibold tabular-nums"
                   style={{ background: "var(--border2)", color: "var(--text)" }}
                 >
                   {r.filingCount}
                 </span>
-                <span className="min-w-0 flex-1">
+                <span className="min-w-0 flex-1 truncate">
                   <span className="font-medium" style={{ color: "var(--blue)" }}>
                     {r.entityName}
                   </span>
-                  <span className="mt-0.5 block font-mono text-[10px]" style={{ color: "var(--muted)" }}>
-                    {r.ticker && r.ticker !== "—" ? `(${r.ticker}) ` : ""}CIK {r.cik}
+                  <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>
+                    {r.ticker && r.ticker !== "—" ? ` (${r.ticker})` : ""} · CIK {r.cik}
                   </span>
                 </span>
               </button>

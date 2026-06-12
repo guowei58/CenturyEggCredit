@@ -1,3 +1,5 @@
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
+
 /**
  * HowStuffWorks tab — operating-diligence prompt. Replace placeholders in the UI / bulk runner.
  */
@@ -8,12 +10,12 @@ export const HOW_STUFF_WORKS_OPTIONAL_PRODUCTS_FALLBACK =
 export function fillHowStuffWorksPromptPlaceholders(
   tpl: string,
   companyName: string,
-  ticker: string
+  tickerOrWorkspaceKey: string
 ): string {
-  return tpl
-    .replace(/\[INSERT COMPANY NAME\]/g, companyName)
-    .replace(/\[INSERT TICKER\]/g, ticker)
-    .replace(/\[OPTIONAL — INSERT IF KNOWN\]/g, HOW_STUFF_WORKS_OPTIONAL_PRODUCTS_FALLBACK);
+  return fillCompanyPromptTemplate(tpl, tickerOrWorkspaceKey, companyName).replace(
+    /\[OPTIONAL — INSERT IF KNOWN\]/g,
+    HOW_STUFF_WORKS_OPTIONAL_PRODUCTS_FALLBACK
+  );
 }
 
 export const HOW_STUFF_WORKS_PROMPT_TEMPLATE = `You are a meticulous operating-diligence analyst.

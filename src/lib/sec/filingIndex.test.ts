@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   accessionForIndexHtmlBasename,
   htmlLooksLikePersonnelOnlyPressNotEarningsResults,
+  html8KPrimaryDefersEarningsToExhibitAttachment,
   looksLike8kFormCoverShellHtml,
   parseExhibit99HtmlFilenamesFromSubmissionTxt,
   parseFilingDetailIndexHtmlAttachments,
@@ -175,6 +176,21 @@ describe("rankExhibit99HtmlFilenames", () => {
     expect(ranked).toEqual(["issuer_99_a.htm"]);
     expect(scoreExhibit99HtmlFilename("issuer_99_a.htm")).toBeGreaterThanOrEqual(42);
     expect(scoreExhibit99HtmlFilename("issuer_99_a.htm")).toBeLessThan(58);
+  });
+});
+
+describe("html8KPrimaryDefersEarningsToExhibitAttachment", () => {
+  it("is true for Workiva 8-K primaries that link to Exhibit 99 earnings HTML (CMPR-style)", () => {
+    const html = `<html><body>Item 2.02 Results of Operations
+    <p>furnished as Exhibit 99.1 to this report.</p>
+    <a style="-sec-extract:exhibit" href="q3_fy26quarterlyearnings.htm">Q3 Fiscal Year 2026 Quarterly Earnings Document</a>
+    </body></html>`;
+    expect(html8KPrimaryDefersEarningsToExhibitAttachment(html)).toBe(true);
+  });
+
+  it("is false for a standalone earnings press body", () => {
+    const html = `<html><body>${"x".repeat(400)}<p>Press release. Today we announced financial results for Q3.</p></body></html>`;
+    expect(html8KPrimaryDefersEarningsToExhibitAttachment(html)).toBe(false);
   });
 });
 

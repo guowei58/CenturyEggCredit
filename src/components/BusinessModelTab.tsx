@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
 /** Split text by URLs and return React nodes: plain text and clickable links (new tab). Stops at ), ], } so parentheticals aren't part of the link. */
@@ -52,19 +53,13 @@ export function BusinessModelTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
   const { template: businessModelTemplate } = usePromptTemplateOverride("business-model", BUSINESS_MODEL_PROMPT_TEMPLATE);
-  const prompt = safeTicker
-    ? businessModelTemplate.replace(
-        "[TICKER / COMPANY NAME]",
-        `${safeTicker} / ${displayName}`
-      )
-    : "";
+  const prompt = safeTicker ? fillCompanyPromptTemplate(businessModelTemplate, safeTicker, companyName) : "";
 
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker, displayName]);
+  }, [safeTicker, companyName]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -199,7 +194,7 @@ export function BusinessModelTab({
           <PromptTemplateBox
             tabId="business-model"
             defaultTemplate={BUSINESS_MODEL_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? tpl.replace("[TICKER / COMPANY NAME]", `${safeTicker} / ${displayName}`) : "")}
+            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
             className="mb-3"
           />
           <div className="tab-prompt-ai-actions-grid mb-2">

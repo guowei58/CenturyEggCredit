@@ -1,3 +1,5 @@
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
+
 /**
  * Forensic credit org-chart + Excel deliverable prompt for the Org Chart tab.
  * Replace [COMPANY NAME], [TICKER], and [SAMPLE_IMAGE_URLS] in the UI.
@@ -434,12 +436,8 @@ export function resolveOrgChartTemplate(
 ): string {
   const safeTicker = params.ticker.trim();
   if (!safeTicker) return "";
-  const displayName = (params.companyName?.trim() || safeTicker) || "";
   const urls = sampleImageUrlsBlockForOrigin(params.appOrigin);
-  return template
-    .replace(/\[COMPANY NAME\]/g, displayName)
-    .replace(/\[TICKER\]/g, safeTicker)
-    .replace(/\[SAMPLE_IMAGE_URLS\]/g, urls);
+  return fillCompanyPromptTemplate(template, safeTicker, params.companyName).replace(/\[SAMPLE_IMAGE_URLS\]/g, urls);
 }
 
 /** Same substitution logic as the Org Chart tab (for bulk “Open in Claude”). */

@@ -10,6 +10,7 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
 import { SubsidiaryListExcelFileBox } from "@/components/SubsidiaryListExcelFileBox";
+import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
@@ -32,7 +33,7 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
     SUBSIDIARY_LIST_PROMPT_TEMPLATE
   );
   const prompt = useMemo(
-    () => (safeTicker ? subsidiaryListTemplate.replace(/\{\{TICKER\}\}/g, safeTicker) : ""),
+    () => (safeTicker ? fillCompanyPromptTemplate(subsidiaryListTemplate, safeTicker) : ""),
     [subsidiaryListTemplate, safeTicker]
   );
 
@@ -263,7 +264,7 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
               <PromptTemplateBox
                 tabId="subsidiary-list"
                 defaultTemplate={SUBSIDIARY_LIST_PROMPT_TEMPLATE}
-                resolve={(tpl) => (safeTicker ? tpl.replace(/\{\{TICKER\}\}/g, safeTicker) : "")}
+                resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker) : "")}
                 className="mb-3"
               />
               <div className="tab-prompt-ai-actions-grid mb-2">

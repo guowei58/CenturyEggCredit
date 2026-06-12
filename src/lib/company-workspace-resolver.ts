@@ -2,19 +2,34 @@ import {
   getCikFromTicker,
   getCompanyMetadataByCik,
   secCompanyTickerLookupCandidates,
-  searchSecCompaniesByName,
 } from "@/lib/sec-edgar";
-import { parseCompanyLookupInput } from "@/lib/company-workspace-key";
+import {
+  parseCompanyLookupInput,
+  privateWorkspaceKeyFromName,
+} from "@/lib/company-workspace-key";
 
 export type ResolvedCompanyWorkspace = {
   /** Key used for watchlist, saved data, and API routes (`[ticker]` param). */
   workspaceKey: string;
-  cik: string;
-  /** Listed ticker when the filer has one; null for CIK-only entities. */
+  cik: string | null;
+  /** Listed ticker when the filer has one; null for CIK-only or private entities. */
   ticker: string | null;
   companyName: string;
-  inputKind: "cik" | "ticker";
+  inputKind: "cik" | "ticker" | "private";
+  isPrivate: boolean;
 };
+
+function resolvePrivateWorkspace(displayName: string): ResolvedCompanyWorkspace {
+  const name = displayName.trim();
+  return {
+    workspaceKey: privateWorkspaceKeyFromName(name),
+    cik: null,
+    ticker: null,
+    companyName: name,
+    inputKind: "private",
+    isPrivate: true,
+  };
+}
 
 /**
  * Resolve ticker, CIK, or (fallback) company name to a workspace the app can open.
@@ -25,7 +40,11 @@ export async function resolveCompanyWorkspace(
 ): Promise<ResolvedCompanyWorkspace | { error: string }> {
   const parsed = parseCompanyLookupInput(input);
   if (!parsed) {
-    return { error: "Enter a ticker symbol or SEC CIK (6–10 digits, optional CIK prefix)." };
+    return { error: "Enter a ticker, SEC CIK, or company name." };
+  }
+
+  if (parsed.kind === "name") {
+    return resolvePrivateWorkspace(parsed.normalized);
   }
 
   if (parsed.kind === "cik") {
@@ -39,6 +58,7 @@ export async function resolveCompanyWorkspace(
       ticker: meta.tickers[0] ?? null,
       companyName: meta.name,
       inputKind: "cik",
+      isPrivate: false,
     };
   }
 
@@ -53,24 +73,9 @@ export async function resolveCompanyWorkspace(
       ticker: sym,
       companyName: meta?.name ?? sym,
       inputKind: "ticker",
+      isPrivate: false,
     };
   }
 
-  const hits = await searchSecCompaniesByName(parsed.normalized, 8);
-  if (hits.length === 0) {
-    return {
-      error:
-        "No SEC issuer matched. For subsidiaries or acquired filers without a ticker, enter the entity's CIK.",
-    };
-  }
-  const best = hits[0];
-  const meta = await getCompanyMetadataByCik(best.cik);
-  const listedTicker = best.ticker !== "—" ? best.ticker : meta?.tickers[0] ?? null;
-  return {
-    workspaceKey: listedTicker ?? best.cik,
-    cik: best.cik,
-    ticker: listedTicker,
-    companyName: meta?.name ?? best.title,
-    inputKind: listedTicker ? "ticker" : "cik",
-  };
+  return resolvePrivateWorkspace(input);
 }

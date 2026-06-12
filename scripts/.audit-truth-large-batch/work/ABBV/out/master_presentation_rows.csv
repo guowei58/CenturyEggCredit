@@ -1,0 +1,80 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,us-gaap:CashAndCashEquivalentsFairValueDisclosure,us-gaap:CashAndCashEquivalentsFairValueDisclosure,Cash and equivalents,42,0
+balance_sheet,us-gaap:InvestmentsFairValueDisclosure,us-gaap:InvestmentsFairValueDisclosure,Money market funds and time deposits 10,43,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecurities,us-gaap:AvailableForSaleSecuritiesDebtSecurities,Debt securities 24,44,0
+balance_sheet,us-gaap:EquitySecuritiesFvNiCurrentAndNoncurrent,us-gaap:EquitySecuritiesFvNiCurrentAndNoncurrent,Equity securities 103,45,0
+balance_sheet,us-gaap:InterestRateDerivativeAssetsAtFairValue,us-gaap:InterestRateDerivativeAssetsAtFairValue,Interest rate swap contracts 30,46,0
+balance_sheet,us-gaap:DerivativeFairValueOfDerivativeAsset,us-gaap:DerivativeFairValueOfDerivativeAsset,Foreign currency contracts 61,47,0
+balance_sheet,us-gaap:AssetsFairValueDisclosure,us-gaap:AssetsFairValueDisclosure,Total assets,48,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities,49,0
+balance_sheet,us-gaap:InterestRateDerivativeLiabilitiesAtFairValue,us-gaap:InterestRateDerivativeLiabilitiesAtFairValue,Interest rate swap contracts,50,0
+balance_sheet,us-gaap:DerivativeFairValueOfDerivativeLiability,us-gaap:DerivativeFairValueOfDerivativeLiability,Foreign currency contracts 519,51,0
+balance_sheet,abbv:NoncurrentFinancingLiability,abbv:NoncurrentFinancingLiability,Financing liability 378,52,0
+balance_sheet,us-gaap:BusinessCombinationContingentConsiderationLiability,us-gaap:BusinessCombinationContingentConsiderationLiability,"Contingent consideration 25,374",53,0
+balance_sheet,us-gaap:LiabilitiesFairValueDisclosure,us-gaap:LiabilitiesFairValueDisclosure,Total liabilities,54,0
+balance_sheet,html:cash-and-equivalents,html:cash-and-equivalents,Cash and equivalents,0,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,1,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",2,0
+balance_sheet,html:inventories,html:inventories,Inventories,3,0
+balance_sheet,html:prepaid-expenses-and-other,html:prepaid-expenses-and-other,Prepaid expenses and other,4,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,5,0
+balance_sheet,html:investments,html:investments,Investments,6,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",7,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",8,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,9,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,10,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,11,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,Liabilities and Equity,12,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,13,0
+balance_sheet,html:short-term-borrowings,html:short-term-borrowings,Short-term borrowings,14,0
+balance_sheet,html:current-portion-of-long-term-debt-and-finance-lease-obligations,html:current-portion-of-long-term-debt-and-finance-lease-obligations,Current portion of long-term debt and finance lease obligations,15,0
+balance_sheet,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,16,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,17,0
+balance_sheet,html:long-term-debt-and-finance-lease-obligations,html:long-term-debt-and-finance-lease-obligations,Long-term debt and finance lease obligations,18,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,19,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,20,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,21,0
+balance_sheet,html:stockholders-equity-deficit,html:stockholders-equity-deficit,Stockholders’ equity (deficit),22,0
+balance_sheet,html:common-stock-0-01-par-value-4-000-000-000-shares-authorized-1-780-885-882-shares-issued-as-of-march-31-2019-and-1-776-510-871-as-of-december-31-2018,html:common-stock-0-01-par-value-4-000-000-000-shares-authorized-1-780-885-882-shares-issued-as-of-march-31-2019-and-1-776-510-871-as-of-december-31-2018,"Common stock, $0.01 par value, 4,000,000,000 shares authorized, 1,780,885,882 shares issued as of March 31, 2019 and 1,776,510,871 as of December 31, 2018",23,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost-302-648-065-shares-as-of-march-31-2019-and-297-686-473-as-of-december-31-2018,html:common-stock-held-in-treasury-at-cost-302-648-065-shares-as-of-march-31-2019-and-297-686-473-as-of-december-31-2018,"Common stock held in treasury, at cost, 302,648,065 shares as of March 31, 2019 and 297,686,473 as of December 31, 2018",24,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,25,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,26,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,27,0
+balance_sheet,html:total-stockholders-equity-deficit,html:total-stockholders-equity-deficit,Total stockholders’ equity (deficit),28,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,29,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and equivalents,30,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,31,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net",32,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,33,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssets,us-gaap:PrepaidExpenseAndOtherAssets,Prepaid expenses and other,34,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,35,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Investments,36,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",37,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",38,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,39,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,40,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,41,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term borrowings,55,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term debt and finance lease obligations,62,0
+balance_sheet,us-gaap:AccountsPayableAndAccruedLiabilitiesCurrent,us-gaap:AccountsPayableAndAccruedLiabilitiesCurrent,Accounts payable and accrued liabilities,67,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,70,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt and finance lease obligations,72,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,74,0
+balance_sheet,us-gaap:LiabilitiesOtherThanLongtermDebtNoncurrent,us-gaap:LiabilitiesOtherThanLongtermDebtNoncurrent,Other long-term liabilities,76,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies,78,0
+balance_sheet,us-gaap:CommonStockValueOutstanding,us-gaap:CommonStockValueOutstanding,"Common stock, $0.01 par value, 4,000,000,000 shares authorized, 1,781,055,877 shares issued as of June 30, 2019 and 1,776,510,871 as of December 31, 2018",56,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Common stock held in treasury, at cost, 302,685,326 shares as of June 30, 2019 and 297,686,473 as of December 31, 2018",63,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,68,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,71,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,73,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders’ equity (deficit),75,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,77,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,57,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,64,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,58,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity (deficit),65,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders' equity,59,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock, $0.01 par value, 4,000,000,000 shares authorized, 1,799,637,990 shares issued as of March 31, 2021 and 1,792,140,764 as of December 31, 2020",66,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Common stock held in treasury, at cost, 33,974,683 shares as of March 31, 2021 and 27,007,945 as of December 31, 2020",69,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Common stock held in treasury, at cost, 57,113,024 shares as of March 31, 2023 and 44,589,000 as of December 31, 2022",60,0
+balance_sheet,html:liabilities-and-equity-deficit,html:liabilities-and-equity-deficit,Liabilities and Equity (Deficit),61,0

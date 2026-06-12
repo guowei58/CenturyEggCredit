@@ -34,6 +34,8 @@ from master_presentation_builder import (
 from period_parser import parse_period
 from row_mapper import MappedFact, UnresolvedRow
 from workbook_loader import WorkbookInfo, FactRecord
+from workbook_truth import pick_headline_period_winner
+from headline_periods import headline_periods_for_workbook
 
 logger = logging.getLogger(__name__)
 
@@ -304,6 +306,7 @@ def integrate_workbook_concepts_not_in_map(
     consolidated: ConsolidatedData,
     file_recency: dict[str, int],
     audit_entries: list[AuditEntry],
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> tuple[int, int]:
     """
     For every (statement, raw concept) that appears in a workbook but has **no**
@@ -367,7 +370,7 @@ def integrate_workbook_concepts_not_in_map(
             new_rows += 1
             _renumber_display_order(master_rows)
 
-        # Merge periods (most recent file wins per cell)
+        # Merge periods (period-primary workbook only)
         by_pl: dict[str, list[FactRecord]] = defaultdict(list)
         for f in facts:
             by_pl[f.period.canonical].append(f)
@@ -375,11 +378,11 @@ def integrate_workbook_concepts_not_in_map(
         label_map = {(r.statement_type, r.canonical_row_id): r.display_label for r in master_rows}
         disp = label_map.get((st, canon), canon)
 
+        headlines = file_headline_periods or {}
         for pl, flist in by_pl.items():
-            winner = max(
-                flist,
-                key=lambda f: (file_recency.get(f.source_file, 0), f.source_file),
-            )
+            winner = pick_headline_period_winner(flist, pl, headlines, file_recency)
+            if winner is None:
+                continue
             _ensure_cell(consolidated, st, canon, pl)
             cur = consolidated[st][canon].get(pl)
             if cur is not None:
@@ -413,6 +416,7 @@ def reconcile_final_statements_with_raw_xbrl(
     consolidated: ConsolidatedData,
     file_recency: dict[str, int],
     audit_entries: list[AuditEntry],
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> FinalRawReconcileResult:
     """
     After the main statement build, compare **all** raw line identifiers from the
@@ -537,11 +541,11 @@ def reconcile_final_statements_with_raw_xbrl(
         label_map = {(r.statement_type, r.canonical_row_id): r.display_label for r in master_rows}
         disp = label_map.get((st, canon), canon)
 
+        headlines = file_headline_periods or {}
         for pl, flist in by_pl.items():
-            winner = max(
-                flist,
-                key=lambda f: (file_recency.get(f.source_file, 0), f.source_file),
-            )
+            winner = pick_headline_period_winner(flist, pl, headlines, file_recency)
+            if winner is None:
+                continue
             _ensure_cell(consolidated, st, canon, pl)
             cur = consolidated[st][canon].get(pl)
             if cur is not None:
@@ -583,6 +587,7 @@ def fill_consolidated_gaps_from_workbook_groups(
     file_recency: dict[str, int],
     master_rows: list[MasterRow],
     audit_entries: list[AuditEntry],
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> int:
     """
     For every fact whose (statement, raw concept) **is** mapped, ensure the
@@ -603,11 +608,11 @@ def fill_consolidated_gaps_from_workbook_groups(
             buckets[(st, canon, f.period.canonical)].append(f)
 
     fills = 0
+    headlines = file_headline_periods or {}
     for (st, crid, pl), flist in buckets.items():
-        winner = max(
-            flist,
-            key=lambda f: (file_recency.get(f.source_file, 0), f.source_file),
-        )
+        winner = pick_headline_period_winner(flist, pl, headlines, file_recency)
+        if winner is None:
+            continue
         _ensure_cell(consolidated, st, crid, pl)
         cur = consolidated[st][crid].get(pl)
         if cur is not None or winner.value is None:
@@ -640,6 +645,7 @@ def repair_mapped_gaps(
     file_recency: dict[str, int],
     master_rows: list[MasterRow],
     audit_entries: list[AuditEntry],
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> int:
     """Fill missing consolidated cells from mapped facts.  Returns repair count."""
     label_map: dict[tuple[str, str], str] = {
@@ -652,11 +658,11 @@ def repair_mapped_gaps(
         buckets[(mf.statement_type, mf.canonical_row_id, mf.period.canonical)].append(mf)
 
     repairs = 0
+    headlines = file_headline_periods or {}
     for (st, crid, pl), facts in buckets.items():
-        winner = max(
-            facts,
-            key=lambda f: (file_recency.get(f.source_file, 0), f.source_file),
-        )
+        winner = pick_headline_period_winner(facts, pl, headlines, file_recency)
+        if winner is None:
+            continue
         _ensure_cell(consolidated, st, crid, pl)
         cur = consolidated[st][crid].get(pl)
         if cur is None and winner.value is not None:
@@ -690,6 +696,7 @@ def integrate_unresolved_facts(
     file_recency: dict[str, int],
     unresolved: list[UnresolvedRow],
     audit_entries: list[AuditEntry],
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> tuple[list[UnresolvedRow], int, int]:
     """
     Add unresolved concepts as positioned rows and merge their values.
@@ -789,11 +796,13 @@ def integrate_unresolved_facts(
         label_map = {(r.statement_type, r.canonical_row_id): r.display_label for r in master_rows}
         disp = label_map.get((st, canon), canon)
 
+        headlines = file_headline_periods or {}
         for pl, ufacts in by_period.items():
-            winner = max(
-                ufacts,
-                key=lambda u: (file_recency.get(u.source_file, 0), u.source_file),
+            winner = pick_headline_period_winner(
+                ufacts, pl, headlines, file_recency, source_file=lambda u: u.source_file,
             )
+            if winner is None:
+                continue
             _ensure_cell(consolidated, st, canon, pl)
             cur = consolidated[st][canon].get(pl)
             if cur is not None:
@@ -829,6 +838,7 @@ def apply_coverage_pass(
     mapped_facts: list[MappedFact],
     unresolved: list[UnresolvedRow],
     audit_entries: list[AuditEntry],
+    file_headline_periods: dict[str, frozenset[str]] | None = None,
 ) -> tuple[list[UnresolvedRow], CoveragePassResult]:
     """
     Mutates *consolidated*, *master_rows*, *concept_map*, and *audit_entries* in place.
@@ -847,8 +857,11 @@ def apply_coverage_pass(
     res = CoveragePassResult()
     groups = _group_facts_by_statement_concept(workbooks)
 
+    headlines = file_headline_periods or {
+        wb.filename: headline_periods_for_workbook(wb) for wb in workbooks
+    }
     res.repaired_mapped_cells = repair_mapped_gaps(
-        consolidated, mapped_facts, file_recency, master_rows, audit_entries
+        consolidated, mapped_facts, file_recency, master_rows, audit_entries, headlines,
     )
     if res.repaired_mapped_cells:
         logger.info("Coverage: repaired %d mapped gaps", res.repaired_mapped_cells)
@@ -858,7 +871,7 @@ def apply_coverage_pass(
     )
 
     er, ec = integrate_workbook_concepts_not_in_map(
-        groups, workbooks, master_rows, concept_map, consolidated, file_recency, audit_entries
+        groups, workbooks, master_rows, concept_map, consolidated, file_recency, audit_entries, headlines,
     )
     res.explicit_workbook_rows = er
     res.explicit_workbook_cells = ec
@@ -879,6 +892,7 @@ def apply_coverage_pass(
         file_recency,
         unresolved,
         audit_entries,
+        headlines,
     )
     res.integrated_unresolved_rows = rrows
     res.integrated_unresolved_cells = rcells
@@ -891,7 +905,7 @@ def apply_coverage_pass(
         )
 
     res.workbook_fact_gap_fills = fill_consolidated_gaps_from_workbook_groups(
-        groups, concept_map, consolidated, file_recency, master_rows, audit_entries
+        groups, concept_map, consolidated, file_recency, master_rows, audit_entries, headlines,
     )
     if res.workbook_fact_gap_fills:
         logger.info(

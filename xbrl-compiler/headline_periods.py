@@ -6,8 +6,9 @@ prefer the value from the workbook whose *face* period is that quarter/year
 comparative / restated column (e.g. 1Q 2026 10-Q).
 
 Heuristic (no SEC ``reportDate`` in Excel today):
-  * **10-K:** every ``FY*`` column present in the workbook is headline (annual
-    as-reported in that 10-K).
+  * **10-K:** only the **primary** fiscal year is headline — the newest ``FY*``
+    column on that filing's face (the year the 10-K reports). Older ``FY*``
+    comparatives on the same workbook are **not** headline (mirrors 10-Q rule).
   * **10-Q / other:** take the **newest** fiscal quarter column (by
     ``Period.sort_key``) among quarterly facts; that is the filing's current
     quarter. When that quarter is **Q2**, also headline **6M** (same fiscal year);
@@ -24,13 +25,16 @@ from workbook_loader import WorkbookInfo
 
 def headline_periods_for_workbook(wb: WorkbookInfo) -> frozenset[str]:
     if wb.is_10k:
-        fy_keys = {
-            fr.period.canonical
+        annual = [
+            fr.period
             for sh in wb.sheets
             for fr in sh.facts
             if fr.period.is_annual()
-        }
-        return frozenset(fy_keys)
+        ]
+        if not annual:
+            return frozenset()
+        primary = max(annual, key=lambda p: p.sort_key)
+        return frozenset({primary.canonical})
 
     quarters = [
         fr.period
@@ -56,3 +60,4 @@ def headline_periods_for_workbook(wb: WorkbookInfo) -> frozenset[str]:
                 keys.add(fr.period.canonical)
 
     return frozenset(keys)
+
