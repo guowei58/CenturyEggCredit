@@ -23,7 +23,7 @@ import {
   gatherCreativeWorkspaceSources,
   buildCreativeWorkspaceInventory,
   buildCreativeWorkspaceMaterials,
-  type CreativeWorkspaceKind,
+  type CreativeWorkspacePromptKind,
 } from "@/lib/creative-workspace-sources";
 import { gatherKpiCommentarySources, formatSourcesForKpiCommentary } from "@/lib/kpi-workspace-sources";
 import { gatherLmeSources, formatSourcesForLme } from "@/lib/lme-sources";
@@ -40,16 +40,16 @@ export type WorkProductPromptKind =
   | "lme"
   | "forensic"
   | "recommendation"
-  | CreativeWorkspaceKind;
+  | CreativeWorkspacePromptKind;
 
-const CREATIVE_KINDS = new Set<CreativeWorkspaceKind>([
+const CREATIVE_KINDS = new Set<CreativeWorkspacePromptKind>([
   "literary",
   "biblical",
   "dumbass",
   "earnings-transcript",
 ]);
 
-const CREATIVE_NO_SOURCES_ERROR: Record<CreativeWorkspaceKind, string> = {
+const CREATIVE_NO_SOURCES_ERROR: Record<CreativeWorkspacePromptKind, string> = {
   literary:
     "No substantive sources found. Save at least one Work Product tab output (KPI, Forensic, LME, Recommendation, AI Memo, etc.) and/or an earnings transcript from Period Financials, then refresh sources.",
   biblical:
@@ -70,7 +70,7 @@ function emptyCreativeUserBreakdown(userPromptLength: number): LmeUserMessageCha
 }
 
 async function buildCreativeWorkspacePromptPackage(params: {
-  kind: CreativeWorkspaceKind;
+  kind: CreativeWorkspacePromptKind;
   ticker: string;
   userId: string;
   apiKeys: LlmCallApiKeys;
@@ -151,9 +151,9 @@ export async function buildWorkProductPromptPackage(params: {
     return { ok: false, error: "Invalid ticker" };
   }
 
-  if (CREATIVE_KINDS.has(params.kind as CreativeWorkspaceKind)) {
+  if (CREATIVE_KINDS.has(params.kind as CreativeWorkspacePromptKind)) {
     return buildCreativeWorkspacePromptPackage({
-      kind: params.kind as CreativeWorkspaceKind,
+      kind: params.kind as CreativeWorkspacePromptKind,
       ticker: sym,
       userId: params.userId,
       apiKeys: params.apiKeys,

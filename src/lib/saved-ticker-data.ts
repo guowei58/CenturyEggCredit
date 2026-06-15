@@ -3,7 +3,7 @@
  */
 
 /** Allowed save keys → filename (no extension in key) */
-export const SAVED_DATA_FILES: Record<string, string> = {
+export const SAVED_DATA_FILES = {
   "business-model": "business-model.txt",
   "company-history": "company-history.txt",
   "capital-allocation": "capital-allocation.txt",
@@ -119,7 +119,7 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "credit-decision-dashboard-inputs": "credit-decision-dashboard-inputs.json",
   /** Cached memo/deck context-window prompts (per product type) until the user rebuilds. */
   "ai-memo-deck-built-prompt-cache": "ai-memo-deck-built-prompt-cache.json",
-};
+} as const satisfies Record<string, string>;
 
 /**
  * Filenames at ticker root for AI Chat ingestion order. Core research tabs first; bulky

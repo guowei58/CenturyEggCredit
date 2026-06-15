@@ -1,6 +1,6 @@
 import { readSavedContent } from "@/lib/saved-content-hybrid";
 import { listUserTickerDocuments } from "@/lib/user-workspace-store";
-import { SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
+import { SAVED_DATA_FILES, type SavedDataKey } from "@/lib/saved-ticker-data";
 import { sanitizeWorkspaceKey } from "@/lib/company-workspace-key";
 
 /** Minimum trimmed length for a saved memo to count as usable for literary/biblical reference generation. */
@@ -63,13 +63,14 @@ export async function readPreferredSavedCreditMemoMarkdown(
 
 const REFERENCE_TAB_RESPONSE_MIN_CHARS = 80;
 
-function isSavedTabResponseKey(key: string): boolean {
+function isSavedTabResponseKey(key: string): key is SavedDataKey {
   if (!(key in SAVED_DATA_FILES)) return false;
-  if (key.endsWith("-meta") || key.endsWith("-source-pack") || key.endsWith("-latest")) return false;
-  if (key.startsWith("ai-credit-memo-")) return false;
-  if (key === "xbrl-deterministic-compiler-result" || key === "entity-mapper-v2-snapshot") return false;
-  if (key === "private-workspace-meta") return false;
-  const fn = SAVED_DATA_FILES[key]?.toLowerCase() ?? "";
+  const saveKey = key as SavedDataKey;
+  if (saveKey.endsWith("-meta") || saveKey.endsWith("-source-pack") || saveKey.endsWith("-latest")) return false;
+  if (saveKey.startsWith("ai-credit-memo-")) return false;
+  if (saveKey === "xbrl-deterministic-compiler-result" || saveKey === "entity-mapper-v2-snapshot") return false;
+  if (saveKey === "private-workspace-meta") return false;
+  const fn = SAVED_DATA_FILES[saveKey].toLowerCase();
   return fn.endsWith(".txt") || fn.endsWith(".html");
 }
 
