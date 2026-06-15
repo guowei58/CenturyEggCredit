@@ -1,0 +1,196 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenues,html:revenues,Revenues,0,0
+income_statement,html:operating-expenses,html:operating-expenses,OPERATING EXPENSES:,1,0
+income_statement,html:cost-of-services,html:cost-of-services,Cost of services,2,0
+income_statement,html:sales-and-marketing,html:sales-and-marketing,Sales and marketing,3,0
+income_statement,html:general-and-administrative-costs,html:general-and-administrative-costs,General and administrative costs,4,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,7,0
+income_statement,html:operating-income,html:operating-income,OPERATING INCOME,8,0
+income_statement,html:interest-income,html:interest-income,Interest income,9,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,10,0
+income_statement,html:other-income-expense-net,html:other-income-expense-net,"Other income (expense), net",11,0
+income_statement,html:pension-settlement-charge,html:pension-settlement-charge,Pension settlement charge,13,0
+income_statement,html:gain-on-sale-of-businesses,html:gain-on-sale-of-businesses,Gain on sale of businesses,14,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,INCOME BEFORE INCOME TAXES,15,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,17,0
+income_statement,html:net-income,html:net-income,Net Income,18,0
+income_statement,html:net-income-attributable-to-noncontrolling-interests-other,html:net-income-attributable-to-noncontrolling-interests-other,Net income attributable to noncontrolling interests – other,19,0
+income_statement,html:net-income-attributable-to-accenture-plc,html:net-income-attributable-to-accenture-plc,NET INCOME ATTRIBUTABLE TO ACCENTURE PLC,20,0
+income_statement,html:weighted-average-class-aordinary-shares,html:weighted-average-class-aordinary-shares,Weighted average Class Aordinary shares:,21,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),22,0
+income_statement,html:diluted-in-shares,html:diluted-in-shares,Diluted (in shares),23,0
+income_statement,html:earnings-per-class-aordinary-share,html:earnings-per-class-aordinary-share,Earnings per Class Aordinary share:,24,0
+income_statement,html:cash-dividends-per-share-in-dollars-per-share,html:cash-dividends-per-share-in-dollars-per-share,Cash dividends per share (in dollars per share),25,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,5,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,6,0
+balance_sheet,html:receivables-and-contract-assets,html:receivables-and-contract-assets,Receivables and contract assets,7,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,8,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,9,0
+balance_sheet,html:non-current-assets,html:non-current-assets,NON-CURRENT ASSETS:,10,0
+balance_sheet,html:contract-assets-non-current,html:contract-assets-non-current,Contract assets (non-current),21,0
+balance_sheet,html:investments,html:investments,Investments,22,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",23,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,25,0
+balance_sheet,html:deferred-contract-costs,html:deferred-contract-costs,Deferred contract costs,26,0
+balance_sheet,html:deferred-income-taxes-net,html:deferred-income-taxes-net,"Deferred income taxes, net",28,0
+balance_sheet,html:other-non-current-assets,html:other-non-current-assets,Other non-current assets,29,0
+balance_sheet,html:total-non-current-assets,html:total-non-current-assets,Total non-current assets,30,0
+balance_sheet,html:total-assets,html:total-assets,TOTAL ASSETS,31,0
+balance_sheet,html:current-liabilities,html:current-liabilities,CURRENT LIABILITIES:,33,0
+balance_sheet,html:current-portion-of-long-term-debt-and-bank-borrowings,html:current-portion-of-long-term-debt-and-bank-borrowings,Current portion of long-term debt and bank borrowings,41,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,42,0
+balance_sheet,html:deferred-revenues,html:deferred-revenues,Deferred revenues,43,0
+balance_sheet,html:accrued-payroll-and-related-benefits,html:accrued-payroll-and-related-benefits,Accrued payroll and related benefits,44,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,45,0
+balance_sheet,html:other-accrued-liabilities,html:other-accrued-liabilities,Other accrued liabilities,48,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,49,0
+balance_sheet,html:non-current-liabilities,html:non-current-liabilities,NON-CURRENT LIABILITIES:,50,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,59,0
+balance_sheet,html:retirement-obligation,html:retirement-obligation,Retirement obligation,60,0
+balance_sheet,html:other-non-current-liabilities,html:other-non-current-liabilities,Other non-current liabilities,62,0
+balance_sheet,html:total-non-current-liabilities,html:total-non-current-liabilities,Total non-current liabilities,63,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,COMMITMENTS AND CONTINGENCIES,64,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,SHAREHOLDERS’ EQUITY:,66,0
+balance_sheet,html:restricted-share-units,html:restricted-share-units,Restricted share units,81,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,82,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2019-and-august-31-2018-class-aordinary-18-964-863-and-24-293-199-shares-as-of-august-31-2019-and-august-31-2018-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2019-and-august-31-2018-class-aordinary-18-964-863-and-24-293-199-shares-as-of-august-31-2019-and-august-31-2018-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of August 31, 2019 and August 31, 2018; Class Aordinary, 18,964,863 and 24,293,199 shares as of August 31, 2019 and August 31, 2018, respectively",99,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,100,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,101,0
+balance_sheet,html:total-accenture-plc-shareholders-equity,html:total-accenture-plc-shareholders-equity,Total Accenture plc shareholders’ equity,102,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,103,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders’ equity,104,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,TOTAL LIABILITIES AND SHAREHOLDERS’ EQUITY,105,0
+balance_sheet,html:ordinary-shares,html:ordinary-shares,Ordinary Shares,106,0
+balance_sheet,html:ordinary-shares-value,html:ordinary-shares-value,"Ordinary shares, value",108,0
+balance_sheet,html:class-a-ordinary-shares,html:class-a-ordinary-shares,Class A Ordinary Shares,114,0
+balance_sheet,html:class-x-ordinary-shares,html:class-x-ordinary-shares,Class X Ordinary Shares,115,0
+cash_flow,html:net-income,html:net-income,Net Income,0,0
+cash_flow,html:depreciation-amortization-and-asset-impairments-1,html:depreciation-amortization-and-asset-impairments-1,"Depreciation, amortization and asset impairments [1]",3,0
+cash_flow,html:share-based-compensation-expense,html:share-based-compensation-expense,Share-based compensation expense,4,0
+cash_flow,html:pension-settlement-charge,html:pension-settlement-charge,Pension settlement charge,6,0
+cash_flow,html:gain-loss-on-sale-of-businesses,html:gain-loss-on-sale-of-businesses,(Gain) loss on sale of businesses,7,0
+cash_flow,html:deferred-income-taxes-net,html:deferred-income-taxes-net,"Deferred income taxes, net",8,0
+cash_flow,html:other-net,html:other-net,"Other, net",9,0
+cash_flow,html:change-in-assets-and-liabilities-net-of-acquisitions,html:change-in-assets-and-liabilities-net-of-acquisitions,"Change in assets and liabilities, net of acquisitions—",10,0
+cash_flow,html:receivables-and-contract-assets-current-and-non-current,html:receivables-and-contract-assets-current-and-non-current,"Receivables and contract assets, current and non-current",11,0
+cash_flow,html:other-current-and-non-current-assets,html:other-current-and-non-current-assets,Other current and non-current assets,12,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,13,0
+cash_flow,html:deferred-revenues-current-and-non-current,html:deferred-revenues-current-and-non-current,"Deferred revenues, current and non-current",14,0
+cash_flow,html:accrued-payroll-and-related-benefits,html:accrued-payroll-and-related-benefits,Accrued payroll and related benefits,15,0
+cash_flow,html:income-taxes-payable-current-and-non-current,html:income-taxes-payable-current-and-non-current,"Income taxes payable, current and non-current",16,0
+cash_flow,html:other-current-and-non-current-liabilities,html:other-current-and-non-current-liabilities,Other current and non-current liabilities,17,0
+cash_flow,html:net-cash-provided-by-used-in-operating-activities,html:net-cash-provided-by-used-in-operating-activities,Net cash provided by (used in) operating activities,18,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,CASH FLOWS FROM INVESTING ACTIVITIES:,19,0
+cash_flow,html:purchases-of-property-and-equipment,html:purchases-of-property-and-equipment,Purchases of property and equipment,20,0
+cash_flow,html:purchases-of-businesses-and-investments-net-of-cash-acquired,html:purchases-of-businesses-and-investments-net-of-cash-acquired,"Purchases of businesses and investments, net of cash acquired",21,0
+cash_flow,html:proceeds-from-the-sale-of-businesses-and-investments-net-of-cash-transferred,html:proceeds-from-the-sale-of-businesses-and-investments-net-of-cash-transferred,"Proceeds from the sale of businesses and investments, net of cash transferred",22,0
+cash_flow,html:other-investing-net,html:other-investing-net,"Other investing, net",23,0
+cash_flow,html:net-cash-provided-by-used-in-investing-activities,html:net-cash-provided-by-used-in-investing-activities,Net cash provided by (used in) investing activities,24,0
+cash_flow,html:proceeds-from-issuance-of-ordinary-shares,html:proceeds-from-issuance-of-ordinary-shares,Proceeds from issuance of ordinary shares,25,0
+cash_flow,html:purchases-of-shares,html:purchases-of-shares,Purchases of shares,26,0
+cash_flow,html:proceeds-from-repayments-of-long-term-debt-net,html:proceeds-from-repayments-of-long-term-debt-net,"Proceeds from (repayments of) long-term debt, net",27,0
+cash_flow,html:cash-dividends-paid,html:cash-dividends-paid,Cash dividends paid,29,0
+cash_flow,html:net-cash-provided-by-used-in-financing-activities,html:net-cash-provided-by-used-in-financing-activities,Net cash provided by (used in) financing activities,30,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents,Effect of exchange rate changes on cash and cash equivalents,31,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,NET INCREASE (DECREASE) IN CASH AND CASH EQUIVALENTS,32,0
+cash_flow,html:cash-and-cash-equivalents-beginning-of-period,html:cash-and-cash-equivalents-beginning-of-period,"CASH AND CASH EQUIVALENTS, beginning of period",33,0
+cash_flow,html:cash-and-cash-equivalents-end-of-period,html:cash-and-cash-equivalents-end-of-period,"CASH AND CASH EQUIVALENTS, end of period",34,0
+cash_flow,html:supplemental-cash-flow-information,html:supplemental-cash-flow-information,SUPPLEMENTAL CASH FLOW INFORMATION:,35,0
+cash_flow,html:interest-paid,html:interest-paid,Interest paid,36,0
+cash_flow,html:income-taxes-paid-net,html:income-taxes-paid-net,"Income taxes paid, net",37,0
+cash_flow,html:1-amounts-include-depreciation-on-property-and-equipment-and-amortization-of-intangible-assets-controlled-by-each-operating-segment-as-well-as-an-allocation-for-amounts-they-do-not-directly-control,html:1-amounts-include-depreciation-on-property-and-equipment-and-amortization-of-intangible-assets-controlled-by-each-operating-segment-as-well-as-an-allocation-for-amounts-they-do-not-directly-control,"[1] Amounts include depreciation on property and equipment and amortization of intangible assets controlled by each operating segment, as well as an allocation for amounts they do not directly control.",38,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,16,0
+balance_sheet,html:contract-assets,html:contract-assets,Contract assets,11,0
+balance_sheet,html:lease-assets,html:lease-assets,Lease assets,24,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,27,0
+balance_sheet,html:lease-liabilities,html:lease-liabilities,Lease liabilities,46,0
+balance_sheet,html:accrued-consumption-taxes,html:accrued-consumption-taxes,Accrued consumption taxes,47,0
+balance_sheet,html:deferred-tax-liabilities,html:deferred-tax-liabilities,Deferred tax liabilities,61,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2020-and-august-31-2019-class-aordinary-24-383-369-and-18-964-863-shares-as-of-august-31-2020-and-august-31-2019-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2020-and-august-31-2019-class-aordinary-24-383-369-and-18-964-863-shares-as-of-august-31-2020-and-august-31-2019-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of August 31, 2020 and August 31, 2019; Class Aordinary, 24,383,369 and 18,964,863 shares as of August 31, 2020 and August 31, 2019, respectively",83,0
+cash_flow,html:depreciation-amortization-and-other,html:depreciation-amortization-and-other,"Depreciation, amortization and other",1,0
+cash_flow,html:deferred-tax-expense-benefit,html:deferred-tax-expense-benefit,Deferred tax expense (benefit),5,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2021-and-august-31-2020-class-aordinary-24-504-666-and-24-383-369-shares-as-of-august-31-2021-and-august-31-2020-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2021-and-august-31-2020-class-aordinary-24-504-666-and-24-383-369-shares-as-of-august-31-2021-and-august-31-2020-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of August 31, 2021 and August 31, 2020; Class Aordinary, 24,504,666 and 24,383,369 shares as of August 31, 2021 and August 31, 2020, respectively",84,0
+income_statement,html:loss-on-disposition-of-russia-business,html:loss-on-disposition-of-russia-business,Loss on disposition of Russia business,12,0
+balance_sheet,html:treasury-shares-value,html:treasury-shares-value,"Treasury shares, value",85,0
+balance_sheet,html:ordinary-shares-shares-issued-in-shares,html:ordinary-shares-shares-issued-in-shares,"Ordinary shares, shares issued (in shares)",107,0
+income_statement,html:restructuring-charges,html:restructuring-charges,Restructuring Charges,5,0
+income_statement,html:business-optimization-costs,html:business-optimization-costs,Business optimization costs,6,0
+balance_sheet,html:intangibles,html:intangibles,Intangibles,117,0
+cash_flow,html:repayments-of-debt,html:repayments-of-debt,Repayments of debt,28,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2025-and-august-31-2024-class-aordinary-36-108-842-and-47-204-565-shares-as-of-august-31-2025-and-august-31-2024-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-august-31-2025-and-august-31-2024-class-aordinary-36-108-842-and-47-204-565-shares-as-of-august-31-2025-and-august-31-2024-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of August 31, 2025 and August 31, 2024; Class Aordinary, 36,108,842 and 47,204,565 shares as of August 31, 2025 and August 31, 2024, respectively",86,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,LIABILITIES AND SHAREHOLDERS’ EQUITY,32,0
+balance_sheet,html:ordinary-shares-par-value-1-00-euros-per-share-40-000-shares-authorized-and-issued-as-of-february-28-2019-and-august-31-2018,html:ordinary-shares-par-value-1-00-euros-per-share-40-000-shares-authorized-and-issued-as-of-february-28-2019-and-august-31-2018,"Ordinary shares, par value 1.00 euros per share, 40,000 shares authorized and issued as of February 28, 2019 and August 31, 2018",67,0
+balance_sheet,html:class-aordinary-shares-par-value-0-0000225-per-share-20-000-000-000-shares-authorized-670-312-741-and-663-327-677-shares-issued-as-of-february-28-2019-and-august-31-2018-respectively,html:class-aordinary-shares-par-value-0-0000225-per-share-20-000-000-000-shares-authorized-670-312-741-and-663-327-677-shares-issued-as-of-february-28-2019-and-august-31-2018-respectively,"Class Aordinary shares, par value $0.0000225 per share, 20,000,000,000 shares authorized, 670,312,741 and 663,327,677 shares issued as of February 28, 2019 and August 31, 2018, respectively",68,0
+balance_sheet,html:class-xordinary-shares-par-value-0-0000225-per-share-1-000-000-000-shares-authorized-650-821-and-655-521-shares-issued-and-outstanding-as-of-february-28-2019-and-august-31-2018-respectively,html:class-xordinary-shares-par-value-0-0000225-per-share-1-000-000-000-shares-authorized-650-821-and-655-521-shares-issued-and-outstanding-as-of-february-28-2019-and-august-31-2018-respectively,"Class Xordinary shares, par value $0.0000225 per share, 1,000,000,000 shares authorized, 650,821 and 655,521 shares issued and outstanding as of February 28, 2019 and August 31, 2018, respectively",69,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2019-and-august-31-2018-class-aordinary-32-399-072-and-24-293-199-shares-as-of-february-28-2019-and-august-31-2018-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2019-and-august-31-2018-class-aordinary-32-399-072-and-24-293-199-shares-as-of-february-28-2019-and-august-31-2018-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of February 28, 2019 and August 31, 2018; Class Aordinary, 32,399,072 and 24,293,199 shares as of February 28, 2019 and August 31, 2018, respectively",87,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,1,0
+balance_sheet,acn:Receivablesandcontractassets,acn:Receivablesandcontractassets,Receivables and contract assets,2,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,3,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,4,0
+balance_sheet,us-gaap:ContractWithCustomerAssetNetNoncurrent,us-gaap:ContractWithCustomerAssetNetNoncurrent,Contract assets,12,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Investments,13,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",14,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,15,0
+balance_sheet,acn:DeferredCostsNoncurrent,acn:DeferredCostsNoncurrent,Deferred contract costs,16,0
+balance_sheet,us-gaap:DeferredTaxAssetsNetNoncurrent,us-gaap:DeferredTaxAssetsNetNoncurrent,"Deferred income taxes, net",17,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other non-current assets,18,0
+balance_sheet,us-gaap:AssetsNoncurrent,us-gaap:AssetsNoncurrent,Total non-current assets,19,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,TOTAL ASSETS,20,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Current portion of long-term debt and bank borrowings,34,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,35,0
+balance_sheet,us-gaap:DeferredRevenueCurrent,us-gaap:DeferredRevenueCurrent,Deferred revenues,36,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued payroll and related benefits,37,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Income taxes payable,38,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other accrued liabilities,39,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,40,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,51,0
+balance_sheet,us-gaap:DeferredRevenueNoncurrent,us-gaap:DeferredRevenueNoncurrent,Deferred revenues,52,0
+balance_sheet,us-gaap:PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent,us-gaap:PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent,Retirement obligation,53,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,"Deferred income taxes, net",54,0
+balance_sheet,us-gaap:AccruedIncomeTaxesNoncurrent,us-gaap:AccruedIncomeTaxesNoncurrent,Income taxes payable,55,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other non-current liabilities,56,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total non-current liabilities,57,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,COMMITMENTS AND CONTINGENCIES,58,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Ordinary shares, par value 1.00 euros per share, 40,000 shares authorized and issued as of May 31, 2019 and August 31, 2018",70,0
+balance_sheet,acn:RestrictedShareUnitsValue,acn:RestrictedShareUnitsValue,Restricted share units,71,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,72,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury shares, at cost: Ordinary, 40,000 shares as of May 31, 2019 and August 31, 2018; Class Aordinary, 34,640,120 and 24,293,199 shares as of May 31, 2019 and August 31, 2018, respectively",73,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,74,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,75,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Accenture plc shareholders’ equity,76,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,77,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total shareholders’ equity,78,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,TOTAL LIABILITIES AND SHAREHOLDERS’ EQUITY,79,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Lease assets,118,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Lease liabilities,119,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Lease liabilities,120,0
+balance_sheet,us-gaap:SalesAndExciseTaxPayableCurrent,us-gaap:SalesAndExciseTaxPayableCurrent,Accrued consumption taxes,121,0
+cash_flow,acn:DepreciationAmortizationandOther,acn:DepreciationAmortizationandOther,"Depreciation, amortization and other",2,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,122,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities,123,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Ordinary shares, par value 1.00 euros per share, 40,000 shares authorized and issued as of November 30, 2020 and August 31, 2020",80,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Treasury shares, at cost: Ordinary, 40,000 shares as of November 30, 2020 and August 31, 2020; Class Aordinary, 26,898,686 and 24,383,369 shares as of November 30, 2020 and August 31, 2020, respectively",124,0
+balance_sheet,html:treasury-stock-value,html:treasury-stock-value,"Treasury Stock, Value",88,0
+balance_sheet,html:ordinary-shares-shares-authorized-shares,html:ordinary-shares-shares-authorized-shares,"Ordinary shares, shares authorized | shares",109,0
+balance_sheet,html:ordinary-shares-shares-issued-shares,html:ordinary-shares-shares-issued-shares,"Ordinary shares, shares issued | shares",110,0
+balance_sheet,html:treasury-shares-ordinary-shares-shares,html:treasury-shares-ordinary-shares-shares,"Treasury shares, ordinary shares | shares",111,0
+balance_sheet,html:class-aordinary-shares,html:class-aordinary-shares,Class Aordinary shares,112,0
+balance_sheet,html:ordinary-shares-par-value-shares,html:ordinary-shares-par-value-shares,"Ordinary shares, par value | $ / shares",113,0
+balance_sheet,html:ordinary-shares-shares-outstanding-shares,html:ordinary-shares-shares-outstanding-shares,"Ordinary shares, shares outstanding | shares",116,0
+balance_sheet,acn:ReceivablesAndContractAssets,acn:ReceivablesAndContractAssets,Receivables and contract assets,125,0
+balance_sheet,us-gaap:DeferredCosts,us-gaap:DeferredCosts,Deferred contract costs,126,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2022-and-august-31-2021-class-aordinary-28-994-869-and-24-504-666-shares-as-of-february-28-2022-and-august-31-2021-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2022-and-august-31-2021-class-aordinary-28-994-869-and-24-504-666-shares-as-of-february-28-2022-and-august-31-2021-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of February 28, 2022 and August 31, 2021; Class Aordinary, 28,994,869 and 24,504,666 shares as of February 28, 2022 and August 31, 2021, respectively",89,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2022-and-august-31-2021-class-aordinary-31-527-538-and-24-504-666-shares-as-of-may-31-2022-and-august-31-2021-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2022-and-august-31-2021-class-aordinary-31-527-538-and-24-504-666-shares-as-of-may-31-2022-and-august-31-2021-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of May 31, 2022 and August 31, 2021; Class Aordinary, 31,527,538 and 24,504,666 shares as of May 31, 2022 and August 31, 2021, respectively",90,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2023-and-august-31-2022-class-aordinary-31-141-439-and-33-393-703-shares-as-of-february-28-2023-and-august-31-2022-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2023-and-august-31-2022-class-aordinary-31-141-439-and-33-393-703-shares-as-of-february-28-2023-and-august-31-2022-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of February 28, 2023 and August 31, 2022; Class Aordinary, 31,141,439 and 33,393,703 shares as of February 28, 2023 and August 31, 2022, respectively",91,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2023-and-august-31-2022-class-aordinary-33-323-829-and-33-393-703-shares-as-of-may-31-2023-and-august-31-2022-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2023-and-august-31-2022-class-aordinary-33-323-829-and-33-393-703-shares-as-of-may-31-2023-and-august-31-2022-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of May 31, 2023 and August 31, 2022; Class Aordinary, 33,323,829 and 33,393,703 shares as of May 31, 2023 and August 31, 2022, respectively",92,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Treasury shares, at cost: Ordinary, 40,000 shares as of November 30, 2023 and August 31, 2023; Class Aordinary, 39,519,697 and 36,351,137 shares as of November 30, 2023 and August 31, 2023, respectively",129,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-29-2024-and-august-31-2023-class-aordinary-41-577-466-and-36-351-137-shares-as-of-february-29-2024-and-august-31-2023-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-29-2024-and-august-31-2023-class-aordinary-41-577-466-and-36-351-137-shares-as-of-february-29-2024-and-august-31-2023-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of February 29, 2024 and August 31, 2023; Class Aordinary, 41,577,466 and 36,351,137 shares as of February 29, 2024 and August 31, 2023, respectively",93,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2024-and-august-31-2023-class-aordinary-45-326-443-and-36-351-137-shares-as-of-may-31-2024-and-august-31-2023-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2024-and-august-31-2023-class-aordinary-45-326-443-and-36-351-137-shares-as-of-may-31-2024-and-august-31-2023-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of May 31, 2024 and August 31, 2023; Class Aordinary, 45,326,443 and 36,351,137 shares as of May 31, 2024 and August 31, 2023, respectively",94,0
+balance_sheet,us-gaap:FiniteLivedIntangibleAssetsNet,us-gaap:FiniteLivedIntangibleAssetsNet,Intangibles,127,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2025-and-august-31-2024-class-aordinary-51-906-694-and-47-204-565-shares-as-of-february-28-2025-and-august-31-2024-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2025-and-august-31-2024-class-aordinary-51-906-694-and-47-204-565-shares-as-of-february-28-2025-and-august-31-2024-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of February 28, 2025 and August 31, 2024; Class Aordinary, 51,906,694 and 47,204,565 shares as of February 28, 2025 and August 31, 2024, respectively",95,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2025-and-august-31-2024-class-aordinary-57-415-810-and-47-204-565-shares-as-of-may-31-2025-and-august-31-2024-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-may-31-2025-and-august-31-2024-class-aordinary-57-415-810-and-47-204-565-shares-as-of-may-31-2025-and-august-31-2024-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of May 31, 2025 and August 31, 2024; Class Aordinary, 57,415,810 and 47,204,565 shares as of May 31, 2025 and August 31, 2024, respectively",96,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-november-30-2025-and-august-31-2025-class-aordinary-44-997-383-and-36-108-842-shares-as-of-november-30-2025-and-august-31-2025-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-november-30-2025-and-august-31-2025-class-aordinary-44-997-383-and-36-108-842-shares-as-of-november-30-2025-and-august-31-2025-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of November 30, 2025 and August 31, 2025; Class Aordinary, 44,997,383 and 36,108,842 shares as of November 30, 2025 and August 31, 2025, respectively",97,0
+balance_sheet,html:redeemable-noncontrolling-interests,html:redeemable-noncontrolling-interests,Redeemable noncontrolling interests,65,0
+balance_sheet,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2026-and-august-31-2025-class-aordinary-50-254-062-and-36-108-842-shares-as-of-february-28-2026-and-august-31-2025-respectively,html:treasury-shares-at-cost-ordinary-40-000-shares-as-of-february-28-2026-and-august-31-2025-class-aordinary-50-254-062-and-36-108-842-shares-as-of-february-28-2026-and-august-31-2025-respectively,"Treasury shares, at cost: Ordinary, 40,000 shares as of February 28, 2026 and August 31, 2025; Class Aordinary, 50,254,062 and 36,108,842 shares as of February 28, 2026 and August 31, 2025, respectively",98,0
+balance_sheet,html:ordinary-shares-shares-authorized-in-shares,html:ordinary-shares-shares-authorized-in-shares,"Ordinary shares, shares authorized (in shares)",128,0

@@ -26,6 +26,17 @@ export function isAmbiguousTicker(ticker: string): boolean {
   return noisy.has(t);
 }
 
+/** Cashtags that collide with common non-equity speech (e.g. SATS / satoshis). */
+const CASHTAG_NOISY = new Set(["SATS", "BIT", "WEN", "MEME", "GME"]);
+
+export function isCashtagNoisyTicker(ticker: string): boolean {
+  return CASHTAG_NOISY.has(ticker.trim().toUpperCase());
+}
+
+export function needsFinanceScopedQuery(ticker: string): boolean {
+  return isAmbiguousTicker(ticker) || isCashtagNoisyTicker(ticker);
+}
+
 export function clampInt(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.floor(n)));
 }
@@ -46,5 +57,15 @@ export function fetchWithTimeout(url: string, timeoutMs: number, init?: RequestI
 export function postUrlFromId(id: string): string {
   // Keep canonical-ish URL; username may be missing without extra expansions.
   return `https://x.com/i/web/status/${encodeURIComponent(id)}`;
+}
+
+/** Opens X.com search (Latest) for cashtag + optional company name. */
+export function xComSearchUrl(ticker: string, companyName?: string): string {
+  const tk = ticker.trim().toUpperCase();
+  if (!tk) return "https://x.com/search";
+  const name = companyName?.trim();
+  const q =
+    name && name.toUpperCase() !== tk ? `$${tk} OR "${name}"` : `$${tk}`;
+  return `https://x.com/search?q=${encodeURIComponent(q)}&f=live`;
 }
 

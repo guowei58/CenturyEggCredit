@@ -1,9 +1,9 @@
 import type { NormalizedXPost } from "../types";
-import { isAmbiguousTicker } from "../utils";
+import { needsFinanceScopedQuery } from "../utils";
 
 export type XSortMode = "relevance" | "recent" | "engagement";
 
-function engagementScore(p: NormalizedXPost): number {
+export function engagementScore(p: NormalizedXPost): number {
   const m = p.metrics;
   if (!m) return 0;
   return (
@@ -22,7 +22,6 @@ export function scorePost(p: NormalizedXPost, ctx: { ticker: string; companyName
 
   if (p.cashtags.map((c) => c.toUpperCase()).includes(tk)) s += 55;
   if (blob.includes(`$${tk}`.toLowerCase())) s += 35;
-  if (blob.includes(tk.toLowerCase())) s += 10;
 
   const name = ctx.companyName?.trim();
   if (name && name.length >= 3 && blob.includes(name.toLowerCase())) s += 22;
@@ -44,7 +43,7 @@ export function scorePost(p: NormalizedXPost, ctx: { ticker: string; companyName
   if (p.isReply) s -= 6;
   if (p.isRetweet) s -= 12;
 
-  if (isAmbiguousTicker(tk) && !blob.includes(`$${tk}`.toLowerCase()) && !(name && blob.includes(name.toLowerCase()))) {
+  if (needsFinanceScopedQuery(tk) && !blob.includes(`$${tk}`.toLowerCase()) && !(name && blob.includes(name.toLowerCase()))) {
     s -= 18;
   }
 

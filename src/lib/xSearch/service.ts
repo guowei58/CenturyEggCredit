@@ -1,4 +1,6 @@
 import { loadXSearchConfigFromEnv } from "./config";
+import { filterBySearchIntent } from "./filter/intentFilter";
+import { filterLowQualityPosts } from "./filter/qualityFilter";
 import { dedupePosts } from "./dedupe/dedupe";
 import { appendPostsToLocalDb } from "./persistence";
 import { getRecentCountEstimate } from "./providers/counts";
@@ -34,6 +36,7 @@ export async function runXSearch(
       warnings: [],
       rawCount: 0,
       finalCount: 0,
+      filteredCount: 0,
       posts: [],
       error: "ticker is required",
     };
@@ -56,6 +59,7 @@ export async function runXSearch(
       warnings,
       rawCount: 0,
       finalCount: 0,
+      filteredCount: 0,
       posts: [],
       error: "No X search providers enabled (check env flags).",
     };
@@ -106,6 +110,7 @@ export async function runXSearch(
       warnings,
       rawCount: 0,
       finalCount: 0,
+      filteredCount: 0,
       posts: [],
       error: msg,
     };
@@ -127,6 +132,7 @@ export async function runXSearch(
       warnings,
       rawCount: 0,
       finalCount: 0,
+      filteredCount: 0,
       posts: [],
       error: result.error ?? "X search failed",
     };
@@ -138,7 +144,16 @@ export async function runXSearch(
     relevanceScore: Number(scorePost(p, { ticker, companyName: params.companyName }).toFixed(2)),
   }));
   const deduped = dedupePosts(scored);
-  const ranked = rankPosts(deduped, { ticker, companyName: params.companyName }, params.sortMode ?? "relevance");
+  const { kept: intentMatched, filteredCount: intentFilteredCount } = filterBySearchIntent(deduped, {
+    ticker,
+    companyName: params.companyName,
+    aliases: params.aliases,
+  });
+  const { kept: qualityFiltered, filteredCount: qualityFilteredCount } = filterLowQualityPosts(intentMatched, {
+    minEngagement: cfg.minEngagementScore,
+  });
+  const filteredCount = intentFilteredCount + qualityFilteredCount;
+  const ranked = rankPosts(qualityFiltered, { ticker, companyName: params.companyName }, params.sortMode ?? "engagement");
 
   try {
     const uid = params.userId;
@@ -167,6 +182,7 @@ export async function runXSearch(
     warnings,
     rawCount: raw.length,
     finalCount: ranked.length,
+    filteredCount,
     posts: ranked,
   };
 }

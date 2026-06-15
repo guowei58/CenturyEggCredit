@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildPeriodFinancialsFilingLabels, formatPeriodFinancialsFilingLabel } from "@/lib/period-financials-roic";
+import {
+  buildPeriodFinancialsFilingLabels,
+  filingPeriodLabelToRoicPeriod,
+  formatPeriodFinancialsFilingLabel,
+  periodLabelToFilenameSlug,
+  selectLastNPeriodFinancialsFilings,
+} from "@/lib/period-financials-roic";
 
 describe("period-financials filing labels", () => {
   it("labels quarters after each 10-K as 3Q, 2Q, 1Q for the same FY", () => {
@@ -37,5 +43,28 @@ describe("period-financials filing labels", () => {
     expect(formatPeriodFinancialsFilingLabel({ form: "10-Q", filingDate: "2025-08-13" }, "1Q 2026")).toBe(
       "2025-08-13 · 1Q 2026"
     );
+  });
+
+  it("maps fiscal period labels to Roic quarters", () => {
+    expect(filingPeriodLabelToRoicPeriod("1Q 2026")).toBe("2026Q1");
+    expect(filingPeriodLabelToRoicPeriod("3Q 2025")).toBe("2025Q3");
+    expect(filingPeriodLabelToRoicPeriod("FY 2025", "2025-04-03")).toBe("2025Q2");
+    // ixbrl period end (same as Period Financials tab) overrides bare filing date
+    expect(filingPeriodLabelToRoicPeriod("FY 2025", "2025-04-03", "2025-05-15")).toBe("2025Q2");
+  });
+
+  it("selects newest labeled filings up to a cap", () => {
+    const filings = [
+      { accessionNumber: "q3", form: "10-Q", filingDate: "2026-02-06", reportDate: "2026-01-31" },
+      { accessionNumber: "q2", form: "10-Q", filingDate: "2025-11-07", reportDate: "2025-10-31" },
+      { accessionNumber: "k", form: "10-K", filingDate: "2025-05-15", reportDate: "2025-04-03" },
+    ];
+    const picked = selectLastNPeriodFinancialsFilings(filings, 2);
+    expect(picked).toHaveLength(2);
+    expect(picked.every((p) => p.periodLabel.match(/^(FY \d{4}|[123]Q \d{4})$/))).toBe(true);
+  });
+
+  it("builds filename slugs from period labels", () => {
+    expect(periodLabelToFilenameSlug("1Q 2026")).toBe("1Q_2026");
   });
 });

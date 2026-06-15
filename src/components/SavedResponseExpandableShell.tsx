@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { collectHttpUrlsForSavedResponse } from "@/lib/extract-links-from-saved-content";
+import { buildCreditDocSaveLabelMap, lookupCreditDocSaveLabel } from "@/lib/extract-credit-doc-save-label";
 import { saveRemoteUrlForTicker } from "@/lib/save-remote-url-client";
 
 /** Add to scroll areas and RichPasteTextarea in saved-response boxes so they fill space in fullscreen. */
@@ -18,6 +19,8 @@ export function SavedResponseExpandableShell({
   headerActions,
   className = "",
   fillViewportMinHeight = true,
+  hideTitle = false,
+  hideHeader = false,
   ticker,
   linkSourceText,
   children,
@@ -28,6 +31,10 @@ export function SavedResponseExpandableShell({
   className?: string;
   /** When false, omit `lg:min-h-[70vh]` (e.g. stacked Credit Agreements boxes). */
   fillViewportMinHeight?: boolean;
+  /** Hide the title line; header shows actions only (e.g. Excel workbook viewer). */
+  hideTitle?: boolean;
+  /** Omit the entire header row (e.g. empty Excel preview). */
+  hideHeader?: boolean;
   /** When set, shows "Save all links" to batch-save http(s) URLs to Saved Documents for this ticker. */
   ticker?: string;
   /** Raw saved markdown/HTML/text used to find URLs while editing or when links are not yet in the DOM. */
@@ -71,10 +78,13 @@ export function SavedResponseExpandableShell({
     }
     setSaveAllBusy(true);
     setSaveAllFeedback(null);
+    const saveLabelByUrl = buildCreditDocSaveLabelMap(linkSourceText ?? "");
     let ok = 0;
     let firstErr: string | null = null;
     for (const url of urls) {
-      const r = await saveRemoteUrlForTicker(safeTicker, url, "saved-documents");
+      const r = await saveRemoteUrlForTicker(safeTicker, url, "saved-documents", {
+        title: lookupCreditDocSaveLabel(saveLabelByUrl, url),
+      });
       if (r.ok) ok++;
       else if (!firstErr) firstErr = r.error;
     }
@@ -88,9 +98,11 @@ export function SavedResponseExpandableShell({
   }
 
   const tall = fillViewportMinHeight ? "lg:min-h-[70vh]" : "";
+  const flushFrame = className.includes("excel-workbook-viewer-frame");
+  const framePadding = expanded ? "p-4" : flushFrame ? "p-0" : "p-4";
   const frameClass = expanded
     ? "fixed inset-0 z-[300] m-0 box-border flex max-h-none min-h-0 flex-col overflow-hidden rounded-none border-2 p-4"
-    : `box-border flex max-h-none min-w-0 flex-col overflow-visible rounded-lg border-2 p-4 ${tall} ${className}`.trim();
+    : `box-border flex max-h-none min-w-0 flex-col overflow-visible rounded-lg border-2 ${framePadding} ${tall} ${className}`.trim();
 
   const saveAllDisabled =
     !showSaveAllLinks || authStatus !== "authenticated" || saveAllBusy;
@@ -101,11 +113,16 @@ export function SavedResponseExpandableShell({
       style={{ borderColor: "var(--accent)", background: "var(--card)" }}
       data-saved-response-expanded={expanded ? "1" : undefined}
     >
-      <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
-        <div className="min-w-0 text-sm font-semibold" style={{ color: "var(--text)" }}>
-          {title}
-        </div>
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+      {!hideHeader ? (
+      <div
+        className={`excel-workbook-viewer-header flex shrink-0 items-center gap-2 ${hideTitle ? "mb-0 justify-end" : "mb-3 justify-between"}`}
+      >
+        {!hideTitle ? (
+          <div className="min-w-0 text-sm font-semibold" style={{ color: "var(--text)" }}>
+            {title}
+          </div>
+        ) : null}
+        <div className={`flex shrink-0 flex-wrap items-center gap-2 ${hideTitle ? "justify-end" : "justify-end"}`}>
           {headerActions}
           {showSaveAllLinks ? (
             <button
@@ -129,6 +146,7 @@ export function SavedResponseExpandableShell({
           </button>
         </div>
       </div>
+      ) : null}
       {saveAllFeedback ? (
         <p className="mb-2 text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
           {saveAllFeedback}

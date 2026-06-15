@@ -31,13 +31,8 @@ async function runPython(
       "--output", outputDir,
     ];
 
-    const openaiKey = process.env.OPENAI_API_KEY;
-    const deepseekKey = process.env.DEEPSEEK_API_KEY;
-    if (openaiKey) {
-      args.push("--ai-provider", "openai", "--ai-api-key", openaiKey);
-    } else if (deepseekKey) {
-      args.push("--ai-provider", "deepseek", "--ai-api-key", deepseekKey);
-    }
+    // AI Phase 3 is gated by ENABLE_AI_MATCHING in xbrl-compiler/main.py (off by default).
+    // Do not pass --ai-provider even when API keys exist unless that flag is turned on.
 
     const pythonBin = process.env.PYTHON_PATH?.trim() || process.env.PYTHON_CMD?.trim() || "python";
 

@@ -1,4 +1,5 @@
 import { fetchSavedFromServer } from "@/lib/saved-data-client";
+import { sanitizeWorkspaceKey } from "@/lib/company-workspace-key";
 
 const TAB_KEYS = {
   kpi: { md: "kpi-latest", meta: "kpi-latest-meta" },
@@ -6,6 +7,14 @@ const TAB_KEYS = {
   recommendation: { md: "cs-recommendation-latest", meta: "cs-recommendation-latest-meta" },
   literaryReferences: { md: "literary-references-latest", meta: "literary-references-latest-meta" },
   biblicalReferences: { md: "biblical-references-latest", meta: "biblical-references-latest-meta" },
+  howToLookLikeADumbass: {
+    md: "how-to-look-like-a-dumbass-latest",
+    meta: "how-to-look-like-a-dumbass-latest-meta",
+  },
+  nextQuarterEarningsTranscript: {
+    md: "next-quarter-earnings-transcript-latest",
+    meta: "next-quarter-earnings-transcript-latest-meta",
+  },
 } as const;
 
 export type CreditMemoGeneratedTabKind = keyof typeof TAB_KEYS;
@@ -15,7 +24,7 @@ export async function fetchLatestGeneratedTabOutput(
   ticker: string,
   kind: CreditMemoGeneratedTabKind
 ): Promise<{ markdown: string | null; jobId: string | null; contextSentUtf8Bytes: number | null }> {
-  const tk = ticker.trim().toUpperCase();
+  const tk = sanitizeWorkspaceKey(ticker) ?? "";
   if (!tk) return { markdown: null, jobId: null, contextSentUtf8Bytes: null };
   const { md, meta } = TAB_KEYS[kind];
   const rawMd = await fetchSavedFromServer(tk, md);

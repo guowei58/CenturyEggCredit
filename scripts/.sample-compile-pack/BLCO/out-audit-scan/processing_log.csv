@@ -1,0 +1,28 @@
+Pipeline start  input=C:\Users\admin\Desktop\CenturyEggCredit\scripts\.sample-compile-pack\BLCO\in  output=C:\Users\admin\Desktop\CenturyEggCredit\scripts\.sample-compile-pack\BLCO\out-audit-scan
+Step 1: Loading workbooks
+Loaded 17 workbooks, 51 statement sheets, 3131 facts
+Compiling 17 workbook(s) (from 17 loaded), 51 statement sheets, 3131 facts
+Step 2: Identifying master 10-K
+Master workbook: BLCO_SEC-XBRL-financials_as-presented_10-K_2026-02-18_0001860742-26-000007.xlsx  (is_10k=True, latest_fy=2025)
+Step 3: Building master presentation (legacy only)
+  AI matching disabled (ENABLE_AI_MATCHING=False)
+  Legacy registry: 104 rows, 111 concept mappings
+Master rows: 104, concept mappings: 111, AI matches: 0, interest netting aliases: 0
+Step 4: Mapping facts to canonical rows
+Mapped: 3131, unresolved: 0
+File recency order (oldest→newest): ['BLCO_SEC-XBRL-financials_as-presented_10-Q_2022-06-08_0001860742-22-000012.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2022-08-04_0001860742-22-000019.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2022-11-02_0001860742-22-000026.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-K_2023-02-22_0001860742-23-000008.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2023-05-03_0001860742-23-000015.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2023-08-02_0001860742-23-000021.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2023-11-01_0001860742-23-000029.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-K_2024-02-21_0001860742-24-000004.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2024-05-01_0001860742-24-000008.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2024-08-01_0001860742-24-000014.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2024-10-30_0001860742-24-000018.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-K_2025-02-19_0001860742-25-000004.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0001860742-25-000008.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2025-07-30_0001860742-25-000018.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001860742-25-000023.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-K_2026-02-18_0001860742-26-000007.xlsx', 'BLCO_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001860742-26-000062.xlsx']
+Headline periods (period-primary source): BLCO_SEC-XBRL-financials_as-presented_10-K_2023-02-22_0001860742-23-000008.xlsx=['FY22'], BLCO_SEC-XBRL-financials_as-presented_10-K_2024-02-21_0001860742-24-000004.xlsx=['FY23'], BLCO_SEC-XBRL-financials_as-presented_10-K_2025-02-19_0001860742-25-000004.xlsx=['FY24'], BLCO_SEC-XBRL-financials_as-presented_10-K_2026-02-18_0001860742-26-000007.xlsx=['FY25'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2022-06-08_0001860742-22-000012.xlsx=['1Q22'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2022-08-04_0001860742-22-000019.xlsx=['2Q22', '6M22'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2022-11-02_0001860742-22-000026.xlsx=['3Q22', '9M22'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2023-05-03_0001860742-23-000015.xlsx=['1Q23'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2023-08-02_0001860742-23-000021.xlsx=['2Q23', '6M23'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2023-11-01_0001860742-23-000029.xlsx=['3Q23', '9M23'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2024-05-01_0001860742-24-000008.xlsx=['1Q24'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2024-08-01_0001860742-24-000014.xlsx=['2Q24', '6M24'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2024-10-30_0001860742-24-000018.xlsx=['3Q24', '9M24'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0001860742-25-000008.xlsx=['1Q25'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2025-07-30_0001860742-25-000018.xlsx=['2Q25', '6M25'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001860742-25-000023.xlsx=['3Q25', '9M25'], BLCO_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001860742-26-000062.xlsx=['1Q26']
+Step 5: Consolidating across files
+Consolidated cells: 1498, conflicts: 7
+Step 5b: Coverage pass
+Coverage: repaired 0 mapped cells; row_order registry +0 rows; explicit workbook +0 rows / +0 cells; workbook gap fills 0; integrated 0 unresolved rows, 0 cells; unresolved remaining 0
+Step 6: Deriving missing quarters
+Derived 562 quarterly values
+Step 6b: Final raw XBRL reconcile (add any missing lines / cells)
+Final reconcile: scanned 111 raw keys; +0 rows, +0 map repairs, +0 orphan master rows, +0 cells
+Step 6c: Row deduplication disabled (ENABLE_ROW_DEDUPLICATION=False)
+Step 6d: Workbook truth loop (lines + cells vs headline workbooks)
+Workbook truth: 2 iteration(s); cleared 0, aligned 0, +11 rows, +0 cells, re-derived 562 quarters
+Workbook truth validation: all lines and reported cells match headline workbooks
+Step 7: Validating
+Step 8: Exporting

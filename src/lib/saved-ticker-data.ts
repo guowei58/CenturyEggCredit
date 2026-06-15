@@ -21,6 +21,8 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "credit-agreements-indentures-first-lien-indenture": "credit-agreements-indentures-first-lien-indenture.txt",
   "credit-agreements-indentures-second-lien-indenture": "credit-agreements-indentures-second-lien-indenture.txt",
   "credit-agreements-indentures-unsecured": "credit-agreements-indentures-unsecured.txt",
+  "credit-agreements-indentures-other-credit-documents":
+    "credit-agreements-indentures-other-credit-documents.txt",
   "credit-agreements-indentures-convertible": "credit-agreements-indentures-convertible.txt",
   "credit-agreements-indentures-preferred": "credit-agreements-indentures-preferred.txt",
   "credit-agreements-indentures-other": "credit-agreements-indentures-other.txt",
@@ -105,6 +107,16 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "biblical-references-latest": "biblical-references-latest.md",
   "biblical-references-latest-meta": "biblical-references-latest-meta.json",
   "biblical-references-latest-source-pack": "biblical-references-latest-source-pack.txt",
+  "how-to-look-like-a-dumbass-latest": "how-to-look-like-a-dumbass-latest.md",
+  "how-to-look-like-a-dumbass-latest-meta": "how-to-look-like-a-dumbass-latest-meta.json",
+  "how-to-look-like-a-dumbass-latest-source-pack": "how-to-look-like-a-dumbass-latest-source-pack.txt",
+  "next-quarter-earnings-transcript-latest": "next-quarter-earnings-transcript-latest.md",
+  "next-quarter-earnings-transcript-latest-meta": "next-quarter-earnings-transcript-latest-meta.json",
+  "next-quarter-earnings-transcript-latest-source-pack": "next-quarter-earnings-transcript-latest-source-pack.txt",
+  "credit-decision-dashboard-latest": "credit-decision-dashboard-latest.json",
+  "credit-decision-dashboard-latest-meta": "credit-decision-dashboard-latest-meta.json",
+  "credit-decision-dashboard-latest-source-pack": "credit-decision-dashboard-latest-source-pack.txt",
+  "credit-decision-dashboard-inputs": "credit-decision-dashboard-inputs.json",
 };
 
 /**
@@ -135,6 +147,12 @@ export const SAVED_TAB_FILENAME_AI_PRIORITY: readonly string[] = [
   "literary-references-latest-meta.json",
   "biblical-references-latest.md",
   "biblical-references-latest-meta.json",
+  "how-to-look-like-a-dumbass-latest.md",
+  "how-to-look-like-a-dumbass-latest-meta.json",
+  "next-quarter-earnings-transcript-latest.md",
+  "next-quarter-earnings-transcript-latest-meta.json",
+  "credit-decision-dashboard-latest.json",
+  "credit-decision-dashboard-latest-meta.json",
   "forensic-accounting-latest.md",
   "forensic-accounting-latest-meta.json",
   "ai-credit-memo-buffett.md",

@@ -1,0 +1,179 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenues-from-franchised-restaurants,html:revenues-from-franchised-restaurants,Revenues from franchised restaurants,0,0
+income_statement,html:sales-by-company-owned-and-operated-restaurants,html:sales-by-company-owned-and-operated-restaurants,Sales by Company-owned and operated restaurants,1,0
+income_statement,html:other-revenues,html:other-revenues,Other revenues,2,0
+income_statement,html:total-revenues,html:total-revenues,Total revenues,3,0
+income_statement,html:operating-costs-and-expenses,html:operating-costs-and-expenses,OPERATING COSTS AND EXPENSES,4,0
+income_statement,html:franchised-restaurants-occupancy-expenses,html:franchised-restaurants-occupancy-expenses,Franchised restaurants-occupancy expenses,6,0
+income_statement,html:food-paper,html:food-paper,Food & paper,9,0
+income_statement,html:payroll-employee-benefits,html:payroll-employee-benefits,Payroll & employee benefits,10,0
+income_statement,html:occupancy-other-operating-expenses,html:occupancy-other-operating-expenses,Occupancy & other operating expenses,11,0
+income_statement,html:other-restaurant-expenses,html:other-restaurant-expenses,Other restaurant expenses,12,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,13,0
+income_statement,html:other,html:other,Other,14,0
+income_statement,html:other-operating-income-expense-net,html:other-operating-income-expense-net,"Other operating (income) expense, net",15,0
+income_statement,html:total-operating-costs-and-expenses,html:total-operating-costs-and-expenses,Total operating costs and expenses,16,0
+income_statement,html:operating-income,html:operating-income,Operating income,17,0
+income_statement,html:interest-expense-net-of-capitalized-interest-of-29-22-and-14,html:interest-expense-net-of-capitalized-interest-of-29-22-and-14,"Interest expense-net of capitalized interest of $29, $22 and $14",23,0
+income_statement,html:nonoperating-income-expense-net,html:nonoperating-income-expense-net,"Nonoperating (income) expense, net",24,0
+income_statement,html:income-before-provision-for-income-taxes,html:income-before-provision-for-income-taxes,Income before provision for income taxes,25,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,26,0
+income_statement,html:net-income,html:net-income,Net income,27,0
+income_statement,html:earnings-per-common-share-basic,html:earnings-per-common-share-basic,Earnings per common share–basic,28,0
+income_statement,html:earnings-per-common-share-diluted,html:earnings-per-common-share-diluted,Earnings per common share–diluted,29,0
+income_statement,html:dividends-declared-per-common-share,html:dividends-declared-per-common-share,Dividends declared per common share,30,0
+income_statement,html:weighted-average-shares-outstanding-basic,html:weighted-average-shares-outstanding-basic,Weighted-average shares outstanding–basic,31,0
+income_statement,html:weighted-average-shares-outstanding-diluted,html:weighted-average-shares-outstanding-diluted,Weighted-average shares outstanding–diluted,32,0
+balance_sheet,html:cash-and-equivalents,html:cash-and-equivalents,Cash and equivalents,5,0
+balance_sheet,html:accounts-and-notes-receivable,html:accounts-and-notes-receivable,Accounts and notes receivable,6,0
+balance_sheet,html:inventories-at-cost-not-in-excess-of-market,html:inventories-at-cost-not-in-excess-of-market,"Inventories, at cost, not in excess of market",7,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,8,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,9,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,10,0
+balance_sheet,html:investments-in-and-advances-to-affiliates,html:investments-in-and-advances-to-affiliates,Investments in and advances to affiliates,16,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,17,0
+balance_sheet,html:miscellaneous,html:miscellaneous,Miscellaneous,18,0
+balance_sheet,html:total-other-assets,html:total-other-assets,Total other assets,19,0
+balance_sheet,html:lease-right-of-use-asset-net,html:lease-right-of-use-asset-net,"Lease right-of use asset, net",20,0
+balance_sheet,html:property-and-equipment,html:property-and-equipment,Property and equipment,21,0
+balance_sheet,html:property-and-equipment-at-cost,html:property-and-equipment-at-cost,"Property and equipment, at cost",27,0
+balance_sheet,html:accumulated-depreciation-and-amortization,html:accumulated-depreciation-and-amortization,Accumulated depreciation and amortization,28,0
+balance_sheet,html:net-property-and-equipment,html:net-property-and-equipment,Net property and equipment,29,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,30,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,31,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,47,0
+balance_sheet,html:current-lease-liability,html:current-lease-liability,Current lease liability,49,0
+balance_sheet,html:income-taxes,html:income-taxes,Income taxes,50,0
+balance_sheet,html:other-taxes,html:other-taxes,Other taxes,51,0
+balance_sheet,html:accrued-interest,html:accrued-interest,Accrued interest,52,0
+balance_sheet,html:accrued-payroll-and-other-liabilities,html:accrued-payroll-and-other-liabilities,Accrued payroll and other liabilities,53,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,55,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,56,0
+balance_sheet,html:long-term-lease-liability-noncurrent-net,html:long-term-lease-liability-noncurrent-net,"Long-term lease liability (noncurrent), net",58,0
+balance_sheet,html:long-term-income-taxes,html:long-term-income-taxes,Long-term income taxes,59,0
+balance_sheet,html:deferred-revenues-initial-franchise-fees,html:deferred-revenues-initial-franchise-fees,Deferred revenues - initial franchise fees,60,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,61,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,62,0
+balance_sheet,html:shareholders-equity-deficit,html:shareholders-equity-deficit,Shareholders' equity (deficit),64,0
+balance_sheet,html:preferred-stock-no-par-value-authorized-165-0-million-shares-issued-none,html:preferred-stock-no-par-value-authorized-165-0-million-shares-issued-none,"Preferred stock, no par value; authorized – 165.0 million shares; issued – none",73,0
+balance_sheet,html:common-stock-01-par-value-authorized-3-5-billion-shares-issued-1-660-6-million-shares,html:common-stock-01-par-value-authorized-3-5-billion-shares-issued-1-660-6-million-shares,"Common stock, $.01 par value; authorized – 3.5 billion shares; issued – 1,660.6 million shares",74,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,75,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,76,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),77,0
+balance_sheet,html:common-stock-in-treasury-at-cost-950-0-and-945-4-million-shares,html:common-stock-in-treasury-at-cost-950-0-and-945-4-million-shares,"Common stock in treasury, at cost; 950.0 and 945.4 million shares",84,0
+balance_sheet,html:total-shareholders-equity-deficit,html:total-shareholders-equity-deficit,Total shareholders' equity (deficit),85,0
+balance_sheet,html:total-liabilities-and-shareholders-equity-deficit,html:total-liabilities-and-shareholders-equity-deficit,Total liabilities and shareholders' equity (deficit),86,0
+cash_flow,html:net-income,html:net-income,Net income,2,0
+cash_flow,html:charges-and-credits,html:charges-and-credits,Charges and credits:,8,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,9,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,10,0
+cash_flow,html:share-based-compensation-expense,html:share-based-compensation-expense,Share-based compensation expense,11,0
+cash_flow,html:net-gain-loss-on-sale-of-restaurant-and-other-businesses,html:net-gain-loss-on-sale-of-restaurant-and-other-businesses,Net (gain) loss on sale of restaurant and other businesses,12,0
+cash_flow,html:other,html:other,Other,14,0
+cash_flow,html:changes-in-working-capital-items,html:changes-in-working-capital-items,Changes in working capital items:,23,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,24,0
+cash_flow,html:inventories-prepaid-expenses-and-other-current-assets,html:inventories-prepaid-expenses-and-other-current-assets,"Inventories, prepaid expenses and other current assets",25,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,26,0
+cash_flow,html:income-taxes,html:income-taxes,Income taxes,27,0
+cash_flow,html:other-accrued-liabilities,html:other-accrued-liabilities,Other accrued liabilities,28,0
+cash_flow,html:cash-provided-by-operations,html:cash-provided-by-operations,Cash provided by operations,29,0
+cash_flow,html:investing-activities,html:investing-activities,Investing activities,30,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures,31,0
+cash_flow,html:purchases-of-restaurant-businesses,html:purchases-of-restaurant-businesses,Purchases of restaurant businesses,32,0
+cash_flow,html:payments-to-acquire-equity-method-investments,html:payments-to-acquire-equity-method-investments,Payments to Acquire Equity Method Investments,34,0
+cash_flow,html:sales-of-restaurant-and-other-businesses,html:sales-of-restaurant-and-other-businesses,Sales of restaurant and other businesses,35,0
+cash_flow,html:sales-of-property,html:sales-of-property,Sales of property,36,0
+cash_flow,html:cash-used-for-investing-activities,html:cash-used-for-investing-activities,Cash used for investing activities,37,0
+cash_flow,html:net-short-term-borrowings,html:net-short-term-borrowings,Net short-term borrowings,38,0
+cash_flow,html:long-term-financing-issuances,html:long-term-financing-issuances,Long-term financing issuances,39,0
+cash_flow,html:long-term-financing-repayments,html:long-term-financing-repayments,Long-term financing repayments,40,0
+cash_flow,html:treasury-stock-purchases,html:treasury-stock-purchases,Treasury stock purchases,41,0
+cash_flow,html:common-stock-dividends,html:common-stock-dividends,Common stock dividends,42,0
+cash_flow,html:proceeds-from-stock-option-exercises,html:proceeds-from-stock-option-exercises,Proceeds from stock option exercises,43,0
+cash_flow,html:cash-used-for-financing-activities,html:cash-used-for-financing-activities,Cash used for financing activities,44,0
+cash_flow,html:effect-of-exchange-rates-on-cash-and-equivalents,html:effect-of-exchange-rates-on-cash-and-equivalents,Effect of exchange rates on cash and equivalents,45,0
+cash_flow,html:cash-and-equivalents-increase-decrease,html:cash-and-equivalents-increase-decrease,Cash and equivalents increase (decrease),46,0
+cash_flow,html:cash-and-equivalents-at-beginning-of-year,html:cash-and-equivalents-at-beginning-of-year,Cash and equivalents at beginning of year,48,0
+cash_flow,html:cash-and-equivalents-at-end-of-year,html:cash-and-equivalents-at-end-of-year,Cash and equivalents at end of year,49,0
+cash_flow,html:supplemental-cash-flow-disclosures,html:supplemental-cash-flow-disclosures,Supplemental cash flow disclosures,50,0
+cash_flow,html:interest-paid,html:interest-paid,Interest Paid,51,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general & administrative expenses",7,0
+income_statement,html:selling-general-administrative-expenses,html:selling-general-administrative-expenses,"Selling, general & administrative expenses",8,0
+income_statement,html:interest-expense-net-of-capitalized-interest-of-7-4-5-6-and-5-3,html:interest-expense-net-of-capitalized-interest-of-7-4-5-6-and-5-3,"Interest expense-net of capitalized interest of $7.4, $5.6 and $5.3",18,0
+balance_sheet,html:lease-liability,html:lease-liability,Lease liability,48,0
+balance_sheet,html:current-maturities-of-long-term-debt,html:current-maturities-of-long-term-debt,Current maturities of long term debt,54,0
+balance_sheet,html:long-term-lease-liability,html:long-term-lease-liability,Long-term lease liability,57,0
+balance_sheet,html:common-stock-in-treasury-at-cost-914-3-and-893-5-million-shares,html:common-stock-in-treasury-at-cost-914-3-and-893-5-million-shares,"Common stock in treasury, at cost; 914.3 and 893.5 million shares",78,0
+cash_flow,html:proceeds-from-sale-of-businesses-in-china-and-hong-kong,html:proceeds-from-sale-of-businesses-in-china-and-hong-kong,Proceeds from sale of businesses in China and Hong Kong,13,0
+cash_flow,html:change-in-cash-balances-of-businesses-held-for-sale,html:change-in-cash-balances-of-businesses-held-for-sale,Change in cash balances of businesses held for sale,47,0
+income_statement,html:interest-expense-net-of-capitalized-interest-of-6-0-7-4-and-5-6,html:interest-expense-net-of-capitalized-interest-of-6-0-7-4-and-5-6,"Interest expense-net of capitalized interest of $6.0, $7.4 and $5.6",19,0
+balance_sheet,html:common-stock-in-treasury-at-cost-915-2-and-914-3-million-shares,html:common-stock-in-treasury-at-cost-915-2-and-914-3-million-shares,"Common stock in treasury, at cost; 915.2 and 914.3 million shares",79,0
+income_statement,html:interest-expense-net-of-capitalized-interest-of-6-8-6-0-and-7-4,html:interest-expense-net-of-capitalized-interest-of-6-8-6-0-and-7-4,"Interest expense-net of capitalized interest of $6.8, $6.0 and $7.4",20,0
+balance_sheet,html:common-stock-in-treasury-at-cost-915-8-and-915-2-million-shares,html:common-stock-in-treasury-at-cost-915-8-and-915-2-million-shares,"Common stock in treasury, at cost; 915.8 and 915.2 million shares",80,0
+income_statement,html:interest-expense-net-of-capitalized-interest-of-9-5-6-8-and-6-0,html:interest-expense-net-of-capitalized-interest-of-9-5-6-8-and-6-0,"Interest expense-net of capitalized interest of $9.5, $6.8 and $6.0",21,0
+balance_sheet,html:common-stock-in-treasury-at-cost-929-3-and-915-8-million-shares,html:common-stock-in-treasury-at-cost-929-3-and-915-8-million-shares,"Common stock in treasury, at cost; 929.3 and 915.8 million shares",81,0
+income_statement,html:interest-expense-net-of-capitalized-interest-of-14-5-9-5-and-6-8,html:interest-expense-net-of-capitalized-interest-of-14-5-9-5-and-6-8,"Interest expense-net of capitalized interest of $14.5, $9.5 and $6.8",22,0
+balance_sheet,html:debt-current,html:debt-current,"Debt, Current",32,0
+balance_sheet,html:preferred-stock-issued,html:preferred-stock-issued,"Preferred stock, issued",63,0
+balance_sheet,html:common-stock-in-treasury-at-cost-937-9-and-915-8-million-shares,html:common-stock-in-treasury-at-cost-937-9-and-915-8-million-shares,"Common stock in treasury, at cost; 937.9 and 915.8 million shares",82,0
+balance_sheet,html:revision-of-prior-period-adjustment-member,html:revision-of-prior-period-adjustment-member,"Revision of Prior Period, Adjustment [Member]",87,0
+balance_sheet,html:common-stock-in-treasury-at-cost-945-4-and-937-9-million-shares,html:common-stock-in-treasury-at-cost-945-4-and-937-9-million-shares,"Common stock in treasury, at cost; 945.4 and 937.9 million shares",83,0
+income_statement,mcd:CompanyOperatedRestaurantExpenses,mcd:CompanyOperatedRestaurantExpenses,Company-operated restaurant expenses,5,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and equivalents,0,0
+balance_sheet,us-gaap:AccountsNotesAndLoansReceivableNetCurrent,us-gaap:AccountsNotesAndLoansReceivableNetCurrent,Accounts and notes receivable,1,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,"Inventories, at cost, not in excess of market",2,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,3,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,4,0
+balance_sheet,us-gaap:InvestmentsInAffiliatesSubsidiariesAssociatesAndJointVentures,us-gaap:InvestmentsInAffiliatesSubsidiariesAssociatesAndJointVentures,Investments in and advances to affiliates,11,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,12,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Miscellaneous,13,0
+balance_sheet,mcd:TotalOtherAssets,mcd:TotalOtherAssets,Total other assets,14,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,"Lease right-of-use asset, net",15,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,"Property and equipment, at cost",22,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Accumulated depreciation and amortization,23,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,Net property and equipment,24,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,25,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and shareholders’ equity,26,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,33,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Lease liability,34,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Income taxes,35,0
+balance_sheet,us-gaap:AccrualForTaxesOtherThanIncomeTaxesCurrent,us-gaap:AccrualForTaxesOtherThanIncomeTaxesCurrent,Other taxes,36,0
+balance_sheet,us-gaap:InterestPayableCurrent,us-gaap:InterestPayableCurrent,Accrued interest,37,0
+balance_sheet,mcd:AccruedExpensesAndOtherCurrentLiabilities,mcd:AccruedExpensesAndOtherCurrentLiabilities,Accrued payroll and other liabilities,38,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,39,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,40,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Long-term lease liability,41,0
+balance_sheet,us-gaap:AccruedIncomeTaxesNoncurrent,us-gaap:AccruedIncomeTaxesNoncurrent,Long-term income taxes,42,0
+balance_sheet,us-gaap:DeferredRevenueNoncurrent,us-gaap:DeferredRevenueNoncurrent,Deferred revenues - initial franchise fees,43,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,44,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,45,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock, no par value; authorized – 165.0 million shares; issued – none",65,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $.01 par value; authorized – 3.5 billion shares; issued – 1,660.6 million shares",66,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,67,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,68,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),69,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Common stock in treasury, at cost; 897.1 and 893.5 million shares",70,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total shareholders’ equity (deficit),71,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and shareholders’ equity (deficit),72,0
+balance_sheet,us-gaap:DividendsPayableCurrent,us-gaap:DividendsPayableCurrent,Dividends payable,88,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term borrowings,46,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current maturities of long-term debt,89,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,90,0
+cash_flow,mcd:SalesbyCompanyoperatedrestaurants,mcd:SalesbyCompanyoperatedrestaurants,Sales by Company-owned and operated restaurants,0,0
+cash_flow,mcd:Revenuesfromfranchisedrestaurants,mcd:Revenuesfromfranchisedrestaurants,Revenues from franchised restaurants,1,0
+cash_flow,us-gaap:Revenues,us-gaap:Revenues,Total revenues,15,0
+cash_flow,mcd:CompanyOperatedRestaurantExpenses,mcd:CompanyOperatedRestaurantExpenses,Company-owned and operated restaurant expenses,16,0
+cash_flow,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Franchised restaurants-occupancy expenses,17,0
+cash_flow,html:selling-general-administrative-expenses,html:selling-general-administrative-expenses,"Selling, general & administrative expenses",18,0
+cash_flow,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,Total operating costs and expenses,19,0
+cash_flow,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,20,0
+cash_flow,us-gaap:InterestExpense,us-gaap:InterestExpense,Interest expense,21,0
+cash_flow,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,"Nonoperating (income) expense, net",22,0
+cash_flow,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Earnings per common share-basic,3,0
+cash_flow,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Earnings per common share-diluted,4,0
+cash_flow,us-gaap:CommonStockDividendsPerShareDeclared,us-gaap:CommonStockDividendsPerShareDeclared,Dividends declared per common share,5,0
+cash_flow,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Weighted-average shares outstanding-basic,6,0
+cash_flow,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Weighted-average shares outstanding-diluted,7,0
+cash_flow,us-gaap:PaymentsToAcquireEquityMethodInvestments,us-gaap:PaymentsToAcquireEquityMethodInvestments,Purchases of equity method investments,33,0
+balance_sheet,us-gaap:DividendsPayableCurrentAndNoncurrent,us-gaap:DividendsPayableCurrentAndNoncurrent,Dividend Payable,92,0
+balance_sheet,html:liabilities-and-shareholders-equity-deficit,html:liabilities-and-shareholders-equity-deficit,Liabilities and shareholders’ equity (deficit),91,0

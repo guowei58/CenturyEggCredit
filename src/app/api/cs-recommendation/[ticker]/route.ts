@@ -134,7 +134,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     return NextResponse.json(
       {
         error:
-          "No substantive text found. Add non-Excel files or saved tab content to your ticker workspace (LME / KPI / Forensic outputs are included when saved), then try again.",
+          "No substantive recommendation sources found. Save tab text files and/or saved LME, KPI, or Forensic outputs, then try again.",
       },
       { status: 400 }
     );

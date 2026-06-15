@@ -5,8 +5,10 @@
   "scripts": {
     "postinstall": "prisma generate",
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});\"",
+    "kill-dev-ports": "node scripts/kill-dev-ports.mjs",
     "dev": "next dev",
-    "dev:clean": "npm run clean && next dev",
+    "dev:fresh": "npm run kill-dev-ports && next dev",
+    "dev:clean": "npm run kill-dev-ports && npm run clean && next dev",
     "dev:turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
@@ -41,8 +43,10 @@
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "remark-linkify": "^1.1.0",
+    "server-only": "^0.0.1",
     "unzipper": "^0.12.3",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

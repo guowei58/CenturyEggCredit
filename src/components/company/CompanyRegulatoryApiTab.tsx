@@ -7,6 +7,7 @@ import type { RegulatorySourceRegistryEntry, RegulatorySearchResult } from "@/li
 import { connectionBucketForSource } from "@/lib/regulatory/connectionBuckets";
 import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
 import { RegulatoryResultSourceLinks } from "@/components/company/RegulatoryResultSourceLinks";
+import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 
 type SearchResp =
   | {
@@ -56,6 +57,7 @@ export function CompanyRegulatoryApiTab({
   const [error, setError] = useState<string | null>(null);
   const [payload, setPayload] = useState<SearchResp | null>(null);
   const [entityNameHints, setEntityNameHints] = useState<string[]>([]);
+  const [subsidiaryCollapseSignal, setSubsidiaryCollapseSignal] = useState(0);
   const bootstrapKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -68,6 +70,7 @@ export function CompanyRegulatoryApiTab({
       if (!safeTicker || !source) return;
       const trimmed = q.trim();
       if (!trimmed) return;
+      setSubsidiaryCollapseSignal((n) => n + 1);
       setLoading(true);
       setError(null);
       setPayload(null);
@@ -157,6 +160,7 @@ export function CompanyRegulatoryApiTab({
         ticker={safeTicker}
         companyName={companyName}
         disabled={loading}
+        searchCollapseSignal={subsidiaryCollapseSignal}
         disclaimer="Subsidiaries from your saved Public Records profile (Exhibit 21 grid when present, otherwise the subsidiary name table). Use these as search queries. Verify matches in the underlying agency system."
         onNamesLoaded={setEntityNameHints}
         onPickName={(name) => {
@@ -217,18 +221,7 @@ export function CompanyRegulatoryApiTab({
           </p>
         ) : null}
 
-        {warnings.length > 0 ? (
-          <div className="mt-4 rounded-lg border px-4 py-3 text-sm" style={{ borderColor: "var(--border2)", background: "rgba(250,204,21,0.06)", color: "var(--text)" }}>
-            <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
-              Search notes
-            </div>
-            <ul className="mt-2 space-y-1 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
-              {warnings.map((warning, index) => (
-                <li key={`${warning}-${index}`}>• {warning}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        <RegulatorySearchNotes notes={warnings} />
 
         {error ? (
           <div className="mt-4 rounded-lg border px-4 py-3 text-sm" style={{ borderColor: "var(--danger)", background: "rgba(239,68,68,0.06)", color: "var(--danger)" }}>

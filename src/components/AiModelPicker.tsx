@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { AiProvider } from "@/lib/ai-provider";
-import { presetsForProvider, sanitizeClientModelId } from "@/lib/ai-model-options";
+import { sanitizeClientModelId } from "@/lib/ai-model-options";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { useAiModelPresets } from "@/hooks/useAiModelPresets";
 
 const CUSTOM = "__custom__";
 
@@ -18,6 +19,7 @@ export function AiModelPicker({
   className?: string;
 }) {
   const { ready, preferences, updatePreferences } = useUserPreferences();
+  const { presets } = useAiModelPresets(provider);
   const [selectValue, setSelectValue] = useState<string>("");
   const [custom, setCustom] = useState("");
 
@@ -40,7 +42,6 @@ export function AiModelPicker({
 
   const hydrate = useCallback(() => {
     if (!ready) return;
-    const presets = presetsForProvider(provider);
     const models = preferences.aiModels as Partial<Record<AiProvider | "ollama", string>> | undefined;
     const raw =
       provider === "deepseek" ? models?.deepseek ?? models?.ollama : models?.[provider];
@@ -58,13 +59,11 @@ export function AiModelPicker({
       setSelectValue(CUSTOM);
       setCustom(id);
     }
-  }, [ready, preferences, provider]);
+  }, [ready, preferences, provider, presets]);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
-
-  const presets = presetsForProvider(provider);
 
   return (
     <div className={`flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:items-center ${className}`}>

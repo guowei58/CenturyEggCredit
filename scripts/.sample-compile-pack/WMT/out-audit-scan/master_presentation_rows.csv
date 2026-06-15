@@ -1,0 +1,133 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:amounts-in-millions-except-per-share-data,html:amounts-in-millions-except-per-share-data,"(Amounts in millions, except per share data)",1,0
+income_statement,html:revenues,html:revenues,Revenues:,2,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net sales,3,0
+income_statement,us-gaap:OtherIncome,us-gaap:OtherIncome,Membership and other income,7,0
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Total revenues,8,0
+income_statement,html:costs-and-expenses,html:costs-and-expenses,Costs and expenses:,9,0
+income_statement,us-gaap:CostOfRevenue,us-gaap:CostOfRevenue,Cost of sales,10,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Operating, selling, general and administrative expenses",11,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,12,0
+income_statement,html:interest,html:interest,Interest:,13,0
+income_statement,us-gaap:InterestExpenseDebt,us-gaap:InterestExpenseDebt,Debt,14,0
+income_statement,us-gaap:InterestExpenseLesseeAssetsUnderCapitalLease,us-gaap:InterestExpenseLesseeAssetsUnderCapitalLease,"Finance, capital lease and financing obligations",15,0
+income_statement,us-gaap:InvestmentIncomeInterest,us-gaap:InvestmentIncomeInterest,Interest income,16,0
+income_statement,us-gaap:InterestIncomeExpenseNet,us-gaap:InterestIncomeExpenseNet,"Interest, net",17,0
+income_statement,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on extinguishment of debt,18,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,Other (gains) and losses,19,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,Income before income taxes,20,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes,21,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Consolidated net income,22,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Consolidated net income attributable to noncontrolling interest,23,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Consolidated net income attributable to Walmart,24,0
+income_statement,html:net-income-per-common-share,html:net-income-per-common-share,Net income per common share:,25,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic net income per common share attributable to Walmart,26,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted net income per common share attributable to Walmart,27,0
+income_statement,html:weighted-average-common-shares-outstanding,html:weighted-average-common-shares-outstanding,Weighted-average common shares outstanding:,28,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,29,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,30,0
+income_statement,us-gaap:CommonStockDividendsPerShareDeclared,us-gaap:CommonStockDividendsPerShareDeclared,Dividends declared per common share,31,0
+balance_sheet,html:amounts-in-millions,html:amounts-in-millions,(Amounts in millions),0,0
+balance_sheet,html:assets,html:assets,ASSETS,1,0
+balance_sheet,html:current-assets,html:current-assets,Current assets:,2,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,3,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,"Receivables, net",4,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,5,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other,6,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,11,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",12,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease right-of-use assets,17,0
+balance_sheet,us-gaap:FinanceLeaseRightOfUseAsset,us-gaap:FinanceLeaseRightOfUseAsset,"Finance lease right-of-use assets, net",18,0
+balance_sheet,us-gaap:CapitalLeasesBalanceSheetAssetsByMajorClassNet,us-gaap:CapitalLeasesBalanceSheetAssetsByMajorClassNet,"Property under capital lease and financing obligations, net",19,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,20,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other long-term assets,21,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,23,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,LIABILITIES AND EQUITY,26,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,27,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term borrowings,28,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,29,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,31,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Accrued income taxes,32,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Long-term debt due within one year,33,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Operating lease obligations due within one year,34,0
+balance_sheet,us-gaap:FinanceLeaseLiabilityCurrent,us-gaap:FinanceLeaseLiabilityCurrent,Finance lease obligations due within one year,35,0
+balance_sheet,us-gaap:CapitalLeaseObligationsCurrent,us-gaap:CapitalLeaseObligationsCurrent,Capital lease and financing obligations due within one year,37,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,38,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,39,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Long-term operating lease obligations,40,0
+balance_sheet,us-gaap:FinanceLeaseLiabilityNoncurrent,us-gaap:FinanceLeaseLiabilityNoncurrent,Long-term finance lease obligations,41,0
+balance_sheet,us-gaap:CapitalLeaseObligationsNoncurrent,us-gaap:CapitalLeaseObligationsNoncurrent,Long-term capital lease and financing obligations,42,0
+balance_sheet,us-gaap:DeferredIncomeTaxesAndOtherLiabilitiesNoncurrent,us-gaap:DeferredIncomeTaxesAndOtherLiabilitiesNoncurrent,Deferred income taxes and other,43,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies,44,0
+balance_sheet,html:equity,html:equity,Equity:,47,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,Common stock,48,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Capital in excess of par value,49,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,50,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,51,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Walmart shareholders' equity,52,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,54,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,57,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,58,0
+cash_flow,html:consolidated-net-income,html:consolidated-net-income,Consolidated net income,1,0
+cash_flow,html:adjustments-to-reconcile-income-from-continuing-operations-to-net-cash-provided-by-operating-activities,html:adjustments-to-reconcile-income-from-continuing-operations-to-net-cash-provided-by-operating-activities,Adjustments to reconcile income from continuing operations to net cash provided by operating activities:,2,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,3,0
+cash_flow,html:unrealized-gains-and-losses,html:unrealized-gains-and-losses,Unrealized (gains) and losses,5,0
+cash_flow,html:gains-and-losses-for-disposal-of-business-operations,html:gains-and-losses-for-disposal-of-business-operations,(Gains) and losses for disposal of business operations,6,0
+cash_flow,html:asda-pension-contribution,html:asda-pension-contribution,Asda pension contribution,7,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,8,0
+cash_flow,html:loss-on-extinguishment-of-debt,html:loss-on-extinguishment-of-debt,Loss on extinguishment of debt,9,0
+cash_flow,html:other-operating-activities,html:other-operating-activities,Other operating activities,10,0
+cash_flow,html:changes-in-certain-assets-and-liabilities-net-of-effects-of-acquisitions,html:changes-in-certain-assets-and-liabilities-net-of-effects-of-acquisitions,"Changes in certain assets and liabilities, net of effects of acquisitions:",11,0
+cash_flow,html:receivables-net,html:receivables-net,"Receivables, net",12,0
+cash_flow,html:inventories,html:inventories,Inventories,13,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,14,0
+cash_flow,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,15,0
+cash_flow,html:accrued-income-taxes,html:accrued-income-taxes,Accrued income taxes,16,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,17,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,18,0
+cash_flow,html:payments-for-property-and-equipment,html:payments-for-property-and-equipment,Payments for property and equipment,19,0
+cash_flow,html:proceeds-from-the-disposal-of-property-and-equipment,html:proceeds-from-the-disposal-of-property-and-equipment,Proceeds from the disposal of property and equipment,20,0
+cash_flow,html:proceeds-from-the-disposal-of-certain-operations,html:proceeds-from-the-disposal-of-certain-operations,Proceeds from the disposal of certain operations,22,0
+cash_flow,html:payments-for-business-acquisitions-net-of-cash-acquired,html:payments-for-business-acquisitions-net-of-cash-acquired,"Payments for business acquisitions, net of cash acquired",24,0
+cash_flow,html:other-investing-activities,html:other-investing-activities,Other investing activities,25,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,26,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,Cash flows from financing activities:,27,0
+cash_flow,html:net-change-in-short-term-borrowings,html:net-change-in-short-term-borrowings,Net change in short-term borrowings,28,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt,html:proceeds-from-issuance-of-long-term-debt,Proceeds from issuance of long-term debt,29,0
+cash_flow,html:repayments-of-long-term-debt,html:repayments-of-long-term-debt,Repayments of long-term debt,30,0
+cash_flow,html:premiums-paid-to-extinguish-debt,html:premiums-paid-to-extinguish-debt,Premiums paid to extinguish debt,31,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,32,0
+cash_flow,html:purchase-of-company-stock,html:purchase-of-company-stock,Purchase of Company stock,33,0
+cash_flow,html:dividends-paid-to-noncontrolling-interest,html:dividends-paid-to-noncontrolling-interest,Dividends paid to noncontrolling interest,34,0
+cash_flow,html:purchase-of-noncontrolling-interest,html:purchase-of-noncontrolling-interest,Purchase of noncontrolling interest,35,0
+cash_flow,html:other-financing-activities,html:other-financing-activities,Other financing activities,37,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,Net cash used in financing activities,38,0
+cash_flow,html:effect-of-exchange-rate-on-cash-cash-equivalents-and-restricted-cash,html:effect-of-exchange-rate-on-cash-cash-equivalents-and-restricted-cash,"Effect of Exchange Rate on Cash, Cash Equivalents, and Restricted Cash",39,0
+cash_flow,html:net-increase-decrease-in-cash-cash-equivalents-and-restricted-cash,html:net-increase-decrease-in-cash-cash-equivalents-and-restricted-cash,"Net increase (decrease) in cash, cash equivalents and restricted cash",40,0
+balance_sheet,html:liabilities-redeemable-noncontrolling-interest-and-shareholders-equity,html:liabilities-redeemable-noncontrolling-interest-and-shareholders-equity,"LIABILITIES, REDEEMABLE NONCONTROLLING INTEREST, AND SHAREHOLDERS' EQUITY",24,0
+balance_sheet,us-gaap:DividendsPayableCurrent,us-gaap:DividendsPayableCurrent,Dividends payable,30,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,Redeemable noncontrolling interest,45,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders' equity:,46,0
+cash_flow,html:amounts-in-millions,html:amounts-in-millions,(Amounts in millions),0,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,"Investment (gains) and losses, net",4,0
+cash_flow,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,Proceeds from disposal of certain strategic investments,21,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,7,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,22,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,36,0
+balance_sheet,html:nonredeemable-noncontrolling-interest,html:nonredeemable-noncontrolling-interest,Nonredeemable noncontrolling interest,53,0
+cash_flow,html:sale-of-subsidiary-stock,html:sale-of-subsidiary-stock,Sale of subsidiary stock,36,0
+balance_sheet,html:liabilities-redeemable-noncontrolling-interest-and-equity,html:liabilities-redeemable-noncontrolling-interest-and-equity,"LIABILITIES, REDEEMABLE NONCONTROLLING INTEREST, AND EQUITY",25,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,55,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,56,0
+balance_sheet,html:operating-lease-right-of-use-assets-net,html:operating-lease-right-of-use-assets-net,"Operating lease right-of-use assets, net",13,0
+income_statement,html:amounts-in-millions-except-unit-counts,html:amounts-in-millions-except-unit-counts,"(Amounts in millions, except unit counts)",0,0
+income_statement,html:percentage-change-from-comparable-period,html:percentage-change-from-comparable-period,Percentage change from comparable period,4,0
+income_statement,html:unit-counts-at-period-end,html:unit-counts-at-period-end,Unit counts at period end,5,0
+income_statement,html:retail-square-feet-at-period-end,html:retail-square-feet-at-period-end,Retail square feet at period end,6,0
+balance_sheet,html:property-and-equipment,html:property-and-equipment,Property and equipment:,8,0
+balance_sheet,html:property-and-equipment-2,html:property-and-equipment-2,Property and equipment,9,0
+balance_sheet,html:less-accumulated-depreciation,html:less-accumulated-depreciation,Less accumulated depreciation,10,0
+balance_sheet,html:property-under-capital-lease-and-financing-obligations,html:property-under-capital-lease-and-financing-obligations,Property under capital lease and financing obligations:,14,0
+balance_sheet,html:property-under-capital-lease-and-financing-obligations-2,html:property-under-capital-lease-and-financing-obligations-2,Property under capital lease and financing obligations,15,0
+balance_sheet,html:less-accumulated-amortization,html:less-accumulated-amortization,Less accumulated amortization,16,0
+cash_flow,html:purchase-of-available-for-sale-securities,html:purchase-of-available-for-sale-securities,Purchase of available for sale securities,23,0

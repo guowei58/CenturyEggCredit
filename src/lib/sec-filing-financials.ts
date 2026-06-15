@@ -18,6 +18,7 @@ import {
   scoreShapeTemplateSimilarity,
   type PrimaryFaceShapeTemplates,
 } from "@/lib/sec-filing-financials-shape-templates";
+import { normalizeSecProsePeriodHeader } from "@/lib/sec-xbrl-compiler-period-headers";
 import {
   locateFinancialStatementsSection,
   locatePrimaryStatementPacket,
@@ -632,6 +633,46 @@ function looksLikePrimaryCashFlowLayout(text: string): boolean {
   );
 }
 
+/**
+ * Page-break tail of the consolidated CF (financing footer + net change + supplemental).
+ * Must not be chosen as the primary statement table — pick the preceding full face instead.
+ */
+function isLikelyCashFlowPageBreakContinuationFragment(text: string): boolean {
+  const t = normalizeSpace(text).toLowerCase();
+  if (!t) return false;
+
+  const hasOperatingSection =
+    /\bcash flows? from operating\b/.test(t) ||
+    /\boperating activities\s*:/.test(t) ||
+    (/\boperating activities\b/.test(t) && /\badjustments to reconcile\b/.test(t));
+  const hasInvestingSection =
+    /\bcash flows? from investing\b/.test(t) || /\binvesting activities\s*:/.test(t);
+  const hasIndirectMethodStart = /\bnet income\b/.test(t) && /\bdepreciation\b/.test(t);
+
+  if (hasOperatingSection && hasInvestingSection) return false;
+  if (hasIndirectMethodStart && /\boperating activities\b/.test(t)) return false;
+
+  const head = t.slice(0, 220);
+  const startsMidFinancing =
+    /^(?:payment of financing costs|repayments of|proceeds from issuance|advances to|contributions from|share repurchases)\b/.test(
+      head,
+    ) ||
+    (/^[^.\n]{0,180}\bpayment of financing costs\b/.test(head) && !hasIndirectMethodStart);
+
+  if (startsMidFinancing && !hasOperatingSection && !hasInvestingSection) return true;
+
+  if (
+    cashFlowContinuationTableHasTailCue(t) &&
+    !hasOperatingSection &&
+    !hasInvestingSection &&
+    !hasIndirectMethodStart
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 /** “Cash paid for interest/taxes” and supplemental non‑cash disclosures — not the consolidated statement of cash flows. */
 function isLikelySupplementalCashFlowDetailTable(text: string): boolean {
   const t = normalizeSpace(text).toLowerCase();
@@ -854,6 +895,7 @@ function statementTableContentLooksLikePrimaryFace(text: string, kind: Statement
   if (kind === "is" && isLikelyPercentageOfRevenueIncomeTable(text)) return false;
   if (kind === "is" && isLikelyEquityRollforwardIncomeTable(text)) return false;
   if (kind === "cf" && isLikelyEquityRollforwardCashFlowTable(text)) return false;
+  if (kind === "cf" && isLikelyCashFlowPageBreakContinuationFragment(text)) return false;
   if (kind === "is" && isLikelyRevenueDisaggregationTableText(text)) return false;
   if (kind === "is" && isLikelyLiabilitiesScheduleMisclassifiedAsIncome(text)) return false;
   return simpleStatementKindScore(text, kind) >= MIN_STATEMENT_KIND_SCORE;
@@ -2440,9 +2482,9 @@ function isLikelyConsolidatedIncomeStatementSkeleton(text: string): boolean {
 function cashFlowShapeLooksValid(labelShallow: string, labelDeep: string): boolean {
   if (isLikelyCashRollupCrossReferenceToCashFlowStatement(labelShallow)) return false;
   if (isLikelyEquityRollforwardCashFlowTable(labelShallow)) return false;
+  if (isLikelyCashFlowPageBreakContinuationFragment(`${labelShallow}\n${labelDeep}`)) return false;
   const combined = `${labelShallow}\n${labelDeep}`;
   if (/\boperating activities\b/.test(combined) && /\binvesting activities\b/.test(combined)) return true;
-  if (/\bnet cash (?:provided|used)\b/.test(combined)) return true;
   if (/\bnet income\b/.test(combined) && /\bdepreciation\b/.test(combined)) return true;
   return false;
 }
@@ -2493,6 +2535,23 @@ function normalizeCashFlowRowLabelForDedup(label: string): string {
     .toLowerCase();
 }
 
+/** CF faces repeat generic labels (e.g. operating vs financing "Other") — dedupe by label + concept + values. */
+function cashFlowRowDedupKey(row: FilingHtmlStatementRow): string {
+  const taggedConcept =
+    row.ixByPeriod && Object.values(row.ixByPeriod).find((m) => m?.xbrlConcept)?.xbrlConcept;
+  const concept = (taggedConcept ?? row.concept ?? "").trim().toLowerCase();
+  const normLabel = normalizeCashFlowRowLabelForDedup(row.label);
+  const ambiguousShort = /^(other|other,? net)$/.test(normLabel);
+  if (ambiguousShort) {
+    const valKey = Object.entries(row.values)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, v]) => (v == null ? "" : String(v)))
+      .join(",");
+    return `${normLabel}|${concept}|${valKey}`;
+  }
+  return `${normLabel}|${concept}`;
+}
+
 function remapCashFlowRowToPrimaryPeriods(
   row: FilingHtmlStatementRow,
   continuationPeriodKeys: string[],
@@ -2521,7 +2580,7 @@ function appendCashFlowContinuationTables(
   opts?: { primaryDocument?: string; sourceUrl?: string },
 ): FilingHtmlStatement {
   const primaryPeriodKeys = primary.periods.map((p) => p.key);
-  const existingLabels = new Set(primary.rows.map((r) => normalizeCashFlowRowLabelForDedup(r.label)));
+  const existingLabels = new Set(primary.rows.map((r) => cashFlowRowDedupKey(r)));
   const mergedRows = [...primary.rows];
 
   const following = ctx.tables
@@ -2550,7 +2609,7 @@ function appendCashFlowContinuationTables(
 
     const contPeriodKeys = fragment.periods.map((p) => p.key);
     for (const row of fragment.rows) {
-      const dedupKey = normalizeCashFlowRowLabelForDedup(row.label);
+      const dedupKey = cashFlowRowDedupKey(row);
       if (existingLabels.has(dedupKey)) continue;
       const hasNumeric = Object.values(row.values).some((v) => v !== null && Number.isFinite(v));
       if (!hasNumeric && row.rowKind !== "heading") continue;
@@ -3827,7 +3886,10 @@ function detectDataStart(matrix: string[][]): number {
   if (enhanced < 0) return classic;
   // Mirrored HTML tables can satisfy col-0 + 2 amounts only on trailing supplemental rows.
   if (classic >= Math.floor(matrix.length * 0.7) && enhanced < classic) return enhanced;
-  return classic;
+  // Prefer the earliest data row. Classic only looked at column 0; condensed filings
+  // (HTZ 1Q-style) often place Revenues in column 1+ and were parsed starting at the
+  // first expense line instead.
+  return Math.min(classic, enhanced);
 }
 
 function rowPrimaryLabel(row: string[]): string {
@@ -3875,8 +3937,8 @@ function detectDataStartClassic(matrix: string[][]): number {
   for (let i = 0; i < matrix.length; i += 1) {
     const row = matrix[i] ?? [];
     const amountCount = row.filter((cell) => cellCountsAsDataAmount(cell)).length;
-    const labelCell = normalizeSpace(row[0] ?? "");
-    if (labelCell && !looksLikeAmount(labelCell) && !isHeaderOnlyLabel(labelCell) && amountCount >= 2) return i;
+    const labelCell = rowPrimaryLabel(row);
+    if (labelCell && !isHeaderOnlyLabel(labelCell) && amountCount >= 2) return i;
   }
   return -1;
 }
@@ -4037,10 +4099,10 @@ function inferPeriods(matrix: string[][], dataStart: number, valueCols: number[]
         })
         .filter(Boolean)
     );
-    let label = parts.join(" ").trim() || `Period ${idx + 1}`;
+    let label = normalizeSecProsePeriodHeader(parts.join(" ").trim() || `Period ${idx + 1}`);
     const colYear = headerYearForColumn(matrix, dataStart, col);
     if (colYear && !/\b(?:19|20)\d{2}\b/.test(label)) {
-      label = `${label} ${colYear}`.trim();
+      label = normalizeSecProsePeriodHeader(`${label} ${colYear}`.trim());
     }
     return { key: `p${idx + 1}`, label, shortLabel: label };
   });
@@ -4054,7 +4116,7 @@ function inferPeriods(matrix: string[][], dataStart: number, valueCols: number[]
       if (/\b(?:19|20)\d{2}\b/.test(period.label)) return period;
       const year = headerYears[idx] ?? headerYears[Math.min(idx, headerYears.length - 1)];
       if (!year) return period;
-      const label = `${period.label} ${year}`.trim();
+      const label = normalizeSecProsePeriodHeader(`${period.label} ${year}`.trim());
       return { ...period, label, shortLabel: label };
     });
   }
@@ -4395,6 +4457,7 @@ function scoreTableCandidate(
   if (kind === "cf" && isLikelySupplementalCashFlowDetailTable(text)) return -500;
   if (kind === "cf" && isLikelyRevenueDisaggregationTableText(text)) return -500;
   if (kind === "cf" && isLikelyEquityRollforwardCashFlowTable(text)) return -560;
+  if (kind === "cf" && isLikelyCashFlowPageBreakContinuationFragment(text)) return -560;
   if (!statementTableMeetsMinNumericDensity($, table, kind)) return -500;
   const matrix = extractTableMatrix($, $(table.el));
   const dataStart = detectDataStart(matrix);
@@ -4974,6 +5037,8 @@ function parseStatementRows(
 ): FilingHtmlStatementRow[] {
   const rows: FilingHtmlStatementRow[] = [];
   const trs = $table.find("tr").toArray();
+  /** Disambiguate untagged rows that share the same face label (e.g. CF operating/investing/financing "Other, net"). */
+  const usedHtmlConceptSlugs = new Set<string>();
 
   for (let rowIdx = dataStart; rowIdx < Math.min(matrix.length, trs.length); rowIdx += 1) {
     const row = matrix[rowIdx] ?? [];
@@ -5036,10 +5101,24 @@ function parseStatementRows(
           : "data";
 
     const firstTaggedConcept = periods.map((p) => ixByPeriod[p.key]?.xbrlConcept).find(Boolean);
-    const concept =
-      firstTaggedConcept ??
-      ((tr ? normalizeSpace($(directRowCells($, tr)[0] as Element).attr("id") ?? "") : "") ||
-        `html:${resolvedLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || rowIdx}`);
+    let concept = firstTaggedConcept ?? "";
+    if (!concept) {
+      const rowId = tr ? normalizeSpace($(directRowCells($, tr)[0] as Element).attr("id") ?? "") : "";
+      if (rowId) {
+        concept = rowId;
+      } else {
+        const base =
+          `html:${resolvedLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || String(rowIdx)}`;
+        if (!usedHtmlConceptSlugs.has(base)) {
+          concept = base;
+        } else {
+          let n = 2;
+          while (usedHtmlConceptSlugs.has(`${base}-${n}`)) n += 1;
+          concept = `${base}-${n}`;
+        }
+        usedHtmlConceptSlugs.add(concept);
+      }
+    }
 
     rows.push({
       concept,

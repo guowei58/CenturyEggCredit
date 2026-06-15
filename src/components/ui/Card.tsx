@@ -16,8 +16,10 @@ export function Card({
   return (
     <div className={`card-shell ${className}`.trim()}>
       {showHeader ? (
-        <div className="card-header flex flex-wrap items-center gap-2">
-          {title != null && title !== "" ? <span>{title}</span> : null}
+        <div
+          className={`card-header flex flex-wrap items-center gap-2${titleAside != null ? " justify-between" : ""}`}
+        >
+          {title != null && title !== "" ? <span className="min-w-0">{title}</span> : null}
           {titleAside}
         </div>
       ) : null}

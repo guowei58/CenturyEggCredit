@@ -208,7 +208,7 @@ export function CompanyCapStructureRecommendationTab({ ticker }: { ticker: strin
               style={{ color: "var(--muted2)" }}
             >
               <li>
-                Click <strong>Refresh sources</strong> to rescan your full workspace and saved tabs (non-Excel files, including saved LME / KPI / Forensic outputs).
+                Click <strong>Refresh sources</strong> to rescan saved tab text files plus saved LME, KPI, and Forensic outputs.
               </li>
               <li>Pick the AI model.</li>
               <li>
@@ -287,6 +287,9 @@ export function CompanyCapStructureRecommendationTab({ ticker }: { ticker: strin
               >
                 Refresh sources
               </button>
+              <span className="text-[11px]" style={{ color: "var(--muted2)" }}>
+                Uses saved tab `.txt` files plus LME / KPI / Forensic generated outputs only.
+              </span>
               {data?.cacheStale && data.cachedMarkdown && (
                 <span className="text-[11px]" style={{ color: "var(--warn)" }}>
                   Sources changed since last run — run again for an updated memo.
@@ -676,7 +679,7 @@ export function CompanyCapStructureRecommendationTab({ ticker }: { ticker: strin
         <Card title="Recommendation output">
           <p className="text-sm" style={{ color: "var(--muted2)" }}>
             {data
-              ? "No recommendation yet. Add workspace files or saved tabs (including LME / KPI / Forensic outputs when saved), then click Run recommendation."
+              ? "No recommendation yet. Save tab text files and/or saved LME, KPI, or Forensic outputs, then click Run recommendation."
               : "Saved recommendation output will appear here after you run."}
           </p>
         </Card>

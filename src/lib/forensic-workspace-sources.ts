@@ -1,24 +1,9 @@
 /**
- * Forensic Analysis corpus: materialized user ticker workspace + saved tab bodies + Saved Documents,
- * excluding (1) the same sources as **LME Analysis** (LME workspace subtrees, LME tab keys, and Saved Documents that pass
- * the LME include gate), (2) Excel spreadsheets (.xls/.xlsx/.xlsm/.xlsb), (3) generated work products, (4) embedding
- * vector caches under `credit-memo/lme-retrieval-embeddings` and `credit-memo/kpi-embeddings`, and (5) paths excluded by
- * `workspaceFileSkippedForWorkProductIngest(..., "forensic")`.
+ * Forensic Analysis corpus: four specific saved tabs plus the latest saved 10-K.
  */
 
-import { prisma } from "@/lib/prisma";
 import { loadCreditMemoConfig } from "@/lib/creditMemo/config";
-import { workspaceFileSkippedForWorkProductIngest } from "@/lib/creditMemo/workProductIngestScope";
-import {
-  generatedWorkProductTabDataKeys,
-  isUnderLmeAnalysisWorkspacePath,
-  isWorkspaceEmbeddingVectorCachePath,
-  isWorkspaceSpreadsheetFilename,
-  lmeAnalysisTabDataKeys,
-  lmeAnalysisTabMaterializedFilenamesLower,
-  workspaceGeneratedArtifactBasenamesLower,
-} from "@/lib/kpi-workspace-sources";
-import { userSavedDocumentIncludedInLmeCorpus } from "@/lib/lme-saved-documents-filter";
+import { isWorkspaceSpreadsheetFilename } from "@/lib/kpi-workspace-sources";
 import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
 import { extractBytesForAi } from "@/lib/ticker-file-text-extract";
 import { tierForExtractedBody } from "@/lib/lme-tier-classify";
@@ -41,14 +26,26 @@ function nextForensicDocId(): string {
   return `forensic-ws-${forensicDocCounter.toString(36)}`;
 }
 
+const FORENSIC_SAVED_TAB_KEYS = [
+  "business-model",
+  "how-stuff-works",
+  "risk-from-10k",
+  "business-risk-analysis",
+] as const;
+
+function looksLikeTenKFilename(filename: string): boolean {
+  return /(^|[_\s-])10-k([_\s.-]|$)/i.test(filename);
+}
+
+function extractTenKYear(filename: string): number {
+  const m = /10-k[_-](?:fy[_-])?(\d{4})/i.exec(filename);
+  return m ? Number(m[1]) : -1;
+}
+
 export async function collectForensicWorkspaceRawDocuments(ticker: string, userId?: string | null): Promise<LmeRawDocument[]> {
   forensicDocCounter = 0;
   const out: LmeRawDocument[] = [];
   let seq = 0;
-  const workProductBasenames = workspaceGeneratedArtifactBasenamesLower();
-  const workProductTabKeys = generatedWorkProductTabDataKeys();
-  const lmeTabKeys = lmeAnalysisTabDataKeys();
-  const lmeTabBasenamesLower = lmeAnalysisTabMaterializedFilenamesLower();
 
   const push = (d: Omit<LmeRawDocument, "docId" | "seq"> & { docId?: string }) => {
     out.push({
@@ -67,49 +64,13 @@ export async function collectForensicWorkspaceRawDocuments(ticker: string, userI
 
   const maxBytes = loadCreditMemoConfig().maxIngestFileBytes;
 
-  const rows = await prisma.userTickerWorkspaceFile.findMany({
-    where: { userId, ticker: sym },
-    select: { path: true, body: true },
-    orderBy: { path: "asc" },
-  });
-
-  for (const row of rows) {
-    const rel = row.path.replace(/\\/g, "/");
-    const base = rel.split("/").pop() ?? rel;
-    if (isWorkspaceSpreadsheetFilename(base)) continue;
-    if (isWorkspaceEmbeddingVectorCachePath(rel)) continue;
-    if (workProductBasenames.has(base.toLowerCase())) continue;
-    if (isUnderLmeAnalysisWorkspacePath(rel)) continue;
-    if (lmeTabBasenamesLower.has(base.toLowerCase())) continue;
-    const wp = workspaceFileSkippedForWorkProductIngest(rel, "forensic");
-    if (wp.skip) continue;
-    const buf = Buffer.from(row.body);
-    if (buf.length > maxBytes) continue;
-    try {
-      const extracted = (await extractBytesForAi(base, buf)).trim();
-      if (!extracted) continue;
-      const tier = tierForExtractedBody(base, extracted);
-      push({
-        tier,
-        label: `Workspace — ${rel}`,
-        file: rel,
-        raw: extracted,
-      });
-    } catch {
-      /* skip */
-    }
-  }
-
   const tabRows = await listUserTickerDocuments(userId, sym);
   for (const row of tabRows) {
     if (!(row.dataKey in SAVED_DATA_FILES)) continue;
-    if (workProductTabKeys.has(row.dataKey)) continue;
-    if (lmeTabKeys.has(row.dataKey)) continue;
+    if (!FORENSIC_SAVED_TAB_KEYS.includes(row.dataKey as (typeof FORENSIC_SAVED_TAB_KEYS)[number])) continue;
     const raw = row.content?.trim() ?? "";
     if (!raw) continue;
     const fn = SAVED_DATA_FILES[row.dataKey as keyof typeof SAVED_DATA_FILES];
-    if (isWorkspaceSpreadsheetFilename(fn)) continue;
-    if (workProductBasenames.has(fn.trim().toLowerCase())) continue;
     const tier = tierForExtractedBody(fn, raw);
     push({
       tier,
@@ -121,26 +82,32 @@ export async function collectForensicWorkspaceRawDocuments(ticker: string, userI
   }
 
   const savedDocs = await listAllUserSavedDocumentsBodiesForIngest(userId, sym);
-  for (const { filename, body } of savedDocs) {
-    const fn = filename.trim();
-    if (!fn) continue;
-    if (body.length > maxBytes) continue;
-    if (isWorkspaceSpreadsheetFilename(fn)) continue;
-    const base = fn.split("/").pop() ?? fn;
-    if (workProductBasenames.has(base.toLowerCase())) continue;
-    const wp = workspaceFileSkippedForWorkProductIngest(fn, "forensic");
-    if (wp.skip) continue;
-    if (userSavedDocumentIncludedInLmeCorpus(fn, body.length).ok) continue;
+  const latestTenK = savedDocs
+    .map((doc, index) => ({ ...doc, index }))
+    .filter(({ filename, body }) => {
+      const fn = filename.trim();
+      return fn && body.length <= maxBytes && !isWorkspaceSpreadsheetFilename(fn) && looksLikeTenKFilename(fn);
+    })
+    .sort((a, b) => {
+      const yearDelta = extractTenKYear(b.filename) - extractTenKYear(a.filename);
+      if (yearDelta !== 0) return yearDelta;
+      return a.index - b.index;
+    })[0];
+
+  if (latestTenK) {
     try {
-      const extracted = (await extractBytesForAi(base, body)).trim();
-      if (!extracted) continue;
-      const tier = tierForExtractedBody(fn, extracted);
-      push({
-        tier,
-        label: `Saved Documents — ${fn}`,
-        file: fn,
-        raw: extracted,
-      });
+      const fn = latestTenK.filename.trim();
+      const base = fn.split("/").pop() ?? fn;
+      const extracted = (await extractBytesForAi(base, latestTenK.body)).trim();
+      if (extracted) {
+        const tier = tierForExtractedBody(fn, extracted);
+        push({
+          tier,
+          label: `Saved Documents — ${fn}`,
+          file: fn,
+          raw: extracted,
+        });
+      }
     } catch {
       /* skip */
     }

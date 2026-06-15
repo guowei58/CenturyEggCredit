@@ -7,6 +7,7 @@ import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/co
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
+import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { AiCreditDeckTemplateFileBox } from "@/components/AiCreditDeckTemplateFileBox";
 import { AI_CREDIT_DECK_PROMPT_TEMPLATE } from "@/data/ai-credit-deck-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
@@ -134,7 +135,10 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
         <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
           Same workflow as Org Chart: upload your template file, run the prompt in Claude, ChatGPT, Gemini, or DeepSeek, and save the output here.
         </p>
-        <div className="flex flex-col gap-6 lg:flex-row">
+        <TabPromptSlideOutShell
+          hasMainContent={savedContent.trim().length > 0}
+          main={
+            <div className="flex flex-col gap-6 lg:flex-row">
           {isSavedResponseCollapsed ? (
             <div className="flex w-full justify-start lg:w-[44px] lg:flex-none">
               <button
@@ -228,7 +232,10 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
             </div>
           )}
 
-          <div className="flex w-full flex-col lg:w-80 flex-shrink-0 gap-3">
+            </div>
+          }
+          prompt={
+            <div className="flex w-full flex-col gap-3">
             <div>
               <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
                 Prompt for AI Credit Deck (uses your exact instructions). Open in AI; copy also goes to clipboard.{" "}
@@ -310,8 +317,9 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
                 </p>
               )}
             </div>
-          </div>
-        </div>
+            </div>
+          }
+        />
       </Card>
     </div>
   );

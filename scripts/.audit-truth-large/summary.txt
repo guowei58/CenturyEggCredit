@@ -1,0 +1,18 @@
+Large-cap workbook truth audit — 30 tickers (seed 20260612)
+Strict check: reported IS/BS/CF cells + lines vs period-primary workbooks (derived quarters excluded).
+Clean (exact match): 29
+With mismatches: 0
+Failed pipeline: 1
+
+Issues by type:
+
+Issues by statement:
+
+── All mismatches ──
+
+── Pipeline failures (no compile / no issues parsed) ──
+  BA: :   'Cash Flow': no header row
+2026-06-12 10:53:43,497 [INFO] workbook_loader: Loaded 30 workbooks
+2026-06-12 10:53:43,497 [INFO] xbrl_compiler: Loaded 30 workbooks, 0 statement sheets, 0 facts
+2026-06-12 10:53:43,497 [ERROR] xbrl_compiler: Pipeline failed: No facts extracted from saved workbooks. Each file needs sheets named Income Statement / Balance Sheet / Cash Flow with Concept + period columns (1Q25, FY25, or SEC date headers). Re-run Step 1 bulk save after deploying the latest build.
+ (saved=30)

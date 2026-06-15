@@ -17,6 +17,7 @@ import {
   prepareBulkPresentedFilings,
 } from "@/lib/sec-xbrl-as-presented-save-client";
 import { workbookToXlsxUint8Array } from "@/lib/sec-xbrl-presented-excel";
+import { writeFileWithRetry } from "./lib/write-file-retry";
 
 const COMPILER_DIR = path.resolve(process.cwd(), "xbrl-compiler");
 const OUT_DIR = path.resolve(process.cwd(), "scripts", ".audit-truth-batch");
@@ -200,7 +201,7 @@ async function auditTicker(ticker: string, workRoot: string): Promise<TickerResu
           validation: payload.validation,
           calculationLinkbaseLoaded: payload.calculationLinkbaseLoaded,
         });
-        await fs.writeFile(
+        await writeFileWithRetry(
           path.join(inputDir, wbFilename(ticker, filing)),
           Buffer.from(workbookToXlsxUint8Array(wb))
         );

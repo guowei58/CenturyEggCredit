@@ -11,9 +11,19 @@ export type XSearchParams = {
   language?: string;
 };
 
+export type XPostMedia = {
+  type: string;
+  url: string | null;
+  previewUrl: string | null;
+  altText: string | null;
+};
+
 export type NormalizedXPost = {
   id: string;
   text: string;
+  /** When API returns a truncated preview, full note-tweet body if available. */
+  isTruncatedPreview: boolean;
+  media: XPostMedia[];
   authorId: string | null;
   authorUsername: string | null;
   authorName: string | null;
@@ -71,6 +81,8 @@ export type XSearchResponse = {
   warnings: string[];
   rawCount: number;
   finalCount: number;
+  /** Posts removed by spam / low-engagement filter. */
+  filteredCount: number;
   posts: NormalizedXPost[];
   error?: string;
 };

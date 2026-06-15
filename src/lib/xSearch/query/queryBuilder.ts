@@ -1,4 +1,4 @@
-import { isAmbiguousTicker } from "../utils";
+import { needsFinanceScopedQuery } from "../utils";
 
 export type BuiltQuery = {
   query: string;
@@ -20,6 +20,12 @@ const FINANCE_TERMS = [
   "default",
   "bankruptcy",
   "EBITDA",
+  "stock",
+  "shares",
+  "revenue",
+  "trading",
+  "NASDAQ",
+  "NYSE",
 ];
 
 function q(s: string): string {
@@ -42,7 +48,7 @@ export function buildXQuery(params: {
   const langClause = lang ? ` lang:${lang.toLowerCase()}` : "";
   const rtClause = params.includeRetweets ? "" : " -is:retweet";
 
-  const ambiguous = isAmbiguousTicker(tk);
+  const ambiguous = needsFinanceScopedQuery(tk);
 
   // Cashtag ($TICKER) + quoted company / aliases only. Omitting the bare ticker avoids huge irrelevant
   // match volume (short tokens match unrelated uses of the same letters).
@@ -66,8 +72,8 @@ export function buildXQuery(params: {
   return {
     query,
     ambiguous,
-    explanation:
-      "Ticker appears ambiguous; query requires cashtag/company anchor plus finance-context terms to reduce noise.",
+      explanation:
+        "Ticker appears ambiguous or cashtag-noisy; query requires cashtag/company anchor plus finance-context terms to reduce noise.",
   };
 }
 

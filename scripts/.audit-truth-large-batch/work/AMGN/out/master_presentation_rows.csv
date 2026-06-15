@@ -1,0 +1,57 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,11,0
+balance_sheet,html:marketable-securities,html:marketable-securities,Marketable securities,12,0
+balance_sheet,html:trade-receivables-net,html:trade-receivables-net,"Trade receivables, net",13,0
+balance_sheet,html:inventories,html:inventories,Inventories,14,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,15,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,16,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant and equipment, net",17,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",18,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,19,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,20,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,21,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,23,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,33,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,34,0
+balance_sheet,html:current-portion-of-long-term-debt,html:current-portion-of-long-term-debt,Current portion of long-term debt,35,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,36,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,37,0
+balance_sheet,html:long-term-deferred-tax-liabilities,html:long-term-deferred-tax-liabilities,Long-term deferred tax liabilities,38,0
+balance_sheet,html:long-term-tax-liabilities,html:long-term-tax-liabilities,Long-term tax liabilities,39,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,40,0
+balance_sheet,html:contingencies-and-commitments,html:contingencies-and-commitments,Contingencies and commitments,41,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders’ equity:,42,0
+balance_sheet,html:common-stock-and-additional-paid-in-capital-0-0001-par-value-per-share-2-750-0-shares-authorized-outstanding-629-6-shares-in-2018-and-722-2-shares-in-2017,html:common-stock-and-additional-paid-in-capital-0-0001-par-value-per-share-2-750-0-shares-authorized-outstanding-629-6-shares-in-2018-and-722-2-shares-in-2017,"Common stock and additional paid-in capital; $0.0001 par value per share; 2,750.0 shares authorized; outstanding—629.6 shares in 2018 and 722.2 shares in 2017",50,0
+balance_sheet,html:accumulated-deficit,html:accumulated-deficit,Accumulated deficit,51,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,52,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders’ equity,53,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders’ equity,54,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS’ EQUITY,22,0
+balance_sheet,html:common-stock-and-additional-paid-in-capital-0-0001-par-value-2-750-0-shares-authorized-outstanding-614-4-shares-in-2019-and-629-6-shares-in-2018,html:common-stock-and-additional-paid-in-capital-0-0001-par-value-2-750-0-shares-authorized-outstanding-614-4-shares-in-2019-and-629-6-shares-in-2018,"Common stock and additional paid-in capital; $0.0001 par value; 2,750.0 shares authorized; outstanding — 614.4 shares in 2019 and 629.6 shares in 2018",43,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,Marketable securities,1,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Trade receivables, net",2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,3,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment, net",6,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",7,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,8,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,9,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,10,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,24,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,25,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,26,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,27,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,28,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Long-term deferred tax liabilities,29,0
+balance_sheet,us-gaap:LiabilityForUncertainTaxPositionsNoncurrent,us-gaap:LiabilityForUncertainTaxPositionsNoncurrent,Long-term tax liabilities,30,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,31,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Contingencies and commitments,32,0
+balance_sheet,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,"Common stock and additional paid-in capital; $0.0001 par value; 2,750.0 shares authorized; outstanding — 602.1 shares in 2019 and 629.6 shares in 2018",44,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated deficit,45,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,46,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders’ equity,47,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders’ equity,48,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Long-term deferred tax liabilities,55,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock and additional paid-in capital; $0.0001 par value; 2,750.0 shares authorized; outstanding — 583.5 shares in 2020 and 591.4 shares in 2019",49,0

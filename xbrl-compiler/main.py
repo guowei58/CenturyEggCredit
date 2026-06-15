@@ -19,10 +19,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger("xbrl_compiler")
 
-# Frontend / API ``models`` only: optional extra floor on top of the **first fiscal
-# year that has all four quarters** (1Q–4Q) in consolidated data. ``None`` = no
-# extra floor (still starts at the first complete fiscal year when one exists).
-DISPLAY_MODEL_MIN_FISCAL_YEAR: int | None = 2019
+# Frontend / API ``models`` display floor.  Workbooks are still saved from
+# FACE_BULK_MIN_FILING_YEAR (2019) for master presentation / comparatives; compiled
+# grids and Excel export start here (1Q20 for calendar FY2020).
+DISPLAY_MODEL_MIN_FISCAL_YEAR: int | None = 2020
+# Post-build merge of duplicate canonical rows (Step 6c). Off for now — registry is append-only.
+ENABLE_ROW_DEDUPLICATION = False
+# Phase 3 concept matching via LLM (master presentation). Off — deterministic Phases 2 + 4 only.
+ENABLE_AI_MATCHING = False
 COMPILER_SCHEMA_VERSION = 2
 
 
@@ -32,6 +36,7 @@ def run(
     ai_provider: str | None = None,
     ai_api_key: str | None = None,
     ai_model: str | None = None,
+    presentation_registry: str = "legacy",
 ) -> dict:
     """Execute the full pipeline.  Returns a JSON-serialisable summary."""
     from workbook_loader import load_all_workbooks, pick_latest_10k
@@ -46,7 +51,7 @@ def run(
         reconcile_final_statements_with_raw_xbrl,
         _prune_unresolved_after_map,
     )
-    from row_deduplication import apply_row_deduplication
+    from row_deduplication import RowDedupResult
     from statement_universe import universe_keys_not_in_concept_map
     from period_parser import parse_period, sort_period_labels
     from headline_periods import headline_periods_for_workbook
@@ -70,6 +75,47 @@ def run(
     total_facts = sum(len(s.facts) for w in workbooks for s in w.sheets)
     sheets_with_facts = sum(1 for w in workbooks for s in w.sheets if s.facts)
     _log(f"Loaded {len(workbooks)} workbooks, {sheets_with_facts} statement sheets, {total_facts} facts")
+
+    from xbrl_periods import filter_workbooks_to_xbrl_tagged, workbook_has_xbrl_tagged_facts
+
+    loaded_count = len(workbooks)
+    workbooks, skipped_html_only = filter_workbooks_to_xbrl_tagged(workbooks)
+    if skipped_html_only:
+        _log(
+            f"Skipped {len(skipped_html_only)} workbook(s) "
+            f"(entire batch is HTML-face-only, no XBRL tags to anchor): "
+            + ", ".join(skipped_html_only[:12])
+            + (" …" if len(skipped_html_only) > 12 else "")
+        )
+    html_only_included = [
+        w.filename for w in workbooks if not workbook_has_xbrl_tagged_facts(w)
+    ]
+    if html_only_included:
+        _log(
+            f"Including {len(html_only_included)} HTML-face workbook(s) for label merge: "
+            + ", ".join(html_only_included[:12])
+            + (" …" if len(html_only_included) > 12 else "")
+        )
+    if not workbooks:
+        return {
+            "ok": False,
+            "error": (
+                "No workbooks with XBRL-tagged facts found. Saved files may be HTML-face-only "
+                "(Concept column uses html: slugs). Re-save from SEC XBRL exports or use filings "
+                "with us-gaap / extension QNames."
+            ),
+            "elapsed_s": round(time.time() - t0, 2),
+            "files_processed": len(skipped_html_only),
+            "skipped_html_only_workbooks": skipped_html_only,
+        }
+
+    total_facts = sum(len(s.facts) for w in workbooks for s in w.sheets)
+    sheets_with_facts = sum(1 for w in workbooks for s in w.sheets if s.facts)
+    _log(
+        f"Compiling {len(workbooks)} workbook(s) "
+        f"(from {loaded_count} loaded), "
+        f"{sheets_with_facts} statement sheets, {total_facts} facts"
+    )
     if total_facts == 0:
         return {
             "ok": False,
@@ -91,18 +137,123 @@ def run(
                 "elapsed_s": round(time.time() - t0, 2)}
     _log(f"Master workbook: {master_wb.filename}  (is_10k={master_wb.is_10k}, latest_fy={master_wb.latest_fy})")
 
-    # 3 – Build master presentation + concept map (scan ALL files, AI Phase 3)
-    _log("Step 3: Building master presentation")
-    if ai_provider:
-        _log(f"  AI matching enabled: provider={ai_provider}  model={ai_model or 'default'}")
-    master_rows, concept_map = build_master_presentation(
-        master_wb,
-        all_workbooks=workbooks,
-        ai_provider=ai_provider,
-        ai_api_key=ai_api_key,
-        ai_model=ai_model,
-    )
+    # 3 – Build master presentation
+    registry_mode = (presentation_registry or "legacy").strip().lower()
+    if registry_mode not in ("legacy", "lineage", "compare"):
+        return {
+            "ok": False,
+            "error": (
+                f"Invalid presentation_registry={presentation_registry!r}; "
+                "use legacy | lineage | compare"
+            ),
+            "elapsed_s": round(time.time() - t0, 2),
+        }
+
+    if registry_mode == "compare":
+        _log("Step 3: Building master presentation (legacy + lineage, pick winner)")
+    else:
+        _log(f"Step 3: Building master presentation ({registry_mode} only)")
+    ai_provider_eff: str | None = None
+    ai_api_key_eff: str | None = None
+    ai_model_eff: str | None = None
+    if ENABLE_AI_MATCHING and ai_provider:
+        ai_provider_eff = ai_provider
+        ai_api_key_eff = ai_api_key
+        ai_model_eff = ai_model
+        _log(f"  AI matching enabled: provider={ai_provider_eff}  model={ai_model_eff or 'default'}")
+    else:
+        _log("  AI matching disabled (ENABLE_AI_MATCHING=False)")
+
+    from master_presentation_builder import ConceptMapping, MasterRow
+
+    def _clone_registry(
+        rows: list[MasterRow],
+        cmap: list[ConceptMapping],
+    ) -> tuple[list[MasterRow], list[ConceptMapping]]:
+        return (
+            [
+                MasterRow(
+                    r.statement_type,
+                    r.canonical_row_id,
+                    r.master_raw_concept,
+                    r.display_label,
+                    r.display_order,
+                    r.depth,
+                )
+                for r in rows
+            ],
+            [
+                ConceptMapping(
+                    m.statement_type,
+                    m.raw_concept,
+                    m.canonical_row_id,
+                    m.mapping_status,
+                    m.notes,
+                )
+                for m in cmap
+            ],
+        )
+
+    registry_choice = None
+    lineage_stats = None
+
+    if registry_mode in ("legacy", "compare"):
+        legacy_rows, legacy_map = build_master_presentation(
+            master_wb,
+            all_workbooks=workbooks,
+            ai_provider=ai_provider_eff,
+            ai_api_key=ai_api_key_eff,
+            ai_model=ai_model_eff,
+        )
+        _log(
+            f"  Legacy registry: {len(legacy_rows)} rows, {len(legacy_map)} concept mappings",
+        )
+    else:
+        legacy_rows, legacy_map = [], []
+
+    if registry_mode in ("lineage", "compare"):
+        from presentation_lineage import build_presentation_lineage
+
+        lineage_rows, lineage_map, lineage_stats = build_presentation_lineage(
+            master_wb,
+            workbooks,
+        )
+        _log(
+            f"  Lineage registry: {len(lineage_rows)} rows, {len(lineage_map)} mappings "
+            f"({lineage_stats.workbooks_walked} workbooks walked, "
+            f"{lineage_stats.label_aliases} label aliases, "
+            f"{lineage_stats.prefix_aliases} prefix aliases)",
+        )
+    else:
+        lineage_rows, lineage_map = [], []
+
     from interest_netting import apply_interest_netting_aliases
+
+    if registry_mode == "legacy":
+        master_rows, concept_map = _clone_registry(legacy_rows, legacy_map)
+    elif registry_mode == "lineage":
+        master_rows, concept_map = _clone_registry(lineage_rows, lineage_map)
+    else:
+        from presentation_registry_compare import choose_better_registry
+
+        legacy_for_score = _clone_registry(legacy_rows, legacy_map)
+        lineage_for_score = _clone_registry(lineage_rows, lineage_map)
+        apply_interest_netting_aliases(*legacy_for_score, workbooks)
+        apply_interest_netting_aliases(*lineage_for_score, workbooks)
+
+        registry_choice = choose_better_registry(
+            workbooks,
+            legacy_for_score[0],
+            legacy_for_score[1],
+            lineage_for_score[0],
+            lineage_for_score[1],
+        )
+        _log(f"  Registry winner: {registry_choice.winner} — {registry_choice.reason}")
+
+        if registry_choice.winner == "lineage":
+            master_rows, concept_map = _clone_registry(lineage_rows, lineage_map)
+        else:
+            master_rows, concept_map = _clone_registry(legacy_rows, legacy_map)
 
     interest_net_aliases = apply_interest_netting_aliases(
         master_rows, concept_map, workbooks,
@@ -185,17 +336,26 @@ def run(
         _log(f"Re-derived after reconcile: {len(derived_audit_2)} quarterly values")
         unresolved = _prune_unresolved_after_map(unresolved, concept_map)
 
-    _log("Step 6c: Row deduplication (merge duplicate canonical rows)")
-    dedup_res = apply_row_deduplication(
-        consolidated, master_rows, concept_map, audit_entries,
-    )
     derived_audit_3: list = []
-    if dedup_res.changed:
-        derived_audit_3 = derive_quarters(consolidated, master_rows, audit_entries)
-        _log(f"Row deduplication: removed {dedup_res.rows_removed} duplicate canonical rows; re-derived {len(derived_audit_3)} values")
-        unresolved = _prune_unresolved_after_map(unresolved, concept_map)
+    if ENABLE_ROW_DEDUPLICATION:
+        from row_deduplication import apply_row_deduplication
+
+        _log("Step 6c: Row deduplication (merge duplicate canonical rows)")
+        dedup_res = apply_row_deduplication(
+            consolidated, master_rows, concept_map, audit_entries,
+        )
+        if dedup_res.changed:
+            derived_audit_3 = derive_quarters(consolidated, master_rows, audit_entries)
+            _log(
+                f"Row deduplication: removed {dedup_res.rows_removed} duplicate "
+                f"canonical rows; re-derived {len(derived_audit_3)} values"
+            )
+            unresolved = _prune_unresolved_after_map(unresolved, concept_map)
+        else:
+            _log("Row deduplication: no duplicate canonical rows merged")
     else:
-        _log("Row deduplication: no duplicate canonical rows merged")
+        dedup_res = RowDedupResult()
+        _log("Step 6c: Row deduplication disabled (ENABLE_ROW_DEDUPLICATION=False)")
 
     all_audit = audit_entries + derived_audit + derived_audit_2 + derived_audit_3
 
@@ -208,6 +368,7 @@ def run(
     )
 
     prior_derived_audit = derived_audit + derived_audit_2 + derived_audit_3
+    display_fy_floor = DISPLAY_MODEL_MIN_FISCAL_YEAR
     wb_pass, post_truth_derived = run_workbook_truth_until_clean(
         consolidated,
         workbooks,
@@ -217,6 +378,7 @@ def run(
         all_audit,
         prior_derived_audit,
         derive_quarters,
+        min_fiscal_year=display_fy_floor,
     )
     pre_truth_audit = all_audit
     if wb_pass.derived_cells_cleared:
@@ -251,15 +413,33 @@ def run(
     # 8 – Export
     _log("Step 8: Exporting")
     exp = export_all(consolidated, master_rows, concept_map, all_audit,
-                     conflicts, unresolved, log_msgs, output_dir)
+                     conflicts, unresolved, log_msgs, output_dir,
+                     display_min_fiscal_year=display_fy_floor)
 
     elapsed = round(time.time() - t0, 2)
 
     from period_parser import parse_period
-    from xbrl_periods import xbrl_backed_period_canonicals_by_statement
+    from xbrl_periods import (
+        earliest_xbrl_tagged_fiscal_year,
+        earliest_xbrl_tagged_period_canonical,
+        xbrl_backed_period_canonicals_by_statement,
+    )
 
+    earliest_xbrl_fy = earliest_xbrl_tagged_fiscal_year(workbooks)
+    earliest_xbrl_period = earliest_xbrl_tagged_period_canonical(workbooks)
+    if earliest_xbrl_fy is not None:
+        _log(
+            f"Earliest XBRL-tagged workbook period: {earliest_xbrl_period} "
+            f"(fiscal year {earliest_xbrl_fy})"
+        )
+    else:
+        _log("Earliest XBRL-tagged workbook period: none (HTML-only or empty workbooks)")
+
+    xbrl_min_fy = max(earliest_xbrl_fy or 0, display_fy_floor or 0) if (earliest_xbrl_fy or display_fy_floor) else 0
     xbrl_by_stmt: dict[str, set[str]] = {
-        st: set(keys) for st, keys in xbrl_backed_period_canonicals_by_statement(workbooks).items()
+        st: set(keys) for st, keys in xbrl_backed_period_canonicals_by_statement(
+            workbooks, min_fiscal_year=xbrl_min_fy,
+        ).items()
     }
     _DERIVED_METHODS = frozenset({
         "derived",
@@ -272,7 +452,11 @@ def run(
             continue
         st = ae.statement_type
         p = parse_period(ae.output_period)
-        if not p or p.fiscal_year < (DISPLAY_MODEL_MIN_FISCAL_YEAR or 0):
+        if not p:
+            continue
+        if display_fy_floor is not None and p.fiscal_year < display_fy_floor:
+            continue
+        if earliest_xbrl_fy is not None and p.fiscal_year < earliest_xbrl_fy:
             continue
         stmt_years = {
             parse_period(pl).fiscal_year
@@ -283,7 +467,8 @@ def run(
             xbrl_by_stmt.setdefault(st, set()).add(ae.output_period)
     xbrl_by_stmt_frozen = {st: frozenset(keys) for st, keys in xbrl_by_stmt.items()}
     _log(
-        f"XBRL-backed display periods by statement (FY>={DISPLAY_MODEL_MIN_FISCAL_YEAR}): "
+        "XBRL-backed display periods by statement "
+        + (f"(from FY{display_fy_floor or xbrl_min_fy}): " if (display_fy_floor or xbrl_min_fy) else "(all): ")
         + ", ".join(f"{st}={len(keys)}" for st, keys in sorted(xbrl_by_stmt_frozen.items()))
     )
 
@@ -298,6 +483,7 @@ def run(
         cell_failures,
         allowed_periods_by_statement=xbrl_by_stmt_frozen,
         workbook_canons_by_statement=workbook_canons_by_statement,
+        display_min_fiscal_year=display_fy_floor,
     )
     for st, yr in sorted(display_starts.items()):
         _log(f"Display column start: {st} fiscal year {yr}")
@@ -323,13 +509,49 @@ def run(
     summary = {
         "ok": len(workbook_truth_issues) == 0,
         "compiler_schema_version": COMPILER_SCHEMA_VERSION,
-        "display_models_min_fiscal_year": DISPLAY_MODEL_MIN_FISCAL_YEAR,
+        "display_models_min_fiscal_year": display_fy_floor,
+        "earliest_xbrl_tagged_fiscal_year": earliest_xbrl_fy,
+        "earliest_xbrl_tagged_period": earliest_xbrl_period,
         "xbrl_backed_period_count": sum(len(v) for v in xbrl_by_stmt_frozen.values()),
         "xbrl_backed_periods_by_statement": {st: sorted(v) for st, v in xbrl_by_stmt_frozen.items()},
         "display_column_start_fiscal_year": display_starts,
         "elapsed_s": elapsed,
         "master_file": master_wb.filename,
+        "presentation_registry": (
+            {
+                "mode": registry_mode,
+                "winner": registry_choice.winner,
+                "reason": registry_choice.reason,
+                "legacy": {
+                    "master_rows": registry_choice.legacy_score.master_row_count,
+                    "mapped_facts": registry_choice.legacy_score.mapped_facts,
+                    "unresolved_facts": registry_choice.legacy_score.unresolved_facts,
+                    "duplicate_label_rows": registry_choice.legacy_score.duplicate_label_rows,
+                    "map_coverage": registry_choice.legacy_score.detail.get("map_coverage"),
+                    "total_score": round(registry_choice.legacy_score.total_score, 2),
+                },
+                "lineage": {
+                    "master_rows": registry_choice.lineage_score.master_row_count,
+                    "mapped_facts": registry_choice.lineage_score.mapped_facts,
+                    "unresolved_facts": registry_choice.lineage_score.unresolved_facts,
+                    "duplicate_label_rows": registry_choice.lineage_score.duplicate_label_rows,
+                    "map_coverage": registry_choice.lineage_score.detail.get("map_coverage"),
+                    "total_score": round(registry_choice.lineage_score.total_score, 2),
+                    "workbooks_walked": lineage_stats.workbooks_walked if lineage_stats else 0,
+                    "label_aliases": lineage_stats.label_aliases if lineage_stats else 0,
+                    "prefix_aliases": lineage_stats.prefix_aliases if lineage_stats else 0,
+                },
+            }
+            if registry_choice is not None
+            else {
+                "mode": registry_mode,
+                "winner": registry_mode,
+                "master_rows": len(master_rows),
+                "concept_mappings": len(concept_map),
+            }
+        ),
         "files_processed": len(workbooks),
+        "skipped_html_only_workbooks": skipped_html_only,
         "sheets_processed": sum(len(w.sheets) for w in workbooks),
         "total_facts": total_facts,
         "total_concepts": len(master_rows),
@@ -340,9 +562,15 @@ def run(
             + len(post_truth_derived)
         ),
         "row_deduplication": {
+            "enabled": ENABLE_ROW_DEDUPLICATION,
             "changed": dedup_res.changed,
             "rows_removed": dedup_res.rows_removed,
             "detail": dedup_res.detail,
+        },
+        "ai_matching": {
+            "enabled": ENABLE_AI_MATCHING,
+            "provider": ai_provider_eff,
+            "matches": ai_matched,
         },
         "universe_gaps_after_build": universe_keys_not_in_concept_map(workbooks, concept_map),
         "final_raw_reconcile": {
@@ -414,15 +642,20 @@ def run(
         ],
     }
 
-    if DISPLAY_MODEL_MIN_FISCAL_YEAR is None:
+    if display_fy_floor is not None:
         _log(
-            "Display models: quarterly/annual columns start at the first fiscal year "
-            "with all four quarters (unless no such year exists); full history in export files"
+            f"Display models / Excel export: columns start at fiscal year {display_fy_floor} "
+            f"(1Q{display_fy_floor % 100:02d}); older workbook periods remain in consolidation only"
+        )
+    elif earliest_xbrl_fy is None:
+        _log(
+            "Display models: columns start at the first fiscal year with all four "
+            "quarters when one exists; otherwise all consolidated periods"
         )
     else:
         _log(
-            f"Display models: columns start at max(first complete FY, {DISPLAY_MODEL_MIN_FISCAL_YEAR}); "
-            "full history remains in consolidated output files"
+            f"Display models: columns start at earliest XBRL-tagged fiscal year "
+            f"({earliest_xbrl_fy}, first period {earliest_xbrl_period})"
         )
     _log(f"Pipeline complete in {elapsed}s")
     return summary
@@ -571,11 +804,7 @@ def _models_json(
             return any(f"{qi}Q{yy}" in allowed_periods for qi in "1234")
         return False
 
-    floor_eff = (
-        display_min_fiscal_year
-        if display_min_fiscal_year is not None
-        else DISPLAY_MODEL_MIN_FISCAL_YEAR
-    )
+    floor_eff = display_min_fiscal_year
 
     failures = cell_failures or {}
 
@@ -653,9 +882,8 @@ def _models_json(
                 first_complete_year = yr
                 break
 
-        # When a minimum display year is configured (2019 for inline XBRL era), show
-        # every tagged period from that year — do not wait for the first fiscal year
-        # with all four quarters (GEN IS/CF often lack a complete early year until ~FY24).
+        # Display floor: earliest XBRL-tagged fiscal year from workbooks when set;
+        # else first fiscal year with Q1–Q4 in consolidated data.
         if floor_eff is not None:
             display_floor = floor_eff
         else:
@@ -778,6 +1006,15 @@ def main() -> None:
                         help="API key (falls back to OPENAI_API_KEY / DEEPSEEK_API_KEY env)")
     parser.add_argument("--ai-model", default=None,
                         help="Override model name for AI matching")
+    parser.add_argument(
+        "--presentation-registry",
+        default="legacy",
+        choices=("legacy", "lineage", "compare"),
+        help=(
+            "Master row registry: legacy=backwards 10-K seed only (default), "
+            "lineage=forward quarter walk only, compare=pick better of both"
+        ),
+    )
     args = parser.parse_args()
 
     result = run(
@@ -785,6 +1022,7 @@ def main() -> None:
         ai_provider=args.ai_provider,
         ai_api_key=args.ai_api_key,
         ai_model=args.ai_model,
+        presentation_registry=args.presentation_registry,
     )
     if not result.get("ok"):
         logger.error("Pipeline failed: %s", result.get("error"))

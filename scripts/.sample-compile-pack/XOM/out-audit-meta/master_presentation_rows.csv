@@ -1,0 +1,144 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenues,html:revenues,Revenues,2,0
+income_statement,html:costs-and-other-deductions,html:costs-and-other-deductions,Costs and other deductions,3,0
+income_statement,html:crude-oil-and-product-purchases,html:crude-oil-and-product-purchases,Crude oil and product purchases,4,0
+income_statement,html:production-and-manufacturing-expenses,html:production-and-manufacturing-expenses,Production and manufacturing expenses,5,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",6,0
+income_statement,html:depreciation-and-depletion-includes-impairments,html:depreciation-and-depletion-includes-impairments,Depreciation and depletion (includes impairments),7,0
+income_statement,html:exploration-expenses-including-dry-holes,html:exploration-expenses-including-dry-holes,"Exploration expenses, including dry holes",8,0
+income_statement,html:non-service-pension-and-postretirement-benefit-expense,html:non-service-pension-and-postretirement-benefit-expense,Non-service pension and postretirement benefit expense,9,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,10,0
+income_statement,html:other-taxes-and-duties,html:other-taxes-and-duties,Other taxes and duties,11,0
+income_statement,html:total-costs-and-other-deductions,html:total-costs-and-other-deductions,Total costs and other deductions,12,0
+income_statement,html:income-loss-before-income-taxes,html:income-loss-before-income-taxes,Income (loss) before income taxes,13,0
+income_statement,html:income-tax-expense-benefit,html:income-tax-expense-benefit,Income tax expense (benefit),14,0
+income_statement,html:net-income-loss-including-noncontrolling-interests,html:net-income-loss-including-noncontrolling-interests,Net income (loss) including noncontrolling interests,15,0
+income_statement,html:net-income-loss-attributable-to-noncontrolling-interests,html:net-income-loss-attributable-to-noncontrolling-interests,Net income (loss) attributable to noncontrolling interests,16,0
+income_statement,html:net-income-loss-attributable-to-exxonmobil,html:net-income-loss-attributable-to-exxonmobil,Net income (loss) attributable to ExxonMobil,17,0
+income_statement,html:earnings-loss-per-common-share-dollars,html:earnings-loss-per-common-share-dollars,Earnings (loss) per common share (dollars),18,0
+income_statement,html:earnings-loss-per-common-share-basic-in-dollars-per-share,html:earnings-loss-per-common-share-basic-in-dollars-per-share,"Earnings (loss) per common share, basic (in dollars per share)",21,0
+income_statement,html:sales-and-other-operating-revenue,html:sales-and-other-operating-revenue,Sales and other operating revenue,22,0
+income_statement,html:revenues-and-other-income,html:revenues-and-other-income,Revenues and other income,23,0
+income_statement,html:revenues-2,html:revenues-2,Revenues,24,0
+income_statement,html:income-from-equity-affiliates,html:income-from-equity-affiliates,Income from equity affiliates,25,0
+income_statement,html:revenues-and-other-income-2,html:revenues-and-other-income-2,Revenues and other income,26,0
+income_statement,html:revenues-3,html:revenues-3,Revenues,27,0
+income_statement,html:other-income,html:other-income,Other income,28,0
+income_statement,html:revenues-and-other-income-3,html:revenues-and-other-income-3,Revenues and other income,29,0
+income_statement,html:revenues-4,html:revenues-4,Revenues,30,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:cash-and-cash-equivalents-restricted,html:cash-and-cash-equivalents-restricted,Cash and cash equivalents – restricted,2,0
+balance_sheet,html:notes-and-accounts-receivable-net,html:notes-and-accounts-receivable-net,Notes and accounts receivable – net,3,0
+balance_sheet,html:inventories,html:inventories,Inventories,4,0
+balance_sheet,html:crude-oil-products-and-merchandise,html:crude-oil-products-and-merchandise,"Crude oil, products and merchandise",6,0
+balance_sheet,html:materials-and-supplies,html:materials-and-supplies,Materials and supplies,7,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,8,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,9,0
+balance_sheet,html:investments-advances-and-long-term-receivables,html:investments-advances-and-long-term-receivables,"Investments, advances, and long-term receivables",10,0
+balance_sheet,html:property-plant-and-equipment-at-cost-less-accumulated-depreciation-and-depletion,html:property-plant-and-equipment-at-cost-less-accumulated-depreciation-and-depletion,"Property, plant, and equipment, at cost, less accumulated depreciation and depletion",12,0
+balance_sheet,html:other-assets-including-intangibles-net,html:other-assets-including-intangibles-net,"Other assets, including intangibles – net",13,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,14,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,15,0
+balance_sheet,html:notes-and-loans-payable,html:notes-and-loans-payable,Notes and loans payable,17,0
+balance_sheet,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,18,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,19,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,21,0
+balance_sheet,html:liabilities-noncurrent,html:liabilities-noncurrent,"Liabilities, Noncurrent",22,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,23,0
+balance_sheet,html:postretirement-benefits-reserves,html:postretirement-benefits-reserves,Postretirement benefits reserves,24,0
+balance_sheet,html:deferred-income-tax-liabilities,html:deferred-income-tax-liabilities,Deferred income tax liabilities,25,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,28,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,30,0
+balance_sheet,html:equity,html:equity,EQUITY,31,0
+balance_sheet,html:common-stock-without-par-value-9-000-million-shares-authorized-8-019-million-shares-issued,html:common-stock-without-par-value-9-000-million-shares-authorized-8-019-million-shares-issued,"Common stock without par value (9,000 million shares authorized, 8,019 million shares issued)",32,0
+balance_sheet,html:earnings-reinvested,html:earnings-reinvested,Earnings reinvested,34,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,36,0
+balance_sheet,html:common-stock-held-in-treasury-3-840-million-shares-in-2025-and-3-666-million-shares-in-2024,html:common-stock-held-in-treasury-3-840-million-shares-in-2025-and-3-666-million-shares-in-2024,"Common stock held in treasury (3,840 million shares in 2025 and 3,666 million shares in 2024)",37,0
+balance_sheet,html:exxonmobil-share-of-equity,html:exxonmobil-share-of-equity,ExxonMobil share of equity,46,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,47,0
+balance_sheet,html:total-equity,html:total-equity,Total Equity,49,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total Liabilities and Equity,50,0
+balance_sheet,html:related-party,html:related-party,Related Party,52,0
+balance_sheet,html:liabilities-noncurrent-2,html:liabilities-noncurrent-2,"Liabilities, Noncurrent",54,0
+balance_sheet,html:long-term-obligations,html:long-term-obligations,Long-term obligations,55,0
+balance_sheet,html:nonrelated-party,html:nonrelated-party,Nonrelated Party,56,0
+balance_sheet,html:liabilities-noncurrent-3,html:liabilities-noncurrent-3,"Liabilities, Noncurrent",58,0
+balance_sheet,html:long-term-obligations-2,html:long-term-obligations-2,Long-term obligations,59,0
+cash_flow,html:net-income-loss-including-noncontrolling-interests,html:net-income-loss-including-noncontrolling-interests,Net income (loss) including noncontrolling interests,1,0
+cash_flow,html:adjustments-for-noncash-transactions,html:adjustments-for-noncash-transactions,Adjustments for noncash transactions,2,0
+cash_flow,html:depreciation-and-depletion-includes-impairments,html:depreciation-and-depletion-includes-impairments,Depreciation and depletion (includes impairments),3,0
+cash_flow,html:deferred-income-tax-charges-credits,html:deferred-income-tax-charges-credits,Deferred income tax charges/(credits),5,0
+cash_flow,html:postretirement-benefits-expense-in-excess-of-less-than-net-payments,html:postretirement-benefits-expense-in-excess-of-less-than-net-payments,Postretirement benefits expense in excess of/(less than) net payments,6,0
+cash_flow,html:other-long-term-obligation-provisions-in-excess-of-less-than-payments,html:other-long-term-obligation-provisions-in-excess-of-less-than-payments,Other long-term obligation provisions in excess of/(less than) payments,7,0
+cash_flow,html:dividends-received-greater-than-less-than-equity-in-current-earnings-of-equity-companies,html:dividends-received-greater-than-less-than-equity-in-current-earnings-of-equity-companies,Dividends received greater than/(less than) equity in current earnings of equity companies,8,0
+cash_flow,html:changes-in-operational-working-capital-excluding-cash-and-debt,html:changes-in-operational-working-capital-excluding-cash-and-debt,"Changes in operational working capital, excluding cash and debt",9,0
+cash_flow,html:notes-and-accounts-receivable-reduction-increase,html:notes-and-accounts-receivable-reduction-increase,Notes and accounts receivable reduction/(increase),10,0
+cash_flow,html:inventories-reduction-increase,html:inventories-reduction-increase,Inventories reduction/(increase),11,0
+cash_flow,html:other-current-assets-reduction-increase,html:other-current-assets-reduction-increase,Other current assets reduction/(increase),12,0
+cash_flow,html:accounts-and-other-payables-increase-reduction,html:accounts-and-other-payables-increase-reduction,Accounts and other payables increase/(reduction),13,0
+cash_flow,html:net-gain-loss-on-asset-sales,html:net-gain-loss-on-asset-sales,Net (gain)/loss on asset sales,14,0
+cash_flow,html:all-other-items-net,html:all-other-items-net,All other items - net,15,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,16,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,CASH FLOWS FROM INVESTING ACTIVITIES,17,0
+cash_flow,html:additions-to-property-plant-and-equipment,html:additions-to-property-plant-and-equipment,"Additions to property, plant, and equipment",18,0
+cash_flow,html:proceeds-from-asset-sales-and-returns-of-investments,html:proceeds-from-asset-sales-and-returns-of-investments,Proceeds from asset sales and returns of investments,21,0
+cash_flow,html:additional-investments-and-advances,html:additional-investments-and-advances,Additional investments and advances,22,0
+cash_flow,html:other-investing-activities-including-collection-of-advances,html:other-investing-activities-including-collection-of-advances,Other investing activities including collection of advances,23,0
+cash_flow,html:cash-acquired-from-mergers-and-acquisitions,html:cash-acquired-from-mergers-and-acquisitions,Cash acquired from mergers and acquisitions,24,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,25,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,CASH FLOWS FROM FINANCING ACTIVITIES,26,0
+cash_flow,html:additions-to-long-term-debt,html:additions-to-long-term-debt,Additions to long-term debt,27,0
+cash_flow,html:reductions-in-long-term-debt,html:reductions-in-long-term-debt,Reductions in long-term debt,28,0
+cash_flow,html:additions-to-short-term-debt-3,html:additions-to-short-term-debt-3,Additions to short-term debt [3],29,0
+cash_flow,html:reductions-in-short-term-debt-3,html:reductions-in-short-term-debt-3,Reductions in short-term debt [3],30,0
+cash_flow,html:additions-reductions-in-commercial-paper-and-debt-with-three-months-or-less-maturity,html:additions-reductions-in-commercial-paper-and-debt-with-three-months-or-less-maturity,"Additions/(reductions) in commercial paper, and debt with three months or less maturity",31,0
+cash_flow,html:contingent-consideration-payments,html:contingent-consideration-payments,Contingent consideration payments,32,0
+cash_flow,html:cash-dividends-to-exxonmobil-shareholders,html:cash-dividends-to-exxonmobil-shareholders,Cash dividends to ExxonMobil shareholders,33,0
+cash_flow,html:cash-dividends-to-noncontrolling-interests,html:cash-dividends-to-noncontrolling-interests,Cash dividends to noncontrolling interests,34,0
+cash_flow,html:changes-in-noncontrolling-interests,html:changes-in-noncontrolling-interests,Changes in noncontrolling interests,35,0
+cash_flow,html:inflows-from-noncontrolling-interests-for-major-projects,html:inflows-from-noncontrolling-interests-for-major-projects,Inflows from noncontrolling interests for major projects,36,0
+cash_flow,html:common-stock-acquired,html:common-stock-acquired,Common stock acquired,37,0
+cash_flow,html:net-cash-provided-by-used-in-financing-activities,html:net-cash-provided-by-used-in-financing-activities,Net cash provided by (used in) financing activities,39,0
+cash_flow,html:effects-of-exchange-rate-changes-on-cash,html:effects-of-exchange-rate-changes-on-cash,Effects of exchange rate changes on cash,40,0
+cash_flow,html:increase-decrease-in-cash-and-cash-equivalents-including-restricted,html:increase-decrease-in-cash-and-cash-equivalents-including-restricted,Increase/(decrease) in cash and cash equivalents (including restricted),41,0
+cash_flow,html:cash-and-cash-equivalents-at-beginning-of-year-including-restricted,html:cash-and-cash-equivalents-at-beginning-of-year-including-restricted,Cash and cash equivalents at beginning of year (including restricted),42,0
+cash_flow,html:cash-and-cash-equivalents-at-end-of-year-including-restricted,html:cash-and-cash-equivalents-at-end-of-year-including-restricted,Cash and cash equivalents at end of year (including restricted),43,0
+cash_flow,html:1-1-includes-568-million-issued-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-debt-upon-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2023-2-2-includes-659-million-of-proceeds-related-to-a-financing-arrangement-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-obligation-at-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2025-3-3-includes-commercial-paper-with-a-maturity-greater-than-three-months,html:1-1-includes-568-million-issued-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-debt-upon-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2023-2-2-includes-659-million-of-proceeds-related-to-a-financing-arrangement-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-obligation-at-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2025-3-3-includes-commercial-paper-with-a-maturity-greater-than-three-months,[1] (1) Includes $568 million issued to facilitate the sale of an entity where the buyer assumed the debt upon closing; no longer on the Consolidated Balance Sheet at the end of 2023. [2] (2) Includes $659 million of proceeds related to a financing arrangement to facilitate the sale of an entity where the buyer assumed the obligation at closing; no longer on the Consolidated Balance Sheet at the end of 2025. [3] (3) Includes commercial paper with a maturity greater than three months.,48,0
+cash_flow,html:1-1-includes-568-million-issued-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-debt-upon-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2023,html:1-1-includes-568-million-issued-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-debt-upon-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2023,[1] (1) Includes $568 million issued to facilitate the sale of an entity where the buyer assumed the debt upon closing; no longer on the Consolidated Balance Sheet at the end of 2023.,49,0
+cash_flow,html:2-2-includes-659-million-of-proceeds-related-to-a-financing-arrangement-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-obligation-at-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2025,html:2-2-includes-659-million-of-proceeds-related-to-a-financing-arrangement-to-facilitate-the-sale-of-an-entity-where-the-buyer-assumed-the-obligation-at-closing-no-longer-on-the-consolidated-balance-sheet-at-the-end-of-2025,[2] (2) Includes $659 million of proceeds related to a financing arrangement to facilitate the sale of an entity where the buyer assumed the obligation at closing; no longer on the Consolidated Balance Sheet at the end of 2025.,50,0
+cash_flow,html:3-3-includes-commercial-paper-with-a-maturity-greater-than-three-months,html:3-3-includes-commercial-paper-with-a-maturity-greater-than-three-months,[3] (3) Includes commercial paper with a maturity greater than three months.,51,0
+income_statement,html:millions-of-dollars-unless-noted-note-reference-number,html:millions-of-dollars-unless-noted-note-reference-number,"(millions of dollars, unless noted) Note Reference Number",0,0
+balance_sheet,us-gaap:EnergyRelatedInventory,us-gaap:EnergyRelatedInventory,"Crude oil, products and merchandise",5,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment – net",11,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Notes and loans payable,16,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,20,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Long-term obligations to equity companies,26,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent@R23,us-gaap:OtherLiabilitiesNoncurrent@R23,Other long-term obligations,27,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies 7,29,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income 5,35,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total Equity,48,0
+cash_flow,html:millions-of-dollars,html:millions-of-dollars,(millions of dollars),0,0
+income_statement,html:millions-of-dollars-unless-noted,html:millions-of-dollars-unless-noted,"(millions of dollars, unless noted)",1,0
+income_statement,us-gaap:CapitalizedExploratoryWellCostChargedToExpense1,us-gaap:CapitalizedExploratoryWellCostChargedToExpense1,"(1) Includes $40 million related to the write-off of exploratory well costs in second quarter 2025 that were previously capitalized for greater than one year at December 31, 2024.",19,0
+income_statement,html:the-information-in-the-notes-to-condensed-consolidated-financial-statements-is-an-integral-part-of-these-statements,html:the-information-in-the-notes-to-condensed-consolidated-financial-statements-is-an-integral-part-of-these-statements,The information in the Notes to Condensed Consolidated Financial Statements is an integral part of these statements.,20,0
+balance_sheet,html:the-information-in-the-notes-to-condensed-consolidated-financial-statements-is-an-integral-part-of-these-statements,html:the-information-in-the-notes-to-condensed-consolidated-financial-statements-is-an-integral-part-of-these-statements,The information in the Notes to Condensed Consolidated Financial Statements is an integral part of these statements.,51,0
+balance_sheet,html:current-liabilities-2,html:current-liabilities-2,Current liabilities,53,0
+balance_sheet,html:current-liabilities-3,html:current-liabilities-3,Current liabilities,57,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"(3,901 million shares at September 30, 2022 and3,780 million shares at December 31, 2021)",38,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"(3,806 million shares at March 31, 2022 and3,780 million shares at December 31, 2021)",39,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Noncash inventory adjustment - lower of cost or market,4,0
+cash_flow,html:proceeds-associated-with-sales-of-subsidiaries-property-plant-and,html:proceeds-associated-with-sales-of-subsidiaries-property-plant-and,"Proceeds associated with sales of subsidiaries, property, plant and",19,0
+balance_sheet,html:3-791-million-shares-at-june-30-2020-and,html:3-791-million-shares-at-june-30-2020-and,"(3,791 million shares at June 30, 2020 and",40,0
+balance_sheet,html:3-791-million-shares-at-march-31-2020-and,html:3-791-million-shares-at-march-31-2020-and,"(3,791 million shares at March 31, 2020 and",41,0
+balance_sheet,html:3-788-million-shares-at-september-30-2019-and,html:3-788-million-shares-at-september-30-2019-and,"(3,788 million shares at September 30, 2019 and",42,0
+balance_sheet,html:3-788-million-shares-at-june-30-2019-and,html:3-788-million-shares-at-june-30-2019-and,"(3,788 million shares at June 30, 2019 and",43,0
+balance_sheet,html:notes-and-accounts-receivable-less-estimated-doubtful-amounts,html:notes-and-accounts-receivable-less-estimated-doubtful-amounts,"Notes and accounts receivable, less estimated doubtful amounts",1,0
+balance_sheet,html:9-000-million-shares-authorized-8-019-million-shares-issued,html:9-000-million-shares-authorized-8-019-million-shares-issued,"(9,000 million shares authorized, 8,019 million shares issued)",33,0
+balance_sheet,html:3-788-million-shares-at-march-31-2019-and,html:3-788-million-shares-at-march-31-2019-and,"(3,788 million shares at March 31, 2019 and",44,0
+balance_sheet,html:3-782-million-shares-at-december-31-2018,html:3-782-million-shares-at-december-31-2018,"3,782 million shares at December 31, 2018)",45,0
+cash_flow,html:equipment-and-sales-and-returns-of-investments,html:equipment-and-sales-and-returns-of-investments,"equipment, and sales and returns of investments",20,0
+cash_flow,html:supplemental-disclosures,html:supplemental-disclosures,Supplemental Disclosures,44,0
+cash_flow,html:income-taxes-paid,html:income-taxes-paid,Income taxes paid,45,0
+cash_flow,html:cash-interest-paid,html:cash-interest-paid,Cash interest paid,46,0
+cash_flow,html:included-in-cash-flows-from-operating-activities,html:included-in-cash-flows-from-operating-activities,Included in cash flows from operating activities,47,0
+cash_flow,html:common-stock-sold,html:common-stock-sold,Common stock sold,38,0

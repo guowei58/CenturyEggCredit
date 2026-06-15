@@ -1,3 +1,5 @@
+import { parseFiscalPeriodToken } from "@/lib/presentations/discovery/period";
+
 export type PeriodFinancialsFilingLabelInput = {
   form: string;
   filingDate: string;
@@ -7,6 +9,69 @@ export type PeriodFinancialsFilingLabelInput = {
 export type PeriodFinancialsFilingLabelRow = PeriodFinancialsFilingLabelInput & {
   accessionNumber: string;
 };
+
+/** Stable Saved Documents base for the primary 10-Q/10-K (covers MD&A and debt footnotes in one file). */
+export function periodicSecFilingFilenameBase(ticker: string, form: string, periodLabel: string): string {
+  const sym = ticker.trim().toUpperCase().replace(/[^A-Z0-9.-]/g, "") || "TICKER";
+  const formSlug = (form || "filing").trim().replace(/[^\w-]+/g, "_");
+  return `${sym}_${formSlug}_${periodLabelToFilenameSlug(periodLabel)}`;
+}
+
+/** Stable slug for Saved Documents filenames (e.g. `1Q_2026`, `FY_2025`). */
+export function periodLabelToFilenameSlug(periodLabel: string): string {
+  return periodLabel.trim().replace(/\s+/g, "_").replace(/[^\w-]+/g, "_");
+}
+
+export function periodicSecFilingSaveTitle(
+  ticker: string,
+  form: string,
+  periodLabel: string
+): string {
+  const sym = ticker.trim().toUpperCase();
+  return `${sym} ${form.trim() || "SEC filing"} · ${periodLabel} (MD&A & debt footnotes)`;
+}
+
+/**
+ * Map Period Financials fiscal label (from {@link buildPeriodFinancialsFilingLabels}) to Roic `2024Q3` token.
+ * Prefer label over calendar month from report date — non-calendar FY issuers were mismatched before.
+ */
+export function filingPeriodLabelToRoicPeriod(
+  periodLabel: string,
+  reportDate?: string | null,
+  filingDate?: string | null
+): string | null {
+  const label = periodLabel.trim();
+  if (!label) return reportDateToRoicPeriod(reportDate, filingDate);
+
+  if (/^FY\s+\d{4}$/i.test(label)) {
+    const fromReport = reportDateToRoicPeriod(reportDate, filingDate);
+    if (fromReport) return fromReport;
+    const y = /^FY\s+(\d{4})$/i.exec(label)?.[1];
+    return y ? `${y}Q4` : null;
+  }
+
+  const normalized = label.replace(/^(\d)Q\s+/i, "Q$1 ");
+  const parsed = parseFiscalPeriodToken(normalized);
+  if (parsed) return `${parsed.year}Q${parsed.quarter}`;
+
+  return reportDateToRoicPeriod(reportDate, filingDate);
+}
+
+/** Newest-first periodic filings with human period labels (default: last 8 quarters / periods). */
+export function selectLastNPeriodFinancialsFilings<T extends PeriodFinancialsFilingLabelRow>(
+  filings: T[],
+  count = 8
+): Array<T & { periodLabel: string }> {
+  const labels = buildPeriodFinancialsFilingLabels(filings);
+  const out: Array<T & { periodLabel: string }> = [];
+  for (const f of filings) {
+    const periodLabel = labels.get(f.accessionNumber);
+    if (!periodLabel) continue;
+    out.push({ ...f, periodLabel });
+    if (out.length >= count) break;
+  }
+  return out;
+}
 
 function anchorDate(f: PeriodFinancialsFilingLabelInput): string {
   return (f.reportDate ?? f.filingDate ?? "").trim().slice(0, 10);

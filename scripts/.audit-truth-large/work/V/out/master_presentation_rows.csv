@@ -1,0 +1,186 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,15,0
+balance_sheet,v:RestrictedCashAndCashEquivalentsU.S.LitigationEscrow,v:RestrictedCashAndCashEquivalentsU.S.LitigationEscrow,Restricted cash equivalents—U.S. litigation escrow (Note 4 and Note 5),16,0
+balance_sheet,us-gaap:Investments,us-gaap:Investments,Investment securities (Note 6),17,0
+balance_sheet,v:SettlementReceivable,v:SettlementReceivable,Settlement receivable,18,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,Accounts receivable,19,0
+balance_sheet,v:ClientIncentivesAssetsCurrent,v:ClientIncentivesAssetsCurrent,Current portion of client incentives,20,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,21,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,22,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesNoncurrent,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesNoncurrent,Investment securities (Note 6),25,0
+balance_sheet,v:ClientIncentivesAssetsNoncurrent,v:ClientIncentivesAssetsNoncurrent,Client incentives,26,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, equipment and technology, net (Note 7)",27,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill (Note 8),28,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net (Note 8)",29,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,30,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,31,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities,32,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,45,0
+balance_sheet,v:SettlementPayable,v:SettlementPayable,Settlement payable,46,0
+balance_sheet,v:CustomerCollateralLiabilities,v:CustomerCollateralLiabilities,Customer collateral (Note 4 and Note 11),47,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation and benefits,48,0
+balance_sheet,v:ClientIncentivesLiabilitiesCurrent,v:ClientIncentivesLiabilitiesCurrent,Client incentives,49,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,50,0
+balance_sheet,v:BusinessCombinationAdditionalCashConsiderationPayableCurrent,v:BusinessCombinationAdditionalCashConsiderationPayableCurrent,Deferred purchase consideration,53,0
+balance_sheet,v:AccruedLitigationCurrent,v:AccruedLitigationCurrent,Accrued litigation (Note 20),54,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,55,0
+balance_sheet,us-gaap:LongTermDebt,us-gaap:LongTermDebt,Long-term debt (Note 9),57,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities (Note 19),58,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other liabilities,59,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,60,0
+balance_sheet,html:commitments-and-contingencies-note-17,html:commitments-and-contingencies-note-17,Commitments and contingencies (Note 17),62,0
+balance_sheet,html:equity,html:equity,Equity,63,0
+balance_sheet,html:preferred-stock-0-0001-par-value-25-shares-authorized-and-5-shares-issued-and-outstanding-as-follows,html:preferred-stock-0-0001-par-value-25-shares-authorized-and-5-shares-issued-and-outstanding-as-follows,"Preferred stock, $0.0001 par value, 25 shares authorized and 5 shares issued and outstanding as follows:",70,0
+balance_sheet,us-gaap:PreferredStockValueOutstanding,us-gaap:PreferredStockValueOutstanding,"Series Aconvertible participating preferred stock, none issued (the “class Aequivalent preferred stock”) (Note 14)",81,0
+balance_sheet,us-gaap:CommonStockValueOutstanding,us-gaap:CommonStockValueOutstanding,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,718 and 1,768 shares issued and outstanding at September 30, 2019 and 2018, respectively (Note 14)",82,0
+balance_sheet,v:VECoveredLossProtectionfromthePlanRelatingtoLiabilitieswheretheClaimRelatestoInterregionalMultilateralInterchangeFeeRates,v:VECoveredLossProtectionfromthePlanRelatingtoLiabilitieswheretheClaimRelatestoInterregionalMultilateralInterchangeFeeRates,Right to recover for covered losses (Note 5),83,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,84,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated income,85,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss-net,html:accumulated-other-comprehensive-income-loss-net,"Accumulated other comprehensive income (loss), net:",87,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax,Investment securities,102,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,Defined benefit pension and other postretirement plans,103,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossCumulativeChangesInNetGainLossFromCashFlowHedgesEffectNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossCumulativeChangesInNetGainLossFromCashFlowHedgesEffectNetOfTax,Derivative instruments,105,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,Foreign currency translation adjustments,106,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,"Total accumulated other comprehensive income (loss), net",107,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,108,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,109,0
+income_statement,html:net-revenues,html:net-revenues,Net revenues,0,0
+income_statement,html:personnel,html:personnel,Personnel,1,0
+income_statement,html:marketing,html:marketing,Marketing,2,0
+income_statement,html:network-and-processing,html:network-and-processing,Network and processing,3,0
+income_statement,html:professional-fees,html:professional-fees,Professional fees,4,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,5,0
+income_statement,html:general-and-administrative,html:general-and-administrative,General and administrative,6,0
+income_statement,html:litigation-provision,html:litigation-provision,Litigation provision,7,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,8,0
+income_statement,html:interest-expense-net,html:interest-expense-net,"Interest expense, net",9,0
+income_statement,html:investment-income-and-other,html:investment-income-and-other,Investment income and other,10,0
+income_statement,html:total-non-operating-income-expense,html:total-non-operating-income-expense,Total non-operating income (expense),11,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,Income before income taxes,12,0
+income_statement,html:income-tax-provision,html:income-tax-provision,Income tax provision,13,0
+income_statement,html:net-income,html:net-income,Net income,14,0
+income_statement,html:class-acommon-stock,html:class-acommon-stock,Class Acommon stock,15,0
+income_statement,html:earnings-per-share-abstract,html:earnings-per-share-abstract,Earnings Per Share [Abstract],16,0
+income_statement,html:diluted-earnings-per-share-in-dollars-per-share,html:diluted-earnings-per-share-in-dollars-per-share,Diluted earnings per share (in dollars per share),17,0
+income_statement,html:diluted-weighted-average-shares-outstanding-in-shares,html:diluted-weighted-average-shares-outstanding-in-shares,Diluted weighted-average shares outstanding (in shares),18,0
+income_statement,html:class-bcommon-stock,html:class-bcommon-stock,Class Bcommon stock,19,0
+income_statement,html:class-ccommon-stock,html:class-ccommon-stock,Class Ccommon stock,20,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:restricted-cash-equivalents-u-s-litigation-escrow,html:restricted-cash-equivalents-u-s-litigation-escrow,Restricted cash equivalents—U.S. litigation escrow,1,0
+balance_sheet,html:investment-securities,html:investment-securities,Investment securities,2,0
+balance_sheet,html:settlement-receivable,html:settlement-receivable,Settlement receivable,3,0
+balance_sheet,html:accounts-receivable,html:accounts-receivable,Accounts receivable,4,0
+balance_sheet,html:customer-collateral,html:customer-collateral,Customer collateral,5,0
+balance_sheet,html:current-portion-of-client-incentives,html:current-portion-of-client-incentives,Current portion of client incentives,6,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,7,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,8,0
+balance_sheet,html:client-incentives,html:client-incentives,Client incentives,9,0
+balance_sheet,html:property-equipment-and-technology-net,html:property-equipment-and-technology-net,"Property, equipment and technology, net",10,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,11,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",12,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,13,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,14,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,33,0
+balance_sheet,html:settlement-payable,html:settlement-payable,Settlement payable,34,0
+balance_sheet,html:accrued-compensation-and-benefits,html:accrued-compensation-and-benefits,Accrued compensation and benefits,35,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,36,0
+balance_sheet,html:current-maturities-of-debt,html:current-maturities-of-debt,Current maturities of debt,37,0
+balance_sheet,html:accrued-litigation,html:accrued-litigation,Accrued litigation,38,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,39,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,40,0
+balance_sheet,html:deferred-tax-liabilities,html:deferred-tax-liabilities,Deferred tax liabilities,41,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other liabilities,42,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,43,0
+balance_sheet,html:commitments-and-contingencies-note-18,html:commitments-and-contingencies-note-18,Commitments and contingencies (Note 18),44,0
+balance_sheet,html:right-to-recover-for-covered-losses,html:right-to-recover-for-covered-losses,Right to recover for covered losses,64,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,65,0
+balance_sheet,html:accumulated-income,html:accumulated-income,Accumulated income,66,0
+balance_sheet,html:defined-benefit-pension-and-other-postretirement-plans,html:defined-benefit-pension-and-other-postretirement-plans,Defined benefit pension and other postretirement plans,88,0
+balance_sheet,html:derivative-instruments,html:derivative-instruments,Derivative instruments,89,0
+balance_sheet,html:foreign-currency-translation-adjustments,html:foreign-currency-translation-adjustments,Foreign currency translation adjustments,90,0
+balance_sheet,html:total-accumulated-other-comprehensive-income-loss-net,html:total-accumulated-other-comprehensive-income-loss-net,"Total accumulated other comprehensive income (loss), net",91,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,92,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,93,0
+balance_sheet,html:series-aconvertible-participating-preferred-stock,html:series-aconvertible-participating-preferred-stock,Series Aconvertible participating preferred stock,94,0
+balance_sheet,html:preferred-stock,html:preferred-stock,Preferred stock,95,0
+balance_sheet,html:series-bconvertible-participating-preferred-stock,html:series-bconvertible-participating-preferred-stock,Series Bconvertible participating preferred stock,96,0
+balance_sheet,html:series-cconvertible-participating-preferred-stock,html:series-cconvertible-participating-preferred-stock,Series Cconvertible participating preferred stock,97,0
+balance_sheet,html:class-acommon-stock,html:class-acommon-stock,Class Acommon stock,98,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,99,0
+balance_sheet,html:class-bcommon-stock,html:class-bcommon-stock,Class Bcommon stock,100,0
+balance_sheet,html:class-ccommon-stock,html:class-ccommon-stock,Class Ccommon stock,101,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-used-in-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-used-in-operating-activities,Adjustments to reconcile net income to net cash provided by (used in) operating activities:,0,0
+cash_flow,html:client-incentives,html:client-incentives,Client incentives,1,0
+cash_flow,html:share-based-compensation,html:share-based-compensation,Share-based compensation,2,0
+cash_flow,html:depreciation-and-amortization-of-property-equipment-technology-and-intangible-assets,html:depreciation-and-amortization-of-property-equipment-technology-and-intangible-assets,"Depreciation and amortization of property, equipment, technology and intangible assets",3,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,4,0
+cash_flow,html:ve-territory-covered-losses-incurred,html:ve-territory-covered-losses-incurred,VE territory covered losses incurred,5,0
+cash_flow,html:change-in-operating-assets-and-liabilities,html:change-in-operating-assets-and-liabilities,Change in operating assets and liabilities:,6,0
+cash_flow,html:settlement-receivable,html:settlement-receivable,Settlement receivable,7,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,8,0
+cash_flow,html:other-assets,html:other-assets,Other assets,9,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,10,0
+cash_flow,html:settlement-payable,html:settlement-payable,Settlement payable,11,0
+cash_flow,html:accrued-and-other-liabilities,html:accrued-and-other-liabilities,Accrued and other liabilities,12,0
+cash_flow,html:accrued-litigation,html:accrued-litigation,Accrued litigation,13,0
+cash_flow,html:proceeds-from-maturities-and-sales,html:proceeds-from-maturities-and-sales,Proceeds from maturities and sales,14,0
+cash_flow,html:acquisitions-net-of-cash-and-restricted-cash-acquired,html:acquisitions-net-of-cash-and-restricted-cash-acquired,"Acquisitions, net of cash and restricted cash acquired",15,0
+cash_flow,html:purchases-of-contributions-to-other-investments,html:purchases-of-contributions-to-other-investments,Purchases of / contributions to other investments,16,0
+cash_flow,html:other-investing-activities,html:other-investing-activities,Other investing activities,17,0
+cash_flow,html:net-cash-provided-by-used-in-investing-activities,html:net-cash-provided-by-used-in-investing-activities,Net cash provided by (used in) investing activities,18,0
+cash_flow,html:repurchase-of-class-acommon-stock,html:repurchase-of-class-acommon-stock,Repurchase of class Acommon stock,19,0
+cash_flow,html:proceeds-from-issuance-of-senior-notes,html:proceeds-from-issuance-of-senior-notes,Proceeds from issuance of senior notes,20,0
+cash_flow,html:repayments-of-debt,html:repayments-of-debt,Repayments of debt,21,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,22,0
+cash_flow,html:payment-of-deferred-purchase-consideration-related-to-the-visa-europe-acquisition,html:payment-of-deferred-purchase-consideration-related-to-the-visa-europe-acquisition,Payment of deferred purchase consideration related to the Visa Europe acquisition,23,0
+cash_flow,html:restricted-stock-and-performance-based-shares-settled-in-cash-for-taxes,html:restricted-stock-and-performance-based-shares-settled-in-cash-for-taxes,Restricted stock and performance-based shares settled in cash for taxes,24,0
+cash_flow,html:payments-to-settle-derivative-instruments,html:payments-to-settle-derivative-instruments,Payments to settle derivative instruments,25,0
+cash_flow,html:other-financing-activities,html:other-financing-activities,Other financing activities,26,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents,html:effect-of-exchange-rate-changes-on-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents,"Effect of exchange rate changes on cash, cash equivalents, restricted cash and restricted cash equivalents",27,0
+cash_flow,html:increase-decrease-in-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents,html:increase-decrease-in-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents,"Increase (decrease) in cash, cash equivalents, restricted cash and restricted cash equivalents",28,0
+cash_flow,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-year,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-year,"Cash, cash equivalents, restricted cash and restricted cash equivalents at beginning of year",29,0
+cash_flow,html:supplemental-disclosure,html:supplemental-disclosure,Supplemental Disclosure,30,0
+cash_flow,html:cash-paid-for-income-taxes-net,html:cash-paid-for-income-taxes-net,"Cash paid for income taxes, net",31,0
+cash_flow,html:interest-payments-on-debt,html:interest-payments-on-debt,Interest payments on debt,32,0
+cash_flow,html:charitable-contribution-of-investment-securities-to-visa-foundation,html:charitable-contribution-of-investment-securities-to-visa-foundation,Charitable contribution of investment securities to Visa Foundation,33,0
+cash_flow,html:accruals-related-to-purchases-of-property-equipment-and-technology,html:accruals-related-to-purchases-of-property-equipment-and-technology,"Accruals related to purchases of property, equipment and technology",34,0
+cash_flow,html:gains-losses-on-equity-investments-net,html:gains-losses-on-equity-investments-net,"(Gains) losses on equity investments, net",35,0
+cash_flow,html:cash-proceeds-from-issuance-of-class-acommon-stock-under-employee-equity-plans,html:cash-proceeds-from-issuance-of-class-acommon-stock-under-employee-equity-plans,Cash proceeds from issuance of class Acommon stock under employee equity plans,36,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Investment securities,23,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current maturities of debt,51,0
+balance_sheet,us-gaap:LitigationReserveCurrent,us-gaap:LitigationReserveCurrent,Accrued litigation,52,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,56,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies (Note 18 and Note 20),61,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Series A, Series Band Series Cconvertible participating preferred stock (preferred stock), $0.0001 par value: 25 shares authorized and 5 (Series Aless than one, Series B 2, Series C 3) shares issued and outstanding",67,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Class A, Class Band Class Ccommon stock and additional paid-in capital, $0.0001 par value: 2,003,341 shares authorized (Class A 2,001,622, Class B 622, Class C 1,097); 1,890 (Class A 1,635, Class B 245, Class C 10) and 1,932 (Class A 1,677, Class B 245, Class C 10) shares issued and outstanding",68,0
+balance_sheet,v:RightToRecoverForCoveredLosses,v:RightToRecoverForCoveredLosses,Right to recover for covered losses,69,0
+balance_sheet,us-gaap:AociLossCashFlowHedgeCumulativeGainLossAfterTax,us-gaap:AociLossCashFlowHedgeCumulativeGainLossAfterTax,Derivative instruments,104,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss):,86,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding,us-gaap:CommonStockSharesOutstanding,"Class Acommon stock, 1,733 and 1,594 shares issued and outstanding as of September 30, 2024 and 2023, respectively",110,0
+balance_sheet,us-gaap:CommonStockSharesIssued,us-gaap:CommonStockSharesIssued,"Class Ccommon stock, 10 shares issued and outstanding as of September 30, 2024 and 2023",120,0
+balance_sheet,html:restricted-cash-equivalents-u-s-litigation-escrow-note-3-and-note-4,html:restricted-cash-equivalents-u-s-litigation-escrow-note-3-and-note-4,Restricted cash equivalents—U.S. litigation escrow (Note 3 and Note 4),111,0
+balance_sheet,html:investment-securities-note-5,html:investment-securities-note-5,Investment securities (Note 5),121,0
+balance_sheet,html:customer-collateral-note-3-and-note-7,html:customer-collateral-note-3-and-note-7,Customer collateral (Note 3 and Note 7),112,0
+balance_sheet,html:deferred-purchase-consideration,html:deferred-purchase-consideration,Deferred purchase consideration,113,0
+balance_sheet,html:accrued-litigation-note-13,html:accrued-litigation-note-13,Accrued litigation (Note 13),122,0
+balance_sheet,html:long-term-debt-note-6,html:long-term-debt-note-6,Long-term debt (Note 6),114,0
+balance_sheet,html:series-aconvertible-participating-preferred-stock-none-issued-the-class-aequivalent-preferred-stock-note-9,html:series-aconvertible-participating-preferred-stock-none-issued-the-class-aequivalent-preferred-stock-note-9,"Series Aconvertible participating preferred stock, none issued (the “class Aequivalent preferred stock”) (Note 9)",71,0
+balance_sheet,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-uk-ipreferred-stock-note-9,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-uk-ipreferred-stock-note-9,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at December 31, 2018 and September 30, 2018 (the “UK&Ipreferred stock”) (Note 9)",72,0
+balance_sheet,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-europe-preferred-stock-note-9,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-europe-preferred-stock-note-9,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at December 31, 2018 and September 30, 2018 (the “Europe preferred stock”) (Note 9)",73,0
+balance_sheet,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-754-and-1-768-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-respectively-note-9,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-754-and-1-768-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-respectively-note-9,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,754 and 1,768 shares issued and outstanding at December 31, 2018 and September 30, 2018, respectively (Note 9)",74,0
+balance_sheet,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at December 31, 2018 and September 30, 2018 (Note 9)",75,0
+balance_sheet,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 12 shares issued and outstanding at December 31, 2018 and September 30, 2018 (Note 9)",76,0
+balance_sheet,html:right-to-recover-for-covered-losses-note-4,html:right-to-recover-for-covered-losses-note-4,Right to recover for covered losses (Note 4),77,0
+balance_sheet,html:derivative-instruments-classified-as-cash-flow-hedges,html:derivative-instruments-classified-as-cash-flow-hedges,Derivative instruments classified as cash flow hedges,115,0
+balance_sheet,html:total-accumulated-other-comprehensive-income-net,html:total-accumulated-other-comprehensive-income-net,"Total accumulated other comprehensive income, net",116,0
+balance_sheet,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-uk-ipreferred-stock-note-9,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-uk-ipreferred-stock-note-9,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at March 31, 2019 and September 30, 2018 (the “UK&Ipreferred stock”) (Note 9)",117,0
+balance_sheet,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-europe-preferred-stock-note-9,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-europe-preferred-stock-note-9,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at March 31, 2019 and September 30, 2018 (the “Europe preferred stock”) (Note 9)",123,0
+balance_sheet,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-741-and-1-768-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-respectively-note-9,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-741-and-1-768-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-respectively-note-9,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,741 and 1,768 shares issued and outstanding at March 31, 2019 and September 30, 2018, respectively (Note 9)",124,0
+balance_sheet,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at March 31, 2019 and September 30, 2018 (Note 9)",125,0
+balance_sheet,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 12 shares issued and outstanding at March 31, 2019 and September 30, 2018 (Note 9)",126,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesNoncurrent,us-gaap:AvailableForSaleSecuritiesNoncurrent,Investment securities (Note 5),24,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Series Aconvertible participating preferred stock, none issued (the “class Aequivalent preferred stock”) (Note 9)",78,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,729 and 1,768 shares issued and outstanding at June 30, 2019 and September 30, 2018, respectively (Note 9)",79,0
+balance_sheet,v:RighttoRecoverforCoveredLosses,v:RighttoRecoverforCoveredLosses,Right to recover for covered losses (Note 4),80,0
+balance_sheet,us-gaap:PreferredStockSharesIssued,us-gaap:PreferredStockSharesIssued,"Series Aconvertible participating preferred stock, none issued (the “class Aequivalent preferred stock”) (Note 10)",118,0
+balance_sheet,us-gaap:PreferredStockSharesOutstanding,us-gaap:PreferredStockSharesOutstanding,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at December 31, 2020 and September 30, 2020 (the “UK&Ipreferred stock”)",119,0

@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import {
-  buildTranscriptQuery,
-  getEarningsTranscriptFieldId,
+  fetchRoicV2EarningsCallTranscript,
+  getRoicTranscriptIdentifierCandidates,
+  parseRoicQuarterPeriod,
   getRoicApiKey,
-  resolveRoicSymbolForTicker,
-  roicRqlRequest,
 } from "@/lib/roic-ai";
 
 export const runtime = "nodejs";
@@ -41,41 +40,41 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
     );
   }
 
-  const fieldOverride = url.searchParams.get("field")?.trim();
-  const fieldId = fieldOverride || getEarningsTranscriptFieldId();
+  const parsed = parseRoicQuarterPeriod(period);
+  if (!parsed) {
+    return NextResponse.json({ error: "Invalid period format." }, { status: 400 });
+  }
+
   const symbolParam = url.searchParams.get("symbol")?.trim() || null;
-  const resolved = await resolveRoicSymbolForTicker(sym, apiKey, symbolParam);
-  if (!resolved.ok) {
-    return NextResponse.json({ error: resolved.error, ticker: sym, tried: resolved.tried }, { status: 404 });
-  }
-  const roicSymbol = resolved.symbol;
-  const query = buildTranscriptQuery(fieldId, roicSymbol, period);
+  const identifiers = getRoicTranscriptIdentifierCandidates(sym, symbolParam);
+  const errors: string[] = [];
 
-  const r = await roicRqlRequest(query, apiKey);
-  if (!r.ok) {
-    const status = r.status >= 400 && r.status < 600 ? r.status : 502;
-    return NextResponse.json(
-      {
-        error: r.error,
+  for (const id of identifiers) {
+    const r = await fetchRoicV2EarningsCallTranscript(id, parsed.year, parsed.quarter);
+    if (r.ok) {
+      return NextResponse.json({
         ticker: sym,
-        roicSymbol,
+        roicSymbol: r.symbol,
+        symbolResolution: { tried: identifiers, resolved: r.symbol },
         period,
-        fieldId,
-        query,
-        hint:
-          "If the field is wrong, set ROIC_AI_EARNINGS_TRANSCRIPT_FIELD in .env.local to the ID from https://roic.ai/knowledge-base/financial-definitions/ or pass ?field=your_field_id",
-      },
-      { status }
-    );
+        year: r.year,
+        quarter: r.quarter,
+        date: r.date,
+        content: r.content,
+        data: r.content,
+        source: "roic-v2-earnings-calls",
+      });
+    }
+    errors.push(`${id}: ${r.error}`);
   }
 
-  return NextResponse.json({
-    ticker: sym,
-    roicSymbol,
-    symbolResolution: { tried: resolved.tried, resolved: roicSymbol },
-    period,
-    fieldId,
-    query,
-    data: r.data,
-  });
+  return NextResponse.json(
+    {
+      error: errors[errors.length - 1] ?? "Transcript not found.",
+      ticker: sym,
+      tried: identifiers,
+      period,
+    },
+    { status: 404 }
+  );
 }

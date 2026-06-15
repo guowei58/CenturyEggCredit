@@ -1,0 +1,3708 @@
+{
+  "out": {
+    "ok": true,
+    "compiler_schema_version": 2,
+    "display_models_min_fiscal_year": 2020,
+    "earliest_xbrl_tagged_fiscal_year": 2018,
+    "earliest_xbrl_tagged_period": "4Q18",
+    "xbrl_backed_period_count": 75,
+    "xbrl_backed_periods_by_statement": {
+      "income_statement": [
+        "1Q20",
+        "1Q21",
+        "1Q22",
+        "1Q23",
+        "1Q24",
+        "1Q25",
+        "1Q26",
+        "4Q20",
+        "4Q21",
+        "4Q22",
+        "4Q23",
+        "4Q24",
+        "4Q25",
+        "6M20",
+        "6M21",
+        "6M22",
+        "6M23",
+        "6M24",
+        "6M25",
+        "9M20",
+        "9M21",
+        "9M22",
+        "9M23",
+        "9M24",
+        "9M25",
+        "9M26"
+      ],
+      "balance_sheet": [
+        "1Q20",
+        "1Q21",
+        "1Q22",
+        "1Q24",
+        "1Q25",
+        "1Q26",
+        "2Q20",
+        "2Q21",
+        "2Q22",
+        "2Q23",
+        "2Q24",
+        "2Q25",
+        "3Q20",
+        "3Q21",
+        "3Q22",
+        "3Q23",
+        "3Q24",
+        "FY20",
+        "FY21",
+        "FY22",
+        "FY23",
+        "FY24",
+        "FY25"
+      ],
+      "cash_flow": [
+        "1Q20",
+        "1Q21",
+        "1Q22",
+        "1Q23",
+        "1Q24",
+        "1Q25",
+        "1Q26",
+        "4Q20",
+        "4Q21",
+        "4Q22",
+        "4Q23",
+        "4Q24",
+        "4Q25",
+        "6M20",
+        "6M21",
+        "6M22",
+        "6M23",
+        "6M24",
+        "6M25",
+        "9M20",
+        "9M21",
+        "9M22",
+        "9M23",
+        "9M24",
+        "9M25",
+        "9M26"
+      ]
+    },
+    "display_column_start_fiscal_year": {
+      "income_statement": 2020,
+      "balance_sheet": 2020,
+      "cash_flow": 2020
+    },
+    "elapsed_s": 1.05,
+    "master_file": "MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx",
+    "presentation_registry": {
+      "mode": "legacy",
+      "winner": "legacy",
+      "master_rows": 116,
+      "concept_mappings": 209
+    },
+    "files_processed": 30,
+    "skipped_html_only_workbooks": [],
+    "sheets_processed": 57,
+    "total_facts": 4828,
+    "total_concepts": 116,
+    "mapped_facts": 4828,
+    "statements_built": [
+      "income_statement",
+      "cash_flow",
+      "balance_sheet"
+    ],
+    "derived_facts": 0,
+    "row_deduplication": {
+      "enabled": false,
+      "changed": false,
+      "rows_removed": 0,
+      "detail": []
+    },
+    "ai_matching": {
+      "enabled": false,
+      "provider": null,
+      "matches": 0
+    },
+    "universe_gaps_after_build": [],
+    "final_raw_reconcile": {
+      "raw_keys_scanned": 209,
+      "rows_added": 0,
+      "maps_repaired": 0,
+      "orphan_master_rows_recovered": 0,
+      "cells_added": 0
+    },
+    "conflicts_count": 8,
+    "unresolved_count": 0,
+    "coverage_pass": {
+      "repaired_mapped_cells": 0,
+      "row_order_registry_rows": 0,
+      "integrated_unresolved_rows": 0,
+      "integrated_unresolved_cells": 0,
+      "explicit_workbook_rows": 0,
+      "explicit_workbook_cells": 0,
+      "workbook_fact_gap_fills": 0
+    },
+    "workbook_truth": {
+      "iterations": 2,
+      "cells_cleared": 0,
+      "cells_aligned": 0,
+      "rows_added": 13,
+      "cells_filled": 0,
+      "derived_cells_cleared": 0,
+      "post_truth_derived": 0,
+      "issues_count": 0,
+      "issues": []
+    },
+    "validation_passed": 16,
+    "validation_failed": 102,
+    "output_files": [
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\consolidated_historical_financials.xlsx",
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\master_presentation_rows.csv",
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\concept_to_row_map.csv",
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\source_audit_trail.csv",
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\conflicts.csv",
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\unresolved_rows.csv",
+      "..\\scripts\\.sample-compile-pack\\MSFT\\out-eval\\processing_log.csv"
+    ],
+    "concept_map_summary": [
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-income",
+        "canon": "html:net-income",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:adjustments-to-reconcile-net-income-to-net-cash-from-operations",
+        "canon": "html:adjustments-to-reconcile-net-income-to-net-cash-from-operations",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:depreciation-amortization-and-other",
+        "canon": "html:depreciation-amortization-and-other",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:stock-based-compensation-expense",
+        "canon": "html:stock-based-compensation-expense",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-recognized-gains-on-investments-and-derivatives",
+        "canon": "html:net-recognized-gains-on-investments-and-derivatives",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:deferred-income-taxes",
+        "canon": "html:deferred-income-taxes",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:changes-in-operating-assets-and-liabilities",
+        "canon": "html:changes-in-operating-assets-and-liabilities",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:accounts-receivable",
+        "canon": "html:accounts-receivable",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:inventories",
+        "canon": "html:inventories",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:other-current-assets",
+        "canon": "html:other-current-assets",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:other-long-term-assets",
+        "canon": "html:other-long-term-assets",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:accounts-payable",
+        "canon": "html:accounts-payable",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:unearned-revenue",
+        "canon": "html:unearned-revenue",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:income-taxes",
+        "canon": "html:income-taxes",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:other-current-liabilities",
+        "canon": "html:other-current-liabilities",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:other-long-term-liabilities",
+        "canon": "html:other-long-term-liabilities",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-cash-from-operations",
+        "canon": "html:net-cash-from-operations",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:financing",
+        "canon": "html:financing",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net",
+        "canon": "html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:proceeds-from-issuance-of-debt",
+        "canon": "html:proceeds-from-issuance-of-debt",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:repayments-of-debt",
+        "canon": "html:repayments-of-debt",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:common-stock-issued",
+        "canon": "html:common-stock-issued",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:common-stock-repurchased",
+        "canon": "html:common-stock-repurchased",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:common-stock-cash-dividends-paid",
+        "canon": "html:common-stock-cash-dividends-paid",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:other-net",
+        "canon": "html:other-net",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-cash-from-used-in-financing",
+        "canon": "html:net-cash-from-used-in-financing",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:investing",
+        "canon": "html:investing",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:additions-to-property-and-equipment",
+        "canon": "html:additions-to-property-and-equipment",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:acquisition-of-companies-net-of-cash-acquired-and-purchases-of-intangible-and-other-assets",
+        "canon": "html:acquisition-of-companies-net-of-cash-acquired-and-purchases-of-intangible-and-other-assets",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:purchases-of-investments",
+        "canon": "html:purchases-of-investments",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:maturities-of-investments",
+        "canon": "html:maturities-of-investments",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:sales-of-investments",
+        "canon": "html:sales-of-investments",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:securities-lending-payable",
+        "canon": "html:securities-lending-payable",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-cash-used-in-investing",
+        "canon": "html:net-cash-used-in-investing",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:effect-of-foreign-exchange-rates-on-cash-and-cash-equivalents",
+        "canon": "html:effect-of-foreign-exchange-rates-on-cash-and-cash-equivalents",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-change-in-cash-and-cash-equivalents",
+        "canon": "html:net-change-in-cash-and-cash-equivalents",
+        "status": "auto_from_master",
+        "notes": "Seeded from master 10-K: MSFT_SEC-XBRL-financials_as-presented_10-K_2019-08-01_0001564590-19-027952.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:NetIncomeLoss",
+        "canon": "html:net-income",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net income' matched master html:net-income (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "msft:DepreciationAmortizationAndOther",
+        "canon": "html:depreciation-amortization-and-other",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'depreciation amortization and other' matched master html:depreciation-amortization-and-other (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:ShareBasedCompensation",
+        "canon": "html:stock-based-compensation-expense",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'stock based compensation expense' matched master html:stock-based-compensation-expense (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "msft:GainLossOnInvestmentsAndDerivativeInstruments",
+        "canon": "html:net-recognized-gains-on-investments-and-derivatives",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:net-recognized-gains-on-investments-and-derivatives (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:DeferredIncomeTaxesAndTaxCredits",
+        "canon": "html:deferred-income-taxes",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'deferred income tax' matched master html:deferred-income-taxes (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInAccountsReceivable",
+        "canon": "html:accounts-receivable",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'account receivable' matched master html:accounts-receivable (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInInventories",
+        "canon": "html:inventories",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'inventory' matched master html:inventories (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInOtherCurrentAssets",
+        "canon": "html:other-current-assets",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other current asset' matched master html:other-current-assets (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInOtherNoncurrentAssets",
+        "canon": "html:other-long-term-assets",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other long term asset' matched master html:other-long-term-assets (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInAccountsPayable",
+        "canon": "html:accounts-payable",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'account payable' matched master html:accounts-payable (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInContractWithCustomerLiability",
+        "canon": "html:unearned-revenue",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'unearned revenue' matched master html:unearned-revenue (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable",
+        "canon": "html:income-taxes",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'income tax' matched master html:income-taxes (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInOtherCurrentLiabilities",
+        "canon": "html:other-current-liabilities",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other current liability' matched master html:other-current-liabilities (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:IncreaseDecreaseInOtherNoncurrentLiabilities",
+        "canon": "html:other-long-term-liabilities",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other long term liability' matched master html:other-long-term-liabilities (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+        "canon": "html:net-cash-from-operations",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net cash from operation' matched master html:net-cash-from-operations (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:RepaymentsOfShortTermDebtMaturingInThreeMonthsOrLess",
+        "canon": "html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:RepaymentsOfDebtMaturingInMoreThanThreeMonths",
+        "canon": "html:repayments-of-debt",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'repayment of debt' matched master html:repayments-of-debt (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:ProceedsFromIssuanceOfCommonStock",
+        "canon": "html:common-stock-issued",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'common stock issued' matched master html:common-stock-issued (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:PaymentsForRepurchaseOfCommonStock",
+        "canon": "html:common-stock-repurchased",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'common stock repurchased' matched master html:common-stock-repurchased (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:PaymentsOfDividendsCommonStock",
+        "canon": "html:common-stock-cash-dividends-paid",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'common stock cash dividend paid' matched master html:common-stock-cash-dividends-paid (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:ProceedsFromPaymentsForOtherFinancingActivities",
+        "canon": "html:other-net",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other net' matched master html:other-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:NetCashProvidedByUsedInFinancingActivities",
+        "canon": "html:financing",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:financing (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+        "canon": "html:additions-to-property-and-equipment",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'addition to property and equipment' matched master html:additions-to-property-and-equipment (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "msft:AcquisitionsNetOfCashAcquiredAndPurchasesOfIntangibleAndOtherAssets",
+        "canon": "html:other-net",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:other-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:PaymentsToAcquireInvestments",
+        "canon": "html:purchases-of-investments",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'purchase of investment' matched master html:purchases-of-investments (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:ProceedsFromMaturitiesPrepaymentsAndCallsOfAvailableForSaleSecurities",
+        "canon": "html:maturities-of-investments",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'maturity of investment' matched master html:maturities-of-investments (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "msft:ProceedsFromInvestments",
+        "canon": "html:sales-of-investments",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'sale of investment' matched master html:sales-of-investments (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:PaymentsForProceedsFromOtherInvestingActivities",
+        "canon": "html:other-net",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other net' matched master html:other-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:NetCashProvidedByUsedInInvestingActivities",
+        "canon": "html:net-cash-used-in-investing",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net cash used in investing' matched master html:net-cash-used-in-investing (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+        "canon": "html:effect-of-foreign-exchange-rates-on-cash-and-cash-equivalents",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'effect of foreign exchange rate on cash and cash equivalent' matched master html:effect-of-foreign-exchange-rates-on-cash-and-cash-equivalents (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect",
+        "canon": "html:net-change-in-cash-and-cash-equivalents",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net change in cash and cash equivalent' matched master html:net-change-in-cash-and-cash-equivalents (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
+        "canon": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3",
+        "canon": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4",
+        "canon": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:cost-of-revenue",
+        "canon": "html:cost-of-revenue",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:CostOfGoodsAndServicesSold",
+        "canon": "us-gaap:CostOfGoodsAndServicesSold",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:CostOfGoodsAndServicesSold@R7",
+        "canon": "us-gaap:CostOfGoodsAndServicesSold@R7",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:CostOfGoodsAndServicesSold@R8",
+        "canon": "us-gaap:CostOfGoodsAndServicesSold@R8",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:GrossProfit",
+        "canon": "us-gaap:GrossProfit",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:ResearchAndDevelopmentExpense",
+        "canon": "us-gaap:ResearchAndDevelopmentExpense",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:SellingAndMarketingExpense",
+        "canon": "us-gaap:SellingAndMarketingExpense",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:GeneralAndAdministrativeExpense",
+        "canon": "us-gaap:GeneralAndAdministrativeExpense",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:OperatingIncomeLoss",
+        "canon": "us-gaap:OperatingIncomeLoss",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:NonoperatingIncomeExpense",
+        "canon": "us-gaap:NonoperatingIncomeExpense",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "canon": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:IncomeTaxExpenseBenefit",
+        "canon": "us-gaap:IncomeTaxExpenseBenefit",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:NetIncomeLoss",
+        "canon": "us-gaap:NetIncomeLoss",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:earnings-per-share",
+        "canon": "html:earnings-per-share",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:EarningsPerShareBasic",
+        "canon": "us-gaap:EarningsPerShareBasic",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:EarningsPerShareDiluted",
+        "canon": "us-gaap:EarningsPerShareDiluted",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:weighted-average-shares-outstanding",
+        "canon": "html:weighted-average-shares-outstanding",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic",
+        "canon": "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding",
+        "canon": "us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "canon": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:ShortTermInvestments",
+        "canon": "us-gaap:ShortTermInvestments",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "canon": "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:AccountsReceivableNetCurrent",
+        "canon": "us-gaap:AccountsReceivableNetCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:InventoryNet",
+        "canon": "us-gaap:InventoryNet",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:OtherAssetsCurrent",
+        "canon": "us-gaap:OtherAssetsCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:AssetsCurrent",
+        "canon": "us-gaap:AssetsCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:PropertyPlantAndEquipmentNet",
+        "canon": "us-gaap:PropertyPlantAndEquipmentNet",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:OperatingLeaseRightOfUseAsset",
+        "canon": "us-gaap:OperatingLeaseRightOfUseAsset",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:LongTermInvestments",
+        "canon": "us-gaap:LongTermInvestments",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:Goodwill",
+        "canon": "us-gaap:Goodwill",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "canon": "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:OtherAssetsNoncurrent",
+        "canon": "us-gaap:OtherAssetsNoncurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:Assets",
+        "canon": "us-gaap:Assets",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:liabilities-and-stockholders-equity",
+        "canon": "html:liabilities-and-stockholders-equity",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:current-liabilities",
+        "canon": "html:current-liabilities",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:AccountsPayableCurrent",
+        "canon": "us-gaap:AccountsPayableCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:LongTermDebtCurrent",
+        "canon": "us-gaap:LongTermDebtCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "canon": "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:AccruedIncomeTaxesCurrent",
+        "canon": "us-gaap:AccruedIncomeTaxesCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "canon": "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:OtherLiabilitiesCurrent",
+        "canon": "us-gaap:OtherLiabilitiesCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:LiabilitiesCurrent",
+        "canon": "us-gaap:LiabilitiesCurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:LongTermDebtNoncurrent",
+        "canon": "us-gaap:LongTermDebtNoncurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "canon": "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "canon": "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "canon": "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "canon": "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:OtherLiabilitiesNoncurrent",
+        "canon": "us-gaap:OtherLiabilitiesNoncurrent",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:Liabilities",
+        "canon": "us-gaap:Liabilities",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:commitments-and-contingencies",
+        "canon": "html:commitments-and-contingencies",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:stockholders-equity",
+        "canon": "html:stockholders-equity",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "canon": "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "canon": "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "canon": "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:StockholdersEquity",
+        "canon": "us-gaap:StockholdersEquity",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:LiabilitiesAndStockholdersEquity",
+        "canon": "us-gaap:LiabilitiesAndStockholdersEquity",
+        "status": "auto_from_filing",
+        "notes": "No anchor \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:DeferredIncomeTaxExpenseBenefit",
+        "canon": "html:deferred-income-taxes",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'deferred income tax' matched master html:deferred-income-taxes (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-01-28_0001193125-26-027207.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:cash-and-cash-equivalents",
+        "canon": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'cash and cash equivalent' matched master us-gaap:CashAndCashEquivalentsAtCarryingValue (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:short-term-investments",
+        "canon": "us-gaap:ShortTermInvestments",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'short term investment' matched master us-gaap:ShortTermInvestments (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-cash-cash-equivalents-and-short-term-investments",
+        "canon": "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'cash cash equivalent and short term investment' matched master us-gaap:CashCashEquivalentsAndShortTermInvestments (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:inventories",
+        "canon": "us-gaap:InventoryNet",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'inventory' matched master us-gaap:InventoryNet (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:other-current-assets",
+        "canon": "us-gaap:OtherAssetsCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'other current asset' matched master us-gaap:OtherAssetsCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-current-assets",
+        "canon": "us-gaap:AssetsCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'current asset' matched master us-gaap:AssetsCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:operating-lease-right-of-use-assets",
+        "canon": "us-gaap:OperatingLeaseRightOfUseAsset",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'operating lease right of use asset' matched master us-gaap:OperatingLeaseRightOfUseAsset (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:equity-and-other-investments",
+        "canon": "us-gaap:LongTermInvestments",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'equity and other investment' matched master us-gaap:LongTermInvestments (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:goodwill",
+        "canon": "us-gaap:Goodwill",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'goodwill' matched master us-gaap:Goodwill (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:intangible-assets-net",
+        "canon": "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'intangible asset net' matched master us-gaap:FiniteLivedIntangibleAssetsNet (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:other-long-term-assets",
+        "canon": "us-gaap:OtherAssetsNoncurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'other long term asset' matched master us-gaap:OtherAssetsNoncurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-assets",
+        "canon": "us-gaap:Assets",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'asset' matched master us-gaap:Assets (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accounts-payable",
+        "canon": "us-gaap:AccountsPayableCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'account payable' matched master us-gaap:AccountsPayableCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:current-portion-of-long-term-debt",
+        "canon": "us-gaap:LongTermDebtCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'current portion of long term debt' matched master us-gaap:LongTermDebtCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accrued-compensation",
+        "canon": "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'accrued compensation' matched master us-gaap:EmployeeRelatedLiabilitiesCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:short-term-income-taxes",
+        "canon": "us-gaap:AccruedIncomeTaxesCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'short term income tax' matched master us-gaap:AccruedIncomeTaxesCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:short-term-unearned-revenue",
+        "canon": "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'short term unearned revenue' matched master us-gaap:ContractWithCustomerLiabilityCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:other-current-liabilities",
+        "canon": "us-gaap:OtherLiabilitiesCurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'other current liability' matched master us-gaap:OtherLiabilitiesCurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:long-term-debt",
+        "canon": "us-gaap:LongTermDebtNoncurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'long term debt' matched master us-gaap:LongTermDebtNoncurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:long-term-income-taxes",
+        "canon": "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'long term income tax' matched master us-gaap:AccruedIncomeTaxesNoncurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:long-term-unearned-revenue",
+        "canon": "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'long term unearned revenue' matched master us-gaap:ContractWithCustomerLiabilityNoncurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:deferred-income-taxes",
+        "canon": "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'deferred income tax' matched master us-gaap:DeferredIncomeTaxLiabilitiesNet (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:operating-lease-liabilities",
+        "canon": "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'operating lease liability' matched master us-gaap:OperatingLeaseLiabilityNoncurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:other-long-term-liabilities",
+        "canon": "us-gaap:OtherLiabilitiesNoncurrent",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'other long term liability' matched master us-gaap:OtherLiabilitiesNoncurrent (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-liabilities",
+        "canon": "us-gaap:Liabilities",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'liability' matched master us-gaap:Liabilities (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:retained-earnings",
+        "canon": "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'retained earning' matched master us-gaap:RetainedEarningsAccumulatedDeficit (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accumulated-other-comprehensive-loss",
+        "canon": "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "status": "auto_label_match",
+        "notes": "BS normalized label 'accumulated other comprehensive loss' matched master us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:repayments-of-debt-maturities-of-90-days-or-less",
+        "canon": "html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-cash-used-in-financing",
+        "canon": "html:financing",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:financing (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:acquisition-of-companies-net-of-cash-acquired-and-divestitures-and-purchases-of-intangible-and-other-assets",
+        "canon": "html:other-net",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:other-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:other-net-2",
+        "canon": "html:other-net",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other net' matched master html:other-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-687-and-944",
+        "canon": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-687-and-944",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:CashCashEquivalentsAndShortTermInvestments \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:property-and-equipment-net-of-accumulated-depreciation-of-98-880-and-93-653",
+        "canon": "html:property-and-equipment-net-of-accumulated-depreciation-of-98-880-and-93-653",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AssetsCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-current-liabilities",
+        "canon": "html:total-current-liabilities",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:OtherLiabilitiesCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-434-and-7-434",
+        "canon": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-434-and-7-434",
+        "status": "auto_from_filing",
+        "notes": "Positioned after html:stockholders-equity \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-stockholders-equity",
+        "canon": "html:total-stockholders-equity",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:total-liabilities-and-stockholders-equity",
+        "canon": "html:total-liabilities-and-stockholders-equity",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:ProceedsFromRepaymentsOfShortTermDebtMaturingInThreeMonthsOrLess",
+        "canon": "html:proceeds-from-issuance-of-debt",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:proceeds-from-issuance-of-debt (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:ProceedsFromDebtMaturingInMoreThanThreeMonths",
+        "canon": "html:proceeds-from-issuance-of-debt",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'proceed from issuance of debt' matched master html:proceeds-from-issuance-of-debt (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "us-gaap:CommercialPaper",
+        "canon": "us-gaap:CommercialPaper",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AccountsPayableCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-recognized-losses-gains-on-investments-and-derivatives",
+        "canon": "html:net-recognized-gains-on-investments-and-derivatives",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:net-recognized-gains-on-investments-and-derivatives (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:IncrementalCommonSharesAttributableToShareBasedPaymentArrangements",
+        "canon": "us-gaap:IncrementalCommonSharesAttributableToShareBasedPaymentArrangements",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:WeightedAverageNumberOfSharesOutstandingBasic \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-495-and-633",
+        "canon": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-495-and-633",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:CashCashEquivalentsAndShortTermInvestments \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:property-and-equipment-net-of-accumulated-depreciation-of-65-998-and-59-660",
+        "canon": "html:property-and-equipment-net-of-accumulated-depreciation-of-65-998-and-59-660",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AssetsCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:equity-investments",
+        "canon": "html:equity-investments",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:OperatingLeaseRightOfUseAsset \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-437-and-7-464",
+        "canon": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-437-and-7-464",
+        "status": "auto_from_filing",
+        "notes": "Positioned after html:stockholders-equity \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:EffectOfExchangeRateOnCashAndCashEquivalents",
+        "canon": "html:effect-of-foreign-exchange-rates-on-cash-and-cash-equivalents",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'effect of foreign exchange rate on cash and cash equivalent' matched master html:effect-of-foreign-exchange-rates-on-cash-and-cash-equivalents (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-04-26_0001564590-22-015675.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "us-gaap:PaymentsOfDebtRestructuringCosts",
+        "canon": "us-gaap:PaymentsOfDebtRestructuringCosts",
+        "status": "auto_from_filing",
+        "notes": "Positioned after html:financing \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-04-26_0001564590-22-015675.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments",
+        "canon": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'income before income tax' matched master us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2021-04-27_0001564590-21-020891.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:product",
+        "canon": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'product' matched master us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:service-and-other",
+        "canon": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'service and other' matched master us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3 (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:total-revenue",
+        "canon": "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'revenue' matched master us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4 (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:product-2",
+        "canon": "us-gaap:CostOfGoodsAndServicesSold",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'product' matched master us-gaap:CostOfGoodsAndServicesSold (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:service-and-other-2",
+        "canon": "us-gaap:CostOfGoodsAndServicesSold@R7",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'service and other' matched master us-gaap:CostOfGoodsAndServicesSold@R7 (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:total-cost-of-revenue",
+        "canon": "html:cost-of-revenue",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'cost of revenue' matched master html:cost-of-revenue (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:gross-margin",
+        "canon": "us-gaap:GrossProfit",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'gross margin' matched master us-gaap:GrossProfit (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:research-and-development",
+        "canon": "us-gaap:ResearchAndDevelopmentExpense",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'research and development' matched master us-gaap:ResearchAndDevelopmentExpense (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:sales-and-marketing",
+        "canon": "us-gaap:SellingAndMarketingExpense",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'sale and marketing' matched master us-gaap:SellingAndMarketingExpense (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:general-and-administrative",
+        "canon": "us-gaap:GeneralAndAdministrativeExpense",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'general and administrative' matched master us-gaap:GeneralAndAdministrativeExpense (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:operating-income",
+        "canon": "us-gaap:OperatingIncomeLoss",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'operating income' matched master us-gaap:OperatingIncomeLoss (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:other-income-net",
+        "canon": "us-gaap:NonoperatingIncomeExpense",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'other income net' matched master us-gaap:NonoperatingIncomeExpense (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:income-before-income-taxes",
+        "canon": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'income before income tax' matched master us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:provision-for-income-taxes",
+        "canon": "us-gaap:IncomeTaxExpenseBenefit",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'provision for income tax' matched master us-gaap:IncomeTaxExpenseBenefit (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:net-income",
+        "canon": "us-gaap:NetIncomeLoss",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net income' matched master us-gaap:NetIncomeLoss (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:basic",
+        "canon": "us-gaap:EarningsPerShareBasic",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'basic' matched master us-gaap:EarningsPerShareBasic (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:diluted",
+        "canon": "us-gaap:EarningsPerShareDiluted",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'diluted' matched master us-gaap:EarningsPerShareDiluted (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:basic-2",
+        "canon": "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'basic' matched master us-gaap:WeightedAverageNumberOfSharesOutstandingBasic (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:diluted-2",
+        "canon": "us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'diluted' matched master us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-cash-from-used-in-investing",
+        "canon": "html:net-cash-from-operations",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:net-cash-from-operations (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-336-and-377",
+        "canon": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-336-and-377",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:CashCashEquivalentsAndShortTermInvestments \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:other",
+        "canon": "html:other",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:InventoryNet \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:property-and-equipment-net-of-accumulated-depreciation-of-35-431-and-29-223",
+        "canon": "html:property-and-equipment-net-of-accumulated-depreciation-of-35-431-and-29-223",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AssetsCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:other-2",
+        "canon": "html:other-2",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:ContractWithCustomerLiabilityCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-666-and-7-677",
+        "canon": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-666-and-7-677",
+        "status": "auto_from_filing",
+        "notes": "Positioned after html:stockholders-equity \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:net-income-loss",
+        "canon": "us-gaap:NetIncomeLoss",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net income' matched master us-gaap:NetIncomeLoss (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx)"
+      },
+      {
+        "stmt": "income_statement",
+        "raw": "html:earnings-loss-per-share",
+        "canon": "html:earnings-per-share",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'earning per share' matched master html:earnings-per-share (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:net-income-loss",
+        "canon": "html:net-income",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'net income' matched master html:net-income (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:adjustments-to-reconcile-net-income-loss-to-net-cash-from-operations",
+        "canon": "html:adjustments-to-reconcile-net-income-to-net-cash-from-operations",
+        "status": "auto_label_match",
+        "notes": "Normalized label 'adjustment to reconcile net income to net cash from operation' matched master html:adjustments-to-reconcile-net-income-to-net-cash-from-operations (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx)"
+      },
+      {
+        "stmt": "cash_flow",
+        "raw": "html:proceeds-from-issuance-of-short-term-debt-maturities-of-90-days-or-less-net",
+        "canon": "html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net",
+        "status": "auto_label_match",
+        "notes": "Fuzzy label match to html:repayments-of-short-term-debt-maturities-of-90-days-or-less-net (from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx)"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-354-and-377",
+        "canon": "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-354-and-377",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:CashCashEquivalentsAndShortTermInvestments \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:property-and-equipment-net-of-accumulated-depreciation-of-33-082-and-29-223",
+        "canon": "html:property-and-equipment-net-of-accumulated-depreciation-of-33-082-and-29-223",
+        "status": "auto_from_filing",
+        "notes": "Positioned after us-gaap:AssetsCurrent \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx"
+      },
+      {
+        "stmt": "balance_sheet",
+        "raw": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-683-and-7-677",
+        "canon": "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-683-and-7-677",
+        "status": "auto_from_filing",
+        "notes": "Positioned after html:stockholders-equity \u2014 added from MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx"
+      }
+    ],
+    "bs_file_concepts": {
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx": [
+        "html:cash-and-cash-equivalents",
+        "html:short-term-investments",
+        "html:total-cash-cash-equivalents-and-short-term-investments",
+        "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-354-and-377",
+        "html:inventories",
+        "html:other",
+        "html:total-current-assets",
+        "html:property-and-equipment-net-of-accumulated-depreciation-of-33-082-and-29-223",
+        "html:operating-lease-right-of-use-assets",
+        "html:equity-investments",
+        "html:goodwill",
+        "html:intangible-assets-net",
+        "html:other-long-term-assets",
+        "html:total-assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "html:accounts-payable",
+        "html:current-portion-of-long-term-debt",
+        "html:accrued-compensation",
+        "html:short-term-income-taxes",
+        "html:short-term-unearned-revenue",
+        "html:other-2",
+        "html:total-current-liabilities",
+        "html:long-term-debt",
+        "html:long-term-income-taxes",
+        "html:long-term-unearned-revenue",
+        "html:deferred-income-taxes",
+        "html:operating-lease-liabilities",
+        "html:other-long-term-liabilities",
+        "html:total-liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-683-and-7-677",
+        "html:retained-earnings",
+        "html:accumulated-other-comprehensive-loss",
+        "html:total-stockholders-equity",
+        "html:total-liabilities-and-stockholders-equity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx": [
+        "html:cash-and-cash-equivalents",
+        "html:short-term-investments",
+        "html:total-cash-cash-equivalents-and-short-term-investments",
+        "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-336-and-377",
+        "html:inventories",
+        "html:other",
+        "html:total-current-assets",
+        "html:property-and-equipment-net-of-accumulated-depreciation-of-35-431-and-29-223",
+        "html:operating-lease-right-of-use-assets",
+        "html:equity-investments",
+        "html:goodwill",
+        "html:intangible-assets-net",
+        "html:other-long-term-assets",
+        "html:total-assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "html:accounts-payable",
+        "html:current-portion-of-long-term-debt",
+        "html:accrued-compensation",
+        "html:short-term-income-taxes",
+        "html:short-term-unearned-revenue",
+        "html:other-2",
+        "html:total-current-liabilities",
+        "html:long-term-debt",
+        "html:long-term-income-taxes",
+        "html:long-term-unearned-revenue",
+        "html:deferred-income-taxes",
+        "html:operating-lease-liabilities",
+        "html:other-long-term-liabilities",
+        "html:total-liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-666-and-7-677",
+        "html:retained-earnings",
+        "html:accumulated-other-comprehensive-loss",
+        "html:total-stockholders-equity",
+        "html:total-liabilities-and-stockholders-equity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-10-23_0001564590-19-037549.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2020-01-29_0001564590-20-002450.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2020-04-29_0001564590-20-019706.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2020-10-27_0001564590-20-047996.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2021-01-26_0001564590-21-002316.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2021-04-27_0001564590-21-020891.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2021-10-26_0001564590-21-051992.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-01-25_0001564590-22-002324.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-04-26_0001564590-22-015675.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-10-25_0001564590-22-035087.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-01-24_0001564590-23-000733.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx": [
+        "html:cash-and-cash-equivalents",
+        "html:short-term-investments",
+        "html:total-cash-cash-equivalents-and-short-term-investments",
+        "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-495-and-633",
+        "html:inventories",
+        "html:other-current-assets",
+        "html:total-current-assets",
+        "html:property-and-equipment-net-of-accumulated-depreciation-of-65-998-and-59-660",
+        "html:operating-lease-right-of-use-assets",
+        "html:equity-investments",
+        "html:goodwill",
+        "html:intangible-assets-net",
+        "html:other-long-term-assets",
+        "html:total-assets",
+        "html:current-liabilities",
+        "html:accounts-payable",
+        "html:current-portion-of-long-term-debt",
+        "html:accrued-compensation",
+        "html:short-term-income-taxes",
+        "html:short-term-unearned-revenue",
+        "html:other-current-liabilities",
+        "html:total-current-liabilities",
+        "html:long-term-debt",
+        "html:long-term-income-taxes",
+        "html:long-term-unearned-revenue",
+        "html:deferred-income-taxes",
+        "html:operating-lease-liabilities",
+        "html:other-long-term-liabilities",
+        "html:total-liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-437-and-7-464",
+        "html:retained-earnings",
+        "html:accumulated-other-comprehensive-loss",
+        "html:total-stockholders-equity",
+        "html:total-liabilities-and-stockholders-equity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-10-24_0000950170-23-054855.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:CommercialPaper",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2024-01-30_0000950170-24-008814.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:CommercialPaper",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2024-04-25_0000950170-24-048288.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:CommercialPaper",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2024-10-30_0000950170-24-118967.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:CommercialPaper",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-01-29_0000950170-25-010491.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:CommercialPaper",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:CommercialPaper",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-10-29_0001193125-25-256321.xlsx": [
+        "html:cash-and-cash-equivalents",
+        "html:short-term-investments",
+        "html:total-cash-cash-equivalents-and-short-term-investments",
+        "html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-687-and-944",
+        "html:inventories",
+        "html:other-current-assets",
+        "html:total-current-assets",
+        "html:property-and-equipment-net-of-accumulated-depreciation-of-98-880-and-93-653",
+        "html:operating-lease-right-of-use-assets",
+        "html:equity-and-other-investments",
+        "html:goodwill",
+        "html:intangible-assets-net",
+        "html:other-long-term-assets",
+        "html:total-assets",
+        "html:current-liabilities",
+        "html:accounts-payable",
+        "html:current-portion-of-long-term-debt",
+        "html:accrued-compensation",
+        "html:short-term-income-taxes",
+        "html:short-term-unearned-revenue",
+        "html:other-current-liabilities",
+        "html:total-current-liabilities",
+        "html:long-term-debt",
+        "html:long-term-income-taxes",
+        "html:long-term-unearned-revenue",
+        "html:deferred-income-taxes",
+        "html:operating-lease-liabilities",
+        "html:other-long-term-liabilities",
+        "html:total-liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "html:common-stock-and-paid-in-capital-shares-authorized-24-000-outstanding-7-434-and-7-434",
+        "html:retained-earnings",
+        "html:accumulated-other-comprehensive-loss",
+        "html:total-stockholders-equity",
+        "html:total-liabilities-and-stockholders-equity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-01-28_0001193125-26-027207.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ],
+      "MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx": [
+        "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+        "us-gaap:ShortTermInvestments",
+        "us-gaap:CashCashEquivalentsAndShortTermInvestments",
+        "us-gaap:AccountsReceivableNetCurrent",
+        "us-gaap:InventoryNet",
+        "us-gaap:OtherAssetsCurrent",
+        "us-gaap:AssetsCurrent",
+        "us-gaap:PropertyPlantAndEquipmentNet",
+        "us-gaap:OperatingLeaseRightOfUseAsset",
+        "us-gaap:LongTermInvestments",
+        "us-gaap:Goodwill",
+        "us-gaap:FiniteLivedIntangibleAssetsNet",
+        "us-gaap:OtherAssetsNoncurrent",
+        "us-gaap:Assets",
+        "html:liabilities-and-stockholders-equity",
+        "html:current-liabilities",
+        "us-gaap:AccountsPayableCurrent",
+        "us-gaap:LongTermDebtCurrent",
+        "us-gaap:EmployeeRelatedLiabilitiesCurrent",
+        "us-gaap:AccruedIncomeTaxesCurrent",
+        "us-gaap:ContractWithCustomerLiabilityCurrent",
+        "us-gaap:OtherLiabilitiesCurrent",
+        "us-gaap:LiabilitiesCurrent",
+        "us-gaap:LongTermDebtNoncurrent",
+        "us-gaap:AccruedIncomeTaxesNoncurrent",
+        "us-gaap:ContractWithCustomerLiabilityNoncurrent",
+        "us-gaap:DeferredIncomeTaxLiabilitiesNet",
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:OtherLiabilitiesNoncurrent",
+        "us-gaap:Liabilities",
+        "html:commitments-and-contingencies",
+        "html:stockholders-equity",
+        "us-gaap:CommonStocksIncludingAdditionalPaidInCapital",
+        "us-gaap:RetainedEarningsAccumulatedDeficit",
+        "us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+        "us-gaap:StockholdersEquity",
+        "us-gaap:LiabilitiesAndStockholdersEquity"
+      ]
+    },
+    "conflicts_detail": [
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:other-net",
+        "period": "4Q18",
+        "values": [
+          {
+            "value": -459.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended December 31, 2018",
+            "raw_concept": "html:other-net"
+          },
+          {
+            "value": -2052.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2020-01-29_0001564590-20-002450.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended December 31, 2018",
+            "raw_concept": "msft:AcquisitionsNetOfCashAcquiredAndPurchasesOfIntangibleAndOtherAssets + us-gaap:ProceedsFromPaymentsForOtherFinancingActivities"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-01-30_0001564590-19-001392.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:other-net",
+        "period": "1Q19",
+        "values": [
+          {
+            "value": 404.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2019",
+            "raw_concept": "html:other-net"
+          },
+          {
+            "value": 135.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2020-04-29_0001564590-20-019706.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2019",
+            "raw_concept": "msft:AcquisitionsNetOfCashAcquiredAndPurchasesOfIntangibleAndOtherAssets + us-gaap:ProceedsFromPaymentsForOtherFinancingActivities"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2019-04-24_0001564590-19-012709.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:other-net",
+        "period": "1Q22",
+        "values": [
+          {
+            "value": -20058.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-04-26_0001564590-22-015675.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2022",
+            "raw_concept": "msft:AcquisitionsNetOfCashAcquiredAndPurchasesOfIntangibleAndOtherAssets + us-gaap:PaymentsForProceedsFromOtherInvestingActivities + us-gaap:ProceedsFromPaymentsForOtherFinancingActivities"
+          },
+          {
+            "value": -158.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "3 Months Ended Mar. 31, 2022",
+            "raw_concept": "html:other-net + html:other-net-2"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2022-04-26_0001564590-22-015675.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:other-net",
+        "period": "1Q23",
+        "values": [
+          {
+            "value": -258.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "3 Months Ended Mar. 31, 2023",
+            "raw_concept": "html:other-net + html:other-net-2"
+          },
+          {
+            "value": -2245.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2024-04-25_0000950170-24-048288.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2023",
+            "raw_concept": "msft:AcquisitionsNetOfCashAcquiredAndPurchasesOfIntangibleAndOtherAssets + us-gaap:PaymentsForProceedsFromOtherInvestingActivities + us-gaap:ProceedsFromPaymentsForOtherFinancingActivities"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:depreciation-amortization-and-other",
+        "period": "4Q24",
+        "values": [
+          {
+            "value": 6827.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-01-29_0000950170-25-010491.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended December 31, 2024",
+            "raw_concept": "msft:DepreciationAmortizationAndOther"
+          },
+          {
+            "value": 5667.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-01-28_0001193125-26-027207.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended December 31, 2024",
+            "raw_concept": "msft:DepreciationAmortizationAndOther"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-01-29_0000950170-25-010491.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-recognized-gains-on-investments-and-derivatives",
+        "period": "4Q24",
+        "values": [
+          {
+            "value": 976.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-01-29_0000950170-25-010491.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended December 31, 2024",
+            "raw_concept": "msft:GainLossOnInvestmentsAndDerivativeInstruments"
+          },
+          {
+            "value": 2136.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-01-28_0001193125-26-027207.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended December 31, 2024",
+            "raw_concept": "msft:GainLossOnInvestmentsAndDerivativeInstruments"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-01-29_0000950170-25-010491.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:depreciation-amortization-and-other",
+        "period": "1Q25",
+        "values": [
+          {
+            "value": 8740.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2025",
+            "raw_concept": "msft:DepreciationAmortizationAndOther"
+          },
+          {
+            "value": 7734.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2025",
+            "raw_concept": "msft:DepreciationAmortizationAndOther"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx"
+      },
+      {
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-recognized-gains-on-investments-and-derivatives",
+        "period": "1Q25",
+        "values": [
+          {
+            "value": -298.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2025",
+            "raw_concept": "msft:GainLossOnInvestmentsAndDerivativeInstruments"
+          },
+          {
+            "value": 708.0,
+            "source_file": "MSFT_SEC-XBRL-financials_as-presented_10-Q_2026-04-29_0001193125-26-191507.xlsx",
+            "source_sheet": "Cash Flow",
+            "source_column": "Three Months Ended March 31, 2025",
+            "raw_concept": "msft:GainLossOnInvestmentsAndDerivativeInstruments"
+          }
+        ],
+        "resolution": "Kept period-primary filing MSFT_SEC-XBRL-financials_as-presented_10-Q_2025-04-30_0000950170-25-061046.xlsx"
+      }
+    ],
+    "unresolved_detail": [],
+    "validation_detail": [
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q18",
+        "detail": "subtotal=10258.00, sum_of_section=103407.00, diff=93149.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q19",
+        "detail": "subtotal=10341.00, sum_of_section=96495.00, diff=86154.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q19",
+        "detail": "subtotal=13891.00, sum_of_section=115478.00, diff=101587.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q20",
+        "detail": "subtotal=12975.00, sum_of_section=111238.00, diff=98263.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q20",
+        "detail": "subtotal=17897.00, sum_of_section=134947.00, diff=117050.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q21",
+        "detail": "subtotal=17048.00, sum_of_section=132903.00, diff=115855.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q21",
+        "detail": "subtotal=22247.00, sum_of_section=163886.00, diff=141639.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q22",
+        "detail": "subtotal=20364.00, sum_of_section=159710.00, diff=139346.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q22",
+        "detail": "subtotal=20399.00, sum_of_section=174072.00, diff=153673.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q23",
+        "detail": "subtotal=27032.00, sum_of_section=202107.00, diff=175075.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q24",
+        "detail": "subtotal=27581.00, sum_of_section=202771.00, diff=175190.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q24",
+        "detail": "subtotal=31653.00, sum_of_section=230656.00, diff=199003.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q25",
+        "detail": "subtotal=32000.00, sum_of_section=232945.00, diff=200945.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "4Q25",
+        "detail": "subtotal=38275.00, sum_of_section=270366.00, diff=232091.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_operating_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:OperatingIncomeLoss",
+        "period": "1Q26",
+        "detail": "subtotal=38398.00, sum_of_section=278057.00, diff=239659.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q18",
+        "detail": "subtotal=10385.00, sum_of_section=127.00, diff=10258.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q19",
+        "detail": "subtotal=10486.00, sum_of_section=145.00, diff=10341.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q19",
+        "detail": "subtotal=14085.00, sum_of_section=194.00, diff=13891.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q20",
+        "detail": "subtotal=12843.00, sum_of_section=-132.00, diff=12975.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q20",
+        "detail": "subtotal=18337.00, sum_of_section=440.00, diff=17897.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q21",
+        "detail": "subtotal=17236.00, sum_of_section=188.00, diff=17048.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q21",
+        "detail": "subtotal=22515.00, sum_of_section=268.00, diff=22247.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q22",
+        "detail": "subtotal=20190.00, sum_of_section=-174.00, diff=20364.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q22",
+        "detail": "subtotal=20339.00, sum_of_section=-60.00, diff=20399.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q23",
+        "detail": "subtotal=26526.00, sum_of_section=-506.00, diff=27032.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q24",
+        "detail": "subtotal=26727.00, sum_of_section=-854.00, diff=27581.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q24",
+        "detail": "subtotal=29365.00, sum_of_section=-2288.00, diff=31653.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q25",
+        "detail": "subtotal=31377.00, sum_of_section=-623.00, diff=32000.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "4Q25",
+        "detail": "subtotal=48246.00, sum_of_section=9971.00, diff=38275.00"
+      },
+      {
+        "check": "IS_SUBTOTAL_pretax_income",
+        "passed": false,
+        "statement_type": "income_statement",
+        "canonical_row_id": "us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+        "period": "1Q26",
+        "detail": "subtotal=39340.00, sum_of_section=942.00, diff=38398.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q19",
+        "detail": "Assets=263281.00, L+E=168417.00 (L=168417.0, E=None), diff=94864.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q19",
+        "detail": "Assets=278955.00, L+E=172894.00 (L=172894.0, E=None), diff=106061.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q20",
+        "detail": "Assets=285449.00, L+E=170948.00 (L=170948.0, E=None), diff=114501.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q20",
+        "detail": "Assets=301001.00, L+E=177609.00 (L=177609.0, E=None), diff=123392.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q21",
+        "detail": "Assets=308879.00, L+E=174374.00 (L=174374.0, E=None), diff=134505.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q21",
+        "detail": "Assets=335418.00, L+E=183440.00 (L=183440.0, E=None), diff=151978.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q22",
+        "detail": "Assets=344607.00, L+E=181683.00 (L=181683.0, E=None), diff=162924.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q22",
+        "detail": "Assets=359784.00, L+E=186218.00 (L=186218.0, E=None), diff=173566.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q23",
+        "detail": "Assets=380088.00, L+E=185405.00 (L=185405.0, E=None), diff=194683.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q23",
+        "detail": "Assets=445785.00, L+E=225071.00 (L=225071.0, E=None), diff=220714.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q24",
+        "detail": "Assets=484275.00, L+E=231123.00 (L=231123.0, E=None), diff=253152.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q24",
+        "detail": "Assets=523013.00, L+E=235290.00 (L=235290.0, E=None), diff=287723.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q25",
+        "detail": "Assets=562624.00, L+E=240733.00 (L=240733.0, E=None), diff=321891.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q25",
+        "detail": "Assets=636351.00, L+E=273275.00 (L=273275.0, E=None), diff=363076.00"
+      },
+      {
+        "check": "BS_EQUATION",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q26",
+        "detail": "Assets=694228.00, L+E=279861.00 (L=279861.0, E=None), diff=414367.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q19",
+        "detail": "subtotal=159887.00, sum=291505.00, diff=131618.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q19",
+        "detail": "subtotal=165896.00, sum=302532.00, diff=136636.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q20",
+        "detail": "subtotal=170505.00, sum=308131.00, diff=137626.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q20",
+        "detail": "subtotal=177077.00, sum=315054.00, diff=137977.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q21",
+        "detail": "subtotal=165614.00, sum=291021.00, diff=125407.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q21",
+        "detail": "subtotal=174326.00, sum=304941.00, diff=130615.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q22",
+        "detail": "subtotal=153922.00, sum=258615.00, diff=104693.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q22",
+        "detail": "subtotal=160812.00, sum=268074.00, diff=107262.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q23",
+        "detail": "subtotal=163889.00, sum=268316.00, diff=104427.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q23",
+        "detail": "subtotal=207586.00, sum=351537.00, diff=143951.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q24",
+        "detail": "subtotal=147180.00, sum=227201.00, diff=80021.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q24",
+        "detail": "subtotal=149926.00, sum=228354.00, diff=78428.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q25",
+        "detail": "subtotal=156644.00, sum=236262.00, diff=79618.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "3Q25",
+        "detail": "subtotal=189066.00, sum=291078.00, diff=102012.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_current_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:AssetsCurrent",
+        "period": "1Q26",
+        "detail": "subtotal=175329.00, sum=253601.00, diff=78272.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q19",
+        "detail": "subtotal=263281.00, sum=103394.00, diff=159887.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q19",
+        "detail": "subtotal=278955.00, sum=113059.00, diff=165896.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q20",
+        "detail": "subtotal=285449.00, sum=114944.00, diff=170505.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q20",
+        "detail": "subtotal=301001.00, sum=123924.00, diff=177077.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q21",
+        "detail": "subtotal=308879.00, sum=143265.00, diff=165614.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q21",
+        "detail": "subtotal=335418.00, sum=161092.00, diff=174326.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q22",
+        "detail": "subtotal=344607.00, sum=190685.00, diff=153922.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q22",
+        "detail": "subtotal=359784.00, sum=198972.00, diff=160812.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q23",
+        "detail": "subtotal=380088.00, sum=216199.00, diff=163889.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q23",
+        "detail": "subtotal=445785.00, sum=238199.00, diff=207586.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q24",
+        "detail": "subtotal=484275.00, sum=337095.00, diff=147180.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q24",
+        "detail": "subtotal=523013.00, sum=373087.00, diff=149926.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q25",
+        "detail": "subtotal=562624.00, sum=405980.00, diff=156644.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "3Q25",
+        "detail": "subtotal=636351.00, sum=447285.00, diff=189066.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_assets",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Assets",
+        "period": "1Q26",
+        "detail": "subtotal=694228.00, sum=518899.00, diff=175329.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "3Q19",
+        "detail": "subtotal=172894.00, sum=114776.00, diff=58118.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "1Q20",
+        "detail": "subtotal=170948.00, sum=112241.00, diff=58707.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "3Q20",
+        "detail": "subtotal=177609.00, sum=107553.00, diff=70056.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "1Q21",
+        "detail": "subtotal=174374.00, sum=102181.00, diff=72193.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "3Q21",
+        "detail": "subtotal=183440.00, sum=102912.00, diff=80528.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "1Q22",
+        "detail": "subtotal=181683.00, sum=104244.00, diff=77439.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "3Q22",
+        "detail": "subtotal=186218.00, sum=98829.00, diff=87389.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "3Q23",
+        "detail": "subtotal=225071.00, sum=100279.00, diff=124792.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "1Q24",
+        "detail": "subtotal=231123.00, sum=112598.00, diff=118525.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "3Q24",
+        "detail": "subtotal=235290.00, sum=120090.00, diff=115200.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "1Q25",
+        "detail": "subtotal=240733.00, sum=126527.00, diff=114206.00"
+      },
+      {
+        "check": "BS_SUBTOTAL_total_liabilities",
+        "passed": false,
+        "statement_type": "balance_sheet",
+        "canonical_row_id": "us-gaap:Liabilities",
+        "period": "1Q26",
+        "detail": "subtotal=279861.00, sum=143200.00, diff=136661.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q19",
+        "detail": "subtotal=-6036.00, sum_of_items=-5956.00, diff=80.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q20",
+        "detail": "subtotal=51.00, sum_of_items=380.00, diff=329.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q20",
+        "detail": "subtotal=-1669.00, sum_of_items=-1581.00, diff=88.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q21",
+        "detail": "subtotal=-9684.00, sum_of_items=-2572.00, diff=7112.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q21",
+        "detail": "subtotal=-1161.00, sum_of_items=-222.00, diff=939.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q22",
+        "detail": "subtotal=-16171.00, sum_of_items=3729.00, diff=19900.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q22",
+        "detail": "subtotal=-7150.00, sum_of_items=-6170.00, diff=980.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q23",
+        "detail": "subtotal=-3264.00, sum_of_items=-1578.00, diff=1686.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q23",
+        "detail": "subtotal=-71925.00, sum_of_items=-8243.00, diff=63682.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q24",
+        "detail": "subtotal=-10700.00, sum_of_items=-7844.00, diff=2856.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q24",
+        "detail": "subtotal=-14112.00, sum_of_items=-12691.00, diff=1421.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q25",
+        "detail": "subtotal=-12714.00, sum_of_items=-12337.00, diff=377.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "3Q25",
+        "detail": "subtotal=-34559.00, sum_of_items=-27772.00, diff=6787.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "4Q25",
+        "detail": "subtotal=-22705.00, sum_of_items=-21613.00, diff=1092.00"
+      },
+      {
+        "check": "CF_SECTION_html:net-cash-used-in-investing",
+        "passed": false,
+        "statement_type": "cash_flow",
+        "canonical_row_id": "html:net-cash-used-in-investing",
+        "period": "1Q26",
+        "detail": "subtotal=-27405.00, sum_of_items=-24548.00, diff=2857.00"
+      }
+    ]
+  },
+  "models_summary": {
+    "income_statement": {
+      "n_periods": 35,
+      "periods_first5": [
+        "1Q20",
+        "2Q20",
+        "3Q20",
+        "4Q20",
+        "FY20"
+      ],
+      "periods_last5": [
+        "1Q26",
+        "2Q26",
+        "3Q26",
+        "4Q26",
+        "FY26"
+      ],
+      "n_rows": 23,
+      "fully_empty_periods": [
+        "1Q20",
+        "2Q20",
+        "3Q20",
+        "4Q20",
+        "FY20",
+        "1Q21",
+        "2Q21",
+        "3Q21",
+        "4Q21",
+        "FY21",
+        "1Q22",
+        "2Q22",
+        "3Q22",
+        "4Q22",
+        "FY22",
+        "1Q23",
+        "2Q23",
+        "3Q23",
+        "4Q23",
+        "FY23",
+        "1Q24",
+        "2Q24",
+        "3Q24",
+        "4Q24",
+        "FY24",
+        "1Q25",
+        "2Q25",
+        "3Q25",
+        "4Q25",
+        "FY25",
+        "1Q26",
+        "2Q26",
+        "3Q26",
+        "4Q26",
+        "FY26"
+      ],
+      "sparse_periods_lt10pct": [],
+      "annual_periods": []
+    },
+    "balance_sheet": {
+      "n_periods": 35,
+      "periods_first5": [
+        "1Q20",
+        "2Q20",
+        "3Q20",
+        "4Q20",
+        "FY20"
+      ],
+      "periods_last5": [
+        "1Q26",
+        "2Q26",
+        "3Q26",
+        "4Q26",
+        "FY26"
+      ],
+      "n_rows": 56,
+      "fully_empty_periods": [
+        "1Q20",
+        "2Q20",
+        "3Q20",
+        "4Q20",
+        "FY20",
+        "1Q21",
+        "2Q21",
+        "3Q21",
+        "4Q21",
+        "FY21",
+        "1Q22",
+        "2Q22",
+        "3Q22",
+        "4Q22",
+        "FY22",
+        "1Q23",
+        "2Q23",
+        "3Q23",
+        "4Q23",
+        "FY23",
+        "1Q24",
+        "2Q24",
+        "3Q24",
+        "4Q24",
+        "FY24",
+        "1Q25",
+        "2Q25",
+        "3Q25",
+        "4Q25",
+        "FY25",
+        "1Q26",
+        "2Q26",
+        "3Q26",
+        "4Q26",
+        "FY26"
+      ],
+      "sparse_periods_lt10pct": [],
+      "annual_periods": []
+    },
+    "cash_flow": {
+      "n_periods": 35,
+      "periods_first5": [
+        "1Q20",
+        "2Q20",
+        "3Q20",
+        "4Q20",
+        "FY20"
+      ],
+      "periods_last5": [
+        "1Q26",
+        "2Q26",
+        "3Q26",
+        "4Q26",
+        "FY26"
+      ],
+      "n_rows": 37,
+      "fully_empty_periods": [
+        "1Q20",
+        "2Q20",
+        "3Q20",
+        "4Q20",
+        "FY20",
+        "1Q21",
+        "2Q21",
+        "3Q21",
+        "4Q21",
+        "FY21",
+        "1Q22",
+        "2Q22",
+        "3Q22",
+        "4Q22",
+        "FY22",
+        "1Q23",
+        "2Q23",
+        "3Q23",
+        "4Q23",
+        "FY23",
+        "1Q24",
+        "2Q24",
+        "3Q24",
+        "4Q24",
+        "FY24",
+        "1Q25",
+        "2Q25",
+        "3Q25",
+        "4Q25",
+        "FY25",
+        "1Q26",
+        "2Q26",
+        "3Q26",
+        "4Q26",
+        "FY26"
+      ],
+      "sparse_periods_lt10pct": [],
+      "annual_periods": []
+    }
+  }
+}

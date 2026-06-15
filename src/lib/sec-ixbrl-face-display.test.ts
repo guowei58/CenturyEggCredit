@@ -109,6 +109,9 @@ describe("formatFaceStatementCell", () => {
         "10-Q"
       )
     ).toBe("Three months ended June 28, 2024");
+    expect(compilerPeriodColumnHeader({ label: "2025" }, "10-K")).toBe("FY25");
+    expect(compilerPeriodColumnHeader({ label: "FY 2024" }, "10-K")).toBe("FY24");
+    expect(compilerPeriodColumnHeader({ label: "Fiscal Year 2023" }, "10-K")).toBe("FY23");
   });
 
   it("workbook cells are numeric at the same scale as the on-screen grid", () => {

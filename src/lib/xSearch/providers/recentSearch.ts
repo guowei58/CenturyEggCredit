@@ -1,13 +1,14 @@
 import { loadXSearchConfigFromEnv } from "../config";
 import { buildXQuery } from "../query/queryBuilder";
 import { normalizeTweet } from "../normalize/postNormalizer";
+import { resolveTweetDisplayText, toMediaByKey } from "../normalize/tweetText";
 import type { NormalizedXPost, XPostProvider, XProviderResult, XSearchParams } from "../types";
 import { clampInt, fetchWithTimeout } from "../utils";
 import { requireBearerToken } from "./base";
 
 type XApiRecentResponse = {
   data?: Array<Record<string, unknown>>;
-  includes?: { users?: Array<Record<string, unknown>> };
+  includes?: { users?: Array<Record<string, unknown>>; media?: Array<Record<string, unknown>> };
   meta?: { result_count?: number; next_token?: string };
   errors?: Array<{ message?: string }>;
   title?: string;
@@ -75,10 +76,13 @@ export function createRecentSearchProvider(): XPostProvider {
           "conversation_id",
           "referenced_tweets",
           "author_id",
+          "attachments",
+          "note_tweet",
         ].join(",")
       );
-      url.searchParams.set("expansions", "author_id");
+      url.searchParams.set("expansions", "author_id,attachments.media_keys");
       url.searchParams.set("user.fields", "username,name");
+      url.searchParams.set("media.fields", "url,preview_image_url,type,alt_text");
 
       let res: Response;
       try {
@@ -102,6 +106,7 @@ export function createRecentSearchProvider(): XPostProvider {
       }
 
       const usersById = toUserMap(json.includes);
+      const mediaByKey = toMediaByKey(json.includes as { media?: import("../normalize/tweetText").XApiMedia[] });
       const data = Array.isArray(json.data) ? json.data : [];
       const posts: NormalizedXPost[] = [];
 
@@ -109,11 +114,14 @@ export function createRecentSearchProvider(): XPostProvider {
         const id = typeof row.id === "string" ? row.id : "";
         if (!id) continue;
         const tweet = row as unknown as Parameters<typeof normalizeTweet>[0]["tweet"];
-        // provisional scoring signals (ranker will re-score later; keep simple confidence baseline here)
-        const text = typeof (row as { text?: unknown }).text === "string" ? String((row as { text?: unknown }).text) : "";
+        const { text } = resolveTweetDisplayText(tweet);
         const signals: string[] = [];
-        if (text.toLowerCase().includes(`$${tk}`.toLowerCase())) signals.push("cashtag");
-        if (text.toLowerCase().includes(tk.toLowerCase())) signals.push("ticker");
+        if (
+          text.toLowerCase().includes(`$${tk}`.toLowerCase()) ||
+          (tweet.entities?.cashtags ?? []).some((c) => (c.tag ?? "").toUpperCase() === tk)
+        ) {
+          signals.push("cashtag");
+        }
         if (params.companyName && text.toLowerCase().includes(params.companyName.toLowerCase())) signals.push("company_name");
 
         const confidence = Math.min(1, 0.25 + signals.length * 0.18);
@@ -121,6 +129,7 @@ export function createRecentSearchProvider(): XPostProvider {
           normalizeTweet({
             tweet,
             usersById,
+            mediaByKey,
             sourceProvider: "recent_search",
             matchedTicker: tk,
             companyName: params.companyName,

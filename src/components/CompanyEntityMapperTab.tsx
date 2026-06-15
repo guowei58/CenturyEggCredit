@@ -59,8 +59,6 @@ export function CompanyEntityMapperTab({ ticker, companyName }: { ticker: string
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSavedDocs, setLastSavedDocs] = useState<{ saved: number; failed: number } | null>(null);
-  const [discoverSec, setDiscoverSec] = useState(true);
-  const [downloadExhibits, setDownloadExhibits] = useState(true);
   const [aiProvider, setAiProvider] = useState<AiProvider>("claude");
   const [runPhase, setRunPhase] = useState<null | "pipeline" | "subsidiary-list">(null);
   const [subsidiaryListMarkdown, setSubsidiaryListMarkdown] = useState("");
@@ -151,8 +149,8 @@ export function CompanyEntityMapperTab({ ticker, companyName }: { ticker: string
         body: JSON.stringify({
           provider: aiProvider,
           companyName: companyName?.trim() || undefined,
-          discoverSecDocuments: discoverSec,
-          downloadExhibitsToSavedDocs: downloadExhibits,
+          discoverSecDocuments: true,
+          downloadExhibitsToSavedDocs: false,
           maxSavedDocumentDownloads: 80,
           ...modelOverridePayloadForProvider(aiProvider),
         }),
@@ -255,11 +253,6 @@ export function CompanyEntityMapperTab({ ticker, companyName }: { ticker: string
     <div className="space-y-6">
       <Card title={`Entity Mapper — ${safeTicker}`}>
         <div className="min-w-0">
-            <p className="text-[11px] leading-relaxed mb-4" style={{ color: "var(--muted2)" }}>
-              Maps <strong>Public Records Exhibit 21</strong> subsidiaries to roles in debt documents. Run discovers EDGAR exhibits
-              (optional), refreshes Saved Documents, then builds structured matrices with evidence — not a generic org chart.
-            </p>
-
             {needsSignIn && (
               <p className="text-xs mb-4 rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
                 Sign in to load your Public Records profile and run the mapper.
@@ -306,22 +299,6 @@ export function CompanyEntityMapperTab({ ticker, companyName }: { ticker: string
                 </button>
               </div>
               <AiModelPicker provider={aiProvider} className="mt-2 w-full sm:mt-0 sm:ml-2 sm:w-auto" />
-            </div>
-
-            <div className="flex flex-wrap gap-4 mb-3 text-[11px]" style={{ color: "var(--muted2)" }}>
-              <label className="inline-flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={discoverSec} onChange={(e) => setDiscoverSec(e.target.checked)} />
-                Discover debt exhibits from EDGAR + update SEC index / Saved Documents
-              </label>
-              <label className="inline-flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={downloadExhibits}
-                  onChange={(e) => setDownloadExhibits(e.target.checked)}
-                  disabled={!discoverSec}
-                />
-                Download exhibits into Saved Documents (when discovering SEC)
-              </label>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 mb-4">

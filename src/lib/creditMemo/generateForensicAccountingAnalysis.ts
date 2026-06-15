@@ -20,8 +20,7 @@ function formatSourcesForForensicAnalysis(ticker: string, parts: LmeSourcePart[]
   const sym = ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   const header =
     `Ticker: ${sym}\n` +
-    `The blocks below are packed from your ticker workspace, saved tabs, and Saved Documents, excluding sources that already feed **LME Analysis** (same paths and tab keys as the LME tab, plus Saved Documents that pass the LME include gate). ` +
-    `Excel spreadsheets, generated work products, and embedding caches are also excluded. ` +
+    `The blocks below are limited to five forensic inputs only: saved tab business model, saved tab how stuff works, the latest saved 10-K, saved tab risk from 10-K, and saved tab business risk analysis. ` +
     `When retrieval is enabled, you receive embedding-ranked context under the same 400k default bundle ceiling as LME/KPI. ` +
     `Use them as the primary factual basis for forensic claims.\n\n`;
   const blocks = parts.map(
@@ -118,7 +117,7 @@ export async function runForensicAccountingAnalysisGeneration(params: {
     return {
       ok: false,
       error:
-        "No ingestible workspace sources found for this ticker. Upload files to your ticker workspace and/or save tab content (excluding generated outputs), then try again.",
+        "No forensic sources found. Save the four required tabs and at least one 10-K in Saved Documents, then try again.",
     };
   }
 
@@ -129,7 +128,7 @@ export async function runForensicAccountingAnalysisGeneration(params: {
     return {
       ok: false,
       error:
-        "No substantive text found. Add non-Excel files or saved tab text to your ticker workspace (generated tab outputs are excluded), then try again.",
+        "No substantive forensic text found. Save the four required tabs and a readable 10-K, then try again.",
     };
   }
 

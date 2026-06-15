@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
@@ -130,8 +131,10 @@ export function CompanyResearchRoadmapTab({ ticker }: { ticker: string }) {
 
   return (
     <Card title={`Research Roadmap - ${safeTicker}`}>
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <SavedResponseExpandableShell
+      <TabPromptSlideOutShell
+        hasMainContent={savedContent.trim().length > 0}
+        main={
+          <SavedResponseExpandableShell
           className="min-w-0 flex-1"
           ticker={safeTicker}
           linkSourceText={isEditing ? editDraft : savedContent}
@@ -178,8 +181,9 @@ export function CompanyResearchRoadmapTab({ ticker }: { ticker: string }) {
             </>
           )}
         </SavedResponseExpandableShell>
-
-        <div className="flex w-full flex-col lg:w-80 flex-shrink-0">
+        }
+        prompt={
+          <>
           <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
             {OPEN_IN_EXTERNAL_AI_FULL_LINE}
           </p>
@@ -262,8 +266,9 @@ export function CompanyResearchRoadmapTab({ ticker }: { ticker: string }) {
               Select the prompt above and copy manually (Ctrl+C / Cmd+C).
             </p>
           )}
-        </div>
-      </div>
+          </>
+        }
+      />
     </Card>
   );
 }

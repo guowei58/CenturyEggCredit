@@ -9,7 +9,8 @@ export type SaveRemoteUrlResult = { ok: true } | { ok: false; error: string };
 export async function saveRemoteUrlForTicker(
   ticker: string,
   url: string,
-  mode: SaveRemoteUrlMode
+  mode: SaveRemoteUrlMode,
+  opts?: { title?: string; filenameBase?: string }
 ): Promise<SaveRemoteUrlResult> {
   const t = ticker.trim();
   const u = url.trim();
@@ -20,11 +21,18 @@ export async function saveRemoteUrlForTicker(
       ? `/api/save-filing-link/${encodeURIComponent(t)}`
       : `/api/saved-documents/${encodeURIComponent(t)}`;
 
+  const title = opts?.title?.trim();
+  const filenameBase = opts?.filenameBase?.trim();
+
   try {
+    const payload: Record<string, string> = { url: u };
+    if (title) payload.title = title;
+    if (filenameBase) payload.filenameBase = filenameBase;
+
     const res = await fetch(path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: u }),
+      body: JSON.stringify(payload),
     });
     const body = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
     if (!res.ok) {

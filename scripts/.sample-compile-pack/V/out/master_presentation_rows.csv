@@ -1,0 +1,210 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net revenue,0,0
+income_statement,html:operating-expenses,html:operating-expenses,Operating Expenses,1,0
+income_statement,us-gaap:LaborAndRelatedExpense,us-gaap:LaborAndRelatedExpense,Personnel,2,0
+income_statement,us-gaap:MarketingAndAdvertisingExpense,us-gaap:MarketingAndAdvertisingExpense,Marketing,3,0
+income_statement,us-gaap:CommunicationsAndInformationTechnology,us-gaap:CommunicationsAndInformationTechnology,Network and processing,4,0
+income_statement,us-gaap:ProfessionalFees,us-gaap:ProfessionalFees,Professional fees,5,0
+income_statement,us-gaap:DepreciationAndAmortization,us-gaap:DepreciationAndAmortization,Depreciation and amortization,6,0
+income_statement,us-gaap:GeneralAndAdministrativeExpense,us-gaap:GeneralAndAdministrativeExpense,General and administrative,7,0
+income_statement,us-gaap:LossContingencyLossInPeriod,us-gaap:LossContingencyLossInPeriod,Litigation provision,8,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,Total operating expenses,9,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,10,0
+income_statement,html:non-operating-income-expense,html:non-operating-income-expense,Non-operating Income (Expense),11,0
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,Interest expense,12,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Investment income (expense) and other,13,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,Total non-operating income (expense),14,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before income taxes,15,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax provision,16,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,17,0
+income_statement,html:basic-earnings-per-share,html:basic-earnings-per-share,Basic Earnings Per Share,18,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Class Acommon stock,19,0
+income_statement,us-gaap:EarningsPerShareBasic@R22,us-gaap:EarningsPerShareBasic@R22,Class B-1 common stock,20,0
+income_statement,us-gaap:EarningsPerShareBasic@R23,us-gaap:EarningsPerShareBasic@R23,Class B-2 common stock(1),21,0
+income_statement,us-gaap:EarningsPerShareBasic@R24,us-gaap:EarningsPerShareBasic@R24,Class Ccommon stock,22,0
+income_statement,html:basic-weighted-average-shares-outstanding,html:basic-weighted-average-shares-outstanding,Basic Weighted-average Shares Outstanding,23,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Class Acommon stock,24,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R27,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R27,Class B-1 common stock,25,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R28,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R28,Class B-2 common stock(1),26,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R29,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R29,Class Ccommon stock,27,0
+income_statement,html:diluted-earnings-per-share,html:diluted-earnings-per-share,Diluted Earnings Per Share,28,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Class Acommon stock,29,0
+income_statement,us-gaap:EarningsPerShareDiluted@R32,us-gaap:EarningsPerShareDiluted@R32,Class B-1 common stock,30,0
+income_statement,us-gaap:EarningsPerShareDiluted@R33,us-gaap:EarningsPerShareDiluted@R33,Class B-2 common stock(1),31,0
+income_statement,us-gaap:EarningsPerShareDiluted@R34,us-gaap:EarningsPerShareDiluted@R34,Class Ccommon stock,32,0
+income_statement,html:diluted-weighted-average-shares-outstanding,html:diluted-weighted-average-shares-outstanding,Diluted Weighted-average Shares Outstanding,33,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Class Acommon stock,35,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding@R37,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding@R37,Class B-1 common stock,36,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding@R38,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding@R38,Class B-2 common stock(1),37,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding@R39,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding@R39,Class Ccommon stock,38,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,v:RestrictedCashAndCashEquivalentsU.S.LitigationEscrow,v:RestrictedCashAndCashEquivalentsU.S.LitigationEscrow,Restricted cash equivalents—U.S. litigation escrow,1,0
+balance_sheet,us-gaap:Investments,us-gaap:Investments,Investment securities,4,0
+balance_sheet,v:SettlementReceivable,v:SettlementReceivable,Settlement receivable,5,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,Accounts receivable,6,0
+balance_sheet,v:CustomerCollateralAssets,v:CustomerCollateralAssets,Customer collateral,9,0
+balance_sheet,v:ClientIncentivesAssetsCurrent,v:ClientIncentivesAssetsCurrent,Current portion of client incentives,10,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,11,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,12,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Investment securities,18,0
+balance_sheet,v:ClientIncentivesAssetsNoncurrent,v:ClientIncentivesAssetsNoncurrent,Client incentives,19,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, equipment and technology, net",20,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,21,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",22,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,23,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,24,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities,25,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,26,0
+balance_sheet,v:SettlementPayable,v:SettlementPayable,Settlement payable,27,0
+balance_sheet,v:CustomerCollateralLiabilities,v:CustomerCollateralLiabilities,Customer collateral,30,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation and benefits,31,0
+balance_sheet,v:ClientIncentivesLiabilitiesCurrent,v:ClientIncentivesLiabilitiesCurrent,Client incentives,33,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,34,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current maturities of debt,36,0
+balance_sheet,us-gaap:LitigationReserveCurrent,us-gaap:LitigationReserveCurrent,Accrued litigation,37,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,38,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,39,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities,40,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other liabilities,41,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,43,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies (Note 18 and Note 20),44,0
+balance_sheet,html:equity,html:equity,Equity,45,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Preferred stock, $0.0001 par value, 5 shares issued and outstanding as of September 30, 2025 and 2024",63,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock, $0.0001 par value:",75,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding,us-gaap:CommonStockSharesOutstanding,"Class Acommon stock, 1,691 and 1,733 shares issued and outstanding as of September 30, 2025 and 2024, respectively",79,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding@R37,us-gaap:CommonStockSharesOutstanding@R37,"Class B-1 and B-2 total common stock, 125 shares issued and outstanding as of September 30, 2025 and 2024",81,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding@R38,us-gaap:CommonStockSharesOutstanding@R38,"Class Ccommon stock, 9 and 10 shares issued and outstanding as of September 30, 2025 and 2024, respectively",82,0
+balance_sheet,v:RightToRecoverForCoveredLosses,v:RightToRecoverForCoveredLosses,Right to recover for covered losses,83,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,84,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated income,85,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss):,89,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax,Investment securities,90,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossDefinedBenefitPensionAndOtherPostretirementPlansNetOfTax,Defined benefit pension and other postretirement plans,91,0
+balance_sheet,us-gaap:AociLossCashFlowHedgeCumulativeGainLossAfterTax,us-gaap:AociLossCashFlowHedgeCumulativeGainLossAfterTax,Derivative instruments,94,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossForeignCurrencyTranslationAdjustmentNetOfTax,Foreign currency translation adjustments,95,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Total accumulated other comprehensive income (loss),96,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,97,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,98,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,0,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-used-in-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-used-in-operating-activities,Adjustments to reconcile net income to net cash provided by (used in) operating activities:,3,0
+cash_flow,v:AmortizationOfClientIncentives,v:AmortizationOfClientIncentives,Client incentives,4,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Share-based compensation,5,0
+cash_flow,us-gaap:DepreciationAndAmortization,us-gaap:DepreciationAndAmortization,Depreciation and amortization,6,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,7,0
+cash_flow,v:VETerritoryCoveredLossesIncurredPostAcquisition,v:VETerritoryCoveredLossesIncurredPostAcquisition,VE territory covered losses,9,0
+cash_flow,v:IncomeLossFromEquityMethodInvestmentsAndFairMarketValueAlternativeInvestments,v:IncomeLossFromEquityMethodInvestmentsAndFairMarketValueAlternativeInvestments,"(Gains) losses on equity investments, net",11,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,Other,12,0
+cash_flow,html:change-in-operating-assets-and-liabilities,html:change-in-operating-assets-and-liabilities,Change in operating assets and liabilities:,13,0
+cash_flow,v:IncreaseDecreaseInSettlementReceivable,v:IncreaseDecreaseInSettlementReceivable,Settlement receivable,14,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Accounts receivable,15,0
+cash_flow,v:IncreaseDecreaseInClientIncentives,v:IncreaseDecreaseInClientIncentives,Client incentives,16,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingAssets,us-gaap:IncreaseDecreaseInOtherOperatingAssets,Other assets,17,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,Accounts payable,18,0
+cash_flow,v:IncreaseDecreaseInSettlementPayable,v:IncreaseDecreaseInSettlementPayable,Settlement payable,19,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedLiabilitiesAndOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInAccruedLiabilitiesAndOtherOperatingLiabilities,Accrued and other liabilities,20,0
+cash_flow,v:IncreaseDecreaseInAccruedLitigation,v:IncreaseDecreaseInAccruedLitigation,Accrued litigation,21,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by (used in) operating activities,22,0
+cash_flow,html:investing-activities,html:investing-activities,Investing Activities,23,0
+cash_flow,us-gaap:PaymentsToAcquireProductiveAssets,us-gaap:PaymentsToAcquireProductiveAssets,"Purchases of property, equipment and technology",24,0
+cash_flow,us-gaap:PaymentsToAcquireAvailableForSaleSecuritiesDebt,us-gaap:PaymentsToAcquireAvailableForSaleSecuritiesDebt,Purchases of investment securities,26,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfAvailableForSaleSecurities,us-gaap:ProceedsFromSaleAndMaturityOfAvailableForSaleSecurities,Proceeds from maturities and sales of investment securities,27,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisitions, net of cash and restricted cash acquired",28,0
+cash_flow,us-gaap:PaymentsToAcquireOtherInvestments,us-gaap:PaymentsToAcquireOtherInvestments,Purchases of other investments,29,0
+cash_flow,us-gaap:PaymentsForProceedsFromDerivativeInstrumentInvestingActivities,us-gaap:PaymentsForProceedsFromDerivativeInstrumentInvestingActivities,Proceeds from settlement of derivative instruments,30,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other investing activities,31,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash provided by (used in) investing activities,32,0
+cash_flow,html:financing-activities,html:financing-activities,Financing Activities,33,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchases of class Acommon stock,34,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayments of debt,35,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Dividends paid,36,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfDebt,us-gaap:ProceedsFromIssuanceOfDebt,Proceeds from issuance of senior notes,38,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from stock issued under equity plans,43,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Taxes paid related to stock issued under equity plans,44,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other financing activities,46,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided by (used in) financing activities,47,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Effect of exchange rate changes on cash, cash equivalents, restricted cash and restricted cash equivalents",48,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Increase (decrease) in cash, cash equivalents, restricted cash and restricted cash equivalents",49,0
+balance_sheet,us-gaap:CommonStockSharesIssued,us-gaap:CommonStockSharesIssued,"Class Acommon stock, 1,660 and 1,691 shares issued and outstanding as of March 31, 2026 and September 30, 2025, respectively",76,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding@R36,us-gaap:CommonStockSharesOutstanding@R36,"Class B-1 common stock, 245 shares issued and outstanding as of March 31, 2024 and September 30, 2023",80,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss-net,html:accumulated-other-comprehensive-income-loss-net,"Accumulated other comprehensive income (loss), net:",86,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfCommercialPaper,us-gaap:ProceedsFromIssuanceOfCommercialPaper,Proceeds from issuance of commercial paper,37,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Series Aconvertible participating preferred stock, less than one shares issued and outstanding at June 30, 2022 and September 30, 2021 (the “series Apreferred stock”)",64,0
+balance_sheet,us-gaap:PreferredStockSharesOutstanding,us-gaap:PreferredStockSharesOutstanding,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at June 30, 2022 and September 30, 2021 (the “series Bpreferred stock”)",67,0
+balance_sheet,us-gaap:PreferredStockSharesOutstanding@R36,us-gaap:PreferredStockSharesOutstanding@R36,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at June 30, 2022 and September 30, 2021 (the “series Cpreferred stock”)",69,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare@R38,us-gaap:CommonStockParOrStatedValuePerShare@R38,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at June 30, 2022 and September 30, 2021",77,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare@R39,us-gaap:CommonStockParOrStatedValuePerShare@R39,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 10 shares issued and outstanding at June 30, 2022 and September 30, 2021",78,0
+cash_flow,us-gaap:ProceedsFromStockPlans,us-gaap:ProceedsFromStockPlans,Cash proceeds from issuance of class Acommon stock under employee equity plans,39,0
+balance_sheet,us-gaap:PreferredStockSharesIssued,us-gaap:PreferredStockSharesIssued,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at March 31, 2022 and September 30, 2021 (the “series Bpreferred stock”)",65,0
+balance_sheet,us-gaap:PreferredStockSharesIssued@R36,us-gaap:PreferredStockSharesIssued@R36,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at March 31, 2022 and September 30, 2021 (the “series Cpreferred stock”)",70,0
+cash_flow,us-gaap:PaymentsForDerivativeInstrumentFinancingActivities,us-gaap:PaymentsForDerivativeInstrumentFinancingActivities,Payments to settle derivative instruments,45,0
+income_statement,html:class-bcommon-stock,html:class-bcommon-stock,Class Bcommon stock,34,0
+balance_sheet,html:investment-securities,html:investment-securities,Investment securities,2,0
+balance_sheet,html:customer-collateral,html:customer-collateral,Customer collateral,7,0
+balance_sheet,html:investment-securities-2,html:investment-securities-2,Investment securities,13,0
+balance_sheet,html:client-incentives,html:client-incentives,Client incentives,17,0
+balance_sheet,html:customer-collateral-2,html:customer-collateral-2,Customer collateral,28,0
+balance_sheet,html:client-incentives-2,html:client-incentives-2,Client incentives,32,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,42,0
+balance_sheet,html:investment-securities-3,html:investment-securities-3,Investment securities,87,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,88,0
+balance_sheet,html:series-aconvertible-participating-preferred-stock,html:series-aconvertible-participating-preferred-stock,Series Aconvertible participating preferred stock,99,0
+balance_sheet,html:equity-2,html:equity-2,Equity,100,0
+balance_sheet,html:preferred-stock,html:preferred-stock,Preferred stock,101,0
+balance_sheet,html:series-bconvertible-participating-preferred-stock,html:series-bconvertible-participating-preferred-stock,Series Bconvertible participating preferred stock,102,0
+balance_sheet,html:equity-3,html:equity-3,Equity,103,0
+balance_sheet,html:preferred-stock-2,html:preferred-stock-2,Preferred stock,104,0
+balance_sheet,html:series-cconvertible-participating-preferred-stock,html:series-cconvertible-participating-preferred-stock,Series Cconvertible participating preferred stock,105,0
+balance_sheet,html:equity-4,html:equity-4,Equity,106,0
+balance_sheet,html:preferred-stock-3,html:preferred-stock-3,Preferred stock,107,0
+balance_sheet,html:class-acommon-stock,html:class-acommon-stock,Class Acommon stock,108,0
+balance_sheet,html:equity-5,html:equity-5,Equity,109,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,110,0
+balance_sheet,html:class-bcommon-stock,html:class-bcommon-stock,Class Bcommon stock,111,0
+balance_sheet,html:equity-6,html:equity-6,Equity,112,0
+balance_sheet,html:common-stock-2,html:common-stock-2,Common stock,113,0
+balance_sheet,html:class-ccommon-stock,html:class-ccommon-stock,Class Ccommon stock,114,0
+balance_sheet,html:equity-7,html:equity-7,Equity,115,0
+balance_sheet,html:common-stock-3,html:common-stock-3,Common stock,116,0
+cash_flow,html:payment-of-deferred-purchase-consideration-related-to-the-visa-europe-acquisition,html:payment-of-deferred-purchase-consideration-related-to-the-visa-europe-acquisition,Payment of deferred purchase consideration related to the Visa Europe acquisition,40,0
+cash_flow,html:restricted-stock-and-performance-based-shares-settled-in-cash-for-taxes,html:restricted-stock-and-performance-based-shares-settled-in-cash-for-taxes,Restricted stock and performance-based shares settled in cash for taxes,42,0
+cash_flow,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-year,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-year,"Cash, cash equivalents, restricted cash and restricted cash equivalents at beginning of year",50,0
+cash_flow,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-year,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-year,"Cash, cash equivalents, restricted cash and restricted cash equivalents at end of year",51,0
+cash_flow,html:supplemental-disclosure,html:supplemental-disclosure,Supplemental Disclosure,52,0
+cash_flow,html:interest-payments-on-debt,html:interest-payments-on-debt,Interest payments on debt,1,0
+balance_sheet,us-gaap:PreferredStockSharesIssued@R35,us-gaap:PreferredStockSharesIssued@R35,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at June 30, 2020 and September 30, 2019 (the “UK&Ipreferred stock”) (Note 5 and Note 10)",68,0
+balance_sheet,html:preferred-stock-0-0001-par-value-25-shares-authorized-and-5-shares-issued-and-outstanding-as-follows,html:preferred-stock-0-0001-par-value-25-shares-authorized-and-5-shares-issued-and-outstanding-as-follows,"Preferred stock, $0.0001 par value, 25 shares authorized and 5 shares issued and outstanding as follows:",46,0
+balance_sheet,us-gaap:PreferredStockValue@R35,us-gaap:PreferredStockValue@R35,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at March 31, 2020 and September 30, 2019 (the “UK&Ipreferred stock”) (Note 5 and Note 10)",66,0
+balance_sheet,us-gaap:PreferredStockValue@R36,us-gaap:PreferredStockValue@R36,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at March 31, 2020 and September 30, 2019 (the “Europe preferred stock”) (Note 5 and Note 10)",71,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,693 and 1,718 shares issued and outstanding at March 31, 2020 and September 30, 2019, respectively (Note 10)",72,0
+balance_sheet,us-gaap:CommonStockValue@R38,us-gaap:CommonStockValue@R38,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at March 31, 2020 and September 30, 2019 (Note 10)",73,0
+balance_sheet,us-gaap:CommonStockValue@R39,us-gaap:CommonStockValue@R39,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 11 shares issued and outstanding at March 31, 2020 and September 30, 2019 (Note 10)",74,0
+cash_flow,html:charitable-contribution-of-investment-securities-to-visa-foundation,html:charitable-contribution-of-investment-securities-to-visa-foundation,Charitable contribution of investment securities to Visa Foundation,2,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesNoncurrent,us-gaap:AvailableForSaleSecuritiesNoncurrent,Investment securities (Note 5),14,0
+balance_sheet,v:BusinessCombinationAdditionalCashConsiderationPayableCurrent,v:BusinessCombinationAdditionalCashConsiderationPayableCurrent,Deferred purchase consideration,35,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossCumulativeChangesInNetGainLossFromCashFlowHedgesEffectNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossCumulativeChangesInNetGainLossFromCashFlowHedgesEffectNetOfTax,Derivative instruments,92,0
+cash_flow,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,"Proceeds from sales of property, equipment and technology",25,0
+balance_sheet,html:investment-securities-note-5,html:investment-securities-note-5,Investment securities (Note 5),3,0
+balance_sheet,html:customer-collateral-note-3-and-note-7,html:customer-collateral-note-3-and-note-7,Customer collateral (Note 3 and Note 7),8,0
+balance_sheet,html:investment-securities-note-5-2,html:investment-securities-note-5-2,Investment securities (Note 5),15,0
+balance_sheet,html:customer-collateral-note-7,html:customer-collateral-note-7,Customer collateral (Note 7),29,0
+balance_sheet,html:series-aconvertible-participating-preferred-stock-none-issued-the-class-aequivalent-preferred-stock-note-9,html:series-aconvertible-participating-preferred-stock-none-issued-the-class-aequivalent-preferred-stock-note-9,"Series Aconvertible participating preferred stock, none issued (the “class Aequivalent preferred stock”) (Note 9)",47,0
+balance_sheet,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-uk-ipreferred-stock-note-9,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-uk-ipreferred-stock-note-9,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at March 31, 2019 and September 30, 2018 (the “UK&Ipreferred stock”) (Note 9)",48,0
+balance_sheet,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-europe-preferred-stock-note-9,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-the-europe-preferred-stock-note-9,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at March 31, 2019 and September 30, 2018 (the “Europe preferred stock”) (Note 9)",51,0
+balance_sheet,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-741-and-1-768-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-respectively-note-9,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-741-and-1-768-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-respectively-note-9,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,741 and 1,768 shares issued and outstanding at March 31, 2019 and September 30, 2018, respectively (Note 9)",54,0
+balance_sheet,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at March 31, 2019 and September 30, 2018 (Note 9)",57,0
+balance_sheet,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-march-31-2019-and-september-30-2018-note-9,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 12 shares issued and outstanding at March 31, 2019 and September 30, 2018 (Note 9)",60,0
+cash_flow,html:right-to-recover-for-covered-losses-recorded-in-equity-note-4,html:right-to-recover-for-covered-losses-recorded-in-equity-note-4,Right to recover for covered losses recorded in equity (Note 4),8,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesNoncurrent,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesNoncurrent,Investment securities (Note 6),16,0
+balance_sheet,us-gaap:PreferredStockValueOutstanding@R36,us-gaap:PreferredStockValueOutstanding@R36,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at September 30, 2019 and 2018 (the “UK&Ipreferred stock”) (Note 5 and Note 14)",49,0
+balance_sheet,us-gaap:PreferredStockValueOutstanding@R37,us-gaap:PreferredStockValueOutstanding@R37,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at September 30, 2019 and 2018 (the “Europe preferred stock”) (Note 5 and Note 14)",52,0
+balance_sheet,us-gaap:CommonStockValueOutstanding,us-gaap:CommonStockValueOutstanding,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,718 and 1,768 shares issued and outstanding at September 30, 2019 and 2018, respectively (Note 14)",55,0
+balance_sheet,us-gaap:CommonStockValueOutstanding@R39,us-gaap:CommonStockValueOutstanding@R39,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at September 30, 2019 and 2018, respectively (Note 14)",58,0
+balance_sheet,us-gaap:CommonStockValueOutstanding@R40,us-gaap:CommonStockValueOutstanding@R40,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 11 and 12 shares issued and outstanding at September 30, 2019 and 2018, respectively (Note 14)",61,0
+cash_flow,us-gaap:NoncashContributionExpense,us-gaap:NoncashContributionExpense,Charitable contribution of Visa Inc. shares (Note 19),10,0
+cash_flow,us-gaap:PaymentsOfDebtIssuanceCosts,us-gaap:PaymentsOfDebtIssuanceCosts,Debt issuance costs,41,0
+balance_sheet,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-uk-ipreferred-stock-note-9,html:series-bconvertible-participating-preferred-stock-2-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-uk-ipreferred-stock-note-9,"Series Bconvertible participating preferred stock, 2 shares issued and outstanding at December 31, 2018 and September 30, 2018 (the “UK&Ipreferred stock”) (Note 9)",50,0
+balance_sheet,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-europe-preferred-stock-note-9,html:series-cconvertible-participating-preferred-stock-3-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-the-europe-preferred-stock-note-9,"Series Cconvertible participating preferred stock, 3 shares issued and outstanding at December 31, 2018 and September 30, 2018 (the “Europe preferred stock”) (Note 9)",53,0
+balance_sheet,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-754-and-1-768-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-respectively-note-9,html:class-acommon-stock-0-0001-par-value-2-001-622-shares-authorized-1-754-and-1-768-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-respectively-note-9,"Class Acommon stock, $0.0001 par value, 2,001,622 shares authorized, 1,754 and 1,768 shares issued and outstanding at December 31, 2018 and September 30, 2018, respectively (Note 9)",56,0
+balance_sheet,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,html:class-bcommon-stock-0-0001-par-value-622-shares-authorized-245-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,"Class Bcommon stock, $0.0001 par value, 622 shares authorized, 245 shares issued and outstanding at December 31, 2018 and September 30, 2018 (Note 9)",59,0
+balance_sheet,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,html:class-ccommon-stock-0-0001-par-value-1-097-shares-authorized-12-shares-issued-and-outstanding-at-december-31-2018-and-september-30-2018-note-9,"Class Ccommon stock, $0.0001 par value, 1,097 shares authorized, 12 shares issued and outstanding at December 31, 2018 and September 30, 2018 (Note 9)",62,0
+balance_sheet,html:derivative-instruments-classified-as-cash-flow-hedges,html:derivative-instruments-classified-as-cash-flow-hedges,Derivative instruments classified as cash flow hedges,93,0

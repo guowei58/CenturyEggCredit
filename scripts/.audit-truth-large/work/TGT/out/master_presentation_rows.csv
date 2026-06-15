@@ -1,0 +1,188 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,us-gaap:CashCashEquivalentsAndShortTermInvestments,us-gaap:CashCashEquivalentsAndShortTermInvestments,Cash and cash equivalents,4,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventory,5,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,6,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,7,0
+balance_sheet,html:property-and-equipment,html:property-and-equipment,Property and equipment,8,0
+balance_sheet,us-gaap:Land,us-gaap:Land,Land,19,0
+balance_sheet,us-gaap:BuildingsAndImprovementsGross,us-gaap:BuildingsAndImprovementsGross,Buildings and improvements,20,0
+balance_sheet,us-gaap:FurnitureAndFixturesGross,us-gaap:FurnitureAndFixturesGross,Fixtures and equipment,21,0
+balance_sheet,us-gaap:CapitalizedComputerSoftwareGross,us-gaap:CapitalizedComputerSoftwareGross,Computer hardware and software,22,0
+balance_sheet,us-gaap:ConstructionInProgressGross,us-gaap:ConstructionInProgressGross,Construction-in-progress,23,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Accumulated depreciation,26,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",27,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,28,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other noncurrent assets,29,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,30,0
+balance_sheet,html:liabilities-and-shareholders-investment,html:liabilities-and-shareholders-investment,Liabilities and shareholders' investment,31,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,41,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued and other current liabilities,42,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term debt and other borrowings,43,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,44,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt and other borrowings,45,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Noncurrent operating lease liabilities,46,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,48,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,49,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total noncurrent liabilities,50,0
+balance_sheet,html:shareholders-investment,html:shareholders-investment,Shareholders' investment,51,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,Common stock,58,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,59,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,60,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,61,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total shareholders' investment,62,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and shareholders' investment,63,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,Accumulated depreciation,24,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property and equipment, net",25,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,47,0
+income_statement,html:sales,html:sales,Sales,0,0
+income_statement,html:other-revenue,html:other-revenue,Other revenue,1,0
+income_statement,html:total-revenue,html:total-revenue,Total revenue,2,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of sales,3,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",4,0
+income_statement,html:depreciation-and-amortization-exclusive-of-depreciation-included-in-cost-of-sales,html:depreciation-and-amortization-exclusive-of-depreciation-included-in-cost-of-sales,Depreciation and amortization (exclusive of depreciation included in cost of sales),5,0
+income_statement,html:operating-income,html:operating-income,Operating income,6,0
+income_statement,html:net-interest-expense,html:net-interest-expense,Net interest expense,7,0
+income_statement,html:net-other-income-expense,html:net-other-income-expense,Net other (income) / expense,8,0
+income_statement,html:earnings-from-continuing-operations-before-income-taxes,html:earnings-from-continuing-operations-before-income-taxes,Earnings from continuing operations before income taxes,9,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,10,0
+income_statement,html:net-earnings-from-continuing-operations,html:net-earnings-from-continuing-operations,Net earnings from continuing operations,11,0
+income_statement,html:discontinued-operations-net-of-tax,html:discontinued-operations-net-of-tax,"Discontinued operations, net of tax",12,0
+income_statement,html:net-earnings,html:net-earnings,Net earnings,13,0
+income_statement,html:continuing-operations,html:continuing-operations,Continuing operations,14,0
+income_statement,html:net-earnings-per-share,html:net-earnings-per-share,Net earnings per share,15,0
+income_statement,html:weighted-average-common-shares-outstanding,html:weighted-average-common-shares-outstanding,Weighted average common shares outstanding,16,0
+income_statement,html:basic,html:basic,Basic,17,0
+income_statement,html:diluted,html:diluted,Diluted,18,0
+income_statement,html:antidilutive-shares,html:antidilutive-shares,Antidilutive shares,19,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:inventory,html:inventory,Inventory,1,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,2,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,3,0
+balance_sheet,html:land,html:land,Land,9,0
+balance_sheet,html:buildings-and-improvements,html:buildings-and-improvements,Buildings and improvements,10,0
+balance_sheet,html:fixtures-and-equipment,html:fixtures-and-equipment,Fixtures and equipment,11,0
+balance_sheet,html:computer-hardware-and-software,html:computer-hardware-and-software,Computer hardware and software,12,0
+balance_sheet,html:construction-in-progress,html:construction-in-progress,Construction-in-progress,13,0
+balance_sheet,html:accumulated-depreciation,html:accumulated-depreciation,Accumulated depreciation,14,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",15,0
+balance_sheet,html:operating-lease-assets,html:operating-lease-assets,Operating lease assets,16,0
+balance_sheet,html:other-noncurrent-assets,html:other-noncurrent-assets,Other noncurrent assets,17,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,18,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,32,0
+balance_sheet,html:accrued-and-other-current-liabilities,html:accrued-and-other-current-liabilities,Accrued and other current liabilities,33,0
+balance_sheet,html:current-portion-of-long-term-debt-and-other-borrowings,html:current-portion-of-long-term-debt-and-other-borrowings,Current portion of long-term debt and other borrowings,34,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,35,0
+balance_sheet,html:long-term-debt-and-other-borrowings,html:long-term-debt-and-other-borrowings,Long-term debt and other borrowings,36,0
+balance_sheet,html:noncurrent-operating-lease-liabilities,html:noncurrent-operating-lease-liabilities,Noncurrent operating lease liabilities,37,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,38,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,39,0
+balance_sheet,html:total-noncurrent-liabilities,html:total-noncurrent-liabilities,Total noncurrent liabilities,40,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,52,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,53,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,54,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,55,0
+balance_sheet,html:total-shareholders-investment,html:total-shareholders-investment,Total shareholders’ investment,56,0
+balance_sheet,html:total-liabilities-and-shareholders-investment,html:total-liabilities-and-shareholders-investment,Total liabilities and shareholders’ investment,57,0
+cash_flow,html:net-earnings,html:net-earnings,Net earnings,0,0
+cash_flow,html:earnings-from-discontinued-operations-net-of-tax,html:earnings-from-discontinued-operations-net-of-tax,"Earnings from discontinued operations, net of tax",1,0
+cash_flow,html:net-earnings-from-continuing-operations,html:net-earnings-from-continuing-operations,Net earnings from continuing operations,2,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,3,0
+cash_flow,html:share-based-compensation-expense,html:share-based-compensation-expense,Share-based compensation expense,4,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,5,0
+cash_flow,html:noncash-losses-gains-and-other-net,html:noncash-losses-gains-and-other-net,"Noncash losses / (gains) and other, net",6,0
+cash_flow,html:changes-in-operating-accounts,html:changes-in-operating-accounts,Changes in operating accounts,7,0
+cash_flow,html:inventory,html:inventory,Inventory,8,0
+cash_flow,html:other-assets,html:other-assets,Other assets,9,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,10,0
+cash_flow,html:accrued-and-other-liabilities,html:accrued-and-other-liabilities,Accrued and other liabilities,11,0
+cash_flow,html:cash-provided-by-operating-activities-continuing-operations,html:cash-provided-by-operating-activities-continuing-operations,Cash provided by operating activities—continuing operations,12,0
+cash_flow,html:cash-provided-by-operating-activities-discontinued-operations,html:cash-provided-by-operating-activities-discontinued-operations,Cash provided by operating activities—discontinued operations,13,0
+cash_flow,html:expenditures-for-property-and-equipment,html:expenditures-for-property-and-equipment,Expenditures for property and equipment,14,0
+cash_flow,html:proceeds-from-disposal-of-property-and-equipment,html:proceeds-from-disposal-of-property-and-equipment,Proceeds from disposal of property and equipment,15,0
+cash_flow,html:other-investments,html:other-investments,Other investments,16,0
+cash_flow,html:cash-required-for-investing-activities,html:cash-required-for-investing-activities,Cash required for investing activities,17,0
+cash_flow,html:additions-to-long-term-debt,html:additions-to-long-term-debt,Additions to long-term debt,18,0
+cash_flow,html:reductions-of-long-term-debt,html:reductions-of-long-term-debt,Reductions of long-term debt,19,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,20,0
+cash_flow,html:repurchase-of-stock,html:repurchase-of-stock,Repurchase of stock,21,0
+cash_flow,html:accelerated-share-repurchase-pending-final-settlement,html:accelerated-share-repurchase-pending-final-settlement,Accelerated share repurchase pending final settlement,22,0
+cash_flow,html:stock-option-exercises,html:stock-option-exercises,Stock option exercises,23,0
+cash_flow,html:cash-required-for-financing-activities,html:cash-required-for-financing-activities,Cash required for financing activities,24,0
+cash_flow,html:net-decrease-in-cash-and-cash-equivalents,html:net-decrease-in-cash-and-cash-equivalents,Net decrease in cash and cash equivalents,25,0
+cash_flow,html:cash-and-cash-equivalents-at-beginning-of-period,html:cash-and-cash-equivalents-at-beginning-of-period,Cash and cash equivalents at beginning of period,26,0
+cash_flow,html:cash-and-cash-equivalents-at-end-of-period,html:cash-and-cash-equivalents-at-end-of-period,Cash and cash equivalents at end of period,27,0
+cash_flow,html:supplemental-information,html:supplemental-information,Supplemental information,28,0
+cash_flow,html:leased-assets-obtained-in-exchange-for-new-finance-lease-liabilities,html:leased-assets-obtained-in-exchange-for-new-finance-lease-liabilities,Leased assets obtained in exchange for new finance lease liabilities,29,0
+cash_flow,html:leased-assets-obtained-in-exchange-for-new-operating-lease-liabilities,html:leased-assets-obtained-in-exchange-for-new-operating-lease-liabilities,Leased assets obtained in exchange for new operating lease liabilities,30,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Sales,20,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales,21,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative expenses",22,0
+income_statement,us-gaap:DepreciationAndAmortization,us-gaap:DepreciationAndAmortization,Depreciation and amortization (exclusive of depreciation included in cost of sales),23,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,24,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Net other (income) / expense,25,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,Earnings from continuing operations before income taxes,26,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes,27,0
+income_statement,us-gaap:IncomeLossFromContinuingOperations,us-gaap:IncomeLossFromContinuingOperations,Net earnings from continuing operations,28,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,"Discontinued operations, net of tax",29,0
+income_statement,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,Net earnings,30,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,Continuing operations,33,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Net earnings per share,42,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,Continuing operations,34,0
+income_statement,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare,Discontinued operations,39,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Net earnings per share,43,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,35,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,40,0
+income_statement,us-gaap:AntidilutiveSecuritiesExcludedFromComputationOfEarningsPerShareAmount,us-gaap:AntidilutiveSecuritiesExcludedFromComputationOfEarningsPerShareAmount,Antidilutive shares,44,0
+cash_flow,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,Net earnings,31,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,33,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Share-based compensation expense,47,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,57,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,"Noncash losses / (gains) and other, net",61,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventory,34,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherCurrentAssets,us-gaap:IncreaseDecreaseInOtherCurrentAssets,Other assets,48,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,Accounts payable,58,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherAccruedLiabilities,us-gaap:IncreaseDecreaseInOtherAccruedLiabilities,Accrued and other liabilities,62,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Cash provided by operations,66,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Expenditures for property and equipment,35,0
+cash_flow,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,Proceeds from disposal of property and equipment,49,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other investments,59,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Cash required for investing activities,63,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Additions to long-term debt,36,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Reductions of long-term debt,50,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Dividends paid,60,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchase of stock,64,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Stock option exercises,65,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Cash required for financing activities,67,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net increase / (decrease) in cash and cash equivalents,68,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Cash and cash equivalents at beginning of period,69,0
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,Leased assets obtained in exchange for new finance lease liabilities,37,0
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability,Leased assets obtained in exchange for new operating lease liabilities,51,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net earnings,36,0
+cash_flow,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net earnings,32,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,"Change in commercial paper, net",70,0
+income_statement,html:revenue,html:revenue,Revenue,31,0
+income_statement,html:continuing-operations-in-dollars-per-share,html:continuing-operations-in-dollars-per-share,Continuing operations (in dollars per share),45,0
+income_statement,html:discontinued-operations-in-dollars-per-share,html:discontinued-operations-in-dollars-per-share,Discontinued operations (in dollars per share),47,0
+income_statement,html:net-earnings-per-share-in-dollars-per-share,html:net-earnings-per-share-in-dollars-per-share,Net earnings per share (in dollars per share),49,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),46,0
+income_statement,html:diluted-in-shares,html:diluted-in-shares,Diluted (in shares),48,0
+income_statement,html:antidilutive-shares-in-shares,html:antidilutive-shares-in-shares,Antidilutive shares (in shares),50,0
+cash_flow,html:cash-provided-by-required-for-financing-activities,html:cash-provided-by-required-for-financing-activities,Cash provided by / (required for) financing activities,38,0
+cash_flow,html:net-increase-in-cash-and-cash-equivalents,html:net-increase-in-cash-and-cash-equivalents,Net increase in cash and cash equivalents,52,0
+cash_flow,html:loss-on-debt-extinguishment,html:loss-on-debt-extinguishment,Loss on debt extinguishment,39,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Gain on Dermstore sale,40,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinesses,us-gaap:ProceedsFromDivestitureOfBusinesses,Proceeds from Dermstore sale,41,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Earnings before income taxes,37,0
+cash_flow,tgt:AcceleratedPaymentsForRepurchaseOfCommonStockPendingFinalSettlement,tgt:AcceleratedPaymentsForRepurchaseOfCommonStockPendingFinalSettlement,Accelerated share repurchase pending final settlement,42,0
+cash_flow,html:cash-provided-by-required-for-operating-activities,html:cash-provided-by-required-for-operating-activities,Cash provided by (required for) operating activities,43,0
+cash_flow,html:change-in-commercial-paper-net,html:change-in-commercial-paper-net,"Change in commercial paper, net",71,0
+cash_flow,html:shares-withheld-for-taxes-on-share-based-compensation,html:shares-withheld-for-taxes-on-share-based-compensation,Shares withheld for taxes on share-based compensation,44,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Shares withheld for taxes on share-based compensation,53,0
+income_statement,html:net-sales,html:net-sales,Net sales,32,0
+income_statement,html:adjusted-sg-aexpenses-a,html:adjusted-sg-aexpenses-a,Adjusted SG&Aexpenses (a),38,0
+income_statement,html:adjusted-operating-income-a,html:adjusted-operating-income-a,Adjusted operating income (a),41,0
+cash_flow,html:noncash-gains-losses-and-other-net,html:noncash-gains-losses-and-other-net,"Noncash (gains) / losses and other, net",54,0
+cash_flow,html:cash-provided-by-operating-activities,html:cash-provided-by-operating-activities,Cash provided by operating activities,55,0
+cash_flow,html:other,html:other,Other,45,0
+cash_flow,html:cash-used-in-investing-activities,html:cash-used-in-investing-activities,Cash used in investing activities,56,0
+cash_flow,html:cash-used-in-financing-activities,html:cash-used-in-financing-activities,Cash used in financing activities,46,0

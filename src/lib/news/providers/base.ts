@@ -27,8 +27,9 @@ export async function fetchWithTimeout(
 }
 
 export function perRequestLimit(params: NewsQueryParams, cfgMax: number, hardCap = 100): number {
-  const fromReq = params.limit != null ? Math.floor(params.limit) : cfgMax;
-  return Math.min(hardCap, Math.max(1, Math.min(fromReq, cfgMax)));
+  const requested =
+    params.limit != null && params.limit > 0 ? Math.floor(params.limit) : cfgMax;
+  return Math.min(hardCap, Math.max(1, requested));
 }
 
 export function buildRuntimeContext(

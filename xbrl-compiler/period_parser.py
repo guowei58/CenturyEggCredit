@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from datetime import date
 
 _TYPE_ORDER = {"Q1": 0, "Q2": 1, "Q3": 2, "Q4": 3, "FY": 4, "6M": 5, "9M": 6}
 
@@ -37,17 +38,36 @@ class Period:
 
 _Q_RE  = re.compile(r"^([1-4])Q(\d{2})$", re.I)
 _FY_RE = re.compile(r"^FY(\d{2})$", re.I)
+_FY4_RE = re.compile(r"^FY\s*((19|20)\d{2})$", re.I)
 _CM_RE = re.compile(r"^([69])M(\d{2})$", re.I)
+_PLAIN_YEAR_RE = re.compile(r"^(19|20)\d{2}$")
+_FISCAL_YEAR_LABEL_RE = re.compile(
+    r"^(?:for\s+the\s+)?(?:fiscal\s+)?years?\s+(?:ended\s+)?(19|20)\d{2}\b",
+    re.I,
+)
 
 _SEC_DATE_RE = re.compile(
     r"\b("
     r"Jan(?:uary|\.)?|Feb(?:ruary|\.)?|Mar(?:ch|\.)?|Apr(?:il|\.)?|May\.?|Jun(?:e|\.)?|"
     r"Jul(?:y|\.)?|Aug(?:ust|\.)?|Sep(?:t(?:ember)?|\.)?|Oct(?:ober|\.)?|Nov(?:ember|\.)?|Dec(?:ember|\.)?"
-    r")\s+(\d{1,2}),\s*(\d{4})\b",
+    r")\s+(\d{1,2}),?\s*(\d{4})\b",
     re.I,
 )
 
 _NUM_DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+
+# SEC HTML sometimes glues "Ended" to the month name (no space), e.g. HTZ 10-Q exports:
+# "Three Months EndedSeptember 30, 2024"
+_ENDED_GLUE_RE = re.compile(
+    r"(?i)(ended)"
+    r"(Jan(?:uary|\.)?|Feb(?:ruary|\.)?|Mar(?:ch|\.)?|Apr(?:il|\.)?|May\.?|Jun(?:e|\.)?|"
+    r"Jul(?:y|\.)?|Aug(?:ust|\.)?|Sep(?:t(?:ember)?|\.)?|Oct(?:ober|\.)?|Nov(?:ember|\.)?|Dec(?:ember|\.)?)"
+)
+
+
+def _normalize_sec_prose_header(header: str) -> str:
+    """Insert a space when duration prose is glued to a month name (``EndedSeptember`` → ``Ended September``)."""
+    return _ENDED_GLUE_RE.sub(r"\1 \2", header)
 
 
 def _year(yy: str) -> int:
@@ -79,13 +99,32 @@ _BS_INSTANT_MARKERS = (
 )
 
 
+def _header_has_duration_prose(low: str) -> bool:
+    if "year ended" in low or "years ended" in low or "twelve month" in low:
+        return True
+    if "three month" in low or "quarter ended" in low or "nine month" in low or "six month" in low:
+        return True
+    return False
+
+
+def is_balance_sheet_point_in_time_header(header: str) -> bool:
+    """BS column is a balance *as of* a date, not a duration (year/quarter ended).
+
+    FICO-style ``December 31, 2018 (In thousands…)`` and GEN-style
+    ``December 31, 2021 ASSETS`` both qualify.  Used when remapping period tags
+    for non-December fiscal year ends.
+    """
+    low = header.lower()
+    if _header_has_duration_prose(low):
+        return False
+    return bool(collect_dates(header))
+
+
 def is_balance_sheet_instant_header(header: str) -> bool:
     """GEN-style BS columns: ``December 31, 2021 ASSETS`` (point-in-time, not duration FY)."""
+    if not is_balance_sheet_point_in_time_header(header):
+        return False
     low = header.lower()
-    if "year ended" in low or "years ended" in low or "twelve month" in low:
-        return False
-    if "three month" in low or "quarter ended" in low or "nine month" in low or "six month" in low:
-        return False
     return any(m in low for m in _BS_INSTANT_MARKERS)
 
 
@@ -259,6 +298,150 @@ def _parse_sec_prose_period(
     return Period(f"Q{q}", y, header)
 
 
+def plain_calendar_year_from_header(header: str) -> int | None:
+    """Extract a 4-digit calendar/fiscal year label from minimal workbook headers.
+
+    Face HTML exports sometimes collapse annual columns to ``2025`` / ``FY2025`` /
+    ``Fiscal Year 2025`` when multi-row SEC headers lose duration prose.
+    """
+    s = header.strip()
+    if not s:
+        return None
+    m = _PLAIN_YEAR_RE.match(s)
+    if m:
+        return int(s)
+    compact = re.sub(r"\s+", "", s)
+    m = _FY4_RE.match(compact)
+    if m:
+        return int(m.group(1))
+    m = _FISCAL_YEAR_LABEL_RE.search(s)
+    if m:
+        return int(m.group(0).split()[-1])
+    return None
+
+
+@dataclass(frozen=True)
+class WorkbookMetaPeriod:
+    """One period column from the workbook Meta sheet (authoritative start/end dates)."""
+
+    sheet: str
+    column: int
+    period_key: str
+    header: str
+    start: str | None
+    end: str | None
+
+
+def parse_iso_date(value: str | None) -> tuple[int, int, int] | None:
+    """Parse ``YYYY-MM-DD`` (or prefix thereof) to ``(year, month, day)``."""
+    if not value:
+        return None
+    s = str(value).strip()[:10]
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})$", s)
+    if not m:
+        return None
+    y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    if not (1 <= mo <= 12 and 1 <= d <= 31):
+        return None
+    return y, mo, d
+
+
+def _duration_days(
+    start: tuple[int, int, int],
+    end: tuple[int, int, int],
+) -> int:
+    return (date(*end) - date(*start)).days
+
+
+def _cumulative_kind_from_duration_days(
+    days: int,
+    *,
+    is_10k: bool,
+    statement_type: str,
+) -> str | None:
+    """Map XBRL period duration to FY / 9M / 6M / quarter (``None`` = discrete quarter)."""
+    if is_10k or days >= 350:
+        return "FY"
+    if days >= 250:
+        return "9M"
+    if days >= 160:
+        return "6M"
+    if days >= 80:
+        return None
+    if statement_type == "balance_sheet":
+        return None
+    return None
+
+
+def period_from_workbook_meta(
+    meta: WorkbookMetaPeriod,
+    *,
+    statement_type: str,
+    is_10k: bool,
+    fy_end_month: int | None = None,
+) -> Period | None:
+    """Build a Period from Meta sheet start/end dates (preferred) or header text."""
+    label = (meta.header or meta.period_key or "").strip()
+    end_t = parse_iso_date(meta.end)
+    start_t = parse_iso_date(meta.start)
+
+    if end_t is not None:
+        y, mo, d = end_t
+        if start_t is None:
+            cum: str | None = "FY" if is_10k and statement_type != "balance_sheet" else None
+        else:
+            days = _duration_days(start_t, end_t)
+            cum = _cumulative_kind_from_duration_days(
+                days, is_10k=is_10k, statement_type=statement_type,
+            )
+        if fy_end_month is not None:
+            return period_from_end_date(
+                y, mo, d, fy_end_month, label or meta.period_key, cumulative=cum,
+            )
+        if cum == "FY":
+            fy = fiscal_year_from_end_date(y, mo, d, fy_end_month or 12, is_annual=True)
+            return Period("FY", fy, label)
+        if cum == "9M":
+            return Period("9M", y, label)
+        if cum == "6M":
+            return Period("6M", y, label)
+        q = (mo - 1) // 3 + 1
+        return Period(f"Q{q}", y, label)
+
+    return parse_workbook_period(
+        label, statement_type=statement_type, is_10k=is_10k, fy_end_month=fy_end_month,
+    )
+
+
+def parse_workbook_period(
+    header: str,
+    *,
+    statement_type: str,
+    is_10k: bool,
+    fy_end_month: int | None = None,
+) -> Period | None:
+    """Parse a workbook column header with filing/statement context.
+
+    Extends :func:`parse_period` for year-only annual columns (common on 10-K and
+    some 10-Q YTD tables) and other minimal headers the TypeScript face export
+    can emit when SEC prose is stripped.
+    """
+    p = parse_period(header, fy_end_month=fy_end_month)
+    if p is not None:
+        return p
+
+    yr = plain_calendar_year_from_header(header)
+    if yr is None:
+        return None
+
+    # Year-only columns on saved face workbooks are annual (FY) comparatives.
+    # Applies to 10-K IS/BS/CF and 10-Q IS/CF YTD tables (e.g. MSFT Oct 10-Q).
+    if is_10k or statement_type in ("income_statement", "balance_sheet", "cash_flow"):
+        return Period("FY", yr, header.strip())
+
+    return None
+
+
 def parse_period(header: str, *, fy_end_month: int | None = None) -> Period | None:
     """Return a Period for recognised header strings, else None.
 
@@ -279,9 +462,10 @@ def parse_period(header: str, *, fy_end_month: int | None = None) -> Period | No
     if m:
         return Period(f"{m.group(1)}M", _year(m.group(2)), s)
 
-    prose = _parse_sec_prose_period(s, fy_end_month=fy_end_month)
+    prose = _parse_sec_prose_period(_normalize_sec_prose_header(s), fy_end_month=fy_end_month)
     if prose:
-        return prose
+        # Keep the workbook's original column text for traceability.
+        return Period(prose.period_type, prose.fiscal_year, s)
 
     return None
 

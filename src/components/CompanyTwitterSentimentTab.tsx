@@ -4,8 +4,9 @@ import { Card } from "@/components/ui";
 import { XSearchFeed } from "@/components/xSearch/XSearchFeed";
 
 export function CompanyTwitterSentimentTab({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
-  const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
+  const safeTicker = ticker?.trim().toUpperCase() ?? "";
+  const resolvedCompanyName =
+    companyName?.trim() && companyName.trim().toUpperCase() !== safeTicker ? companyName.trim() : undefined;
 
   if (!safeTicker) {
     return (
@@ -19,7 +20,7 @@ export function CompanyTwitterSentimentTab({ ticker, companyName }: { ticker: st
 
   return (
     <Card title={`Twitter Sentiment — ${safeTicker}`}>
-      <XSearchFeed ticker={safeTicker} companyName={displayName || undefined} />
+      <XSearchFeed ticker={safeTicker} companyName={resolvedCompanyName} />
     </Card>
   );
 }

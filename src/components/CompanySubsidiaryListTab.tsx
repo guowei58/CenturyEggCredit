@@ -9,6 +9,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { SubsidiaryListExcelFileBox } from "@/components/SubsidiaryListExcelFileBox";
 import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
@@ -143,7 +144,10 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
           stored under this tab only, and use the prompt in Claude, ChatGPT, Gemini, or DeepSeek. This tab has no fixed sample images—attach
           Exhibit 21, debt exhibits, or other files in your AI session when helpful.
         </p>
-        <div className="flex flex-col gap-6 lg:flex-row">
+        <TabPromptSlideOutShell
+          hasMainContent={savedContent.trim().length > 0}
+          main={
+            <div className="flex flex-col gap-6 lg:flex-row">
           {isSavedResponseCollapsed ? (
             <div className="flex w-full justify-start lg:w-[44px] lg:flex-none">
               <button
@@ -246,7 +250,10 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
             </div>
           )}
 
-          <div className="flex w-full flex-col lg:w-80 flex-shrink-0 gap-3">
+            </div>
+          }
+          prompt={
+            <div className="flex w-full flex-col gap-3">
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
                 Reference materials
@@ -341,8 +348,9 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
                 </p>
               )}
             </div>
-          </div>
-        </div>
+            </div>
+          }
+        />
       </Card>
     </div>
   );

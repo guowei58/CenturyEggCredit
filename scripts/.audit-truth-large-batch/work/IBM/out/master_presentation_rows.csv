@@ -1,0 +1,277 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenue,html:revenue,Revenue,0,0
+income_statement,html:cost,html:cost,Cost,1,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,2,0
+income_statement,html:expense-and-other-income,html:expense-and-other-income,Expense and other (income),3,0
+income_statement,html:selling-general-and-administrative,html:selling-general-and-administrative,"Selling, general and administrative",4,0
+income_statement,html:research-and-development,html:research-and-development,Research and development,5,0
+income_statement,html:intellectual-property-and-custom-development-income,html:intellectual-property-and-custom-development-income,Intellectual property and custom development income,6,0
+income_statement,html:other-income-and-expense-1,html:other-income-and-expense-1,Other (income) and expense [1],7,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,8,0
+income_statement,html:total-expense-and-other-income,html:total-expense-and-other-income,Total expense and other (income),9,0
+income_statement,html:income-from-continuing-operations-before-income-taxes,html:income-from-continuing-operations-before-income-taxes,Income from continuing operations before income taxes,10,0
+income_statement,html:provision-for-benefit-from-income-taxes-1,html:provision-for-benefit-from-income-taxes-1,Provision for/(benefit from) income taxes [1],11,0
+income_statement,html:income-from-continuing-operations,html:income-from-continuing-operations,Income from continuing operations,12,0
+income_statement,html:income-loss-from-discontinued-operations-net-of-tax,html:income-loss-from-discontinued-operations-net-of-tax,"Income/(loss) from discontinued operations, net of tax",13,0
+income_statement,html:net-income-1,html:net-income-1,Net income [1],20,0
+income_statement,html:assuming-dilution,html:assuming-dilution,Assuming dilution,23,0
+income_statement,html:continuing-operations-in-dollars-per-share-1,html:continuing-operations-in-dollars-per-share-1,Continuing operations (in dollars per share) [1],24,0
+income_statement,html:discontinued-operations-in-dollars-per-share-1,html:discontinued-operations-in-dollars-per-share-1,Discontinued operations (in dollars per share) [1],25,0
+income_statement,html:total-in-dollars-per-share-1,html:total-in-dollars-per-share-1,Total (in dollars per share) [1],26,0
+income_statement,html:basic,html:basic,Basic,28,0
+income_statement,html:weighted-average-number-of-common-shares-outstanding,html:weighted-average-number-of-common-shares-outstanding,Weighted-average number of common shares outstanding,29,0
+income_statement,html:assuming-dilution-in-shares,html:assuming-dilution-in-shares,Assuming dilution (in shares),30,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),31,0
+income_statement,html:services,html:services,Services,32,0
+income_statement,html:sales,html:sales,Sales,33,0
+income_statement,html:financing,html:financing,Financing,34,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,6,0
+balance_sheet,html:restricted-cash,html:restricted-cash,Restricted cash,7,0
+balance_sheet,html:marketable-securities,html:marketable-securities,Marketable securities,27,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-99-in-2025-and-114-in-2024,html:notes-and-accounts-receivable-trade-net-of-allowances-of-99-in-2025-and-114-in-2024,Notes and accounts receivable—trade (net of allowances of $99 in 2025 and $114 in 2024),32,0
+balance_sheet,html:short-term-financing-receivables,html:short-term-financing-receivables,Short-term financing receivables,33,0
+balance_sheet,html:held-for-investment-net-of-allowances-of-106-in-2025-and-109-in-2024,html:held-for-investment-net-of-allowances-of-106-in-2025-and-109-in-2024,Held for investment (net of allowances of $106 in 2025 and $109 in 2024),38,0
+balance_sheet,html:held-for-sale,html:held-for-sale,Held for sale,39,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-37-in-2025-and-31-in-2024,html:other-accounts-receivable-net-of-allowances-of-37-in-2025-and-31-in-2024,Other accounts receivable (net of allowances of $37 in 2025 and $31 in 2024),42,0
+balance_sheet,html:inventory,html:inventory,Inventory,43,0
+balance_sheet,html:deferred-costs,html:deferred-costs,Deferred costs,44,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,45,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,47,0
+balance_sheet,html:property-plant-and-equipment,html:property-plant-and-equipment,"Property, plant and equipment",78,0
+balance_sheet,html:less-accumulated-depreciation,html:less-accumulated-depreciation,Less: Accumulated depreciation,79,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant and equipment—net",80,0
+balance_sheet,html:operating-right-of-use-assets-net,html:operating-right-of-use-assets-net,Operating right-of-use assets—net,81,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-34-in-2025-and-19-in-2024,html:long-term-financing-receivables-net-of-allowances-of-34-in-2025-and-19-in-2024,Long-term financing receivables (net of allowances of $34 in 2025 and $19 in 2024),85,0
+balance_sheet,html:prepaid-pension-assets,html:prepaid-pension-assets,Prepaid pension assets,86,0
+balance_sheet,html:deferred-taxes,html:deferred-taxes,Deferred taxes,87,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,88,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,Intangible assets—net,89,0
+balance_sheet,html:investments-and-sundry-assets,html:investments-and-sundry-assets,Investments and sundry assets,90,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,91,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,92,0
+balance_sheet,html:taxes,html:taxes,Taxes,99,0
+balance_sheet,html:short-term-debt,html:short-term-debt,Short-term debt,100,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,101,0
+balance_sheet,html:compensation-and-benefits,html:compensation-and-benefits,Compensation and benefits,102,0
+balance_sheet,html:deferred-income,html:deferred-income,Deferred income,103,0
+balance_sheet,html:operating-lease-liabilities,html:operating-lease-liabilities,Operating lease liabilities,106,0
+balance_sheet,html:other-accrued-expenses-and-liabilities,html:other-accrued-expenses-and-liabilities,Other accrued expenses and liabilities,107,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,109,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,121,0
+balance_sheet,html:retirement-and-nonpension-postretirement-benefit-obligations,html:retirement-and-nonpension-postretirement-benefit-obligations,Retirement and nonpension postretirement benefit obligations,122,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other liabilities,123,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,124,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and Contingencies,128,0
+balance_sheet,html:ibm-stockholders-equity,html:ibm-stockholders-equity,IBM stockholders' equity,129,0
+balance_sheet,html:common-stock-and-additional-paid-in-capital,html:common-stock-and-additional-paid-in-capital,Common stock and additional paid-in capital,136,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,137,0
+balance_sheet,html:treasury-stock-at-cost-shares-2025-1-353-666-394-2024-1-352-874-243,html:treasury-stock-at-cost-shares-2025-1-353-666-394-2024-1-352-874-243,"Treasury stock, at cost (shares: 2025—1,353,666,394; 2024—1,352,874,243)",145,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income/(loss),146,0
+balance_sheet,html:total-ibm-stockholders-equity,html:total-ibm-stockholders-equity,Total IBM stockholders' equity,147,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,149,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,150,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,151,0
+cash_flow,html:net-income-1,html:net-income-1,Net income [1],0,0
+cash_flow,html:pension-settlement-charges,html:pension-settlement-charges,Pension settlement charges,1,0
+cash_flow,html:depreciation-2,html:depreciation-2,Depreciation [2],6,0
+cash_flow,html:amortization-of-capitalized-software-and-acquired-intangible-assets,html:amortization-of-capitalized-software-and-acquired-intangible-assets,Amortization of capitalized software and acquired intangible assets,7,0
+cash_flow,html:stock-based-compensation,html:stock-based-compensation,Stock-based compensation,8,0
+cash_flow,html:deferred-taxes-3,html:deferred-taxes-3,Deferred taxes [3],9,0
+cash_flow,html:net-gain-loss-on-divestitures-asset-sales-and-other,html:net-gain-loss-on-divestitures-asset-sales-and-other,"Net (gain)/loss on divestitures, asset sales and other",10,0
+cash_flow,html:change-in-operating-assets-and-liabilities-net-of-acquisitions-divestitures,html:change-in-operating-assets-and-liabilities-net-of-acquisitions-divestitures,"Change in operating assets and liabilities, net of acquisitions/divestitures",11,0
+cash_flow,html:receivables-including-financing-receivables,html:receivables-including-financing-receivables,Receivables (including financing receivables),12,0
+cash_flow,html:retirement-related,html:retirement-related,Retirement related,13,0
+cash_flow,html:inventory,html:inventory,Inventory,14,0
+cash_flow,html:other-assets-other-liabilities-3,html:other-assets-other-liabilities-3,Other assets/other liabilities [3],15,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,16,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,17,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities,18,0
+cash_flow,html:payments-for-property-plant-and-equipment,html:payments-for-property-plant-and-equipment,"Payments for property, plant and equipment",19,0
+cash_flow,html:proceeds-from-disposition-of-property-plant-and-equipment-other,html:proceeds-from-disposition-of-property-plant-and-equipment-other,"Proceeds from disposition of property, plant and equipment/other",20,0
+cash_flow,html:investment-in-software,html:investment-in-software,Investment in software,21,0
+cash_flow,html:purchases-of-marketable-securities-and-other-investments,html:purchases-of-marketable-securities-and-other-investments,Purchases of marketable securities and other investments,22,0
+cash_flow,html:proceeds-from-disposition-of-marketable-securities-and-other-investments,html:proceeds-from-disposition-of-marketable-securities-and-other-investments,Proceeds from disposition of marketable securities and other investments,23,0
+cash_flow,html:acquisition-of-businesses-net-of-cash-acquired,html:acquisition-of-businesses-net-of-cash-acquired,"Acquisition of businesses, net of cash acquired",24,0
+cash_flow,html:divestiture-of-businesses-net-of-cash-transferred,html:divestiture-of-businesses-net-of-cash-transferred,"Divestiture of businesses, net of cash transferred",25,0
+cash_flow,html:net-cash-provided-by-used-in-investing-activities,html:net-cash-provided-by-used-in-investing-activities,Net cash provided by/(used in) investing activities,27,0
+cash_flow,html:proceeds-from-new-debt,html:proceeds-from-new-debt,Proceeds from new debt,28,0
+cash_flow,html:payments-to-settle-debt,html:payments-to-settle-debt,Payments to settle debt,29,0
+cash_flow,html:short-term-borrowings-repayments-less-than-90-days-net,html:short-term-borrowings-repayments-less-than-90-days-net,Short-term borrowings/(repayments) less than 90 days—net,30,0
+cash_flow,html:common-stock-repurchases-for-tax-withholdings,html:common-stock-repurchases-for-tax-withholdings,Common stock repurchases for tax withholdings,31,0
+cash_flow,html:proceeds-from-issuance-of-shares,html:proceeds-from-issuance-of-shares,Proceeds from issuance of shares,32,0
+cash_flow,html:financing-other,html:financing-other,Financing—other,33,0
+cash_flow,html:cash-dividends-paid,html:cash-dividends-paid,Cash dividends paid,35,0
+cash_flow,html:net-cash-provided-by-used-in-financing-activities,html:net-cash-provided-by-used-in-financing-activities,Net cash provided by/(used in) financing activities,36,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-cash-equivalents-and-restricted-cash,html:effect-of-exchange-rate-changes-on-cash-cash-equivalents-and-restricted-cash,"Effect of exchange rate changes on cash, cash equivalents and restricted cash",37,0
+cash_flow,html:net-change-in-cash-cash-equivalents-and-restricted-cash,html:net-change-in-cash-cash-equivalents-and-restricted-cash,"Net change in cash, cash equivalents and restricted cash",38,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-january-1,html:cash-cash-equivalents-and-restricted-cash-at-january-1,"Cash, cash equivalents and restricted cash at January 1",40,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-december-31,html:cash-cash-equivalents-and-restricted-cash-at-december-31,"Cash, cash equivalents and restricted cash at December 31",42,0
+cash_flow,html:supplemental-data,html:supplemental-data,Supplemental data,43,0
+cash_flow,html:income-taxes-paid-net-of-refunds-received,html:income-taxes-paid-net-of-refunds-received,Income taxes paid—net of refunds received,44,0
+cash_flow,html:interest-paid-on-debt,html:interest-paid-on-debt,Interest paid on debt,45,0
+cash_flow,html:1-refer-to-basis-of-presentation-in-note-a-significant-accounting-policies-for-additional-information-2-includes-operating-lease-right-of-use-assets-amortization-expense-of-0-9-billion-in-2025-2024-and-2023-3-refer-to-basis-of-presentation-in-note-a-significant-accounting-policies-for-additional-information,html:1-refer-to-basis-of-presentation-in-note-a-significant-accounting-policies-for-additional-information-2-includes-operating-lease-right-of-use-assets-amortization-expense-of-0-9-billion-in-2025-2024-and-2023-3-refer-to-basis-of-presentation-in-note-a-significant-accounting-policies-for-additional-information,"[1] Refer to ""Basis of Presentation"" in note A, ""Significant Accounting Policies,"" for additional information. [2] Includes operating lease right-of-use assets amortization expense of $0.9 billion in 2025, 2024 and 2023. [3] Refer to ""Basis of Presentation"" in note A, ""Significant Accounting Policies,"" for additional information.",47,0
+balance_sheet,html:marketable-securities-note-d,html:marketable-securities-note-d,Marketable securities (Note D),8,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-309-in-2018-and-297-in-2017,html:notes-and-accounts-receivable-trade-net-of-allowances-of-309-in-2018-and-297-in-2017,Notes and accounts receivable - trade (net of allowances of $309 in 2018 and $297 in 2017),9,0
+balance_sheet,html:short-term-financing-receivables-net-of-allowances-of-244-in-2018-and-261-in-2017-note-f,html:short-term-financing-receivables-net-of-allowances-of-244-in-2018-and-261-in-2017-note-f,Short-term financing receivables (net of allowances of $244 in 2018 and $261 in 2017) (Note F),10,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-38-in-2018-and-36-in-2017,html:other-accounts-receivable-net-of-allowances-of-38-in-2018-and-36-in-2017,Other accounts receivable (net of allowances of $38 in 2018 and $36 in 2017),11,0
+balance_sheet,html:inventories-note-e,html:inventories-note-e,Inventories (Note E),12,0
+balance_sheet,html:deferred-costs-note-o,html:deferred-costs-note-o,Deferred costs (Note O),13,0
+balance_sheet,html:property-plant-and-equipment-note-g,html:property-plant-and-equipment-note-g,"Property, plant and equipment (Note G)",48,0
+balance_sheet,html:less-accumulated-depreciation-note-g,html:less-accumulated-depreciation-note-g,Less: Accumulated depreciation (Note G),49,0
+balance_sheet,html:property-plant-and-equipment-net-note-g,html:property-plant-and-equipment-net-note-g,"Property, plant and equipment - net (Note G)",50,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-48-in-2018-and-74-in-2017-note-f,html:long-term-financing-receivables-net-of-allowances-of-48-in-2018-and-74-in-2017-note-f,Long-term financing receivables (net of allowances of $48 in 2018 and $74 in 2017) (Note F),51,0
+balance_sheet,html:prepaid-pension-assets-note-t,html:prepaid-pension-assets-note-t,Prepaid pension assets (Note T),52,0
+balance_sheet,html:deferred-taxes-note-n,html:deferred-taxes-note-n,Deferred taxes (Note N),53,0
+balance_sheet,html:goodwill-note-i,html:goodwill-note-i,Goodwill (Note I),54,0
+balance_sheet,html:intangible-assets-net-note-i,html:intangible-assets-net-note-i,Intangible assets - net (Note I),55,0
+balance_sheet,html:investments-and-sundry-assets-note-h,html:investments-and-sundry-assets-note-h,Investments and sundry assets (Note H),56,0
+balance_sheet,html:taxes-note-n,html:taxes-note-n,Taxes (Note N),93,0
+balance_sheet,html:short-term-debt-notes-d-j,html:short-term-debt-notes-d-j,Short-term debt (Notes D&J),94,0
+balance_sheet,html:long-term-debt-notes-d-j,html:long-term-debt-notes-d-j,Long-term debt (Notes D&J),110,0
+balance_sheet,html:retirement-and-nonpension-postretirement-benefit-obligations-note-t,html:retirement-and-nonpension-postretirement-benefit-obligations-note-t,Retirement and nonpension postretirement benefit obligations (Note T),111,0
+balance_sheet,html:other-liabilities-note-k,html:other-liabilities-note-k,Other liabilities (Note K),112,0
+balance_sheet,html:contingencies-and-commitments-note-m,html:contingencies-and-commitments-note-m,Contingencies and commitments (Note M),125,0
+balance_sheet,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2018-2-233-427-058-2017-2-229-428-813,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2018-2-233-427-058-2017-2-229-428-813,"Common stock, par value $.20 per share, and additional paid-in capital; Shares authorized: 4,687,500,000; Shares issued (2018 - 2,233,427,058; 2017 - 2,229,428,813)",130,0
+balance_sheet,html:treasury-stock-at-cost-shares-2018-1-340-947-648-2017-1-307-249-588,html:treasury-stock-at-cost-shares-2018-1-340-947-648-2017-1-307-249-588,"Treasury stock, at cost (Shares: 2018 - 1,340,947,648; 2017 - 1,307,249,588)",138,0
+balance_sheet,html:noncontrolling-interests-note-a,html:noncontrolling-interests-note-a,Noncontrolling interests (Note A),148,0
+balance_sheet,html:1-recast-to-reflect-adoption-of-the-fasb-guidance-on-restricted-cash-2-recast-to-conform-to-current-period-presentation,html:1-recast-to-reflect-adoption-of-the-fasb-guidance-on-restricted-cash-2-recast-to-conform-to-current-period-presentation,[1] * Recast to reflect adoption of the FASB guidance on restricted cash. [2] ** Recast to conform to current period presentation.,152,0
+balance_sheet,html:1,html:1,[1],153,0
+balance_sheet,html:2,html:2,[2],154,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,26,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-end-of-period,html:cash-cash-equivalents-and-restricted-cash-at-end-of-period,"Cash, cash equivalents and restricted cash at end of period",41,0
+cash_flow,html:1-recast-to-reflect-adoption-of-the-fasb-guidance-on-restricted-cash,html:1-recast-to-reflect-adoption-of-the-fasb-guidance-on-restricted-cash,[1] * Recast to reflect adoption of the FASB guidance on restricted cash.,46,0
+income_statement,html:total-in-dollars-per-share-note-h,html:total-in-dollars-per-share-note-h,Total (in dollars per share) (Note H),14,0
+balance_sheet,html:marketable-securities-note-i,html:marketable-securities-note-i,Marketable securities (Note I),14,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-299-in-2019-and-309-in-2018,html:notes-and-accounts-receivable-trade-net-of-allowances-of-299-in-2019-and-309-in-2018,Notes and accounts receivable-trade (net of allowances of $299 in 2019 and $309 in 2018),15,0
+balance_sheet,html:short-term-financing-receivables-net-of-allowances-of-188-in-2019-and-244-in-2018-note-k,html:short-term-financing-receivables-net-of-allowances-of-188-in-2019-and-244-in-2018-note-k,Short-term financing receivables (net of allowances of $188 in 2019 and $244 in 2018) (Note K),16,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-33-in-2019-and-38-in-2018,html:other-accounts-receivable-net-of-allowances-of-33-in-2019-and-38-in-2018,Other accounts receivable (net of allowances of $33 in 2019 and $38 in 2018),17,0
+balance_sheet,html:inventory-note-j,html:inventory-note-j,Inventory (Note J),18,0
+balance_sheet,html:deferred-costs-note-c,html:deferred-costs-note-c,Deferred costs (Note C),19,0
+balance_sheet,html:property-plant-and-equipment-note-l,html:property-plant-and-equipment-note-l,"Property, plant and equipment (Note L)",57,0
+balance_sheet,html:less-accumulated-depreciation-note-l,html:less-accumulated-depreciation-note-l,Less: Accumulated depreciation (Note L),58,0
+balance_sheet,html:property-plant-and-equipment-net-note-l,html:property-plant-and-equipment-net-note-l,"Property, plant and equipment - net (Note L)",59,0
+balance_sheet,html:operating-right-of-use-assets-net-note-m,html:operating-right-of-use-assets-net-note-m,Operating right-of-use assets - net (Note M),60,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-33-in-2019-and-48-in-2018-note-k,html:long-term-financing-receivables-net-of-allowances-of-33-in-2019-and-48-in-2018-note-k,Long-term financing receivables (net of allowances of $33 in 2019 and $48 in 2018) (Note K),61,0
+balance_sheet,html:prepaid-pension-assets-note-v,html:prepaid-pension-assets-note-v,Prepaid pension assets (Note V),62,0
+balance_sheet,html:deferred-taxes-note-g,html:deferred-taxes-note-g,Deferred taxes (Note G),63,0
+balance_sheet,html:goodwill-note-n,html:goodwill-note-n,Goodwill (Note N),64,0
+balance_sheet,html:intangible-assets-net-note-n,html:intangible-assets-net-note-n,Intangible assets - net (Note N),65,0
+balance_sheet,html:investments-and-sundry-assets-note-o,html:investments-and-sundry-assets-note-o,Investments and sundry assets (Note O),66,0
+balance_sheet,html:taxes-note-g,html:taxes-note-g,Taxes (Note G),95,0
+balance_sheet,html:short-term-debt-notes-i-p,html:short-term-debt-notes-i-p,Short-term debt (Notes I&P),96,0
+balance_sheet,html:operating-lease-liabilities-note-m,html:operating-lease-liabilities-note-m,Operating lease liabilities (Note M),104,0
+balance_sheet,html:long-term-debt-notes-i-p,html:long-term-debt-notes-i-p,Long-term debt (Notes I&P),113,0
+balance_sheet,html:retirement-and-nonpension-postretirement-benefit-obligations-note-v,html:retirement-and-nonpension-postretirement-benefit-obligations-note-v,Retirement and nonpension postretirement benefit obligations (Note V),114,0
+balance_sheet,html:other-liabilities-note-q,html:other-liabilities-note-q,Other liabilities (Note Q),115,0
+balance_sheet,html:commitments-and-contingencies-note-r,html:commitments-and-contingencies-note-r,Commitments and Contingencies (Note R),126,0
+balance_sheet,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2019-2-237-996-975-2018-2-233-427-058,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2019-2-237-996-975-2018-2-233-427-058,"Common stock, par value $.20 per share, and additional paid-in capital; Shares authorized: 4,687,500,000; Shares issued (2019-2,237,996,975; 2018-2,233,427,058)",131,0
+balance_sheet,html:treasury-stock-at-cost-shares-2019-1-350-886-521-2018-1-340-947-648,html:treasury-stock-at-cost-shares-2019-1-350-886-521-2018-1-340-947-648,"Treasury stock, at cost (shares: 2019-1,350,886,521; 2018-1,340,947,648)",139,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-period,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-period,"Cash, cash equivalents and restricted cash at beginning of period",39,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-351-in-2020-and-299-in-2019,html:notes-and-accounts-receivable-trade-net-of-allowances-of-351-in-2020-and-299-in-2019,Notes and accounts receivable-trade (net of allowances of $351 in 2020 and $299 in 2019),155,0
+balance_sheet,html:short-term-financing-receivables-net-of-allowances-of-218-in-2020-and-188-in-2019-note-k,html:short-term-financing-receivables-net-of-allowances-of-218-in-2020-and-188-in-2019-note-k,Short-term financing receivables (net of allowances of $218 in 2020 and $188 in 2019) (Note K),167,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-28-in-2020-and-33-in-2019,html:other-accounts-receivable-net-of-allowances-of-28-in-2020-and-33-in-2019,Other accounts receivable (net of allowances of $28 in 2020 and $33 in 2019),172,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-45-in-2020-and-33-in-2019-note-k,html:long-term-financing-receivables-net-of-allowances-of-45-in-2020-and-33-in-2019-note-k,Long-term financing receivables (net of allowances of $45 in 2020 and $33 in 2019) (Note K),156,0
+balance_sheet,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2020-2-242-969-004-2019-2-237-996-975,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2020-2-242-969-004-2019-2-237-996-975,"Common stock, par value $.20 per share, and additional paid-in capital Shares authorized: 4,687,500,000 Shares issued (2020- 2,242,969,004; 2019-2,237,996,975)",132,0
+balance_sheet,html:treasury-stock-at-cost-shares-2020-1-350-315-580-2019-1-350-886-521,html:treasury-stock-at-cost-shares-2020-1-350-315-580-2019-1-350-886-521,"Treasury stock, at cost (shares: 2020-1,350,315,580; 2019-1,350,886,521)",140,0
+income_statement,html:total-in-dollars-per-share-note-i,html:total-in-dollars-per-share-note-i,Total (in dollars per share) (Note I),15,0
+balance_sheet,html:marketable-securities-note-j,html:marketable-securities-note-j,Marketable securities (Note J),20,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-218-in-2021-and-260-in-2020,html:notes-and-accounts-receivable-trade-net-of-allowances-of-218-in-2021-and-260-in-2020,Notes and accounts receivable - trade (net of allowances of $218 in 2021 and $260 in 2020),21,0
+balance_sheet,html:short-term-financing-receivables-held-for-investment-net-of-allowances-of-176-in-2021-and-218-in-2020-note-l,html:short-term-financing-receivables-held-for-investment-net-of-allowances-of-176-in-2021-and-218-in-2020-note-l,"Short-term financing receivables, held for investment (net of allowances of $176 in 2021 and $218 in 2020) (Note L)",22,0
+balance_sheet,html:short-term-financing-receivables-held-for-sale-note-l,html:short-term-financing-receivables-held-for-sale-note-l,"Short-term financing receivables, held for sale (Note L)",23,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-24-in-2021-and-25-in-2020,html:other-accounts-receivable-net-of-allowances-of-24-in-2021-and-25-in-2020,Other accounts receivable (net of allowances of $24 in 2021 and $25 in 2020),24,0
+balance_sheet,html:inventory-note-k,html:inventory-note-k,Inventory (Note K),25,0
+balance_sheet,html:deferred-costs-note-d,html:deferred-costs-note-d,Deferred costs (Note D),26,0
+balance_sheet,html:current-assets-of-discontinued-operations-note-c,html:current-assets-of-discontinued-operations-note-c,Current assets of discontinued operations (Note C),46,0
+balance_sheet,html:property-plant-and-equipment-note-m,html:property-plant-and-equipment-note-m,"Property, plant and equipment (Note M)",67,0
+balance_sheet,html:less-accumulated-depreciation-note-m,html:less-accumulated-depreciation-note-m,Less: Accumulated depreciation (Note M),68,0
+balance_sheet,html:property-plant-and-equipment-net-note-m,html:property-plant-and-equipment-net-note-m,"Property, plant and equipment - net (Note M)",69,0
+balance_sheet,html:operating-right-of-use-assets-net-note-n,html:operating-right-of-use-assets-net-note-n,Operating right-of-use assets-net (Note N),70,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-25-in-2021-and-45-in-2020-note-l,html:long-term-financing-receivables-net-of-allowances-of-25-in-2021-and-45-in-2020-note-l,Long-term financing receivables (net of allowances of $25 in 2021 and $45 in 2020) (Note L),71,0
+balance_sheet,html:prepaid-pension-assets-note-w,html:prepaid-pension-assets-note-w,Prepaid pension assets (Note W),72,0
+balance_sheet,html:deferred-taxes-note-h,html:deferred-taxes-note-h,Deferred taxes (Note H),73,0
+balance_sheet,html:goodwill-note-o,html:goodwill-note-o,Goodwill (Note O),74,0
+balance_sheet,html:intangible-assets-net-note-o,html:intangible-assets-net-note-o,Intangible assets-net (Note O),75,0
+balance_sheet,html:investments-and-sundry-assets-note-p,html:investments-and-sundry-assets-note-p,Investments and sundry assets (Note P),76,0
+balance_sheet,html:non-current-assets-of-discontinued-operations-note-c,html:non-current-assets-of-discontinued-operations-note-c,Non-current assets of discontinued operations (Note C),77,0
+balance_sheet,html:taxes-note-h,html:taxes-note-h,Taxes (Note H),97,0
+balance_sheet,html:short-term-debt-note-j-q,html:short-term-debt-note-j-q,Short-term debt (Note J&Q),98,0
+balance_sheet,html:operating-lease-liabilities-note-n,html:operating-lease-liabilities-note-n,Operating lease liabilities (Note N),105,0
+balance_sheet,html:current-liabilities-of-discontinued-operations-note-c,html:current-liabilities-of-discontinued-operations-note-c,Current liabilities of discontinued operations (Note C),108,0
+balance_sheet,html:long-term-debt-note-j-q,html:long-term-debt-note-j-q,Long-term debt (Note J&Q),116,0
+balance_sheet,html:retirement-and-nonpension-postretirement-benefit-obligations-note-w,html:retirement-and-nonpension-postretirement-benefit-obligations-note-w,Retirement and nonpension postretirement benefit obligations (Note W),117,0
+balance_sheet,html:other-liabilities-note-r,html:other-liabilities-note-r,Other liabilities (Note R),118,0
+balance_sheet,html:non-current-liabilities-of-discontinued-operations-note-c,html:non-current-liabilities-of-discontinued-operations-note-c,Non-current liabilities of discontinued operations (Note C),119,0
+balance_sheet,html:commitments-and-contingencies-note-s,html:commitments-and-contingencies-note-s,Commitments and Contingencies (Note S),127,0
+balance_sheet,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2021-2-248-577-848-2020-2-242-969-004,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2021-2-248-577-848-2020-2-242-969-004,"Common stock, par value $.20 per share, and additional paid-in capital Shares authorized: 4,687,500,000 Shares issued (2021-2,248,577,848; 2020-2,242,969,004)",133,0
+balance_sheet,html:treasury-stock-at-cost-shares-2021-1-350-509-249-2020-1-350-315-580,html:treasury-stock-at-cost-shares-2021-1-350-509-249-2020-1-350-315-580,"Treasury stock, at cost (shares: 2021-1,350,509,249; 2020-1,350,315,580)",141,0
+cash_flow,html:distribution-from-kyndryl,html:distribution-from-kyndryl,Distribution from Kyndryl,34,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-233-in-2022-and-218-in-2021,html:notes-and-accounts-receivable-trade-net-of-allowances-of-233-in-2022-and-218-in-2021,Notes and accounts receivable-trade (net of allowances of $233 in 2022 and $218 in 2021),157,0
+balance_sheet,html:short-term-financing-receivables-held-for-investment-net-of-allowances-of-145-in-2022-and-176-in-2021-note-l,html:short-term-financing-receivables-held-for-investment-net-of-allowances-of-145-in-2022-and-176-in-2021-note-l,"Short-term financing receivables, held for investment (net of allowances of $145 in 2022 and $176 in 2021) (Note L)",168,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-89-in-2022-and-24-in-2021,html:other-accounts-receivable-net-of-allowances-of-89-in-2022-and-24-in-2021,Other accounts receivable (net of allowances of $89 in 2022 and $24 in 2021),158,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-28-in-2022-and-25-in-2021,html:long-term-financing-receivables-net-of-allowances-of-28-in-2022-and-25-in-2021,Long-term financing receivables (net of allowances of $28 in 2022 and $25 in 2021),159,0
+balance_sheet,html:short-term-debt-note-j-p,html:short-term-debt-note-j-p,Short-term debt (Note J&P),160,0
+balance_sheet,html:long-term-debt-note-j-p,html:long-term-debt-note-j-p,Long-term debt (Note J&P),120,0
+balance_sheet,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2022-2-257-116-920-2021-2-248-577-848,html:common-stock-par-value-20-per-share-and-additional-paid-in-capital-shares-authorized-4-687-500-000-shares-issued-2022-2-257-116-920-2021-2-248-577-848,"Common stock, par value $.20 per share, and additional paid-in capital Shares authorized: 4,687,500,000 Shares issued (2022-2,257,116,920; 2021-2,248,577,848)",134,0
+balance_sheet,html:treasury-stock-at-cost-shares-2022-1-351-024-943-2021-1-350-509-249,html:treasury-stock-at-cost-shares-2022-1-351-024-943-2021-1-350-509-249,"Treasury stock, at cost (shares: 2022-1,351,024,943; 2021-1,350,509,249)",142,0
+income_statement,html:total-in-dollars-per-share,html:total-in-dollars-per-share,Total (in dollars per share),16,0
+income_statement,html:2,html:2,[2],27,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-192-in-2023-and-233-in-2022,html:notes-and-accounts-receivable-trade-net-of-allowances-of-192-in-2023-and-233-in-2022,Notes and accounts receivable—trade (net of allowances of $192 in 2023 and $233 in 2022),28,0
+balance_sheet,html:held-for-investment-net-of-allowances-of-129-in-2023-and-145-in-2022,html:held-for-investment-net-of-allowances-of-129-in-2023-and-145-in-2022,Held for investment (net of allowances of $129 in 2023 and $145 in 2022),34,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-109-in-2023-and-89-in-2022,html:other-accounts-receivable-net-of-allowances-of-109-in-2023-and-89-in-2022,Other accounts receivable (net of allowances of $109 in 2023 and $89 in 2022),40,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-27-in-2023-and-28-in-2022,html:long-term-financing-receivables-net-of-allowances-of-27-in-2023-and-28-in-2022,Long-term financing receivables (net of allowances of $27 in 2023 and $28 in 2022),82,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,135,0
+balance_sheet,html:treasury-stock-at-cost-shares-2023-1-351-897-514-2022-1-351-024-943,html:treasury-stock-at-cost-shares-2023-1-351-897-514-2022-1-351-024-943,"Treasury stock, at cost (shares: 2023—1,351,897,514; 2022—1,351,024,943)",143,0
+cash_flow,html:depreciation-3,html:depreciation-3,Depreciation [3],2,0
+cash_flow,html:2-amounts-presented-have-not-been-recast-to-exclude-discontinued-operations,html:2-amounts-presented-have-not-been-recast-to-exclude-discontinued-operations,[2] Amounts presented have not been recast to exclude discontinued operations.,3,0
+cash_flow,html:3-includes-operating-lease-right-of-use-assets-amortization-expense-of-0-9-billion-in-2023-and-2022-2021-is-not-comparable-as-it-includes-kyndryl-discontinued-operations,html:3-includes-operating-lease-right-of-use-assets-amortization-expense-of-0-9-billion-in-2023-and-2022-2021-is-not-comparable-as-it-includes-kyndryl-discontinued-operations,[3] Includes operating lease right-of-use assets amortization expense of $0.9 billion in 2023 and 2022. 2021 is not comparable as it includes Kyndryl discontinued operations.,4,0
+cash_flow,html:5-amount-in-2021-represents-0-9-billion-net-cash-proceeds-from-kyndryl-dividend-payments-to-ibm-funded-from-the-proceeds-of-2-9-billion-of-debt-issued-and-retained-by-kyndryl,html:5-amount-in-2021-represents-0-9-billion-net-cash-proceeds-from-kyndryl-dividend-payments-to-ibm-funded-from-the-proceeds-of-2-9-billion-of-debt-issued-and-retained-by-kyndryl,"[5] Amount in 2021 represents $0.9 billion net cash proceeds from Kyndryl dividend payments to IBM, funded from the proceeds of $2.9 billion of debt issued and retained by Kyndryl.",5,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-114-in-2024-and-192-in-2023,html:notes-and-accounts-receivable-trade-net-of-allowances-of-114-in-2024-and-192-in-2023,Notes and accounts receivable—trade (net of allowances of $114 in 2024 and $192 in 2023),29,0
+balance_sheet,html:held-for-investment-net-of-allowances-of-109-in-2024-and-129-in-2023,html:held-for-investment-net-of-allowances-of-109-in-2024-and-129-in-2023,Held for investment (net of allowances of $109 in 2024 and $129 in 2023),35,0
+balance_sheet,html:other-accounts-receivable-net-of-allowances-of-31-in-2024-and-109-in-2023,html:other-accounts-receivable-net-of-allowances-of-31-in-2024-and-109-in-2023,Other accounts receivable (net of allowances of $31 in 2024 and $109 in 2023),41,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-19-in-2024-and-27-in-2023,html:long-term-financing-receivables-net-of-allowances-of-19-in-2024-and-27-in-2023,Long-term financing receivables (net of allowances of $19 in 2024 and $27 in 2023),83,0
+balance_sheet,html:treasury-stock-at-cost-shares-2024-1-352-874-243-2023-1-351-897-514,html:treasury-stock-at-cost-shares-2024-1-352-874-243-2023-1-351-897-514,"Treasury stock, at cost (shares: 2024—1,352,874,243; 2023—1,351,897,514)",144,0
+cash_flow,html:3-prior-year-amounts-have-been-reclassified-to-conform-to-the-change-in-2024-presentation,html:3-prior-year-amounts-have-been-reclassified-to-conform-to-the-change-in-2024-presentation,[3] Prior-year amounts have been reclassified to conform to the change in 2024 presentation.,48,0
+income_statement,html:total,html:total,Total,17,0
+balance_sheet,html:notes-and-accounts-receivable-trade-net-of-allowances-of-316-in-2019-and-309-in-2018,html:notes-and-accounts-receivable-trade-net-of-allowances-of-316-in-2019-and-309-in-2018,Notes and accounts receivable — trade (net of allowances of $316 in 2019 and $309 in 2018),30,0
+balance_sheet,html:short-term-financing-receivables-net-of-allowances-of-248-in-2019-and-244-in-2018,html:short-term-financing-receivables-net-of-allowances-of-248-in-2019-and-244-in-2018,Short-term financing receivables (net of allowances of $248 in 2019 and $244 in 2018),31,0
+balance_sheet,html:inventories-at-lower-of-average-cost-or-net-realizable-value,html:inventories-at-lower-of-average-cost-or-net-realizable-value,"Inventories, at lower of average cost or net realizable value:",161,0
+balance_sheet,html:finished-goods,html:finished-goods,Finished goods,169,0
+balance_sheet,html:work-in-process-and-raw-materials,html:work-in-process-and-raw-materials,Work in process and raw materials,173,0
+balance_sheet,html:total-inventories,html:total-inventories,Total inventories,176,0
+balance_sheet,html:long-term-financing-receivables-net-of-allowances-of-38-in-2019-and-48-in-2018,html:long-term-financing-receivables-net-of-allowances-of-38-in-2019-and-48-in-2018,Long-term financing receivables (net of allowances of $38 in 2019 and $48 in 2018),84,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Total,18,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Total,19,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:RestrictedCash,us-gaap:RestrictedCash,Restricted cash,1,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,Marketable securities,2,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,Notes and accounts receivable — trade (net of allowances of $281 in 2019 and $309 in 2018),3,0
+balance_sheet,us-gaap:NotesAndLoansReceivableNetCurrent,us-gaap:NotesAndLoansReceivableNetCurrent,Short-term financing receivables (net of allowances of $243 in 2019 and $244 in 2018),4,0
+balance_sheet,us-gaap:OtherReceivablesNetCurrent,us-gaap:OtherReceivablesNetCurrent,Other accounts receivable (net of allowances of $39 in 2019 and $38 in 2018),5,0
+balance_sheet,us-gaap:InventoryFinishedGoodsNetOfReserves,us-gaap:InventoryFinishedGoodsNetOfReserves,Finished goods,162,0
+balance_sheet,us-gaap:InventoryWorkInProcessAndRawMaterialsNetOfReserves,us-gaap:InventoryWorkInProcessAndRawMaterialsNetOfReserves,Work in process and raw materials,170,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Total inventories,174,0
+balance_sheet,us-gaap:CapitalizedContractCostNetCurrent,us-gaap:CapitalizedContractCostNetCurrent,Deferred costs,177,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,178,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,179,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,"Property, plant and equipment",180,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Less: Accumulated depreciation,181,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment — net",182,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating right-of-use assets — net*,183,0
+balance_sheet,us-gaap:NotesAndLoansReceivableNetNoncurrent,us-gaap:NotesAndLoansReceivableNetNoncurrent,Long-term financing receivables (net of allowances of $35 in 2019 and $48 in 2018),184,0
+balance_sheet,us-gaap:DefinedBenefitPlanAssetsForPlanBenefitsNoncurrent,us-gaap:DefinedBenefitPlanAssetsForPlanBenefitsNoncurrent,Prepaid pension assets,185,0
+balance_sheet,us-gaap:CapitalizedContractCostNetNoncurrent,us-gaap:CapitalizedContractCostNetNoncurrent,Deferred costs,186,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred taxes,187,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,188,0
+balance_sheet,us-gaap:FiniteLivedIntangibleAssetsNet,us-gaap:FiniteLivedIntangibleAssetsNet,Intangible assets — net,189,0
+balance_sheet,us-gaap:InvestmentsAndOtherNoncurrentAssets,us-gaap:InvestmentsAndOtherNoncurrentAssets,Investments and sundry assets,190,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,191,0
+balance_sheet,html:inventory-at-lower-of-average-cost-or-net-realizable-value,html:inventory-at-lower-of-average-cost-or-net-realizable-value,"Inventory, at lower of average cost or net realizable value:",163,0
+balance_sheet,us-gaap:DebtSecuritiesAvailableForSaleExcludingAccruedInterestCurrent,us-gaap:DebtSecuritiesAvailableForSaleExcludingAccruedInterestCurrent,Marketable securities,164,0
+balance_sheet,us-gaap:TradeAndLoansReceivablesHeldForSaleNetNotPartOfDisposalGroup,us-gaap:TradeAndLoansReceivablesHeldForSaleNetNotPartOfDisposalGroup,Held for sale,165,0
+balance_sheet,ibm:NotesAndLoansReceivableAndNetInvestmentInLeaseNetCurrent,ibm:NotesAndLoansReceivableAndNetInvestmentInLeaseNetCurrent,Held for investment (net of allowances of $150 in 2022 and $176 in 2021),36,0
+balance_sheet,ibm:NotesAndLoansReceivableAndNetInvestmentInLeaseHeldForInvestmentNetCurrent,ibm:NotesAndLoansReceivableAndNetInvestmentInLeaseHeldForInvestmentNetCurrent,Held for investment (net of allowances of $133 in 2023 and $145 in 2022),37,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,"Property, plant and equipment",166,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,Less: Accumulated depreciation,171,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property, plant and equipment — net",175,0
+income_statement,html:earnings-loss-per-share-of-common-stock-1,html:earnings-loss-per-share-of-common-stock-1,Earnings/(loss) per share of common stock: (1),21,0
+income_statement,html:earnings-per-share-of-common-stock,html:earnings-per-share-of-common-stock,Earnings per share of common stock:,22,0

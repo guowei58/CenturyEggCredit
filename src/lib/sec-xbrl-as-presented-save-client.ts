@@ -86,8 +86,11 @@ export function sortPresentedFilingsNewestFirst<T extends { form: string; filing
   });
 }
 
-/** Earliest calendar filing-date year for HTML-face bulk save (inline XBRL era; matches compiler floor). */
+/** Earliest calendar filing-date year for HTML-face bulk save (2019+ for comparatives / master build). */
 export const FACE_BULK_MIN_FILING_YEAR = 2019;
+
+/** Compiled IS/BS/CF columns start at this fiscal year (1Q20 onward). Workbooks still saved from 2019. */
+export const COMPILE_DISPLAY_MIN_FISCAL_YEAR = 2020;
 
 /**
  * Period Financials filing picker — long SEC history, no inline-XBRL-era floor.
@@ -243,7 +246,13 @@ export function buildWorkbookParamsFromPresentedStatements(
         title: s.title,
         role: s.role,
         primaryGridUsesRaw: s.id === "primary-is",
-        periods: periods.map((p) => ({ key: p.key, label: p.label, shortLabel: p.shortLabel })),
+        periods: periods.map((p) => ({
+          key: p.key,
+          label: p.label,
+          shortLabel: p.shortLabel,
+          start: p.start,
+          end: p.end,
+        })),
         rows: visRows.map((r) => ({
           concept: r.concept,
           label: r.label,

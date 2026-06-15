@@ -1,0 +1,188 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:net-sales,html:net-sales,Net sales,0,0
+income_statement,html:cost-of-products-and-services-sold,html:cost-of-products-and-services-sold,Cost of products and services sold,1,0
+income_statement,html:research-and-development-expenses,html:research-and-development-expenses,Research and development expenses,2,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",3,0
+income_statement,html:impairment-of-goodwill,html:impairment-of-goodwill,Impairment of goodwill,4,0
+income_statement,html:impairment-of-assets-held-for-sale,html:impairment-of-assets-held-for-sale,Impairment of assets held for sale,5,0
+income_statement,html:other-income-expense,html:other-income-expense,Other (income) expense,7,0
+income_statement,html:interest-and-other-financial-charges,html:interest-and-other-financial-charges,Interest and other financial charges,8,0
+income_statement,html:total-costs-expenses-and-other,html:total-costs-expenses-and-other,"Total costs, expenses and other",11,0
+income_statement,html:income-from-continuing-operations-before-taxes,html:income-from-continuing-operations-before-taxes,Income from continuing operations before taxes,12,0
+income_statement,html:tax-expense,html:tax-expense,Tax expense,13,0
+income_statement,html:net-income-from-continuing-operations,html:net-income-from-continuing-operations,Net income from continuing operations,14,0
+income_statement,html:net-income-from-discontinued-operations,html:net-income-from-discontinued-operations,Net income from discontinued operations,15,0
+income_statement,html:net-income,html:net-income,Net income,16,0
+income_statement,html:less-net-income-attributable-to-noncontrolling-interest,html:less-net-income-attributable-to-noncontrolling-interest,Less: Net income attributable to noncontrolling interest,17,0
+income_statement,html:net-income-attributable-to-honeywell,html:net-income-attributable-to-honeywell,Net income attributable to Honeywell,18,0
+income_statement,html:earnings-per-share-of-common-stock-basic,html:earnings-per-share-of-common-stock-basic,Earnings per share of common stock—basic:,19,0
+income_statement,html:earnings-per-share-of-common-stock-from-continuing-operations-basic-in-dollars-per-share,html:earnings-per-share-of-common-stock-from-continuing-operations-basic-in-dollars-per-share,Earnings per share of common stock from continuing operations - basic (in dollars per share),20,0
+income_statement,html:total-earnings-per-share-of-common-stock-basic-in-dollars-per-share,html:total-earnings-per-share-of-common-stock-basic-in-dollars-per-share,Total earnings per share of common stock—basic (in dollars per share),21,0
+income_statement,html:earnings-per-share-of-common-stock-assuming-dilution,html:earnings-per-share-of-common-stock-assuming-dilution,Earnings per share of common stock—assuming dilution:,22,0
+income_statement,html:earnings-per-share-of-common-stock-from-continuing-operations-assuming-dilution-in-dollars-per-share,html:earnings-per-share-of-common-stock-from-continuing-operations-assuming-dilution-in-dollars-per-share,Earnings per share of common stock from continuing operations - assuming dilution (in dollars per share),23,0
+income_statement,html:earnings-per-share-of-common-stock-from-discontinued-operations-assuming-dilution-in-dollars-per-share,html:earnings-per-share-of-common-stock-from-discontinued-operations-assuming-dilution-in-dollars-per-share,Earnings per share of common stock from discontinued operations - assuming dilution (in dollars per share),24,0
+income_statement,html:total-earnings-per-share-of-common-stock-assuming-dilution-in-dollars-per-share,html:total-earnings-per-share-of-common-stock-assuming-dilution-in-dollars-per-share,Total earnings per share of common stock—assuming dilution (in dollars per share),25,0
+income_statement,html:product,html:product,Product,26,0
+income_statement,html:service,html:service,Service,28,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,14,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,15,0
+balance_sheet,html:accounts-receivable-less-allowances-of-202-and-307-respectively,html:accounts-receivable-less-allowances-of-202-and-307-respectively,"Accounts receivable, less allowances of $202 and $307, respectively",21,0
+balance_sheet,html:inventories,html:inventories,Inventories,22,0
+balance_sheet,html:assets-held-for-sale,html:assets-held-for-sale,Assets held for sale,23,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,24,0
+balance_sheet,html:current-assets-of-discontinued-operations,html:current-assets-of-discontinued-operations,Current assets of discontinued operations,25,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,26,0
+balance_sheet,html:investments-and-long-term-receivables,html:investments-and-long-term-receivables,Investments and long-term receivables,27,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant and equipment—net",28,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,29,0
+balance_sheet,html:other-intangible-assets-net,html:other-intangible-assets-net,Other intangible assets—net,30,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,32,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,33,0
+balance_sheet,html:assets-of-discontinued-operations,html:assets-of-discontinued-operations,Assets of discontinued operations,34,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,35,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,38,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,50,0
+balance_sheet,html:commercial-paper-and-other-short-term-borrowings,html:commercial-paper-and-other-short-term-borrowings,Commercial paper and other short-term borrowings,51,0
+balance_sheet,html:current-maturities-of-long-term-debt,html:current-maturities-of-long-term-debt,Current maturities of long-term debt,52,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,53,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,55,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,56,0
+balance_sheet,html:postretirement-benefit-obligations-other-than-pensions,html:postretirement-benefit-obligations-other-than-pensions,Postretirement benefit obligations other than pensions,57,0
+balance_sheet,html:asbestos-related-liabilities,html:asbestos-related-liabilities,Asbestos-related liabilities,58,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other liabilities,59,0
+balance_sheet,html:liabilities-of-discontinued-operations,html:liabilities-of-discontinued-operations,Liabilities of discontinued operations,60,0
+balance_sheet,html:redeemable-noncontrolling-interest,html:redeemable-noncontrolling-interest,Redeemable noncontrolling interest,61,0
+balance_sheet,html:shareowners-equity,html:shareowners-equity,SHAREOWNERS’ EQUITY,63,0
+balance_sheet,html:capital-common-stock-issued,html:capital-common-stock-issued,Capital—common stock issued,74,0
+balance_sheet,html:capital-additional-paid-in-capital,html:capital-additional-paid-in-capital,Capital - additional paid in capital,76,0
+balance_sheet,html:common-stock-held-in-treasury-at-cost,html:common-stock-held-in-treasury-at-cost,"Common stock held in treasury, at cost",77,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,79,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,80,0
+balance_sheet,html:total-honeywell-shareowners-equity,html:total-honeywell-shareowners-equity,Total Honeywell shareowners’ equity,81,0
+balance_sheet,html:noncontrolling-interest,html:noncontrolling-interest,Noncontrolling interest,82,0
+balance_sheet,html:total-shareowners-equity,html:total-shareowners-equity,Total shareowners’ equity,83,0
+balance_sheet,html:total-liabilities-redeemable-noncontrolling-interest-and-shareowners-equity,html:total-liabilities-redeemable-noncontrolling-interest-and-shareowners-equity,"Total liabilities, redeemable noncontrolling interest and shareowners’ equity",84,0
+balance_sheet,html:discontinued-operations,html:discontinued-operations,Discontinued Operations,85,0
+balance_sheet,html:current-liabilities-of-discontinued-operations-liabilities-held-for-sale,html:current-liabilities-of-discontinued-operations-liabilities-held-for-sale,Current liabilities of discontinued operations/Liabilities held for sale,86,0
+balance_sheet,html:disposal-group-held-for-sale-not-discontinued-operations,html:disposal-group-held-for-sale-not-discontinued-operations,"Disposal Group, Held-for-Sale, Not Discontinued Operations",87,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:net-income-from-discontinued-operations,html:net-income-from-discontinued-operations,Net income from discontinued operations,1,0
+cash_flow,html:net-income-from-continuing-operations,html:net-income-from-continuing-operations,Net income from continuing operations,2,0
+cash_flow,html:depreciation,html:depreciation,Depreciation,3,0
+cash_flow,html:amortization,html:amortization,Amortization,4,0
+cash_flow,html:loss-gain-on-sale-of-non-strategic-businesses-and-assets,html:loss-gain-on-sale-of-non-strategic-businesses-and-assets,Loss (gain) on sale of non-strategic businesses and assets,5,0
+cash_flow,html:impairment-of-goodwill,html:impairment-of-goodwill,Impairment of goodwill,6,0
+cash_flow,html:impairment-of-assets-held-for-sale,html:impairment-of-assets-held-for-sale,Impairment of assets held for sale,7,0
+cash_flow,html:repositioning-and-other-gains-charges,html:repositioning-and-other-gains-charges,Repositioning and other (gains) charges,9,0
+cash_flow,html:net-payments-for-repositioning-and-other-charges,html:net-payments-for-repositioning-and-other-charges,Net payments for repositioning and other charges,10,0
+cash_flow,html:narco-buyout-payment,html:narco-buyout-payment,NARCO Buyout payment,11,0
+cash_flow,html:resideo-indemnification-and-reimbursement-agreement-termination-payment,html:resideo-indemnification-and-reimbursement-agreement-termination-payment,Resideo indemnification and reimbursement agreement termination payment,12,0
+cash_flow,html:asbestos-liabilities-divestiture-payment,html:asbestos-liabilities-divestiture-payment,Asbestos liabilities divestiture payment,13,0
+cash_flow,html:pension-and-other-postretirement-income,html:pension-and-other-postretirement-income,Pension and other postretirement income,14,0
+cash_flow,html:pension-and-other-postretirement-benefit-payments,html:pension-and-other-postretirement-benefit-payments,Pension and other postretirement benefit payments,15,0
+cash_flow,html:stock-compensation-expense,html:stock-compensation-expense,Stock compensation expense,16,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,17,0
+cash_flow,html:other,html:other,Other,20,0
+cash_flow,html:changes-in-assets-and-liabilities-net-of-the-effects-of-acquisitions-and-divestitures,html:changes-in-assets-and-liabilities-net-of-the-effects-of-acquisitions-and-divestitures,"Changes in assets and liabilities, net of the effects of acquisitions and divestitures",21,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,22,0
+cash_flow,html:inventories,html:inventories,Inventories,23,0
+cash_flow,html:other-current-assets,html:other-current-assets,Other current assets,24,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,25,0
+cash_flow,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,26,0
+cash_flow,html:income-taxes,html:income-taxes,Income taxes,27,0
+cash_flow,html:net-cash-provided-by-operating-activities-from-continuing-operations,html:net-cash-provided-by-operating-activities-from-continuing-operations,Net cash provided by operating activities from continuing operations,28,0
+cash_flow,html:net-cash-provided-by-operating-activities-from-discontinued-operations,html:net-cash-provided-by-operating-activities-from-discontinued-operations,Net cash provided by operating activities from discontinued operations,29,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,30,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities,31,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures,34,0
+cash_flow,html:proceeds-from-disposals-of-property-plant-and-equipment,html:proceeds-from-disposals-of-property-plant-and-equipment,"Proceeds from disposals of property, plant and equipment",35,0
+cash_flow,html:increase-in-investments,html:increase-in-investments,Increase in investments,36,0
+cash_flow,html:decrease-in-investments,html:decrease-in-investments,Decrease in investments,37,0
+cash_flow,html:payments-receipts-from-settlements-of-derivative-contracts,html:payments-receipts-from-settlements-of-derivative-contracts,(Payments) receipts from settlements of derivative contracts,40,0
+cash_flow,html:cash-paid-for-acquisitions-net-of-cash-acquired,html:cash-paid-for-acquisitions-net-of-cash-acquired,"Cash paid for acquisitions, net of cash acquired",41,0
+cash_flow,html:proceeds-from-sales-of-businesses-net-of-fees-paid,html:proceeds-from-sales-of-businesses-net-of-fees-paid,"Proceeds from sales of businesses, net of fees paid",43,0
+cash_flow,html:net-cash-used-for-investing-activities-from-continuing-operations,html:net-cash-used-for-investing-activities-from-continuing-operations,Net cash used for investing activities from continuing operations,44,0
+cash_flow,html:net-cash-used-for-investing-activities-from-discontinued-operations,html:net-cash-used-for-investing-activities-from-discontinued-operations,Net cash used for investing activities from discontinued operations,45,0
+cash_flow,html:net-cash-used-for-investing-activities,html:net-cash-used-for-investing-activities,Net cash used for investing activities,46,0
+cash_flow,html:proceeds-from-issuance-of-commercial-paper-and-other-short-term-borrowings,html:proceeds-from-issuance-of-commercial-paper-and-other-short-term-borrowings,Proceeds from issuance of commercial paper and other short-term borrowings,47,0
+cash_flow,html:payments-of-commercial-paper-and-other-short-term-borrowings,html:payments-of-commercial-paper-and-other-short-term-borrowings,Payments of commercial paper and other short-term borrowings,48,0
+cash_flow,html:proceeds-from-issuance-of-common-stock,html:proceeds-from-issuance-of-common-stock,Proceeds from issuance of common stock,49,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt,html:proceeds-from-issuance-of-long-term-debt,Proceeds from issuance of long-term debt,50,0
+cash_flow,html:payments-of-long-term-debt,html:payments-of-long-term-debt,Payments of long-term debt,51,0
+cash_flow,html:repurchases-of-common-stock,html:repurchases-of-common-stock,Repurchases of common stock,52,0
+cash_flow,html:cash-dividends-paid,html:cash-dividends-paid,Cash dividends paid,53,0
+cash_flow,html:pre-separation-funding,html:pre-separation-funding,Pre-separation funding,55,0
+cash_flow,html:spin-off-cash,html:spin-off-cash,Spin-off cash,57,0
+cash_flow,html:net-cash-used-for-provided-by-financing-activities,html:net-cash-used-for-provided-by-financing-activities,Net cash (used for) provided by financing activities,58,0
+cash_flow,html:effect-of-foreign-exchange-rate-changes-on-cash-and-cash-equivalents,html:effect-of-foreign-exchange-rate-changes-on-cash-and-cash-equivalents,Effect of foreign exchange rate changes on cash and cash equivalents,59,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,Net increase (decrease) in cash and cash equivalents,60,0
+cash_flow,html:cash-and-cash-equivalents-at-beginning-of-period,html:cash-and-cash-equivalents-at-beginning-of-period,Cash and cash equivalents at beginning of period,61,0
+cash_flow,html:cash-and-cash-equivalents-at-end-of-period,html:cash-and-cash-equivalents-at-end-of-period,Cash and cash equivalents at end of period,62,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,Accounts receivable—net,16,0
+balance_sheet,html:insurance-recoveries-for-asbestos-related-liabilities,html:insurance-recoveries-for-asbestos-related-liabilities,Insurance recoveries for asbestos related liabilities,31,0
+balance_sheet,html:liabilities,html:liabilities,LIABILITIES,36,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,—additional paid-in capital,75,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),78,0
+cash_flow,html:expenditures-for-property-plant-and-equipment,html:expenditures-for-property-plant-and-equipment,"Expenditures for property, plant and equipment",32,0
+cash_flow,html:payments-to-purchase-the-noncontrolling-interest,html:payments-to-purchase-the-noncontrolling-interest,Payments to purchase the noncontrolling interest,54,0
+cash_flow,html:pre-spin-borrowing,html:pre-spin-borrowing,Pre-spin borrowing,56,0
+income_statement,hon:CostsAndOperatingAndNonoperatingExpenses,hon:CostsAndOperatingAndNonoperatingExpenses,costs and operating and nonoperating expenses costs and operating and nonoperating expenses costs and operating and nonoperating expenses,9,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,1,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,Accounts receivable—net,2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,3,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,us-gaap:LongTermInvestmentsAndReceivablesNet,us-gaap:LongTermInvestmentsAndReceivablesNet,Investments and long-term receivables,6,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment—net",7,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,8,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,Other intangible assets—net,9,0
+balance_sheet,us-gaap:LossContingencyReceivableNoncurrent,us-gaap:LossContingencyReceivableNoncurrent,Insurance recoveries for asbestos related liabilities,10,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,11,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,12,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,13,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,39,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Commercial paper and other short-term borrowings,40,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current maturities of long-term debt,41,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued liabilities,42,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,43,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,44,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,45,0
+balance_sheet,us-gaap:OtherPostretirementDefinedBenefitPlanLiabilitiesNoncurrent,us-gaap:OtherPostretirementDefinedBenefitPlanLiabilitiesNoncurrent,Postretirement benefit obligations other than pensions,46,0
+balance_sheet,us-gaap:LossContingencyAccrualCarryingValueNoncurrent,us-gaap:LossContingencyAccrualCarryingValueNoncurrent,Asbestos related liabilities,47,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other liabilities,48,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCommonCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCommonCarryingAmount,Redeemable noncontrolling interest,49,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,Capital—common stock issued,64,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,—additional paid-in capital,65,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Common stock held in treasury, at cost",66,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),67,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,68,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Honeywell shareowners’ equity,69,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,70,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total shareowners’ equity,71,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,"Total liabilities, redeemable noncontrolling interest and shareowners’ equity",72,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,"Expenditures for property, plant and equipment",33,0
+income_statement,html:cost-operating-and-non-operating-expenses,html:cost-operating-and-non-operating-expenses,"Cost, operating and non-operating expenses",10,0
+income_statement,html:income-statement-abstract,html:income-statement-abstract,Income Statement [Abstract],27,0
+balance_sheet,html:liabilities-current-abstract,html:liabilities-current-abstract,"Liabilities, Current [Abstract]",37,0
+balance_sheet,html:shareowners-equity-abstract,html:shareowners-equity-abstract,SHAREOWNERS' EQUITY [Abstract],62,0
+cash_flow,html:reimbursement-receivables-charge,html:reimbursement-receivables-charge,Reimbursement receivables charge,18,0
+balance_sheet,html:accounts-receivable-less-allowances,html:accounts-receivable-less-allowances,"Accounts receivable, less allowances",17,0
+cash_flow,html:receipts-from-garrett-motion-inc,html:receipts-from-garrett-motion-inc,Receipts from Garrett Motion Inc.,38,0
+balance_sheet,html:accounts-receivable-less-allowances-of-326-and-177-respectively,html:accounts-receivable-less-allowances-of-326-and-177-respectively,"Accounts receivable, less allowances of $326 and $177, respectively",18,0
+balance_sheet,html:accounts-receivable-less-allowances-of-323-and-326-respectively,html:accounts-receivable-less-allowances-of-323-and-326-respectively,"Accounts receivable, less allowances of $323 and $326, respectively",19,0
+balance_sheet,html:accounts-receivable-less-allowances-of-314-and-323-respectively,html:accounts-receivable-less-allowances-of-314-and-323-respectively,"Accounts receivable, less allowances of $314 and $323, respectively",20,0
+balance_sheet,html:liabilities-held-for-sale,html:liabilities-held-for-sale,Liabilities held for sale,54,0
+balance_sheet,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,Deferred income taxes,88,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,89,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherNoncurrentAssets,us-gaap:IncreaseDecreaseInOtherNoncurrentAssets,Reimbursement receivables charge,19,0
+cash_flow,hon:CashReceivedByHoneywell,hon:CashReceivedByHoneywell,Receipts from Garrett Motion Inc.,39,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,"Accounts receivable, less allowances of $326 and $177, respectively",90,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property, plant and equipment - net",91,0
+balance_sheet,us-gaap:TreasuryStockCommonValue,us-gaap:TreasuryStockCommonValue,"Common stock held in treasury, at cost",92,0
+balance_sheet,us-gaap:CommonStockValueOutstanding,us-gaap:CommonStockValueOutstanding,Capital—common stock issued,73,0
+balance_sheet,us-gaap:AssetsHeldForSaleNotPartOfDisposalGroupCurrent,us-gaap:AssetsHeldForSaleNotPartOfDisposalGroupCurrent,Assets held for sale,93,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Liabilities held for sale,94,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinesses,us-gaap:ProceedsFromDivestitureOfBusinesses,"Proceeds from sale of business, net of cash transferred",42,0
+income_statement,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on debt extinguishment,6,0
+cash_flow,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on debt extinguishment,8,0

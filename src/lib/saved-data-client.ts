@@ -20,6 +20,7 @@ export type SavedDataKey =
   | "credit-agreements-indentures-first-lien-indenture"
   | "credit-agreements-indentures-second-lien-indenture"
   | "credit-agreements-indentures-unsecured"
+  | "credit-agreements-indentures-other-credit-documents"
   | "credit-agreements-indentures-convertible"
   | "credit-agreements-indentures-preferred"
   | "credit-agreements-indentures-other"
@@ -93,7 +94,17 @@ export type SavedDataKey =
   | "literary-references-latest-source-pack"
   | "biblical-references-latest"
   | "biblical-references-latest-meta"
-  | "biblical-references-latest-source-pack";
+  | "biblical-references-latest-source-pack"
+  | "how-to-look-like-a-dumbass-latest"
+  | "how-to-look-like-a-dumbass-latest-meta"
+  | "how-to-look-like-a-dumbass-latest-source-pack"
+  | "next-quarter-earnings-transcript-latest"
+  | "next-quarter-earnings-transcript-latest-meta"
+  | "next-quarter-earnings-transcript-latest-source-pack"
+  | "credit-decision-dashboard-latest"
+  | "credit-decision-dashboard-latest-meta"
+  | "credit-decision-dashboard-latest-source-pack"
+  | "credit-decision-dashboard-inputs";
 
 /** No-op compatibility POST so clients can "warm" the session before first save. */
 export async function initTickerSaveFolder(ticker: string): Promise<void> {

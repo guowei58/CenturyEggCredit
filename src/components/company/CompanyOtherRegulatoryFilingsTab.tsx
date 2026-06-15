@@ -6,6 +6,7 @@ import { REGULATORY_SOURCE_REGISTRY } from "@/lib/regulatory/registry";
 import type { RegulatorySourceRegistryEntry } from "@/lib/regulatory/types";
 import { CONNECTION_BUCKET_LABEL, connectionBucketForSource } from "@/lib/regulatory/connectionBuckets";
 import { accessGuideForSource } from "@/lib/regulatory/regulatoryAccessGuides";
+import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 
 const DEDICATED_REGULATORY_TAB_SOURCE_IDS = new Set([
   "epa_echo",
@@ -97,6 +98,26 @@ export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { tick
     [sources, activeSourceId],
   );
 
+  const searchSeed = (companyName ?? "").trim() || safeTicker;
+
+  const searchNotes = useMemo(() => {
+    if (!activeSource || !safeTicker) return [];
+    const connBucket = connectionBucketForSource(activeSource.source_id);
+    const guide = accessGuideForSource(activeSource.source_id);
+    const accessRequirements = guide?.accessRequirements?.length
+      ? guide.accessRequirements
+      : fallbackAccessRequirements(activeSource);
+    const whatsInside = guide?.whatsInside?.length ? guide.whatsInside : fallbackWhatsInside(activeSource);
+    const notes: string[] = [
+      `Suggested search seed: ${searchSeed} (plus subsidiaries, legal names, docket numbers, and known identifiers).`,
+      `This source is accessed manually on ${activeSource.display_name} (${CONNECTION_BUCKET_LABEL[connBucket].toLowerCase()}).`,
+    ];
+    if (activeSource.notes?.trim()) notes.push(activeSource.notes.trim());
+    notes.push(...accessRequirements);
+    notes.push(...whatsInside.map((item) => `Data available: ${item}`));
+    return notes;
+  }, [activeSource, searchSeed, safeTicker]);
+
   if (!safeTicker) {
     return (
       <Card title="Other Regulatory Filings - Manual">
@@ -115,7 +136,6 @@ export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { tick
   const guide = activeSource ? accessGuideForSource(activeSource.source_id) : null;
   const accessRequirements = guide?.accessRequirements?.length ? guide.accessRequirements : activeSource ? fallbackAccessRequirements(activeSource) : [];
   const whatsInside = guide?.whatsInside?.length ? guide.whatsInside : activeSource ? fallbackWhatsInside(activeSource) : [];
-  const searchSeed = (companyName ?? "").trim() || safeTicker;
 
   return (
     <div className="space-y-6">
@@ -148,10 +168,6 @@ export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { tick
                 {activeSource.notes}
               </p>
             ) : null}
-            <p className="mt-2 text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-              This tab is a self-serve directory for sources that are better accessed directly on the publisher’s website.
-              Use the links below to open the filing/data site, then search for <span className="font-mono">{searchSeed}</span> and related affiliates yourself.
-            </p>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             {activeSource?.api_docs_url ? (
@@ -166,6 +182,8 @@ export function CompanyOtherRegulatoryFilingsTab({ ticker, companyName }: { tick
             ) : null}
           </div>
         </div>
+
+        <RegulatorySearchNotes notes={searchNotes} />
 
         <div className="mt-4 space-y-3">
           <div>

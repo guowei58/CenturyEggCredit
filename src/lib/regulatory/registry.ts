@@ -48,7 +48,7 @@ export const REGULATORY_SOURCE_REGISTRY: RegulatorySourceRegistryEntry[] = [
     adapter_status: "working",
     priority: "high",
     notes:
-      "Searches CourtListener / RECAP for federal litigation by company name.",
+      "CourtListener / RECAP docket search plus optional PACER Case Locator (case summaries; open case on PACER for filings). Set PACER_USERNAME + PACER_PASSWORD to enable PACER.",
   },
   {
     source_id: "epa_echo",

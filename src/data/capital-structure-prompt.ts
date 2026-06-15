@@ -70,10 +70,12 @@ Produce a WORKING EXCEL FILE (.xlsx), not just a markdown table.
 
 The workbook should be usable immediately and should contain properly formatted tabs, formulas, notes, and a source log.
 
+Please include some commentary about the capital structure on a page in the Excel file called Notes. On this page, write a thoughtful summary of the information you've found.
+
 At a minimum, create these tabs:
 1. Capital Structure
 2. Guarantor & Collateral Detail
-3. Notes / Assumptions
+3. Notes
 4. Sources
 
 Add these tabs if relevant:
@@ -373,9 +375,10 @@ If possible, use standard analyst-friendly color coding for:
 - linked / derived values
 
 ==================================================
-NOTES / ASSUMPTIONS TAB
+NOTES TAB
 ==================================================
-Include a Notes / Assumptions tab that clearly states:
+Include a Notes tab that clearly states:
+- a thoughtful summary of the capital structure and the information you've found
 - reporting date used
 - pro forma adjustments
 - EBITDA definition used
@@ -444,7 +447,7 @@ A brief paragraph summarizing:
 2. EXCEL WORKBOOK
 Provide the working .xlsx file.
 
-3. NOTES / ASSUMPTIONS
+3. NOTES
 Summarize the key assumptions briefly and also include them inside the workbook.
 
 4. SOURCE LOG
@@ -490,7 +493,7 @@ function capitalStructureSampleImageUrlsBlock(appOrigin: string): string {
   return !origin
     ? CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS.map(
         (p, i) =>
-          `${i + 1}. After you open this app in a browser, use: <your app URL>${p} (or attach from the Capital Structure tab thumbnails).`
+          `${i + 1}. After you open this app in a browser, use: <your app URL>${p}`
       ).join("\n")
     : CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS.map((p, i) => `${i + 1}. ${origin}${p}`).join("\n");
 }

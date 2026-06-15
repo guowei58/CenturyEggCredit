@@ -13,12 +13,12 @@ from workbook_loader import (
     SheetData,
     WorkbookInfo,
     _filter_sparse_columns,
-    SPARSE_COLUMN_THRESHOLD,
     normalize_fiscal_periods,
 )
 from master_presentation_builder import (
     build_master_presentation, MasterRow, ConceptMapping,
-    _extract_local_name, _normalize_label,
+    _extract_local_name, _normalize_label, _master_row_keys,
+    workbooks_for_backwards_walk,
 )
 from row_mapper import map_all_facts, MappedFact, UnresolvedRow
 from consolidator import consolidate, AuditEntry, Conflict
@@ -101,6 +101,19 @@ class TestPeriodParsing:
     def test_case_insensitive(self):
         assert parse_period("fy24") is not None
 
+    def test_sec_prose_ended_glued_to_month(self):
+        """HTZ 10-Q workbooks omit space between 'Ended' and month in column headers."""
+        p3 = parse_period("Three Months EndedSeptember 30, 2024")
+        assert p3 and p3.period_type == "Q3" and p3.fiscal_year == 2024
+        assert p3.canonical == "3Q24"
+        assert p3.column_label == "Three Months EndedSeptember 30, 2024"
+
+        p9 = parse_period("Nine Months EndedSeptember 30, 2024")
+        assert p9 and p9.period_type == "9M" and p9.fiscal_year == 2024
+        assert p9.canonical == "9M24"
+
+        assert parse_period("Three Months Ended September 30, 2024") is not None
+
     def test_canonical(self):
         assert _p("1Q15").canonical == "1Q15"
         assert _p("FY20").canonical == "FY20"
@@ -125,6 +138,75 @@ class TestPeriodParsing:
 
         out = ensure_quarter_and_fy_columns(["FY15"])
         assert out == ["1Q15", "2Q15", "3Q15", "4Q15", "FY15"]
+
+    def test_plain_calendar_year_from_header(self):
+        from period_parser import plain_calendar_year_from_header
+
+        assert plain_calendar_year_from_header("2025") == 2025
+        assert plain_calendar_year_from_header("FY2025") == 2025
+        assert plain_calendar_year_from_header("FY 2025") == 2025
+        assert plain_calendar_year_from_header("Fiscal Year 2025") == 2025
+        assert plain_calendar_year_from_header("Revenue") is None
+
+    def test_parse_workbook_period_plain_year_10k(self):
+        from period_parser import parse_workbook_period
+
+        p = parse_workbook_period(
+            "2025", statement_type="income_statement", is_10k=True,
+        )
+        assert p and p.period_type == "FY" and p.fiscal_year == 2025
+        assert p.canonical == "FY25"
+
+    def test_parse_workbook_period_plain_year_10q_ytd(self):
+        from period_parser import parse_workbook_period
+
+        p = parse_workbook_period(
+            "2021", statement_type="income_statement", is_10k=False,
+        )
+        assert p and p.period_type == "FY" and p.fiscal_year == 2021
+
+    def test_period_from_workbook_meta_quarter(self):
+        from period_parser import WorkbookMetaPeriod, period_from_workbook_meta
+
+        meta = WorkbookMetaPeriod(
+            sheet="Income Statement",
+            column=4,
+            period_key="p1",
+            header="2025",
+            start="2025-01-01",
+            end="2025-03-31",
+        )
+        p = period_from_workbook_meta(
+            meta, statement_type="income_statement", is_10k=False,
+        )
+        assert p and p.period_type == "Q1" and p.fiscal_year == 2025
+
+    def test_sec_date_header_optional_comma_before_year(self):
+        from period_parser import collect_dates, parse_workbook_period
+
+        assert collect_dates("Three months ended March 31 2019") == [(2019, 3, 31)]
+        assert collect_dates("Three months ended March 31, 2019") == [(2019, 3, 31)]
+
+        p = parse_workbook_period(
+            "Three months ended March 31 2019",
+            statement_type="income_statement",
+            is_10k=False,
+        )
+        assert p and p.canonical == "1Q19"
+
+        p6 = parse_workbook_period(
+            "Six months ended June 30 2019",
+            statement_type="cash_flow",
+            is_10k=False,
+        )
+        assert p6 and p6.period_type == "6M" and p6.fiscal_year == 2019
+
+        p9 = parse_workbook_period(
+            "Nine months ended September 30 2019",
+            statement_type="cash_flow",
+            is_10k=False,
+        )
+        assert p9 and p9.period_type == "9M" and p9.fiscal_year == 2019
 
 
 class TestHeadlinePeriods:
@@ -224,55 +306,239 @@ class _MockWorksheet:
         for row_data in self._rows[min_row - 1:]:
             yield [_MockCell(v) for v in row_data]
 
-class TestSparseColumnFilter:
-    def test_sparse_column_dropped(self):
-        """A column with < 50% fill of the best column is dropped."""
-        pcols = [
-            (1, _p("1Q15")),   # col 1
-            (2, _p("FY15")),   # col 2
-            (3, _p("6M15")),   # col 3 – sparse
-        ]
-        # 10 data rows; col1 has 10 values, col2 has 8, col3 has only 3
-        rows = []
-        for i in range(10):
-            rows.append([
-                float(i + 1),                          # col 1: always filled
-                float(i + 100) if i < 8 else None,     # col 2: 8/10
-                float(i + 200) if i < 3 else None,     # col 3: 3/10 = 30% of max
-            ])
-        ws = _MockWorksheet(rows)
-        kept = _filter_sparse_columns(ws, 0, pcols)  # header_row=0 → data starts row 1
-        kept_labels = {p.column_label for _, p in kept}
-        assert "1Q15" in kept_labels
-        assert "FY15" in kept_labels
-        assert "6M15" not in kept_labels  # 3/10 = 30% < 50%
+class TestWorkbookLoaderRowOrder:
+    def test_duplicate_concept_rows_get_unique_order_slots(self, tmp_path):
+        from openpyxl import Workbook
 
-    def test_all_columns_kept_when_above_threshold(self):
-        """Columns at or above 50% of max fill survive."""
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Income Statement"
+        ws.append(["Line", "Concept", "Depth", "1Q24", "1Q23"])
+        ws.append(["Vehicle", "us-gaap:InterestIncomeExpenseNet", 0, 141, 111])
+        ws.append(["Non-vehicle", "us-gaap:InterestIncomeExpenseNet", 0, 75, 51])
+        fp = tmp_path / "dup.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        sheet = info.sheets[0]
+        assert len(sheet.row_order) == 2
+        assert sheet.row_order[0] == "us-gaap:InterestIncomeExpenseNet"
+        assert sheet.row_order[1].startswith("us-gaap:InterestIncomeExpenseNet@R")
+        assert len(sheet.facts) == 4
+        vehicle_facts = [f for f in sheet.facts if f.value == 141 or f.value == 111]
+        non_vehicle_facts = [f for f in sheet.facts if f.value == 75 or f.value == 51]
+        assert all(f.concept == "us-gaap:InterestIncomeExpenseNet" for f in vehicle_facts)
+        assert all(
+            f.concept.startswith("us-gaap:InterestIncomeExpenseNet@R") for f in non_vehicle_facts
+        )
+
+    def test_loads_10k_with_plain_year_column_headers(self, tmp_path):
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        for title in ("Income Statement", "Balance Sheet", "Cash Flow"):
+            ws = wb.create_sheet(title)
+            ws.append(["Line", "Concept", "Depth", "2025", "2024", "2023"])
+            ws.append(["Total revenue", "us-gaap:Revenues", 0, 100, 90, 80])
+        wb.remove(wb["Sheet"])
+        fp = tmp_path / "MSFT_SEC-XBRL-financials_as-presented_10-K_2025-07-30_test.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        assert len(info.sheets) == 3
+        assert info.latest_fy == 2025
+        periods = {f.period.canonical for sh in info.sheets for f in sh.facts}
+        assert "FY25" in periods
+        assert "FY24" in periods
+        assert "FY23" in periods
+
+    def test_loads_10q_with_plain_year_is_columns(self, tmp_path):
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Income Statement"
+        ws.append(["Line", "Concept", "Depth", "2021", "2020"])
+        ws.append(["Total revenue", "us-gaap:Revenues", 0, 100, 90])
+        fp = tmp_path / "MSFT_SEC-XBRL-financials_as-presented_10-Q_2021-10-26_test.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        assert len(info.sheets) == 1
+        assert {f.period.canonical for f in info.sheets[0].facts} == {"FY21", "FY20"}
+
+    def test_loads_multi_row_stacked_header(self, tmp_path):
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Income Statement"
+        ws.append(["", "", "", "Three Months Ended", "Nine Months Ended"])
+        ws.append(["Line", "Concept", "Depth", "March 31, 2025", "March 31, 2025"])
+        ws.append(["Revenue", "us-gaap:Revenues", 0, 100, 300])
+        fp = tmp_path / "stacked_header.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        assert len(info.sheets) == 1
+        periods = {f.period.canonical for f in info.sheets[0].facts}
+        assert "1Q25" in periods or "3Q25" in periods
+        assert "9M25" in periods
+
+    def test_loads_period_from_meta_sheet_dates(self, tmp_path):
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        meta = wb.active
+        meta.title = "Meta"
+        meta.append(["Ticker", "TEST"])
+        meta.append(["", ""])
+        meta.append(["Period columns", ""])
+        meta.append(["Sheet", "Column", "Period key", "Header", "Start", "End"])
+        meta.append([
+            "Income Statement", 4, "p1", "2025",
+            "2025-01-01", "2025-03-31",
+        ])
+        ws = wb.create_sheet("Income Statement")
+        ws.append(["Line", "Concept", "Depth", "2025"])
+        ws.append(["Revenue", "us-gaap:Revenues", 0, 100])
+        fp = tmp_path / "meta_period.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        assert len(info.sheets) == 1
+        assert info.sheets[0].facts[0].period.canonical == "1Q25"
+
+
+class TestCfStatementBounds:
+    NET_CHANGE = (
+        "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+        "PeriodIncreaseDecreaseIncludingExchangeRateEffect"
+    )
+    NET_LABEL = (
+        "Net increase (decrease) in cash and cash equivalents and "
+        "restricted cash and cash equivalents during the period"
+    )
+
+    def test_truncate_drops_supplemental_tail(self, tmp_path):
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Cash Flow"
+        ws.append(["Line", "Concept", "Depth", "FY25"])
+        ws.append(["Net cash from operating activities", "us-gaap:NetCashProvidedByUsedInOperatingActivities", 0, 100])
+        ws.append([self.NET_LABEL, self.NET_CHANGE, 0, 52])
+        ws.append(["Cash at beginning of period", "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", 0, 1000])
+        ws.append(["Dividends paid to Hertz Holdings", "us-gaap:PaymentsOfDividends", 0, -13])
+        ws.append(["Supplemental disclosures of cash flow information:", "html:supplemental-disclosures-of-cash-flow-information", 0, None])
+        fp = tmp_path / "cf.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        sheet = info.sheets[0]
+        assert sheet.row_order[-1] == self.NET_CHANGE
+        assert "us-gaap:PaymentsOfDividends" not in sheet.row_order
+        assert all("PaymentsOfDividends" not in f.concept for f in sheet.facts)
+
+    def test_truncate_uses_first_net_change_when_duplicated_at_tail(self, tmp_path):
+        """HTZ 10-Q sheets repeat net-change after supplemental disclosures."""
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        dup_label = (
+            "Net increase (decrease) in cash and cash equivalents and "
+            "restricted cash and cash equivalents during the period"
+        )
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Cash Flow"
+        ws.append(["Line", "Concept", "Depth", "1Q22"])
+        ws.append(["Net cash from financing activities", "us-gaap:NetCashProvidedByUsedInFinancingActivities", 0, -10])
+        ws.append(["Net (decrease) increase in cash and cash equivalents and restricted cash and cash equivalents during the period", self.NET_CHANGE, 0, 5])
+        ws.append(["Cash at beginning of period", "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", 0, 1000])
+        ws.append(["Supplemental disclosures of cash flow information:", "html:supplemental-disclosures-of-cash-flow-information", 0, None])
+        ws.append(["Dividends paid to Hertz Holdings", "us-gaap:PaymentsOfDividends", 0, -7])
+        ws.append([dup_label, self.NET_CHANGE, 0, 5])
+        fp = tmp_path / "cf_dup.xlsx"
+        wb.save(fp)
+
+        info = load_workbook_data(fp)
+        sheet = info.sheets[0]
+        assert sheet.row_order[-1] == self.NET_CHANGE
+        assert "html:supplemental-disclosures-of-cash-flow-information" not in sheet.row_order
+        assert "us-gaap:PaymentsOfDividends" not in sheet.row_order
+
+    def test_is_cf_net_change_matches_concept_and_label(self):
+        from cf_statement_bounds import is_cf_net_change_in_cash_row
+
+        assert is_cf_net_change_in_cash_row(self.NET_CHANGE, self.NET_LABEL)
+        assert is_cf_net_change_in_cash_row(
+            "html:net-increase-decrease-in-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents",
+            "Net increase (decrease) in cash, cash equivalents, restricted cash and rest",
+        )
+        assert not is_cf_net_change_in_cash_row(
+            "us-gaap:NetCashProvidedByUsedInOperatingActivities",
+            "Net cash provided by operating activities",
+        )
+        assert not is_cf_net_change_in_cash_row(
+            "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+            "Cash and cash equivalents at end of period",
+        )
+
+
+class TestSparseColumnFilter:
+    def test_zero_fill_column_dropped(self):
+        """Only columns with zero numeric cells are dropped."""
         pcols = [
             (1, _p("1Q15")),
             (2, _p("FY15")),
+            (3, _p("6M15")),
         ]
-        rows = [[100.0, 200.0]] * 10  # both fully filled
+        rows = []
+        for i in range(10):
+            rows.append([
+                float(i + 1),
+                float(i + 100) if i < 8 else None,
+                float(i + 200) if i < 3 else None,
+            ])
+        ws = _MockWorksheet(rows)
+        kept = _filter_sparse_columns(ws, 0, pcols)
+        kept_labels = {p.column_label for _, p in kept}
+        assert kept_labels == {"1Q15", "FY15", "6M15"}
+
+    def test_all_columns_kept_when_any_numeric(self):
+        pcols = [(1, _p("1Q15")), (2, _p("FY15"))]
+        rows = [[100.0, 200.0]] * 10
         ws = _MockWorksheet(rows)
         kept = _filter_sparse_columns(ws, 0, pcols)
         assert len(kept) == 2
 
-    def test_empty_sheet_keeps_all(self):
-        """If no column has any data, keep all (avoid division-by-zero)."""
+    def test_empty_sheet_drops_all_columns(self):
         pcols = [(1, _p("1Q15")), (2, _p("FY15"))]
         rows = [[None, None]] * 5
         ws = _MockWorksheet(rows)
         kept = _filter_sparse_columns(ws, 0, pcols)
-        assert len(kept) == 2
+        assert kept == []
 
-    def test_exactly_at_threshold_kept(self):
-        """Column at exactly 50% of max fill is kept (>= threshold)."""
+    def test_single_value_column_kept(self):
+        """Low-fill but non-empty columns survive (no ratio threshold)."""
         pcols = [(1, _p("1Q15")), (2, _p("FY15"))]
-        # col1: 10 values, col2: 5 values → 5/10 = 50% exactly
-        rows = []
-        for i in range(10):
-            rows.append([float(i), float(i) if i < 5 else None])
+        rows = [[100.0, None]] * 10
+        rows[0] = [100.0, 5.0]
         ws = _MockWorksheet(rows)
         kept = _filter_sparse_columns(ws, 0, pcols)
         assert len(kept) == 2
@@ -486,6 +752,113 @@ class TestFiscalYearNormalization:
         assert by_label[fy_hdr] == "FY23"
         assert by_label[q1_hdr] == "1Q24"
 
+    def test_sep_fye_bs_december_instant_maps_to_fiscal_q1(self):
+        """FICO Q1 10-Q: Dec 31 BS without ASSETS suffix is fiscal Q1, not FY."""
+        dec_hdr = "December 31, 2018 (In thousands, except par value data)"
+        facts = [
+            _fact(
+                concept="us-gaap:Cash",
+                plabel=dec_hdr,
+                value=100.0,
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+                line="Cash",
+            ),
+        ]
+        sheet = _sheet(facts, stmt="balance_sheet", src="fico_q1.xlsx", sheet_name="Balance Sheet")
+        wbs = [
+            _wb([sheet], filename="fico_q1.xlsx", is_10k=False, fy=2019),
+            _wb(
+                [_sheet([
+                    _fact(
+                        concept="us-gaap:Revenue",
+                        plabel="Year ended September 30, 2019",
+                        value=1,
+                        stmt="income_statement",
+                    ),
+                ], src="fico_10k.xlsx")],
+                filename="fico_10k.xlsx",
+                is_10k=True,
+                fy=2019,
+            ),
+        ]
+        normalize_fiscal_periods(wbs)
+        assert wbs[0].sheets[0].facts[0].period.canonical == "1Q19"
+
+    def test_sep_fye_10k_bs_year_end_maps_to_fy(self):
+        """10-K BS at fiscal year-end month → FY (matches 10-K headline), not Q4."""
+        sep_hdr = "September 30, 2019 (In thousands, except par valuedata) Assets"
+        facts = [
+            _fact(
+                concept="us-gaap:Cash",
+                plabel=sep_hdr,
+                value=200.0,
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+                line="Cash",
+            ),
+            _fact(
+                concept="us-gaap:Revenue",
+                plabel="Year ended September 30, 2019",
+                value=1,
+                stmt="income_statement",
+            ),
+        ]
+        sheet_bs = _sheet([facts[0]], stmt="balance_sheet", src="fico_10k.xlsx", sheet_name="Balance Sheet")
+        sheet_is = _sheet([facts[1]], stmt="income_statement", src="fico_10k.xlsx")
+        wbs = [_wb([sheet_bs, sheet_is], filename="fico_10k.xlsx", is_10k=True, fy=2019)]
+        normalize_fiscal_periods(wbs)
+        assert wbs[0].sheets[0].facts[0].period.canonical == "FY19"
+
+    def test_sep_fye_bs_consolidates_when_headlines_match(self):
+        """BS survives period-primary merge when fiscal period tags match headlines."""
+        q1_hdr = "December 31, 2018 (In thousands, except par value data)"
+        q2_hdr = "March 31, 2019 (In thousands, except par value data)"
+        fy_hdr = "September 30, 2019 (In thousands, except par valuedata) Assets"
+        q1_facts = [
+            _fact(
+                "us-gaap:Cash", stmt="balance_sheet", plabel=q1_hdr, value=10.0,
+                line="Cash", src="q1.xlsx", sheet="Balance Sheet",
+            ),
+        ]
+        q2_facts = [
+            _fact(
+                "us-gaap:Cash", stmt="balance_sheet", plabel=q2_hdr, value=20.0,
+                line="Cash", src="q2.xlsx", sheet="Balance Sheet",
+            ),
+        ]
+        k_facts = [
+            _fact(
+                "us-gaap:Cash", stmt="balance_sheet", plabel=fy_hdr, value=30.0,
+                line="Cash", src="k.xlsx", sheet="Balance Sheet",
+            ),
+            _fact("us-gaap:Revenue", plabel="Year ended September 30, 2019", value=1, src="k.xlsx"),
+        ]
+        q1_wb = _wb(
+            [_sheet(q1_facts, stmt="balance_sheet", src="q1.xlsx", sheet_name="Balance Sheet")],
+            filename="q1.xlsx", is_10k=False, fy=2019,
+        )
+        q2_wb = _wb(
+            [_sheet(q2_facts, stmt="balance_sheet", src="q2.xlsx", sheet_name="Balance Sheet")],
+            filename="q2.xlsx", is_10k=False, fy=2019,
+        )
+        k_wb = _wb([
+            _sheet([k_facts[0]], stmt="balance_sheet", src="k.xlsx", sheet_name="Balance Sheet"),
+            _sheet([k_facts[1]], src="k.xlsx"),
+        ], filename="k.xlsx", is_10k=True, fy=2019)
+        wbs = [q1_wb, q2_wb, k_wb]
+        normalize_fiscal_periods(wbs)
+        rows = [MasterRow("balance_sheet", "us-gaap:Cash", "us-gaap:Cash", "Cash", 0, 0)]
+        cmap = [ConceptMapping("balance_sheet", "us-gaap:Cash", "us-gaap:Cash", "auto_from_master", "")]
+        mapped, _ = map_all_facts(wbs, cmap, rows)
+        headlines = {wb.filename: headline_periods_for_workbook(wb) for wb in wbs}
+        data, audit, _ = consolidate(mapped, rows, file_headline_periods=headlines)
+        assert data["balance_sheet"]["us-gaap:Cash"]["1Q19"] == 10.0
+        assert data["balance_sheet"]["us-gaap:Cash"]["2Q19"] == 20.0
+        assert data["balance_sheet"]["us-gaap:Cash"]["FY19"] == 30.0
+        bs_periods = {a.output_period for a in audit if a.statement_type == "balance_sheet"}
+        assert {"1Q19", "2Q19", "FY19"}.issubset(bs_periods)
+
     def test_june_fye_prose_quarter(self):
         """June FYE: Q1 ends September (not calendar Q3)."""
         from period_parser import period_from_end_date
@@ -634,6 +1007,62 @@ class TestMasterPresentation:
         assert by_raw["us-gaap:Goodwill"] == "us-gaap:Goodwill"
         assert by_raw["custom:OtherIntangible"] == "custom:OtherIntangible"
 
+    def test_balance_sheet_label_match_plural_difference(self):
+        """BS allows exact normalized label match when concept tag aligns with label."""
+        master_sh = _sheet([
+            _fact(
+                "us-gaap:AccountsReceivableNetCurrent",
+                line="Accounts receivable, net",
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+            ),
+        ], stmt="balance_sheet", sheet_name="Balance Sheet")
+        master_wb = _wb([master_sh], "10-K.xlsx", True, 2024)
+
+        old_sh = _sheet([
+            _fact(
+                "custom:AccountsReceivableNet",
+                line="Accounts receivables, net",
+                src="old.xlsx",
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+            ),
+        ], src="old.xlsx", stmt="balance_sheet", sheet_name="Balance Sheet")
+        old_wb = _wb([old_sh], "old.xlsx", False, 2016)
+
+        rows, cmap = build_master_presentation(master_wb, all_workbooks=[master_wb, old_wb])
+        assert len(rows) == 1
+        m = [x for x in cmap if x.raw_concept == "custom:AccountsReceivableNet"][0]
+        assert m.canonical_row_id == "us-gaap:AccountsReceivableNetCurrent"
+        assert m.mapping_status == "auto_label_match"
+
+    def test_balance_sheet_label_match_parenthetical_stripped(self):
+        master_sh = _sheet([
+            _fact(
+                "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+                line="Cash and cash equivalents",
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+            ),
+        ], stmt="balance_sheet", sheet_name="Balance Sheet")
+        master_wb = _wb([master_sh], "10-K.xlsx", True, 2024)
+
+        old_sh = _sheet([
+            _fact(
+                "custom:Cash",
+                line="Cash and cash equivalents (includes restricted cash)",
+                src="old.xlsx",
+                stmt="balance_sheet",
+                sheet="Balance Sheet",
+            ),
+        ], src="old.xlsx", stmt="balance_sheet", sheet_name="Balance Sheet")
+        old_wb = _wb([old_sh], "old.xlsx", False, 2015)
+
+        rows, cmap = build_master_presentation(master_wb, all_workbooks=[master_wb, old_wb])
+        assert len(rows) == 1
+        m = [x for x in cmap if x.raw_concept == "custom:Cash"][0]
+        assert m.canonical_row_id == "us-gaap:CashAndCashEquivalentsAtCarryingValue"
+
     # ── Normalized-label matching ─────────────────────────────────────
     def test_label_match_plural_difference(self):
         """'Revenues' in old filing matches 'Revenue' in master via normalization."""
@@ -652,6 +1081,34 @@ class TestMasterPresentation:
         assert len(rev_map) == 1
         assert rev_map[0].canonical_row_id == "us-gaap:Revenue"
         assert rev_map[0].mapping_status == "auto_label_match"
+
+    def test_label_match_duplicate_other_net_occurrence(self):
+        """Repeated CF 'Other, net' lines map to operating / investing / financing in order."""
+        master_sh = _sheet([
+            _fact("us-gaap:OtherOperatingActivitiesCashFlowStatement", stmt="cash_flow",
+                  sheet="Cash Flow", line="Other, net"),
+            _fact("us-gaap:PaymentsForProceedsFromOtherInvestingActivities", stmt="cash_flow",
+                  sheet="Cash Flow", line="Other, net"),
+            _fact("us-gaap:ProceedsFromPaymentsForOtherFinancingActivities", stmt="cash_flow",
+                  sheet="Cash Flow", line="Other, net"),
+        ], stmt="cash_flow", sheet_name="Cash Flow")
+        master_wb = _wb([master_sh], "10-K.xlsx", True, 2024)
+
+        q_sh = _sheet([
+            _fact("html:other-net", stmt="cash_flow", sheet="Cash Flow", line="Other, net",
+                  plabel="1Q19", value=-2.0, src="q.xlsx"),
+            _fact("html:other-net-2", stmt="cash_flow", sheet="Cash Flow", line="Other, net",
+                  plabel="1Q19", value=5.0, src="q.xlsx"),
+            _fact("html:other-net-3", stmt="cash_flow", sheet="Cash Flow", line="Other, net",
+                  plabel="1Q19", value=-7.0, src="q.xlsx"),
+        ], stmt="cash_flow", src="q.xlsx", sheet_name="Cash Flow")
+        q_wb = _wb([q_sh], "q.xlsx", False, 2019)
+
+        _, cmap = build_master_presentation(master_wb, all_workbooks=[master_wb, q_wb])
+        by_raw = {m.raw_concept: m.canonical_row_id for m in cmap}
+        assert by_raw["html:other-net"] == "us-gaap:OtherOperatingActivitiesCashFlowStatement"
+        assert by_raw["html:other-net-2"] == "us-gaap:PaymentsForProceedsFromOtherInvestingActivities"
+        assert by_raw["html:other-net-3"] == "us-gaap:ProceedsFromPaymentsForOtherFinancingActivities"
 
     def test_label_match_ampersand_vs_and(self):
         """'Selling, General & Administrative' matches 'Selling, General and Administrative'."""
@@ -797,6 +1254,52 @@ class TestMasterPresentation:
         m = [x for x in cmap if x.raw_concept == "cabo:Revenue"][0]
         assert m.canonical_row_id == "us-gaap:Revenue"
         assert m.mapping_status == "auto_local_name"
+
+    def test_master_rows_monotonic_growth(self):
+        """Registry only grows: Phase 1 rows + each workbook's new rows all survive."""
+        master_sh = _sheet([
+            _fact("us-gaap:Revenue", line="Revenue"),
+            _fact("us-gaap:COGS", line="COGS"),
+        ])
+        master_wb = _wb([master_sh], "10-K.xlsx", True, 2024)
+
+        mid_sh = _sheet([
+            _fact("us-gaap:Revenue", line="Revenue", src="mid.xlsx"),
+            _fact("custom:MidItem", line="Mid Item", src="mid.xlsx"),
+        ], src="mid.xlsx")
+        mid_wb = _wb([mid_sh], "mid_10Q.xlsx", False, 2022)
+
+        old_sh = _sheet([
+            _fact("us-gaap:Revenue", line="Revenue", src="old.xlsx"),
+            _fact("custom:OldExpense", line="Old Expense", src="old.xlsx"),
+        ], src="old.xlsx")
+        old_wb = _wb([old_sh], "old_10Q.xlsx", False, 2020)
+
+        rows, _ = build_master_presentation(
+            master_wb, all_workbooks=[master_wb, mid_wb, old_wb],
+        )
+        keys = _master_row_keys(rows)
+        assert ("income_statement", "us-gaap:Revenue") in keys
+        assert ("income_statement", "us-gaap:COGS") in keys
+        assert ("income_statement", "custom:MidItem") in keys
+        assert ("income_statement", "custom:OldExpense") in keys
+        assert len(rows) == 4
+
+    def test_workbooks_for_backwards_walk_newest_first(self):
+        """Non-master workbooks are ordered by newest headline period descending."""
+        master = _wb([_sheet([_fact("us-gaap:Revenue", plabel="FY24")])], "master_10K.xlsx", True, 2024)
+
+        q25_facts = [
+            _fact("us-gaap:Revenue", plabel="1Q25", src="q25.xlsx"),
+            _fact("us-gaap:Revenue", plabel="2Q25", src="q25.xlsx"),
+        ]
+        q25 = _wb([_sheet(q25_facts, src="q25.xlsx")], "q25.xlsx", False, 2025)
+
+        q20_facts = [_fact("us-gaap:Revenue", plabel="1Q20", src="q20.xlsx")]
+        q20 = _wb([_sheet(q20_facts, src="q20.xlsx")], "q20.xlsx", False, 2020)
+
+        ordered = workbooks_for_backwards_walk([master, q25, q20], master)
+        assert [w.filename for w in ordered] == ["q25.xlsx", "q20.xlsx"]
 
 
 # ===========================================================================
@@ -1013,8 +1516,81 @@ class TestXbrlPeriods:
         out = filter_facts_to_xbrl_periods(facts)
         labels = {f.period.canonical for f in out}
         assert "2Q20" in labels
+        assert "FY18" in labels
         assert "1Q20" not in labels
+
+    def test_filter_facts_respects_min_fiscal_year(self):
+        from xbrl_periods import filter_facts_to_xbrl_periods
+
+        facts = [
+            _fact(concept="us-gaap:Revenues", plabel="2Q20", value=2.0),
+            _fact(concept="us-gaap:Revenues", plabel="FY18", value=3.0),
+        ]
+        out = filter_facts_to_xbrl_periods(facts, min_fiscal_year=2019)
+        labels = {f.period.canonical for f in out}
+        assert "2Q20" in labels
         assert "FY18" not in labels
+
+    def test_earliest_xbrl_tagged_fiscal_year(self):
+        from xbrl_periods import (
+            earliest_xbrl_tagged_fiscal_year,
+            earliest_xbrl_tagged_period_canonical,
+        )
+
+        sh = _sheet(
+            [
+                _fact(concept="html:revenues", plabel="1Q18", value=1.0),
+                _fact(concept="us-gaap:Revenues", plabel="2Q18", value=2.0),
+                _fact(concept="us-gaap:Revenues", plabel="1Q19", value=3.0),
+            ],
+            stmt="income_statement",
+        )
+        wb = _wb([sh], "q.xlsx", False, 2018)
+        assert earliest_xbrl_tagged_fiscal_year([wb]) == 2018
+        assert earliest_xbrl_tagged_period_canonical([wb]) == "2Q18"
+
+    def test_filter_workbooks_skips_html_only(self):
+        from xbrl_periods import filter_workbooks_to_xbrl_tagged, workbook_has_xbrl_tagged_facts
+
+        html_sh = _sheet([
+            _fact(concept="html:revenues", plabel="1Q19", value=1.0),
+        ])
+        html_wb = _wb([html_sh], "html_only.xlsx", False, 2019)
+        assert not workbook_has_xbrl_tagged_facts(html_wb)
+
+        mixed_sh = _sheet([
+            _fact(concept="html:revenues", plabel="1Q19", value=1.0),
+            _fact(concept="us-gaap:Revenues", plabel="1Q20", value=2.0),
+        ])
+        tagged_wb = _wb([mixed_sh], "tagged.xlsx", False, 2020)
+        assert workbook_has_xbrl_tagged_facts(tagged_wb)
+
+        kept, skipped = filter_workbooks_to_xbrl_tagged([html_wb, tagged_wb])
+        assert skipped == []
+        assert {w.filename for w in kept} == {"html_only.xlsx", "tagged.xlsx"}
+
+        kept_all_html, skipped_all_html = filter_workbooks_to_xbrl_tagged([html_wb])
+        assert kept_all_html == []
+        assert skipped_all_html == ["html_only.xlsx"]
+
+    def test_html_only_quarter_merges_onto_tagged_master_row(self):
+        """HTML-face 10-Q rows map to us-gaap master rows instead of new html: canonical ids."""
+        master_sh = _sheet([_fact("us-gaap:Revenue", line="Revenue")])
+        master_wb = _wb([master_sh], "10-K.xlsx", True, 2024)
+
+        html_sh = _sheet([
+            _fact("html:revenues", line="Revenues", src="q.xlsx", plabel="1Q19", value=100.0),
+        ], src="q.xlsx")
+        html_wb = _wb([html_sh], "q.xlsx", False, 2019)
+
+        rows, cmap = build_master_presentation(
+            master_wb, all_workbooks=[master_wb, html_wb]
+        )
+        assert len(rows) == 1
+        html_map = [m for m in cmap if m.raw_concept == "html:revenues"]
+        assert len(html_map) == 1
+        assert html_map[0].canonical_row_id == "us-gaap:Revenue"
+        assert html_map[0].mapping_status == "auto_label_match"
 
     def test_filter_facts_keeps_html_only_sheet(self):
         """When every fact is html:, keep in-range periods instead of zeroing the sheet."""
@@ -1027,7 +1603,7 @@ class TestXbrlPeriods:
         ]
         out = filter_facts_to_xbrl_periods(facts)
         labels = {f.period.canonical for f in out}
-        assert labels == {"1Q20", "FY20"}
+        assert labels == {"1Q20", "FY18", "FY20"}
 
     def test_models_json_allowed_periods(self):
         from main import _models_json
@@ -1825,6 +2401,15 @@ class TestInterestNetting:
 
         assert find_net_interest_canonical_row(rows) is None
 
+    def test_interest_expense_leg_excludes_total_expense_subtotal_tags(self):
+        from interest_netting import is_interest_expense_leg
+
+        assert not is_interest_expense_leg("htz:CostAndExpensesIncludingInterestExpense")
+        assert not is_interest_expense_leg("htzz:CostAndExpensesIncludingInterestExpense")
+        assert not is_interest_expense_leg("us-gaap:CostsAndExpenses")
+        assert is_interest_expense_leg("htz:InterestExpenseContractRelated")
+        assert is_interest_expense_leg("us-gaap:InterestExpenseOperating")
+
     def test_apply_interest_netting_aliases_skips_when_master_already_has_separate_interest_rows(self):
         from interest_netting import apply_interest_netting_aliases
 
@@ -2033,7 +2618,7 @@ class TestFullMasterPresentationInExports:
         """If no fiscal year has Q1–Q4, the grid still lists every period (legacy behavior)."""
         from main import _models_json, DISPLAY_MODEL_MIN_FISCAL_YEAR
 
-        assert DISPLAY_MODEL_MIN_FISCAL_YEAR == 2019
+        assert DISPLAY_MODEL_MIN_FISCAL_YEAR == 2020
         consolidated = {
             "income_statement": {
                 "us-gaap:Revenue": {
@@ -2133,8 +2718,8 @@ class TestFullMasterPresentationInExports:
         ann_row = models["balance_sheet"]["annual"]["rows"][0]
         assert ann_row["FY20"] == 100.0
 
-    def test_models_json_uses_2019_floor_not_first_complete_year(self):
-        """With DISPLAY_MODEL_MIN_FISCAL_YEAR=2019, partial years before first Q1–Q4 set still show."""
+    def test_models_json_display_min_shows_partial_years_before_first_complete(self):
+        """display_min_fiscal_year (earliest XBRL-tagged FY at compile time) shows partial years."""
         from main import _models_json
 
         consolidated = {
@@ -2154,17 +2739,15 @@ class TestFullMasterPresentationInExports:
         rows = [
             MasterRow("income_statement", "us-gaap:Revenue", "us-gaap:Revenue", "Revenue", 0, 0),
         ]
-        models, starts = _models_json(consolidated, rows, None)
+        models, starts = _models_json(consolidated, rows, None, display_min_fiscal_year=2019)
         qtr = models["income_statement"]["quarterly"]["periods"]
         assert starts["income_statement"] == 2019
         assert "1Q19" in qtr
         assert "1Q24" in qtr
 
-    def test_models_json_starts_at_first_fiscal_year_with_four_quarters(self, monkeypatch):
-        from main import _models_json, DISPLAY_MODEL_MIN_FISCAL_YEAR
+    def test_models_json_starts_at_first_fiscal_year_with_four_quarters(self):
+        from main import _models_json
 
-        assert DISPLAY_MODEL_MIN_FISCAL_YEAR == 2019
-        monkeypatch.setattr("main.DISPLAY_MODEL_MIN_FISCAL_YEAR", None)
         consolidated = {
             "income_statement": {
                 "us-gaap:Revenue": {
@@ -2283,6 +2866,22 @@ class TestFullMasterPresentationInExports:
         concepts = {"us-gaap:A": {"FY20": 1.0}}
         order = _row_order(master_rows, "balance_sheet", concepts)
         assert order == ["us-gaap:A", "us-gaap:B"]
+
+    def test_exporter_period_sheets_split_quarterly_ytd_annual(self):
+        from exporter import _quarter_periods, _ytd_periods, _fy_periods
+
+        concepts = {
+            "us-gaap:Revenues": {
+                "1Q24": 1.0,
+                "2Q24": 2.0,
+                "6M24": 3.0,
+                "9M24": 4.0,
+                "FY24": 10.0,
+            },
+        }
+        assert _quarter_periods(concepts) == ["1Q24", "2Q24"]
+        assert _ytd_periods(concepts) == ["6M24", "9M24"]
+        assert _fy_periods(concepts) == ["FY24"]
 
 
 class TestAuditTrail:
@@ -2871,6 +3470,130 @@ class TestWorkbookTruth:
         assert cleared >= 1 or data.get("cash_flow", {}).get(canon, {}).get("1Q24") is None
         issues = validate_compiled_against_workbooks(data, truth, rows, derived)
         assert not any(i.issue == "extra_value" and i.period == "1Q24" for i in issues)
+
+
+class TestPresentationLineage:
+    FX_LABEL = (
+        "Effect of foreign currency exchange rate changes on cash and cash "
+        "equivalents and restricted cash and cash equivalents"
+    )
+    FX_SHORT = "us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+    FX_LONG = (
+        "us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
+        "IncludingDisposalGroupAndDiscontinuedOperations"
+    )
+
+    def _cf_wb(self, tmp_path, fname, concept, fy, is_10k=False):
+        from openpyxl import Workbook
+
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Cash Flow"
+        period = f"FY{fy % 100}"
+        ws.append(["Line", "Concept", "Depth", period])
+        ws.append([self.FX_LABEL, concept, 0, 5.0])
+        fp = tmp_path / fname
+        wb.save(fp)
+        return load_workbook_data(fp)
+
+    def test_lineage_merges_tag_rename_same_label(self, tmp_path):
+        from presentation_lineage import build_presentation_lineage
+
+        old = self._cf_wb(tmp_path, "old.xlsx", self.FX_SHORT, 2023, is_10k=True)
+        new = self._cf_wb(tmp_path, "new.xlsx", self.FX_LONG, 2025, is_10k=True)
+        rows, cmap, stats = build_presentation_lineage(new, [old, new])
+
+        canon_ids = {r.canonical_row_id for r in rows if r.statement_type == "cash_flow"}
+        assert len(canon_ids) == 1
+        short_maps = [m for m in cmap if m.raw_concept == self.FX_SHORT]
+        long_maps = [m for m in cmap if m.raw_concept == self.FX_LONG]
+        assert len(short_maps) == 1
+        assert len(long_maps) == 1
+        assert short_maps[0].canonical_row_id == long_maps[0].canonical_row_id
+        assert stats.label_aliases >= 1
+
+    def test_lineage_keeps_duplicate_qname_slots_separate(self, tmp_path):
+        from openpyxl import Workbook
+
+        from presentation_lineage import build_presentation_lineage
+        from workbook_loader import load_workbook_data
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Cash Flow"
+        ws.append(["Line", "Concept", "Depth", "1Q25"])
+        ws.append(["Vehicle debt", "us-gaap:ProceedsFromIssuanceOfDebt", 0, 100])
+        ws.append(["Non-vehicle debt", "us-gaap:ProceedsFromIssuanceOfDebt", 0, 50])
+        fp = tmp_path / "dup.xlsx"
+        wb.save(fp)
+        info = load_workbook_data(fp)
+        rows, cmap, _ = build_presentation_lineage(info, [info])
+        proceeds_canons = {
+            m.canonical_row_id
+            for m in cmap
+            if m.statement_type == "cash_flow"
+            and "ProceedsFromIssuanceOfDebt" in m.raw_concept
+        }
+        assert len(proceeds_canons) == 2
+
+
+class TestRegistryCompare:
+    def test_prefers_lineage_when_fewer_duplicate_labels(self):
+        from pathlib import Path
+
+        from master_presentation_builder import ConceptMapping, MasterRow
+        from presentation_registry_compare import choose_better_registry
+        from workbook_loader import FactRecord, SheetData, WorkbookInfo
+
+        label = TestPresentationLineage.FX_LABEL
+        short = TestPresentationLineage.FX_SHORT
+        long = TestPresentationLineage.FX_LONG
+
+        def _fact(concept, pl, val):
+            from period_parser import parse_period
+
+            p = parse_period(pl)
+            assert p is not None
+            return FactRecord(
+                "cash_flow", concept, label, p, val,
+                "f.xlsx", "Cash Flow", pl, 0,
+            )
+
+        sh = SheetData(
+            source_file="f.xlsx",
+            source_sheet="Cash Flow",
+            statement_type="cash_flow",
+            facts=[_fact(short, "FY23", 1.0), _fact(long, "FY25", 2.0)],
+            row_order=[short, long],
+            concept_to_line={short: label, long: label},
+            concept_to_depth={short: 0, long: 0},
+        )
+        wb = WorkbookInfo(
+            filename="f.xlsx", filepath=Path("f.xlsx"),
+            is_10k=True, latest_fy=2025, sheets=[sh],
+        )
+
+        legacy_rows = [
+            MasterRow("cash_flow", short, short, label, 0, 0),
+            MasterRow("cash_flow", long, long, label, 1, 0),
+        ]
+        legacy_map = [
+            ConceptMapping("cash_flow", short, short, "auto_from_master", ""),
+            ConceptMapping("cash_flow", long, long, "auto_from_filing", ""),
+        ]
+        lineage_rows = [
+            MasterRow("cash_flow", short, short, label, 0, 0),
+        ]
+        lineage_map = [
+            ConceptMapping("cash_flow", short, short, "lineage_new_row", ""),
+            ConceptMapping("cash_flow", long, short, "lineage_label_alias", ""),
+        ]
+
+        choice = choose_better_registry([wb], legacy_rows, legacy_map, lineage_rows, lineage_map)
+        assert choice.winner == "lineage"
+        assert len(choice.master_rows) == 1
 
 
 if __name__ == "__main__":

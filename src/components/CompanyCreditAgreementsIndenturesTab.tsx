@@ -7,7 +7,6 @@ import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import {
-  CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES,
   OPEN_IN_EXTERNAL_AI_FULL_LINE,
   openGeminiWithClipboard,
 } from "@/lib/gemini-open-url";
@@ -15,10 +14,11 @@ import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
-import { CreditAgreementsFilesBox } from "@/components/CreditAgreementsFilesBox";
 import { DistressedLinkAnalyzeModal } from "@/components/DistressedLinkAnalyzeModal";
+import type { CreditDocSavedBoxKey } from "@/lib/credit-doc-save-targets";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
@@ -281,7 +281,7 @@ IMPORTANT RULES
 
 The final output should feel like a real debt-document index built by a credit analyst for underwriting and document review.`;
 
-export const DOC_REVIEW_PROMPT = `You are a top-tier distressed debt / special situations credit analyst and legal-document reviewer. I am going to paste a credit agreement, indenture, or related debt document. Your job is to extract, organize, and explain everything that matters to a distressed analyst.
+export const DOC_REVIEW_PROMPT = `You are a top-tier distressed debt / special situations credit analyst and legal-document reviewer. Your job is to review the credit agreement, indenture, or related debt document at the SOURCE DOCUMENT LINK at the end of this prompt, and extract, organize, and explain everything that matters to a distressed analyst.
 
 Your objectives are:
 
@@ -293,7 +293,7 @@ Your objectives are:
 
 Very important instructions:
 
-- Base everything only on the text I paste.
+- Base everything only on the document at the SOURCE DOCUMENT LINK. Open that URL and read the full text before answering.
 - Do not hallucinate or assume market-standard language if it is not in the document.
 - Cite the exact section number, definition name, schedule, exhibit, annex, or page reference for every important point.
 - Quote short key snippets only when necessary.
@@ -302,7 +302,7 @@ Very important instructions:
   b) what it likely means in practice,
   c) what is ambiguous or requires further documents.
 - If amendments, supplements, joinders, guarantee agreements, security documents, intercreditor agreements, collateral agency provisions, or exhibits are missing, tell me exactly what is missing and why it matters.
-- If the pasted text is incomplete, still do the best possible job and identify the highest-priority gaps.
+- If the document at the link is incomplete or you cannot access it, say so explicitly and identify the highest-priority gaps.
 - Write like a distressed analyst speaking to another distressed analyst: precise, skeptical, commercially focused.
 
 Please produce the output in the exact structure below:
@@ -501,7 +501,7 @@ If enough information is present, show a sample covenant calculation framework:
 - Final covenant EBITDA
 - Resulting leverage / coverage ratio
 
-If exact math cannot be done from the pasted text alone, still show the formula architecture and explain where judgment enters.
+If exact math cannot be done from the document alone, still show the formula architecture and explain where judgment enters.
 
 ==================================================
 6. NEGATIVE COVENANTS
@@ -817,61 +817,101 @@ Final style rules:
 - Highlight anything non-obvious.
 - When in doubt, be skeptical.
 - Prioritize what matters in distress, restructuring, and downside protection.
-- Always tie conclusions back to the actual text.
+- Always tie conclusions back to the actual text in the document at the SOURCE DOCUMENT LINK.
 
-I will now paste the document below:
-
-[PASTE CREDIT AGREEMENT / INDENTURE / AMENDMENTS / NOTES HERE]`;
+The full document is at the SOURCE DOCUMENT LINK at the end of this prompt. Open that URL, retrieve the credit agreement / indenture / amendment / supplement text, and base your entire analysis on that document. Do not rely on summaries or memory — read the linked filing.`;
 
 const SAVED_PREFIX = "century-egg-credit-agreements-indentures-";
 
-type SavedBoxKey =
-  | "credit-agreements-indentures-credit-agreement"
-  | "credit-agreements-indentures-first-lien-indenture"
-  | "credit-agreements-indentures-second-lien-indenture"
-  | "credit-agreements-indentures-unsecured"
-  | "credit-agreements-indentures-convertible"
-  | "credit-agreements-indentures-preferred"
-  | "credit-agreements-indentures-other";
+export type { CreditDocSavedBoxKey } from "@/lib/credit-doc-save-targets";
 
-const BOXES: Array<{ title: string; key: SavedBoxKey; storagePrefix: string; fallback?: { key: "credit-agreements-indentures"; storagePrefix: string } }> = [
-  {
-    title: "Document list",
-    key: "credit-agreements-indentures-other",
+export type CreditDocWorkspaceVariant =
+  | "credit-docs-list"
+  | "credit-agreement"
+  | "first-lien-notes"
+  | "second-lien-notes"
+  | "unsecured-notes"
+  | "other-credit-documents";
+
+type CreditDocVariantConfig = {
+  cardTitle: string;
+  boxTitle: string;
+  saveKey: CreditDocSavedBoxKey;
+  storagePrefix: string;
+  fallback?: { key: "credit-agreements-indentures"; storagePrefix: string };
+  enableLinkAnalyze: boolean;
+  showFindDocsPrompt: boolean;
+  /** When set, slide-out shows list→Analyze instructions instead of a local prompt. */
+  analyzeFromListDocumentLabel?: string;
+};
+
+export const CREDIT_DOC_WORKSPACE_VARIANTS: Record<CreditDocWorkspaceVariant, CreditDocVariantConfig> = {
+  "credit-docs-list": {
+    cardTitle: "Credit Docs List",
+    boxTitle: "Document list",
+    saveKey: "credit-agreements-indentures-other",
     storagePrefix: "century-egg-credit-agreements-indentures-other-",
     fallback: { key: "credit-agreements-indentures", storagePrefix: SAVED_PREFIX },
+    enableLinkAnalyze: true,
+    showFindDocsPrompt: true,
   },
-  {
-    title: "Credit agreement",
-    key: "credit-agreements-indentures-credit-agreement",
+  "credit-agreement": {
+    cardTitle: "Credit Agreement",
+    boxTitle: "Credit agreement",
+    saveKey: "credit-agreements-indentures-credit-agreement",
     storagePrefix: "century-egg-credit-agreements-indentures-credit-agreement-",
+    enableLinkAnalyze: false,
+    showFindDocsPrompt: false,
+    analyzeFromListDocumentLabel: "credit agreement",
   },
-  {
-    title: "1st lien indenture",
-    key: "credit-agreements-indentures-first-lien-indenture",
+  "first-lien-notes": {
+    cardTitle: "First Lien Notes",
+    boxTitle: "First lien notes",
+    saveKey: "credit-agreements-indentures-first-lien-indenture",
     storagePrefix: "century-egg-credit-agreements-indentures-first-lien-indenture-",
+    enableLinkAnalyze: false,
+    showFindDocsPrompt: false,
+    analyzeFromListDocumentLabel: "first lien notes",
   },
-  {
-    title: "2nd lien indenture",
-    key: "credit-agreements-indentures-second-lien-indenture",
+  "second-lien-notes": {
+    cardTitle: "2nd Lien Notes",
+    boxTitle: "2nd lien notes",
+    saveKey: "credit-agreements-indentures-second-lien-indenture",
     storagePrefix: "century-egg-credit-agreements-indentures-second-lien-indenture-",
+    enableLinkAnalyze: false,
+    showFindDocsPrompt: false,
+    analyzeFromListDocumentLabel: "2nd lien notes",
   },
-  {
-    title: "Unsecured",
-    key: "credit-agreements-indentures-unsecured",
+  "unsecured-notes": {
+    cardTitle: "Unsecured Notes",
+    boxTitle: "Unsecured notes",
+    saveKey: "credit-agreements-indentures-unsecured",
     storagePrefix: "century-egg-credit-agreements-indentures-unsecured-",
+    enableLinkAnalyze: false,
+    showFindDocsPrompt: false,
+    analyzeFromListDocumentLabel: "unsecured notes",
   },
-  {
-    title: "Convertible",
-    key: "credit-agreements-indentures-convertible",
-    storagePrefix: "century-egg-credit-agreements-indentures-convertible-",
+  "other-credit-documents": {
+    cardTitle: "Other Credit Documents",
+    boxTitle: "Other credit documents",
+    saveKey: "credit-agreements-indentures-other-credit-documents",
+    storagePrefix: "century-egg-credit-agreements-indentures-other-credit-documents-",
+    enableLinkAnalyze: false,
+    showFindDocsPrompt: false,
+    analyzeFromListDocumentLabel: "other credit documents",
   },
-  {
-    title: "Preferred",
-    key: "credit-agreements-indentures-preferred",
-    storagePrefix: "century-egg-credit-agreements-indentures-preferred-",
-  },
-];
+};
+
+export const CREDIT_DOC_TAB_ID_TO_VARIANT: Record<string, CreditDocWorkspaceVariant> = {
+  "credit-docs-list": "credit-docs-list",
+  "credit-agreement": "credit-agreement",
+  "first-lien-notes": "first-lien-notes",
+  "2nd-lien-notes": "second-lien-notes",
+  "unsecured-notes": "unsecured-notes",
+  "other-credit-documents": "other-credit-documents",
+  /** Legacy bookmark for the old combined tab. */
+  "credit-agreements-indentures": "credit-docs-list",
+};
 
 function SavedResponseBox({
   ticker,
@@ -884,7 +924,7 @@ function SavedResponseBox({
 }: {
   ticker: string;
   title: string;
-  saveKey: SavedBoxKey;
+  saveKey: CreditDocSavedBoxKey;
   storagePrefix: string;
   fallback?: { key: "credit-agreements-indentures"; storagePrefix: string };
   /** Increment when another control (e.g. API) writes this key so we reload from server. */
@@ -934,8 +974,7 @@ function SavedResponseBox({
   return (
     <SavedResponseExpandableShell
       title={title}
-      className="rounded-lg"
-      fillViewportMinHeight={false}
+      className="min-w-0 flex-1 rounded-lg"
       ticker={safeTicker}
       linkSourceText={isEditing ? editDraft : savedContent}
     >
@@ -945,7 +984,7 @@ function SavedResponseBox({
             value={editDraft}
             onChange={setEditDraft}
             placeholder="Paste your notes / extraction / AI output here, then click Save."
-            className={`min-h-[220px] w-full resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+            className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
           />
           <button
@@ -960,7 +999,7 @@ function SavedResponseBox({
       ) : (
         <>
           <div
-            className={`min-h-[220px] overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+            className={`min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
             style={{ color: "var(--text)" }}
           >
             {savedContent ? (
@@ -1017,11 +1056,19 @@ function linkify(text: string): ReactNode[] {
   );
 }
 
-export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: string }) {
+export function CompanyCreditDocWorkspaceTab({
+  ticker,
+  variant,
+}: {
+  ticker: string;
+  variant: CreditDocWorkspaceVariant;
+}) {
+  const config = CREDIT_DOC_WORKSPACE_VARIANTS[variant];
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [clipboardFailed, setClipboardFailed] = useState(false);
   const [savedRefreshKey, setSavedRefreshKey] = useState(0);
   const [analyzeModalUrl, setAnalyzeModalUrl] = useState<string | null>(null);
+  const [hasAnySavedContent, setHasAnySavedContent] = useState(false);
 
   const openDistressedAnalyzeForUrl = useCallback((url: string) => {
     setAnalyzeModalUrl(url.trim());
@@ -1045,20 +1092,24 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
-  }, [safeTicker]);
+  }, [safeTicker, variant]);
 
-  async function copyToClipboard() {
-    if (!prompt) return;
-    setClipboardFailed(false);
-    setStatusMessage(null);
-    try {
-      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-      setStatusMessage("Copied to clipboard.");
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage("Could not copy. Use the prompt below and copy manually.");
-    }
-  }
+  useEffect(() => {
+    if (!safeTicker) return;
+    let cancelled = false;
+    (async () => {
+      let content = await fetchSavedTabContent(safeTicker, config.saveKey);
+      if (!content.trim() && config.fallback) {
+        content = await fetchSavedTabContent(safeTicker, config.fallback.key);
+      }
+      if (!cancelled) {
+        setHasAnySavedContent(content.trim().length > 0);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [safeTicker, config.saveKey, config.fallback, savedRefreshKey]);
 
   async function copyText(text: string) {
     setClipboardFailed(false);
@@ -1094,7 +1145,7 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
 
   if (!safeTicker) {
     return (
-      <Card title="Credit Agreements & Indentures">
+      <Card title={config.cardTitle}>
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
           Select a company to open this prompt in Claude, ChatGPT, or DeepSeek.
         </p>
@@ -1103,7 +1154,8 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
   }
 
   return (
-    <Card title={`Credit Agreements & Indentures - ${safeTicker}`}>
+    <Card title={`${config.cardTitle} - ${safeTicker}`}>
+      {config.enableLinkAnalyze ? (
       <DistressedLinkAnalyzeModal
         open={analyzeModalUrl !== null}
         url={analyzeModalUrl}
@@ -1112,31 +1164,32 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
         onClose={() => setAnalyzeModalUrl(null)}
         setStatusMessage={setStatusMessage}
         setClipboardFailed={setClipboardFailed}
-        onApiSaved={() => {
-          setSavedRefreshKey((k) => k + 1);
-          setStatusMessage("API response saved to the Credit agreement box above.");
+        onApiSaved={(targetLabel) => {
+          setStatusMessage(`API response saved to the ${targetLabel} box. Open that tab to review.`);
         }}
       />
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <div className="min-w-0 flex-1 space-y-4 lg:min-h-[70vh]">
-          {BOXES.map((b) => (
+      ) : null}
+      <TabPromptSlideOutShell
+        hasMainContent={hasAnySavedContent}
+        main={
+          <div className="min-w-0 space-y-4 lg:min-h-[70vh]">
             <SavedResponseBox
-              key={b.key}
               ticker={safeTicker}
-              title={b.title}
-              saveKey={b.key}
-              storagePrefix={b.storagePrefix}
-              fallback={b.fallback}
+              title={config.boxTitle}
+              saveKey={config.saveKey}
+              storagePrefix={config.storagePrefix}
+              fallback={config.fallback}
               refreshKey={savedRefreshKey}
-              onLinkAnalyze={b.key === "credit-agreements-indentures-other" ? openDistressedAnalyzeForUrl : undefined}
+              onLinkAnalyze={config.enableLinkAnalyze ? openDistressedAnalyzeForUrl : undefined}
             />
-          ))}
-        </div>
-
-        <div className="flex w-full flex-col lg:w-[420px] flex-shrink-0 gap-4">
+          </div>
+        }
+        prompt={
+          <div className="flex w-full flex-col gap-4">
+          {config.showFindDocsPrompt ? (
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
-              Prompt 1 - find documents
+              Find documents
             </div>
             <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
               {OPEN_IN_EXTERNAL_AI_FULL_LINE}
@@ -1197,86 +1250,37 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
               persistAfterResult={async (text) => {
                 const t = text.trim();
                 if (!safeTicker || !t) return;
-                const ok = await saveToServer(safeTicker, "credit-agreements-indentures-other", t);
+                const ok = await saveToServer(safeTicker, config.saveKey, t);
                 if (!ok) throw new Error("Could not save response.");
                 setSavedRefreshKey((k) => k + 1);
-                setStatusMessage("API response saved to the Document list box above.");
+                setStatusMessage(`API response saved to the ${config.boxTitle} box above.`);
               }}
               className="mt-2 border-t border-[var(--border2)] pt-2"
             />
           </div>
+          ) : null}
 
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
-              Prompt 2 - distressed doc review
+          {config.analyzeFromListDocumentLabel ? (
+          <div
+            className="rounded-lg border px-3 py-3 text-sm leading-relaxed"
+            style={{ borderColor: "var(--border2)", color: "var(--text)", background: "var(--card2)" }}
+          >
+            <div className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--muted)" }}>
+              How to fill this box
             </div>
-            <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-              Paste the actual credit agreement / indenture text into the chat after opening. {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
-            </p>
-            <PromptTemplateBox
-              tabId="credit-agreements-doc-review"
-              defaultTemplate={DOC_REVIEW_PROMPT}
-              resolve={(tpl) => tpl}
-              className="mb-3"
-            />
-            <div className="tab-prompt-ai-actions-grid mb-2">
-              <button
-                type="button"
-                onClick={() => openInClaude(docReviewPrompt)}
-                className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-              >
-                Open in Claude
-              </button>
-              <button
-                type="button"
-                onClick={() => openInChatGPT(docReviewPrompt)}
-                className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
-              >
-                Open in ChatGPT
-              </button>
-              <button
-                type="button"
-                onClick={() => openInGemini(docReviewPrompt)}
-                className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "#EAB308", color: "#EAB308", background: "transparent" }}
-              >
-                Open in Gemini
-              </button>
-              <button
-                type="button"
-                onClick={() => openInDeepSeek(docReviewPrompt)}
-                className="tab-prompt-ai-action-btn"
-                style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
-              >
-                Open in DeepSeek
-              </button>
-              <button
-                type="button"
-                onClick={() => void copyText(docReviewPrompt)}
-                className="tab-prompt-ai-action-btn tab-prompt-ai-action-btn--grid-singleton"
-                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-              >
-                Copy prompt
-              </button>
-            </div>
-            <TabPromptApiButtons
-              userPrompt={docReviewPrompt}
-              onResult={() => {
-                setClipboardFailed(false);
-              }}
-              persistAfterResult={async (text) => {
-                const t = text.trim();
-                if (!safeTicker || !t) return;
-                const ok = await saveToServer(safeTicker, "credit-agreements-indentures-credit-agreement", t);
-                if (!ok) throw new Error("Could not save response.");
-                setSavedRefreshKey((k) => k + 1);
-                setStatusMessage("API response saved to the Credit agreement box above.");
-              }}
-              className="mt-2 border-t border-[var(--border2)] pt-2"
-            />
+            <ol className="list-decimal space-y-2 pl-5 text-sm" style={{ color: "var(--text)" }}>
+              <li>
+                Go to the <strong>Credit Docs List</strong> page (Capital Structure section) and update the document list for this company&apos;s credit docs.
+              </li>
+              <li>
+                For each relevant <strong>{config.analyzeFromListDocumentLabel}</strong> document link in that list, click <strong>Analyze</strong>.
+              </li>
+              <li>
+                Run the distressed doc review in your AI tool (or via API), then copy and paste the results into the <strong>{config.boxTitle}</strong> response box above and click <strong>Save</strong>.
+              </li>
+            </ol>
           </div>
+          ) : null}
           {statusMessage && (
             <p className="text-xs mb-1" style={{ color: "var(--muted2)" }}>
               {statusMessage}
@@ -1288,10 +1292,15 @@ export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: strin
             </p>
           )}
 
-          <CreditAgreementsFilesBox ticker={safeTicker} />
-        </div>
-      </div>
+          </div>
+        }
+      />
     </Card>
   );
+}
+
+/** @deprecated Use CompanyCreditDocWorkspaceTab with variant `credit-docs-list`. */
+export function CompanyCreditAgreementsIndenturesTab({ ticker }: { ticker: string }) {
+  return <CompanyCreditDocWorkspaceTab ticker={ticker} variant="credit-docs-list" />;
 }
 

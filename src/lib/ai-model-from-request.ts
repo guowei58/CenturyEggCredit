@@ -187,6 +187,129 @@ export function resolveBiblicalReferencesModels(b: ModelOverrideBody) {
   };
 }
 
+/** Credit Decision Dashboard; optional `*_CREDIT_DECISION_DASHBOARD_MODEL` env per provider. */
+export function resolveCreditDecisionDashboardModels(b: ModelOverrideBody) {
+  return {
+    claudeModel:
+      sanitizeClientModelId(b.claudeModel) ||
+      process.env.ANTHROPIC_CREDIT_DECISION_DASHBOARD_MODEL?.trim() ||
+      process.env.ANTHROPIC_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.ANTHROPIC_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.ANTHROPIC_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.ANTHROPIC_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.ANTHROPIC_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.ANTHROPIC_MODEL?.trim() ||
+      "claude-sonnet-4-6",
+    openaiModel:
+      sanitizeClientModelId(b.openaiModel) ||
+      process.env.OPENAI_CREDIT_DECISION_DASHBOARD_MODEL?.trim() ||
+      process.env.OPENAI_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.OPENAI_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.OPENAI_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.OPENAI_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.OPENAI_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.OPENAI_MODEL?.trim() ||
+      undefined,
+    geminiModel:
+      sanitizeClientModelId(b.geminiModel) ||
+      process.env.GEMINI_CREDIT_DECISION_DASHBOARD_MODEL?.trim() ||
+      process.env.GEMINI_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.GEMINI_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.GEMINI_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.GEMINI_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.GEMINI_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.GEMINI_MODEL?.trim() ||
+      undefined,
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_CREDIT_DECISION_DASHBOARD_MODEL?.trim() ||
+      process.env.DEEPSEEK_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.DEEPSEEK_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.DEEPSEEK_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.DEEPSEEK_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.DEEPSEEK_CREDIT_MEMO_MODEL?.trim() ||
+      getDeepSeekModel(),
+  };
+}
+
+/** Same pattern as dumbass tab; optional `*_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL` env per provider. */
+export function resolveNextQuarterEarningsTranscriptModels(b: ModelOverrideBody) {
+  return {
+    claudeModel:
+      sanitizeClientModelId(b.claudeModel) ||
+      process.env.ANTHROPIC_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.ANTHROPIC_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.ANTHROPIC_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.ANTHROPIC_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.ANTHROPIC_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.ANTHROPIC_MODEL?.trim() ||
+      "claude-sonnet-4-6",
+    openaiModel:
+      sanitizeClientModelId(b.openaiModel) ||
+      process.env.OPENAI_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.OPENAI_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.OPENAI_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.OPENAI_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.OPENAI_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.OPENAI_MODEL?.trim() ||
+      undefined,
+    geminiModel:
+      sanitizeClientModelId(b.geminiModel) ||
+      process.env.GEMINI_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.GEMINI_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.GEMINI_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.GEMINI_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.GEMINI_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.GEMINI_MODEL?.trim() ||
+      undefined,
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_NEXT_QUARTER_EARNINGS_TRANSCRIPT_MODEL?.trim() ||
+      process.env.DEEPSEEK_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.DEEPSEEK_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.DEEPSEEK_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.DEEPSEEK_CREDIT_MEMO_MODEL?.trim() ||
+      getDeepSeekModel(),
+  };
+}
+
+/** Same pattern as biblical tab; optional `*_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL` env per provider. */
+export function resolveHowToLookLikeADumbassModels(b: ModelOverrideBody) {
+  return {
+    claudeModel:
+      sanitizeClientModelId(b.claudeModel) ||
+      process.env.ANTHROPIC_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.ANTHROPIC_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.ANTHROPIC_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.ANTHROPIC_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.ANTHROPIC_MODEL?.trim() ||
+      "claude-sonnet-4-6",
+    openaiModel:
+      sanitizeClientModelId(b.openaiModel) ||
+      process.env.OPENAI_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.OPENAI_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.OPENAI_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.OPENAI_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.OPENAI_MODEL?.trim() ||
+      undefined,
+    geminiModel:
+      sanitizeClientModelId(b.geminiModel) ||
+      process.env.GEMINI_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.GEMINI_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.GEMINI_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.GEMINI_CREDIT_MEMO_MODEL?.trim() ||
+      process.env.GEMINI_MODEL?.trim() ||
+      undefined,
+    deepseekModel:
+      clientDeepseekModelId(b) ||
+      process.env.DEEPSEEK_HOW_TO_LOOK_LIKE_A_DUMBASS_MODEL?.trim() ||
+      process.env.DEEPSEEK_BIBLICAL_REFERENCES_MODEL?.trim() ||
+      process.env.DEEPSEEK_LITERARY_REFERENCES_MODEL?.trim() ||
+      process.env.DEEPSEEK_CREDIT_MEMO_MODEL?.trim() ||
+      getDeepSeekModel(),
+  };
+}
+
 const GEMINI_CREDIT_MEMO_MODEL_FALLBACK = "gemini-2.5-flash-lite";
 
 /** Exact model id used for this provider after env + request overrides (for audit / library UI). */

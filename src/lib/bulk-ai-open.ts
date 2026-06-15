@@ -15,7 +15,6 @@ import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE, resolveCapitalStructurePrompt } from
 import { COMPETITORS_PROMPT_TEMPLATE } from "@/data/competitors-prompt";
 import { CUSTOMERS_PROMPT_TEMPLATE } from "@/data/customers-prompt";
 import { SUPPLIERS_PROMPT_TEMPLATE } from "@/data/suppliers-prompt";
-import { EARNINGS_RELEASES_PROMPT_TEMPLATE } from "@/data/earnings-releases-prompt";
 import { EMPLOYEE_CONTACTS_PROMPT_TEMPLATE } from "@/data/employee-contacts-prompt";
 import {
   fillHistoricalFinancialsPromptPlaceholders,
@@ -73,7 +72,7 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
   const tk = ctx.ticker.trim();
   if (!tk) return [];
   const labels = promptLabels(ctx);
-  const { displayName: dn, tickerForPrompt, parenLabel: labelParen, earningsCompanyNameLine } = labels;
+  const { displayName: dn, tickerForPrompt, parenLabel: labelParen } = labels;
   const origin = ctx.appOrigin || "";
   const fill = (template: string) => fillCompanyPromptTemplate(template, tk, ctx.companyName);
   const ov = readPromptTemplateOverride;
@@ -189,13 +188,6 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       label: "Company Reputation",
       saveKey: "company-reputation",
       prompt: fill(ov("company-reputation", COMPANY_REPUTATION_PROMPT_TEMPLATE)),
-    },
-    {
-      label: "Earnings releases",
-      saveKey: "earnings-releases",
-      prompt: ov("earnings-releases", EARNINGS_RELEASES_PROMPT_TEMPLATE)
-        .replace(/\{\{TICKER\}\}/g, tickerForPrompt)
-        .replace(/\{\{COMPANY_NAME\}\}/g, earningsCompanyNameLine),
     },
     {
       label: "Mgmt Presentations & Transcripts",

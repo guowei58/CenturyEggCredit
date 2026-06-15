@@ -14,6 +14,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 
@@ -135,140 +136,144 @@ export function CompanyOverviewTab({
 
   return (
     <Card title={`Business Overview - ${safeTicker}`}>
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <SavedResponseExpandableShell
-          className="min-w-0 flex-1"
-          ticker={safeTicker}
-          linkSourceText={isEditing ? editDraft : savedContent}
-        >
-          {isEditing ? (
-            <>
-              <RichPasteTextarea
-                value={editDraft}
-                onChange={setEditDraft}
-                placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek response here, then click Save."
-                className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+      <TabPromptSlideOutShell
+        hasMainContent={savedContent.trim().length > 0}
+        main={
+          <SavedResponseExpandableShell
+            className="min-w-0 flex-1"
+            ticker={safeTicker}
+            linkSourceText={isEditing ? editDraft : savedContent}
+          >
+            {isEditing ? (
+              <>
+                <RichPasteTextarea
+                  value={editDraft}
+                  onChange={setEditDraft}
+                  placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek response here, then click Save."
+                  className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+                  style={{
+                    borderColor: "var(--border2)",
+                    color: "var(--text)",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleSaveResponse}
+                  className="mt-3 shrink-0 rounded border px-4 py-2 text-sm font-medium"
+                  style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                <div
+                  className={`min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+                  style={{ color: "var(--text)" }}
+                >
+                  {savedContent ? <SavedRichText content={savedContent} ticker={safeTicker} /> : (
+                    <span style={{ color: "var(--muted)" }}>No saved response yet.</span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleReplace}
+                  className="mt-3 shrink-0 rounded border px-4 py-2 text-sm font-medium"
+                  style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+                >
+                  Replace / Edit
+                </button>
+              </>
+            )}
+          </SavedResponseExpandableShell>
+        }
+        prompt={
+          <>
+            <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
+              {OPEN_IN_EXTERNAL_AI_FULL_LINE}
+            </p>
+            <PromptTemplateBox
+              tabId="business-overview"
+              defaultTemplate={OVERVIEW_PROMPT_TEMPLATE}
+              resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
+              className="mb-3"
+            />
+            <div className="tab-prompt-ai-actions-grid mb-2">
+              <button
+                type="button"
+                onClick={openInClaude}
+                className="tab-prompt-ai-action-btn"
                 style={{
-                  borderColor: "var(--border2)",
-                  color: "var(--text)",
+                  borderColor: "var(--accent)",
+                  color: "var(--accent)",
+                  background: "transparent",
                 }}
-              />
-              <button
-                type="button"
-                onClick={handleSaveResponse}
-                className="mt-3 shrink-0 rounded border px-4 py-2 text-sm font-medium"
-                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
               >
-                Save
+                Open in Claude
               </button>
-            </>
-          ) : (
-            <>
-              <div
-                className={`min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
-                style={{ color: "var(--text)" }}
-              >
-                {savedContent ? <SavedRichText content={savedContent} ticker={safeTicker} /> : (
-                  <span style={{ color: "var(--muted)" }}>No saved response yet.</span>
-                )}
-              </div>
               <button
                 type="button"
-                onClick={handleReplace}
-                className="mt-3 shrink-0 rounded border px-4 py-2 text-sm font-medium"
+                onClick={openInChatGPT}
+                className="tab-prompt-ai-action-btn"
+                style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
+              >
+                Open in ChatGPT
+              </button>
+              <button
+                type="button"
+                onClick={openInGemini}
+                className="tab-prompt-ai-action-btn"
+                style={{ borderColor: "#EAB308", color: "#EAB308", background: "transparent" }}
+              >
+                Open in Gemini
+              </button>
+              <button
+                type="button"
+                onClick={openInDeepSeek}
+                className="tab-prompt-ai-action-btn"
+                style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
+              >
+                Open in DeepSeek
+              </button>
+              <button
+                type="button"
+                onClick={copyToClipboard}
+                className="tab-prompt-ai-action-btn tab-prompt-ai-action-btn--grid-singleton"
                 style={{ borderColor: "var(--border2)", color: "var(--text)" }}
               >
-                Replace / Edit
+                Copy prompt
               </button>
-            </>
-          )}
-        </SavedResponseExpandableShell>
-
-        <div className="flex w-full flex-col lg:w-80 flex-shrink-0">
-          <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
-            {OPEN_IN_EXTERNAL_AI_FULL_LINE}
-          </p>
-          <PromptTemplateBox
-            tabId="business-overview"
-            defaultTemplate={OVERVIEW_PROMPT_TEMPLATE}
-            resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker, companyName) : "")}
-            className="mb-3"
-          />
-          <div className="tab-prompt-ai-actions-grid mb-2">
-            <button
-              type="button"
-              onClick={openInClaude}
-              className="tab-prompt-ai-action-btn"
-              style={{
-                borderColor: "var(--accent)",
-                color: "var(--accent)",
-                background: "transparent",
+            </div>
+            <TabPromptApiButtons
+              userPrompt={prompt}
+              onResult={() => {
+                setClipboardFailed(false);
               }}
-            >
-              Open in Claude
-            </button>
-            <button
-              type="button"
-              onClick={openInChatGPT}
-              className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
-            >
-              Open in ChatGPT
-            </button>
-            <button
-              type="button"
-              onClick={openInGemini}
-              className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "#EAB308", color: "#EAB308", background: "transparent" }}
-            >
-              Open in Gemini
-            </button>
-            <button
-              type="button"
-              onClick={openInDeepSeek}
-              className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
-            >
-              Open in DeepSeek
-            </button>
-            <button
-              type="button"
-              onClick={copyToClipboard}
-              className="tab-prompt-ai-action-btn tab-prompt-ai-action-btn--grid-singleton"
-              style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-            >
-              Copy prompt
-            </button>
-          </div>
-          <TabPromptApiButtons
-            userPrompt={prompt}
-            onResult={() => {
-              setClipboardFailed(false);
-            }}
-            persistAfterResult={async (text) => {
-              const trimmed = text.trim();
-              if (!safeTicker) return;
-              const ok = await saveToServer(safeTicker, "overview", trimmed);
-              if (!ok) throw new Error("Could not save response.");
-              setSavedContent(trimmed);
-              setIsEditing(false);
-              setEditDraft("");
-              setStatusMessage("Response saved.");
-            }}
-            className="mt-3 border-t border-[var(--border2)] pt-3"
-          />
-          {statusMessage && (
-            <p className="text-xs mb-1" style={{ color: "var(--muted2)" }}>
-              {statusMessage}
-            </p>
-          )}
-          {clipboardFailed && prompt && (
-            <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
-              Select the prompt above and copy manually (Ctrl+C / Cmd+C).
-            </p>
-          )}
-        </div>
-      </div>
+              persistAfterResult={async (text) => {
+                const trimmed = text.trim();
+                if (!safeTicker) return;
+                const ok = await saveToServer(safeTicker, "overview", trimmed);
+                if (!ok) throw new Error("Could not save response.");
+                setSavedContent(trimmed);
+                setIsEditing(false);
+                setEditDraft("");
+                setStatusMessage("Response saved.");
+              }}
+              className="mt-3 border-t border-[var(--border2)] pt-3"
+            />
+            {statusMessage && (
+              <p className="text-xs mb-1" style={{ color: "var(--muted2)" }}>
+                {statusMessage}
+              </p>
+            )}
+            {clipboardFailed && prompt && (
+              <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
+                Select the prompt above and copy manually (Ctrl+C / Cmd+C).
+              </p>
+            )}
+          </>
+        }
+      />
     </Card>
   );
 }

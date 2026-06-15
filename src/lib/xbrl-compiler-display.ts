@@ -1,6 +1,6 @@
 /** Display helpers for compiled XBRL statement grids (Historical Financial Statements). */
 
-export type CompilerModelRow = Record<string, string | number | null | string[] | undefined>;
+export type CompilerModelRow = Record<string, string | number | boolean | null | string[] | undefined>;
 
 export function compilerRowPeriodValue(row: CompilerModelRow, period: string): number | null {
   const v = row[period];

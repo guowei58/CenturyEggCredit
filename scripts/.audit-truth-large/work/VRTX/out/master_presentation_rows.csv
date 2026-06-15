@@ -1,0 +1,211 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:product-revenues-net,html:product-revenues-net,"Product revenues, net",0,0
+income_statement,html:costs-and-expenses,html:costs-and-expenses,Costs and expenses:,2,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of sales,3,0
+income_statement,html:research-and-development-expenses,html:research-and-development-expenses,Research and development expenses,4,0
+income_statement,html:acquired-in-process-research-and-development-expenses,html:acquired-in-process-research-and-development-expenses,Acquired in-process research and development expenses,5,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",6,0
+income_statement,html:intangible-asset-impairment-charge,html:intangible-asset-impairment-charge,Intangible asset impairment charge,8,0
+income_statement,html:change-in-fair-value-of-contingent-consideration,html:change-in-fair-value-of-contingent-consideration,Change in fair value of contingent consideration,9,0
+income_statement,html:total-costs-and-expenses,html:total-costs-and-expenses,Total costs and expenses,10,0
+income_statement,html:income-loss-from-operations,html:income-loss-from-operations,Income (loss) from operations,11,0
+income_statement,html:interest-income,html:interest-income,Interest income,12,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,13,0
+income_statement,html:other-expense-net,html:other-expense-net,"Other expense, net",14,0
+income_statement,html:income-before-provision-for-income-taxes,html:income-before-provision-for-income-taxes,Income before provision for income taxes,15,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,16,0
+income_statement,html:income-loss,html:income-loss,income (loss),17,0
+income_statement,html:basic-in-dollars-per-share,html:basic-in-dollars-per-share,Basic (in dollars per share),20,0
+income_statement,html:diluted-in-dollars-per-share,html:diluted-in-dollars-per-share,Diluted (in dollars per share),21,0
+income_statement,html:shares-used-in-per-share-calculations,html:shares-used-in-per-share-calculations,Shares used in per share calculations:,22,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),23,0
+income_statement,html:diluted-in-shares,html:diluted-in-shares,Diluted (in shares),24,0
+income_statement,html:other-revenues,html:other-revenues,Other revenues,25,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,12,0
+balance_sheet,html:marketable-securities,html:marketable-securities,Marketable securities,13,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",14,0
+balance_sheet,html:inventories,html:inventories,Inventories,15,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,16,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,17,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",18,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,20,0
+balance_sheet,html:other-intangible-assets-net,html:other-intangible-assets-net,"Other intangible assets, net",21,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,22,0
+balance_sheet,html:operating-lease-assets,html:operating-lease-assets,Operating lease assets,23,0
+balance_sheet,html:long-term-marketable-securities,html:long-term-marketable-securities,Long-term marketable securities,24,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,25,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,26,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,28,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,39,0
+balance_sheet,html:accrued-expenses,html:accrued-expenses,Accrued expenses,40,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,44,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,45,0
+balance_sheet,html:long-term-operating-lease-liabilities,html:long-term-operating-lease-liabilities,Long-term operating lease liabilities,52,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,54,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,55,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ equity:,57,0
+balance_sheet,html:preferred-stock-0-01-par-value-1-000-000-shares-authorized-none-issued-and-outstanding,html:preferred-stock-0-01-par-value-1-000-000-shares-authorized-none-issued-and-outstanding,"Preferred stock, $0.01 par value; 1,000,000 shares authorized; none issued and outstanding",69,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-000-shares-authorized-253-991-224-and-256-940-382-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-000-shares-authorized-253-991-224-and-256-940-382-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000,000 shares authorized, 253,991,224 and 256,940,382 shares issued and outstanding, respectively",75,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,76,0
+balance_sheet,html:accumulated-other-comprehensive-loss-income,html:accumulated-other-comprehensive-loss-income,Accumulated other comprehensive (loss) income,84,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,85,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders’ equity,86,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total liabilities and shareholders’ equity,87,0
+cash_flow,html:income-loss,html:income-loss,income (loss),0,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,1,0
+cash_flow,html:depreciation-and-amortization-expense,html:depreciation-and-amortization-expense,Depreciation and amortization expense,2,0
+cash_flow,html:intangible-asset-impairment-charges,html:intangible-asset-impairment-charges,Intangible asset impairment charges,4,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,6,0
+cash_flow,html:other-non-cash-items-net,html:other-non-cash-items-net,"Other non-cash items, net",13,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,14,0
+cash_flow,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",15,0
+cash_flow,html:inventories,html:inventories,Inventories,16,0
+cash_flow,html:prepaid-expenses-and-other-assets,html:prepaid-expenses-and-other-assets,Prepaid expenses and other assets,17,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,18,0
+cash_flow,html:accrued-expenses,html:accrued-expenses,Accrued expenses,19,0
+cash_flow,html:other-liabilities,html:other-liabilities,Other liabilities,21,0
+cash_flow,html:net-cash-provided-by-used-in-operating-activities,html:net-cash-provided-by-used-in-operating-activities,Net cash provided by (used in) operating activities,22,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,23,0
+cash_flow,html:purchases-of-available-for-sale-debt-securities,html:purchases-of-available-for-sale-debt-securities,Purchases of available-for-sale debt securities,26,0
+cash_flow,html:sales-and-maturities-of-available-for-sale-debt-securities,html:sales-and-maturities-of-available-for-sale-debt-securities,Sales and maturities of available-for-sale debt securities,36,0
+cash_flow,html:purchases-of-property-and-equipment,html:purchases-of-property-and-equipment,Purchases of property and equipment,37,0
+cash_flow,html:proceeds-related-to-equity-securities,html:proceeds-related-to-equity-securities,Proceeds related to equity securities,39,0
+cash_flow,html:net-payments-related-to-finite-lived-intangible-assets,html:net-payments-related-to-finite-lived-intangible-assets,Net payments related to finite-lived intangible assets,40,0
+cash_flow,html:acquisition-of-available-for-sale-debt-securities-from-alpine-immune-sciences-inc,html:acquisition-of-available-for-sale-debt-securities-from-alpine-immune-sciences-inc,"Acquisition of available-for-sale debt securities from Alpine Immune Sciences, Inc.",41,0
+cash_flow,html:other-investing-activities,html:other-investing-activities,Other investing activities,43,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,44,0
+cash_flow,html:issuances-of-common-stock-under-benefit-plans,html:issuances-of-common-stock-under-benefit-plans,Issuances of common stock under benefit plans,45,0
+cash_flow,html:repurchases-of-common-stock,html:repurchases-of-common-stock,Repurchases of common stock,50,0
+cash_flow,html:payments-in-connection-with-common-stock-withheld-for-employee-tax-obligations,html:payments-in-connection-with-common-stock-withheld-for-employee-tax-obligations,Payments in connection with common stock withheld for employee tax obligations,57,0
+cash_flow,html:payments-on-finance-leases,html:payments-on-finance-leases,Payments on finance leases,58,0
+cash_flow,html:other-financing-activities,html:other-financing-activities,Other financing activities,65,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,Net cash used in financing activities,66,0
+cash_flow,html:effect-of-changes-in-exchange-rates-on-cash,html:effect-of-changes-in-exchange-rates-on-cash,Effect of changes in exchange rates on cash,67,0
+cash_flow,html:net-increase-decrease-in-cash-cash-equivalents-and-restricted-cash,html:net-increase-decrease-in-cash-cash-equivalents-and-restricted-cash,"Net increase (decrease) in cash, cash equivalents and restricted cash",68,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-beginning-of-period,html:cash-cash-equivalents-and-restricted-cash-beginning-of-period,"Cash, cash equivalents and restricted cash—beginning of period",69,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-end-of-period,html:cash-cash-equivalents-and-restricted-cash-end-of-period,"Cash, cash equivalents and restricted cash—end of period",70,0
+cash_flow,html:supplemental-disclosure-of-cash-flow-information,html:supplemental-disclosure-of-cash-flow-information,Supplemental disclosure of cash flow information:,71,0
+cash_flow,html:cash-paid-for-income-taxes,html:cash-paid-for-income-taxes,Cash paid for income taxes,72,0
+cash_flow,html:cash-paid-for-interest,html:cash-paid-for-interest,Cash paid for interest,76,0
+cash_flow,html:net-payments-due-to-crispr-therapeutics-ag-related-to-finite-lived-intangible-assets,html:net-payments-due-to-crispr-therapeutics-ag-related-to-finite-lived-intangible-assets,Net payments due to CRISPR Therapeutics AG related to finite-lived intangible assets,77,0
+income_statement,html:restructuring-income-expenses,html:restructuring-income-expenses,Restructuring (income) expenses,7,0
+income_statement,html:collaborative-and-royalty-revenues,html:collaborative-and-royalty-revenues,Collaborative and royalty revenues,1,0
+balance_sheet,html:intangible-assets,html:intangible-assets,Intangible assets,19,0
+balance_sheet,html:capital-lease-obligations-current-portion,html:capital-lease-obligations-current-portion,"Capital lease obligations, current portion",41,0
+balance_sheet,html:early-access-sales-accrual,html:early-access-sales-accrual,Early access sales accrual,42,0
+balance_sheet,html:other-liabilities-current-portion,html:other-liabilities-current-portion,"Other liabilities, current portion",43,0
+balance_sheet,html:capital-lease-obligations-excluding-current-portion,html:capital-lease-obligations-excluding-current-portion,"Capital lease obligations, excluding current portion",46,0
+balance_sheet,html:deferred-tax-liabilities,html:deferred-tax-liabilities,Deferred tax liabilities,47,0
+balance_sheet,html:construction-financing-lease-obligation-excluding-current-portion,html:construction-financing-lease-obligation-excluding-current-portion,"Construction financing lease obligation, excluding current portion",48,0
+balance_sheet,html:advance-from-collaborator-excluding-current-portion,html:advance-from-collaborator-excluding-current-portion,"Advance from collaborator, excluding current portion",49,0
+balance_sheet,html:other-liabilities-excluding-current-portion,html:other-liabilities-excluding-current-portion,"Other liabilities, excluding current portion",50,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,56,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-000-shares-authorized-255-172-328-and-253-253-362-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-000-shares-authorized-255-172-328-and-253-253-362-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000,000 shares authorized, 255,172,328 and 253,253,362 shares issued and outstanding, respectively",70,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),77,0
+balance_sheet,html:accumulated-deficit,html:accumulated-deficit,Accumulated deficit,78,0
+balance_sheet,html:total-vertex-shareholders-equity,html:total-vertex-shareholders-equity,Total Vertex shareholders’ equity,79,0
+balance_sheet,html:noncontrolling-interest,html:noncontrolling-interest,Noncontrolling interest,80,0
+cash_flow,html:unrealized-gain-on-equity-securities,html:unrealized-gain-on-equity-securities,Unrealized gain on equity securities,7,0
+cash_flow,html:deconsolidation-of-vie,html:deconsolidation-of-vie,Deconsolidation of VIE,5,0
+cash_flow,html:early-access-sales-accrual,html:early-access-sales-accrual,Early access sales accrual,20,0
+cash_flow,html:expenditures-for-property-and-equipment,html:expenditures-for-property-and-equipment,Expenditures for property and equipment,27,0
+cash_flow,html:purchase-of-in-process-research-and-development,html:purchase-of-in-process-research-and-development,Purchase of in-process research and development,28,0
+cash_flow,html:investment-in-note-receivable,html:investment-in-note-receivable,Investment in note receivable,29,0
+cash_flow,html:investment-in-equity-securities,html:investment-in-equity-securities,Investment in equity securities,30,0
+cash_flow,html:payments-on-revolving-credit-facility,html:payments-on-revolving-credit-facility,Payments on revolving credit facility,51,0
+cash_flow,html:advance-from-collaborator,html:advance-from-collaborator,Advance from collaborator,52,0
+cash_flow,html:proceeds-from-capital-lease-financing,html:proceeds-from-capital-lease-financing,Proceeds from capital lease financing,53,0
+cash_flow,html:repayments-of-advanced-funding,html:repayments-of-advanced-funding,Repayments of advanced funding,54,0
+cash_flow,html:payments-on-senior-secured-term-loan,html:payments-on-senior-secured-term-loan,Payments on senior secured term loan,55,0
+cash_flow,html:payments-of-debt-issuance-costs,html:payments-of-debt-issuance-costs,Payments of debt issuance costs,56,0
+cash_flow,html:non-cash-investing-and-financing-activities,html:non-cash-investing-and-financing-activities,Non-cash investing and financing activities:,73,0
+cash_flow,html:capitalization-of-costs-related-to-construction-financing-lease-obligation,html:capitalization-of-costs-related-to-construction-financing-lease-obligation,Capitalization of costs related to construction financing lease obligation,74,0
+cash_flow,html:proceeds-from-revolving-credit-facility-directly-paid-to-settle-all-outstanding-obligations-under-the-term-loan,html:proceeds-from-revolving-credit-facility-directly-paid-to-settle-all-outstanding-obligations-under-the-term-loan,Proceeds from revolving credit facility directly paid to settle all outstanding obligations under the term loan,46,0
+income_statement,html:loss-attributable-to-noncontrolling-interest,html:loss-attributable-to-noncontrolling-interest,Loss attributable to noncontrolling interest,18,0
+balance_sheet,html:long-term-finance-lease-liabilities,html:long-term-finance-lease-liabilities,Long-term finance lease liabilities,51,0
+balance_sheet,html:long-term-contingent-consideration,html:long-term-contingent-consideration,Long-term contingent consideration,88,0
+balance_sheet,html:preferred-stock-0-01-par-value-1-000-shares-authorized-none-issued-and-outstanding,html:preferred-stock-0-01-par-value-1-000-shares-authorized-none-issued-and-outstanding,"Preferred stock, $0.01 par value; 1,000 shares authorized; none issued and outstanding",58,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-shares-authorized-258-993-and-255-172-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-shares-authorized-258-993-and-255-172-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000 shares authorized, 258,993 and 255,172 shares issued and outstanding, respectively",59,0
+cash_flow,html:gains-on-equity-securities,html:gains-on-equity-securities,Gains on equity securities,8,0
+cash_flow,html:increase-in-fair-value-of-contingent-consideration,html:increase-in-fair-value-of-contingent-consideration,Increase in fair value of contingent consideration,9,0
+cash_flow,html:payments-to-acquire-businesses-net-of-cash-acquired,html:payments-to-acquire-businesses-net-of-cash-acquired,"Payments to acquire businesses, net of cash acquired",24,0
+cash_flow,html:sale-of-equity-securities,html:sale-of-equity-securities,Sale of equity securities,31,0
+cash_flow,html:proceeds-related-to-capital-lease-and-construction-financing-lease-obligations,html:proceeds-related-to-capital-lease-and-construction-financing-lease-obligations,Proceeds related to capital lease and construction financing lease obligations,78,0
+cash_flow,html:payments-on-capital-lease-and-construction-financing-lease-obligations,html:payments-on-capital-lease-and-construction-financing-lease-obligations,Payments on capital lease and construction financing lease obligations,79,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-shares-authorized-259-890-and-258-993-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-shares-authorized-259-890-and-258-993-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000 shares authorized, 259,890 and 258,993 shares issued and outstanding, respectively",89,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,81,0
+balance_sheet,html:retained-earnings-accumulated-deficit,html:retained-earnings-accumulated-deficit,Retained earnings (accumulated deficit),82,0
+cash_flow,html:proceeds-from-finance-leases-1,html:proceeds-from-finance-leases-1,Proceeds from finance leases [1],59,0
+cash_flow,html:capitalization-of-costs-related-to-construction-financing-lease-obligation-1,html:capitalization-of-costs-related-to-construction-financing-lease-obligation-1,Capitalization of costs related to construction financing lease obligation [1],75,0
+cash_flow,html:1-for-the-year-ended-december-31-2018-amounts-are-related-to-the-company-s-capital-leases-and-construction-financing-lease-obligations-pursuant-to-asc-840-leases-which-was-applicable-until-december-31-2018,html:1-for-the-year-ended-december-31-2018-amounts-are-related-to-the-company-s-capital-leases-and-construction-financing-lease-obligations-pursuant-to-asc-840-leases-which-was-applicable-until-december-31-2018,"[1] * For the year ended December 31, 2018, amounts are related to the Company’s capital leases and construction financing lease obligations pursuant to ASC 840, Leases, which was applicable until December 31, 2018.",47,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-000-shares-authorized-254-479-046-and-259-889-549-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-000-shares-authorized-254-479-046-and-259-889-549-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000,000 shares authorized, 254,479,046 and 259,889,549 shares issued and outstanding, respectively",71,0
+cash_flow,html:decrease-increase-in-fair-value-of-contingent-consideration,html:decrease-increase-in-fair-value-of-contingent-consideration,(Decrease) increase in fair value of contingent consideration,80,0
+cash_flow,html:investment-in-equity-securities-and-notes-receivable,html:investment-in-equity-securities-and-notes-receivable,Investment in equity securities and notes receivable,38,0
+cash_flow,html:proceeds-from-finance-leases,html:proceeds-from-finance-leases,Proceeds from finance leases,60,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-000-shares-authorized-257-011-628-and-254-479-046-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-000-shares-authorized-257-011-628-and-254-479-046-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000,000 shares authorized, 257,011,628 and 254,479,046 shares issued and outstanding, respectively",72,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,83,0
+cash_flow,html:losses-gains-on-equity-securities,html:losses-gains-on-equity-securities,Losses (gains) on equity securities,10,0
+cash_flow,html:payment-to-acquire-viacyte-net-of-cash-acquired,html:payment-to-acquire-viacyte-net-of-cash-acquired,"Payment to acquire ViaCyte, net of cash acquired",25,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-000-shares-authorized-257-695-221-and-257-011-628-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-000-shares-authorized-257-695-221-and-257-011-628-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000,000 shares authorized, 257,695,221 and 257,011,628 shares issued and outstanding, respectively",73,0
+cash_flow,html:decrease-in-fair-value-of-contingent-consideration,html:decrease-in-fair-value-of-contingent-consideration,Decrease in fair value of contingent consideration,81,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-000-shares-authorized-256-940-382-and-257-695-221-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-000-shares-authorized-256-940-382-and-257-695-221-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000,000 shares authorized, 256,940,382 and 257,695,221 shares issued and outstanding, respectively",74,0
+cash_flow,html:losses-on-equity-securities,html:losses-on-equity-securities,Losses on equity securities,11,0
+cash_flow,html:payment-to-acquire-viacyte-inc-net-of-cash-acquired,html:payment-to-acquire-viacyte-inc-net-of-cash-acquired,"Payment to acquire ViaCyte, Inc., net of cash acquired",42,0
+income_statement,html:amounts-per-share-attributable-to-vertex-common-shareholders,html:amounts-per-share-attributable-to-vertex-common-shareholders,Amounts per share attributable to Vertex common shareholders:,19,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and Shareholders’ Equity,27,0
+balance_sheet,html:long-term-advance-from-collaborator,html:long-term-advance-from-collaborator,Long-term advance from collaborator,53,0
+balance_sheet,html:common-stock-0-01-par-value-500-000-shares-authorized-256-351-and-255-172-shares-issued-and-outstanding-respectively,html:common-stock-0-01-par-value-500-000-shares-authorized-256-351-and-255-172-shares-issued-and-outstanding-respectively,"Common stock, $0.01 par value; 500,000 shares authorized, 256,351 and 255,172 shares issued and outstanding, respectively",95,0
+cash_flow,html:accrued-share-repurchase-liability,html:accrued-share-repurchase-liability,Accrued share repurchase liability,48,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:MarketableSecuritiesCurrent,us-gaap:MarketableSecuritiesCurrent,Marketable securities,1,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net",2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,3,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",6,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,7,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,8,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,9,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,10,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,11,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,29,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued expenses,30,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,31,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,32,0
+balance_sheet,us-gaap:FinanceLeaseLiabilityNoncurrent,us-gaap:FinanceLeaseLiabilityNoncurrent,Long-term finance lease liabilities,33,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Long-term operating lease liabilities,34,0
+balance_sheet,vrtx:AdvancedFundingReceivedFromCollaborator,vrtx:AdvancedFundingReceivedFromCollaborator,Long-term advance from collaborator,35,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,36,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,37,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies,38,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock, $0.01 par value; 1,000 shares authorized; none issued and outstanding",60,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $0.01 par value; 500,000 shares authorized, 256,671 and 255,172 shares issued and outstanding, respectively",61,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,62,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive (loss) income,63,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated deficit,64,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total shareholders’ equity,65,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and shareholders’ equity,66,0
+cash_flow,us-gaap:EquitySecuritiesFvNiUnrealizedGainLoss,us-gaap:EquitySecuritiesFvNiUnrealizedGainLoss,Unrealized gain on equity securities,12,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Expenditures for property and equipment,32,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Investment in equity securities,33,0
+cash_flow,vrtx:ProceedsFromCollaborativeFunding,vrtx:ProceedsFromCollaborativeFunding,Advance from collaborator,61,0
+cash_flow,vrtx:RepaymentsofCollaborativeFunding,vrtx:RepaymentsofCollaborativeFunding,Repayments of advanced funding,62,0
+cash_flow,us-gaap:ProceedsFromConstructionLoansPayable,us-gaap:ProceedsFromConstructionLoansPayable,Proceeds related to capital lease and construction financing lease obligations,63,0
+cash_flow,vrtx:AccruedShareRepurchaseLiability,vrtx:AccruedShareRepurchaseLiability,Accrued share repurchase liability,49,0
+balance_sheet,us-gaap:BusinessCombinationContingentConsiderationLiabilityNoncurrent,us-gaap:BusinessCombinationContingentConsiderationLiabilityNoncurrent,Long-term contingent consideration,90,0
+cash_flow,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,Change in fair value of contingent consideration,3,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Payment to acquire business, net of cash acquired",34,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,Intangible assets,91,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfOtherInvestments,us-gaap:ProceedsFromSaleAndMaturityOfOtherInvestments,Sale of equity securities,35,0
+cash_flow,us-gaap:PaymentsToAcquireMarketableSecurities,us-gaap:PaymentsToAcquireMarketableSecurities,Investment in equity securities,82,0
+cash_flow,vrtx:ProceedsFromFinanceLeases,vrtx:ProceedsFromFinanceLeases,Proceeds related to finance leases,64,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Preferred stock, $0.01 par value; 1,000 shares authorized; none issued and outstanding",67,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock, $0.01 par value; 500,000 shares authorized, 260,124 and 258,993 shares issued and outstanding, respectively",68,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total shareholders’ equity,92,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property and equipment, net",93,0
+cash_flow,us-gaap:PaymentsToAcquireNotesReceivable,us-gaap:PaymentsToAcquireNotesReceivable,Investment in note receivable,83,0
+cash_flow,us-gaap:PaymentsToAcquireOtherInvestments,us-gaap:PaymentsToAcquireOtherInvestments,Investment in equity securities and notes receivable,84,0
+cash_flow,vrtx:PaymentToAcquirePreferredStockAndNotesReceivable,vrtx:PaymentToAcquirePreferredStockAndNotesReceivable,Investment in equity securities and notes receivable,85,0
+balance_sheet,us-gaap:MarketableSecuritiesNoncurrent,us-gaap:MarketableSecuritiesNoncurrent,Long-term marketable securities,94,0
+cash_flow,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,Investment in equity securities,86,0
+cash_flow,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,Sale of equity securities,87,0

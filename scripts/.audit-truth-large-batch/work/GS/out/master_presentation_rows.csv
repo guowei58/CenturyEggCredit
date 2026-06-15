@@ -1,0 +1,72 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:investment-banking,html:investment-banking,Investment banking,0,0
+income_statement,html:investment-management,html:investment-management,Investment management,1,0
+income_statement,html:commissions-and-fees,html:commissions-and-fees,Commissions and fees,2,0
+income_statement,html:market-making,html:market-making,Market making,3,0
+income_statement,html:other-principal-transactions,html:other-principal-transactions,Other principal transactions,4,0
+income_statement,html:total-non-interest-revenues,html:total-non-interest-revenues,Total non-interest revenues,5,0
+income_statement,html:interest-income,html:interest-income,Interest income,6,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,7,0
+income_statement,html:net-interest-income,html:net-interest-income,Net interest income,8,0
+income_statement,html:total-net-revenues,html:total-net-revenues,Total net revenues,9,0
+income_statement,html:provision-for-credit-losses,html:provision-for-credit-losses,Provision for credit losses,10,0
+income_statement,html:compensation-and-benefits,html:compensation-and-benefits,Compensation and benefits,11,0
+income_statement,html:brokerage-clearing-exchange-and-distribution-fees,html:brokerage-clearing-exchange-and-distribution-fees,"Brokerage, clearing, exchange and distribution fees",12,0
+income_statement,html:market-development,html:market-development,Market development,13,0
+income_statement,html:communications-and-technology,html:communications-and-technology,Communications and technology,14,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,15,0
+income_statement,html:occupancy,html:occupancy,Occupancy,16,0
+income_statement,html:professional-fees,html:professional-fees,Professional fees,17,0
+income_statement,html:other-expenses,html:other-expenses,Other expenses,18,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,19,0
+income_statement,html:pre-tax-earnings,html:pre-tax-earnings,Pre-tax earnings,20,0
+income_statement,html:provision-for-taxes,html:provision-for-taxes,Provision for taxes,21,0
+income_statement,html:net-earnings,html:net-earnings,Net earnings,22,0
+income_statement,html:preferred-stock-dividends,html:preferred-stock-dividends,Preferred stock dividends,23,0
+income_statement,html:net-earnings-applicable-to-common-shareholders,html:net-earnings-applicable-to-common-shareholders,Net earnings applicable to common shareholders,24,0
+income_statement,html:earnings-per-common-share,html:earnings-per-common-share,Earnings per common share,25,0
+income_statement,html:basic,html:basic,Basic,26,0
+income_statement,html:diluted,html:diluted,Diluted,27,0
+income_statement,html:average-common-shares,html:average-common-shares,Average common shares,28,0
+cash_flow,html:net-earnings,html:net-earnings,Net earnings,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:share-based-compensation,html:share-based-compensation,Share-based compensation,2,0
+cash_flow,html:provision-for-credit-losses,html:provision-for-credit-losses,Provision for credit losses,3,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,4,0
+cash_flow,html:customer-and-other-receivables-and-payables-net,html:customer-and-other-receivables-and-payables-net,"Customer and other receivables and payables, net",5,0
+cash_flow,html:collateralized-transactions-excluding-other-secured-financings-net,html:collateralized-transactions-excluding-other-secured-financings-net,"Collateralized transactions (excluding other secured financings), net",6,0
+cash_flow,html:financial-instruments-owned-excluding-available-for-sale-securities,html:financial-instruments-owned-excluding-available-for-sale-securities,Financial instruments owned (excluding available-for-sale securities),7,0
+cash_flow,html:financial-instruments-sold-but-not-yet-purchased,html:financial-instruments-sold-but-not-yet-purchased,"Financial instruments sold, but not yet purchased",8,0
+cash_flow,html:other-net,html:other-net,"Other, net",9,0
+cash_flow,html:net-cash-used-for-operating-activities,html:net-cash-used-for-operating-activities,Net cash used for operating activities,10,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities,11,0
+cash_flow,html:purchase-of-property-leasehold-improvements-and-equipment,html:purchase-of-property-leasehold-improvements-and-equipment,"Purchase of property, leasehold improvements and equipment",12,0
+cash_flow,html:proceeds-from-sales-of-property-leasehold-improvements-and-equipment,html:proceeds-from-sales-of-property-leasehold-improvements-and-equipment,"Proceeds from sales of property, leasehold improvements and equipment",13,0
+cash_flow,html:net-cash-used-for-business-acquisitions,html:net-cash-used-for-business-acquisitions,Net cash used for business acquisitions,14,0
+cash_flow,html:purchase-of-investments,html:purchase-of-investments,Purchase of investments,15,0
+cash_flow,html:proceeds-from-sales-and-paydowns-of-investments,html:proceeds-from-sales-and-paydowns-of-investments,Proceeds from sales and paydowns of investments,16,0
+cash_flow,html:loans-receivable-net,html:loans-receivable-net,"Loans receivable, net",17,0
+cash_flow,html:net-cash-used-for-investing-activities,html:net-cash-used-for-investing-activities,Net cash used for investing activities,18,0
+cash_flow,html:unsecured-short-term-borrowings-net,html:unsecured-short-term-borrowings-net,"Unsecured short-term borrowings, net",19,0
+cash_flow,html:other-secured-financings-short-term-net,html:other-secured-financings-short-term-net,"Other secured financings (short-term), net",20,0
+cash_flow,html:proceeds-from-issuance-of-other-secured-financings-long-term,html:proceeds-from-issuance-of-other-secured-financings-long-term,Proceeds from issuance of other secured financings (long-term),21,0
+cash_flow,html:repayment-of-other-secured-financings-long-term-including-the-current-portion,html:repayment-of-other-secured-financings-long-term-including-the-current-portion,"Repayment of other secured financings (long-term), including the current portion",22,0
+cash_flow,html:purchase-of-trust-preferred-securities,html:purchase-of-trust-preferred-securities,Purchase of Trust Preferred Securities,23,0
+cash_flow,html:proceeds-from-issuance-of-unsecured-long-term-borrowings,html:proceeds-from-issuance-of-unsecured-long-term-borrowings,Proceeds from issuance of unsecured long-term borrowings,24,0
+cash_flow,html:repayment-of-unsecured-long-term-borrowings-including-the-current-portion,html:repayment-of-unsecured-long-term-borrowings-including-the-current-portion,"Repayment of unsecured long-term borrowings, including the current portion",25,0
+cash_flow,html:derivative-contracts-with-a-financing-element-net,html:derivative-contracts-with-a-financing-element-net,"Derivative contracts with a financing element, net",26,0
+cash_flow,html:deposits-net,html:deposits-net,"Deposits, net",27,0
+cash_flow,html:preferred-stock-redemption,html:preferred-stock-redemption,Preferred stock redemption,28,0
+cash_flow,html:common-stock-repurchased,html:common-stock-repurchased,Common stock repurchased,30,0
+cash_flow,html:settlement-of-share-based-awards-in-satisfaction-of-withholding-tax-requirements,html:settlement-of-share-based-awards-in-satisfaction-of-withholding-tax-requirements,Settlement of share-based awards in satisfaction of withholding tax requirements,31,0
+cash_flow,html:dividends-and-dividend-equivalents-paid-on-common-stock-preferred-stock-and-share-based-awards,html:dividends-and-dividend-equivalents-paid-on-common-stock-preferred-stock-and-share-based-awards,"Dividends and dividend equivalents paid on common stock, preferred stock and share-based awards",32,0
+cash_flow,html:other-financing-net,html:other-financing-net,"Other financing, net",34,0
+cash_flow,html:net-cash-provided-by-financing-activities,html:net-cash-provided-by-financing-activities,Net cash provided by financing activities,35,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,Net increase/(decrease) in cash and cash equivalents,36,0
+cash_flow,html:cash-and-cash-equivalents-beginning-balance,html:cash-and-cash-equivalents-beginning-balance,"Cash and cash equivalents, beginning balance",37,0
+cash_flow,html:cash-and-cash-equivalents-ending-balance,html:cash-and-cash-equivalents-ending-balance,"Cash and cash equivalents, ending balance",38,0
+cash_flow,html:supplemental-disclosures,html:supplemental-disclosures,Supplemental disclosures:,39,0
+cash_flow,html:cash-payments-for-interest-net-of-capitalized-interest,html:cash-payments-for-interest-net-of-capitalized-interest,"Cash payments for interest, net of capitalized interest",40,0
+cash_flow,html:cash-payments-refunds-for-income-taxes-net,html:cash-payments-refunds-for-income-taxes-net,"Cash payments/(refunds) for income taxes, net",41,0
+cash_flow,html:proceeds-from-issuance-of-preferred-stock-net-of-issuance-costs,html:proceeds-from-issuance-of-preferred-stock-net-of-issuance-costs,"Proceeds from issuance of preferred stock, net of issuance costs",29,0
+cash_flow,html:proceeds-from-issuance-of-common-stock-including-exercise-of-share-based-awards,html:proceeds-from-issuance-of-common-stock-including-exercise-of-share-based-awards,"Proceeds from issuance of common stock, including exercise of share-based awards",33,0

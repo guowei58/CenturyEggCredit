@@ -10,12 +10,15 @@ export function SaveFilingLinkButton({
   url,
   className = "",
   mode = "filings",
+  saveTitle,
 }: {
   ticker: string;
   url: string;
   className?: string;
   /** `saved-documents`: any http(s) URL (Saved Documents tab pipeline). `filings`: SEC/FCC/USPTO allowlist only. */
   mode?: SaveRemoteUrlMode;
+  /** Optional descriptive title for Saved Documents (e.g. from credit-doc list table row). */
+  saveTitle?: string;
 }) {
   const safeTicker = ticker?.trim() ?? "";
   const safeUrl = url?.trim() ?? "";
@@ -38,7 +41,9 @@ export function SaveFilingLinkButton({
     setPhase("saving");
     setErrMsg(null);
     try {
-      const result = await saveRemoteUrlForTicker(safeTicker, safeUrl, mode);
+      const result = await saveRemoteUrlForTicker(safeTicker, safeUrl, mode, {
+        title: saveTitle,
+      });
       if (!result.ok) {
         setErrMsg(result.error);
         setPhase("err");
@@ -53,7 +58,7 @@ export function SaveFilingLinkButton({
       setErrMsg(e instanceof Error ? e.message : "Save failed.");
       setPhase("err");
     }
-  }, [safeTicker, safeUrl, mode]);
+  }, [safeTicker, safeUrl, mode, saveTitle]);
 
   if (!safeTicker || !safeUrl) return null;
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as cheerio from "cheerio";
+import { compilerPeriodColumnHeader, normalizeSecProsePeriodHeader } from "@/lib/sec-xbrl-compiler-period-headers";
 import type { FilingHtmlStatement } from "@/lib/sec-filing-financials";
 import {
   __test_detectDataStart,
@@ -28,6 +29,9 @@ import {
   __test_isLikelyBankBalanceSheetShape,
   __test_isLikelyBankIncomeStatementShape,
   __test_isLikelyCombinedOperationsAndComprehensiveLossShape,
+  __test_appendCashFlowContinuationTables,
+  __test_parseBestStatementTableFromHtml,
+  __test_parsePrimaryStatementAtTableOffset,
   buildParsedFilingHtmlContext,
   buildPrimaryFaceShapeTemplateFromStatement,
   scoreShapeTemplateSimilarity,
@@ -1455,6 +1459,30 @@ describe("parsePrimaryFilingStatementHtml", () => {
     expect(__test_detectDataStart(matrix)).toBe(4);
   });
 
+  it("includes revenues when the label is not in column zero (condensed face tables)", () => {
+    const matrix = [
+      ["", "", "Three Months Ended March 31,", "Three Months Ended March 31,"],
+      ["", "", "2024", "2023"],
+      ["", "Revenues", "", "2,080", "1,950"],
+      ["", "Direct vehicle and operating", "", "1,366", "1,221"],
+    ];
+
+    expect(__test_detectDataStart(matrix)).toBe(2);
+  });
+
+  it("normalizes glued SEC prose period headers for compiler workbooks", () => {
+    expect(normalizeSecProsePeriodHeader("Three Months EndedSeptember 30, 2024")).toBe(
+      "Three Months Ended September 30, 2024"
+    );
+    expect(
+      compilerPeriodColumnHeader({
+        label: "Three Months EndedSeptember 30, 2024",
+        end: "2024-09-30",
+        start: "2024-07-01",
+      })
+    ).toBe("Three Months Ended September 30, 2024");
+  });
+
   it("does not latch mirrored cash-flow data start on trailing supplemental rows only", () => {
     const filler = Array.from({ length: 36 }, () => ["", "OPERATING ACTIVITIES", "", "", "", "", "", "", "", "", "", ""]);
     const matrix = [
@@ -2808,5 +2836,79 @@ describe("10-K FilingSummary and shape relaxations", () => {
       __test_validateSinglePrimaryStatementShape(parsed!, "10-K") ||
         __test_validateHeadingWindowPrimaryStatementShape(parsed!, "10-K")
     ).toBe(true);
+  });
+});
+
+describe("cash flow page-break continuation merge", () => {
+  it("rejects page-break CF tail fragment as primary face table", () => {
+    const rawHtml = `
+      <html><body>
+        <table id="cf-head">
+          <tr><td></td><td>Six Months Ended June 30, 2020</td><td>Six Months Ended June 30, 2019</td></tr>
+          <tr><td>Net income (loss)</td><td>(852)</td><td>100</td></tr>
+          <tr><td>Depreciation and reserves for revenue earning vehicles, net</td><td>800</td><td>700</td></tr>
+          <tr><td>Net cash provided by (used in) operating activities</td><td>(500)</td><td>(400)</td></tr>
+          <tr><td>Cash flows from investing activities:</td><td></td><td></td></tr>
+          <tr><td>Revenue earning vehicles expenditures</td><td>(1000)</td><td>(900)</td></tr>
+          <tr><td>Net cash provided by (used in) investing activities</td><td>(800)</td><td>(700)</td></tr>
+          <tr><td>Cash flows from financing activities:</td><td></td><td></td></tr>
+          <tr><td>Repayments of vehicle debt</td><td>(200)</td><td>(100)</td></tr>
+        </table>
+        <hr/>
+        <table id="cf-tail">
+          <tr><td></td><td>Six Months Ended June 30, 2020</td><td>Six Months Ended June 30, 2019</td></tr>
+          <tr><td>Payment of financing costs</td><td>(11)</td><td>(23)</td></tr>
+          <tr><td>Other</td><td>(1)</td><td>(1)</td></tr>
+          <tr><td>Net cash provided by (used in) financing activities</td><td>190</td><td>3020</td></tr>
+          <tr><td>Net increase (decrease) in cash, cash equivalents, restricted cash and cash equivalents during the period</td><td>922</td><td>(756)</td></tr>
+        </table>
+      </body></html>
+    `;
+    const html = densifyPrimaryFaceFixtureHtml(rawHtml);
+    const ctx = buildParsedFilingHtmlContext(html);
+    expect(ctx).not.toBeNull();
+    const headIdx = ctx!.tables.findIndex((t) => ctx!.$(t.el).attr("id") === "cf-head");
+    const tailIdx = ctx!.tables.findIndex((t) => ctx!.$(t.el).attr("id") === "cf-tail");
+    expect(headIdx).toBeGreaterThanOrEqual(0);
+    expect(tailIdx).toBeGreaterThanOrEqual(0);
+    const head = __test_parsePrimaryStatementAtTableOffset(html, "cf", headIdx, "10-Q");
+    const tail = __test_parsePrimaryStatementAtTableOffset(html, "cf", tailIdx, "10-Q");
+    expect(head.validated).not.toBeNull();
+    expect(tail.validated).toBeNull();
+    const best = __test_parseBestStatementTableFromHtml(html, { kind: "cf", form: "10-Q" });
+    expect(best?.rows[0]?.label).toBe("Net income (loss)");
+  });
+
+  it("keeps financing Other from continuation when operating section already has Other", () => {
+    const html = `
+      <html><body>
+        <table id="cf-primary">
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Other</td><td>1</td><td>4</td></tr>
+          <tr><td>Net cash provided by (used in) operating activities</td><td>20</td><td>251</td></tr>
+          <tr><td>Repayments of non-vehicle debt</td><td>(374)</td><td>(280)</td></tr>
+          <tr><td>Payment of financing costs</td><td>(7)</td><td>(13)</td></tr>
+        </table>
+        <hr/>
+        <table id="cf-continuation">
+          <tr><td></td><td>Three Months Ended March 31, 2026</td><td>Three Months Ended March 31, 2025</td></tr>
+          <tr><td>Other</td><td>(8)</td><td>(3)</td></tr>
+          <tr><td>Net cash provided by (used in) financing activities</td><td>1136</td><td>346</td></tr>
+          <tr><td>Net increase (decrease) in cash and cash equivalents and restricted cash and cash equivalents during the period</td><td>52</td><td>(112)</td></tr>
+        </table>
+      </body></html>
+    `;
+    const ctx = buildParsedFilingHtmlContext(html);
+    expect(ctx).not.toBeNull();
+    const primaryIdx = ctx!.tables.findIndex((t) => ctx!.$(t.el).attr("id") === "cf-primary");
+    expect(primaryIdx).toBeGreaterThanOrEqual(0);
+    const merged = __test_appendCashFlowContinuationTables(html, primaryIdx, "10-Q");
+    expect(merged).not.toBeNull();
+    const payIdx = merged!.rows.findIndex((r) => r.label === "Payment of financing costs");
+    expect(merged!.rows[payIdx + 1]?.label).toBe("Other");
+    expect(merged!.rows[payIdx + 1]?.values.p1).toBe(-8);
+    expect(merged!.rows[payIdx + 2]?.label).toBe("Net cash provided by (used in) financing activities");
+    const others = merged!.rows.filter((r) => r.label.trim() === "Other");
+    expect(others.length).toBe(2);
   });
 });

@@ -81,7 +81,6 @@ export type PresentationDiscoveryResult = {
     openUrl: string;
     bytes: number;
   };
-  metaFilename?: string;
   error?: string;
 };
 

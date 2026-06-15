@@ -1,19 +1,15 @@
 /**
- * KPI Commentary source pack: full user ticker workspace + saved tabs + saved documents,
- * excluding (1) LME Analysis ingest, (2) generated work products (LME / forensic / recommendation /
- * AI memos & deck / KPI / literary / biblical tab outputs) and the `ai-memo-deck-library/` archive
- * (saved memos/decks from the library), (3) LME/KPI embedding vector caches under `credit-memo/`, (4) selected
- * research tabs (earnings releases, presentations & transcripts, industry/employee contacts), and (5) all Excel files.
+ * KPI Commentary source pack: Saved Documents only, limited to Period Financials
+ * management presentations and earnings transcripts. This keeps the KPI tab focused
+ * on the curated investor materials the user explicitly saved from Period Financials.
  */
 
-import { prisma } from "@/lib/prisma";
 import { loadCreditMemoConfig } from "@/lib/creditMemo/config";
-import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
 import { CREDIT_AGREEMENTS_SAVED_KEYS } from "@/lib/covenant-sources";
-import { listUserTickerDocuments, listAllUserSavedDocumentsBodiesForIngest } from "@/lib/user-workspace-store";
+import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
+import { listAllUserSavedDocumentsBodiesForIngest } from "@/lib/user-workspace-store";
 import { extractBytesForAi } from "@/lib/ticker-file-text-extract";
 import { tierForExtractedBody } from "@/lib/lme-tier-classify";
-import { userSavedDocumentIncludedInLmeCorpus } from "@/lib/lme-saved-documents-filter";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import {
   packLmeSourcesForModel,
@@ -25,7 +21,6 @@ import {
   type LmeSourcePart,
   type LmeRunPackingStats,
 } from "@/lib/lme-sources";
-import { isMemoDeckLibraryWorkspacePath } from "@/lib/creditMemo/workProductIngestScope";
 
 /** App-internal embedding caches (vector JSON — not research text). Sync with `lme-retrieval.ts` / `kpiRetrieval.ts` STORAGE_PREFIX. */
 const INTERNAL_EMBEDDING_WORKSPACE_PREFIXES = [
@@ -40,6 +35,11 @@ const LME_WORKSPACE_PATH_PREFIXES = [
   "Org Chart Excel/",
   "Subsidiary List Excel/",
 ] as const;
+
+/** Spreadsheet extensions excluded from KPI / Forensic broad workspace ingest. */
+export function isWorkspaceSpreadsheetFilename(name: string): boolean {
+  return /\.(xlsx?|xlsm|xlsb)$/i.test(name.trim());
+}
 
 /** True when `relPath` is under a folder LME Analysis ingests from the materialized workspace. */
 export function isUnderLmeAnalysisWorkspacePath(relPath: string): boolean {
@@ -93,7 +93,16 @@ function buildWorkProductSavedKeys(): Set<string> {
     "biblical-references-latest",
     "biblical-references-latest-meta",
     "biblical-references-latest-source-pack",
-    /** Deterministic XBRL compiler dump (JSON) — restores Financials tab; not KPI source text. */
+    "how-to-look-like-a-dumbass-latest",
+    "how-to-look-like-a-dumbass-latest-meta",
+    "how-to-look-like-a-dumbass-latest-source-pack",
+    "next-quarter-earnings-transcript-latest",
+    "next-quarter-earnings-transcript-latest-meta",
+    "next-quarter-earnings-transcript-latest-source-pack",
+    "credit-decision-dashboard-latest",
+    "credit-decision-dashboard-latest-meta",
+    "credit-decision-dashboard-latest-source-pack",
+    "credit-decision-dashboard-inputs",
     "xbrl-deterministic-compiler-result",
   ]);
   for (const k of Object.keys(SAVED_DATA_FILES)) {
@@ -102,50 +111,14 @@ function buildWorkProductSavedKeys(): Set<string> {
   return s;
 }
 
-/** Materialized filenames for those keys (workspace basename match). */
-function buildWorkProductFilenamesLower(): Set<string> {
+/** Basenames (lowercase) of generated tab artifacts on disk — skip for KPI / Forensic workspace rows. */
+export function workspaceGeneratedArtifactBasenamesLower(): Set<string> {
   const out = new Set<string>();
   for (const k of buildWorkProductSavedKeys()) {
     const fn = SAVED_DATA_FILES[k as keyof typeof SAVED_DATA_FILES];
     if (typeof fn === "string" && fn.trim()) out.add(fn.trim().toLowerCase());
   }
   return out;
-}
-
-/** Research tabs omitted from KPI commentary (saved Postgres tab text + same-named workspace files). */
-const KPI_COMMENTARY_EXCLUDED_TAB_KEYS: readonly string[] = [
-  "earnings-releases",
-  /** "Mgmt Presentations & Transcripts" tab — `SAVED_DATA_FILES` key is `presentations`. */
-  "presentations",
-  "industry-contacts",
-  "employee-contacts",
-];
-
-function kpiCommentaryExcludedFilenamesLower(): Set<string> {
-  const out = buildWorkProductFilenamesLower();
-  for (const k of KPI_COMMENTARY_EXCLUDED_TAB_KEYS) {
-    const fn = SAVED_DATA_FILES[k as keyof typeof SAVED_DATA_FILES];
-    if (typeof fn === "string" && fn.trim()) out.add(fn.trim().toLowerCase());
-  }
-  return out;
-}
-
-/** Tab keys to omit from KPI: LME research inputs + generated work products + selected research tabs. */
-function kpiExcludedTabDataKeys(): Set<string> {
-  const s = lmeTabDataKeys();
-  for (const k of buildWorkProductSavedKeys()) s.add(k);
-  for (const k of KPI_COMMENTARY_EXCLUDED_TAB_KEYS) s.add(k);
-  return s;
-}
-
-/** Spreadsheet extensions excluded from KPI / Forensic broad workspace ingest. */
-export function isWorkspaceSpreadsheetFilename(name: string): boolean {
-  return /\.(xlsx?|xlsm|xlsb)$/i.test(name.trim());
-}
-
-/** Basenames (lowercase) of generated tab artifacts on disk — skip for KPI / Forensic workspace rows. */
-export function workspaceGeneratedArtifactBasenamesLower(): Set<string> {
-  return buildWorkProductFilenamesLower();
 }
 
 /** Postgres `dataKey` values for generated outputs — skip for KPI / Forensic saved-tab ingest. */
@@ -159,6 +132,18 @@ export function isWorkspaceEmbeddingVectorCachePath(relPath: string): boolean {
   return INTERNAL_EMBEDDING_WORKSPACE_PREFIXES.some((p) => n.startsWith(p));
 }
 
+function isKpiPeriodFinancialsSourceFilename(name: string): boolean {
+  const n = name.trim().toLowerCase();
+  if (!n) return false;
+  if (n.endsWith(".meta.json")) return false;
+  return (
+    n.includes("_mgmt-presentation_") ||
+    n.includes("-mgmt-presentation.") ||
+    n.includes("_earnings-transcript_") ||
+    n.includes("roic-earnings-transcript-")
+  );
+}
+
 let kpiDocCounter = 0;
 function nextKpiDocId(): string {
   kpiDocCounter += 1;
@@ -166,15 +151,14 @@ function nextKpiDocId(): string {
 }
 
 /**
- * Raw documents for KPI: workspace files + non-LME tab saves + saved documents not in the LME corpus.
+ * Raw documents for KPI: Saved Documents containing Period Financials management
+ * presentations or earnings transcripts.
  * Requires `userId` for anything beyond an empty list.
  */
 export async function collectKpiCommentaryRawDocuments(ticker: string, userId?: string | null): Promise<LmeRawDocument[]> {
   kpiDocCounter = 0;
   const out: LmeRawDocument[] = [];
   let seq = 0;
-  const excludedTabs = kpiExcludedTabDataKeys();
-  const workProductFilenames = kpiCommentaryExcludedFilenamesLower();
 
   const push = (d: Omit<LmeRawDocument, "docId" | "seq"> & { docId?: string }) => {
     out.push({
@@ -191,56 +175,7 @@ export async function collectKpiCommentaryRawDocuments(ticker: string, userId?: 
   const sym = sanitizeTicker(ticker);
   if (!userId || !sym) return out.sort((a, b) => a.tier - b.tier || a.seq - b.seq);
 
-  const rows = await prisma.userTickerWorkspaceFile.findMany({
-    where: { userId, ticker: sym },
-    select: { path: true, body: true },
-    orderBy: { path: "asc" },
-  });
-
   const maxBytes = loadCreditMemoConfig().maxIngestFileBytes;
-
-  for (const row of rows) {
-    const rel = row.path.replace(/\\/g, "/");
-    const base = rel.split("/").pop() ?? rel;
-    if (isWorkspaceSpreadsheetFilename(base)) continue;
-    if (isUnderLmeAnalysisWorkspacePath(rel)) continue;
-    if (isWorkspaceEmbeddingVectorCachePath(rel)) continue;
-    if (isMemoDeckLibraryWorkspacePath(rel)) continue;
-    if (workProductFilenames.has(base.toLowerCase())) continue;
-    const buf = Buffer.from(row.body);
-    if (buf.length > maxBytes) continue;
-    try {
-      const extracted = (await extractBytesForAi(base, buf)).trim();
-      if (!extracted) continue;
-      const tier = tierForExtractedBody(base, extracted);
-      push({
-        tier,
-        label: `Workspace — ${rel}`,
-        file: rel,
-        raw: extracted,
-      });
-    } catch {
-      /* skip */
-    }
-  }
-
-  const tabRows = await listUserTickerDocuments(userId, sym);
-  for (const row of tabRows) {
-    if (!(row.dataKey in SAVED_DATA_FILES)) continue;
-    if (excludedTabs.has(row.dataKey)) continue;
-    const raw = row.content?.trim() ?? "";
-    if (!raw) continue;
-    const fn = SAVED_DATA_FILES[row.dataKey as keyof typeof SAVED_DATA_FILES];
-    if (isWorkspaceSpreadsheetFilename(fn)) continue;
-    const tier = tierForExtractedBody(fn, raw);
-    push({
-      tier,
-      label: `Saved tab — ${fn}`,
-      key: row.dataKey,
-      file: fn,
-      raw,
-    });
-  }
 
   const savedDocs = await listAllUserSavedDocumentsBodiesForIngest(userId, sym);
   for (const { filename, body } of savedDocs) {
@@ -248,10 +183,7 @@ export async function collectKpiCommentaryRawDocuments(ticker: string, userId?: 
     if (!fn) continue;
     if (body.length > maxBytes) continue;
     if (isWorkspaceSpreadsheetFilename(fn)) continue;
-    if (isMemoDeckLibraryWorkspacePath(fn)) continue;
-    if (workProductFilenames.has(fn.toLowerCase())) continue;
-    const gate = userSavedDocumentIncludedInLmeCorpus(fn, body.length);
-    if (gate.ok) continue;
+    if (!isKpiPeriodFinancialsSourceFilename(fn)) continue;
     try {
       const extracted = (await extractBytesForAi(fn, body)).trim();
       if (!extracted) continue;
@@ -272,7 +204,7 @@ export async function collectKpiCommentaryRawDocuments(ticker: string, userId?: 
 
 export function formatSourcesForKpiCommentary(ticker: string, parts: LmeSourcePart[]): string {
   const sym = ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  const header = `Ticker: ${sym}\nThe blocks below are your full ticker workspace (uploaded files) plus saved tab text and Saved Documents, excluding (1) sources that feed the LME Analysis tab (capital structure / org chart / subsidiary responses, credit-agreement tab saves and uploads, capital-structure/org/subsidiary Excel trees, and saved documents that pass the LME include gate), (2) generated work products (LME analysis, forensic accounting, capital-structure recommendation, AI credit memos and source packs, AI credit deck, KPI commentary outputs) and the ai-memo-deck-library/ tree (library memos and decks on disk), (3) embedding-vector cache files under credit-memo/lme-retrieval-embeddings and credit-memo/kpi-embeddings, (4) saved tabs and matching workspace files for earnings releases, management presentations & transcripts, industry contacts, and employee contacts, and (5) all Excel spreadsheets (.xls/.xlsx/.xlsm/.xlsb). When retrieval is enabled, you usually receive one embedding-ranked context pack from this corpus under the character ceiling; otherwise you receive ordinary per-source blocks. Use them as the primary factual basis for KPI commentary.\n\n`;
+  const header = `Ticker: ${sym}\nThe blocks below are Saved Documents only, limited to management presentations and earnings transcripts saved from Period Financials. Ask users to save at least one management presentation or earnings transcript in Period Financials before running KPI commentary. When retrieval is enabled, you usually receive one embedding-ranked context pack from this corpus under the character ceiling; otherwise you receive ordinary per-source blocks. Use them as the primary factual basis for KPI commentary.\n\n`;
   const blocks = parts.map(
     (p) =>
       `==========\nSOURCE: ${p.label}${p.key ? ` [key:${p.key}]` : ""}${p.file ? ` [file:${p.file}]` : ""}\n==========\n${p.content}\n`

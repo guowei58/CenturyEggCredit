@@ -5,7 +5,7 @@ import {
   locateFinancialStatementsSection,
   locatePrimaryStatementPacket,
 } from "@/lib/sec-statement-locator";
-import { isLikelyFaceStatementFooterNotesReference } from "@/lib/sec-statement-locator/signals";
+import { isLikelyFaceStatementFooterNotesReference, isLikelyStatementIndexListingHit, findPrimaryFaceTablesEndBeforeNotes } from "@/lib/sec-statement-locator/signals";
 
 function ctxFromHtml(html: string) {
   const ctx = buildParsedFilingHtmlContext(html);
@@ -315,5 +315,36 @@ describe("sec-statement-locator", () => {
     expect(result.audit.blocksBuilt).toBeGreaterThanOrEqual(0);
     expect(result.packet).toBeNull();
     expect(result.nearMisses.length + result.rejected.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it("rejects HTZ-style Item 1 index note list with page numbers between Note entries", () => {
+    const acc =
+      "12 Notes to the Condensed Consolidated Financial Statements Note 1 Background 14 Note 2 Basis of Presentation 15 Note 3 Debt 22";
+    const note1Offset = acc.indexOf("Note 1");
+    const notesOffset = acc.indexOf("Notes to");
+    expect(isLikelyStatementIndexListingHit(acc, note1Offset)).toBe(true);
+    expect(isLikelyStatementIndexListingHit(acc, notesOffset)).toBe(true);
+  });
+
+  it("does not reject a real Note 1 heading that is not an index listing", () => {
+    const acc =
+      "NOTES TO CONDENSED CONSOLIDATED FINANCIAL STATEMENTS Note 1. Background The Company was reorganized in 2021.";
+    const note1Offset = acc.indexOf("Note 1");
+    expect(isLikelyStatementIndexListingHit(acc, note1Offset)).toBe(false);
+  });
+
+  it("extends face scan ceiling past index note list to real statements", () => {
+    const item1Start = 1000;
+    const indexListing =
+      "12 Notes to the Condensed Consolidated Financial Statements Note 1 Background 14 Note 2 Basis 15";
+    const faceAnchor = "CONDENSED CONSOLIDATED BALANCE SHEETS Unaudited";
+    const acc =
+      "x".repeat(item1Start) +
+      indexListing +
+      " ".repeat(5000) +
+      faceAnchor +
+      " ".repeat(50_000);
+    const ceiling = findPrimaryFaceTablesEndBeforeNotes(acc, item1Start, acc.length);
+    expect(ceiling).toBeGreaterThan(acc.indexOf(faceAnchor));
   });
 });

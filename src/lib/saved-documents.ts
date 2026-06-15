@@ -496,7 +496,8 @@ export async function upsertSecArchivesExhibitAsSavedDocument(
 export async function saveDocumentFromUrl(
   userId: string,
   ticker: string,
-  urlStr: string
+  urlStr: string,
+  opts?: { titleHint?: string }
 ): Promise<
   | { ok: true; item: SavedDocumentItem }
   | { ok: false; error: string }
@@ -569,7 +570,8 @@ export async function saveDocumentFromUrl(
   const now = new Date();
   const savedAtIso = now.toISOString();
   const stamp = savedAtIso.replace(/[:.]/g, "-");
-  const baseTitle = guessTitleFromUrl(url.toString());
+  const hintedTitle = opts?.titleHint?.trim();
+  const baseTitle = hintedTitle ? hintedTitle.slice(0, 480) : guessTitleFromUrl(url.toString());
   const safeBase = toSafeFilename(baseTitle);
   const stem = filenameStemFromSafeBase(safeBase);
 

@@ -122,13 +122,11 @@ export async function discoverManagementPresentation(
   }
 
   let savedDocument: PresentationDiscoveryResult["savedDocument"];
-  let metaFilename: string | undefined;
   const shouldSave = opts?.save !== false && opts?.userId && best.review_status !== "reject";
   if (shouldSave && opts.userId) {
     const saved = await savePresentationDiscoveryDocument(opts.userId, ticker, best);
     if (saved.ok) {
       savedDocument = { filename: saved.filename, openUrl: saved.openUrl, bytes: saved.bytes };
-      metaFilename = saved.metaFilename;
     }
   }
 
@@ -137,7 +135,6 @@ export async function discoverManagementPresentation(
     best,
     metadata,
     savedDocument,
-    metaFilename,
   };
 }
 

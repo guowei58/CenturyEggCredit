@@ -10,8 +10,9 @@ export function CompanyNewsEventsTab({
   ticker: string;
   companyName?: string | null;
 }) {
-  const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
+  const safeTicker = ticker?.trim().toUpperCase() ?? "";
+  const resolvedCompanyName =
+    companyName?.trim() && companyName.trim().toUpperCase() !== safeTicker ? companyName.trim() : undefined;
 
   if (!safeTicker) {
     return (
@@ -25,7 +26,7 @@ export function CompanyNewsEventsTab({
 
   return (
     <Card title={`News & Events — ${safeTicker}`}>
-      <NewsFeed ticker={safeTicker} companyName={displayName || undefined} />
+      <NewsFeed ticker={safeTicker} companyName={resolvedCompanyName} />
     </Card>
   );
 }

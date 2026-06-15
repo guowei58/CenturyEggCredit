@@ -11,9 +11,12 @@ from openpyxl import load_workbook as _xl_open
 
 from period_parser import (
     Period,
+    WorkbookMetaPeriod,
     collect_dates,
     parse_period,
+    parse_workbook_period,
     period_from_end_date,
+    period_from_workbook_meta,
 )
 
 logger = logging.getLogger(__name__)
@@ -94,21 +97,143 @@ class WorkbookInfo:
 
 
 # ── header scanning ────────────────────────────────────────────────────────
-def _find_header(ws: Any, max_rows: int = 10) -> tuple[int, dict[int, str]] | None:
+HEADER_SCAN_ROWS = 15
+
+
+def _row_cell_map(ws: Any, row_index: int) -> dict[int, str]:
+    cells: dict[int, str] = {}
+    for ci, cell in enumerate(ws[row_index], 1):
+        v = str(cell.value).strip() if cell.value is not None else ""
+        if v:
+            cells[ci] = v
+    return cells
+
+
+def _is_structural_header(val: str) -> bool:
+    return val.lower().strip() in ("line", "concept", "depth")
+
+
+def _merge_header_block(ws: Any, concept_row: int) -> dict[int, str]:
+    """Combine stacked header rows (duration prose + date) into one label per column."""
+    merged: dict[int, str] = {}
+    for ri in range(1, concept_row + 1):
+        for ci, val in _row_cell_map(ws, ri).items():
+            if ci in merged:
+                merged[ci] = f"{merged[ci]} {val}".strip()
+            else:
+                merged[ci] = val
+    return merged
+
+
+def _read_meta_period_map(wb: Any) -> dict[str, dict[int, WorkbookMetaPeriod]]:
+    """Parse period column metadata written by ``buildAsPresentedStatementsWorkbook``."""
+    if "Meta" not in wb.sheetnames:
+        return {}
+    ws = wb["Meta"]
+    rows = list(ws.iter_rows(values_only=True))
+    header_idx: int | None = None
+    for i, row in enumerate(rows):
+        if not row:
+            continue
+        a = str(row[0] or "").strip().lower()
+        b = str(row[1] or "").strip().lower() if len(row) > 1 else ""
+        if a == "sheet" and b == "column":
+            header_idx = i
+            break
+    if header_idx is None:
+        return {}
+
+    out: dict[str, dict[int, WorkbookMetaPeriod]] = {}
+    for row in rows[header_idx + 1 :]:
+        if not row or row[0] in (None, ""):
+            break
+        sheet = str(row[0]).strip()
+        try:
+            col = int(row[1])
+        except (TypeError, ValueError):
+            continue
+        key = str(row[2] or "").strip() if len(row) > 2 else ""
+        header = str(row[3] or "").strip() if len(row) > 3 else ""
+        start_raw = row[4] if len(row) > 4 else None
+        end_raw = row[5] if len(row) > 5 else None
+        start = str(start_raw).strip() if start_raw not in (None, "") else None
+        end = str(end_raw).strip() if end_raw not in (None, "") else None
+        out.setdefault(sheet, {})[col] = WorkbookMetaPeriod(
+            sheet=sheet,
+            column=col,
+            period_key=key,
+            header=header,
+            start=start,
+            end=end,
+        )
+    return out
+
+
+def _column_parses_as_period(
+    ci: int,
+    val: str,
+    *,
+    statement_type: str,
+    is_10k: bool,
+    meta_periods: dict[int, WorkbookMetaPeriod],
+) -> bool:
+    if ci in meta_periods:
+        return True
+    if _is_structural_header(val):
+        return False
+    return parse_workbook_period(val, statement_type=statement_type, is_10k=is_10k) is not None
+
+
+def _parse_column_period(
+    ci: int,
+    val: str,
+    *,
+    statement_type: str,
+    is_10k: bool,
+    meta_periods: dict[int, WorkbookMetaPeriod],
+) -> Period | None:
+    if ci in meta_periods:
+        p = period_from_workbook_meta(
+            meta_periods[ci],
+            statement_type=statement_type,
+            is_10k=is_10k,
+        )
+        if p is not None:
+            return p
+    if _is_structural_header(val):
+        return None
+    return parse_workbook_period(val, statement_type=statement_type, is_10k=is_10k)
+
+
+def _find_header(
+    ws: Any,
+    *,
+    statement_type: str,
+    is_10k: bool,
+    meta_periods: dict[int, WorkbookMetaPeriod] | None = None,
+    max_rows: int = HEADER_SCAN_ROWS,
+) -> tuple[int, dict[int, str]] | None:
+    meta_periods = meta_periods or {}
     for ri in range(1, max_rows + 1):
-        cells: dict[int, str] = {}
-        for ci, cell in enumerate(ws[ri], 1):
-            v = str(cell.value).strip() if cell.value is not None else ""
-            if v:
-                cells[ci] = v
-        if any(v.lower() == "concept" for v in cells.values()) and any(
-            parse_period(v) is not None for v in cells.values()
+        cells = _row_cell_map(ws, ri)
+        if not any(v.lower() == "concept" for v in cells.values()):
+            continue
+        merged = _merge_header_block(ws, ri)
+        if any(
+            _column_parses_as_period(
+                ci, val,
+                statement_type=statement_type,
+                is_10k=is_10k,
+                meta_periods=meta_periods,
+            )
+            for ci, val in merged.items()
         ):
-            return ri, cells
+            return ri, merged
     return None
 
 
-SPARSE_COLUMN_THRESHOLD = 0.50  # columns below 50% of max fill are dropped
+# Drop period columns only when they contain zero numeric facts (never by fill ratio).
+SPARSE_COLUMN_THRESHOLD = 0.50  # kept for tests referencing the name; unused for ratio drops
 
 
 def _filter_sparse_columns(
@@ -117,10 +242,8 @@ def _filter_sparse_columns(
     pcols: list[tuple[int, Period]],
 ) -> list[tuple[int, Period]]:
     """
-    Count non-empty numeric cells in each period column.
-    Drop any column whose fill count is below SPARSE_COLUMN_THRESHOLD of the
-    most-populated column.  This removes footnote / dimensional columns that
-    carry only a handful of values.
+    Drop period columns with **no** numeric facts.  Parsed Q/FY/6M/9M columns are
+    kept whenever at least one row has a number (no 50% fill-ratio drop).
     """
     fill_counts: dict[int, int] = {ci: 0 for ci, _ in pcols}
 
@@ -136,23 +259,13 @@ def _filter_sparse_columns(
             except (ValueError, TypeError):
                 continue
 
-    if not fill_counts:
-        return pcols
-
-    max_fill = max(fill_counts.values())
-    if max_fill == 0:
-        return pcols
-
-    cutoff = max_fill * SPARSE_COLUMN_THRESHOLD
     kept: list[tuple[int, Period]] = []
     for ci, period in pcols:
-        cnt = fill_counts[ci]
-        if cnt >= cutoff:
+        cnt = fill_counts.get(ci, 0)
+        if cnt > 0:
             kept.append((ci, period))
         else:
-            logger.info("    Dropping sparse column '%s' (%d/%d = %.0f%% fill)",
-                        period.column_label, cnt, max_fill,
-                        100 * cnt / max_fill if max_fill else 0)
+            logger.info("    Dropping empty column '%s' (0 numeric cells)", period.column_label)
 
     return kept
 
@@ -161,9 +274,11 @@ def _filter_sparse_columns(
 def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
     fp = Path(filepath)
     fname = fp.name
+    is_10k = is_10k_filename(fname)
     logger.info("Loading %s", fname)
 
     wb = _xl_open(str(fp), data_only=True)
+    meta_period_map = _read_meta_period_map(wb)
     sheets: list[SheetData] = []
     max_fy = 0
 
@@ -173,7 +288,13 @@ def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
             continue
 
         ws = wb[tab_name]
-        hdr = _find_header(ws)
+        sheet_meta = meta_period_map.get(tab_name, {})
+        hdr = _find_header(
+            ws,
+            statement_type=stmt,
+            is_10k=is_10k,
+            meta_periods=sheet_meta,
+        )
         if hdr is None:
             logger.warning("  '%s': no header row", tab_name)
             continue
@@ -193,7 +314,12 @@ def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
             elif low == "depth":
                 depth_col = ci
             else:
-                p = parse_period(val)
+                p = _parse_column_period(
+                    ci, val,
+                    statement_type=stmt,
+                    is_10k=is_10k,
+                    meta_periods=sheet_meta,
+                )
                 if p:
                     pcols.append((ci, p))
 
@@ -236,11 +362,21 @@ def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
             if not concept and line:
                 concept = f"_:lineonly:{fname}|{tab_name}|R{hrow + ri}"
 
+            row_concept = concept
             if concept and concept not in seen:
                 order.append(concept)
                 seen.add(concept)
                 c2line[concept] = line
                 c2depth[concept] = depth
+            elif concept:
+                # Same QName on multiple face lines (e.g. Vehicle / Non-vehicle interest).
+                slot = f"{concept}@R{hrow + ri}"
+                row_concept = slot
+                if slot not in seen:
+                    order.append(slot)
+                    seen.add(slot)
+                    c2line[slot] = line
+                    c2depth[slot] = depth
 
             for ci, period in pcols:
                 vc = row[ci - 1] if ci - 1 < len(row) else None
@@ -254,24 +390,36 @@ def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
                 if period.is_annual() and period.fiscal_year > max_fy:
                     max_fy = period.fiscal_year
                 facts.append(FactRecord(
-                    statement_type=stmt, concept=concept, line_label=line,
+                    statement_type=stmt, concept=row_concept, line_label=line,
                     period=period, value=value,
                     source_file=fname, source_sheet=tab_name,
                     source_column=period.column_label, depth=depth,
                 ))
 
-        from xbrl_periods import XBRL_PERIOD_MIN_FISCAL_YEAR, filter_facts_to_xbrl_periods
+        from xbrl_periods import filter_facts_to_xbrl_periods
 
         before = len(facts)
         facts = filter_facts_to_xbrl_periods(facts)
         if before != len(facts):
             logger.info(
-                "  '%s': kept %d/%d facts (XBRL-tagged period columns, FY>=%d)",
+                "  '%s': kept %d/%d facts (XBRL-tagged period columns only)",
                 tab_name,
                 len(facts),
                 before,
-                XBRL_PERIOD_MIN_FISCAL_YEAR,
             )
+
+        if stmt == "cash_flow":
+            from cf_statement_bounds import truncate_cash_flow_sheet
+
+            order, c2line, c2depth, facts, dropped = truncate_cash_flow_sheet(
+                order, c2line, c2depth, facts,
+            )
+            if dropped:
+                logger.info(
+                    "  '%s': truncated %d supplemental CF row(s) after net change in cash",
+                    tab_name,
+                    dropped,
+                )
 
         sheets.append(SheetData(
             source_file=fname, source_sheet=tab_name,
@@ -283,8 +431,8 @@ def load_workbook_data(filepath: str | Path) -> WorkbookInfo:
     wb.close()
     return WorkbookInfo(
         filename=fname, filepath=fp,
-        is_10k=is_10k_filename(fname),
-        latest_fy=max_fy, sheets=sheets,
+        is_10k=is_10k, sheets=sheets,
+        latest_fy=max_fy,
     )
 
 
@@ -293,6 +441,8 @@ def load_all_workbooks(folder: str | Path) -> list[WorkbookInfo]:
     folder = Path(folder)
     wbs: list[WorkbookInfo] = []
     for fp in sorted(folder.glob("*.xlsx")):
+        if fp.name.startswith("~$"):
+            continue
         try:
             wbs.append(load_workbook_data(fp))
         except Exception:
@@ -374,7 +524,12 @@ def _detect_quarter_offset(workbooks: list[WorkbookInfo]) -> bool:
 
 
 def _infer_fy_end_month(workbooks: list[WorkbookInfo]) -> int | None:
-    """Infer fiscal year-end month from FY column headers (SEC prose dates)."""
+    """Infer fiscal year-end month from FY column headers (SEC prose dates).
+
+    Uses income statement / cash flow **duration** FY columns only.  Balance sheet
+    point-in-time columns (e.g. Dec 31 mis-tagged as FY before remap) must not
+    pollute inference.
+    """
     from collections import Counter
 
     months: list[int] = []
@@ -382,6 +537,11 @@ def _infer_fy_end_month(workbooks: list[WorkbookInfo]) -> int | None:
         for sheet in wb.sheets:
             for fact in sheet.facts:
                 if fact.period.period_type != "FY":
+                    continue
+                low = fact.period.column_label.lower()
+                if not any(
+                    x in low for x in ("year ended", "years ended", "twelve month")
+                ):
                     continue
                 dates = collect_dates(fact.period.column_label)
                 if dates:
@@ -407,7 +567,12 @@ def _cumulative_kind_from_label(low: str) -> str | None:
     return None
 
 
-def _remap_fact_period_from_dates(fact: FactRecord, fy_end_month: int) -> bool:
+def _remap_fact_period_from_dates(
+    fact: FactRecord,
+    fy_end_month: int,
+    *,
+    is_annual_filing: bool = False,
+) -> bool:
     """Re-label a fact using period-end date + inferred FY end month (any non-Dec FYE)."""
     lbl = fact.period.column_label
     dates = collect_dates(lbl)
@@ -415,16 +580,21 @@ def _remap_fact_period_from_dates(fact: FactRecord, fy_end_month: int) -> bool:
         return False
     y, mo, d = dates[-1]
     low = lbl.lower()
-    from period_parser import is_balance_sheet_instant_header
+    from period_parser import is_balance_sheet_point_in_time_header
 
     cum = _cumulative_kind_from_label(low)
     if cum is None:
-        bs_instant = (
+        bs_point_in_time = (
             fact.statement_type == "balance_sheet"
-            and is_balance_sheet_instant_header(lbl)
+            and is_balance_sheet_point_in_time_header(lbl)
         )
-        if bs_instant:
-            cum = None
+        if bs_point_in_time:
+            # 10-K year-end instant → FY (matches filing headline).  Same calendar
+            # month on 10-Q is a fiscal quarter-end (or prior-year comparative).
+            if is_annual_filing and mo == fy_end_month:
+                cum = "FY"
+            else:
+                cum = None
         elif fact.period.is_annual() or "year ended" in low or "twelve month" in low:
             cum = "FY"
         elif fact.period.is_cumulative():
@@ -451,7 +621,11 @@ def _normalize_by_fy_end_month(workbooks: list[WorkbookInfo], fy_end_month: int)
     for wb in workbooks:
         for sheet in wb.sheets:
             for fact in sheet.facts:
-                if _remap_fact_period_from_dates(fact, fy_end_month):
+                if _remap_fact_period_from_dates(
+                    fact,
+                    fy_end_month,
+                    is_annual_filing=wb.is_10k,
+                ):
                     remapped += 1
     return remapped
 

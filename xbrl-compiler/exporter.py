@@ -25,23 +25,44 @@ _BD = Border(left=_TH, right=_TH, top=_TH, bottom=_TH)
 
 # ── period helpers ─────────────────────────────────────────────────────────
 
-def _q_periods(concepts: dict[str, dict]) -> list[str]:
+def _quarter_periods(concepts: dict[str, dict], *, display_min_fiscal_year: int | None = None) -> list[str]:
+    """Discrete fiscal quarters (1Q–4Q) only — excludes FY and YTD (6M/9M)."""
     s: set[str] = set()
     for vals in concepts.values():
         for lbl in vals:
             p = parse_period(lbl)
-            if p and (p.is_quarterly() or p.is_annual()):
-                s.add(lbl)
+            if not p or not p.is_quarterly():
+                continue
+            if display_min_fiscal_year is not None and p.fiscal_year < display_min_fiscal_year:
+                continue
+            s.add(lbl)
     return sort_period_labels(list(s))
 
 
-def _fy_periods(concepts: dict[str, dict]) -> list[str]:
+def _ytd_periods(concepts: dict[str, dict], *, display_min_fiscal_year: int | None = None) -> list[str]:
+    """Year-to-date cumulative columns (6M, 9M)."""
     s: set[str] = set()
     for vals in concepts.values():
         for lbl in vals:
             p = parse_period(lbl)
-            if p and p.is_annual():
-                s.add(lbl)
+            if not p or not p.is_cumulative():
+                continue
+            if display_min_fiscal_year is not None and p.fiscal_year < display_min_fiscal_year:
+                continue
+            s.add(lbl)
+    return sort_period_labels(list(s))
+
+
+def _fy_periods(concepts: dict[str, dict], *, display_min_fiscal_year: int | None = None) -> list[str]:
+    s: set[str] = set()
+    for vals in concepts.values():
+        for lbl in vals:
+            p = parse_period(lbl)
+            if not p or not p.is_annual():
+                continue
+            if display_min_fiscal_year is not None and p.fiscal_year < display_min_fiscal_year:
+                continue
+            s.add(lbl)
     return sort_period_labels(list(s))
 
 
@@ -130,6 +151,8 @@ def export_all(
     unresolved: list[UnresolvedRow],
     log_messages: list[str],
     output_dir: str | Path,
+    *,
+    display_min_fiscal_year: int | None = None,
 ) -> dict[str, Any]:
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -145,10 +168,13 @@ def export_all(
         concepts = data[st]
         order = _row_order(master_rows, st, concepts)
 
-        qp = _q_periods(concepts)
+        qp = _quarter_periods(concepts, display_min_fiscal_year=display_min_fiscal_year)
         if qp:
             _write_stmt_sheet(wb, f"{pfx}_Quarterly", concepts, qp, order, labels, st)
-        fp = _fy_periods(concepts)
+        yp = _ytd_periods(concepts, display_min_fiscal_year=display_min_fiscal_year)
+        if yp:
+            _write_stmt_sheet(wb, f"{pfx}_YTD", concepts, yp, order, labels, st)
+        fp = _fy_periods(concepts, display_min_fiscal_year=display_min_fiscal_year)
         if fp:
             _write_stmt_sheet(wb, f"{pfx}_Annual", concepts, fp, order, labels, st)
 

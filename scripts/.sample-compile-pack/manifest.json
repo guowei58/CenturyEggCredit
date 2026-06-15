@@ -1,0 +1,339 @@
+{
+  "seed": 20260614,
+  "tickers": [
+    "MSFT",
+    "BRK.B",
+    "HD",
+    "V",
+    "META",
+    "AAPL",
+    "UNH",
+    "AMZN",
+    "JPM",
+    "PEP",
+    "TXN",
+    "AVGO",
+    "SPGI",
+    "INTU",
+    "TMO",
+    "MCD",
+    "AMGN",
+    "QCOM",
+    "DECK",
+    "EMR",
+    "ETN",
+    "BIO",
+    "GNRC",
+    "MANH",
+    "SPSC",
+    "PDFS",
+    "ZD",
+    "ATEN",
+    "MODG",
+    "CABO"
+  ],
+  "results": [
+    {
+      "ticker": "MSFT",
+      "ok": false,
+      "error": "564590-19-012709.xlsx �� 2 concepts (html:acquisition-of-companies-net-of-cash-acquired-and-purchases-of-intangible-and-other-assets, html:other-net) summed to 135.0\r\n2026-06-14 09:49:31,431 [INFO] consolidator: SUM-WITHIN-FILE: cash_flow/us-gaap:ProceedsFromPaymentsForOtherFinancingActivities/1Q23 in MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx �� 2 concepts (html:acquisition-of-companies-net-of-cash-acquired-and-purchases-of-intangible-and-other-assets, html:",
+      "filingsSaved": 25,
+      "filingsSkipped": 0,
+      "filingsFailed": 5,
+      "compileOk": false,
+      "elapsedSec": 587
+    },
+    {
+      "ticker": "BRK.B",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "BRK.B_compiled_financials.xlsx",
+      "elapsedSec": 333
+    },
+    {
+      "ticker": "HD",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "HD_compiled_financials.xlsx",
+      "elapsedSec": 68
+    },
+    {
+      "ticker": "V",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "V_compiled_financials.xlsx",
+      "elapsedSec": 69
+    },
+    {
+      "ticker": "META",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "META_compiled_financials.xlsx",
+      "elapsedSec": 59
+    },
+    {
+      "ticker": "AAPL",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "AAPL_compiled_financials.xlsx",
+      "elapsedSec": 49
+    },
+    {
+      "ticker": "UNH",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "UNH_compiled_financials.xlsx",
+      "elapsedSec": 56
+    },
+    {
+      "ticker": "AMZN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "AMZN_compiled_financials.xlsx",
+      "elapsedSec": 56
+    },
+    {
+      "ticker": "JPM",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "JPM_compiled_financials.xlsx",
+      "elapsedSec": 363
+    },
+    {
+      "ticker": "PEP",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "PEP_compiled_financials.xlsx",
+      "elapsedSec": 8018
+    },
+    {
+      "ticker": "TXN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "TXN_compiled_financials.xlsx",
+      "elapsedSec": 315
+    },
+    {
+      "ticker": "AVGO",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "AVGO_compiled_financials.xlsx",
+      "elapsedSec": 210
+    },
+    {
+      "ticker": "SPGI",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "SPGI_compiled_financials.xlsx",
+      "elapsedSec": 227
+    },
+    {
+      "ticker": "INTU",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "INTU_compiled_financials.xlsx",
+      "elapsedSec": 10011
+    },
+    {
+      "ticker": "TMO",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "TMO_compiled_financials.xlsx",
+      "elapsedSec": 60
+    },
+    {
+      "ticker": "MCD",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "MCD_compiled_financials.xlsx",
+      "elapsedSec": 99
+    },
+    {
+      "ticker": "AMGN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "AMGN_compiled_financials.xlsx",
+      "elapsedSec": 121
+    },
+    {
+      "ticker": "QCOM",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "QCOM_compiled_financials.xlsx",
+      "elapsedSec": 96
+    },
+    {
+      "ticker": "DECK",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "DECK_compiled_financials.xlsx",
+      "elapsedSec": 65
+    },
+    {
+      "ticker": "EMR",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "EMR_compiled_financials.xlsx",
+      "elapsedSec": 116
+    },
+    {
+      "ticker": "ETN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "ETN_compiled_financials.xlsx",
+      "elapsedSec": 406
+    },
+    {
+      "ticker": "BIO",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "BIO_compiled_financials.xlsx",
+      "elapsedSec": 63
+    },
+    {
+      "ticker": "GNRC",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "GNRC_compiled_financials.xlsx",
+      "elapsedSec": 150
+    },
+    {
+      "ticker": "MANH",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "MANH_compiled_financials.xlsx",
+      "elapsedSec": 192
+    },
+    {
+      "ticker": "SPSC",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "SPSC_compiled_financials.xlsx",
+      "elapsedSec": 287
+    },
+    {
+      "ticker": "PDFS",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "PDFS_compiled_financials.xlsx",
+      "elapsedSec": 200
+    },
+    {
+      "ticker": "ZD",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "ZD_compiled_financials.xlsx",
+      "elapsedSec": 149
+    },
+    {
+      "ticker": "ATEN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "ATEN_compiled_financials.xlsx",
+      "elapsedSec": 58
+    },
+    {
+      "ticker": "MODG",
+      "ok": false,
+      "error": "ticker not in SEC cache",
+      "filingsSaved": 0,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": false,
+      "elapsedSec": 0
+    },
+    {
+      "ticker": "CABO",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "CABO_compiled_financials.xlsx",
+      "elapsedSec": 102
+    }
+  ],
+  "zipFile": "compiled-financials-sample.zip",
+  "generatedAt": "2026-06-14T19:56:13.490Z"
+}

@@ -11,9 +11,10 @@ export function RegulatoryResultSourceLinks({ ticker, row }: { ticker: string; r
   const d = row.detail_url?.trim();
   const doc = row.document_url?.trim();
   const dl = row.download_url?.trim();
+  const isPacerCase = row.agency === "PACER Case Locator";
 
-  const pairs: { label: string; url: string }[] = [];
-  if (d) pairs.push({ label: "Open", url: d });
+  const pairs: { label: string; url: string; save?: boolean }[] = [];
+  if (d) pairs.push({ label: isPacerCase ? "View case on PACER" : "Open", url: d, save: !isPacerCase });
   if (doc && doc !== d) pairs.push({ label: "Document", url: doc });
   if (dl && dl !== d && dl !== doc) pairs.push({ label: "Download", url: dl });
 
@@ -28,7 +29,7 @@ export function RegulatoryResultSourceLinks({ ticker, row }: { ticker: string; r
           <a href={p.url} target="_blank" rel="noreferrer" className="text-xs font-medium underline" style={{ color: "var(--accent)" }}>
             {p.label}
           </a>
-          <SaveFilingLinkButton ticker={ticker} url={p.url} mode="saved-documents" />
+          {p.save !== false ? <SaveFilingLinkButton ticker={ticker} url={p.url} mode="saved-documents" /> : null}
         </span>
       ))}
     </div>

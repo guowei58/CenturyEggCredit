@@ -22,6 +22,7 @@ export type XSearchConfig = {
   defaultLanguage: string;
   timeoutMs: number;
   enableCounts: boolean;
+  minEngagementScore: number;
 };
 
 export function loadXSearchConfigFromEnv(): XSearchConfig {
@@ -37,6 +38,7 @@ export function loadXSearchConfigFromEnv(): XSearchConfig {
     defaultLanguage: (process.env.X_DEFAULT_LANGUAGE?.trim() || "en").toLowerCase(),
     timeoutMs: Math.min(60_000, Math.max(2_000, parseIntEnv(process.env.X_REQUEST_TIMEOUT_MS, 10_000))),
     enableCounts: parseBool(process.env.X_COUNTS_ENABLED, true),
+    minEngagementScore: Math.max(0, parseIntEnv(process.env.X_MIN_ENGAGEMENT_SCORE, 1)),
   };
 }
 

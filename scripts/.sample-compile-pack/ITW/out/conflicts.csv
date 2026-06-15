@@ -1,0 +1,3 @@
+statement_type,canonical_row_id,period,value,source_file,source_sheet,source_column,raw_concept,resolution
+cash_flow,us-gaap:ProfitLoss,1Q19,681.0,ITW_SEC-XBRL-financials_as-presented_10-Q_2019-05-03_0000049826-19-000055.xlsx,Cash Flow,"Three Months Ended March 31, 2019",html:cash-paid-during-the-period-for-income-taxes-net-of-refunds + html:net-income,Kept period-primary filing ITW_SEC-XBRL-financials_as-presented_10-Q_2019-05-03_0000049826-19-000055.xlsx
+cash_flow,us-gaap:ProfitLoss,1Q19,597.0,ITW_SEC-XBRL-financials_as-presented_10-Q_2020-05-08_0000049826-20-000052.xlsx,Cash Flow,"Three Months Ended March 31, 2019",us-gaap:ProfitLoss,Kept period-primary filing ITW_SEC-XBRL-financials_as-presented_10-Q_2019-05-03_0000049826-19-000055.xlsx

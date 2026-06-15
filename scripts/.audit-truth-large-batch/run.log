@@ -44,3 +44,168 @@ SBUX, AXP, BMY, SPGI, CSCO, ABBV, PM, NEE, NFLX, MCD, NKE, TJX, GILD, LIN, SO, C
   saved=30 skip=0 fail=0 compileOk=true issues=0 (94s)
 
 [8/30] NEE ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (196s)
+
+[9/30] NFLX ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (179s)
+
+[9/30] NFLX ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (222s)
+
+[10/30] MCD ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (199s)
+
+[10/30] MCD ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (137s)
+
+[11/30] NKE ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (161s)
+
+[11/30] NKE ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (148s)
+
+[12/30] TJX ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (148s)
+
+[12/30] TJX ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (144s)
+
+[13/30] GILD ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (144s)
+
+[13/30] GILD ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (279s)
+
+[14/30] LIN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (279s)
+
+[14/30] LIN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (141s)
+
+[15/30] SO ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (153s)
+
+[15/30] SO ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (369s)
+
+[16/30] COST ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (356s)
+
+[16/30] COST ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (210s)
+
+[17/30] REGN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (211s)
+
+[17/30] REGN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (98s)
+
+[18/30] SLB ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (99s)
+
+[18/30] SLB ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (582s)
+
+[19/30] CRM ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (591s)
+
+[19/30] CRM ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (124s)
+
+[20/30] TXN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (117s)
+
+[20/30] TXN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (391s)
+
+[21/30] CVS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (389s)
+
+[21/30] CVS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (174s)
+
+[22/30] MS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (174s)
+
+[22/30] MS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (422s)
+
+[23/30] HON ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (422s)
+
+[23/30] HON ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (259s)
+
+[24/30] GS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (264s)
+
+[24/30] GS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (646s)
+
+[25/30] IBM ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (653s)
+
+[25/30] IBM ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (213s)
+
+[26/30] KO ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (216s)
+
+[26/30] KO ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (195s)
+
+[27/30] AMGN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (202s)
+
+[27/30] AMGN ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (174s)
+
+[28/30] AMD ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (169s)
+
+[28/30] AMD ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (82s)
+
+[29/30] UPS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (81s)
+
+[29/30] UPS ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (181s)
+
+[30/30] BKNG ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (174s)
+
+[30/30] BKNG ...
+  saved=30 skip=0 fail=0 compileOk=true issues=0 (173s)
+
+Large-cap workbook truth audit — 30 tickers (seed 20260522)
+Tickers: SBUX, AXP, BMY, SPGI, CSCO, ABBV, PM, NEE, NFLX, MCD, NKE, TJX, GILD, LIN, SO, COST, REGN, SLB, CRM, TXN, CVS, MS, HON, GS, IBM, KO, AMGN, AMD, UPS, BKNG
+
+Strict check: every reported IS/BS/CF cell on period-primary workbooks must match compiled;
+no extra reported cells or lines. (Derived quarters excluded.)
+
+Clean (exact match): 30
+With mismatches: 0
+Pipeline errors (no compile / no issues captured): 0
+
+Issues by type:
+
+Issues by statement:
+
+── All mismatches ──  saved=30 skip=0 fail=0 compileOk=true issues=0 (173s)
+
+Large-cap workbook truth audit — 30 tickers (seed 20260522)
+Tickers: SBUX, AXP, BMY, SPGI, CSCO, ABBV, PM, NEE, NFLX, MCD, NKE, TJX, GILD, LIN, SO, COST, REGN, SLB, CRM, TXN, CVS, MS, HON, GS, IBM, KO, AMGN, AMD, UPS, BKNG
+
+Strict check: every reported IS/BS/CF cell on period-primary workbooks must match compiled;
+no extra reported cells or lines. (Derived quarters excluded.)
+
+Clean (exact match): 30
+With mismatches: 0
+Pipeline errors (no compile / no issues captured): 0
+
+Issues by type:
+
+Issues by statement:
+
+── All mismatches ──

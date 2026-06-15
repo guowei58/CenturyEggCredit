@@ -16,9 +16,23 @@ export type WorkProductIngestScope =
   | "capstructure"
   | "literary"
   | "biblical"
+  | "dumbass"
+  | "earnings-transcript"
+  | "credit-dashboard"
   | "generic";
 
-const VALID = new Set<string>(["memo", "kpi", "forensic", "capstructure", "literary", "biblical", "generic"]);
+const VALID = new Set<string>([
+  "memo",
+  "kpi",
+  "forensic",
+  "capstructure",
+  "literary",
+  "biblical",
+  "dumbass",
+  "earnings-transcript",
+  "credit-dashboard",
+  "generic",
+]);
 
 export function normalizeWorkProductIngestScope(raw: unknown): WorkProductIngestScope {
   const s = typeof raw === "string" ? raw.trim().toLowerCase() : "";
@@ -61,6 +75,16 @@ const GENERATED_WORK_PRODUCT_ARTIFACT_BASES = new Set(
     "biblical-references-latest.md",
     "biblical-references-latest-meta.json",
     "biblical-references-latest-source-pack.txt",
+    "how-to-look-like-a-dumbass-latest.md",
+    "how-to-look-like-a-dumbass-latest-meta.json",
+    "how-to-look-like-a-dumbass-latest-source-pack.txt",
+    "next-quarter-earnings-transcript-latest.md",
+    "next-quarter-earnings-transcript-latest-meta.json",
+    "next-quarter-earnings-transcript-latest-source-pack.txt",
+    "credit-decision-dashboard-latest.json",
+    "credit-decision-dashboard-latest-meta.json",
+    "credit-decision-dashboard-latest-source-pack.txt",
+    "credit-decision-dashboard-inputs.json",
     "lme-analysis.md",
     "lme-analysis-meta.json",
   ].map((s) => s.toLowerCase())

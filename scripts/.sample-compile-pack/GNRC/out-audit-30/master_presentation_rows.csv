@@ -1,0 +1,184 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net sales,0,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Costs of goods sold,1,0
+income_statement,us-gaap:GrossProfit,us-gaap:GrossProfit,Gross profit,2,0
+income_statement,html:operating-expenses,html:operating-expenses,Operating expenses:,3,0
+income_statement,us-gaap:SellingAndMarketingExpense,us-gaap:SellingAndMarketingExpense,Selling and service,4,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research and development,5,0
+income_statement,us-gaap:GeneralAndAdministrativeExpense,us-gaap:GeneralAndAdministrativeExpense,General and administrative,6,0
+income_statement,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangibles,8,0
+income_statement,us-gaap:OperatingExpenses,us-gaap:OperatingExpenses,Total operating expenses,9,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Income from operations,10,0
+income_statement,html:other-expense-income,html:other-expense-income,Other (expense) income:,11,0
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,Interest expense,12,0
+income_statement,us-gaap:InvestmentIncomeNet,us-gaap:InvestmentIncomeNet,Investment income,13,0
+income_statement,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Change in fair value of investments,14,0
+income_statement,gnrc:LossOnModificationOfDebt,gnrc:LossOnModificationOfDebt,Loss on refinancing of debt,15,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,"Other, net",18,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,"Total other expense, net",19,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before provision for income taxes,20,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes,21,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,22,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net income attributable to noncontrolling interests,24,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income attributable to Generac Holdings Inc.,25,0
+income_statement,html:other-comprehensive-income-loss,html:other-comprehensive-income-loss,Other comprehensive income (loss):,27,0
+income_statement,us-gaap:OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationAdjustmentNetOfTaxPortionAttributableToParent,us-gaap:OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationAdjustmentNetOfTaxPortionAttributableToParent,Foreign currency translation adjustment,28,0
+income_statement,us-gaap:OtherComprehensiveIncomeLossCashFlowHedgeGainLossAfterReclassificationAndTax,us-gaap:OtherComprehensiveIncomeLossCashFlowHedgeGainLossAfterReclassificationAndTax,Net unrealized loss on derivatives,29,0
+income_statement,us-gaap:OtherComprehensiveIncomeLossNetOfTax,us-gaap:OtherComprehensiveIncomeLossNetOfTax,Other comprehensive income (loss),31,0
+income_statement,us-gaap:ComprehensiveIncomeNetOfTaxIncludingPortionAttributableToNoncontrollingInterest,us-gaap:ComprehensiveIncomeNetOfTaxIncludingPortionAttributableToNoncontrollingInterest,Total comprehensive income,32,0
+income_statement,us-gaap:ComprehensiveIncomeNetOfTaxAttributableToNoncontrollingInterest,us-gaap:ComprehensiveIncomeNetOfTaxAttributableToNoncontrollingInterest,Comprehensive income attributable to noncontrolling interests,33,0
+income_statement,us-gaap:ComprehensiveIncomeNetOfTax,us-gaap:ComprehensiveIncomeNetOfTax,Comprehensive income attributable to Generac Holdings Inc.,34,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Net income attributable to Generac Holdings Inc. per common share - basic:,35,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Weighted average common shares outstanding - basic:,36,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Net income attributable to Generac Holdings Inc. per common share - diluted:,39,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Weighted average common shares outstanding - diluted:,40,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, less allowance for credit losses of $34,504 and $35,465 as of December 31, 2025 and 2024, respectively",10,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,11,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other assets,13,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,14,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",15,0
+balance_sheet,gnrc:FiniteLivedCustomerListsNet,gnrc:FiniteLivedCustomerListsNet,"Customer lists, net",16,0
+balance_sheet,gnrc:FiniteLivedPatentsAndTechnologyNet,gnrc:FiniteLivedPatentsAndTechnologyNet,"Patents and technology, net",18,0
+balance_sheet,us-gaap:OtherIntangibleAssetsNet,us-gaap:OtherIntangibleAssetsNet,"Other intangible assets, net",19,0
+balance_sheet,gnrc:TradeNamesNet,gnrc:TradeNamesNet,"Tradenames, net",20,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,21,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,25,0
+balance_sheet,gnrc:OperatingLeaseRightOfUseAssetAndOtherAssestNoncurrent,gnrc:OperatingLeaseRightOfUseAssetAndOtherAssestNoncurrent,Operating lease and other assets,26,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,27,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,Liabilities and stockholders’ equity,28,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,29,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term borrowings,30,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,31,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued wages and employee benefits,32,0
+balance_sheet,us-gaap:ProductWarrantyAccrualClassifiedCurrent,us-gaap:ProductWarrantyAccrualClassifiedCurrent,Accrued product warranty,33,0
+balance_sheet,us-gaap:OtherAccruedLiabilitiesCurrent,us-gaap:OtherAccruedLiabilitiesCurrent,Other accrued liabilities,34,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term borrowings and finance lease obligations,36,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,39,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term borrowings and finance lease obligations,40,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,43,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityNoncurrent,us-gaap:ContractWithCustomerLiabilityNoncurrent,Deferred revenue,44,0
+balance_sheet,gnrc:OperatingLeaseLiabilityNoncurrentAndOtherLongTermLiabilities,gnrc:OperatingLeaseLiabilityNoncurrentAndOtherLongTermLiabilities,Operating lease and other long-term liabilities,45,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,46,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,Redeemable noncontrolling interest,47,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders’ equity:,48,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, par value $0.01, 500,000,000 shares authorized, 74,050,753 and 73,785,631 shares issued as of December 31, 2025 and 2024, respectively",63,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,64,0
+balance_sheet,us-gaap:TreasuryStockCommonValue,us-gaap:TreasuryStockCommonValue,"Treasury stock, at cost, 15,373,990 and 14,173,697 shares as of December 31, 2025 and 2024, respectively",74,0
+balance_sheet,gnrc:ExcessPurchasePriceOverPredecessorBasis,gnrc:ExcessPurchasePriceOverPredecessorBasis,Excess purchase price over predecessor basis,75,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,76,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),78,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Stockholders’ equity attributable to Generac Holdings Inc.,79,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,80,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total stockholders’ equity,83,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders’ equity,84,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,0,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-operating-activities,Adjustments to reconcile net income to net cash provided by operating activities:,1,0
+cash_flow,us-gaap:Depreciation,us-gaap:Depreciation,Depreciation and finance lease amortization,2,0
+cash_flow,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangible assets,3,0
+cash_flow,us-gaap:AmortizationOfFinancingCostsAndDiscounts,us-gaap:AmortizationOfFinancingCostsAndDiscounts,Amortization of deferred financing costs and original issue discount,5,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Change in fair value of investments,6,0
+cash_flow,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on refinancing of debt,8,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income tax expense (benefit),11,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Share-based compensation expense,12,0
+cash_flow,gnrc:GainLossOnDispositionOfAssetsExcludingDispositionOfBusinessCredit,gnrc:GainLossOnDispositionOfAssetsExcludingDispositionOfBusinessCredit,Loss (gain) on disposal of assets,13,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Loss attributable to the disposition of a business,16,0
+cash_flow,gnrc:BusinessCombinationContingentConsiderationGainLossChangeInFairValue,gnrc:BusinessCombinationContingentConsiderationGainLossChangeInFairValue,Other noncash charges,17,0
+cash_flow,gnrc:ExcessTaxBenefitsFromEquityAwards,gnrc:ExcessTaxBenefitsFromEquityAwards,Excess tax benefits from equity awards,18,0
+cash_flow,html:net-changes-in-operating-assets-and-liabilities,html:net-changes-in-operating-assets-and-liabilities,Net changes in operating assets and liabilities:,19,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Accounts receivable,20,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,21,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingAssets,us-gaap:IncreaseDecreaseInOtherOperatingAssets,Other assets,22,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,Accounts payable,23,0
+cash_flow,us-gaap:IncreaseDecreaseInEmployeeRelatedLiabilities,us-gaap:IncreaseDecreaseInEmployeeRelatedLiabilities,Accrued wages and employee benefits,24,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherAccruedLiabilities,us-gaap:IncreaseDecreaseInOtherAccruedLiabilities,Other accrued liabilities,25,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by operating activities,26,0
+cash_flow,html:investing-activities,html:investing-activities,Investing activities,27,0
+cash_flow,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,Proceeds from sale of property and equipment,28,0
+cash_flow,us-gaap:ProceedsFromCollectionOfRetainedInterestInSecuritizedReceivables,us-gaap:ProceedsFromCollectionOfRetainedInterestInSecuritizedReceivables,Proceeds from beneficial interest in securitization transactions,29,0
+cash_flow,us-gaap:PaymentsToAcquireEquityMethodInvestments,us-gaap:PaymentsToAcquireEquityMethodInvestments,Contribution to tax equity investment,30,0
+cash_flow,us-gaap:PaymentsToAcquireLongtermInvestments,us-gaap:PaymentsToAcquireLongtermInvestments,Purchase of long-term investments,31,0
+cash_flow,us-gaap:ProceedsFromSaleOfLongtermInvestments,us-gaap:ProceedsFromSaleOfLongtermInvestments,Proceeds from sale of long-term investments,32,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Expenditures for property and equipment,33,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisition of businesses, net of cash acquired",34,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other investing activities,36,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used in investing activities,37,0
+cash_flow,html:financing-activities,html:financing-activities,Financing activities,38,0
+cash_flow,us-gaap:ProceedsFromShortTermDebt,us-gaap:ProceedsFromShortTermDebt,Proceeds from short-term borrowings,39,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Proceeds from long-term borrowings,40,0
+cash_flow,us-gaap:RepaymentsOfShortTermDebt,us-gaap:RepaymentsOfShortTermDebt,Repayments of short-term borrowings,41,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebtAndCapitalSecurities,us-gaap:RepaymentsOfLongTermDebtAndCapitalSecurities,Repayments of long-term borrowings and finance lease obligations,42,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Stock repurchases,43,0
+cash_flow,us-gaap:PaymentsOfDebtIssuanceCosts,us-gaap:PaymentsOfDebtIssuanceCosts,Payment of debt issuance costs,44,0
+cash_flow,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,us-gaap:PaymentForContingentConsiderationLiabilityFinancingActivities,Payment of contingent acquisition consideration,46,0
+cash_flow,gnrc:PaymentsOfDeferredAcquisitionRelatedCostsFinancingActivities,gnrc:PaymentsOfDeferredAcquisitionRelatedCostsFinancingActivities,Payment of deferred acquisition consideration,47,0
+cash_flow,us-gaap:ProceedsFromMinorityShareholders,us-gaap:ProceedsFromMinorityShareholders,Contributions received from noncontrolling interest in subsidiary,49,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Dividends paid to noncontrolling interest of subsidiary,50,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfRedeemableNoncontrollingInterest,us-gaap:PaymentsForRepurchaseOfRedeemableNoncontrollingInterest,Purchase of additional ownership interest,51,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Taxes paid related to equity awards,52,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from the exercise of stock options,53,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash used in financing activities,54,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,Effect of foreign exchange rate changes on cash and cash equivalents,55,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net increase in cash and cash equivalents,56,0
+income_statement,us-gaap:MinorityInterestChangeInRedemptionValue,us-gaap:MinorityInterestChangeInRedemptionValue,Redeemable noncontrolling interest redemption value adjustment,26,0
+income_statement,html:denominator,html:denominator,Denominator,23,0
+income_statement,us-gaap:IncrementalCommonSharesAttributableToShareBasedPaymentArrangements,us-gaap:IncrementalCommonSharesAttributableToShareBasedPaymentArrangements,Dilutive effect of stock compensation awards (1),37,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses-of-34-489-and-33-925-at-september-30-2024-and-december-31-2023-respectively,html:accounts-receivable-less-allowance-for-credit-losses-of-34-489-and-33-925-at-september-30-2024-and-december-31-2023-respectively,"Accounts receivable, less allowance for credit losses of $34,489 and $33,925 at September 30, 2024 and December 31, 2023, respectively",1,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,12,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,22,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,37,0
+balance_sheet,html:deferred-income-taxes-2,html:deferred-income-taxes-2,Deferred income taxes,41,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-646-420-and-73-195-055-shares-issued-at-september-30-2024-and-december-31-2023-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-646-420-and-73-195-055-shares-issued-at-september-30-2024-and-december-31-2023-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 73,646,420 and 73,195,055 shares issued at September 30, 2024 and December 31, 2023, respectively",49,0
+balance_sheet,html:treasury-stock-at-cost-14-149-513-and-13-057-298-shares-at-september-30-2024-and-december-31-2023-respectively,html:treasury-stock-at-cost-14-149-513-and-13-057-298-shares-at-september-30-2024-and-december-31-2023-respectively,"Treasury stock, at cost, 14,149,513 and 13,057,298 shares at September 30, 2024 and December 31, 2023, respectively",65,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,77,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,81,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders’ equity,82,0
+cash_flow,html:amortization-of-capitalized-debt-fees-and-original-issue-discount,html:amortization-of-capitalized-debt-fees-and-original-issue-discount,Amortization of capitalized debt fees and original issue discount,4,0
+cash_flow,html:loss-on-extinguishment-of-debt-1,html:loss-on-extinguishment-of-debt-1,Loss on extinguishment of debt [1],7,0
+income_statement,us-gaap:IncrementalCommonSharesAttributableToContingentlyIssuableShares,us-gaap:IncrementalCommonSharesAttributableToContingentlyIssuableShares,Dilutive effect of contingently issued shares,38,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses-of-34-546-and-33-925-at-june-30-2024-and-december-31-2023-respectively,html:accounts-receivable-less-allowance-for-credit-losses-of-34-546-and-33-925-at-june-30-2024-and-december-31-2023-respectively,"Accounts receivable, less allowance for credit losses of $34,546 and $33,925 at June 30, 2024 and December 31, 2023, respectively",2,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-608-578-and-73-195-055-shares-issued-at-june-30-2024-and-december-31-2023-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-608-578-and-73-195-055-shares-issued-at-june-30-2024-and-december-31-2023-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 73,608,578 and 73,195,055 shares issued at June 30, 2024 and December 31, 2023, respectively",50,0
+balance_sheet,html:treasury-stock-at-cost-13-446-797-and-13-057-298-shares-at-june-30-2024-and-december-31-2023-respectively,html:treasury-stock-at-cost-13-446-797-and-13-057-298-shares-at-june-30-2024-and-december-31-2023-respectively,"Treasury stock, at cost, 13,446,797 and 13,057,298 shares at June 30, 2024 and December 31, 2023, respectively",66,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses-of-34-594-and-33-925-at-march-31-2024-and-december-31-2023-respectively,html:accounts-receivable-less-allowance-for-credit-losses-of-34-594-and-33-925-at-march-31-2024-and-december-31-2023-respectively,"Accounts receivable, less allowance for credit losses of $34,594 and $33,925 at March 31, 2024 and December 31, 2023, respectively",3,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-492-146-and-73-195-055-shares-issued-at-march-31-2024-and-december-31-2023-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-492-146-and-73-195-055-shares-issued-at-march-31-2024-and-december-31-2023-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 73,492,146 and 73,195,055 shares issued at March 31, 2024 and December 31, 2023, respectively",51,0
+balance_sheet,html:treasury-stock-at-cost-13-087-185-and-13-057-298-shares-at-march-31-2024-and-december-31-2023-respectively,html:treasury-stock-at-cost-13-087-185-and-13-057-298-shares-at-march-31-2024-and-december-31-2023-respectively,"Treasury stock, at cost, 13,087,185 and 13,057,298 shares at March 31, 2024 and December 31, 2023, respectively",67,0
+cash_flow,html:payment-for-additional-ownership-interest,html:payment-for-additional-ownership-interest,Payment for additional ownership interest,48,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses-of-29-580-and-27-664-at-september-30-2023-and-december-31-2022-respectively,html:accounts-receivable-less-allowance-for-credit-losses-of-29-580-and-27-664-at-september-30-2023-and-december-31-2022-respectively,"Accounts receivable, less allowance for credit losses of $29,580 and $27,664 at September 30, 2023 and December 31, 2022, respectively",4,0
+balance_sheet,html:operating-lease-and-other-non-current-assets,html:operating-lease-and-other-non-current-assets,Operating lease and other non-current assets,23,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-108-913-and-72-701-257-shares-issued-at-september-30-2023-and-december-31-2022-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-108-913-and-72-701-257-shares-issued-at-september-30-2023-and-december-31-2022-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 73,108,913 and 72,701,257 shares issued at September 30, 2023 and December 31, 2022, respectively",52,0
+balance_sheet,html:treasury-stock-at-cost-11-739-423-and-11-284-350-shares-at-september-30-2023-and-december-31-2022-respectively,html:treasury-stock-at-cost-11-739-423-and-11-284-350-shares-at-september-30-2023-and-december-31-2022-respectively,"Treasury stock, at cost, 11,739,423 and 11,284,350 shares at September 30, 2023 and December 31, 2022, respectively",68,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses-of-29-610-and-27-664-at-june-30-2023-and-december-31-2022-respectively,html:accounts-receivable-less-allowance-for-credit-losses-of-29-610-and-27-664-at-june-30-2023-and-december-31-2022-respectively,"Accounts receivable, less allowance for credit losses of $29,610 and $27,664 at June 30, 2023 and December 31, 2022, respectively",5,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-097-016-and-72-701-257-shares-issued-at-june-30-2023-and-december-31-2022-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-097-016-and-72-701-257-shares-issued-at-june-30-2023-and-december-31-2022-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 73,097,016 and 72,701,257 shares issued at June 30, 2023 and December 31, 2022, respectively",53,0
+balance_sheet,html:treasury-stock-at-cost-10-858-348-and-11-284-350-shares-at-june-30-2023-and-december-31-2022-respectively,html:treasury-stock-at-cost-10-858-348-and-11-284-350-shares-at-june-30-2023-and-december-31-2022-respectively,"Treasury stock, at cost, 10,858,348 and 11,284,350 shares at June 30, 2023 and December 31, 2022, respectively",69,0
+income_statement,us-gaap:BusinessCombinationAcquisitionRelatedCosts,us-gaap:BusinessCombinationAcquisitionRelatedCosts,Acquisition related costs,7,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses-of-28-660-and-27-664-at-march-31-2023-and-december-31-2022-respectively,html:accounts-receivable-less-allowance-for-credit-losses-of-28-660-and-27-664-at-march-31-2023-and-december-31-2022-respectively,"Accounts receivable, less allowance for credit losses of $28,660 and $27,664 at March 31, 2023 and December 31, 2022, respectively",6,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-052-760-and-72-701-257-shares-issued-at-march-31-2023-and-december-31-2022-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-73-052-760-and-72-701-257-shares-issued-at-march-31-2023-and-december-31-2022-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 73,052,760 and 72,701,257 shares issued at March 31, 2023 and December 31, 2022, respectively",54,0
+balance_sheet,html:treasury-stock-at-cost-10-855-203-and-11-284-350-shares-at-march-31-2023-and-december-31-2022-respectively,html:treasury-stock-at-cost-10-855-203-and-11-284-350-shares-at-march-31-2023-and-december-31-2022-respectively,"Treasury stock, at cost, 10,855,203 and 11,284,350 shares at March 31, 2023 and December 31, 2022, respectively",70,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock, at cost, 11,284,350 and 8,667,031 shares at December 31, 2022 and 2021, respectively",71,0
+cash_flow,html:other-non-cash-gains-charges,html:other-non-cash-gains-charges,Other non-cash (gains) charges,14,0
+cash_flow,html:other-net,html:other-net,"Other, net",15,0
+income_statement,us-gaap:DefinedBenefitPlanRecognizedNetGainLossDueToSettlementsAndCurtailments1,us-gaap:DefinedBenefitPlanRecognizedNetGainLossDueToSettlementsAndCurtailments1,Loss on pension settlement,16,0
+income_statement,us-gaap:OtherComprehensiveIncomeLossPensionAndOtherPostretirementBenefitPlansAdjustmentNetOfTax,us-gaap:OtherComprehensiveIncomeLossPensionAndOtherPostretirementBenefitPlansAdjustmentNetOfTax,Pension liability adjustment,30,0
+cash_flow,us-gaap:DefinedBenefitPlanRecognizedNetGainLossDueToSettlementsAndCurtailments1,us-gaap:DefinedBenefitPlanRecognizedNetGainLossDueToSettlementsAndCurtailments1,Loss on pension settlement,9,0
+balance_sheet,html:accounts-receivable-less-allowance-for-credit-losses,html:accounts-receivable-less-allowance-for-credit-losses,"Accounts receivable, less allowance for credit losses",7,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-72-205-746-and-72-024-329-shares-issued-at-march-31-2021-and-december-31-2020-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-72-205-746-and-72-024-329-shares-issued-at-march-31-2021-and-december-31-2020-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 72,205,746 and 72,024,329 shares issued at March 31, 2021 and December 31, 2020, respectively",55,0
+balance_sheet,html:treasury-stock-at-cost,html:treasury-stock-at-cost,"Treasury stock, at cost",72,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-72-011-902-and-71-667-726-shares-issued-at-september-30-2020-and-december-31-2019-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-72-011-902-and-71-667-726-shares-issued-at-september-30-2020-and-december-31-2019-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 72,011,902 and 71,667,726 shares issued at September 30, 2020 and December 31, 2019, respectively",56,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-960-067-and-71-667-726-shares-issued-at-june-30-2020-and-december-31-2019-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-960-067-and-71-667-726-shares-issued-at-june-30-2020-and-december-31-2019-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 71,960,067 and 71,667,726 shares issued at June 30, 2020 and December 31, 2019, respectively",57,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-844-675-and-71-667-726-shares-issued-at-march-31-2020-and-december-31-2019-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-844-675-and-71-667-726-shares-issued-at-march-31-2020-and-december-31-2019-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 71,844,675 and 71,667,726 shares issued at March 31, 2020 and December 31, 2019, respectively",58,0
+balance_sheet,html:accounts-receivable-less-allowance-for-doubtful-accounts,html:accounts-receivable-less-allowance-for-doubtful-accounts,"Accounts receivable, less allowance for doubtful accounts",8,0
+balance_sheet,html:patents-net,html:patents-net,"Patents, net",17,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-640-792-and-71-186-418-shares-issued-at-september-30-2019-and-december-31-2018-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-640-792-and-71-186-418-shares-issued-at-september-30-2019-and-december-31-2018-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 71,640,792 and 71,186,418 shares issued at September 30, 2019 and December 31, 2018, respectively",59,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-471-341-and-71-186-418-shares-issued-at-june-30-2019-and-december-31-2018-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-471-341-and-71-186-418-shares-issued-at-june-30-2019-and-december-31-2018-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 71,471,341 and 71,186,418 shares issued at June 30, 2019 and December 31, 2018, respectively",60,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-395-561-and-71-186-418-shares-issued-at-march-31-2019-and-december-31-2018-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-395-561-and-71-186-418-shares-issued-at-march-31-2019-and-december-31-2018-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 71,395,561 and 71,186,418 shares issued at March 31, 2019 and December 31, 2018, respectively",61,0
+income_statement,html:loss-on-change-in-contractual-interest-rate,html:loss-on-change-in-contractual-interest-rate,Loss on change in contractual interest rate,17,0
+balance_sheet,html:accounts-receivable-less-allowance-for-doubtful-accounts-of-4-873-and-4-805-at-december-31-2018-and-2017-respectively,html:accounts-receivable-less-allowance-for-doubtful-accounts-of-4-873-and-4-805-at-december-31-2018-and-2017-respectively,"Accounts receivable, less allowance for doubtful accounts of $4,873 and $4,805 at December 31, 2018 and 2017, respectively",9,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,24,0
+balance_sheet,html:current-portion-of-long-term-borrowings-and-capital-lease-obligations,html:current-portion-of-long-term-borrowings-and-capital-lease-obligations,Current portion of long-term borrowings and capital lease obligations,35,0
+balance_sheet,html:long-term-borrowings-and-capital-lease-obligations,html:long-term-borrowings-and-capital-lease-obligations,Long-term borrowings and capital lease obligations,38,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,42,0
+balance_sheet,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-186-418-and-70-820-173-shares-issued-at-december-31-2018-and-2017-respectively,html:common-stock-par-value-0-01-500-000-000-shares-authorized-71-186-418-and-70-820-173-shares-issued-at-december-31-2018-and-2017-respectively,"Common stock, par value $0.01, 500,000,000 shares authorized, 71,186,418 and 70,820,173 shares issued at December 31, 2018 and 2017, respectively",62,0
+balance_sheet,html:treasury-stock-at-cost-9-047-060-and-8-448-874-shares-at-december-31-2018-and-2017-respectively,html:treasury-stock-at-cost-9-047-060-and-8-448-874-shares-at-december-31-2018-and-2017-respectively,"Treasury stock, at cost, 9,047,060 and 8,448,874 shares at December 31, 2018 and 2017, respectively",73,0
+cash_flow,html:loss-on-change-in-contractual-interest-rate,html:loss-on-change-in-contractual-interest-rate,Loss on change in contractual interest rate,10,0
+cash_flow,html:deposit-paid-related-to-acquisition,html:deposit-paid-related-to-acquisition,Deposit paid related to acquisition,35,0
+cash_flow,html:cash-dividends-paid,html:cash-dividends-paid,Cash dividends paid,45,0

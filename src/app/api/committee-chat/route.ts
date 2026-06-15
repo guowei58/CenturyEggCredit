@@ -10,6 +10,7 @@ import { buildCommitteeOreoContext } from "@/lib/committee-ticker-context";
 import { readPrivateWorkspaceMeta } from "@/lib/private-workspace-meta";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import { isProviderConfigured, llmCompleteConversation } from "@/lib/llm-router";
+import { llmApiErrorResponseBody } from "@/lib/llm-api-error-report";
 import { checkOllamaHealth } from "@/lib/ollama";
 import { resolveCommitteeChatModels } from "@/lib/ai-model-from-request";
 import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
@@ -103,22 +104,19 @@ export async function POST(request: Request) {
       : undefined;
 
   if (!isProviderConfigured(provider, apiKeysForCall)) {
-    const hint =
-      provider === "openai"
-        ? "OPENAI_API_KEY is not set. Add it to .env.local to use ChatGPT in AI Chat."
-        : provider === "gemini"
-          ? "GEMINI_API_KEY is not set. Add it to .env.local to use Gemini in AI Chat."
-          : provider === "deepseek"
-            ? "DEEPSEEK_API_KEY is not set. Add it to .env.local (or your DeepSeek API key in User Settings) to use DeepSeek in AI Chat."
-            : "ANTHROPIC_API_KEY is not set. Add it to .env.local to use Claude in AI Chat.";
-    return NextResponse.json({ error: hint }, { status: 503 });
+    const { status, body } = llmApiErrorResponseBody({
+      provider,
+      httpStatus: 503,
+      rawError: "provider_not_configured",
+    });
+    return NextResponse.json(body, { status });
   }
   const parsed = parseCommitteeChatMessages(b.messages);
   if (!Array.isArray(parsed)) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
-  const sym = sanitizeTicker(b.ticker);
+  const sym = typeof b.ticker === "string" ? sanitizeTicker(b.ticker) : null;
   const includeOreo = b.includeOreoContext !== false;
   const oreoAlreadyInjected = b.oreoAlreadyInjected === true;
 
@@ -175,19 +173,12 @@ export async function POST(request: Request) {
   }
 
   if (!result.ok) {
-    const status =
-      result.status && result.status >= 400 && result.status < 600 ? result.status : 502;
-    const label =
-      provider === "openai"
-        ? "OpenAI"
-        : provider === "gemini"
-          ? "Gemini"
-          : provider === "deepseek"
-            ? "DeepSeek"
-            : "Claude";
-    const short =
-      result.error.length > 500 ? `${label} request failed` : result.error;
-    return NextResponse.json({ error: short }, { status: status === 400 ? 400 : status });
+    const { status, body } = llmApiErrorResponseBody({
+      provider,
+      httpStatus: result.status,
+      rawError: result.error,
+    });
+    return NextResponse.json(body, { status: status === 400 ? 400 : status });
   }
 
   return NextResponse.json({ ok: true, text: result.text, ...(didInjectOreo ? { oreoInjected: true } : {}) });

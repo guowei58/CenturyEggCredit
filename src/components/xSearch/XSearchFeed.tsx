@@ -4,9 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
 import type { NormalizedXPost, XSearchResponse } from "@/lib/xSearch/types";
+import { filterBySearchIntent } from "@/lib/xSearch/filter/intentFilter";
+import { filterLowQualityPosts } from "@/lib/xSearch/filter/qualityFilter";
+import { engagementScore } from "@/lib/xSearch/ranking/rank";
+import { xComSearchUrl } from "@/lib/xSearch/utils";
 import { XSearchCard } from "./XSearchCard";
 import { XSearchFilters } from "./XSearchFilters";
-import { XSearchStats } from "./XSearchStats";
 
 const CACHE_PREFIX = "century-egg-xsearch:";
 
@@ -27,108 +30,68 @@ function parseFeedCache(raw: string | null | undefined): XSearchResponse | null 
 export function XSearchFeed({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
   const tk = ticker?.trim() ?? "";
   const name = companyName?.trim() || undefined;
-  const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
+  const { ready: prefsReady, preferences } = useUserPreferences();
   const feedCacheKey = tk ? cacheKey(tk) : "";
   const feedCacheBlob = feedCacheKey ? preferences.feedCaches?.[feedCacheKey] : undefined;
 
   const [includeRetweets, setIncludeRetweets] = useState(false);
   const [language, setLanguage] = useState("en");
-  const [sortMode, setSortMode] = useState<"relevance" | "recent" | "engagement">("relevance");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [sortMode, setSortMode] = useState<"relevance" | "recent" | "engagement">("engagement");
   const [data, setData] = useState<XSearchResponse | null>(null);
 
-  const run = useCallback(async () => {
+  const openXSearch = useCallback(() => {
     if (!tk) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/x/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ticker: tk,
-          companyName: name,
-          includeRetweets,
-          language,
-          limit: 100,
-          sortMode,
-        }),
-      });
-      const json = (await res.json()) as XSearchResponse & { error?: string };
-      if (!res.ok) {
-        setData(null);
-        setError(json.error ?? `Request failed (${res.status})`);
-        return;
-      }
-      setData(json);
-      setError(json.error ?? null);
-      const k = cacheKey(tk);
-      updatePreferences((p) => ({
-        ...p,
-        feedCaches: { ...(p.feedCaches ?? {}), [k]: JSON.stringify(json) },
-      }));
-    } catch (e) {
-      setData(null);
-      setError(e instanceof Error ? e.message : "Network error");
-    } finally {
-      setLoading(false);
-    }
-  }, [tk, name, includeRetweets, language, sortMode, updatePreferences]);
+    window.open(xComSearchUrl(tk, name), "_blank", "noopener,noreferrer");
+  }, [tk, name]);
 
-  // Cache-first: load saved results on tab open; only hit API when user clicks Refresh.
+  // Cache-first: show saved API results if any; API ingest paused — use Find Twits for X.com search.
   useEffect(() => {
     if (!tk) {
       setData(null);
-      setError(null);
       return;
     }
     if (!prefsReady) return;
     const cached = parseFeedCache(feedCacheBlob);
-    setData(cached);
-    setError(cached?.error ?? null);
+    if (cached?.posts?.length) {
+      setData(cached);
+    } else {
+      setData(null);
+    }
   }, [tk, prefsReady, feedCacheBlob]);
 
   const posts = useMemo(() => {
     const base = (data?.posts ?? []) as NormalizedXPost[];
+    const { kept: intentMatched } = filterBySearchIntent(base, {
+      ticker: tk,
+      companyName: name,
+    });
+    const { kept } = filterLowQualityPosts(intentMatched);
     if (sortMode === "recent") {
-      return [...base].sort((a, b) => {
+      return [...kept].sort((a, b) => {
         const ta = a.createdAt ? Date.parse(a.createdAt) : 0;
         const tb = b.createdAt ? Date.parse(b.createdAt) : 0;
         return tb - ta;
       });
     }
     if (sortMode === "engagement") {
-      return [...base].sort((a, b) => {
-        const ea =
-          (a.metrics?.likeCount ?? 0) +
-          (a.metrics?.repostCount ?? 0) * 2 +
-          (a.metrics?.replyCount ?? 0) * 1.5 +
-          (a.metrics?.quoteCount ?? 0) * 2.5 +
-          (a.metrics?.impressionCount ?? 0) * 0.0005;
-        const eb =
-          (b.metrics?.likeCount ?? 0) +
-          (b.metrics?.repostCount ?? 0) * 2 +
-          (b.metrics?.replyCount ?? 0) * 1.5 +
-          (b.metrics?.quoteCount ?? 0) * 2.5 +
-          (b.metrics?.impressionCount ?? 0) * 0.0005;
+      return [...kept].sort((a, b) => {
+        const ea = engagementScore(a);
+        const eb = engagementScore(b);
         if (ea !== eb) return eb - ea;
         const ta = a.createdAt ? Date.parse(a.createdAt) : 0;
         const tb = b.createdAt ? Date.parse(b.createdAt) : 0;
         return tb - ta;
       });
     }
-    // relevance: keep provider order (already scored on refresh); stable for cached view
-    return base;
-  }, [data, sortMode]);
+    return kept;
+  }, [data, sortMode, tk, name]);
 
   if (!tk) return null;
 
   return (
     <CompanyFeedTabShell
-      description="Uses the official X API (no scraping). Last refresh per ticker is remembered on your account for quick reload."
-      onRefresh={() => void run()}
-      refreshBusy={loading}
+      onRefresh={openXSearch}
+      refreshLabel="Find Twits"
       hasPayload={Boolean(data)}
       sortValue={sortMode}
       onSortChange={(v) => setSortMode(v as typeof sortMode)}
@@ -137,7 +100,17 @@ export function XSearchFeed({ ticker, companyName }: { ticker: string; companyNa
         { value: "recent", label: "Date (most recent)" },
         { value: "engagement", label: "Engagement" },
       ]}
-      error={error}
+      emptyState={
+        !data ? (
+          <p
+            className="rounded-md border border-dashed px-3 py-3 text-center text-sm leading-relaxed"
+            style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+          >
+            In-app X API search is paused. Click <strong style={{ color: "var(--text)" }}>Find Twits</strong> to
+            open X.com search for <strong style={{ color: "var(--text)" }}>${tk.toUpperCase()}</strong> in a new tab.
+          </p>
+        ) : undefined
+      }
       filterSection={
         <XSearchFilters
           includeRetweets={includeRetweets}
@@ -149,10 +122,16 @@ export function XSearchFeed({ ticker, companyName }: { ticker: string; companyNa
           omitSort
         />
       }
-      filterSectionTitle="Post filters"
-      statsSection={<XSearchStats data={data} />}
+      statsSection={
+        data ? (
+          <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+            {data.finalCount} saved post{data.finalCount === 1 ? "" : "s"} from earlier API run
+            {(data.filteredCount ?? 0) > 0 ? ` (${data.filteredCount} hidden as low quality)` : ""}
+          </p>
+        ) : null
+      }
     >
-      {!loading && !error && data && posts.length === 0 ? (
+      {data && posts.length === 0 ? (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
           No posts returned. Try including retweets or changing language in filters.
         </p>

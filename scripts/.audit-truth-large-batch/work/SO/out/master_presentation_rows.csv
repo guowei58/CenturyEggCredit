@@ -1,0 +1,432 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,14,0
+balance_sheet,html:receivables,html:receivables,Receivables —,15,0
+balance_sheet,html:customer-accounts-net-and-affiliated,html:customer-accounts-net-and-affiliated,"Customer accounts, net and affiliated",31,0
+balance_sheet,html:other,html:other,Other,33,0
+balance_sheet,html:materials-and-supplies,html:materials-and-supplies,Materials and supplies,46,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,54,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,55,0
+balance_sheet,html:property-plant-and-equipment,html:property-plant-and-equipment,"Property, Plant, and Equipment:",56,0
+balance_sheet,html:in-service,html:in-service,In service,67,0
+balance_sheet,html:less-accumulated-provision-for-depreciation,html:less-accumulated-provision-for-depreciation,Less: Accumulated provision for depreciation,69,0
+balance_sheet,html:plant-in-service-net-of-depreciation,html:plant-in-service-net-of-depreciation,"Plant in service, net of depreciation",70,0
+balance_sheet,html:construction-work-in-progress,html:construction-work-in-progress,Construction work in progress,72,0
+balance_sheet,html:total-property-plant-and-equipment,html:total-property-plant-and-equipment,"Total property, plant, and equipment",73,0
+balance_sheet,html:other-property-and-investments,html:other-property-and-investments,Other Property and Investments:,74,0
+balance_sheet,html:deferred-charges-and-other-assets,html:deferred-charges-and-other-assets,Deferred Charges and Other Assets:,82,0
+balance_sheet,html:operating-lease-right-of-use-assets-net-of-amortization,html:operating-lease-right-of-use-assets-net-of-amortization,"Operating lease right-of-use assets, net of amortization",88,0
+balance_sheet,html:other-deferred-charges-and-assets,html:other-deferred-charges-and-assets,Other deferred charges and assets,94,0
+balance_sheet,html:total-deferred-charges-and-other-assets,html:total-deferred-charges-and-other-assets,Total deferred charges and other assets,95,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,96,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities:,97,0
+balance_sheet,html:securities-due-within-one-year,html:securities-due-within-one-year,Securities due within one year,98,0
+balance_sheet,html:notes-payable,html:notes-payable,Notes payable,99,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable —,100,0
+balance_sheet,html:accrued-interest,html:accrued-interest,Accrued interest,105,0
+balance_sheet,html:operating-lease-obligations,html:operating-lease-obligations,Operating lease obligations,110,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,111,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,112,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-Term Debt,113,0
+balance_sheet,html:deferred-credits-and-other-liabilities,html:deferred-credits-and-other-liabilities,Deferred Credits and Other Liabilities:,118,0
+balance_sheet,html:accumulated-deferred-income-taxes,html:accumulated-deferred-income-taxes,Accumulated deferred income taxes,119,0
+balance_sheet,html:accumulated-deferred-itcs,html:accumulated-deferred-itcs,Accumulated deferred ITCs,121,0
+balance_sheet,html:operating-lease-obligations-deferred,html:operating-lease-obligations-deferred,"Operating lease obligations, deferred",123,0
+balance_sheet,html:other-deferred-credits-and-liabilities,html:other-deferred-credits-and-liabilities,Other deferred credits and liabilities,129,0
+balance_sheet,html:total-deferred-credits-and-other-liabilities,html:total-deferred-credits-and-other-liabilities,Total deferred credits and other liabilities,130,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,131,0
+balance_sheet,html:common-stockholders-equity,html:common-stockholders-equity,Common Stockholders' Equity:,135,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,136,0
+balance_sheet,html:paid-in-capital,html:paid-in-capital,Paid-in capital,137,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,140,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),141,0
+balance_sheet,html:total-common-stockholders-equity,html:total-common-stockholders-equity,Total common stockholders' equity,142,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling Interests,144,0
+balance_sheet,html:total-stockholders-equity-see-accompanying-statements,html:total-stockholders-equity-see-accompanying-statements,Total Stockholders' Equity (See accompanying statements),153,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total Liabilities and Stockholders' Equity,154,0
+balance_sheet,html:commitments-and-contingent-matters,html:commitments-and-contingent-matters,Commitments and Contingent Matters,162,0
+balance_sheet,html:southern-power,html:southern-power,Southern Power,164,0
+balance_sheet,html:current-assets,html:current-assets,Current Assets:,166,0
+balance_sheet,html:intangible-assets-net-of-amortization-of-188-and-168-respectively,html:intangible-assets-net-of-amortization-of-188-and-168-respectively,"Intangible assets, net of amortization of $188 and $168, respectively",168,0
+balance_sheet,html:net-investment-in-sales-type-leases,html:net-investment-in-sales-type-leases,Net investment in sales-type leases,169,0
+balance_sheet,html:prepaid-ltsas,html:prepaid-ltsas,Prepaid LTSAs,170,0
+balance_sheet,html:affiliated-and-other,html:affiliated-and-other,Affiliated and other,172,0
+balance_sheet,html:accrued-taxes,html:accrued-taxes,Accrued taxes,173,0
+balance_sheet,html:southern-power-related-party,html:southern-power-related-party,Southern Power | Related Party,175,0
+balance_sheet,html:equity-investments-in-unconsolidated-subsidiaries,html:equity-investments-in-unconsolidated-subsidiaries,Equity investments in unconsolidated subsidiaries,0,0
+balance_sheet,html:southern-company-gas,html:southern-company-gas,Southern Company Gas,1,0
+balance_sheet,html:schedule-of-equity-method-investments-line-items,html:schedule-of-equity-method-investments-line-items,Schedule of Equity Method Investments [Line Items],2,0
+balance_sheet,html:sng-southern-company-gas,html:sng-southern-company-gas,SNG | Southern Company Gas,3,0
+balance_sheet,html:other-deferred-charges-and-other-liabilities,html:other-deferred-charges-and-other-liabilities,Other deferred charges and other liabilities,114,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total Stockholders' Equity,132,0
+balance_sheet,html:penneast-pipeline-southern-company-gas,html:penneast-pipeline-southern-company-gas,PennEast Pipeline | Southern Company Gas,155,0
+balance_sheet,html:atlantic-coast-pipeline-southern-company-gas,html:atlantic-coast-pipeline-southern-company-gas,Atlantic Coast Pipeline | Southern Company Gas,156,0
+balance_sheet,html:other-southern-company-gas,html:other-southern-company-gas,Other | Southern Company Gas,157,0
+balance_sheet,html:customer-accounts-receivable,html:customer-accounts-receivable,Customer accounts receivable,4,0
+balance_sheet,html:energy-marketing-receivable,html:energy-marketing-receivable,Energy marketing receivable,5,0
+balance_sheet,html:unbilled-revenues,html:unbilled-revenues,Unbilled revenues,6,0
+balance_sheet,html:under-recovered-fuel-clause-revenues,html:under-recovered-fuel-clause-revenues,Under recovered fuel clause revenues,7,0
+balance_sheet,html:other-accounts-and-notes-receivable,html:other-accounts-and-notes-receivable,Other accounts and notes receivable,8,0
+balance_sheet,html:accumulated-provision-for-uncollectible-accounts,html:accumulated-provision-for-uncollectible-accounts,Accumulated provision for uncollectible accounts,9,0
+balance_sheet,html:fossil-fuel-for-generation,html:fossil-fuel-for-generation,Fossil fuel for generation,47,0
+balance_sheet,html:natural-gas-for-sale,html:natural-gas-for-sale,Natural gas for sale,48,0
+balance_sheet,html:prepaid-expenses,html:prepaid-expenses,Prepaid expenses,49,0
+balance_sheet,html:regulatory-assets-asset-retirement-obligations,html:regulatory-assets-asset-retirement-obligations,Regulatory assets – asset retirement obligations,50,0
+balance_sheet,html:assets-from-risk-management-activities-net-of-collateral,html:assets-from-risk-management-activities-net-of-collateral,"Assets from risk management activities, net of collateral",51,0
+balance_sheet,html:other-regulatory-assets,html:other-regulatory-assets,Other regulatory assets,52,0
+balance_sheet,html:assets-held-for-sale,html:assets-held-for-sale,Assets held for sale,53,0
+balance_sheet,html:less-accumulated-depreciation,html:less-accumulated-depreciation,Less: Accumulated depreciation,68,0
+balance_sheet,html:nuclear-fuel-at-amortized-cost,html:nuclear-fuel-at-amortized-cost,"Nuclear fuel, at amortized cost",71,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,75,0
+balance_sheet,html:other-intangible-assets-net-of-amortization,html:other-intangible-assets-net-of-amortization,"Other intangible assets, net of amortization",176,0
+balance_sheet,html:nuclear-decommissioning-trusts-at-fair-value,html:nuclear-decommissioning-trusts-at-fair-value,"Nuclear decommissioning trusts, at fair value",190,0
+balance_sheet,html:leveraged-leases,html:leveraged-leases,Leveraged leases,196,0
+balance_sheet,html:miscellaneous-property-and-investments,html:miscellaneous-property-and-investments,Miscellaneous property and investments,198,0
+balance_sheet,html:total-other-property-and-investments,html:total-other-property-and-investments,Total other property and investments,200,0
+balance_sheet,html:deferred-charges-related-to-income-taxes,html:deferred-charges-related-to-income-taxes,Deferred charges related to income taxes,89,0
+balance_sheet,html:unamortized-loss-on-reacquired-debt,html:unamortized-loss-on-reacquired-debt,Unamortized loss on reacquired debt,90,0
+balance_sheet,html:regulatory-assets-asset-retirement-obligations-deferred,html:regulatory-assets-asset-retirement-obligations-deferred,"Regulatory assets – asset retirement obligations, deferred",91,0
+balance_sheet,html:other-regulatory-assets-deferred,html:other-regulatory-assets-deferred,"Other regulatory assets, deferred",92,0
+balance_sheet,html:assets-held-for-sale-deferred,html:assets-held-for-sale-deferred,"Assets held for sale, deferred",93,0
+balance_sheet,html:energy-marketing-trade-payables,html:energy-marketing-trade-payables,Energy marketing trade payables,101,0
+balance_sheet,html:customer-deposits,html:customer-deposits,Customer deposits,102,0
+balance_sheet,html:accrued-income-taxes,html:accrued-income-taxes,Accrued income taxes,103,0
+balance_sheet,html:other-accrued-taxes,html:other-accrued-taxes,Other accrued taxes,104,0
+balance_sheet,html:accrued-compensation,html:accrued-compensation,Accrued compensation,106,0
+balance_sheet,html:asset-retirement-obligations,html:asset-retirement-obligations,Asset retirement obligations,107,0
+balance_sheet,html:other-regulatory-liabilities,html:other-regulatory-liabilities,Other regulatory liabilities,108,0
+balance_sheet,html:liabilities-held-for-sale,html:liabilities-held-for-sale,Liabilities held for sale,109,0
+balance_sheet,html:unamortized-debt-premium-discount-net,html:unamortized-debt-premium-discount-net,"Unamortized debt premium (discount), net",115,0
+balance_sheet,html:unamortized-debt-issuance-expense,html:unamortized-debt-issuance-expense,Unamortized debt issuance expense,116,0
+balance_sheet,html:total-long-term-debt,html:total-long-term-debt,Total long-term debt,117,0
+balance_sheet,html:deferred-credits-related-to-income-taxes,html:deferred-credits-related-to-income-taxes,Deferred credits related to income taxes,120,0
+balance_sheet,html:employee-benefit-obligations,html:employee-benefit-obligations,Employee benefit obligations,122,0
+balance_sheet,html:asset-retirement-obligations-deferred,html:asset-retirement-obligations-deferred,"Asset retirement obligations, deferred",124,0
+balance_sheet,html:accrued-environmental-remediation,html:accrued-environmental-remediation,Accrued environmental remediation,125,0
+balance_sheet,html:other-cost-of-removal-obligations,html:other-cost-of-removal-obligations,Other cost of removal obligations,126,0
+balance_sheet,html:other-regulatory-liabilities-deferred,html:other-regulatory-liabilities-deferred,"Other regulatory liabilities, deferred",127,0
+balance_sheet,html:liabilities-held-for-sale-deferred,html:liabilities-held-for-sale-deferred,"Liabilities held for sale, deferred",128,0
+balance_sheet,html:common-stockholder-s-equity,html:common-stockholder-s-equity,Common Stockholder's Equity:,133,0
+balance_sheet,html:redeemable-preferred-stock-of-subsidiaries,html:redeemable-preferred-stock-of-subsidiaries,Redeemable Preferred Stock of Subsidiaries,143,0
+balance_sheet,html:total-liabilities-and-stockholder-s-equity,html:total-liabilities-and-stockholder-s-equity,Total Liabilities and Stockholder's Equity,177,0
+balance_sheet,html:alabama-power,html:alabama-power,Alabama Power,163,0
+balance_sheet,html:affiliated,html:affiliated,Affiliated,16,0
+balance_sheet,html:deferred-under-recovered-regulatory-clause-revenues,html:deferred-under-recovered-regulatory-clause-revenues,Deferred under recovered regulatory clause revenues,17,0
+balance_sheet,html:redeemable-preferred-stock,html:redeemable-preferred-stock,Redeemable Preferred Stock,34,0
+balance_sheet,html:georgia-power,html:georgia-power,Georgia Power,35,0
+balance_sheet,html:restricted-cash-and-cash-equivalents,html:restricted-cash-and-cash-equivalents,Restricted cash and cash equivalents,36,0
+balance_sheet,html:joint-owner-accounts-receivable,html:joint-owner-accounts-receivable,Joint owner accounts receivable,37,0
+balance_sheet,html:regulatory-assets-storm-damage-reserves,html:regulatory-assets-storm-damage-reserves,Regulatory assets – storm damage reserves,38,0
+balance_sheet,html:mississippi-power,html:mississippi-power,Mississippi Power,39,0
+balance_sheet,html:prepaid-income-taxes,html:prepaid-income-taxes,Prepaid income taxes,40,0
+balance_sheet,html:accrued-plant-closure-costs,html:accrued-plant-closure-costs,Accrued plant closure costs,41,0
+balance_sheet,html:over-recovered-regulatory-clause-liabilities,html:over-recovered-regulatory-clause-liabilities,Over recovered regulatory clause liabilities,42,0
+balance_sheet,html:intangible-assets-net-of-amortization,html:intangible-assets-net-of-amortization,"Intangible assets, net of amortization",165,0
+balance_sheet,html:income-taxes-receivable-non-current,html:income-taxes-receivable-non-current,"Income taxes receivable, non-current",171,0
+balance_sheet,html:southern-power-2-375-due-2020,html:southern-power-2-375-due-2020,Southern Power | 2.375% due 2020,145,0
+balance_sheet,html:senior-notes,html:senior-notes,Senior notes,146,0
+balance_sheet,html:southern-power-2-50-due-2021,html:southern-power-2-50-due-2021,Southern Power | 2.50% due 2021,147,0
+balance_sheet,html:southern-power-1-00-due-2022,html:southern-power-1-00-due-2022,Southern Power | 1.00% due 2022,148,0
+balance_sheet,html:southern-power-2-75-due-2023,html:southern-power-2-75-due-2023,Southern Power | 2.75% due 2023,149,0
+balance_sheet,html:southern-power-weighted-average-interest-rate-4-12-at-12-31-19-due-2025-2046,html:southern-power-weighted-average-interest-rate-4-12-at-12-31-19-due-2025-2046,Southern Power | Weighted average interest rate 4.12% at 12/31/19 due 2025-2046,150,0
+balance_sheet,html:southern-power-variable-rate-3-34-at-12-31-18-due-2020,html:southern-power-variable-rate-3-34-at-12-31-18-due-2020,Southern Power | Variable rate (3.34% at 12/31/18) due 2020,151,0
+balance_sheet,html:other-long-term-debt,html:other-long-term-debt,Other long-term debt,152,0
+balance_sheet,html:liabilities-from-risk-management-activities,html:liabilities-from-risk-management-activities,Liabilities from risk management activities,178,0
+balance_sheet,html:customer-accounts,html:customer-accounts,Customer accounts,10,0
+balance_sheet,html:energy-marketing,html:energy-marketing,Energy marketing,11,0
+balance_sheet,html:other-accounts-and-notes,html:other-accounts-and-notes,Other accounts and notes,179,0
+balance_sheet,html:cumulative-preferred-stock,html:cumulative-preferred-stock,Cumulative preferred stock,134,0
+balance_sheet,html:treasury-at-cost,html:treasury-at-cost,"Treasury, at cost",138,0
+balance_sheet,html:retained-earnings-accumulated-deficit,html:retained-earnings-accumulated-deficit,Retained earnings (accumulated deficit),139,0
+balance_sheet,html:commitments-and-contingent-matters-see-notes,html:commitments-and-contingent-matters-see-notes,Commitments and Contingent Matters (See notes),158,0
+balance_sheet,html:redeemable-preferred-stock-100-par-or-stated-value,html:redeemable-preferred-stock-100-par-or-stated-value,"Redeemable Preferred Stock, $100 par or stated value",159,0
+balance_sheet,html:redeemable-preferred-stock-1-par-value,html:redeemable-preferred-stock-1-par-value,"Redeemable Preferred Stock, $1 par value",160,0
+balance_sheet,html:alabama-power-redeemable-preferred-stock-100-par-or-stated-value,html:alabama-power-redeemable-preferred-stock-100-par-or-stated-value,"Alabama Power | Redeemable Preferred Stock, $100 par or stated value",43,0
+balance_sheet,html:alabama-power-redeemable-preferred-stock-1-par-value,html:alabama-power-redeemable-preferred-stock-1-par-value,"Alabama Power | Redeemable Preferred Stock, $1 par value",44,0
+balance_sheet,html:joint-owner-accounts,html:joint-owner-accounts,Joint owner accounts,180,0
+balance_sheet,html:regulatory-assets-storm-damage,html:regulatory-assets-storm-damage,Regulatory assets – storm damage,191,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,181,0
+balance_sheet,html:intangible-assets-net-of-amortization-of-109-and-89-respectively,html:intangible-assets-net-of-amortization-of-109-and-89-respectively,"Intangible assets, net of amortization of $109 and $89, respectively",182,0
+balance_sheet,html:intangible-assets-net-of-amortization-of-129-and-109-respectively,html:intangible-assets-net-of-amortization-of-129-and-109-respectively,"Intangible assets, net of amortization of $129 and $109, respectively",192,0
+balance_sheet,html:intangible-assets-net-of-amortization-of-148-and-129-respectively,html:intangible-assets-net-of-amortization-of-148-and-129-respectively,"Intangible assets, net of amortization of $148 and $129, respectively",32,0
+balance_sheet,html:intangible-assets-net-of-amortization-of-168-and-148-respectively,html:intangible-assets-net-of-amortization-of-168-and-148-respectively,"Intangible assets, net of amortization of $168 and $148, respectively",167,0
+cash_flow,html:net-income,html:net-income,Net Income,0,0
+cash_flow,html:depreciation-and-amortization-total,html:depreciation-and-amortization-total,"Depreciation and amortization, total",1,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,2,0
+cash_flow,html:other-net,html:other-net,"Other, net",3,0
+cash_flow,html:changes-in-certain-current-assets-and-liabilities,html:changes-in-certain-current-assets-and-liabilities,Changes in certain current assets and liabilities —,4,0
+cash_flow,html:receivables,html:receivables,-Receivables,5,0
+cash_flow,html:other-current-assets,html:other-current-assets,-Other current assets,6,0
+cash_flow,html:accounts-payable,html:accounts-payable,-Accounts payable,7,0
+cash_flow,html:other-current-liabilities,html:other-current-liabilities,-Other current liabilities,8,0
+cash_flow,html:net-cash-provided-from-operating-activities,html:net-cash-provided-from-operating-activities,Net cash provided from operating activities,9,0
+cash_flow,html:property-additions,html:property-additions,Property additions,10,0
+cash_flow,html:proceeds-from-dispositions,html:proceeds-from-dispositions,Proceeds from dispositions,11,0
+cash_flow,html:payments-pursuant-to-ltsas,html:payments-pursuant-to-ltsas,Payments pursuant to LTSAs,12,0
+cash_flow,html:other-investing-activities,html:other-investing-activities,Other investing activities,13,0
+cash_flow,html:net-cash-used-for-investing-activities,html:net-cash-used-for-investing-activities,Net cash used for investing activities,14,0
+cash_flow,html:increase-decrease-in-notes-payable-net,html:increase-decrease-in-notes-payable-net,"Increase (decrease) in notes payable, net",15,0
+cash_flow,html:distributions-to-noncontrolling-interests,html:distributions-to-noncontrolling-interests,Distributions to noncontrolling interests,16,0
+cash_flow,html:payment-of-common-stock-dividends,html:payment-of-common-stock-dividends,Payment of common stock dividends,17,0
+cash_flow,html:other-financing-activities,html:other-financing-activities,Other financing activities,18,0
+cash_flow,html:net-cash-provided-from-used-for-financing-activities,html:net-cash-provided-from-used-for-financing-activities,Net cash provided from (used for) financing activities,19,0
+cash_flow,html:net-change-in-cash-cash-equivalents-and-restricted-cash,html:net-change-in-cash-cash-equivalents-and-restricted-cash,"Net Change in Cash, Cash Equivalents, and Restricted Cash",20,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-year,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-year,"Cash, Cash Equivalents, and Restricted Cash at Beginning of Year",21,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-end-of-year,html:cash-cash-equivalents-and-restricted-cash-at-end-of-year,"Cash, Cash Equivalents, and Restricted Cash at End of Year",22,0
+cash_flow,html:supplemental-cash-flow-information,html:supplemental-cash-flow-information,Supplemental Cash Flow Information:,23,0
+cash_flow,html:interest-net-of-amounts-capitalized,html:interest-net-of-amounts-capitalized,"Interest, net of amounts capitalized",24,0
+cash_flow,html:income-taxes-net-excludes-credit-transfers,html:income-taxes-net-excludes-credit-transfers,"Income taxes, net (excludes credit transfers)",25,0
+cash_flow,html:accrued-property-additions-at-year-end,html:accrued-property-additions-at-year-end,Accrued property additions at year-end,26,0
+cash_flow,html:ltsa-credits-utilized-from-the-sale-of-spare-parts,html:ltsa-credits-utilized-from-the-sale-of-spare-parts,LTSA credits utilized from the sale of spare parts,27,0
+cash_flow,html:contributions-from-noncontrolling-interests,html:contributions-from-noncontrolling-interests,Contributions from noncontrolling interests,28,0
+cash_flow,html:operating-activities,html:operating-activities,Operating Activities:,29,0
+cash_flow,html:utilization-of-federal-tax-credit-carryforward,html:utilization-of-federal-tax-credit-carryforward,Utilization of federal tax credit carryforward,30,0
+cash_flow,html:amortization-of-itcs,html:amortization-of-itcs,Amortization of ITCs,31,0
+cash_flow,html:gain-on-dispositions-net,html:gain-on-dispositions-net,"Gain on dispositions, net",32,0
+cash_flow,html:prepaid-income-taxes,html:prepaid-income-taxes,-Prepaid income taxes,33,0
+cash_flow,html:acquisitions-net-of-cash-acquired,html:acquisitions-net-of-cash-acquired,"Acquisitions, net of cash acquired",34,0
+cash_flow,html:change-in-construction-payables,html:change-in-construction-payables,Change in construction payables,35,0
+cash_flow,html:redemptions-senior-notes,html:redemptions-senior-notes,Redemptions — Senior notes,36,0
+cash_flow,html:capital-contributions-from-parent-company,html:capital-contributions-from-parent-company,Capital contributions from parent company,37,0
+cash_flow,html:capital-contributions-from-noncontrolling-interests,html:capital-contributions-from-noncontrolling-interests,Capital contributions from noncontrolling interests,38,0
+income_statement,html:retail-electric-revenues,html:retail-electric-revenues,Retail electric revenues,0,0
+income_statement,html:wholesale-electric-revenues,html:wholesale-electric-revenues,Wholesale electric revenues,1,0
+income_statement,html:other-electric-revenues,html:other-electric-revenues,Other electric revenues,2,0
+income_statement,html:natural-gas-revenues-includes-alternative-revenue-programs-of-2-and-24-respectively,html:natural-gas-revenues-includes-alternative-revenue-programs-of-2-and-24-respectively,"Natural gas revenues (includes alternative revenue programs of $(2) and $(24), respectively)",3,0
+income_statement,html:other-revenues,html:other-revenues,Other revenues,4,0
+income_statement,html:total-operating-revenues,html:total-operating-revenues,Total operating revenues,5,0
+income_statement,html:fuel,html:fuel,Fuel,6,0
+income_statement,html:purchased-power,html:purchased-power,Purchased power,7,0
+income_statement,html:cost-of-natural-gas,html:cost-of-natural-gas,Cost of natural gas,8,0
+income_statement,html:cost-of-other-sales,html:cost-of-other-sales,Cost of other sales,9,0
+income_statement,html:other-operations-and-maintenance,html:other-operations-and-maintenance,Other operations and maintenance,10,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,11,0
+income_statement,html:taxes-other-than-income-taxes,html:taxes-other-than-income-taxes,Taxes other than income taxes,12,0
+income_statement,html:estimated-loss-on-plants-under-construction,html:estimated-loss-on-plants-under-construction,Estimated loss on plants under construction,13,0
+income_statement,html:gain-on-dispositions-net,html:gain-on-dispositions-net,"Gain on dispositions, net",14,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,15,0
+income_statement,html:operating-income,html:operating-income,Operating Income,16,0
+income_statement,html:allowance-for-equity-funds-used-during-construction,html:allowance-for-equity-funds-used-during-construction,Allowance for equity funds used during construction,17,0
+income_statement,html:earnings-from-equity-method-investments,html:earnings-from-equity-method-investments,Earnings from equity method investments,18,0
+income_statement,html:interest-expense-net-of-amounts-capitalized,html:interest-expense-net-of-amounts-capitalized,"Interest expense, net of amounts capitalized",19,0
+income_statement,html:other-income-expense-net,html:other-income-expense-net,"Other income (expense), net",20,0
+income_statement,html:total-other-income-and-expense,html:total-other-income-and-expense,Total other income and (expense),21,0
+income_statement,html:earnings-before-income-taxes,html:earnings-before-income-taxes,Earnings Before Income Taxes,22,0
+income_statement,html:income-taxes,html:income-taxes,Income taxes,23,0
+income_statement,html:consolidated-net-income,html:consolidated-net-income,Consolidated Net Income,24,0
+income_statement,html:dividends-on-preferred-stock-of-subsidiaries,html:dividends-on-preferred-stock-of-subsidiaries,Dividends on preferred stock of subsidiaries,25,0
+income_statement,html:net-loss-attributable-to-noncontrolling-interests,html:net-loss-attributable-to-noncontrolling-interests,Net loss attributable to noncontrolling interests,26,0
+income_statement,html:consolidated-net-income-attributable-to-southern-company,html:consolidated-net-income-attributable-to-southern-company,Consolidated Net Income Attributable to Southern Company,27,0
+income_statement,html:common-stock-data,html:common-stock-data,Common Stock Data:,28,0
+income_statement,html:basic,html:basic,Basic,29,0
+income_statement,html:diluted,html:diluted,Diluted,30,0
+income_statement,html:average-number-of-shares-of-common-stock-outstanding-in-millions,html:average-number-of-shares-of-common-stock-outstanding-in-millions,Average number of shares of common stock outstanding (in millions),31,0
+balance_sheet,html:energy-marketing-receivables,html:energy-marketing-receivables,Energy marketing receivables,18,0
+balance_sheet,html:other-intangible-assets-net-of-amortization-of-153-and-145-at-march-31-2019-and-december-31-2018-respectively,html:other-intangible-assets-net-of-amortization-of-153-and-145-at-march-31-2019-and-december-31-2018-respectively,"Other intangible assets, net of amortization of $153 and $145 at March 31, 2019 and December 31, 2018, respectively",202,0
+cash_flow,html:depreciation-and-amortization-total-125,html:depreciation-and-amortization-total-125,"Depreciation and amortization, total 125",69,0
+cash_flow,html:deferred-income-taxes-17,html:deferred-income-taxes-17,Deferred income taxes 17,82,0
+cash_flow,html:amortization-of-investment-tax-credits-14,html:amortization-of-investment-tax-credits-14,Amortization of investment tax credits (14,92,0
+cash_flow,html:other-net-7,html:other-net-7,"Other, net (7",99,0
+cash_flow,html:receivables-10,html:receivables-10,-Receivables 10,40,0
+cash_flow,html:prepaid-income-taxes-9,html:prepaid-income-taxes-9,-Prepaid income taxes (9,70,0
+cash_flow,html:other-current-assets-3,html:other-current-assets-3,-Other current assets 3,83,0
+cash_flow,html:accounts-payable-32,html:accounts-payable-32,-Accounts payable (32,93,0
+cash_flow,html:accrued-compensation-15,html:accrued-compensation-15,-Accrued compensation (15,100,0
+cash_flow,html:other-current-liabilities-5,html:other-current-liabilities-5,-Other current liabilities 5,104,0
+cash_flow,html:net-cash-provided-from-operating-activities-110,html:net-cash-provided-from-operating-activities-110,Net cash provided from operating activities 110,109,0
+cash_flow,html:business-acquisitions-2,html:business-acquisitions-2,Business acquisitions (2,41,0
+cash_flow,html:property-additions-66,html:property-additions-66,Property additions (66,71,0
+cash_flow,html:change-in-construction-payables-7,html:change-in-construction-payables-7,Change in construction payables (7,84,0
+cash_flow,html:payments-pursuant-to-ltsas-15,html:payments-pursuant-to-ltsas-15,Payments pursuant to LTSAs (15,94,0
+cash_flow,html:other-investing-activities-11,html:other-investing-activities-11,Other investing activities 11,101,0
+cash_flow,html:net-cash-used-for-investing-activities-79,html:net-cash-used-for-investing-activities-79,Net cash used for investing activities (79,105,0
+cash_flow,html:increase-in-notes-payable-net-5,html:increase-in-notes-payable-net-5,"Increase in notes payable, net 5",42,0
+cash_flow,html:distributions-to-noncontrolling-interests-36,html:distributions-to-noncontrolling-interests-36,Distributions to noncontrolling interests (36,72,0
+cash_flow,html:capital-contributions-from-noncontrolling-interests-3,html:capital-contributions-from-noncontrolling-interests-3,Capital contributions from noncontrolling interests 3,85,0
+cash_flow,html:payment-of-common-stock-dividends-51,html:payment-of-common-stock-dividends-51,Payment of common stock dividends (51,95,0
+cash_flow,html:net-change-in-cash-cash-equivalents-and-restricted-cash-48,html:net-change-in-cash-cash-equivalents-and-restricted-cash-48,"Net Change in Cash, Cash Equivalents, and Restricted Cash (48",106,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-period-181,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-period-181,"Cash, Cash Equivalents, and Restricted Cash at Beginning of Period 181",110,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-end-of-period,html:cash-cash-equivalents-and-restricted-cash-at-end-of-period,"Cash, Cash Equivalents, and Restricted Cash at End of Period",114,0
+cash_flow,html:cash-paid-received-during-the-period-for,html:cash-paid-received-during-the-period-for,Cash paid (received) during the period for —,43,0
+cash_flow,html:interest-net-of-4-and-5-capitalized-for-2019-and-2018-respectively,html:interest-net-of-4-and-5-capitalized-for-2019-and-2018-respectively,"Interest (net of $4 and $5 capitalized for 2019 and 2018, respectively)",73,0
+cash_flow,html:income-taxes-net-1,html:income-taxes-net-1,"Income taxes, net 1",86,0
+cash_flow,html:noncash-transactions-accrued-property-additions-at-end-of-period-19,html:noncash-transactions-accrued-property-additions-at-end-of-period-19,Noncash transactions — Accrued property additions at end of period 19,96,0
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Retail electric revenues,32,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Fuel,33,0
+income_statement,us-gaap:UtilitiesOperatingExpenseMaintenanceAndOperations,us-gaap:UtilitiesOperatingExpenseMaintenanceAndOperations,Other operations and maintenance,43,0
+income_statement,so:DepreciationAndAmortizationExcludingNuclearFuel,so:DepreciationAndAmortizationExcludingNuclearFuel,Depreciation and amortization,50,0
+income_statement,us-gaap:TaxesExcludingIncomeAndExciseTaxes,us-gaap:TaxesExcludingIncomeAndExciseTaxes,Taxes other than income taxes,54,0
+income_statement,so:EstimatedLossOnPlantsUnderConstruction,so:EstimatedLossOnPlantsUnderConstruction,Estimated loss on plants under construction,57,0
+income_statement,us-gaap:GainLossOnDispositionOfAssets1,us-gaap:GainLossOnDispositionOfAssets1,"(Gain) loss on dispositions, net",59,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,Total operating expenses,61,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating Income,63,0
+income_statement,us-gaap:PublicUtilitiesAllowanceForFundsUsedDuringConstructionCapitalizedCostOfEquity,us-gaap:PublicUtilitiesAllowanceForFundsUsedDuringConstructionCapitalizedCostOfEquity,Allowance for equity funds used during construction,34,0
+income_statement,us-gaap:IncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromEquityMethodInvestments,Earnings from equity method investments,44,0
+income_statement,us-gaap:InterestAndDebtExpense,us-gaap:InterestAndDebtExpense,"Interest expense, net of amounts capitalized",51,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,"Other income (expense), net",55,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,Total other income and (expense),58,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Earnings (Loss) Before Income Taxes,60,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income taxes (benefit),62,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Consolidated Net Income (Loss),64,0
+income_statement,us-gaap:PreferredStockDividendsIncomeStatementImpact,us-gaap:PreferredStockDividendsIncomeStatementImpact,Dividends on preferred stock of subsidiaries,65,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net income attributable to noncontrolling interests,66,0
+income_statement,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,Consolidated Net Income (Loss) Attributable to Southern Company,67,0
+income_statement,html:earnings-loss-per-share,html:earnings-loss-per-share,Earnings (loss) per share -,35,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,45,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted,52,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,36,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,46,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,12,0
+balance_sheet,us-gaap:EnergyMarketingContractsAssetsCurrent,us-gaap:EnergyMarketingContractsAssetsCurrent,Energy marketing receivables,19,0
+balance_sheet,us-gaap:AccountsReceivableGrossCurrent,us-gaap:AccountsReceivableGrossCurrent,Customer accounts receivable,20,0
+balance_sheet,so:UnbilledRevenuesCurrent,so:UnbilledRevenuesCurrent,Unbilled revenues,21,0
+balance_sheet,us-gaap:DueFromRelatedPartiesCurrent,us-gaap:DueFromRelatedPartiesCurrent,Affiliated,22,0
+balance_sheet,so:OtherAccountsNotesAndLoansReceivable,so:OtherAccountsNotesAndLoansReceivable,Other accounts and notes receivable,23,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,Accumulated provision for uncollectible accounts,24,0
+balance_sheet,us-gaap:EnergyRelatedInventoryNaturalGasInStorage,us-gaap:EnergyRelatedInventoryNaturalGasInStorage,Natural gas for sale,25,0
+balance_sheet,us-gaap:PrepaidExpenseCurrent,us-gaap:PrepaidExpenseCurrent,Prepaid expenses,26,0
+balance_sheet,us-gaap:DerivativeAssetsCurrent,us-gaap:DerivativeAssetsCurrent,"Assets from risk management activities, net of collateral",27,0
+balance_sheet,so:OtherRegulatoryAssetsCurrent,so:OtherRegulatoryAssetsCurrent,Other regulatory assets,28,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,29,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,30,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,In service,57,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Less: Accumulated depreciation,58,0
+balance_sheet,so:PlantInServiceNetOfDepreciation,so:PlantInServiceNetOfDepreciation,"Plant in service, net of depreciation",59,0
+balance_sheet,us-gaap:ConstructionInProgressGross,us-gaap:ConstructionInProgressGross,Construction work in progress,60,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Total property, plant, and equipment",61,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,76,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Equity investments in unconsolidated subsidiaries,77,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Other intangible assets, net of amortization of $161 and $145 at June 30, 2019 and December 31, 2018, respectively",78,0
+balance_sheet,us-gaap:OtherLongTermInvestments,us-gaap:OtherLongTermInvestments,Miscellaneous property and investments,79,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Total other property and investments,80,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,"Operating lease right-of-use assets, net of amortization",83,0
+balance_sheet,so:OtherRegulatoryAssetsDeferred,so:OtherRegulatoryAssetsDeferred,"Other regulatory assets, deferred",84,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other deferred charges and assets,85,0
+balance_sheet,so:DeferredChargesAndOtherAssets,so:DeferredChargesAndOtherAssets,Total deferred charges and other assets,86,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,87,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Consolidated net income,39,0
+cash_flow,us-gaap:DepreciationAmortizationAndAccretionNet,us-gaap:DepreciationAmortizationAndAccretionNet,"Depreciation and amortization, total",44,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,74,0
+cash_flow,us-gaap:PublicUtilitiesAllowanceForFundsUsedDuringConstructionCapitalizedCostOfEquity,us-gaap:PublicUtilitiesAllowanceForFundsUsedDuringConstructionCapitalizedCostOfEquity,Allowance for equity funds used during construction,87,0
+cash_flow,us-gaap:DerivativeGainLossOnDerivativeNet,us-gaap:DerivativeGainLossOnDerivativeNet,Mark-to-market adjustments,97,0
+cash_flow,us-gaap:PensionAndOtherPostretirementBenefitExpense,us-gaap:PensionAndOtherPostretirementBenefitExpense,"Pension, postretirement, and other employee benefits",102,0
+cash_flow,us-gaap:AssetRetirementObligationCashPaidToSettle,us-gaap:AssetRetirementObligationCashPaidToSettle,Settlement of asset retirement obligations,107,0
+cash_flow,us-gaap:StockOptionPlanExpense,us-gaap:StockOptionPlanExpense,Stock based compensation expense,111,0
+cash_flow,so:EstimatedLossOnPlantsUnderConstructionNonCashAdjusted,so:EstimatedLossOnPlantsUnderConstructionNonCashAdjusted,Estimated loss on plants under construction,115,0
+cash_flow,us-gaap:DisposalGroupNotDiscontinuedOperationGainLossOnDisposal,us-gaap:DisposalGroupNotDiscontinuedOperationGainLossOnDisposal,"(Gain) loss on dispositions, net",119,0
+cash_flow,us-gaap:AssetImpairmentCharges,us-gaap:AssetImpairmentCharges,Impairment charges,123,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,"Other, net",127,0
+cash_flow,us-gaap:IncreaseDecreaseInReceivables,us-gaap:IncreaseDecreaseInReceivables,-Receivables,116,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidExpense,us-gaap:IncreaseDecreaseInPrepaidExpense,-Prepayments,120,0
+cash_flow,so:IncreaseDecreaseinEnergyRelatedInventoryNaturalGasinStorage,so:IncreaseDecreaseinEnergyRelatedInventoryNaturalGasinStorage,-Natural gas for sale,124,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingAssets,us-gaap:IncreaseDecreaseInOtherOperatingAssets,-Other current assets,128,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,-Accounts payable,131,0
+cash_flow,so:IncreaseDecreaseInAccruedTaxes,so:IncreaseDecreaseInAccruedTaxes,-Accrued taxes,134,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedSalaries,us-gaap:IncreaseDecreaseInAccruedSalaries,-Accrued compensation,137,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,-Other current liabilities,140,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided from operating activities,143,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Property additions,112,0
+cash_flow,us-gaap:PaymentsToInvestInDecommissioningFund,us-gaap:PaymentsToInvestInDecommissioningFund,Nuclear decommissioning trust fund purchases,117,0
+cash_flow,us-gaap:ProceedsFromDecommissioningFund,us-gaap:ProceedsFromDecommissioningFund,Nuclear decommissioning trust fund sales,121,0
+cash_flow,us-gaap:ProceedsFromSaleOfProductiveAssets,us-gaap:ProceedsFromSaleOfProductiveAssets,Proceeds from dispositions and asset sales,125,0
+cash_flow,us-gaap:PaymentsForRemovalCosts,us-gaap:PaymentsForRemovalCosts,"Cost of removal, net of salvage",129,0
+cash_flow,so:ChangeInConstructionPayables,so:ChangeInConstructionPayables,"Change in construction payables, net",132,0
+cash_flow,us-gaap:PaymentsToAcquireEquityMethodInvestments,us-gaap:PaymentsToAcquireEquityMethodInvestments,Investment in unconsolidated subsidiaries,135,0
+cash_flow,so:PaymentsPursuantToLongTermServiceAgreements,so:PaymentsPursuantToLongTermServiceAgreements,Payments pursuant to LTSAs,138,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other investing activities,141,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash provided from (used for) investing activities,144,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,"Increase in notes payable, net",122,0
+cash_flow,html:proceeds,html:proceeds,Proceeds —,126,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Long-term debt,130,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfCommonStock,us-gaap:ProceedsFromIssuanceOfCommonStock,Common stock,133,0
+cash_flow,us-gaap:ProceedsFromShortTermDebt,us-gaap:ProceedsFromShortTermDebt,Short-term borrowings,136,0
+cash_flow,html:redemptions-and-repurchases,html:redemptions-and-repurchases,Redemptions and repurchases —,139,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Long-term debt,142,0
+cash_flow,us-gaap:RepaymentsOfShortTermDebt,us-gaap:RepaymentsOfShortTermDebt,Short-term borrowings,145,0
+cash_flow,us-gaap:PaymentsToMinorityShareholders,us-gaap:PaymentsToMinorityShareholders,Distributions to noncontrolling interests,146,0
+cash_flow,us-gaap:ProceedsFromMinorityShareholders,us-gaap:ProceedsFromMinorityShareholders,Capital contributions from noncontrolling interests,148,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Payment of common stock dividends,149,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other financing activities,150,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided from (used for) financing activities,151,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Net Change in Cash, Cash Equivalents, and Restricted Cash",152,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Cash, Cash Equivalents, and Restricted Cash at Beginning of Period",153,0
+cash_flow,us-gaap:InterestPaidNet,us-gaap:InterestPaidNet,"Interest (net of $36 and $35 capitalized for 2019 and 2018, respectively)",108,0
+cash_flow,us-gaap:IncomeTaxesPaidNet,us-gaap:IncomeTaxesPaidNet,"Income taxes, net",113,0
+cash_flow,us-gaap:CapitalExpendituresIncurredButNotYetPaid,us-gaap:CapitalExpendituresIncurredButNotYetPaid,Noncash transactions — Accrued property additions at end of period,118,0
+income_statement,us-gaap:AssetImpairmentCharges,us-gaap:AssetImpairmentCharges,Impairment charges,37,0
+cash_flow,us-gaap:InvestmentTaxCredit,us-gaap:InvestmentTaxCredit,Utilization of federal investment tax credits,45,0
+cash_flow,so:AmortizationOfDeferredInvestmentTaxCredits,so:AmortizationOfDeferredInvestmentTaxCredits,Amortization of investment tax credits,75,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidTaxes,us-gaap:IncreaseDecreaseInPrepaidTaxes,-Prepaid income taxes,46,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Business acquisitions, net of cash acquired",147,0
+cash_flow,us-gaap:ProceedsFromContributionsFromParent,us-gaap:ProceedsFromContributionsFromParent,Capital contributions from parent company,47,0
+cash_flow,us-gaap:RepaymentsOfSeniorDebt,us-gaap:RepaymentsOfSeniorDebt,Senior notes,48,0
+cash_flow,us-gaap:PaymentsOfCapitalDistribution,us-gaap:PaymentsOfCapitalDistribution,Return of capital,88,0
+balance_sheet,us-gaap:EnergyRelatedInventoryOtherFossilFuel,us-gaap:EnergyRelatedInventoryOtherFossilFuel,Fossil fuel stock,183,0
+balance_sheet,us-gaap:OtherInventorySupplies,us-gaap:OtherInventorySupplies,Materials and supplies,193,0
+balance_sheet,so:NuclearFuelAtAmortizedCost,so:NuclearFuelAtAmortizedCost,"Nuclear fuel, at amortized cost",184,0
+balance_sheet,us-gaap:DecommissioningFundInvestments,us-gaap:DecommissioningFundInvestments,"Nuclear decommissioning trusts, at fair value",185,0
+balance_sheet,so:DeferredChargesRelatedToIncomeTaxes,so:DeferredChargesRelatedToIncomeTaxes,Deferred charges related to income taxes,186,0
+balance_sheet,so:DeferredUnderRecoveredRegulatoryClauseRevenues,so:DeferredUnderRecoveredRegulatoryClauseRevenues,Deferred under recovered regulatory clause revenues,194,0
+balance_sheet,so:RegulatoryAssetAssetRetirementObligation,so:RegulatoryAssetAssetRetirementObligation,Regulatory assets – asset retirement obligations,197,0
+cash_flow,us-gaap:RepaymentsOfNotesPayable,us-gaap:RepaymentsOfNotesPayable,"Increase (decrease) in notes payable, net",154,0
+cash_flow,us-gaap:RepaymentsOfOtherShortTermDebt,us-gaap:RepaymentsOfOtherShortTermDebt,Redemptions — Short-term borrowings,155,0
+cash_flow,so:EstimatedLossOnPlantVogtleUnits3And4NonCashAdjusted,so:EstimatedLossOnPlantVogtleUnits3And4NonCashAdjusted,Estimated loss on Plant Vogtle Units 3 and 4,49,0
+cash_flow,us-gaap:StormDamageProvision,us-gaap:StormDamageProvision,Storm damage reserve accruals,76,0
+cash_flow,so:IncreaseDecreaseRetailFuelCostOverRecoveryShortTerm,so:IncreaseDecreaseRetailFuelCostOverRecoveryShortTerm,-Retail fuel cost over recovery,50,0
+cash_flow,so:IncreaseDecreaseInCustomerRefunds,so:IncreaseDecreaseInCustomerRefunds,-Customer refunds,77,0
+cash_flow,us-gaap:ProceedsFromOtherShortTermDebt,us-gaap:ProceedsFromOtherShortTermDebt,Short-term borrowings,51,0
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability,Right-of-use assets obtained under operating leases,52,0
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,Right-of-use assets obtained under finance leases,78,0
+balance_sheet,us-gaap:PrepaidTaxes,us-gaap:PrepaidTaxes,Prepaid income taxes,187,0
+balance_sheet,us-gaap:IntangibleAssetsNetIncludingGoodwill,us-gaap:IntangibleAssetsNetIncludingGoodwill,"Intangible assets, net of amortization of $84 and $69 at September 30, 2020 and December 31, 2019, respectively",81,0
+balance_sheet,so:PrepaidLongTermServiceAgreements,so:PrepaidLongTermServiceAgreements,Prepaid LTSAs,199,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Accumulated deferred income taxes,201,0
+balance_sheet,us-gaap:IncomeTaxesReceivableNoncurrent,us-gaap:IncomeTaxesReceivableNoncurrent,"Income taxes receivable, non-current",203,0
+balance_sheet,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,Assets held for sale,204,0
+cash_flow,so:LeaseImpairmentLoss,so:LeaseImpairmentLoss,Impairment charges,53,0
+cash_flow,us-gaap:IncreaseDecreaseInMaterialsAndSupplies,us-gaap:IncreaseDecreaseInMaterialsAndSupplies,-Materials and supplies,54,0
+cash_flow,so:PurchaseOfMembershipInterestsFromNoncontrollingInterests,so:PurchaseOfMembershipInterestsFromNoncontrollingInterests,Purchase of membership interests from noncontrolling interests,55,0
+cash_flow,us-gaap:InterestPaidCapitalized,us-gaap:InterestPaidCapitalized,"Interest (net of $61 and $55 capitalized for 2020 and 2019, respectively)",56,0
+cash_flow,us-gaap:ProceedsFromNotesPayable,us-gaap:ProceedsFromNotesPayable,"Increase (decrease) in notes payable, net",156,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfSeniorLongTermDebt,us-gaap:ProceedsFromIssuanceOfSeniorLongTermDebt,Proceeds — Senior notes,157,0
+cash_flow,so:NoncashOrPartNoncashTransactionContributionsFromNoncontrollingInterests,so:NoncashOrPartNoncashTransactionContributionsFromNoncontrollingInterests,Contributions from noncontrolling interests,57,0
+cash_flow,us-gaap:ContributionOfProperty,us-gaap:ContributionOfProperty,Contributions of wind turbine equipment,79,0
+income_statement,us-gaap:SalesTypeLeaseSellingProfitLoss,us-gaap:SalesTypeLeaseSellingProfitLoss,Loss on sales-type lease,38,0
+balance_sheet,us-gaap:SalesTypeLeaseNetInvestmentInLeaseAfterAllowanceForCreditLossNoncurrent,us-gaap:SalesTypeLeaseNetInvestmentInLeaseAfterAllowanceForCreditLossNoncurrent,Net investment in sales-type lease,195,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net Income Attributable to Southern Power,39,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinessesNetOfCashDivested,us-gaap:ProceedsFromDivestitureOfBusinessesNetOfCashDivested,Proceeds from dispositions 29,58,0
+cash_flow,so:ChangeInConstructionPayablesNetOfJointOwnerPortion,so:ChangeInConstructionPayablesNetOfJointOwnerPortion,Change in construction payables (31),80,0
+cash_flow,so:PrepaidLongTermServiceAgreement,so:PrepaidLongTermServiceAgreement,Payments pursuant to LTSAs (15),89,0
+cash_flow,so:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiabilityReassessment,so:RightOfUseAssetObtainedInExchangeForOperatingLeaseLiabilityReassessment,Reassessment of right-of-use assets under operating leases 40,59,0
+income_statement,html:estimated-loss-on-plant-vogtle-units-3-and-4,html:estimated-loss-on-plant-vogtle-units-3-and-4,Estimated loss on Plant Vogtle Units 3 and 4,40,0
+income_statement,html:income-taxes-benefit,html:income-taxes-benefit,Income taxes (benefit),41,0
+income_statement,html:net-income,html:net-income,Net Income,47,0
+income_statement,html:basic-in-dollars-per-share,html:basic-in-dollars-per-share,Basic (in dollars per share),42,0
+income_statement,html:diluted-in-dollars-per-share,html:diluted-in-dollars-per-share,Diluted (in dollars per share),48,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),53,0
+income_statement,html:diluted-in-shares,html:diluted-in-shares,Diluted (in shares),56,0
+income_statement,html:total-cost-of-sales,html:total-cost-of-sales,Total cost of sales,49,0
+balance_sheet,html:customer-and-affiliated-accounts-net,html:customer-and-affiliated-accounts-net,"Customer and affiliated accounts, net",13,0
+balance_sheet,html:southern-power-co,html:southern-power-co,SOUTHERN POWER CO,161,0
+balance_sheet,html:southern-power-co-nonrelated-party,html:southern-power-co-nonrelated-party,SOUTHERN POWER CO | Nonrelated Party,174,0
+balance_sheet,html:southern-power-co-related-party,html:southern-power-co-related-party,SOUTHERN POWER CO | Related Party,45,0
+cash_flow,html:utilization-of-federal-investment-tax-credits,html:utilization-of-federal-investment-tax-credits,Utilization of federal investment tax credits,60,0
+cash_flow,html:accrued-compensation,html:accrued-compensation,Accrued compensation,61,0
+cash_flow,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-period,html:cash-cash-equivalents-and-restricted-cash-at-beginning-of-period,"Cash, Cash Equivalents, and Restricted Cash at Beginning of Period",62,0
+cash_flow,html:income-taxes-net,html:income-taxes-net,"Income taxes, net",63,0
+cash_flow,html:accrued-property-additions-at-end-of-period,html:accrued-property-additions-at-end-of-period,Accrued property additions at end of period,90,0
+cash_flow,html:reassessment-of-right-of-use-assets-under-operating-leases,html:reassessment-of-right-of-use-assets-under-operating-leases,Reassessment of right-of-use assets under operating leases,98,0
+cash_flow,html:southern-power-co,html:southern-power-co,SOUTHERN POWER CO,103,0
+cash_flow,html:consolidated-net-income,html:consolidated-net-income,Consolidated net income,64,0
+cash_flow,html:amortization-of-investment-tax-credits,html:amortization-of-investment-tax-credits,Amortization of investment tax credits,65,0
+cash_flow,html:increase-decrease-in-accrued-taxes,html:increase-decrease-in-accrued-taxes,Increase Decrease in Accrued Taxes,66,0
+balance_sheet,us-gaap:OtherReceivablesNetCurrent,us-gaap:OtherReceivablesNetCurrent,Other,188,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedTaxesPayable,us-gaap:IncreaseDecreaseInAccruedTaxesPayable,-Accrued taxes,67,0
+balance_sheet,so:OtherPropertyAndInvestments,so:OtherPropertyAndInvestments,Total other property and investments,189,0
+cash_flow,us-gaap:IncomeTaxCreditsAndAdjustments,us-gaap:IncomeTaxCreditsAndAdjustments,Utilization of federal tax credits,91,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentPlantInService,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentPlantInService,In service,62,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentAccumulatedDepreciation,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentAccumulatedDepreciation,Less: Accumulated provision for depreciation,63,0
+balance_sheet,so:PublicUtilitiesOtherDepreciablePropertyPlantAndEquipmentPlantInService,so:PublicUtilitiesOtherDepreciablePropertyPlantAndEquipmentPlantInService,"Plant in service, net of depreciation",64,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentConstructionWorkInProgress,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentConstructionWorkInProgress,Construction work in progress,65,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentNet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentNet,"Total property, plant, and equipment",66,0
+cash_flow,so:LossOnDamagedEquipment,so:LossOnDamagedEquipment,Loss on damaged equipment,68,0
+cash_flow,us-gaap:IncreaseDecreaseInIncomeTaxesReceivable,us-gaap:IncreaseDecreaseInIncomeTaxesReceivable,-Income taxes receivable,81,0

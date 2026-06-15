@@ -12,7 +12,6 @@ import type {
 } from "@/lib/brokerResearch/types";
 import { BrokerResearchCard } from "./BrokerResearchCard";
 import { BrokerResearchFilters } from "./BrokerResearchFilters";
-import { BrokerResearchStats } from "./BrokerResearchStats";
 
 const CACHE_PREFIX = "century-egg-broker-research:";
 
@@ -168,19 +167,10 @@ export function BrokerResearchFeed({
 
   return (
     <CompanyFeedTabShell
-      description={
-        <>
-          Discoverable broker research links and metadata from public web search. Full report access may require broker or client
-          entitlements. No paywalled bodies are fetched or reproduced. Uses Serper (Google search API) — set{" "}
-          <code className="text-[10px]" style={{ color: "var(--accent)" }}>
-            SERPER_API_KEY
-          </code>{" "}
-          on the server.
-        </>
-      }
       onRefresh={() => void runSearch()}
       refreshBusy={loading}
       hasPayload={Boolean(data)}
+      refreshLabel={data ? "Refresh" : "Load broker research"}
       sortValue={sortMode}
       onSortChange={(v) => setSortMode(v as "relevance" | "recent")}
       sortOptions={[
@@ -188,26 +178,43 @@ export function BrokerResearchFeed({
         { value: "recent", label: "Date (most recent)" },
       ]}
       error={error}
-      filterSection={
-        <div className="space-y-4">
-          <BrokerResearchFilters
-            brokerFilter={brokerFilter}
-            onBrokerFilterChange={setBrokerFilter}
-            typeFilter={typeFilter}
-            onTypeFilterChange={setTypeFilter}
-            accessFilter={accessFilter}
-            onAccessFilterChange={setAccessFilter}
-            sortMode={sortMode}
-            onSortModeChange={setSortMode}
-            timelineMode={timelineMode}
-            onTimelineModeChange={setTimelineMode}
-            brokerIds={brokerIds}
-            omitSort
-          />
-          <BrokerResearchStats data={data} />
-        </div>
+      showRefreshingBanner={Boolean(loading && data)}
+      emptyState={
+        !data && !loading && !error ? (
+          <p
+            className="rounded-md border border-dashed px-3 py-3 text-center text-sm leading-relaxed"
+            style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+          >
+            No saved broker research for this ticker yet. Open{" "}
+            <strong style={{ color: "var(--text)" }}>Search options & filters</strong> if needed, then click{" "}
+            <strong style={{ color: "var(--text)" }}>Load broker research</strong>.
+          </p>
+        ) : undefined
       }
-      filterSectionTitle="Filters & display"
+      filterSection={
+        <BrokerResearchFilters
+          brokerFilter={brokerFilter}
+          onBrokerFilterChange={setBrokerFilter}
+          typeFilter={typeFilter}
+          onTypeFilterChange={setTypeFilter}
+          accessFilter={accessFilter}
+          onAccessFilterChange={setAccessFilter}
+          sortMode={sortMode}
+          onSortModeChange={setSortMode}
+          timelineMode={timelineMode}
+          onTimelineModeChange={setTimelineMode}
+          brokerIds={brokerIds}
+          omitSort
+        />
+      }
+      statsSection={
+        data && !error ? (
+          <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+            {data.reports.length} report{data.reports.length === 1 ? "" : "s"} (from {data.resultsBeforeDedupe} raw,{" "}
+            {data.resultsAfterDedupe} deduped)
+          </p>
+        ) : null
+      }
     >
       {!loading && data && visible.length === 0 && !error ? (
         <p className="text-sm" style={{ color: "var(--muted2)" }}>
@@ -222,7 +229,7 @@ export function BrokerResearchFeed({
               <h4 className="mb-2 border-b pb-1 text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
                 {date}
               </h4>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col divide-y" style={{ borderColor: "var(--border2)" }}>
                 {items.map((item) => (
                   <li key={item.id}>
                     <BrokerResearchCard item={item} />
@@ -233,7 +240,7 @@ export function BrokerResearchFeed({
           ))}
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col divide-y" style={{ borderColor: "var(--border2)" }}>
           {visible.map((item) => (
             <li key={item.id}>
               <BrokerResearchCard item={item} />

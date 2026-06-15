@@ -1,4 +1,7 @@
 import { readSavedContent } from "@/lib/saved-content-hybrid";
+import { listUserTickerDocuments } from "@/lib/user-workspace-store";
+import { SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
+import { sanitizeWorkspaceKey } from "@/lib/company-workspace-key";
 
 /** Minimum trimmed length for a saved memo to count as usable for literary/biblical reference generation. */
 export const REFERENCE_GEN_MIN_MEMO_CHARS = 120;
@@ -56,4 +59,47 @@ export async function readPreferredSavedCreditMemoMarkdown(
     if (raw.length >= minChars) return { saveKey, text: raw };
   }
   return null;
+}
+
+const REFERENCE_TAB_RESPONSE_MIN_CHARS = 80;
+
+function isSavedTabResponseKey(key: string): boolean {
+  if (!(key in SAVED_DATA_FILES)) return false;
+  if (key.endsWith("-meta") || key.endsWith("-source-pack") || key.endsWith("-latest")) return false;
+  if (key.startsWith("ai-credit-memo-")) return false;
+  if (key === "xbrl-deterministic-compiler-result" || key === "entity-mapper-v2-snapshot") return false;
+  if (key === "private-workspace-meta") return false;
+  const fn = SAVED_DATA_FILES[key]?.toLowerCase() ?? "";
+  return fn.endsWith(".txt") || fn.endsWith(".html");
+}
+
+/** Saved research-tab response text from Postgres (excludes generated work-product outputs). */
+export async function readSavedTabResponsePackForReferenceGeneration(
+  ticker: string,
+  userId: string,
+  minChars: number = REFERENCE_TAB_RESPONSE_MIN_CHARS
+): Promise<{ inventory: string; materials: string } | null> {
+  const sym = sanitizeWorkspaceKey(ticker);
+  if (!sym) return null;
+
+  const rows = await listUserTickerDocuments(userId, sym);
+  const blocks: string[] = [];
+  const inventoryLines: string[] = [];
+
+  for (const row of rows) {
+    if (!isSavedTabResponseKey(row.dataKey)) continue;
+    const text = row.content?.trim() ?? "";
+    if (text.length < minChars) continue;
+    const filename = SAVED_DATA_FILES[row.dataKey] ?? `${row.dataKey}.txt`;
+    blocks.push(
+      `<<<BEGIN SOURCE: ${filename} (saved tab response) | synthetic>>>\n${text}\n<<<END SOURCE: ${filename}>>>`
+    );
+    inventoryLines.push(`- ${filename} (saved tab response — ${text.length} chars)`);
+  }
+
+  if (blocks.length === 0) return null;
+  return {
+    inventory: inventoryLines.join("\n"),
+    materials: blocks.join("\n\n") + "\n",
+  };
 }

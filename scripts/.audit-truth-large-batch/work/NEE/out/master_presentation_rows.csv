@@ -1,0 +1,240 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RegulatedAndUnregulatedOperatingRevenue,us-gaap:RegulatedAndUnregulatedOperatingRevenue,OPERATING REVENUES,0,0
+income_statement,nee:FuelPurchasedPowerAndInterchangeExpense,nee:FuelPurchasedPowerAndInterchangeExpense,"Fuel, purchased power and interchange",1,0
+income_statement,us-gaap:UtilitiesOperatingExpenseMaintenanceAndOperations,us-gaap:UtilitiesOperatingExpenseMaintenanceAndOperations,Other operations and maintenance,2,0
+income_statement,nee:DepreciationAndAmortizationExcludingNuclearFuel,nee:DepreciationAndAmortizationExcludingNuclearFuel,Depreciation and amortization,8,0
+income_statement,us-gaap:TaxesExcludingIncomeAndExciseTaxes,us-gaap:TaxesExcludingIncomeAndExciseTaxes,Taxes other than income taxes and other – net,10,0
+income_statement,us-gaap:OperatingExpenses,us-gaap:OperatingExpenses,Total operating expenses – net,11,0
+income_statement,us-gaap:DisposalGroupNotDiscontinuedOperationGainLossOnDisposal,us-gaap:DisposalGroupNotDiscontinuedOperationGainLossOnDisposal,GAINS ON DISPOSAL OF BUSINESSES/ASSETS – NET,12,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,OPERATING INCOME,13,0
+income_statement,nee:InterestExpenseAggregateExpenses,nee:InterestExpenseAggregateExpenses,Interest expense,14,0
+income_statement,us-gaap:IncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromEquityMethodInvestments,Equity in losses of equity method investees,16,0
+income_statement,us-gaap:PublicUtilitiesAllowanceForFundsUsedDuringConstructionCapitalizedCostOfEquity,us-gaap:PublicUtilitiesAllowanceForFundsUsedDuringConstructionCapitalizedCostOfEquity,Allowance for equity funds used during construction,17,0
+income_statement,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Gains on disposal of investments and other property – net,20,0
+income_statement,nee:OtherThanTemporaryImpairmentLossesOnSecuritiesHeldInNuclearDecommissioningFunds,nee:OtherThanTemporaryImpairmentLossesOnSecuritiesHeldInNuclearDecommissioningFunds,Change in unrealized gains (losses) on equity securities held in NEER's nuclear decommissioning funds – net,21,0
+income_statement,us-gaap:AmountRecognizedInNetPeriodicBenefitCostAndOtherComprehensiveIncomeLossBeforeTax,us-gaap:AmountRecognizedInNetPeriodicBenefitCostAndOtherComprehensiveIncomeLossBeforeTax,Other net periodic benefit income,23,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Other – net,24,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,Total other income (deductions) – net,25,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,INCOME BEFORE INCOME TAXES,26,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,INCOME TAX EXPENSE (BENEFIT),27,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,NET INCOME,28,0
+income_statement,us-gaap:NetIncomeLossAttributableToNonredeemableNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNonredeemableNoncontrollingInterest,NET LOSS ATTRIBUTABLE TO NONCONTROLLING INTERESTS,29,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,NET INCOME ATTRIBUTABLE TO NEE,30,0
+income_statement,html:earnings-per-share-attributable-to-nee,html:earnings-per-share-attributable-to-nee,Earnings per share attributable to NEE:,31,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,32,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Assuming dilution,33,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,23,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Customer receivables, net of allowances of $82 and $56, respectively",24,0
+balance_sheet,us-gaap:OtherReceivablesNetCurrent,us-gaap:OtherReceivablesNetCurrent,Other receivables,25,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,"Materials, supplies and fuel inventory",26,0
+balance_sheet,us-gaap:RegulatoryAssetsCurrent,us-gaap:RegulatoryAssetsCurrent,Regulatory assets,27,0
+balance_sheet,us-gaap:DerivativeAssetsCurrent,us-gaap:DerivativeAssetsCurrent,Derivatives,28,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other,30,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,31,0
+balance_sheet,html:other-assets,html:other-assets,Other assets:,32,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment – net ($28,988 and $25,632 related to VIEs, respectively)",51,0
+balance_sheet,us-gaap:DecommissioningFundInvestments,us-gaap:DecommissioningFundInvestments,Special use funds,52,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Investment in equity method investees,53,0
+balance_sheet,us-gaap:DefinedBenefitPlanAssetsForPlanBenefitsNoncurrent,us-gaap:DefinedBenefitPlanAssetsForPlanBenefitsNoncurrent,Prepaid benefit costs,54,0
+balance_sheet,us-gaap:RegulatoryAssetsNoncurrent,us-gaap:RegulatoryAssetsNoncurrent,Regulatory assets,55,0
+balance_sheet,us-gaap:DerivativeAssetsNoncurrent,us-gaap:DerivativeAssetsNoncurrent,Derivatives,56,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,57,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other,58,0
+balance_sheet,us-gaap:AssetsNoncurrent,us-gaap:AssetsNoncurrent,Total other assets,60,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,TOTAL ASSETS,61,0
+balance_sheet,html:liabilities-redeemable-noncontrolling-interests-and-equity,html:liabilities-redeemable-noncontrolling-interests-and-equity,"LIABILITIES, REDEEMABLE NONCONTROLLING INTERESTS AND EQUITY",63,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,64,0
+balance_sheet,us-gaap:CommercialPaper,us-gaap:CommercialPaper,Commercial paper,74,0
+balance_sheet,us-gaap:OtherShortTermBorrowings,us-gaap:OtherShortTermBorrowings,Other short-term debt,76,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,"Current portion of long-term debt ($9 and $25 related to VIEs, respectively)",77,0
+balance_sheet,us-gaap:AccountsPayableCurrentAndNoncurrent,us-gaap:AccountsPayableCurrentAndNoncurrent,"Accounts payable ($502 and $631 related to VIEs, respectively)",78,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Customer deposits,80,0
+balance_sheet,nee:AccruedInterestAndTaxes,nee:AccruedInterestAndTaxes,Accrued interest and taxes,81,0
+balance_sheet,us-gaap:DerivativeLiabilitiesCurrent,us-gaap:DerivativeLiabilitiesCurrent,Derivatives,82,0
+balance_sheet,us-gaap:ConstructionPayableCurrent,us-gaap:ConstructionPayableCurrent,Accrued construction-related expenditures,83,0
+balance_sheet,us-gaap:RegulatoryLiabilityCurrent,us-gaap:RegulatoryLiabilityCurrent,Regulatory liabilities,84,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other,85,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,86,0
+balance_sheet,html:other-liabilities-and-deferred-credits,html:other-liabilities-and-deferred-credits,Other liabilities and deferred credits:,87,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,"Long-term debt ($190 and $436 related to VIEs, respectively)",94,0
+balance_sheet,us-gaap:AssetRetirementObligationsNoncurrent,us-gaap:AssetRetirementObligationsNoncurrent,Asset retirement obligations,96,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,98,0
+balance_sheet,us-gaap:RegulatoryLiabilityNoncurrent,us-gaap:RegulatoryLiabilityNoncurrent,Regulatory liabilities,99,0
+balance_sheet,us-gaap:DerivativeLiabilitiesNoncurrent,us-gaap:DerivativeLiabilitiesNoncurrent,Derivatives,100,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other,101,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total other liabilities and deferred credits,102,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,TOTAL LIABILITIES,103,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,COMMITMENTS AND CONTINGENCIES,104,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,REDEEMABLE NONCONTROLLING INTERESTS – VIEs,105,0
+balance_sheet,html:equity,html:equity,EQUITY,106,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock ($0.01 par value, authorized shares – 3,200; outstanding shares – 2,083 and 2,057, respectively)",107,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,108,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,109,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,111,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total common shareholders' equity,112,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,"Noncontrolling interests ($11,711 and $10,206 related to VIEs, respectively)",113,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,TOTAL EQUITY,114,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,"TOTAL LIABILITIES, REDEEMABLE NONCONTROLLING INTERESTS AND EQUITY",115,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,0,0
+cash_flow,us-gaap:DepreciationAndAmortization,us-gaap:DepreciationAndAmortization,Depreciation and amortization,1,0
+cash_flow,nee:NuclearFuelAndOtherAmortization,nee:NuclearFuelAndOtherAmortization,Nuclear fuel and other amortization,2,0
+cash_flow,us-gaap:UnrealizedGainLossOnDerivativesAndCommodityContracts,us-gaap:UnrealizedGainLossOnDerivativesAndCommodityContracts,Unrealized losses (gains) on marked to market derivative contracts – net,4,0
+cash_flow,nee:UnrealizedGainLossOnOnEquitySecuritiesHeldInDecommissioningFunds,nee:UnrealizedGainLossOnOnEquitySecuritiesHeldInDecommissioningFunds,Unrealized losses (gains) on equity securities held in NEER's nuclear decommissioning funds – net,5,0
+cash_flow,us-gaap:ForeignCurrencyTransactionGainLossBeforeTax,us-gaap:ForeignCurrencyTransactionGainLossBeforeTax,Foreign currency transaction losses (gains),6,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,7,0
+cash_flow,nee:CostRecoveryClausesAndFranchiseFees,nee:CostRecoveryClausesAndFranchiseFees,Cost recovery clauses and franchise fees,8,0
+cash_flow,us-gaap:IncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromEquityMethodInvestments,Equity in losses of equity method investees,11,0
+cash_flow,us-gaap:EquityMethodInvestmentDividendsOrDistributions,us-gaap:EquityMethodInvestmentDividendsOrDistributions,Distributions of earnings from equity method investees,12,0
+cash_flow,us-gaap:GainLossOnDispositionOfAssets1,us-gaap:GainLossOnDispositionOfAssets1,"Gains on disposal of businesses, assets and investments – net",13,0
+cash_flow,us-gaap:IncreaseDecreaseInRecoverablePropertyDamageCosts,us-gaap:IncreaseDecreaseInRecoverablePropertyDamageCosts,Recoverable storm-related costs,15,0
+cash_flow,us-gaap:OtherOperatingActivitiesCashFlowStatement,us-gaap:OtherOperatingActivitiesCashFlowStatement,Other – net,16,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,18,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherCurrentAssets,us-gaap:IncreaseDecreaseInOtherCurrentAssets,Current assets,19,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherNoncurrentAssets,us-gaap:IncreaseDecreaseInOtherNoncurrentAssets,Noncurrent assets,20,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherCurrentLiabilities,us-gaap:IncreaseDecreaseInOtherCurrentLiabilities,Current liabilities,21,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherNoncurrentLiabilities,us-gaap:IncreaseDecreaseInOtherNoncurrentLiabilities,Noncurrent liabilities,22,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by operating activities,23,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,CASH FLOWS FROM INVESTING ACTIVITIES,24,0
+cash_flow,nee:CapitalExpendituresOfFPL,nee:CapitalExpendituresOfFPL,Capital expenditures of FPL,25,0
+cash_flow,nee:IndependentPowerInvestments,nee:IndependentPowerInvestments,Independent power and other investments of NEER,29,0
+cash_flow,us-gaap:PaymentsForProceedsFromNuclearFuel,us-gaap:PaymentsForProceedsFromNuclearFuel,Nuclear fuel purchases,30,0
+cash_flow,nee:OtherCapitalExpenditures,nee:OtherCapitalExpenditures,Other capital expenditures,31,0
+cash_flow,us-gaap:ProceedsFromSaleOfProductiveAssets,us-gaap:ProceedsFromSaleOfProductiveAssets,Proceeds from the sale of Florida City Gas business,33,0
+cash_flow,nee:ProceedsfromSaleofIndependentPowerInvestments,nee:ProceedsfromSaleofIndependentPowerInvestments,Sale of independent power and other investments of NEER,34,0
+cash_flow,us-gaap:ProceedsFromDecommissioningFund,us-gaap:ProceedsFromDecommissioningFund,Proceeds from sale or maturity of securities in special use funds and other investments,35,0
+cash_flow,us-gaap:PaymentsToInvestInDecommissioningFund,us-gaap:PaymentsToInvestInDecommissioningFund,Purchases of securities in special use funds and other investments,36,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other – net,37,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used in investing activities,38,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,"Issuances of long-term debt, including premiums and discounts",39,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Retirements of long-term debt,40,0
+cash_flow,nee:SaleOfDifferentialMembershipInterests,nee:SaleOfDifferentialMembershipInterests,Proceeds from differential membership investors,41,0
+cash_flow,nee:PaymentsToDifferentialMembershipInvestors,nee:PaymentsToDifferentialMembershipInvestors,Payments to differential membership investors,42,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,Net change in commercial paper,43,0
+cash_flow,us-gaap:ProceedsFromOtherShortTermDebt,us-gaap:ProceedsFromOtherShortTermDebt,Proceeds from other short-term debt,44,0
+cash_flow,us-gaap:RepaymentsOfOtherShortTermDebt,us-gaap:RepaymentsOfOtherShortTermDebt,Repayments of other short-term debt,45,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfRelatedPartyDebt,us-gaap:ProceedsFromRepaymentsOfRelatedPartyDebt,Cash swept from (repayments to) related parties – net,50,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfCommonStock,us-gaap:ProceedsFromIssuanceOfCommonStock,Issuances of common stock/equity units,51,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Dividends on common stock,53,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other – net,54,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided by financing activities,55,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Effects of currency translation on cash, cash equivalents and restricted cash",56,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Net increase (decrease) in cash, cash equivalents and restricted cash",57,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Cash, cash equivalents and restricted cash at beginning of year",58,0
+cash_flow,html:supplemental-disclosures-of-cash-flow-information,html:supplemental-disclosures-of-cash-flow-information,SUPPLEMENTAL DISCLOSURES OF CASH FLOW INFORMATION,59,0
+cash_flow,us-gaap:InterestPaidNet,us-gaap:InterestPaidNet,Cash paid for interest (net of amount capitalized),60,0
+cash_flow,nee:IncomeTaxesPaidReceivedNet,nee:IncomeTaxesPaidReceivedNet,Cash paid (received) for income taxes – net,61,0
+cash_flow,html:supplemental-schedule-of-noncash-investing-and-financing-activities,html:supplemental-schedule-of-noncash-investing-and-financing-activities,SUPPLEMENTAL SCHEDULE OF NONCASH INVESTING AND FINANCING ACTIVITIES,62,0
+cash_flow,us-gaap:CapitalExpendituresIncurredButNotYetPaid,us-gaap:CapitalExpendituresIncurredButNotYetPaid,Accrued property additions,63,0
+cash_flow,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,us-gaap:RightOfUseAssetObtainedInExchangeForFinanceLeaseLiability,Right-of-use asset in exchange for finance lease liability,72,0
+income_statement,html:merger-related,html:merger-related,Merger-related,3,0
+income_statement,html:losses-gains-on-disposal-of-a-business-assets-net,html:losses-gains-on-disposal-of-a-business-assets-net,Losses (gains) on disposal of a business/assets - net,9,0
+income_statement,html:benefits-associated-with-differential-membership-interests-net,html:benefits-associated-with-differential-membership-interests-net,Benefits associated with differential membership interests - net,15,0
+income_statement,html:interest-income,html:interest-income,Interest income,18,0
+income_statement,html:revaluation-of-contingent-consideration,html:revaluation-of-contingent-consideration,Revaluation of contingent consideration,22,0
+income_statement,html:weighted-average-number-of-common-shares-outstanding,html:weighted-average-number-of-common-shares-outstanding,Weighted-average number of common shares outstanding:,34,0
+balance_sheet,html:electric-plant-in-service-and-other-property,html:electric-plant-in-service-and-other-property,Electric plant in service and other property,0,0
+balance_sheet,html:nuclear-fuel,html:nuclear-fuel,Nuclear fuel,1,0
+balance_sheet,html:construction-work-in-progress,html:construction-work-in-progress,Construction work in progress,2,0
+balance_sheet,html:accumulated-depreciation-and-amortization,html:accumulated-depreciation-and-amortization,Accumulated depreciation and amortization,3,0
+balance_sheet,html:total-property-plant-and-equipment-net-10-553-and-16-485-related-to-vies-respectively,html:total-property-plant-and-equipment-net-10-553-and-16-485-related-to-vies-respectively,"Total property, plant and equipment - net ($10,553 and $16,485 related to VIEs, respectively)",4,0
+balance_sheet,html:current-assets,html:current-assets,CURRENT ASSETS,5,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,6,0
+balance_sheet,html:customer-receivables-net-of-allowances-of-10-and-7-respectively,html:customer-receivables-net-of-allowances-of-10-and-7-respectively,"Customer receivables, net of allowances of $10 and $7, respectively",7,0
+balance_sheet,html:other-receivables,html:other-receivables,Other receivables,8,0
+balance_sheet,html:materials-supplies-and-fossil-fuel-inventory,html:materials-supplies-and-fossil-fuel-inventory,"Materials, supplies and fossil fuel inventory",9,0
+balance_sheet,html:regulatory-assets-41-and-71-related-to-a-vie-respectively,html:regulatory-assets-41-and-71-related-to-a-vie-respectively,"Regulatory assets ($41 and $71 related to a VIE, respectively)",10,0
+balance_sheet,html:derivatives,html:derivatives,Derivatives,11,0
+balance_sheet,html:other,html:other,Other,12,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,13,0
+balance_sheet,html:special-use-funds,html:special-use-funds,Special use funds,33,0
+balance_sheet,html:investment-in-equity-method-investees,html:investment-in-equity-method-investees,Investment in equity method investees,34,0
+balance_sheet,html:prepaid-benefit-costs,html:prepaid-benefit-costs,Prepaid benefit costs,35,0
+balance_sheet,html:regulatory-assets-37-related-to-a-vie-at-december-31-2017,html:regulatory-assets-37-related-to-a-vie-at-december-31-2017,"Regulatory assets ($37 related to a VIE at December 31, 2017)",36,0
+balance_sheet,html:other-470-related-to-a-vie-at-december-31-2017,html:other-470-related-to-a-vie-at-december-31-2017,"Other ($470 related to a VIE at December 31, 2017)",37,0
+balance_sheet,html:total-other-assets,html:total-other-assets,Total other assets,38,0
+balance_sheet,html:total-assets,html:total-assets,TOTAL ASSETS,39,0
+balance_sheet,html:capitalization,html:capitalization,CAPITALIZATION,40,0
+balance_sheet,html:common-stock-0-01-par-value-authorized-shares-800-outstanding-shares-478-and-471-respectively,html:common-stock-0-01-par-value-authorized-shares-800-outstanding-shares-478-and-471-respectively,"Common stock ($0.01 par value, authorized shares - 800; outstanding shares - 478 and 471, respectively)",41,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,42,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,43,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),44,0
+balance_sheet,html:total-common-shareholders-equity,html:total-common-shareholders-equity,Total common shareholders' equity,45,0
+balance_sheet,html:noncontrolling-interests-3-265-and-1-011-related-to-vies-respectively,html:noncontrolling-interests-3-265-and-1-011-related-to-vies-respectively,"Noncontrolling interests ($3,265 and $1,011 related to VIEs, respectively)",46,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,47,0
+balance_sheet,html:redeemable-noncontrolling-interests,html:redeemable-noncontrolling-interests,Redeemable noncontrolling interests,48,0
+balance_sheet,html:long-term-debt-1-020-and-5-941-related-to-vies-respectively,html:long-term-debt-1-020-and-5-941-related-to-vies-respectively,"Long-term debt ($1,020 and $5,941 related to VIEs, respectively)",49,0
+balance_sheet,html:total-capitalization,html:total-capitalization,Total capitalization,50,0
+balance_sheet,html:commercial-paper,html:commercial-paper,Commercial paper,65,0
+balance_sheet,html:other-short-term-debt,html:other-short-term-debt,Other short-term debt,66,0
+balance_sheet,html:current-portion-of-long-term-debt-74-and-70-related-to-a-vie-respectively,html:current-portion-of-long-term-debt-74-and-70-related-to-a-vie-respectively,"Current portion of long-term debt ($74 and $70 related to a VIE, respectively)",67,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,68,0
+balance_sheet,html:customer-deposits,html:customer-deposits,Customer deposits,69,0
+balance_sheet,html:accrued-interest-and-taxes,html:accrued-interest-and-taxes,Accrued interest and taxes,70,0
+balance_sheet,html:accrued-construction-related-expenditures,html:accrued-construction-related-expenditures,Accrued construction-related expenditures,71,0
+balance_sheet,html:regulatory-liabilities,html:regulatory-liabilities,Regulatory liabilities,72,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,73,0
+balance_sheet,html:asset-retirement-obligations,html:asset-retirement-obligations,Asset retirement obligations,88,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,89,0
+balance_sheet,html:deferral-related-to-differential-membership-interests-vies,html:deferral-related-to-differential-membership-interests-vies,Deferral related to differential membership interests - VIEs,90,0
+balance_sheet,html:total-other-liabilities-and-deferred-credits,html:total-other-liabilities-and-deferred-credits,Total other liabilities and deferred credits,91,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,COMMITMENTS AND CONTINGENCIES,92,0
+balance_sheet,html:total-capitalization-and-liabilities,html:total-capitalization-and-liabilities,TOTAL CAPITALIZATION AND LIABILITIES,93,0
+cash_flow,html:impairment-charges,html:impairment-charges,Impairment charges,3,0
+cash_flow,html:benefits-associated-with-differential-membership-interests-net,html:benefits-associated-with-differential-membership-interests-net,Benefits associated with differential membership interests - net,9,0
+cash_flow,html:proceeds-from-sale-of-the-fiber-optic-telecommunications-business,html:proceeds-from-sale-of-the-fiber-optic-telecommunications-business,Proceeds from sale of the fiber-optic telecommunications business,32,0
+cash_flow,html:issuances-of-common-stock-net,html:issuances-of-common-stock-net,Issuances of common stock - net,46,0
+cash_flow,html:proceeds-from-issuance-of-nep-convertible-preferred-units-net,html:proceeds-from-issuance-of-nep-convertible-preferred-units-net,Proceeds from issuance of NEP convertible preferred units - net,47,0
+cash_flow,html:increase-decrease-in-property-plant-and-equipment-net-as-a-result-of-cash-grants-primarily-under-the-american-recovery-and-reinvestment-act-of-2009,html:increase-decrease-in-property-plant-and-equipment-net-as-a-result-of-cash-grants-primarily-under-the-american-recovery-and-reinvestment-act-of-2009,"Increase (decrease) in property, plant and equipment - net as a result of cash grants primarily under the American Recovery and Reinvestment Act of 2009",64,0
+cash_flow,html:increase-in-property-plant-and-equipment-net-as-a-result-of-a-settlement-noncash-exchange,html:increase-in-property-plant-and-equipment-net-as-a-result-of-a-settlement-noncash-exchange,"Increase in property, plant and equipment - net as a result of a settlement/noncash exchange",65,0
+income_statement,nee:AssetRecoveryDamagedPropertyCosts,nee:AssetRecoveryDamagedPropertyCosts,Storm restoration costs,4,0
+income_statement,us-gaap:ImpairmentOfLongLivedAssetsHeldForUse,us-gaap:ImpairmentOfLongLivedAssetsHeldForUse,Impairment charges,5,0
+income_statement,us-gaap:BusinessCombinationAcquisitionRelatedCosts,us-gaap:BusinessCombinationAcquisitionRelatedCosts,Acquisition-related,6,0
+income_statement,us-gaap:DeconsolidationGainOrLossAmount,us-gaap:DeconsolidationGainOrLossAmount,Gain on NEP deconsolidation,19,0
+balance_sheet,nee:PublicUtilitiesPropertyPlantAndEquipmentPlantInServiceGross,nee:PublicUtilitiesPropertyPlantAndEquipmentPlantInServiceGross,Plant in service and other property,14,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentFuel,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentFuel,Nuclear fuel,15,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentConstructionWorkInProgress,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentConstructionWorkInProgress,Construction work in progress,16,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentAccumulatedDepreciation,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentAccumulatedDepreciation,Accumulated depreciation and amortization,17,0
+balance_sheet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentNet,us-gaap:PublicUtilitiesPropertyPlantAndEquipmentNet,Total electric utility plant and other property - net,18,0
+balance_sheet,us-gaap:CapitalizationLongtermDebtAndEquity,us-gaap:CapitalizationLongtermDebtAndEquity,Total capitalization,95,0
+balance_sheet,us-gaap:CustomerDepositsCurrent,us-gaap:CustomerDepositsCurrent,Customer deposits,79,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,97,0
+cash_flow,nee:RegulatoryAssetPurchasedPowerAgreementTerminationNet,nee:RegulatoryAssetPurchasedPowerAgreementTerminationNet,Acquisition of purchased power agreement,10,0
+cash_flow,us-gaap:ProceedsFromContributionsFromParent,us-gaap:ProceedsFromContributionsFromParent,Capital contributions from NEE,48,0
+cash_flow,nee:CapitalContributionOfSubsidiary,nee:CapitalContributionOfSubsidiary,NEE's noncash contribution of a consolidated subsidiary - net,17,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,LIABILITIES AND EQUITY,62,0
+cash_flow,nee:CapitalExpendituresOfGulfPowerSegment,nee:CapitalExpendituresOfGulfPowerSegment,Acquisition and capital expenditures of Gulf Power,26,0
+cash_flow,us-gaap:ProceedsFromMinorityShareholders,us-gaap:ProceedsFromMinorityShareholders,Proceeds from sale of noncontrolling interests,52,0
+cash_flow,nee:IncreaseInPropertyPlantAndEquipmentAcquisition,nee:IncreaseInPropertyPlantAndEquipmentAcquisition,"Increase in property, plant and equipment related to an acquisition",66,0
+cash_flow,nee:DecreaseInJointVentureInvestmentsAcquisition,nee:DecreaseInJointVentureInvestmentsAcquisition,Decrease in joint venture investments related to an acquisition,67,0
+balance_sheet,us-gaap:ContractWithCustomerAssetNetCurrent,us-gaap:ContractWithCustomerAssetNetCurrent,Contract assets,29,0
+cash_flow,nee:IncreaseDecreaseInConstructionWorkInProgressAndContractLiability,nee:IncreaseDecreaseInConstructionWorkInProgressAndContractLiability,"Decrease in property, plant and equipment – net and contract liabilities (2023 and 2022 activity, see Note 1)",68,0
+income_statement,html:acquisition-related,html:acquisition-related,Acquisition-related,7,0
+income_statement,html:36,html:36,———————————————,36,0
+income_statement,html:a-amounts-have-been-retrospectively-adjusted-for-an-accounting-standards-update-related-to-leases,html:a-amounts-have-been-retrospectively-adjusted-for-an-accounting-standards-update-related-to-leases,(a) Amounts have been retrospectively adjusted for an accounting standards update related to leases.,37,0
+balance_sheet,html:total-property-plant-and-equipment-net-10-219-and-10-553-related-to-vies-respectively,html:total-property-plant-and-equipment-net-10-219-and-10-553-related-to-vies-respectively,"Total property, plant and equipment - net ($10,219 and $10,553 related to VIEs, respectively)",116,0
+balance_sheet,html:customer-receivables-net-of-allowances-of-7-and-10-respectively,html:customer-receivables-net-of-allowances-of-7-and-10-respectively,"Customer receivables, net of allowances of $7 and $10, respectively",117,0
+balance_sheet,html:regulatory-assets-23-and-41-related-to-a-vie-respectively,html:regulatory-assets-23-and-41-related-to-a-vie-respectively,"Regulatory assets ($23 and $41 related to a VIE, respectively)",118,0
+balance_sheet,html:assets-held-for-sale-343-related-to-vies,html:assets-held-for-sale-343-related-to-vies,Assets held for sale ($343 related to VIEs),119,0
+balance_sheet,html:regulatory-assets,html:regulatory-assets,Regulatory assets,120,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,127,0
+balance_sheet,html:common-stock-0-01-par-value-authorized-shares-800-outstanding-shares-479-and-478-respectively,html:common-stock-0-01-par-value-authorized-shares-800-outstanding-shares-479-and-478-respectively,"Common stock ($0.01 par value, authorized shares - 800; outstanding shares - 479 and 478, respectively)",121,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,122,0
+balance_sheet,html:noncontrolling-interests-3-610-and-3-265-related-to-vies-respectively,html:noncontrolling-interests-3-610-and-3-265-related-to-vies-respectively,"Noncontrolling interests ($3,610 and $3,265 related to VIEs, respectively)",123,0
+balance_sheet,html:long-term-debt-984-and-1-020-related-to-vies-respectively,html:long-term-debt-984-and-1-020-related-to-vies-respectively,"Long-term debt ($984 and $1,020 related to VIEs, respectively)",124,0
+balance_sheet,html:current-portion-of-long-term-debt-36-and-74-related-to-a-vie-respectively,html:current-portion-of-long-term-debt-36-and-74-related-to-a-vie-respectively,"Current portion of long-term debt ($36 and $74 related to a VIE, respectively)",125,0
+balance_sheet,html:liabilities-associated-with-assets-held-for-sale-141-related-to-vies,html:liabilities-associated-with-assets-held-for-sale-141-related-to-vies,Liabilities associated with assets held for sale ($141 related to VIEs),126,0
+cash_flow,html:acquisition-and-capital-expenditures-of-gulf-power,html:acquisition-and-capital-expenditures-of-gulf-power,Acquisition and capital expenditures of Gulf Power,27,0
+cash_flow,html:payments-from-to-related-parties-under-a-cash-sweep-and-credit-support-agreement-net,html:payments-from-to-related-parties-under-a-cash-sweep-and-credit-support-agreement-net,Payments from (to) related parties under a cash sweep and credit support agreement – net,49,0
+cash_flow,html:50,html:50,———————————————,69,0
+cash_flow,html:a-amounts-have-been-retrospectively-adjusted-for-an-accounting-standards-update-related-to-leases,html:a-amounts-have-been-retrospectively-adjusted-for-an-accounting-standards-update-related-to-leases,(a) Amounts have been retrospectively adjusted for an accounting standards update related to leases.,70,0
+balance_sheet,nee:ElectricUtilityPlantInServiceAndOtherProperty,nee:ElectricUtilityPlantInServiceAndOtherProperty,Electric plant in service and other property,19,0
+balance_sheet,nee:NuclearFuel,nee:NuclearFuel,Nuclear fuel,20,0
+balance_sheet,us-gaap:ConstructionInProgressGross,us-gaap:ConstructionInProgressGross,Construction work in progress,21,0
+balance_sheet,nee:AccumulatedDepreciationAndAmortization,nee:AccumulatedDepreciationAndAmortization,Accumulated depreciation and amortization,22,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Other short-term debt,75,0
+cash_flow,us-gaap:DeconsolidationGainOrLossAmount,us-gaap:DeconsolidationGainOrLossAmount,Gain on NEP deconsolidation,14,0
+cash_flow,nee:PaymentsToAcquireBusinessesGrossAndRelatedCapitalExpenditures,nee:PaymentsToAcquireBusinessesGrossAndRelatedCapitalExpenditures,Acquisition and capital expenditures of Gulf Power,28,0
+cash_flow,html:53,html:53,———————————————,71,0
+income_statement,html:35,html:35,———————————————,35,0
+balance_sheet,us-gaap:OtherAssets,us-gaap:OtherAssets,Total other assets,59,0
+balance_sheet,nee:AccumulatedOtherComprehensiveIncomeLossNoncontrollingInterestAndParentNetofTax,nee:AccumulatedOtherComprehensiveIncomeLossNoncontrollingInterestAndParentNetofTax,Accumulated other comprehensive loss,110,0

@@ -1,7 +1,17 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
+import {
+  CREDIT_DOC_ANALYZE_SAVE_TARGETS,
+  creditDocAnalyzeSaveTargetForKey,
+  type CreditDocSavedBoxKey,
+} from "@/lib/credit-doc-save-targets";
+import {
+  appendRelevantBackgroundToDocReviewPrompt,
+  EMPTY_CREDIT_DOC_REVIEW_BACKGROUND,
+  type CreditDocReviewBackground,
+} from "@/lib/credit-doc-review-background-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
@@ -12,7 +22,7 @@ export function buildDistressedPromptForUrl(basePrompt: string, url: string): st
   const u = url.trim();
   const b = basePrompt.trim();
   if (!u) return b;
-  return `${b}\n\n---\nSOURCE LINK (open this filing and paste the full document text into the chat after the prompt):\n${u}\n`;
+  return `${b}\n\n---\nSOURCE DOCUMENT LINK (open this URL and read the full credit agreement / indenture / amendment before answering — do not rely on summaries):\n${u}\n`;
 }
 
 type Props = {
@@ -23,7 +33,7 @@ type Props = {
   onClose: () => void;
   setStatusMessage: (s: string | null) => void;
   setClipboardFailed: (b: boolean) => void;
-  onApiSaved: () => void;
+  onApiSaved: (targetLabel: string) => void;
 };
 
 export function DistressedLinkAnalyzeModal({
@@ -36,18 +46,54 @@ export function DistressedLinkAnalyzeModal({
   setClipboardFailed,
   onApiSaved,
 }: Props) {
-  const fullPrompt = url ? buildDistressedPromptForUrl(docReviewPrompt, url) : "";
   const safeTicker = ticker.trim();
+  const [saveTargetKey, setSaveTargetKey] = useState<CreditDocSavedBoxKey>(
+    CREDIT_DOC_ANALYZE_SAVE_TARGETS[0]!.saveKey
+  );
+  const [background, setBackground] = useState<CreditDocReviewBackground>(
+    EMPTY_CREDIT_DOC_REVIEW_BACKGROUND
+  );
+  const [backgroundLoading, setBackgroundLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open || !safeTicker) {
+      setBackground(EMPTY_CREDIT_DOC_REVIEW_BACKGROUND);
+      return;
+    }
+    let cancelled = false;
+    setBackgroundLoading(true);
+    void (async () => {
+      try {
+        const res = await fetch(`/api/credit-doc-review-background/${encodeURIComponent(safeTicker)}`);
+        if (!res.ok) return;
+        const data = (await res.json()) as CreditDocReviewBackground;
+        if (!cancelled) setBackground(data);
+      } catch {
+        if (!cancelled) setBackground(EMPTY_CREDIT_DOC_REVIEW_BACKGROUND);
+      } finally {
+        if (!cancelled) setBackgroundLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, safeTicker]);
+
+  const promptWithBackground = useMemo(
+    () => appendRelevantBackgroundToDocReviewPrompt(docReviewPrompt, background),
+    [docReviewPrompt, background]
+  );
+  const fullPrompt = url ? buildDistressedPromptForUrl(promptWithBackground, url) : "";
 
   const runWeb = useCallback(
     async (
       fn: (p: string, sm: (s: string | null) => void, cf: (b: boolean) => void) => void | Promise<void>
     ) => {
-      if (!fullPrompt.trim()) return;
+      if (backgroundLoading || !fullPrompt.trim()) return;
       await fn(fullPrompt, setStatusMessage, setClipboardFailed);
       onClose();
     },
-    [fullPrompt, setStatusMessage, setClipboardFailed, onClose]
+    [fullPrompt, backgroundLoading, setStatusMessage, setClipboardFailed, onClose]
   );
 
   if (!open || !url?.trim()) return null;
@@ -78,11 +124,20 @@ export function DistressedLinkAnalyzeModal({
           {url}
         </p>
         <p className="mt-3 text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-          Choose web chat (prompt is copied to your clipboard) or run via API (same behavior as Prompt 2 on the right).
+          Choose web chat (prompt copied to clipboard — open the source link in the chat) or run via API (review prompt before send).
         </p>
         <p className="mt-2 text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
           {OPEN_IN_EXTERNAL_AI_FULL_LINE}
         </p>
+        {backgroundLoading ? (
+          <p className="mt-2 text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+            Loading Capital Structure / Org Chart notes for the prompt…
+          </p>
+        ) : background.capitalStructureNotes || background.orgChartNotes ? (
+          <p className="mt-2 text-[10px] leading-relaxed" style={{ color: "var(--muted2)" }}>
+            Included Notes-tab background from your latest Capital Structure and/or Org Chart Excel files.
+          </p>
+        ) : null}
 
         <div className="mt-3 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
           Open in browser
@@ -90,6 +145,7 @@ export function DistressedLinkAnalyzeModal({
         <div className="tab-prompt-ai-actions-grid mt-2">
           <button
             type="button"
+            disabled={backgroundLoading}
             onClick={() => void runWeb(openClaudeWithClipboard)}
             className="tab-prompt-ai-action-btn"
             style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
@@ -98,6 +154,7 @@ export function DistressedLinkAnalyzeModal({
           </button>
           <button
             type="button"
+            disabled={backgroundLoading}
             onClick={() => void runWeb(openChatGptWithClipboard)}
             className="tab-prompt-ai-action-btn"
             style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
@@ -106,6 +163,7 @@ export function DistressedLinkAnalyzeModal({
           </button>
           <button
             type="button"
+            disabled={backgroundLoading}
             onClick={() => void runWeb(openGeminiWithClipboard)}
             className="tab-prompt-ai-action-btn"
             style={{ borderColor: "#EAB308", color: "#EAB308", background: "transparent" }}
@@ -114,6 +172,7 @@ export function DistressedLinkAnalyzeModal({
           </button>
           <button
             type="button"
+            disabled={backgroundLoading}
             onClick={() => void runWeb(openDeepSeekWithClipboard)}
             className="tab-prompt-ai-action-btn"
             style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
@@ -122,21 +181,48 @@ export function DistressedLinkAnalyzeModal({
           </button>
         </div>
 
-        <TabPromptApiButtons
-          userPrompt={fullPrompt}
-          onResult={() => {
-            /* result handled via persist */
-          }}
-          persistAfterResult={async (text) => {
-            const t = text.trim();
-            if (!safeTicker || !t) return;
-            const ok = await saveToServer(safeTicker, "credit-agreements-indentures-credit-agreement", t);
-            if (!ok) throw new Error("Could not save response.");
-            onApiSaved();
-            onClose();
-          }}
-          className="mt-4 border-t border-[var(--border2)] pt-4"
-        />
+        <div className="mt-4 border-t border-[var(--border2)] pt-4">
+          <label
+            htmlFor="distressed-analyze-save-target"
+            className="mb-1 block text-[10px] font-semibold uppercase tracking-wide"
+            style={{ color: "var(--muted)" }}
+          >
+            Save API response to
+          </label>
+          <select
+            id="distressed-analyze-save-target"
+            value={saveTargetKey}
+            onChange={(e) => setSaveTargetKey(e.target.value as CreditDocSavedBoxKey)}
+            className="mb-3 w-full rounded border px-2 py-1.5 text-sm"
+            style={{
+              borderColor: "var(--border2)",
+              color: "var(--text)",
+              background: "var(--card2)",
+            }}
+          >
+            {CREDIT_DOC_ANALYZE_SAVE_TARGETS.map((target) => (
+              <option key={target.saveKey} value={target.saveKey}>
+                {target.label}
+              </option>
+            ))}
+          </select>
+          <TabPromptApiButtons
+            userPrompt={backgroundLoading ? "" : fullPrompt}
+            requirePromptReviewBeforeRun
+            onResult={() => {
+              /* result handled via persist */
+            }}
+            persistAfterResult={async (text) => {
+              const t = text.trim();
+              if (!safeTicker || !t) return;
+              const target = creditDocAnalyzeSaveTargetForKey(saveTargetKey);
+              const ok = await saveToServer(safeTicker, target.saveKey, t);
+              if (!ok) throw new Error("Could not save response.");
+              onApiSaved(target.label);
+              onClose();
+            }}
+          />
+        </div>
 
         <button
           type="button"

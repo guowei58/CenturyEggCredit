@@ -181,8 +181,8 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
     return (
       <Card title="Forensic Analysis">
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
-          Select a company to run forensic analysis from your ticker workspace and saved tabs, excluding material that
-          already feeds LME Analysis, Excel files, and generated work products.
+          Select a company to run forensic analysis from five curated sources: saved tab business model, saved tab how
+          stuff works, latest saved 10-K, saved tab risk from 10-K, and saved tab business risk analysis.
         </p>
       </Card>
     );
@@ -217,8 +217,8 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
           style={{ color: "var(--muted2)" }}
         >
           <li>
-            Click <strong>Refresh sources</strong> to rescan your workspace and saved tabs (excluding LME tab sources,
-            Excel, and generated outputs).
+            Click <strong>Refresh sources</strong> to rescan exactly five sources: saved tab business model, saved tab
+            how stuff works, latest saved 10-K, saved tab risk from 10-K, and saved tab business risk analysis.
           </li>
           <li>Pick the AI model.</li>
           <li>
@@ -297,6 +297,9 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
           >
             Refresh sources
           </button>
+          <span className="text-[11px]" style={{ color: "var(--muted2)" }}>
+            Uses only those four saved tabs plus the latest saved 10-K.
+          </span>
           {data?.cacheStale && data.cachedMarkdown && (
             <span className="text-[11px]" style={{ color: "var(--warn)" }}>
               Sources changed since last run — run again for an updated analysis.
@@ -360,7 +363,7 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
             </p>
           ) : loading && !data ? (
             <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-              Scanning saved Capital Structure sources…
+              Scanning saved forensic sources…
             </p>
           ) : data ? (
             <>
@@ -689,7 +692,7 @@ export function CompanyForensicAnalysisTab({ ticker, companyName }: { ticker: st
         <Card title="Forensic analysis output">
           <p className="text-sm" style={{ color: "var(--muted2)" }}>
             {data
-              ? "No saved output yet. Add workspace files or saved tabs, refresh, then click Run forensic analysis."
+              ? "No saved output yet. Save the four required tabs and at least one 10-K, refresh sources, then click Run forensic analysis."
               : "Saved forensic analysis will appear here after you run."}
           </p>
         </Card>

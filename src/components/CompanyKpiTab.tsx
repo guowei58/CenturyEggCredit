@@ -211,7 +211,8 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
               style={{ color: "var(--muted2)" }}
             >
               <li>
-                Click <strong>Refresh sources</strong> to rescan saved tab content and documents.
+                Click <strong>Refresh sources</strong> to rescan Period Financials transcripts and management presentations
+                saved to <strong>Saved Documents</strong>.
               </li>
               <li>Pick the AI model.</li>
               <li>
@@ -290,6 +291,9 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
               >
                 Refresh sources
               </button>
+              <span className="text-[11px]" style={{ color: "var(--muted2)" }}>
+                Ingestion only uses transcripts and management presentations. Save at least one from Period Financials first.
+              </span>
               {data?.cacheStale && data.cachedMarkdown && (
                 <span className="text-[11px]" style={{ color: "var(--warn)" }}>
                   Sources changed since last run — run again for updated commentary.
@@ -353,7 +357,7 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
                 </p>
               ) : loading && !data ? (
                 <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-                  Scanning workspace and saved tabs…
+                  Scanning saved transcripts and management presentations…
                 </p>
               ) : data ? (
                 <>
@@ -682,7 +686,7 @@ export function CompanyKpiTab({ ticker, companyName }: { ticker: string; company
         <Card title="KPI commentary output">
           <p className="text-sm" style={{ color: "var(--muted2)" }}>
             {data
-              ? "No commentary yet. Add workspace files or other tab saves (LME-only sources and Excel are excluded), then click Run KPI commentary."
+              ? "No commentary yet. Save at least one management presentation or earnings transcript from Period Financials, then click Refresh sources and Run KPI commentary."
               : "Saved KPI commentary will appear here after you run."}
           </p>
         </Card>

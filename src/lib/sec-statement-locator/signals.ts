@@ -234,6 +234,13 @@ export function isLikelyStatementIndexListingHit(acc: string, offset: number): b
   if (/\bnotes\s+to\b[^.]{0,140}\.\s*\d{1,3}\s+item\s+1\b/.test(window)) return true;
   if (/\bnotes\s+to\b[^.]{0,140}\(\s*unaudited\s*\)\s*\d{1,3}\b/.test(window)) return true;
   if (/\b\d{1,3}\s+item\s+2\b/.test(window)) return true;
+  /** HTZ-style index: "12 Notes to … Financial Statements" (page number before notes umbrella). */
+  if (/\b\d{1,3}\s+notes\s+to\b/.test(window.slice(0, 48))) return true;
+  /**
+   * Index note list with page numbers between entries — not a real Note 1 body heading.
+   * e.g. "Note 1 Background 14 Note 2 Basis of Presentation …"
+   */
+  if (/\bnote\s+\d+\b[^.]{0,100}\b\d{1,3}\s+note\s+\d+\b/.test(window)) return true;
   return false;
 }
 

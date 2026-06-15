@@ -218,3 +218,107 @@ export function buildTranscriptQuery(fieldId: string, roicSymbol: string, period
   const p = period.replace(/\s/g, "").toUpperCase();
   return `get(${fieldId}(fa_period_type=Q, fa_period_reference='${p}')) for('${sym}')`;
 }
+
+/** Parse Roic-style quarter codes (e.g. 2026Q2) for the v2 earnings-calls API. */
+export function parseRoicQuarterPeriod(period: string): { year: number; quarter: number } | null {
+  const m = /^(\d{4})Q([1-4])$/i.exec(period.replace(/\s/g, ""));
+  if (!m) return null;
+  return { year: Number(m[1]), quarter: Number(m[2]) };
+}
+
+/** Identifiers to try with the v2 earnings-calls transcript endpoint (ticker, CIK, etc.). */
+export function getRoicTranscriptIdentifierCandidates(
+  ticker: string,
+  requestOverride?: string | null
+): string[] {
+  const env = process.env.ROIC_AI_SYMBOL_OVERRIDE?.trim();
+  if (env) return [env];
+
+  const o = requestOverride?.trim();
+  if (o) return [o];
+
+  const raw = ticker.trim().toUpperCase().replace(/[^A-Z0-9.-]/g, "");
+  return raw ? [raw] : [];
+}
+
+export type RoicV2EarningsTranscriptResult =
+  | { ok: true; content: string; symbol: string; year: number; quarter: number; date?: string }
+  | { ok: false; status: number; error: string };
+
+/** Fetch a single earnings call transcript via Roic REST v2 (not RQL). */
+export async function fetchRoicV2EarningsCallTranscript(
+  identifier: string,
+  year: number,
+  quarter: number
+): Promise<RoicV2EarningsTranscriptResult> {
+  const apiKey = getRoicApiKey();
+  if (!apiKey) {
+    return { ok: false, status: 503, error: "ROIC_AI_API_KEY is not configured." };
+  }
+
+  const id = identifier.trim();
+  if (!id) return { ok: false, status: 400, error: "Missing company identifier." };
+  if (!Number.isFinite(year) || year < 1990 || year > 2100) {
+    return { ok: false, status: 400, error: `Invalid fiscal year: ${year}` };
+  }
+  if (![1, 2, 3, 4].includes(quarter)) {
+    return { ok: false, status: 400, error: `Invalid fiscal quarter: ${quarter}` };
+  }
+
+  const url = new URL(
+    `https://api.roic.ai/v2/company/earnings-calls/transcript/${encodeURIComponent(id)}`
+  );
+  url.searchParams.set("apikey", apiKey);
+  url.searchParams.set("year", String(year));
+  url.searchParams.set("quarter", String(quarter));
+
+  try {
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      next: { revalidate: 0 },
+    });
+    const text = await res.text();
+    if (!res.ok) {
+      let err = `HTTP ${res.status}`;
+      try {
+        const j = JSON.parse(text) as {
+          detail?: { error?: string };
+          error?: string;
+          message?: string;
+        };
+        err = j.detail?.error ?? j.error ?? j.message ?? err;
+      } catch {
+        if (text.length > 0 && text.length < 400) err = text;
+      }
+      return { ok: false, status: res.status, error: err };
+    }
+
+    let data: { content?: unknown; symbol?: unknown; year?: unknown; quarter?: unknown; date?: unknown };
+    try {
+      data = JSON.parse(text) as typeof data;
+    } catch {
+      return { ok: false, status: 502, error: "Invalid JSON from Roic v2 earnings-calls API." };
+    }
+
+    const content = typeof data.content === "string" ? data.content.trim() : "";
+    if (content.length < 200) {
+      return {
+        ok: false,
+        status: 404,
+        error: `No transcript text returned for ${year} Q${quarter}.`,
+      };
+    }
+
+    return {
+      ok: true,
+      content,
+      symbol: typeof data.symbol === "string" && data.symbol.trim() ? data.symbol.trim() : id,
+      year: typeof data.year === "number" ? data.year : year,
+      quarter: typeof data.quarter === "number" ? data.quarter : quarter,
+      date: typeof data.date === "string" ? data.date : undefined,
+    };
+  } catch (e) {
+    return { ok: false, status: 0, error: e instanceof Error ? e.message : "Request failed" };
+  }
+}

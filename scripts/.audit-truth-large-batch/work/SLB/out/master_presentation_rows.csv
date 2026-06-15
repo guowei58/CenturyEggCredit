@@ -1,0 +1,197 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,html:cash,html:cash,Cash,3,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,4,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2025-335-2024-325,html:receivables-less-allowance-for-doubtful-accounts-2025-335-2024-325,Receivables less allowance for doubtful accounts (2025 - $335; 2024 - $325),31,0
+balance_sheet,html:inventories,html:inventories,Inventories,32,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,33,0
+balance_sheet,html:current-assets-total,html:current-assets-total,Current assets total,34,0
+balance_sheet,html:investments-in-affiliated-companies,html:investments-in-affiliated-companies,Investments in Affiliated Companies,35,0
+balance_sheet,html:fixed-assets-less-accumulated-depreciation,html:fixed-assets-less-accumulated-depreciation,Fixed Assets less accumulated depreciation,36,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,38,0
+balance_sheet,html:intangible-assets,html:intangible-assets,Intangible Assets,39,0
+balance_sheet,html:other-assets,html:other-assets,Other Assets,40,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,41,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities,42,0
+balance_sheet,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,43,0
+balance_sheet,html:estimated-liability-for-taxes-on-income,html:estimated-liability-for-taxes-on-income,Estimated liability for taxes on income,44,0
+balance_sheet,html:short-term-borrowings-and-current-portion-of-long-term-debt,html:short-term-borrowings-and-current-portion-of-long-term-debt,Short-term borrowings and current portion of long-term debt,45,0
+balance_sheet,html:dividends-payable,html:dividends-payable,Dividends payable,46,0
+balance_sheet,html:current-liabilities-total,html:current-liabilities-total,Current Liabilities Total,47,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term Debt,48,0
+balance_sheet,html:postretirement-benefits,html:postretirement-benefits,Postretirement Benefits,50,0
+balance_sheet,html:deferred-taxes,html:deferred-taxes,Deferred Taxes,51,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other Liabilities,52,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,53,0
+balance_sheet,html:equity,html:equity,Equity,54,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,55,0
+balance_sheet,html:treasury-stock,html:treasury-stock,Treasury stock,56,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,57,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,58,0
+balance_sheet,html:slb-stockholders-equity,html:slb-stockholders-equity,SLB stockholders' equity,60,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,61,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,62,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,Liabilities and stockholders equity,63,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2018-249-2017-241,html:receivables-less-allowance-for-doubtful-accounts-2018-249-2017-241,Receivables less allowance for doubtful accounts (2018 - $249; 2017 - $241),5,0
+balance_sheet,html:multiclient-seismic-data,html:multiclient-seismic-data,Multiclient Seismic Data,37,0
+balance_sheet,html:schlumberger-stockholders-equity,html:schlumberger-stockholders-equity,Schlumberger stockholders' equity,59,0
+balance_sheet,html:revenue,html:revenue,Revenue,0,0
+balance_sheet,html:income-loss-from-continuing-operations,html:income-loss-from-continuing-operations,Income (loss) from continuing operations,1,0
+balance_sheet,html:diluted-earnings-loss-per-share-from-continuing-operations,html:diluted-earnings-loss-per-share-from-continuing-operations,Diluted earnings (loss) per share from continuing operations,2,0
+balance_sheet,html:working-capital,html:working-capital,Working capital,6,0
+balance_sheet,html:fixed-income-investments-held-to-maturity,html:fixed-income-investments-held-to-maturity,"Fixed income investments, held to maturity",7,0
+balance_sheet,html:total-debt,html:total-debt,Total debt,49,0
+balance_sheet,html:cash-dividends-declared-per-share,html:cash-dividends-declared-per-share,Cash dividends declared per share,64,0
+balance_sheet,html:net-income-loss-attributable-to-schlumberger,html:net-income-loss-attributable-to-schlumberger,Net income (loss) attributable to Schlumberger,65,0
+balance_sheet,html:diluted-earnings-loss-per-share-of-schlumberger,html:diluted-earnings-loss-per-share-of-schlumberger,Diluted earnings (loss) per share of Schlumberger,66,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2021-319-2020-301,html:receivables-less-allowance-for-doubtful-accounts-2021-319-2020-301,Receivables less allowance for doubtful accounts (2021 - $319; 2020 - $301),8,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2022-340-2021-319,html:receivables-less-allowance-for-doubtful-accounts-2022-340-2021-319,Receivables less allowance for doubtful accounts (2022 - $340; 2021 - $319),9,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2023-337-2022-340,html:receivables-less-allowance-for-doubtful-accounts-2023-337-2022-340,Receivables less allowance for doubtful accounts (2023 - $337; 2022 - $340),10,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2024-325-2023-337,html:receivables-less-allowance-for-doubtful-accounts-2024-325-2023-337,Receivables less allowance for doubtful accounts (2024 - $325; 2023 - $337),11,0
+income_statement,html:services,html:services,Services,0,0
+income_statement,html:product-sales,html:product-sales,Product sales,1,0
+income_statement,html:total-revenue,html:total-revenue,Total Revenue,2,0
+income_statement,html:interest-other-income,html:interest-other-income,Interest & other income,3,0
+income_statement,html:cost-of-services,html:cost-of-services,Cost of services,4,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of sales,5,0
+income_statement,html:research-engineering,html:research-engineering,Research & engineering,6,0
+income_statement,html:general-administrative,html:general-administrative,General & administrative,7,0
+income_statement,html:interest,html:interest,Interest,8,0
+income_statement,html:income-before-taxes,html:income-before-taxes,Income before taxes,9,0
+income_statement,html:tax-expense,html:tax-expense,Tax expense,10,0
+income_statement,html:net-income,html:net-income,Net income,11,0
+income_statement,html:net-income-attributable-to-noncontrolling-interests,html:net-income-attributable-to-noncontrolling-interests,Net income attributable to noncontrolling interests,12,0
+income_statement,html:net-income-attributable-to-schlumberger,html:net-income-attributable-to-schlumberger,Net income attributable to Schlumberger,13,0
+income_statement,html:diluted-earnings-per-share-of-schlumberger,html:diluted-earnings-per-share-of-schlumberger,Diluted earnings per share of Schlumberger,14,0
+income_statement,html:average-shares-outstanding,html:average-shares-outstanding,Average shares outstanding:,15,0
+income_statement,html:basic,html:basic,Basic,16,0
+income_statement,html:assuming-dilution,html:assuming-dilution,Assuming dilution,17,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:depreciation-and-amortization-1,html:depreciation-and-amortization-1,Depreciation and amortization (1),1,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,2,0
+cash_flow,html:earnings-of-equity-method-investments-less-dividends-received,html:earnings-of-equity-method-investments-less-dividends-received,"Earnings of equity method investments, less dividends received",3,0
+cash_flow,html:change-in-assets-and-liabilities-2,html:change-in-assets-and-liabilities-2,Change in assets and liabilities: (2),4,0
+cash_flow,html:increase-in-receivables,html:increase-in-receivables,Increase in receivables,5,0
+cash_flow,html:increase-in-inventories,html:increase-in-inventories,Increase in inventories,6,0
+cash_flow,html:increase-in-other-current-assets,html:increase-in-other-current-assets,Increase in other current assets,7,0
+cash_flow,html:decrease-increase-in-other-assets,html:decrease-increase-in-other-assets,Decrease (increase) in other assets,8,0
+cash_flow,html:decrease-in-accounts-payable-and-accrued-liabilities,html:decrease-in-accounts-payable-and-accrued-liabilities,Decrease in accounts payable and accrued liabilities,9,0
+cash_flow,html:increase-in-estimated-liability-for-taxes-on-income,html:increase-in-estimated-liability-for-taxes-on-income,Increase in estimated liability for taxes on income,10,0
+cash_flow,html:decrease-in-other-liabilities,html:decrease-in-other-liabilities,Decrease in other liabilities,11,0
+cash_flow,html:other,html:other,Other,12,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,NET CASH PROVIDED BY OPERATING ACTIVITIES,13,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,14,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures,15,0
+cash_flow,html:spm-investments,html:spm-investments,SPM investments,16,0
+cash_flow,html:multiclient-seismic-data-costs-capitalized,html:multiclient-seismic-data-costs-capitalized,Multiclient seismic data costs capitalized,17,0
+cash_flow,html:business-acquisitions-and-investments-net-of-cash-acquired,html:business-acquisitions-and-investments-net-of-cash-acquired,"Business acquisitions and investments, net of cash acquired",18,0
+cash_flow,html:sale-of-investments-net,html:sale-of-investments-net,"Sale of investments, net",19,0
+cash_flow,html:net-cash-used-in-provided-by-investing-activities,html:net-cash-used-in-provided-by-investing-activities,NET CASH (USED IN) PROVIDED BY INVESTING ACTIVITIES,20,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,21,0
+cash_flow,html:proceeds-from-employee-stock-purchase-plan,html:proceeds-from-employee-stock-purchase-plan,Proceeds from employee stock purchase plan,22,0
+cash_flow,html:proceeds-from-exercise-of-stock-options,html:proceeds-from-exercise-of-stock-options,Proceeds from exercise of stock options,23,0
+cash_flow,html:stock-repurchase-program,html:stock-repurchase-program,Stock repurchase program,24,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt,html:proceeds-from-issuance-of-long-term-debt,Proceeds from issuance of long-term debt,25,0
+cash_flow,html:repayment-of-long-term-debt,html:repayment-of-long-term-debt,Repayment of long-term debt,26,0
+cash_flow,html:net-decrease-in-short-term-borrowings,html:net-decrease-in-short-term-borrowings,Net decrease in short-term borrowings,27,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,NET CASH USED IN FINANCING ACTIVITIES,28,0
+cash_flow,html:net-decrease-increase-in-cash-before-translation-effect,html:net-decrease-increase-in-cash-before-translation-effect,Net (decrease) increase in cash before translation effect,29,0
+cash_flow,html:translation-effect-on-cash,html:translation-effect-on-cash,Translation effect on cash,30,0
+cash_flow,html:cash-beginning-of-period,html:cash-beginning-of-period,"Cash, beginning of period",31,0
+cash_flow,html:cash-end-of-period,html:cash-end-of-period,"Cash, end of period",32,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2019-244-2018-249,html:receivables-less-allowance-for-doubtful-accounts-2019-244-2018-249,Receivables less allowance for doubtful accounts (2019 - $244; 2018 - $249),12,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,33,0
+cash_flow,us-gaap:OtherAssetImpairmentCharges,us-gaap:OtherAssetImpairmentCharges,Impairments and other charges,34,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization (1),54,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Stock-based compensation expense,66,0
+cash_flow,us-gaap:IncomeLossFromEquityMethodInvestmentsNetOfDividendsOrDistributions,us-gaap:IncomeLossFromEquityMethodInvestmentsNetOfDividendsOrDistributions,"Earnings of equity method investments, less dividends received",71,0
+cash_flow,us-gaap:IncreaseDecreaseInReceivables,us-gaap:IncreaseDecreaseInReceivables,Increase in receivables,35,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Increase in inventories,55,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherCurrentAssets,us-gaap:IncreaseDecreaseInOtherCurrentAssets,Increase in other current assets,67,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherNoncurrentAssets,us-gaap:IncreaseDecreaseInOtherNoncurrentAssets,Increase in other assets,72,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,Decrease in accounts payable and accrued liabilities,75,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,Decrease in estimated liability for taxes on income,79,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,Decrease in other liabilities,83,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,Other,86,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,NET CASH PROVIDED BY OPERATING ACTIVITIES,88,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Capital expenditures,36,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,SPM investments,56,0
+cash_flow,slb:PaymentsForProceedsFromCapitalizedCostsSupportEquipmentAndFacilities,slb:PaymentsForProceedsFromCapitalizedCostsSupportEquipmentAndFacilities,Multiclient seismic data costs capitalized,68,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesAndInterestInAffiliates,us-gaap:PaymentsToAcquireBusinessesAndInterestInAffiliates,"Business acquisitions and investments, net of cash acquired",73,0
+cash_flow,us-gaap:PaymentsForProceedsFromInvestments,us-gaap:PaymentsForProceedsFromInvestments,"Sale of investments, net",76,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other,80,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,NET CASH (USED IN) PROVIDED BY INVESTING ACTIVITIES,84,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Dividends paid,37,0
+cash_flow,us-gaap:ProceedsFromStockPlans,us-gaap:ProceedsFromStockPlans,Proceeds from employee stock purchase plan,57,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from exercise of stock options,69,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfEquity,us-gaap:PaymentsForRepurchaseOfEquity,Stock repurchase program,74,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Proceeds from issuance of long-term debt,77,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayment of long-term debt,81,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,Net decrease in short-term borrowings,85,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other,87,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,NET CASH USED IN FINANCING ACTIVITIES,89,0
+cash_flow,us-gaap:CashPeriodIncreaseDecreaseExcludingExchangeRateEffect,us-gaap:CashPeriodIncreaseDecreaseExcludingExchangeRateEffect,Net increase (decrease) in cash before translation effect,90,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCash,us-gaap:EffectOfExchangeRateOnCash,Translation effect on cash,91,0
+cash_flow,us-gaap:Cash,us-gaap:Cash,"Cash, beginning of period",92,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2019-238-2018-249,html:receivables-less-allowance-for-doubtful-accounts-2019-238-2018-249,Receivables less allowance for doubtful accounts (2019 - $238; 2018 - $249),13,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred taxes,38,0
+cash_flow,us-gaap:ProceedsFromSaleMaturityAndCollectionsOfInvestments,us-gaap:ProceedsFromSaleMaturityAndCollectionsOfInvestments,"Sale of investments, net",39,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net decrease in cash before translation effect,40,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Services,18,0
+income_statement,slb:InterestIncomeAndOther,slb:InterestIncomeAndOther,Interest & other income,19,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of services,20,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research & engineering,23,0
+income_statement,us-gaap:GeneralAndAdministrativeExpense,us-gaap:GeneralAndAdministrativeExpense,General & administrative,26,0
+income_statement,slb:EquityMethodInvestmentOtherThanTemporaryImpairmentAndForeignCurrencyDevaluationLoss,slb:EquityMethodInvestmentOtherThanTemporaryImpairmentAndForeignCurrencyDevaluationLoss,Impairments & other,27,0
+income_statement,us-gaap:InterestExpense,us-gaap:InterestExpense,Interest,28,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income (loss) before taxes,29,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Tax expense (benefit),30,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income (loss),31,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net income attributable to noncontrolling interests,32,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income (loss) attributable to Schlumberger,33,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic earnings (loss) per share of Schlumberger,34,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted earnings (loss) per share of Schlumberger,35,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,21,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Assuming dilution,24,0
+cash_flow,slb:PaymentsForProceedsFromInvestments1,slb:PaymentsForProceedsFromInvestments1,"(Purchase) sale of investments, net",41,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinesses,us-gaap:ProceedsFromDivestitureOfBusinesses,Net proceeds from asset divestitures,58,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2020-249-2019-255,html:receivables-less-allowance-for-doubtful-accounts-2020-249-2019-255,Receivables less allowance for doubtful accounts (2020 - $249; 2019 - $255),14,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2020-312-2019-255,html:receivables-less-allowance-for-doubtful-accounts-2020-312-2019-255,Receivables less allowance for doubtful accounts (2020 - $312; 2019 - $255),15,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2020-299-2019-255,html:receivables-less-allowance-for-doubtful-accounts-2020-299-2019-255,Receivables less allowance for doubtful accounts (2020 - $299; 2019 - $255),16,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2021-314-2020-301,html:receivables-less-allowance-for-doubtful-accounts-2021-314-2020-301,Receivables less allowance for doubtful accounts (2021 - $314; 2020 - $301),17,0
+cash_flow,slb:ImpairmentsAndOtherChargesCredits,slb:ImpairmentsAndOtherChargesCredits,Impairments and other charges & credits,42,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2021-320-2020-301,html:receivables-less-allowance-for-doubtful-accounts-2021-320-2020-301,Receivables less allowance for doubtful accounts (2021 - $320; 2020 - $301),18,0
+cash_flow,slb:ProceedsFromSaleOfLibertyShares,slb:ProceedsFromSaleOfLibertyShares,Proceeds from sale of Liberty shares,59,0
+cash_flow,slb:ProceedsFromInvestments1,slb:ProceedsFromInvestments1,"Sale of investments, net",70,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Taxes paid on net settled stock-based compensation awards,43,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2022-319-2021-319,html:receivables-less-allowance-for-doubtful-accounts-2022-319-2021-319,Receivables less allowance for doubtful accounts (2022 - $319; 2021 - $319),19,0
+cash_flow,slb:GainLossOnSaleOfLibertyShares,slb:GainLossOnSaleOfLibertyShares,Gain on sale of Liberty shares,78,0
+cash_flow,us-gaap:GainLossOnDispositionOfRealEstateDiscontinuedOperations,us-gaap:GainLossOnDispositionOfRealEstateDiscontinuedOperations,Gain on sale of real estate,82,0
+cash_flow,us-gaap:ProceedsFromRealEstateAndRealEstateJointVentures,us-gaap:ProceedsFromRealEstateAndRealEstateJointVentures,Proceeds from sale of real estate,44,0
+cash_flow,us-gaap:ProceedsFromSaleOfShortTermInvestments,us-gaap:ProceedsFromSaleOfShortTermInvestments,"Sale of short-term investments, net",60,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,Translation effect on cash,45,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,"Cash, beginning of period",61,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2022-337-2021-319,html:receivables-less-allowance-for-doubtful-accounts-2022-337-2021-319,Receivables less allowance for doubtful accounts (2022 - $337; 2021 - $319),20,0
+cash_flow,us-gaap:GainOnSaleOfInvestments,us-gaap:GainOnSaleOfInvestments,Gain on marketable securities,46,0
+cash_flow,us-gaap:PaymentsForProceedsFromShortTermInvestments,us-gaap:PaymentsForProceedsFromShortTermInvestments,"(Purchase) sale of short-term investments, net",47,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2022-335-2021-320,html:receivables-less-allowance-for-doubtful-accounts-2022-335-2021-320,Receivables less allowance for doubtful accounts (2022 - $335; 2021 - $320),21,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2023-339-2022-340,html:receivables-less-allowance-for-doubtful-accounts-2023-339-2022-340,Receivables less allowance for doubtful accounts (2023 - $339; 2022 - $340),22,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseExcludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseExcludingExchangeRateEffect,Net increase in cash before translation effect,62,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2023-347-2022-340,html:receivables-less-allowance-for-doubtful-accounts-2023-347-2022-340,Receivables less allowance for doubtful accounts (2023 - $347; 2022 - $340),23,0
+income_statement,us-gaap:BusinessCombinationIntegrationRelatedCosts,us-gaap:BusinessCombinationIntegrationRelatedCosts,Merger & integration,22,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2024-333-2023-337,html:receivables-less-allowance-for-doubtful-accounts-2024-333-2023-337,Receivables less allowance for doubtful accounts (2024 - $333; 2023 - $337),24,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2024-318-2023-337,html:receivables-less-allowance-for-doubtful-accounts-2024-318-2023-337,Receivables less allowance for doubtful accounts (2024 - $318; 2023 - $337),25,0
+cash_flow,slb:PurchaseOfBlueChipSwapSecurities,slb:PurchaseOfBlueChipSwapSecurities,Purchase of Blue Chip Swap securities,48,0
+cash_flow,slb:ProceedsFromSaleOfBlueChipSecurities,slb:ProceedsFromSaleOfBlueChipSecurities,Proceeds from sale of Blue Chip securities,63,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2024-332-2023-337,html:receivables-less-allowance-for-doubtful-accounts-2024-332-2023-337,Receivables less allowance for doubtful accounts (2024 - $332; 2023 - $337),26,0
+income_statement,us-gaap:RestructuringCharges,us-gaap:RestructuringCharges,Restructuring,25,0
+cash_flow,us-gaap:PaymentsToAcquireIntangibleAssets,us-gaap:PaymentsToAcquireIntangibleAssets,Exploration data costs capitalized,49,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2025-339-2024-337,html:receivables-less-allowance-for-doubtful-accounts-2025-339-2024-337,Receivables less allowance for doubtful accounts (2025 - $339; 2024 - $337),27,0
+cash_flow,us-gaap:EquityMethodInvestmentRealizedGainLossOnDisposal,us-gaap:EquityMethodInvestmentRealizedGainLossOnDisposal,Gain on sale of APS project,50,0
+cash_flow,slb:ImpairmentOfEquityMethodInvestment,slb:ImpairmentOfEquityMethodInvestment,Impairment of equity method investment,64,0
+cash_flow,us-gaap:ProceedsFromSaleOfEquityMethodInvestments,us-gaap:ProceedsFromSaleOfEquityMethodInvestments,Proceed from sale of APS investment,51,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2025-334-2024-325,html:receivables-less-allowance-for-doubtful-accounts-2025-334-2024-325,Receivables less allowance for doubtful accounts (2025 - $334; 2024 - $325),28,0
+cash_flow,us-gaap:CashAcquiredFromAcquisition,us-gaap:CashAcquiredFromAcquisition,Cash acquired in ChampionX Corporation acquisition,52,0
+cash_flow,slb:ProceedsFromSaleOfChampionXDrillingTechnologiesBusiness,slb:ProceedsFromSaleOfChampionXDrillingTechnologiesBusiness,Proceeds from sale of ChampionX Drilling Technologies business,53,0
+cash_flow,us-gaap:OtherPaymentsToAcquireBusinesses,us-gaap:OtherPaymentsToAcquireBusinesses,"Other business acquisitions and investments, net of cash acquired",65,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2025-341-2024-325,html:receivables-less-allowance-for-doubtful-accounts-2025-341-2024-325,Receivables less allowance for doubtful accounts (2025 - $341; 2024 - $325),29,0
+balance_sheet,html:receivables-less-allowance-for-doubtful-accounts-2026-326-2025-335,html:receivables-less-allowance-for-doubtful-accounts-2026-326-2025-335,Receivables less allowance for doubtful accounts (2026 - $326; 2025 - $335),30,0

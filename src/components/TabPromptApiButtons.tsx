@@ -10,6 +10,7 @@ import { userHasCloudApiKeyForProvider } from "@/lib/user-llm-api-key-guard";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { useUserSettingsModalOptional } from "@/components/layout/UserSettingsModalProvider";
 import { ApiModelChoiceModal } from "@/components/ApiModelChoiceModal";
+import type { LlmApiErrorReport } from "@/lib/llm-api-error-report";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 
 const API_PROVIDERS: AiProvider[] = ["claude", "openai", "gemini", "deepseek"];
@@ -37,6 +38,10 @@ type Props = {
    * Use to persist the answer to the tab's saved-response store; throws to show an error under the buttons.
    */
   persistAfterResult?: (text: string) => void | Promise<void>;
+  /** Called when the user starts a new API run (clicks a provider button). */
+  onRunStart?: () => void;
+  /** When true, show the full prompt for review and require Okay before calling the API (after model pick). */
+  requirePromptReviewBeforeRun?: boolean;
   className?: string;
 };
 
@@ -47,11 +52,18 @@ export function TabPromptApiButtons({
   samplePublicPaths,
   onResult,
   persistAfterResult,
+  onRunStart,
+  requirePromptReviewBeforeRun = false,
   className = "",
 }: Props) {
   const [pending, setPending] = useState<AiProvider | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [modelPickProvider, setModelPickProvider] = useState<AiProvider | null>(null);
+  const [promptReviewRun, setPromptReviewRun] = useState<{
+    provider: AiProvider;
+    choice: ModelRunChoice;
+  } | null>(null);
   const { data: session } = useSession();
   const { preferences } = useUserPreferences();
   const settingsModal = useUserSettingsModalOptional();
@@ -61,6 +73,7 @@ export function TabPromptApiButtons({
       const trimmed = userPrompt.trim();
       if (!trimmed) return;
       setError(null);
+      setWarning(null);
       setPending(provider);
       try {
         const res = await fetch("/api/tab-prompt-complete", {
@@ -75,9 +88,18 @@ export function TabPromptApiButtons({
             ...modelPayloadForRun(provider, choice),
           }),
         });
-        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+        const data = (await res.json().catch(() => ({}))) as {
+          ok?: boolean;
+          text?: string;
+          error?: string;
+          errorReport?: LlmApiErrorReport;
+          warning?: string;
+        };
         if (!res.ok || data.ok !== true || typeof data.text !== "string") {
           throw new Error(data.error || `Request failed (${res.status})`);
+        }
+        if (data.warning?.trim()) {
+          setWarning(data.warning.trim());
         }
         onResult(data.text);
         if (persistAfterResult) {
@@ -96,6 +118,7 @@ export function TabPromptApiButtons({
     (provider: AiProvider) => {
       const trimmed = userPrompt.trim();
       if (!trimmed || pending) return;
+      onRunStart?.();
       const email = session?.user?.email;
       if (!userHasCloudApiKeyForProvider(provider, email, preferences)) {
         setError(USER_LLM_API_KEYS_POLICY);
@@ -104,13 +127,69 @@ export function TabPromptApiButtons({
       }
       setModelPickProvider(provider);
     },
-    [userPrompt, pending, session?.user?.email, preferences, settingsModal]
+    [userPrompt, pending, session?.user?.email, preferences, settingsModal, onRunStart]
   );
 
   const noPrompt = !userPrompt.trim();
+  const blockedByModal = modelPickProvider !== null || promptReviewRun !== null;
 
   return (
     <div className={className}>
+      {requirePromptReviewBeforeRun && promptReviewRun ? (
+        <div
+          className="fixed inset-0 z-[415] flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.55)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Review prompt before API run"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setPromptReviewRun(null);
+          }}
+        >
+          <div
+            className="flex max-h-[min(90vh,720px)] w-full max-w-2xl flex-col overflow-hidden rounded-xl border shadow-xl"
+            style={{ background: "var(--panel)", borderColor: "var(--border)" }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <div className="border-b px-4 py-3" style={{ borderColor: "var(--border2)" }}>
+              <h3 className="text-sm font-semibold" style={{ color: "var(--text)" }}>
+                Review prompt
+              </h3>
+              <p className="mt-1 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+                Confirm the prompt below, then click Okay to send it to {LABELS[promptReviewRun.provider]}.
+              </p>
+            </div>
+            <div
+              className="min-h-0 flex-1 overflow-y-auto px-4 py-3 font-mono text-[11px] leading-relaxed whitespace-pre-wrap"
+              style={{ color: "var(--text)", background: "var(--card2)" }}
+            >
+              {userPrompt}
+            </div>
+            <div className="flex justify-end gap-2 border-t px-4 py-3" style={{ borderColor: "var(--border2)" }}>
+              <button
+                type="button"
+                className="rounded border px-3 py-1.5 text-xs font-semibold"
+                style={{ borderColor: "var(--border2)", color: "var(--text)", background: "transparent" }}
+                onClick={() => setPromptReviewRun(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="rounded border px-3 py-1.5 text-xs font-semibold"
+                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+                onClick={() => {
+                  const run = promptReviewRun;
+                  setPromptReviewRun(null);
+                  if (run) void executeRun(run.provider, run.choice);
+                }}
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <ApiModelChoiceModal
         open={modelPickProvider !== null}
         provider={modelPickProvider}
@@ -118,7 +197,12 @@ export function TabPromptApiButtons({
         onConfirm={(choice) => {
           const p = modelPickProvider;
           setModelPickProvider(null);
-          if (p) void executeRun(p, choice);
+          if (!p) return;
+          if (requirePromptReviewBeforeRun) {
+            setPromptReviewRun({ provider: p, choice });
+            return;
+          }
+          void executeRun(p, choice);
         }}
       />
       <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
@@ -129,7 +213,6 @@ export function TabPromptApiButtons({
           const sel = AI_PROVIDER_CHIP_SELECTED[p];
           const isPending = pending === p;
           const inactiveWhileOtherRuns = pending !== null && pending !== p;
-          const blockedByModal = modelPickProvider !== null;
           return (
             <button
               key={p}
@@ -148,6 +231,11 @@ export function TabPromptApiButtons({
           );
         })}
       </div>
+      {warning ? (
+        <p className="mt-2 whitespace-pre-line text-[11px] leading-relaxed" style={{ color: "var(--warn)" }}>
+          {warning}
+        </p>
+      ) : null}
       {error ? (
         <p className="mt-2 whitespace-pre-line text-[11px] leading-relaxed" style={{ color: "var(--danger)" }}>
           {error}

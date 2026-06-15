@@ -7,6 +7,10 @@ export type RssArticle = {
   pubDate: string;
   /** Item description / summary when present in the feed */
   description?: string;
+  /** Google News RSS `<source url="...">` publisher homepage (outlet identity, not story URL). */
+  sourceUrl?: string;
+  /** Google News RSS `<source>` label, e.g. Reuters. */
+  sourceName?: string;
 };
 
 const parser = new XMLParser({ ignoreAttributes: false, trimValues: true });
@@ -20,12 +24,26 @@ function pickText(v: unknown): string {
 }
 
 /** Google News `<source url="...">` is often the outlet homepage, not the story. Prefer item `<link>`. */
-function sourceHrefFromItem(row: Record<string, unknown>): string {
+function sourceMetaFromItem(row: Record<string, unknown>): { sourceUrl?: string; sourceName?: string } {
   const s = row.source;
-  if (!s || typeof s !== "object") return "";
+  if (s == null) return {};
+  if (typeof s === "string") {
+    const sourceName = s.trim();
+    return sourceName ? { sourceName } : {};
+  }
+  if (typeof s !== "object") return {};
   const o = s as Record<string, unknown>;
-  const u = o["@_url"] ?? o.url;
-  return typeof u === "string" && /^https?:\/\//i.test(u) ? u.trim() : "";
+  const rawUrl = o["@_url"] ?? o.url;
+  const sourceUrl = typeof rawUrl === "string" && /^https?:\/\//i.test(rawUrl) ? rawUrl.trim() : "";
+  const sourceName = pickText(o).trim();
+  return {
+    ...(sourceUrl ? { sourceUrl } : {}),
+    ...(sourceName ? { sourceName } : {}),
+  };
+}
+
+function sourceHrefFromItem(row: Record<string, unknown>): string {
+  return sourceMetaFromItem(row).sourceUrl ?? "";
 }
 
 function normalizeItems(channel: unknown): RssArticle[] {
@@ -46,7 +64,17 @@ function normalizeItems(channel: unknown): RssArticle[] {
       pickText(row["content:encoded"]) ||
       pickText(row.summary) ||
       undefined;
-    if (title && link) out.push({ title, link, pubDate, description });
+    const { sourceUrl, sourceName } = sourceMetaFromItem(row);
+    if (title && link) {
+      out.push({
+        title,
+        link,
+        pubDate,
+        description,
+        ...(sourceUrl ? { sourceUrl } : {}),
+        ...(sourceName ? { sourceName } : {}),
+      });
+    }
   }
   return out;
 }
@@ -73,7 +101,10 @@ export async function fetchGoogleNewsRssSearch(
   /** When true, follow Google News redirect URLs to the publisher story (daily digest links). */
   resolveArticleUrls = false
 ): Promise<RssArticle[]> {
-  const q = query.includes("when:") ? query : `${query} when:${when}`;
+  const q =
+    query.includes("when:") || /\bafter:\d{4}-\d{2}-\d{2}\b/.test(query)
+      ? query
+      : `${query} when:${when}`;
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`;
   const items = await fetchRssFeed(url, max);
   if (!resolveArticleUrls) return items;
@@ -85,11 +116,15 @@ export async function fetchGoogleNewsRssSearch(
   );
 }
 
+export function isGoogleNewsUrl(url: string): boolean {
+  return /news\.google\./i.test(url) || /google\.com\/url\?/i.test(url);
+}
+
 /**
  * Best-effort resolve Google News redirect URLs to a publisher URL (HTTP redirect chain).
  */
 export async function resolvePublisherUrlFromGoogleNewsRss(link: string, timeoutMs = 10_000): Promise<string> {
-  if (!/news\.google\./i.test(link) && !/google\.com\/url\?/i.test(link)) return link;
+  if (!isGoogleNewsUrl(link)) return link;
   try {
     const res = await fetch(link, {
       redirect: "follow",

@@ -1,0 +1,183 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Products,0,0
+income_statement,us-gaap:PremiumsEarnedNet,us-gaap:PremiumsEarnedNet,Premiums,1,0
+income_statement,us-gaap:NetInvestmentIncome,us-gaap:NetInvestmentIncome,Net investment income,3,0
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Total revenues,4,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of products sold,5,0
+income_statement,us-gaap:PolicyholderBenefitsAndClaimsIncurredNet,us-gaap:PolicyholderBenefitsAndClaimsIncurredNet,Health care costs,7,0
+income_statement,us-gaap:OtherCostAndExpenseOperating,us-gaap:OtherCostAndExpenseOperating,Operating expenses,8,0
+income_statement,us-gaap:GoodwillImpairmentLoss,us-gaap:GoodwillImpairmentLoss,Goodwill impairment,9,0
+income_statement,us-gaap:RestructuringCostsAndAssetImpairmentCharges,us-gaap:RestructuringCostsAndAssetImpairmentCharges,Restructuring charges,10,0
+income_statement,us-gaap:ImpairmentOfLongLivedAssetsToBeDisposedOf,us-gaap:ImpairmentOfLongLivedAssetsToBeDisposedOf,Loss on assets held for sale,11,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,Total operating costs,12,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,13,0
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,Interest expense,14,0
+income_statement,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Gain on early extinguishment of debt,15,0
+income_statement,us-gaap:DeconsolidationGainOrLossAmount,us-gaap:DeconsolidationGainOrLossAmount,Gain on deconsolidation of subsidiary,17,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Other income,18,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before income tax provision,19,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax provision,20,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,24,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net (income) loss attributable to noncontrolling interests,25,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income attributable to CVS Health,26,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,27,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted,30,0
+income_statement,html:weighted-average-shares-outstanding,html:weighted-average-shares-outstanding,Weighted average shares outstanding:,33,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,34,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,35,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,13,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Investments,14,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net",15,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,16,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,18,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,19,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Long-term investments,20,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property and equipment, net",22,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease right-of-use assets,23,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,24,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",25,0
+balance_sheet,us-gaap:SeparateAccountAssets,us-gaap:SeparateAccountAssets,Separate accounts assets,26,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,27,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,28,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities:,29,0
+balance_sheet,us-gaap:AccountsPayableTradeCurrent,us-gaap:AccountsPayableTradeCurrent,Accounts payable,56,0
+balance_sheet,cvs:PharmacyClaimsAndDiscountsPayableCurrent,cvs:PharmacyClaimsAndDiscountsPayableCurrent,Pharmacy claims and discounts payable,60,0
+balance_sheet,cvs:LiabilityForClaimsAndClaimsAdjustmentExpenseAndHealthCareOrganizationAccountsPayableToThirdPartyPayor,cvs:LiabilityForClaimsAndClaimsAdjustmentExpenseAndHealthCareOrganizationAccountsPayableToThirdPartyPayor,Health care costs payable,62,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued expenses and other current liabilities,63,0
+balance_sheet,cvs:OtherInsuranceLiabilitiesCurrent,cvs:OtherInsuranceLiabilitiesCurrent,Other insurance liabilities,64,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityCurrent,us-gaap:OperatingLeaseLiabilityCurrent,Current portion of operating lease liabilities,65,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term debt,66,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term debt,68,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,70,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Long-term operating lease liabilities,71,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,73,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,74,0
+balance_sheet,us-gaap:SeparateAccountsLiability,us-gaap:SeparateAccountsLiability,Separate accounts liabilities,75,0
+balance_sheet,cvs:OtherInsuranceLiabilitiesNoncurrent,cvs:OtherInsuranceLiabilitiesNoncurrent,Other long-term insurance liabilities,76,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,77,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,78,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies (Note 18),79,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ equity:,80,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Preferred stock, par value $0.01: 0.1 shares authorized; none issued or outstanding",84,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock, par value $0.01: 3,200 shares authorized; 1,787 shares issued and 1,271 shares outstanding at December 31, 2025 and 1,778 shares issued and 1,260 shares outstanding at December 31, 2024 and capital surplus",85,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Treasury stock, at cost: 516 and 518 shares at December 31, 2025 and 2024",87,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,88,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),89,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total CVS Health shareholders’ equity,90,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,91,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total shareholders’ equity,92,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and shareholders’ equity,93,0
+cash_flow,us-gaap:ProceedsFromCustomers,us-gaap:ProceedsFromCustomers,Cash receipts from customers,0,0
+cash_flow,cvs:PaymentsForInventoryAndPrescriptionsDispensedByRetailNetworkPharmacies,cvs:PaymentsForInventoryAndPrescriptionsDispensedByRetailNetworkPharmacies,"Cash paid for inventory, prescriptions dispensed and health services rendered",2,0
+cash_flow,cvs:PaymentsForInsuranceBenefits,cvs:PaymentsForInsuranceBenefits,Insurance benefits paid,3,0
+cash_flow,us-gaap:PaymentsToSuppliersAndEmployees,us-gaap:PaymentsToSuppliersAndEmployees,Cash paid to other suppliers and employees,4,0
+cash_flow,us-gaap:ProceedsFromInterestAndDividendsReceived,us-gaap:ProceedsFromInterestAndDividendsReceived,Interest and investment income received,5,0
+cash_flow,us-gaap:InterestPaidNet,us-gaap:InterestPaidNet,Interest paid,6,0
+cash_flow,us-gaap:IncomeTaxesPaidNet,us-gaap:IncomeTaxesPaidNet,Income taxes paid,7,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by operating activities,8,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,16,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,Proceeds from sales and maturities of investments,17,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Purchases of investments,18,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Purchases of property and equipment,19,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,Acquisitions (net of cash and restricted cash acquired),22,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other,25,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used in investing activities,27,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,"Commercial paper borrowings (repayments), net",29,0
+cash_flow,us-gaap:ProceedsFromOtherShortTermDebt,us-gaap:ProceedsFromOtherShortTermDebt,Proceeds from issuance of short-term loan,30,0
+cash_flow,us-gaap:RepaymentsOfOtherShortTermDebt,us-gaap:RepaymentsOfOtherShortTermDebt,Repayment of short-term loan,31,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Proceeds from issuance of long-term debt,32,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayments of long-term debt,33,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchase of common stock,37,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Dividends paid,38,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from exercise of stock options,39,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Payments for taxes related to net share settlement of equity awards,40,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other,41,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided by (used in) financing activities,42,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Net increase (decrease) in cash, cash equivalents and restricted cash",44,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Cash, cash equivalents and restricted cash at the beginning of the period",45,0
+income_statement,html:other-expense-income,html:other-expense-income,Other expense (income),16,0
+income_statement,html:loss-from-discontinued-operations-net-of-tax,html:loss-from-discontinued-operations-net-of-tax,"Loss from discontinued operations, net of tax",21,0
+income_statement,html:income-loss-from-continuing-operations-attributable-to-cvs-health-in-dollars-per-share,html:income-loss-from-continuing-operations-attributable-to-cvs-health-in-dollars-per-share,Income (loss) from continuing operations attributable to CVS Health (in dollars per share),28,0
+income_statement,html:services,html:services,Services,2,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:investments,html:investments,Investments,1,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",2,0
+balance_sheet,html:inventories,html:inventories,Inventories,3,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,4,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,5,0
+balance_sheet,html:long-term-investments,html:long-term-investments,Long-term investments,6,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",7,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,8,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",9,0
+balance_sheet,html:separate-accounts-assets,html:separate-accounts-assets,Separate accounts assets,10,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,11,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,12,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,30,0
+balance_sheet,html:pharmacy-claims-and-discounts-payable,html:pharmacy-claims-and-discounts-payable,Pharmacy claims and discounts payable,31,0
+balance_sheet,html:health-care-costs-payable,html:health-care-costs-payable,Health care costs payable,32,0
+balance_sheet,html:policyholders-funds,html:policyholders-funds,Policyholders’ funds,33,0
+balance_sheet,html:accrued-expenses,html:accrued-expenses,Accrued expenses,34,0
+balance_sheet,html:other-insurance-liabilities,html:other-insurance-liabilities,Other insurance liabilities,35,0
+balance_sheet,html:short-term-debt,html:short-term-debt,Short-term debt,36,0
+balance_sheet,html:current-portion-of-long-term-debt,html:current-portion-of-long-term-debt,Current portion of long-term debt,37,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,38,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,39,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,40,0
+balance_sheet,html:separate-accounts-liabilities,html:separate-accounts-liabilities,Separate accounts liabilities,41,0
+balance_sheet,html:other-long-term-insurance-liabilities,html:other-long-term-insurance-liabilities,Other long-term insurance liabilities,42,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,43,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,44,0
+balance_sheet,html:commitments-and-contingencies-note-16,html:commitments-and-contingencies-note-16,Commitments and contingencies (Note 16),45,0
+balance_sheet,html:cvs-health-shareholders-equity,html:cvs-health-shareholders-equity,CVS Health shareholders’ equity:,46,0
+balance_sheet,html:preferred-stock-par-value-0-01-0-1-shares-authorized-none-issued-or-outstanding,html:preferred-stock-par-value-0-01-0-1-shares-authorized-none-issued-or-outstanding,"Preferred stock, par value $0.01: 0.1 shares authorized; none issued or outstanding",47,0
+balance_sheet,html:common-stock-par-value-0-01-3-200-shares-authorized-1-720-shares-issued-and-1-295-shares-outstanding-at-december-31-2018-and-1-712-shares-issued-and-1-014-shares-outstanding-at-december-31-2017-and-capital-surplus,html:common-stock-par-value-0-01-3-200-shares-authorized-1-720-shares-issued-and-1-295-shares-outstanding-at-december-31-2018-and-1-712-shares-issued-and-1-014-shares-outstanding-at-december-31-2017-and-capital-surplus,"Common stock, par value $0.01: 3,200 shares authorized; 1,720 shares issued and 1,295 shares outstanding at December 31, 2018 and 1,712 shares issued and 1,014 shares outstanding at December 31, 2017 and capital surplus",48,0
+balance_sheet,html:treasury-stock-at-cost-425-shares-at-december-31-2018-and-698-shares-at-december-31-2017,html:treasury-stock-at-cost-425-shares-at-december-31-2018-and-698-shares-at-december-31-2017,"Treasury stock, at cost: 425 shares at December 31, 2018 and 698 shares at December 31, 2017",49,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,50,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),51,0
+balance_sheet,html:total-cvs-health-shareholders-equity,html:total-cvs-health-shareholders-equity,Total CVS Health shareholders’ equity,52,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,53,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders’ equity,54,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total liabilities and shareholders’ equity,55,0
+cash_flow,html:purchase-of-noncontrolling-interest-in-subsidiary,html:purchase-of-noncontrolling-interest-in-subsidiary,Purchase of noncontrolling interest in subsidiary,34,0
+cash_flow,html:payment-of-contingent-consideration,html:payment-of-contingent-consideration,Payment of contingent consideration,35,0
+cash_flow,html:net-income-loss,html:net-income-loss,Net income (loss),9,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,10,0
+cash_flow,html:goodwill-impairments,html:goodwill-impairments,Goodwill impairments,11,0
+cash_flow,html:losses-on-settlements-of-defined-benefit-pension-plans,html:losses-on-settlements-of-defined-benefit-pension-plans,Losses on settlements of defined benefit pension plans,12,0
+cash_flow,html:stock-based-compensation,html:stock-based-compensation,Stock-based compensation,13,0
+cash_flow,html:loss-on-early-extinguishment-of-debt,html:loss-on-early-extinguishment-of-debt,Loss on early extinguishment of debt,14,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,15,0
+cash_flow,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",23,0
+cash_flow,html:accounts-payable-and-pharmacy-claims-and-discounts-payable,html:accounts-payable-and-pharmacy-claims-and-discounts-payable,Accounts payable and pharmacy claims and discounts payable,26,0
+income_statement,us-gaap:PolicyholderBenefitsAndClaimsIncurredHealthCare,us-gaap:PolicyholderBenefitsAndClaimsIncurredHealthCare,Benefit costs,6,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest,Income (loss) from continuing operations,22,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTax,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTax,"Loss from discontinued operations, net of tax",23,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,Income (loss) from continuing operations attributable to CVS Health,29,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,Income (loss) from continuing operations attributable to CVS Health,31,0
+income_statement,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare,Loss from discontinued operations attributable to CVS Health,32,0
+income_statement,us-gaap:CommonStockDividendsPerShareDeclared,us-gaap:CommonStockDividendsPerShareDeclared,Dividends declared per share,36,0
+balance_sheet,cvs:PharmacyClaimsandDiscountsPayableCurrent,cvs:PharmacyClaimsandDiscountsPayableCurrent,Pharmacy claims and discounts payable,57,0
+balance_sheet,us-gaap:LiabilityForUnpaidClaimsAndClaimsAdjustmentExpenseNet,us-gaap:LiabilityForUnpaidClaimsAndClaimsAdjustmentExpenseNet,Health care costs payable,58,0
+balance_sheet,us-gaap:OtherPolicyholderFunds,us-gaap:OtherPolicyholderFunds,Policyholders’ funds,59,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,67,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock, par value $0.01: 0.1 shares authorized; none issued or outstanding",81,0
+balance_sheet,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,"Common stock, par value $0.01: 3,200 shares authorized; 1,727 shares issued and 1,302 shares outstanding at December 31, 2019 and 1,720 shares issued and 1,295 shares outstanding at December 31, 2018 and capital surplus",82,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock, at cost: 425 shares at both December 31, 2019 and 2018",83,0
+cash_flow,cvs:PaymentsforInventoryandPrescriptionsDispensedbyRetailNetworkPharmacies,cvs:PaymentsforInventoryandPrescriptionsDispensedbyRetailNetworkPharmacies,Cash paid for inventory and prescriptions dispensed by retail network pharmacies,1,0
+cash_flow,cvs:ProceedsFromLeasePaymentSalesTypeAndDirectFinancingLeasesInvestingActivity,cvs:ProceedsFromLeasePaymentSalesTypeAndDirectFinancingLeasesInvestingActivity,Proceeds from sale-leaseback transactions,20,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,Net repayments of short-term debt,28,0
+cash_flow,us-gaap:PaymentsForProceedsFromDerivativeInstrumentFinancingActivities,us-gaap:PaymentsForProceedsFromDerivativeInstrumentFinancingActivities,Derivative settlements,36,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Effect of exchange rate changes on cash, cash equivalents and restricted cash",43,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",21,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Treasury stock, at cost: 423 and 425 shares at December 31, 2020 and 2019",86,0
+cash_flow,us-gaap:ProceedsFromLeasePaymentSalesTypeAndDirectFinancingLeasesInvestingActivity,us-gaap:ProceedsFromLeasePaymentSalesTypeAndDirectFinancingLeasesInvestingActivity,Proceeds from sale-leaseback transactions,21,0
+income_statement,cvs:StoreImpairmentCharges,cvs:StoreImpairmentCharges,Store impairments,37,0
+income_statement,us-gaap:GainLossRelatedToLitigationSettlement,us-gaap:GainLossRelatedToLitigationSettlement,Opioid litigation charges,38,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Assets held for sale,17,0
+balance_sheet,us-gaap:LiabilityForClaimsAndClaimsAdjustmentExpense,us-gaap:LiabilityForClaimsAndClaimsAdjustmentExpense,Health care costs payable,61,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Liabilities held for sale,69,0
+cash_flow,us-gaap:CashDivestedFromDeconsolidation,us-gaap:CashDivestedFromDeconsolidation,"Proceeds from sale of subsidiaries (net of cash and restricted cash sold of $2,854, $0 and $9)",24,0
+balance_sheet,html:operating-lease-right-of-use-assets,html:operating-lease-right-of-use-assets,Operating lease right-of-use assets,94,0
+balance_sheet,html:current-portion-of-operating-lease-liabilities,html:current-portion-of-operating-lease-liabilities,Current portion of operating lease liabilities,95,0
+balance_sheet,html:long-term-operating-lease-liabilities,html:long-term-operating-lease-liabilities,Long-term operating lease liabilities,96,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,72,0

@@ -1,0 +1,64 @@
+{
+  "seed": 20260613,
+  "tickers": [
+    "MSFT",
+    "BRK.B",
+    "PEP",
+    "TXN",
+    "GNRC"
+  ],
+  "results": [
+    {
+      "ticker": "MSFT",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "MSFT_compiled_financials.xlsx",
+      "elapsedSec": 954
+    },
+    {
+      "ticker": "BRK.B",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "BRK.B_compiled_financials.xlsx",
+      "elapsedSec": 498
+    },
+    {
+      "ticker": "PEP",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "PEP_compiled_financials.xlsx",
+      "elapsedSec": 109
+    },
+    {
+      "ticker": "TXN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "TXN_compiled_financials.xlsx",
+      "elapsedSec": 80
+    },
+    {
+      "ticker": "GNRC",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "outputFile": "GNRC_compiled_financials.xlsx",
+      "elapsedSec": 156
+    }
+  ],
+  "zipFile": "compiled-financials-sample.zip",
+  "generatedAt": "2026-06-14T00:39:17.394Z"
+}

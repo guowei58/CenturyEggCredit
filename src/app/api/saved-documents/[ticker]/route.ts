@@ -7,6 +7,7 @@ import {
   listSavedDocuments,
   reconcileSavedDocuments,
   saveDocumentFromUrl,
+  upsertDocumentFromUrl,
   saveDeterministicCompilerExcelToSavedDocuments,
   saveSecFilingFinancialsExcelToSavedDocuments,
   saveXbrlAsPresentedExcelToSavedDocuments,
@@ -54,7 +55,7 @@ function contentTypeForFilename(filename: string): string {
  * GET  /api/saved-documents/[ticker]  -> list saved items (Postgres, signed-in user)
  * GET  ?file= — download one stored document
  * GET  ?reconcile=1 — no-op compatibility (same as list)
- * POST { url } — fetch URL, store native format (HTML/PDF/XML/text) in Postgres
+ * POST { url, title? } — fetch URL, store native format (HTML/PDF/XML/text) in Postgres
  * POST multipart: action=save-xbrl-compiler-xlsx, file=(.xlsx) — deterministic compiler export (replaces prior for ticker)
  * POST multipart: action=save-xbrl-as-presented-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber — preferred (no base64 size blow-up)
  * POST multipart: action=save-sec-filing-financials-xlsx, file=(.xlsx), filingForm, filingDate, accessionNumber
@@ -222,7 +223,7 @@ export async function POST(
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const b = body as { url?: unknown; action?: unknown; base64?: unknown; filing?: unknown };
+  const b = body as { url?: unknown; title?: unknown; action?: unknown; base64?: unknown; filing?: unknown; filenameBase?: unknown };
 
   if (b.action === "save-xbrl-as-presented-xlsx") {
     const b64 = typeof b.base64 === "string" ? b.base64.trim() : "";
@@ -264,10 +265,22 @@ export async function POST(
   }
 
   const url = typeof b.url === "string" ? b.url : "";
+  const titleHint = typeof b.title === "string" ? b.title.trim() : "";
+  const filenameBase = typeof b.filenameBase === "string" ? b.filenameBase.trim() : "";
   if (!url.trim()) return NextResponse.json({ error: "Missing url" }, { status: 400 });
 
   try {
-    const result = await saveDocumentFromUrl(userId, ticker, url);
+    if (filenameBase) {
+      const result = await upsertDocumentFromUrl(userId, ticker, url, filenameBase);
+      if (!result.ok) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+      return NextResponse.json({ ok: true, item: result.item });
+    }
+
+    const result = await saveDocumentFromUrl(userId, ticker, url, {
+      titleHint: titleHint || undefined,
+    });
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }

@@ -129,6 +129,15 @@ class WorkbookTruthIssue:
     source_file: str = ""
 
 
+def _period_at_or_above_floor(pl: str, floor: int | None) -> bool:
+    if floor is None:
+        return True
+    from period_parser import parse_period
+
+    p = parse_period(pl)
+    return p is not None and p.fiscal_year >= floor
+
+
 def validate_compiled_against_workbooks(
     consolidated: ConsolidatedData,
     truth: dict[tuple[str, str, str], float],
@@ -136,6 +145,7 @@ def validate_compiled_against_workbooks(
     derived_cells: frozenset[tuple[str, str, str]],
     *,
     tol: float = 0.01,
+    min_fiscal_year: int | None = None,
 ) -> list[WorkbookTruthIssue]:
     """Compare consolidated reported cells to headline workbook truth."""
     labels = {(r.statement_type, r.canonical_row_id): r.display_label for r in master_rows}
@@ -143,6 +153,8 @@ def validate_compiled_against_workbooks(
 
     seen_truth = set(truth.keys())
     for (st, crid, pl), wb_val in truth.items():
+        if not _period_at_or_above_floor(pl, min_fiscal_year):
+            continue
         compiled = consolidated.get(st, {}).get(crid, {}).get(pl)
         disp = labels.get((st, crid), crid)
         key = (st, crid, pl)
@@ -161,6 +173,8 @@ def validate_compiled_against_workbooks(
         for crid, periods in consolidated[st].items():
             for pl, val in periods.items():
                 if val is None:
+                    continue
+                if not _period_at_or_above_floor(pl, min_fiscal_year):
                     continue
                 key = (st, crid, pl)
                 if key in derived_cells:
@@ -223,10 +237,12 @@ def validate_workbook_truth(
     derived_cells: frozenset[tuple[str, str, str]],
     *,
     tol: float = 0.01,
+    min_fiscal_year: int | None = None,
 ) -> list[WorkbookTruthIssue]:
     """Cell-level and line-level checks against headline workbook sources."""
     issues = validate_compiled_against_workbooks(
         consolidated, truth, master_rows, derived_cells, tol=tol,
+        min_fiscal_year=min_fiscal_year,
     )
     issues.extend(validate_workbook_lines(
         consolidated, workbook_canons, master_rows, derived_cells,
@@ -370,6 +386,7 @@ def run_workbook_truth_until_clean(
     *,
     max_iterations: int = 15,
     tol: float = 0.01,
+    min_fiscal_year: int | None = None,
 ) -> tuple[WorkbookTruthPassResult, list]:
     """
     Enforce workbook-as-truth in a loop: align reported cells, restore missing
@@ -455,6 +472,7 @@ def run_workbook_truth_until_clean(
             master_rows,
             _protected_derived_keys(),
             tol=tol,
+            min_fiscal_year=min_fiscal_year,
         )
         if not issues:
             logger.info(

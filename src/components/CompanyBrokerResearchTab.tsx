@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui";
-import { BrokerResearchFeed } from "@/components/brokerResearch/BrokerResearchFeed";
+import { BrokerActivitiesFeed } from "@/components/brokerActivities/BrokerActivitiesFeed";
 
 export function CompanyBrokerResearchTab({
   ticker,
@@ -15,17 +15,17 @@ export function CompanyBrokerResearchTab({
 
   if (!safeTicker) {
     return (
-      <Card title="Broker Research Reports">
+      <Card title="Broker Activities">
         <p className="py-4 text-sm" style={{ color: "var(--muted2)" }}>
-          Select a company to build a discoverable broker research index.
+          Select a company to view public sell-side broker activity metadata.
         </p>
       </Card>
     );
   }
 
   return (
-    <Card title={`Broker Research Reports — ${safeTicker}`}>
-      <BrokerResearchFeed ticker={safeTicker} companyName={displayName || undefined} />
+    <Card title={`Broker Activities — ${safeTicker}`}>
+      <BrokerActivitiesFeed ticker={safeTicker} companyName={displayName || undefined} />
     </Card>
   );
 }

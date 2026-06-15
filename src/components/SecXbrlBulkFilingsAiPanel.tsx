@@ -8,7 +8,7 @@ import type { AiProvider } from "@/lib/ai-provider";
 import { AI_PROVIDER_CHIP_SELECTED } from "@/lib/ai-provider";
 import { effectiveModelIdForRun, modelPayloadForRun, type ModelRunChoice } from "@/lib/ai-model-prefs-client";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
-import { presetsForProvider } from "@/lib/ai-model-options";
+import { useAllAiModelPresets } from "@/hooks/useAiModelPresets";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { fetchSavedTabContent } from "@/lib/saved-data-client";
 import { downloadMarkdownConsolidationAsXlsx } from "@/lib/markdown-tables-to-xlsx";
@@ -83,6 +83,10 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
     onAfterBulkSave?: () => void;
     /** Sync save button disabled / busy state to an external trigger. */
     onBulkSaveUiChange?: (state: BulkSaveUiState) => void;
+    /** After bulk save finishes, collapse the scrollable filings list to save vertical space. */
+    autoCollapseFilingsAfterSave?: boolean;
+    /** Scrollable filings list + header. Default true. */
+    showFilingsList?: boolean;
   }
 >(function SecXbrlBulkFilingsAiPanel(
   {
@@ -95,6 +99,8 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
     minFilingYear,
     onAfterBulkSave,
     onBulkSaveUiChange,
+    autoCollapseFilingsAfterSave = !showBulkSaveButton,
+    showFilingsList = true,
   },
   ref
 ) {
@@ -102,6 +108,7 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
   const tk = (ticker ?? "").trim().toUpperCase();
   const { status: authStatus } = useSession();
   const { ready: prefsReady, preferences } = useUserPreferences();
+  const { presetsByProvider } = useAllAiModelPresets();
   const [consolidateModelChoice, setConsolidateModelChoice] =
     useState<Record<AiProvider, ModelRunChoice>>(DEFAULT_CONSOLIDATE_MODELS);
   const lastModelHydrateTickerRef = useRef<string | null>(null);
@@ -118,6 +125,7 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
     outcome?: string;
   } | null>(null);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
+  const [filingsListExpanded, setFilingsListExpanded] = useState(true);
   const tabAliveRef = useRef(true);
   const bulkAbortRef = useRef<AbortController | null>(null);
   const [consolidatedMd, setConsolidatedMd] = useState<string>("");
@@ -145,6 +153,8 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
 
   useEffect(() => {
     tabAliveRef.current = true;
+    setFilingsListExpanded(true);
+    setBulkMsg(null);
     return () => {
       tabAliveRef.current = false;
     };
@@ -161,13 +171,13 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
       for (const p of AI_CONSOLIDATE_PROVIDERS) {
         const raw = p === "deepseek" ? models?.deepseek ?? models?.ollama : models?.[p];
         const id = typeof raw === "string" ? raw.trim() : "";
-        if (id && presetsForProvider(p).some((opt) => opt.id === id)) {
+        if (id && presetsByProvider[p].some((opt) => opt.id === id)) {
           next[p] = id;
         }
       }
       return next;
     });
-  }, [prefsReady, preferences.aiModels, tk, showAiConsolidation]);
+  }, [prefsReady, preferences.aiModels, presetsByProvider, tk, showAiConsolidation]);
 
   useEffect(() => {
     if (!showBulkSave || !tk) return;
@@ -373,6 +383,9 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
           setBulkMsg(
             `Saved ${saved} workbook(s). Skipped ${skipped} (no statements). Failed ${failed}.${latestNote}${tail}`
           );
+          if (autoCollapseFilingsAfterSave && saved > 0) {
+            setFilingsListExpanded(false);
+          }
         }
       } finally {
         setBulkSaving(false);
@@ -387,6 +400,7 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
     filings,
     listData,
     onAfterBulkSave,
+    autoCollapseFilingsAfterSave,
     tk,
     useTestHtmlFace,
   ]);
@@ -413,23 +427,31 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
     );
   }
 
-  return (
-    <div className="space-y-4">
-      {showBulkSave ? (
-      <Card>
-        {listLoading ? (
-          <p className="text-sm" style={{ color: "var(--muted2)" }}>
-            Loading filings…
-          </p>
-        ) : listErr ? (
-          <p className="text-sm" style={{ color: "var(--warn)" }}>
-            {listErr}
-          </p>
-        ) : null}
+  const bulkPanelVisible =
+    showFilingsList ||
+    listLoading ||
+    listErr ||
+    bulkSaving ||
+    Boolean(bulkMsg) ||
+    (!listLoading && !listErr && filings.length === 0);
 
-        {!listLoading && !listErr && filings.length > 0 ? (
-          <div className="pt-0.5">
-            <div>
+  const bulkStatusBody = (
+    <>
+      {listLoading ? (
+        <p className="text-sm" style={{ color: "var(--muted2)" }}>
+          Loading filings…
+        </p>
+      ) : listErr ? (
+        <p className="text-sm" style={{ color: "var(--warn)" }}>
+          {listErr}
+        </p>
+      ) : null}
+
+      {!listLoading && !listErr && filings.length > 0 ? (
+        <div className={showFilingsList ? "pt-0.5" : undefined}>
+          {showFilingsList ? (
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="min-w-0">
               <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
                 {useTestHtmlFace ? "All filings (10-K / 10-Q) — Period Financials extraction" : "All XBRL filings (10-K / 10-Q)"}
               </p>
@@ -438,85 +460,115 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
                 {minFilingYear != null ? ` since ${minFilingYear}` : ""} · newest first
               </p>
             </div>
-            {showBulkSaveButton ? (
+            {!filingsListExpanded && !bulkSaving ? (
               <button
                 type="button"
-                className="mt-2 rounded-md border px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
-                style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-                disabled={!canBulkSave}
-                title={
-                  authStatus !== "authenticated"
-                    ? "Sign in to save workbooks to Saved Documents."
-                    : useTestHtmlFace
-                      ? `Fetch each 10-K/10-Q with filing date ${FACE_BULK_MIN_FILING_YEAR}–present (newest first) and save one HTML-face .xlsx per accession to Saved Documents.`
-                      : "Fetch each filing newest-first and save one .xlsx per accession under Saved Documents. Re-running replaces the same file for each filing."
-                }
-                onClick={runBulkSave}
+                className="shrink-0 rounded border px-2 py-0.5 text-[10px] font-medium"
+                style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card2)" }}
+                onClick={() => setFilingsListExpanded(true)}
               >
-                {bulkSaving
-                  ? "Saving…"
-                  : useTestHtmlFace
-                    ? "Bulk Save HTML Face Workbooks"
-                    : "Bulk Save SEC XBRL Data"}
+                Show filings ({filings.length})
               </button>
             ) : null}
-            {bulkProgress && bulkSaving ? (
-              <p className="mt-2 text-[10px] font-mono" style={{ color: "var(--muted2)" }}>
-                {bulkProgress.done}/{bulkProgress.total} · {bulkProgress.label}
-                {bulkProgress.outcome ? ` · ${bulkProgress.outcome}` : ""}
-                {bulkProgress.done === 0 ? " (newest filing)" : ""}
-              </p>
-            ) : null}
-            {bulkMsg ? (
-              <p className="mt-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
-                {bulkMsg}
-              </p>
-            ) : null}
-            <div
-              className="mt-2 max-h-56 overflow-y-auto rounded border text-xs"
-              style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
-            >
-              <ul className="divide-y p-0" style={{ borderColor: "var(--border2)" }}>
-                {filings.map((f, idx) => {
-                  const isSel = normalizeAccessionKey(f.accessionNumber) === normalizeAccessionKey(selectedAcc);
-                  return (
-                    <li
-                      key={f.accessionNumber}
-                      className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-2 py-1.5"
-                      style={{
-                        background: isSel ? "var(--panel)" : undefined,
-                        borderColor: "var(--border2)",
-                      }}
-                    >
-                      {idx === 0 ? (
-                        <span
-                          className="shrink-0 rounded px-1 py-0.5 text-[9px] font-bold uppercase tracking-wide"
-                          style={{ background: "var(--accent)", color: "#fff" }}
-                        >
-                          Latest
-                        </span>
-                      ) : null}
-                      <span className="shrink-0 font-mono text-[10px]" style={{ color: "var(--muted)" }}>
-                        {f.filingDate}
-                      </span>
-                      <span className="shrink-0 font-semibold" style={{ color: "var(--text)" }}>
-                        {f.form}
-                      </span>
-                      <span className="min-w-0 break-all font-mono text-[10px]" style={{ color: "var(--muted2)" }}>
-                        {f.accessionNumber}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
           </div>
-        ) : !listLoading && !listErr ? (
-          <p className="mt-3 text-sm" style={{ color: "var(--muted2)" }}>
-            No filings returned for this ticker.
-          </p>
-        ) : null}
-      </Card>
+          ) : null}
+          {showBulkSaveButton ? (
+            <button
+              type="button"
+              className="mt-2 rounded-md border px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
+              style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
+              disabled={!canBulkSave}
+              title={
+                authStatus !== "authenticated"
+                  ? "Sign in to save workbooks to Saved Documents."
+                  : useTestHtmlFace
+                    ? `Fetch each 10-K/10-Q with filing date ${FACE_BULK_MIN_FILING_YEAR}–present (newest first) and save one HTML-face .xlsx per accession to Saved Documents.`
+                    : "Fetch each filing newest-first and save one .xlsx per accession under Saved Documents. Re-running replaces the same file for each filing."
+              }
+              onClick={runBulkSave}
+            >
+              {bulkSaving
+                ? "Saving…"
+                : useTestHtmlFace
+                  ? "Bulk Save HTML Face Workbooks"
+                  : "Bulk Save SEC XBRL Data"}
+            </button>
+          ) : null}
+          {bulkProgress && bulkSaving ? (
+            <p className={`${showFilingsList || showBulkSaveButton ? "mt-2" : ""} text-[10px] font-mono`} style={{ color: "var(--muted2)" }}>
+              {bulkProgress.done}/{bulkProgress.total} · {bulkProgress.label}
+              {bulkProgress.outcome ? ` · ${bulkProgress.outcome}` : ""}
+              {bulkProgress.done === 0 ? " (newest filing)" : ""}
+            </p>
+          ) : null}
+          {bulkMsg ? (
+            <p className={`${showFilingsList || showBulkSaveButton || bulkProgress ? "mt-2" : ""} text-[10px] leading-snug`} style={{ color: "var(--muted2)" }}>
+              {bulkMsg}
+            </p>
+          ) : null}
+          {showFilingsList && filingsListExpanded ? (
+          <div
+            className="mt-2 max-h-56 overflow-y-auto rounded border text-xs"
+            style={{ borderColor: "var(--border2)", background: "var(--card2)" }}
+          >
+            <ul className="divide-y p-0" style={{ borderColor: "var(--border2)" }}>
+              {filings.map((f, idx) => {
+                const isSel = normalizeAccessionKey(f.accessionNumber) === normalizeAccessionKey(selectedAcc);
+                return (
+                  <li
+                    key={f.accessionNumber}
+                    className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-2 py-1.5"
+                    style={{
+                      background: isSel ? "var(--panel)" : undefined,
+                      borderColor: "var(--border2)",
+                    }}
+                  >
+                    {idx === 0 ? (
+                      <span
+                        className="shrink-0 rounded px-1 py-0.5 text-[9px] font-bold uppercase tracking-wide"
+                        style={{ background: "var(--accent)", color: "#fff" }}
+                      >
+                        Latest
+                      </span>
+                    ) : null}
+                    <span className="shrink-0 font-mono text-[10px]" style={{ color: "var(--muted)" }}>
+                      {f.filingDate}
+                    </span>
+                    <span className="shrink-0 font-semibold" style={{ color: "var(--text)" }}>
+                      {f.form}
+                    </span>
+                    <span className="min-w-0 break-all font-mono text-[10px]" style={{ color: "var(--muted2)" }}>
+                      {f.accessionNumber}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          ) : null}
+          {showFilingsList && filingsListExpanded && bulkMsg && !bulkSaving ? (
+            <button
+              type="button"
+              className="mt-2 text-[10px] font-medium underline-offset-2 hover:underline"
+              style={{ color: "var(--muted2)" }}
+              onClick={() => setFilingsListExpanded(false)}
+            >
+              Minimize filings list
+            </button>
+          ) : null}
+        </div>
+      ) : !listLoading && !listErr ? (
+        <p className={showFilingsList ? "mt-3 text-sm" : "text-sm"} style={{ color: "var(--muted2)" }}>
+          No filings returned for this ticker.
+        </p>
+      ) : null}
+    </>
+  );
+
+  return (
+    <div className="space-y-4">
+      {showBulkSave && bulkPanelVisible ? (
+        showFilingsList ? <Card>{bulkStatusBody}</Card> : bulkStatusBody
       ) : null}
 
       {showAiConsolidation ? (
@@ -578,7 +630,7 @@ export const SecXbrlBulkFilingsAiPanel = forwardRef<
                     }}
                   >
                     <option value="__saved__">Saved default (User Settings)</option>
-                    {presetsForProvider(p).map((opt) => (
+                    {presetsByProvider[p].map((opt) => (
                       <option key={opt.id} value={opt.id}>
                         {opt.label}
                       </option>

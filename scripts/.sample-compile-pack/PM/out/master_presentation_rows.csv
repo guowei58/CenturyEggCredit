@@ -1,0 +1,84 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net revenues 1 & 2 (Notes 5 & 11),2,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales,3,0
+income_statement,us-gaap:GrossProfit,us-gaap:GrossProfit,Gross profit,4,0
+income_statement,pm:MarketingAdministrationAndResearchCosts,pm:MarketingAdministrationAndResearchCosts,"Marketing, administration and research costs (Notes 3, 4, 11 & 18)",5,0
+income_statement,us-gaap:GoodwillImpairmentLoss,us-gaap:GoodwillImpairmentLoss,Impairment of goodwill (Note 4),8,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,9,0
+income_statement,us-gaap:InterestIncomeExpenseNonoperatingNet,us-gaap:InterestIncomeExpenseNonoperatingNet,"Interest expense, net (Note 13)",10,0
+income_statement,us-gaap:NetPeriodicDefinedBenefitsExpenseReversalOfExpenseExcludingServiceCostComponent,us-gaap:NetPeriodicDefinedBenefitsExpenseReversalOfExpenseExcludingServiceCostComponent,Pension and other employee benefit costs (Note 12),11,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,Earnings before income taxes,12,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes (Note 10),13,0
+income_statement,us-gaap:EquitySecuritiesWithoutReadilyDeterminableFairValueImpairmentLossAnnualAmount,us-gaap:EquitySecuritiesWithoutReadilyDeterminableFairValueImpairmentLossAnnualAmount,Impairment related to the RBH equity investment (Note 5),14,0
+income_statement,us-gaap:IncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromEquityMethodInvestments,"Equity investments and securities (income)/loss, net",15,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net earnings,16,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net earnings attributable to noncontrolling interests,17,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net earnings attributable to PMI,18,0
+income_statement,html:per-share-data-note-9,html:per-share-data-note-9,Per share data (Note 9):,19,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic earnings per share,20,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted earnings per share,21,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,Trade receivables (less allowances of $23 in 2025 and $47 in 2024) (1),1,0
+balance_sheet,us-gaap:AllowanceForDoubtfulOtherReceivablesCurrent,us-gaap:AllowanceForDoubtfulOtherReceivablesCurrent,Other receivables (less allowances of $24 in 2025 and $22 in 2024),2,0
+balance_sheet,html:inventories,html:inventories,Inventories:,3,0
+balance_sheet,pm:InventoryLeafTobacco,pm:InventoryLeafTobacco,Leaf tobacco,4,0
+balance_sheet,us-gaap:InventoryRawMaterialsNetOfReserves,us-gaap:InventoryRawMaterialsNetOfReserves,Other raw materials,5,0
+balance_sheet,us-gaap:InventoryFinishedGoodsNetOfReserves,us-gaap:InventoryFinishedGoodsNetOfReserves,Finished product,6,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,inventory net inventory net,7,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,8,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,9,0
+balance_sheet,html:property-plant-and-equipment-at-cost,html:property-plant-and-equipment-at-cost,"Property, plant and equipment, at cost:",10,0
+balance_sheet,us-gaap:LandAndLandImprovements,us-gaap:LandAndLandImprovements,Land and land improvements,11,0
+balance_sheet,us-gaap:BuildingsAndImprovementsGross,us-gaap:BuildingsAndImprovementsGross,Buildings and building equipment,12,0
+balance_sheet,us-gaap:MachineryAndEquipmentGross,us-gaap:MachineryAndEquipmentGross,Machinery and equipment,13,0
+balance_sheet,us-gaap:ConstructionInProgressGross,us-gaap:ConstructionInProgressGross,Construction in progress,14,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,property plant and equipment and finance lease right of use asset before accumulated depreciation and amortization property plant and equipment and finance lease right of use asset before accumulated depreciation and amortization,15,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,Less: accumulated depreciation,16,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,property plant and equipment and finance lease right of use asset after accumulated depreciation and amortization property plant and equipment and finance lease right of use asset after accumulated depreciation and amortization,18,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill (Note 4),19,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Other intangible assets, net (Note 4)",20,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Equity investments (Note 5),22,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes (Note 10),23,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableNoncurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableNoncurrent,Other assets (less allowances of $12 in 2025 and $26 in 2024),24,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,25,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net earnings,0,0
+cash_flow,html:adjustments-to-reconcile-net-earnings-to-operating-cash-flows,html:adjustments-to-reconcile-net-earnings-to-operating-cash-flows,Adjustments to reconcile net earnings to operating cash flows:,1,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization expense,2,0
+cash_flow,us-gaap:GoodwillAndIntangibleAssetImpairment,us-gaap:GoodwillAndIntangibleAssetImpairment,Impairment of goodwill and other intangibles (Note 4),3,0
+cash_flow,pm:DisposalGroupNotDiscontinuedOperationGainLossOnDisposalIncludingTax,pm:DisposalGroupNotDiscontinuedOperationGainLossOnDisposalIncludingTax,Losses on sales of businesses (including held-for-sale) (Note 3),6,0
+cash_flow,us-gaap:EquitySecuritiesWithoutReadilyDeterminableFairValueImpairmentLossAnnualAmount,us-gaap:EquitySecuritiesWithoutReadilyDeterminableFairValueImpairmentLossAnnualAmount,Impairment related to the RBH equity investment (Note 5),7,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income tax (benefit) provision,8,0
+cash_flow,us-gaap:RestructuringCostsAndAssetImpairmentCharges,us-gaap:RestructuringCostsAndAssetImpairmentCharges,"Restructuring charges, net of cash paid (Note 18)",9,0
+cash_flow,html:cash-effects-of-changes-net-of-the-effects-from-acquired-and-divested-companies,html:cash-effects-of-changes-net-of-the-effects-from-acquired-and-divested-companies,"Cash effects of changes, net of the effects from acquired and divested companies:",11,0
+cash_flow,us-gaap:IncreaseDecreaseInReceivables,us-gaap:IncreaseDecreaseInReceivables,"Receivables, net",12,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,13,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayable,us-gaap:IncreaseDecreaseInAccountsPayable,Accounts payable,14,0
+cash_flow,pm:IncreaseDecreaseInAccruedLiabilitiesAndOtherCurrentAssets,pm:IncreaseDecreaseInAccruedLiabilitiesAndOtherCurrentAssets,Accrued liabilities and other current assets,15,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,Income taxes,16,0
+cash_flow,pm:DefinedBenefitPlanPlanAssetsPensionPlanContributionsNetOfRefunds,pm:DefinedBenefitPlanPlanAssetsPensionPlanContributionsNetOfRefunds,Pension plan contributions (Note 12),17,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,Other,18,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by (used in) operating activities,19,0
+cash_flow,html:cash-provided-by-used-in-investing-activities,html:cash-provided-by-used-in-investing-activities,CASH PROVIDED BY (USED IN) INVESTING ACTIVITIES,20,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Capital expenditures,21,0
+cash_flow,us-gaap:CashAcquiredFromAcquisition,us-gaap:CashAcquiredFromAcquisition,"Other acquisitions, net of acquired cash (Note 3)",23,0
+cash_flow,us-gaap:PaymentsToAcquireIntangibleAssets,us-gaap:PaymentsToAcquireIntangibleAssets,"Altria Group, Inc. agreement (Note 3)",24,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinesses,us-gaap:ProceedsFromDivestitureOfBusinesses,"Proceeds from sales of businesses, net of cash disposed (Note 3)",25,0
+cash_flow,us-gaap:PaymentsToAcquireAvailableForSaleSecuritiesDebt,us-gaap:PaymentsToAcquireAvailableForSaleSecuritiesDebt,Purchases of debt securities,26,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfAvailableForSaleSecurities,us-gaap:ProceedsFromSaleAndMaturityOfAvailableForSaleSecurities,Sales and maturities of debt securities,27,0
+cash_flow,us-gaap:PaymentsToAcquireEquityMethodInvestments,us-gaap:PaymentsToAcquireEquityMethodInvestments,Equity investments,28,0
+cash_flow,pm:CollateralForDerivativesPaidreturnedInvestingActivities,pm:CollateralForDerivativesPaidreturnedInvestingActivities,"Collateral posted/settlements for derivatives, (paid)/returned (Note 14)",31,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other,32,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash provided by (used in) investing activities,34,0
+income_statement,pm:CorporateExpensesAndOther,pm:CorporateExpensesAndOther,Corporate expenses and other (Note 1),6,0
+cash_flow,us-gaap:DisposalGroupNotDiscontinuedOperationGainLossOnDisposal,us-gaap:DisposalGroupNotDiscontinuedOperationGainLossOnDisposal,Loss on sale of Vectura Group (Notes 2 & 8),4,0
+cash_flow,us-gaap:DisposalGroupNotDiscontinuedOperationLossGainOnWriteDown,us-gaap:DisposalGroupNotDiscontinuedOperationLossGainOnWriteDown,Impairment related to Vectura Group's expected sale (Note 18),5,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisition of Swedish Match AB, net of acquired cash (Note 3)",22,0
+income_statement,us-gaap:ExciseAndSalesTaxes,us-gaap:ExciseAndSalesTaxes,Excise taxes on products,0,0
+income_statement,us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax,us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax,Revenues including excise taxes,1,0
+income_statement,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangibles,7,0
+cash_flow,html:cash-effects-of-changes-in,html:cash-effects-of-changes-in,Cash effects of changes in:,10,0
+cash_flow,us-gaap:CashDivestedFromDeconsolidation,us-gaap:CashDivestedFromDeconsolidation,Deconsolidation of RBH (Note 20),29,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,property plant and equipment net property plant and equipment net,17,0
+balance_sheet,pm:EquityMethodInvestmentsAndEquitySecuritiesFVNI,pm:EquityMethodInvestmentsAndEquitySecuritiesFVNI,Investments in unconsolidated subsidiaries and equity securities (Notes 11&14),21,0
+cash_flow,us-gaap:ProceedsFromHedgeInvestingActivities,us-gaap:ProceedsFromHedgeInvestingActivities,Net investment hedges,30,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,33,0

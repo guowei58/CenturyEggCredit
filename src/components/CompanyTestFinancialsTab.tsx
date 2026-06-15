@@ -5,11 +5,15 @@ import DOMPurify from "dompurify";
 import { Card, TabBar } from "@/components/ui";
 import {
   buildPeriodFinancialsFilingLabels,
+  filingPeriodLabelToRoicPeriod,
   formatPeriodFinancialsFilingLabel,
-  reportDateToRoicPeriod,
+  periodLabelToFilenameSlug,
+  periodicSecFilingFilenameBase,
+  periodicSecFilingSaveTitle,
   roicTranscriptIndexUrl,
   roicTranscriptQuarterUrl,
 } from "@/lib/period-financials-roic";
+import { usePeriodFinancialsBackgroundBatchSave } from "@/components/company/usePeriodFinancialsBackgroundBatchSave";
 import { roicPeriodToPresentationPeriod } from "@/lib/presentations/discovery/period";
 import {
   saveFacePresentedStatementsXlsxToServer,
@@ -889,6 +893,24 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     filings.find((f) => f.accessionNumber === selected) ??
     filings[0];
 
+  const selectedPeriodLabel = selectedFiling?.accessionNumber
+    ? filingPeriodLabels.get(selectedFiling.accessionNumber) ?? null
+    : null;
+
+  const { job: batchSaveJob, startBatchSave } = usePeriodFinancialsBackgroundBatchSave({
+    ticker: tk,
+    filings,
+    companyName: data?.companyName,
+    cik: data?.cik,
+  });
+
+  const batchSaveProgress =
+    batchSaveJob.status === "running" ? batchSaveJob.progress : null;
+  const batchSaveSummary =
+    batchSaveJob.status === "complete" || batchSaveJob.status === "error"
+      ? batchSaveJob.summary
+      : null;
+
   const managementPresentationPayload =
     ixbrl?.ok === true
       ? (ixbrl.earningsSlideDeck ??
@@ -896,7 +918,8 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
       : null;
 
   const ixbrlReportDate = ixbrl?.ok === true ? ixbrl.selected?.reportDate : undefined;
-  const roicTranscriptPeriod = reportDateToRoicPeriod(
+  const roicTranscriptPeriod = filingPeriodLabelToRoicPeriod(
+    selectedPeriodLabel ?? "",
     ixbrlReportDate ?? selectedFiling?.reportDate,
     selectedFiling?.filingDate
   );
@@ -976,8 +999,31 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
 
   type TabSaveTarget =
     | { kind: "financials-xlsx" }
-    | { kind: "url"; url: string }
+    | { kind: "url"; url: string; filenameBase: string; title: string }
+    | { kind: "transcript"; periodLabel: string; roicPeriod: string }
     | { kind: "unavailable"; reason: string };
+
+  const periodSlug = selectedPeriodLabel ? periodLabelToFilenameSlug(selectedPeriodLabel) : "period";
+
+  const primaryPeriodicFilingUrl =
+    xbrlPrimaryStatementsFilingUrl ??
+    secFilingPrimaryDocUrl(data?.cik, selectedFiling?.accessionNumber, selectedFiling?.primaryDocument);
+
+  function resolvePeriodicSecFilingSaveTarget(): TabSaveTarget {
+    if (!primaryPeriodicFilingUrl || !selectedFiling) {
+      return { kind: "unavailable", reason: "No SEC periodic filing URL for this period." };
+    }
+    return {
+      kind: "url",
+      url: primaryPeriodicFilingUrl,
+      filenameBase: periodicSecFilingFilenameBase(
+        tk,
+        selectedFiling.form,
+        selectedPeriodLabel ?? periodSlug
+      ),
+      title: periodicSecFilingSaveTitle(tk, selectedFiling.form, selectedPeriodLabel ?? "period"),
+    };
+  }
 
   function resolveTabSaveTarget(tabId: TestSubTabId): TabSaveTarget {
     switch (tabId) {
@@ -990,32 +1036,45 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
         if (!earningsReleaseSecUrl) {
           return { kind: "unavailable", reason: "No earnings press release URL for this period." };
         }
-        return { kind: "url", url: earningsReleaseSecUrl };
+        return {
+          kind: "url",
+          url: earningsReleaseSecUrl,
+          filenameBase: `${tk}_press-release-8K_${periodSlug}`,
+          title: `${tk} press release (8-K) · ${selectedPeriodLabel ?? selectedFiling?.filingDate ?? "period"}`,
+        };
       case "management-presentation":
-        if (managementPresentationSecUrl) return { kind: "url", url: managementPresentationSecUrl };
+        if (managementPresentationSecUrl) {
+          return {
+            kind: "url",
+            url: managementPresentationSecUrl,
+            filenameBase: `${tk}_mgmt-presentation_${periodSlug}`,
+            title: `${tk} management presentation · ${selectedPeriodLabel ?? "period"}`,
+          };
+        }
         if (mgmtDiscoveryAlreadySaved) {
           return { kind: "unavailable", reason: "Presentation already saved to Saved Documents." };
         }
-        if (mgmtDiscoverySaveUrl) return { kind: "url", url: mgmtDiscoverySaveUrl };
+        if (mgmtDiscoverySaveUrl) {
+          return {
+            kind: "url",
+            url: mgmtDiscoverySaveUrl,
+            filenameBase: `${tk}_mgmt-presentation_${periodSlug}`,
+            title: `${tk} management presentation · ${selectedPeriodLabel ?? "period"}`,
+          };
+        }
         return { kind: "unavailable", reason: "No management presentation found for this period." };
       case "earnings-transcript":
-        if (!roicTranscriptPeriod) {
+        if (!roicTranscriptPeriod || !selectedPeriodLabel) {
           return { kind: "unavailable", reason: "Could not infer fiscal quarter for transcript." };
         }
-        return { kind: "url", url: roicTranscriptQuarterUrl(tk, roicTranscriptPeriod) };
-      case "mdna":
-        if (!ixMdnaFilingUrl) {
-          return { kind: "unavailable", reason: "No SEC filing URL for MD&A." };
-        }
-        return { kind: "url", url: ixMdnaFilingUrl };
-      case "debt-footnote":
-        if (!debtFootnote?.ok || !debtFootnote.filing?.docUrl) {
-          return { kind: "unavailable", reason: "No debt footnote SEC filing URL for this period." };
-        }
         return {
-          kind: "url",
-          url: debtFootnote.rollForward?.sourceDocUrl ?? debtFootnote.filing.docUrl,
+          kind: "transcript",
+          periodLabel: selectedPeriodLabel,
+          roicPeriod: roicTranscriptPeriod,
         };
+      case "mdna":
+      case "debt-footnote":
+        return resolvePeriodicSecFilingSaveTarget();
       default:
         return { kind: "unavailable", reason: "Nothing to save." };
     }
@@ -1055,8 +1114,30 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           setTabSavePhase((p) => ({ ...p, [tabId]: "err" }));
           return;
         }
+      } else if (target.kind === "transcript") {
+        const res = await fetch(`/api/roic-ai/${encodeURIComponent(tk)}/earnings-transcript/save`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            periodLabel: target.periodLabel,
+            roicPeriod: target.roicPeriod,
+            reportDate: ixbrlReportDate ?? selectedFiling?.reportDate ?? null,
+            filingDate: selectedFiling?.filingDate ?? null,
+            ixbrlReportDate: ixbrlReportDate ?? null,
+          }),
+        });
+        const body = (await res.json()) as { ok?: boolean; error?: string };
+        if (!res.ok || body.ok !== true) {
+          setTabSaveErr((p) => ({ ...p, [tabId]: body.error ?? "Transcript save failed." }));
+          setTabSavePhase((p) => ({ ...p, [tabId]: "err" }));
+          return;
+        }
       } else {
-        const result = await saveRemoteUrlForTicker(tk, target.url, "saved-documents");
+        const result = await saveRemoteUrlForTicker(tk, target.url, "saved-documents", {
+          title: target.title,
+          filenameBase: target.filenameBase,
+        });
         if (!result.ok) {
           setTabSaveErr((p) => ({ ...p, [tabId]: result.error }));
           setTabSavePhase((p) => ({ ...p, [tabId]: "err" }));
@@ -1092,7 +1173,9 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           ? tabSaveErr[tabId]
           : saveTarget.kind === "financials-xlsx"
             ? "Save HTML-face workbook to Saved Documents"
-            : "Save to Saved Documents (as PDF)";
+            : tabId === "mdna" || tabId === "debt-footnote"
+              ? "Save primary 10-Q/10-K to Saved Documents (covers MD&A and debt footnotes)"
+              : "Save to Saved Documents (as PDF)";
     const saveLabel =
       tabSavePhase[tabId] === "err"
         ? "Retry"
@@ -1186,8 +1269,28 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
             {narrativeBatchErr}
           </span>
         ) : null}
-        {SHOW_MDNA_EARNINGS_CHECK_BUTTON || SHOW_SELF_DIAGNOSTIC_BUTTON ? (
         <span className="ml-auto flex shrink-0 flex-nowrap items-center gap-1">
+          <button
+            type="button"
+            className="shrink-0 whitespace-nowrap rounded border px-2 py-0.5 text-[11px] font-semibold leading-tight disabled:opacity-50"
+            style={{ borderColor: "var(--border2)", color: "var(--text)", background: "var(--card2)" }}
+            disabled={
+              loading ||
+              !financialsSettled ||
+              filings.length === 0 ||
+              batchSaveJob.status === "running"
+            }
+            title="Save press release, management presentation, earnings transcript, and 10-Q/10-K (MD&A & debt footnotes) for the last 8 quarters to Saved Documents. Runs on the server and continues if you navigate away."
+            onClick={() =>
+              startBatchSave({
+                force: batchSaveJob.status === "complete" || batchSaveJob.status === "error",
+              })
+            }
+          >
+            {batchSaveJob.status === "running"
+              ? "Saving quarterly earnings package…"
+              : "Save Quarterly Earnings Package (2yrs)"}
+          </button>
           {SHOW_MDNA_EARNINGS_CHECK_BUTTON ? (
             <button
               type="button"
@@ -1257,7 +1360,6 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
             </button>
           ) : null}
         </span>
-        ) : null}
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -1270,6 +1372,17 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
             className="px-5 sm:px-8"
             renderTabTrailing={renderSubTabTrailing}
           />
+          {batchSaveProgress ? (
+            <p className="px-5 pb-2 text-[11px] sm:px-8" style={{ color: "var(--muted2)" }}>
+              Saving quarterly earnings package (2 yrs)… {batchSaveProgress.label}
+              {batchSaveProgress.detail ? ` — ${batchSaveProgress.detail}` : ""} ({batchSaveProgress.done}/
+              {batchSaveProgress.total})
+            </p>
+          ) : batchSaveSummary ? (
+            <p className="px-5 pb-2 text-[11px] sm:px-8" style={{ color: "var(--muted2)" }}>
+              {batchSaveSummary}
+            </p>
+          ) : null}
         </div>
         <div
           className={

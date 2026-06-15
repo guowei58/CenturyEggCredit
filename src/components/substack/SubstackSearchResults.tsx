@@ -12,7 +12,7 @@ export function SubstackSearchResults({ items, ticker }: { items: SubstackSearch
     );
   }
   return (
-    <ul className="space-y-3">
+    <ul className="flex flex-col divide-y" style={{ borderColor: "var(--border2)" }}>
       {items.map((it) => (
         <li key={it.post.id}>
           <SubstackResultCard item={it} ticker={ticker} />

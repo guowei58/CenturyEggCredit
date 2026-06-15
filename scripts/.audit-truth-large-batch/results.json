@@ -46,7 +46,7 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 139
+      "elapsedSec": 117
     },
     {
       "ticker": "AXP",
@@ -59,7 +59,7 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 197
+      "elapsedSec": 185
     },
     {
       "ticker": "BMY",
@@ -72,7 +72,7 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 130
+      "elapsedSec": 140
     },
     {
       "ticker": "SPGI",
@@ -85,7 +85,7 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 213
+      "elapsedSec": 247
     },
     {
       "ticker": "CSCO",
@@ -98,7 +98,7 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 94
+      "elapsedSec": 103
     },
     {
       "ticker": "ABBV",
@@ -111,7 +111,7 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 78
+      "elapsedSec": 85
     },
     {
       "ticker": "PM",
@@ -124,8 +124,307 @@
       "issues": [],
       "issuesByType": {},
       "issuesByStatement": {},
-      "elapsedSec": 94
+      "elapsedSec": 105
+    },
+    {
+      "ticker": "NEE",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 196
+    },
+    {
+      "ticker": "NFLX",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 222
+    },
+    {
+      "ticker": "MCD",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 161
+    },
+    {
+      "ticker": "NKE",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 148
+    },
+    {
+      "ticker": "TJX",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 144
+    },
+    {
+      "ticker": "GILD",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 279
+    },
+    {
+      "ticker": "LIN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 141
+    },
+    {
+      "ticker": "SO",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 369
+    },
+    {
+      "ticker": "COST",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 210
+    },
+    {
+      "ticker": "REGN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 99
+    },
+    {
+      "ticker": "SLB",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 582
+    },
+    {
+      "ticker": "CRM",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 124
+    },
+    {
+      "ticker": "TXN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 391
+    },
+    {
+      "ticker": "CVS",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 174
+    },
+    {
+      "ticker": "MS",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 422
+    },
+    {
+      "ticker": "HON",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 264
+    },
+    {
+      "ticker": "GS",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 646
+    },
+    {
+      "ticker": "IBM",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 213
+    },
+    {
+      "ticker": "KO",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 195
+    },
+    {
+      "ticker": "AMGN",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 174
+    },
+    {
+      "ticker": "AMD",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 82
+    },
+    {
+      "ticker": "UPS",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 181
+    },
+    {
+      "ticker": "BKNG",
+      "ok": true,
+      "filingsSaved": 30,
+      "filingsSkipped": 0,
+      "filingsFailed": 0,
+      "compileOk": true,
+      "workbookTruthIterations": 2,
+      "issues": [],
+      "issuesByType": {},
+      "issuesByStatement": {},
+      "elapsedSec": 173
     }
   ],
-  "updatedAt": "2026-06-12T12:24:49.943Z"
+  "updatedAt": "2026-06-12T13:56:55.782Z"
 }

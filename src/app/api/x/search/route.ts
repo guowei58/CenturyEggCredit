@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     limit: typeof body.limit === "number" && Number.isFinite(body.limit) ? body.limit : undefined,
     includeRetweets: typeof body.includeRetweets === "boolean" ? body.includeRetweets : undefined,
     language: typeof body.language === "string" ? body.language : undefined,
-    sortMode: body.sortMode === "recent" || body.sortMode === "engagement" ? body.sortMode : "relevance",
+    sortMode: body.sortMode === "recent" || body.sortMode === "relevance" ? body.sortMode : "engagement",
     userId,
   });
 

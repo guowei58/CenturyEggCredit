@@ -1,0 +1,169 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Revenue,0,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales,1,0
+income_statement,us-gaap:ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost,us-gaap:ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost,Research and development,2,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Marketing, selling, and administrative",3,0
+income_statement,us-gaap:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff,us-gaap:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff,Acquired in-process research and development,4,0
+income_statement,us-gaap:RestructuringSettlementAndImpairmentProvisions,us-gaap:RestructuringSettlementAndImpairmentProvisions,"Asset impairment, restructuring, and other special charges",5,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,"Other—net, (income) expense",6,0
+income_statement,lly:CostOfSalesOperatingExpensesAndOtherNet,lly:CostOfSalesOperatingExpensesAndOtherNet,cost of sales operating expenses and other net cost of sales operating expenses and other net cost of sales operating expenses and other net,7,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before income taxes,8,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income taxes,9,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income,10,0
+income_statement,html:earnings-per-share,html:earnings-per-share,Earnings per share:,11,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,12,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted,13,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,14,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,15,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,18,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,Accounts receivable,20,0
+balance_sheet,us-gaap:OtherReceivablesNetCurrent,us-gaap:OtherReceivablesNetCurrent,Other receivables,21,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,22,0
+balance_sheet,us-gaap:PrepaidExpenseCurrent,us-gaap:PrepaidExpenseCurrent,Prepaid expenses,24,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,26,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,27,0
+balance_sheet,html:noncurrent-assets,html:noncurrent-assets,Noncurrent Assets,28,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Investments,29,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,30,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Other intangibles, net",31,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,32,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",34,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other noncurrent assets,37,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,38,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,Liabilities and Equity,39,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities,40,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Short-term borrowings and current maturities of long-term debt,71,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,72,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Employee compensation,73,0
+balance_sheet,lly:SalesRebatesAndDiscounts,lly:SalesRebatesAndDiscounts,Sales rebates and discounts,74,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,76,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,78,0
+balance_sheet,html:noncurrent-liabilities,html:noncurrent-liabilities,Noncurrent Liabilities,79,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,80,0
+balance_sheet,us-gaap:AccruedIncomeTaxesNoncurrent,us-gaap:AccruedIncomeTaxesNoncurrent,Long-term income taxes payable,83,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,85,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total noncurrent liabilities,87,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and Contingencies,88,0
+balance_sheet,html:equity,html:equity,Equity,90,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock—no par valueAuthorized shares: 3,200.0Issued shares: 944.8 (2025) and 947.9 (2024)",91,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,92,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,93,0
+balance_sheet,us-gaap:CommonStockSharesHeldInEmployeeTrust,us-gaap:CommonStockSharesHeldInEmployeeTrust,Employee benefit trust,94,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,95,0
+balance_sheet,us-gaap:OtherAdditionalCapital,us-gaap:OtherAdditionalCapital,Other equity,98,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total equity,99,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,102,0
+cash_flow,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income,0,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,3,0
+cash_flow,us-gaap:IncreaseDecreaseInDeferredIncomeTaxes,us-gaap:IncreaseDecreaseInDeferredIncomeTaxes,Change in deferred income taxes,4,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Stock-based compensation expense,6,0
+cash_flow,us-gaap:GainLossOnDispositionOfIntangibleAssets,us-gaap:GainLossOnDispositionOfIntangibleAssets,Gains on sale of product rights,8,0
+cash_flow,us-gaap:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff,us-gaap:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff,Acquired in-process research and development,9,0
+cash_flow,us-gaap:OtherOperatingActivitiesCashFlowStatement,us-gaap:OtherOperatingActivitiesCashFlowStatement,"Other operating activities, net",10,0
+cash_flow,html:other-changes-in-operating-assets-and-liabilities-net-of-acquisitions-and-divestitures,html:other-changes-in-operating-assets-and-liabilities-net-of-acquisitions-and-divestitures,"Other changes in operating assets and liabilities, net of acquisitions and divestitures:",11,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsAndOtherReceivables,us-gaap:IncreaseDecreaseInAccountsAndOtherReceivables,Receivables—(increase) decrease,12,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories—(increase) decrease,13,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,Prepaid expenses and other assets—(increase) decrease,14,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,Accounts payable and other liabilities—increase (decrease),15,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net Cash Provided by Operating Activities,16,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash Flows from Investing Activities,17,0
+cash_flow,us-gaap:PaymentsToAcquireOtherPropertyPlantAndEquipment,us-gaap:PaymentsToAcquireOtherPropertyPlantAndEquipment,Purchases of property and equipment,18,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfOtherInvestments,us-gaap:ProceedsFromSaleAndMaturityOfOtherInvestments,Proceeds from sales of and distributions from noncurrent investments,23,0
+cash_flow,us-gaap:PaymentsToAcquireOtherInvestments,us-gaap:PaymentsToAcquireOtherInvestments,Purchases of noncurrent investments,24,0
+cash_flow,us-gaap:ProceedsFromSaleOfIntangibleAssets,us-gaap:ProceedsFromSaleOfIntangibleAssets,Proceeds from sale of product rights,25,0
+cash_flow,us-gaap:PaymentsToAcquireInProcessResearchAndDevelopment,us-gaap:PaymentsToAcquireInProcessResearchAndDevelopment,Purchases of in-process research and development,26,0
+cash_flow,us-gaap:OtherPaymentsToAcquireBusinesses,us-gaap:OtherPaymentsToAcquireBusinesses,"Cash paid for acquisitions, net of cash acquired",27,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,"Other investing activities, net",28,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net Cash Used for Investing Activities,29,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Dividends paid,30,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,Net change in short-term borrowings,31,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Proceeds from issuance of long-term debt,32,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayments of long-term debt,33,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Purchases of common stock,34,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,"Other financing activities, net",36,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net Cash Provided by (Used for) Financing Activities,37,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Effect of exchange rate changes on cash and cash equivalents,38,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net increase in cash and cash equivalents,39,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,Cash and cash equivalents at beginning of year,46,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments (Note 7),19,0
+balance_sheet,us-gaap:DividendsPayableCurrent,us-gaap:DividendsPayableCurrent,Dividends payable,75,0
+balance_sheet,us-gaap:PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent,us-gaap:PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent,Accrued retirement benefits (Note 15),81,0
+balance_sheet,html:eli-lilly-and-company-shareholders-equity-notes-12-and-13,html:eli-lilly-and-company-shareholders-equity-notes-12-and-13,Eli Lilly and Company Shareholders' Equity (Notes 12 and 13),89,0
+balance_sheet,us-gaap:TreasuryStockCommonValue,us-gaap:TreasuryStockCommonValue,Cost of common stock in treasury,96,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,100,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,101,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,"Investment (gains) losses, net",7,0
+cash_flow,us-gaap:ProceedsFromSaleOfShortTermInvestments,us-gaap:ProceedsFromSaleOfShortTermInvestments,Proceeds from sales and maturities of short-term investments,19,0
+cash_flow,us-gaap:PaymentsToAcquireShortTermInvestments,us-gaap:PaymentsToAcquireShortTermInvestments,Purchases of short-term investments,20,0
+balance_sheet,html:cash-and-cash-equivalents-note-7,html:cash-and-cash-equivalents-note-7,Cash and cash equivalents (Note 7),0,0
+balance_sheet,html:short-term-investments-note-7,html:short-term-investments-note-7,Short-term investments (Note 7),1,0
+balance_sheet,html:accounts-receivable-net-of-allowances-of-24-4-2019-and-24-1-2018,html:accounts-receivable-net-of-allowances-of-24-4-2019-and-24-1-2018,"Accounts receivable, net of allowances of $24.4 (2019) and $24.1 (2018)",2,0
+balance_sheet,html:other-receivables,html:other-receivables,Other receivables,3,0
+balance_sheet,html:inventories,html:inventories,Inventories,4,0
+balance_sheet,html:prepaid-expenses-and-other,html:prepaid-expenses-and-other,Prepaid expenses and other,5,0
+balance_sheet,html:current-assets-of-discontinued-operations-note-5,html:current-assets-of-discontinued-operations-note-5,Current assets of discontinued operations (Note 5),6,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,7,0
+balance_sheet,html:investments-note-7,html:investments-note-7,Investments (Note 7),8,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,9,0
+balance_sheet,html:other-intangibles-net,html:other-intangibles-net,"Other intangibles, net",10,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,11,0
+balance_sheet,html:sundry,html:sundry,Sundry,12,0
+balance_sheet,html:property-and-equipment-net-of-accumulated-depreciation-of-8-792-0-2019-and-8-666-9-2018,html:property-and-equipment-net-of-accumulated-depreciation-of-8-792-0-2019-and-8-666-9-2018,"Property and equipment, net of accumulated depreciation of $8,792.0 (2019) and $8,666.9 (2018)",13,0
+balance_sheet,html:operating-lease-assets-note-8,html:operating-lease-assets-note-8,Operating lease assets (Note 8),14,0
+balance_sheet,html:noncurrent-assets-of-discontinued-operations-note-5,html:noncurrent-assets-of-discontinued-operations-note-5,Noncurrent assets of discontinued operations (Note 5),15,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,16,0
+balance_sheet,html:short-term-borrowings-and-current-maturities-of-long-term-debt,html:short-term-borrowings-and-current-maturities-of-long-term-debt,Short-term borrowings and current maturities of long-term debt,41,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,42,0
+balance_sheet,html:employee-compensation,html:employee-compensation,Employee compensation,43,0
+balance_sheet,html:sales-rebates-and-discounts,html:sales-rebates-and-discounts,Sales rebates and discounts,44,0
+balance_sheet,html:dividends-payable,html:dividends-payable,Dividends payable,45,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,46,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,47,0
+balance_sheet,html:current-liabilities-of-discontinued-operations-note-5,html:current-liabilities-of-discontinued-operations-note-5,Current liabilities of discontinued operations (Note 5),48,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,49,0
+balance_sheet,html:other-liabilities,html:other-liabilities,Other Liabilities,50,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,51,0
+balance_sheet,html:noncurrent-operating-lease-liabilities-note-8,html:noncurrent-operating-lease-liabilities-note-8,Noncurrent operating lease liabilities (Note 8),52,0
+balance_sheet,html:accrued-retirement-benefits-note-10,html:accrued-retirement-benefits-note-10,Accrued retirement benefits (Note 10),53,0
+balance_sheet,html:long-term-income-taxes-payable,html:long-term-income-taxes-payable,Long-term income taxes payable,54,0
+balance_sheet,html:deferred-tax-liabilities,html:deferred-tax-liabilities,Deferred tax liabilities,55,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,56,0
+balance_sheet,html:noncurrent-liabilities-of-discontinued-operations-note-5,html:noncurrent-liabilities-of-discontinued-operations-note-5,Noncurrent liabilities of discontinued operations (Note 5),57,0
+balance_sheet,html:total-other-liabilities,html:total-other-liabilities,Total other liabilities,58,0
+balance_sheet,html:commitments-and-contingencies-note-11,html:commitments-and-contingencies-note-11,Commitments and Contingencies (Note 11),59,0
+balance_sheet,html:eli-lilly-and-company-shareholders-equity,html:eli-lilly-and-company-shareholders-equity,Eli Lilly and Company Shareholders’ Equity,60,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,61,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,62,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,63,0
+balance_sheet,html:employee-benefit-trust,html:employee-benefit-trust,Employee benefit trust,64,0
+balance_sheet,html:accumulated-other-comprehensive-loss-note-12,html:accumulated-other-comprehensive-loss-note-12,Accumulated other comprehensive loss (Note 12),65,0
+balance_sheet,html:cost-of-common-stock-in-treasury,html:cost-of-common-stock-in-treasury,Cost of common stock in treasury,66,0
+balance_sheet,html:total-eli-lilly-and-company-shareholders-equity,html:total-eli-lilly-and-company-shareholders-equity,Total Eli Lilly and Company shareholders’ equity,67,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,68,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,69,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,Total liabilities and equity,70,0
+cash_flow,html:gain-related-to-disposition-of-elanco-note-5,html:gain-related-to-disposition-of-elanco-note-5,Gain related to disposition of Elanco (Note 5),1,0
+cash_flow,html:proceeds-from-sales-and-maturities-of-short-term-investments,html:proceeds-from-sales-and-maturities-of-short-term-investments,Proceeds from sales and maturities of short-term investments,21,0
+cash_flow,html:purchases-of-short-term-investments,html:purchases-of-short-term-investments,Purchases of short-term investments,22,0
+cash_flow,html:cash-and-cash-equivalents-at-january-1-includes-677-5-2019-and-324-4-2018-of-discontinued-operations,html:cash-and-cash-equivalents-at-january-1-includes-677-5-2019-and-324-4-2018-of-discontinued-operations,Cash and cash equivalents at January 1 (includes $677.5 (2019) and $324.4 (2018) of discontinued operations),40,0
+cash_flow,html:cash-and-cash-equivalents-at-march-31-includes-264-5-2018-of-discontinued-operations,html:cash-and-cash-equivalents-at-march-31-includes-264-5-2018-of-discontinued-operations,Cash and Cash Equivalents at March 31 (includes $264.5 (2018) of discontinued operations),41,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current assets of discontinued operations (Note 5),25,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets (Note 8),35,0
+balance_sheet,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,Noncurrent assets of discontinued operations (Note 5),36,0
+balance_sheet,us-gaap:TaxesPayableCurrent,us-gaap:TaxesPayableCurrent,Income taxes payable,103,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current liabilities of discontinued operations (Note 5),77,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Noncurrent operating lease liabilities (Note 8),82,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities,84,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationNoncurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationNoncurrent,Noncurrent liabilities of discontinued operations (Note 5),86,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,Cost of common stock in treasury,97,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Gain related to disposition of Elanco (Note 5),2,0
+cash_flow,us-gaap:CashAndCashEquivalentsAtCarryingValueIncludingDiscontinuedOperations,us-gaap:CashAndCashEquivalentsAtCarryingValueIncludingDiscontinuedOperations,Cash and cash equivalents at January 1 (includes $677.5 (2019) and $324.4 (2018) of discontinued operations),42,0
+cash_flow,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and Cash Equivalents at June 30 (includes $322.1 (2018) of discontinued operations),43,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValueIncludingDiscontinuedOperations,us-gaap:CashAndCashEquivalentsAtCarryingValueIncludingDiscontinuedOperations,Cash and cash equivalents (Note 7),17,0
+cash_flow,us-gaap:ProceedsFromIssuanceInitialPublicOffering,us-gaap:ProceedsFromIssuanceInitialPublicOffering,Net proceeds from Elanco initial public offering,35,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Cash and cash equivalents at January 1 (2019 includes $677.5 of discontinued operations),44,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,"Accounts receivable, net of allowances of $26.6 (2020) and $22.4 (2019)",104,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,"Property and equipment, net of accumulated depreciation of $9,297.0 (2020) and $9,161.6 (2019)",33,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsDisposalGroupIncludingDiscontinuedOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsDisposalGroupIncludingDiscontinuedOperations,Cash and cash equivalents at January 1 (2019 includes $677.5 of discontinued operations),45,0
+cash_flow,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Debt extinguishment loss (Note 6),5,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,23,0

@@ -1,0 +1,225 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:total-revenues,html:total-revenues,Total revenues,0,0
+income_statement,html:operating-expenses,html:operating-expenses,Operating expenses:,2,0
+income_statement,html:marketing-expenses,html:marketing-expenses,Marketing expenses,5,0
+income_statement,html:sales-and-other-expenses,html:sales-and-other-expenses,Sales and other expenses,6,0
+income_statement,html:personnel-including-stock-based-compensation-of-613-599-and-530-respectively,html:personnel-including-stock-based-compensation-of-613-599-and-530-respectively,"Personnel, including stock-based compensation of $613, $599, and $530, respectively",12,0
+income_statement,html:general-and-administrative,html:general-and-administrative,General and administrative,13,0
+income_statement,html:information-technology,html:information-technology,Information technology,14,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,15,0
+income_statement,html:impairment,html:impairment,Impairment,18,0
+income_statement,html:transformation-costs,html:transformation-costs,Transformation costs,20,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,21,0
+income_statement,html:operating-income,html:operating-income,Operating income,23,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,24,0
+income_statement,html:interest-and-dividend-income,html:interest-and-dividend-income,Interest and dividend income,26,0
+income_statement,html:other-income-expense-net,html:other-income-expense-net,"Other income (expense), net",27,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,Income before income taxes,28,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,29,0
+income_statement,html:net-income,html:net-income,Net income,30,0
+income_statement,html:net-income-applicable-to-common-stockholders-per-basic-common-share-in-dollars-per-share,html:net-income-applicable-to-common-stockholders-per-basic-common-share-in-dollars-per-share,Net income applicable to common stockholders per basic common share (in dollars per share),31,0
+income_statement,html:weighted-average-number-of-basic-common-shares-outstanding-in-shares,html:weighted-average-number-of-basic-common-shares-outstanding-in-shares,Weighted-average number of basic common shares outstanding (in shares),32,0
+income_statement,html:net-income-applicable-to-common-stockholders-per-diluted-common-share-in-dollars-per-share,html:net-income-applicable-to-common-stockholders-per-diluted-common-share-in-dollars-per-share,Net income applicable to common stockholders per diluted common share (in dollars per share),33,0
+income_statement,html:weighted-average-number-of-diluted-common-shares-outstanding-in-shares,html:weighted-average-number-of-diluted-common-shares-outstanding-in-shares,Weighted-average number of diluted common shares outstanding (in shares),34,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,12,0
+balance_sheet,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-137-and-146-respectively,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-137-and-146-respectively,"Accounts receivable, net (Allowance for expected credit losses of $137 and $146, respectively)",29,0
+balance_sheet,html:prepaid-expenses-net,html:prepaid-expenses-net,"Prepaid expenses, net",30,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,31,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,32,0
+balance_sheet,html:property-and-equipment-net,html:property-and-equipment-net,"Property and equipment, net",33,0
+balance_sheet,html:operating-lease-assets,html:operating-lease-assets,Operating lease assets,34,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",35,0
+balance_sheet,html:goodwill-1,html:goodwill-1,Goodwill [1],37,0
+balance_sheet,html:long-term-investments,html:long-term-investments,Long-term investments,44,0
+balance_sheet,html:other-assets-net,html:other-assets-net,"Other assets, net",46,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,47,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,49,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,62,0
+balance_sheet,html:accrued-expenses-and-other-current-liabilities,html:accrued-expenses-and-other-current-liabilities,Accrued expenses and other current liabilities,63,0
+balance_sheet,html:deferred-merchant-bookings,html:deferred-merchant-bookings,Deferred merchant bookings,64,0
+balance_sheet,html:short-term-debt,html:short-term-debt,Short-term debt,66,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,67,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,68,0
+balance_sheet,html:operating-lease-liabilities,html:operating-lease-liabilities,Operating lease liabilities,69,0
+balance_sheet,html:long-term-u-s-transition-tax-liability,html:long-term-u-s-transition-tax-liability,Long-term U.S. transition tax liability,70,0
+balance_sheet,html:other-long-term-liabilities,html:other-long-term-liabilities,Other long-term liabilities,71,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,72,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,73,0
+balance_sheet,html:commitments-and-contingencies-see-note-16,html:commitments-and-contingencies-see-note-16,Commitments and contingencies (see Note 16),80,0
+balance_sheet,html:stockholders-deficit,html:stockholders-deficit,Stockholders' deficit:,84,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-64-521-154-and-64-276-130-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-64-521-154-and-64-276-130-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 64,521,154 and 64,276,130, respectively",87,0
+balance_sheet,html:treasury-stock-32-627-042-and-31-329-265-shares-respectively,html:treasury-stock-32-627-042-and-31-329-265-shares-respectively,"Treasury stock: 32,627,042 and 31,329,265 shares, respectively",88,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,89,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,90,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,94,0
+balance_sheet,html:total-stockholders-deficit,html:total-stockholders-deficit,Total stockholders' deficit,97,0
+balance_sheet,html:total-liabilities-and-stockholders-deficit,html:total-liabilities-and-stockholders-deficit,Total liabilities and stockholders' deficit,98,0
+balance_sheet,html:1-the-balance-of-goodwill-as-of-december-31-2025-and-2024-is-stated-net-of-cumulative-impairment-charges-of-2-2-billion-and-2-0-billion-respectively,html:1-the-balance-of-goodwill-as-of-december-31-2025-and-2024-is-stated-net-of-cumulative-impairment-charges-of-2-2-billion-and-2-0-billion-respectively,"[1] The balance of goodwill as of December 31, 2025 and 2024 is stated net of cumulative impairment charges of $2.2 billion and $2.0 billion, respectively.",99,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:provision-for-expected-credit-losses-and-chargebacks,html:provision-for-expected-credit-losses-and-chargebacks,Provision for expected credit losses and chargebacks,3,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,4,0
+cash_flow,html:net-gains-losses-on-equity-securities-1,html:net-gains-losses-on-equity-securities-1,Net (gains) losses on equity securities [1],5,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,6,0
+cash_flow,html:operating-lease-amortization,html:operating-lease-amortization,Operating lease amortization,8,0
+cash_flow,html:unrealized-foreign-currency-transaction-losses-gains-related-to-euro-denominated-debt,html:unrealized-foreign-currency-transaction-losses-gains-related-to-euro-denominated-debt,Unrealized foreign currency transaction losses (gains) related to Euro-denominated debt,9,0
+cash_flow,html:impairment,html:impairment,Impairment,11,0
+cash_flow,html:amortization-of-debt-discount-and-change-in-fair-value-of-the-conversion-option-related-to-the-convertible-senior-notes,html:amortization-of-debt-discount-and-change-in-fair-value-of-the-conversion-option-related-to-the-convertible-senior-notes,Amortization of debt discount and change in fair value of the conversion option related to the convertible senior notes,13,0
+cash_flow,html:other,html:other,Other,15,0
+cash_flow,html:changes-in-assets-and-liabilities,html:changes-in-assets-and-liabilities,Changes in assets and liabilities:,19,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,20,0
+cash_flow,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,21,0
+cash_flow,html:deferred-merchant-bookings-and-other-current-liabilities,html:deferred-merchant-bookings-and-other-current-liabilities,Deferred merchant bookings and other current liabilities,22,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,24,0
+cash_flow,html:investing-activities,html:investing-activities,INVESTING ACTIVITIES:,25,0
+cash_flow,html:purchase-of-investments,html:purchase-of-investments,Purchase of investments,27,0
+cash_flow,html:proceeds-from-sale-and-maturity-of-investments,html:proceeds-from-sale-and-maturity-of-investments,Proceeds from sale and maturity of investments,28,0
+cash_flow,html:additions-to-property-and-equipment,html:additions-to-property-and-equipment,Additions to property and equipment,29,0
+cash_flow,html:other-investing-activities,html:other-investing-activities,Other investing activities,32,0
+cash_flow,html:net-cash-used-in-provided-by-investing-activities,html:net-cash-used-in-provided-by-investing-activities,Net cash (used in) provided by investing activities,33,0
+cash_flow,html:financing-activities,html:financing-activities,FINANCING ACTIVITIES:,34,0
+cash_flow,html:proceeds-from-the-issuance-of-long-term-debt,html:proceeds-from-the-issuance-of-long-term-debt,Proceeds from the issuance of long-term debt,37,0
+cash_flow,html:payments-on-maturity-redemption-and-conversion-of-debt,html:payments-on-maturity-redemption-and-conversion-of-debt,"Payments on maturity, redemption, and conversion of debt",41,0
+cash_flow,html:payments-for-repurchase-of-common-stock,html:payments-for-repurchase-of-common-stock,Payments for repurchase of common stock,42,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,43,0
+cash_flow,html:proceeds-from-exercise-of-stock-options,html:proceeds-from-exercise-of-stock-options,Proceeds from exercise of stock options,44,0
+cash_flow,html:other-financing-activities,html:other-financing-activities,Other financing activities,45,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,Net cash used in financing activities,46,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents,Effect of exchange rate changes on cash and cash equivalents and restricted cash and cash equivalents,47,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents,Net increase (decrease) in cash and cash equivalents and restricted cash and cash equivalents,48,0
+cash_flow,html:total-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-beginning-of-period,html:total-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-beginning-of-period,"Total cash and cash equivalents and restricted cash and cash equivalents, beginning of period",49,0
+cash_flow,html:total-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-end-of-period,html:total-cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-end-of-period,"Total cash and cash equivalents and restricted cash and cash equivalents, end of period",50,0
+cash_flow,html:1-see-note-5-for-additional-information,html:1-see-note-5-for-additional-information,[1] See Note 5 for additional information.,54,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,1,0
+income_statement,html:performance-marketing,html:performance-marketing,Performance marketing,3,0
+income_statement,html:brand-marketing,html:brand-marketing,Brand marketing,4,0
+income_statement,html:foreign-currency-transactions-and-other,html:foreign-currency-transactions-and-other,Foreign currency transactions and other,19,0
+income_statement,html:1-the-company-realized-net-gains-of-1-million-related-to-investments-in-debt-securities-sold-for-both-years-ended-december-31-2017-and-2016,html:1-the-company-realized-net-gains-of-1-million-related-to-investments-in-debt-securities-sold-for-both-years-ended-december-31-2017-and-2016,"[1] The Company realized net gains of $1 million related to investments in debt securities sold for both years ended December 31, 2017 and 2016.",35,0
+balance_sheet,html:short-term-investments-in-marketable-securities,html:short-term-investments-in-marketable-securities,Short-term investments in marketable securities,13,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-61-and-39-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-61-and-39-respectively,"Accounts receivable, net of allowance for doubtful accounts of $61 and $39, respectively",14,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,15,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,36,0
+balance_sheet,html:other-assets,html:other-assets,Other assets,45,0
+balance_sheet,html:convertible-debt,html:convertible-debt,Convertible debt,65,0
+balance_sheet,html:commitments-and-contingencies-see-note-14,html:commitments-and-contingencies-see-note-14,Commitments and Contingencies (See Note 14),74,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders' equity:,75,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-1-000-000-000-shares-62-948-762-and-62-689-097-shares-issued-respectively,html:common-stock-0-008-par-value-authorized-1-000-000-000-shares-62-948-762-and-62-689-097-shares-issued-respectively,"Common stock, $0.008 par value, authorized 1,000,000,000 shares, 62,948,762 and 62,689,097 shares issued, respectively",76,0
+balance_sheet,html:treasury-stock-17-317-126-and-14-216-819-shares-respectively,html:treasury-stock-17-317-126-and-14-216-819-shares-respectively,"Treasury stock, 17,317,126 and 14,216,819 shares, respectively",77,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),91,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,92,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders' equity,93,0
+cash_flow,html:loss-on-early-extinguishment-of-debt,html:loss-on-early-extinguishment-of-debt,Loss on early extinguishment of debt,14,0
+cash_flow,html:contingent-consideration-fair-value-adjustment,html:contingent-consideration-fair-value-adjustment,Contingent consideration fair value adjustment,16,0
+cash_flow,html:long-term-u-s-transition-tax-liability,html:long-term-u-s-transition-tax-liability,Long-term U.S. transition tax liability,17,0
+cash_flow,html:acquisition-of-land-use-rights,html:acquisition-of-land-use-rights,Acquisition of land-use rights,18,0
+cash_flow,html:payments-for-conversion-of-senior-notes,html:payments-for-conversion-of-senior-notes,Payments for conversion of senior notes,38,0
+cash_flow,html:repayment-of-debt,html:repayment-of-debt,Repayment of debt,39,0
+cash_flow,html:supplemental-cash-flow-information,html:supplemental-cash-flow-information,SUPPLEMENTAL CASH FLOW INFORMATION:,51,0
+cash_flow,html:cash-paid-during-the-period-for-income-taxes,html:cash-paid-during-the-period-for-income-taxes,Cash paid during the period for income taxes,52,0
+cash_flow,html:cash-paid-during-the-period-for-interest,html:cash-paid-during-the-period-for-interest,Cash paid during the period for interest,53,0
+cash_flow,html:1-the-company-realized-net-gains-of-1-million-related-to-investments-in-debt-securities-sold-for-both-years-ended-december-31-2017-and-2016,html:1-the-company-realized-net-gains-of-1-million-related-to-investments-in-debt-securities-sold-for-both-years-ended-december-31-2017-and-2016,"[1] The Company realized net gains of $1 million related to investments in debt securities sold for both years ended December 31, 2017 and 2016.",26,0
+income_statement,html:personnel-including-stock-based-compensation-of-308-317-and-261-respectively,html:personnel-including-stock-based-compensation-of-308-317-and-261-respectively,"Personnel, including stock-based compensation of $308, $317 and $261, respectively",7,0
+income_statement,html:net-unrealized-gains-losses-on-marketable-equity-securities,html:net-unrealized-gains-losses-on-marketable-equity-securities,Net unrealized gains (losses) on marketable equity securities,25,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-49-and-51-respectively,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-49-and-51-respectively,"Accounts receivable, net of allowance for doubtful accounts of $49 and $51, respectively",100,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and Contingencies,78,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-179-471-and-62-948-762-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-179-471-and-62-948-762-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 63,179,471 and 62,948,762, respectively",101,0
+balance_sheet,html:treasury-stock-21-762-070-and-17-317-126-shares-respectively,html:treasury-stock-21-762-070-and-17-317-126-shares-respectively,"Treasury stock, 21,762,070 and 17,317,126 shares, respectively",110,0
+cash_flow,html:provision-for-uncollectible-accounts-and-chargebacks,html:provision-for-uncollectible-accounts-and-chargebacks,Provision for uncollectible accounts and chargebacks,2,0
+cash_flow,html:amortization-of-debt-discount-and-debt-issuance-costs,html:amortization-of-debt-discount-and-debt-issuance-costs,Amortization of debt discount and debt issuance costs,7,0
+cash_flow,html:proceeds-from-revolving-credit-facility-and-short-term-borrowings,html:proceeds-from-revolving-credit-facility-and-short-term-borrowings,Proceeds from revolving credit facility and short-term borrowings,35,0
+cash_flow,html:repayments-of-revolving-credit-facility-and-short-term-borrowings,html:repayments-of-revolving-credit-facility-and-short-term-borrowings,Repayments of revolving credit facility and short-term borrowings,36,0
+income_statement,html:personnel-including-stock-based-compensation-of-233-308-and-317-respectively,html:personnel-including-stock-based-compensation-of-233-308-and-317-respectively,"Personnel, including stock-based compensation of $233, $308 and $317, respectively",8,0
+income_statement,html:restructuring-and-other-exit-costs,html:restructuring-and-other-exit-costs,Restructuring and other exit costs,16,0
+balance_sheet,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-500-and-998-respectively,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-500-and-998-respectively,"Short-term investments (Available-for-sale debt securities: Amortized cost of $500 and $998, respectively)",16,0
+balance_sheet,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-166-and-49-respectively,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-166-and-49-respectively,"Accounts receivable, net (Allowance for expected credit losses of $166 and $49, respectively)",17,0
+balance_sheet,html:prepaid-expenses-net-allowance-for-expected-credit-losses-of-22-and-6-respectively,html:prepaid-expenses-net-allowance-for-expected-credit-losses-of-22-and-6-respectively,"Prepaid expenses, net (Allowance for expected credit losses of $22 and $6, respectively)",18,0
+balance_sheet,html:long-term-investments-includes-available-for-sale-debt-securities-amortized-cost-of-225-and-2-192-respectively,html:long-term-investments-includes-available-for-sale-debt-securities-amortized-cost-of-225-and-2-192-respectively,"Long-term investments (Includes available-for-sale debt securities: Amortized cost of $225 and $2,192, respectively)",38,0
+balance_sheet,html:other-assets-net-allowance-for-expected-credit-losses-of-33-at-december-31-2020,html:other-assets-net-allowance-for-expected-credit-losses-of-33-at-december-31-2020,"Other assets, net (Allowance for expected credit losses of $33 at December 31, 2020)",39,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-406-451-and-63-179-471-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-406-451-and-63-179-471-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 63,406,451 and 63,179,471, respectively",115,0
+balance_sheet,html:treasury-stock-22-446-897-and-21-762-070-shares-respectively,html:treasury-stock-22-446-897-and-21-762-070-shares-respectively,"Treasury stock, 22,446,897 and 21,762,070 shares, respectively",117,0
+balance_sheet,html:1-the-balance-of-goodwill-as-of-december-31-2020-and-2019-is-stated-net-of-cumulative-impairment-charges-of-2-0-billion-and-941-million-respectively,html:1-the-balance-of-goodwill-as-of-december-31-2020-and-2019-is-stated-net-of-cumulative-impairment-charges-of-2-0-billion-and-941-million-respectively,"[1] The balance of goodwill as of December 31, 2020 and 2019 is stated net of cumulative impairment charges of $2.0 billion and $941 million, respectively.",102,0
+cash_flow,html:long-term-assets-and-liabilities,html:long-term-assets-and-liabilities,Long-term assets and liabilities,23,0
+cash_flow,html:payments-for-conversion-of-debt,html:payments-for-conversion-of-debt,Payments for conversion of debt,40,0
+cash_flow,html:cash-paid-during-the-period-for-income-taxes-see-note-15,html:cash-paid-during-the-period-for-income-taxes-see-note-15,Cash paid during the period for income taxes (see Note 15),55,0
+income_statement,html:personnel-including-stock-based-compensation-of-370-233-and-308-respectively,html:personnel-including-stock-based-compensation-of-370-233-and-308-respectively,"Personnel, including stock-based compensation of $370, $233, and $308, respectively",9,0
+balance_sheet,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-25-and-500-respectively,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-25-and-500-respectively,"Short-term investments (Available-for-sale debt securities: Amortized cost of $25 and $500, respectively)",19,0
+balance_sheet,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-101-and-166-respectively,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-101-and-166-respectively,"Accounts receivable, net (Allowance for expected credit losses of $101 and $166, respectively)",20,0
+balance_sheet,html:prepaid-expenses-net-allowance-for-expected-credit-losses-of-29-and-22-respectively,html:prepaid-expenses-net-allowance-for-expected-credit-losses-of-29-and-22-respectively,"Prepaid expenses, net (Allowance for expected credit losses of $29 and $22, respectively)",21,0
+balance_sheet,html:long-term-investments-includes-available-for-sale-debt-securities-amortized-cost-of-225-at-december-31-2020,html:long-term-investments-includes-available-for-sale-debt-securities-amortized-cost-of-225-at-december-31-2020,"Long-term investments (Includes available-for-sale debt securities: Amortized cost of $225 at December 31, 2020)",40,0
+balance_sheet,html:other-assets-net-allowance-for-expected-credit-losses-of-18-and-33-respectively,html:other-assets-net-allowance-for-expected-credit-losses-of-18-and-33-respectively,"Other assets, net (Allowance for expected credit losses of $18 and $33, respectively)",41,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-584-444-and-63-406-451-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-584-444-and-63-406-451-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 63,584,444 and 63,406,451, respectively",118,0
+balance_sheet,html:treasury-stock-22-518-391-and-22-446-897-shares-respectively,html:treasury-stock-22-518-391-and-22-446-897-shares-respectively,"Treasury stock, 22,518,391 and 22,446,897 shares, respectively",119,0
+balance_sheet,html:1-the-balance-of-goodwill-as-of-december-31-2021-and-2020-is-stated-net-of-cumulative-impairment-charges-of-2-0-billion,html:1-the-balance-of-goodwill-as-of-december-31-2021-and-2020-is-stated-net-of-cumulative-impairment-charges-of-2-0-billion,"[1] The balance of goodwill as of December 31, 2021 and 2020 is stated net of cumulative impairment charges of $2.0 billion.",111,0
+cash_flow,html:loss-on-early-extinguishment-of-debt-2,html:loss-on-early-extinguishment-of-debt-2,Loss on early extinguishment of debt [2],12,0
+income_statement,html:personnel-including-stock-based-compensation-of-404-370-and-233-respectively,html:personnel-including-stock-based-compensation-of-404-370-and-233-respectively,"Personnel, including stock-based compensation of $404, $370, and $233, respectively",10,0
+income_statement,html:restructuring-disposal-and-other-exit-activities,html:restructuring-disposal-and-other-exit-activities,"Restructuring, disposal, and other exit activities",17,0
+balance_sheet,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-176-and-25-respectively,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-176-and-25-respectively,"Short-term investments (Available-for-sale debt securities: Amortized cost of $176 and $25, respectively)",22,0
+balance_sheet,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-117-and-101-respectively,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-117-and-101-respectively,"Accounts receivable, net (Allowance for expected credit losses of $117 and $101, respectively)",23,0
+balance_sheet,html:prepaid-expenses-net-allowance-for-expected-credit-losses-of-18-and-29-respectively,html:prepaid-expenses-net-allowance-for-expected-credit-losses-of-18-and-29-respectively,"Prepaid expenses, net (Allowance for expected credit losses of $18 and $29, respectively)",24,0
+balance_sheet,html:long-term-investments-includes-available-for-sale-debt-securities-amortized-cost-of-576-at-december-31-2022,html:long-term-investments-includes-available-for-sale-debt-securities-amortized-cost-of-576-at-december-31-2022,"Long-term investments (Includes available-for-sale debt securities: Amortized cost of $576 at December 31, 2022)",42,0
+balance_sheet,html:other-assets-net-allowance-for-expected-credit-losses-of-5-and-18-respectively,html:other-assets-net-allowance-for-expected-credit-losses-of-5-and-18-respectively,"Other assets, net (Allowance for expected credit losses of $5 and $18, respectively)",43,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-780-528-and-63-584-444-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-63-780-528-and-63-584-444-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 63,780,528 and 63,584,444, respectively",120,0
+balance_sheet,html:treasury-stock-25-917-558-and-22-518-391-shares-respectively,html:treasury-stock-25-917-558-and-22-518-391-shares-respectively,"Treasury stock: 25,917,558 and 22,518,391 shares, respectively",121,0
+balance_sheet,html:1-the-balance-of-goodwill-as-of-december-31-2022-and-2021-is-stated-net-of-cumulative-impairment-charges-of-2-0-billion,html:1-the-balance-of-goodwill-as-of-december-31-2022-and-2021-is-stated-net-of-cumulative-impairment-charges-of-2-0-billion,"[1] The balance of goodwill as of December 31, 2022 and 2021 is stated net of cumulative impairment charges of $2.0 billion.",116,0
+cash_flow,html:gain-on-sale-and-leaseback-transaction,html:gain-on-sale-and-leaseback-transaction,Gain on sale and leaseback transaction,56,0
+cash_flow,html:acquisitions-net-of-cash-acquired,html:acquisitions-net-of-cash-acquired,"Acquisitions, net of cash acquired",30,0
+cash_flow,html:proceeds-from-sale-and-leaseback-transaction,html:proceeds-from-sale-and-leaseback-transaction,Proceeds from sale and leaseback transaction,31,0
+balance_sheet,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-580-and-176-respectively,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-580-and-176-respectively,"Short-term investments (Available-for-sale debt securities: Amortized cost of $580 and $176, respectively)",25,0
+balance_sheet,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-137-and-117-respectively,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-137-and-117-respectively,"Accounts receivable, net (Allowance for expected credit losses of $137 and $117, respectively)",26,0
+balance_sheet,html:stockholders-deficit-equity,html:stockholders-deficit-equity,Stockholders' (deficit) equity:,81,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-64-048-000-and-63-780-528-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-64-048-000-and-63-780-528-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 64,048,000 and 63,780,528, respectively",82,0
+balance_sheet,html:treasury-stock-29-650-351-and-25-917-558-shares-respectively,html:treasury-stock-29-650-351-and-25-917-558-shares-respectively,"Treasury stock: 29,650,351 and 25,917,558 shares, respectively",83,0
+balance_sheet,html:total-stockholders-deficit-equity,html:total-stockholders-deficit-equity,Total stockholders' (deficit) equity,95,0
+balance_sheet,html:total-liabilities-and-stockholders-deficit-equity,html:total-liabilities-and-stockholders-deficit-equity,Total liabilities and stockholders' (deficit) equity,96,0
+balance_sheet,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-580-at-december-31-2023,html:short-term-investments-available-for-sale-debt-securities-amortized-cost-of-580-at-december-31-2023,"Short-term investments (Available-for-sale debt securities: Amortized cost of $580 at December 31, 2023)",27,0
+balance_sheet,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-146-and-137-respectively,html:accounts-receivable-net-allowance-for-expected-credit-losses-of-146-and-137-respectively,"Accounts receivable, net (Allowance for expected credit losses of $146 and $137, respectively)",28,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-64-276-130-and-64-048-000-respectively,html:common-stock-0-008-par-value-authorized-shares-1-000-000-000-issued-shares-64-276-130-and-64-048-000-respectively,"Common stock, $0.008 par value, Authorized shares: 1,000,000,000 Issued shares: 64,276,130 and 64,048,000, respectively",85,0
+balance_sheet,html:treasury-stock-31-329-265-and-29-650-351-shares-respectively,html:treasury-stock-31-329-265-and-29-650-351-shares-respectively,"Treasury stock: 31,329,265 and 29,650,351 shares, respectively",86,0
+cash_flow,html:loss-related-to-the-conversion-option-on-convertible-senior-notes,html:loss-related-to-the-conversion-option-on-convertible-senior-notes,Loss related to the conversion option on convertible senior notes,10,0
+balance_sheet,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-61-at-each-date,html:accounts-receivable-net-of-allowance-for-doubtful-accounts-of-61-at-each-date,"Accounts receivable, net of allowance for doubtful accounts of $61 at each date",112,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS' EQUITY,48,0
+balance_sheet,html:commitments-and-contingencies-see-note-13,html:commitments-and-contingencies-see-note-13,Commitments and Contingencies (See Note 13),79,0
+balance_sheet,html:common-stock-0-008-par-value-authorized-1-000-000-000-shares-63-121-930-and-62-948-762-shares-issued-respectively,html:common-stock-0-008-par-value-authorized-1-000-000-000-shares-63-121-930-and-62-948-762-shares-issued-respectively,"Common stock, $0.008 par value; authorized 1,000,000,000 shares, 63,121,930 and 62,948,762 shares issued, respectively",122,0
+balance_sheet,html:treasury-stock-18-935-914-and-17-317-126-shares-respectively,html:treasury-stock-18-935-914-and-17-317-126-shares-respectively,"Treasury stock, 18,935,914 and 17,317,126 shares, respectively",123,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:MarketableSecuritiesCurrent,us-gaap:MarketableSecuritiesCurrent,Short-term investments in marketable securities,1,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net of allowance for doubtful accounts of $56 and $61, respectively",2,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,3,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,4,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property and equipment, net",5,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,6,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",7,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,8,0
+balance_sheet,us-gaap:LongTermInvestments,us-gaap:LongTermInvestments,Long-term investments,9,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,10,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,11,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,50,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued expenses and other current liabilities,51,0
+balance_sheet,bkng:DeferredMerchantBookings,bkng:DeferredMerchantBookings,Deferred merchant bookings,52,0
+balance_sheet,bkng:ConvertibleDebtLiability,bkng:ConvertibleDebtLiability,Convertible debt,53,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,54,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,55,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating lease liabilities,56,0
+balance_sheet,bkng:LongtermU.S.transitiontaxliability,bkng:LongtermU.S.transitiontaxliability,Long-term U.S. transition tax liability,57,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other long-term liabilities,58,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,59,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,60,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and Contingencies (See Note 13),61,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $0.008 par value; authorized 1,000,000,000 shares, 63,143,816 and 62,948,762 shares issued, respectively",124,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock, 20,378,354 and 17,317,126 shares, respectively",125,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,126,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,127,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,128,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders' equity,129,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders' equity,130,0
+balance_sheet,us-gaap:TaxCutsAndJobsActOf2017TransitionTaxForAccumulatedForeignEarningsLiabilityNoncurrent,us-gaap:TaxCutsAndJobsActOf2017TransitionTaxForAccumulatedForeignEarningsLiabilityNoncurrent,Long-term U.S. transition tax liability,103,0
+balance_sheet,us-gaap:AccountsAndOtherReceivablesNetCurrent,us-gaap:AccountsAndOtherReceivablesNetCurrent,"Accounts receivable, net (Allowance for credit losses of $245 and $49, respectively)",104,0
+balance_sheet,bkng:ConvertibleDebtEquity,bkng:ConvertibleDebtEquity,Convertible debt,105,0
+balance_sheet,us-gaap:PrepaidExpenseCurrent,us-gaap:PrepaidExpenseCurrent,"Prepaid expenses, net (Allowance for expected credit losses of $20 and $22, respectively)",106,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,113,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Short-term debt,107,0
+income_statement,html:personnel-including-stock-based-compensation-of-90-77-199-and-83-respectively,html:personnel-including-stock-based-compensation-of-90-77-199-and-83-respectively,"Personnel, including stock-based compensation of $90, $77, $199 and $83, respectively",11,0
+income_statement,html:operating-loss,html:operating-loss,Operating loss,22,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,"Short-term investments (Available-for-sale debt securities:Amortized cost of $117 and $25, respectively)",108,0
+balance_sheet,html:liabilities-and-stockholders-deficit-equity,html:liabilities-and-stockholders-deficit-equity,LIABILITIES AND STOCKHOLDERS' (DEFICIT) EQUITY,109,0
+balance_sheet,html:liabilities-and-stockholders-deficit,html:liabilities-and-stockholders-deficit,LIABILITIES AND STOCKHOLDERS' DEFICIT,114,0

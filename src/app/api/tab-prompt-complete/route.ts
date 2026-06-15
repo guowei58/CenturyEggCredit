@@ -5,8 +5,11 @@ import type { ChatConversationTurn, ChatUserContentPart } from "@/lib/chat-multi
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured, llmCompleteConversation, llmCompleteSingle } from "@/lib/llm-router";
+import {
+  buildOutputTruncatedWarning,
+  llmApiErrorResponseBody,
+} from "@/lib/llm-api-error-report";
 import { filterAllowedSamplePublicPaths, loadPublicSampleImagesAsParts } from "@/lib/tab-prompt-sample-assets";
-import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
 import { isOpenAiWebSearchEnabled } from "@/lib/openai";
@@ -88,7 +91,12 @@ export async function POST(request: Request) {
       : DEFAULT_SYSTEM;
 
   if (!isProviderConfigured(provider, bundle)) {
-    return NextResponse.json({ error: USER_LLM_KEY_SETTINGS_HINT }, { status: 503 });
+    const { status, body } = llmApiErrorResponseBody({
+      provider,
+      httpStatus: 503,
+      rawError: "provider_not_configured",
+    });
+    return NextResponse.json(body, { status });
   }
 
   let maxTokens = LLM_MAX_OUTPUT_TOKENS;
@@ -149,10 +157,17 @@ export async function POST(request: Request) {
         });
 
   if (!result.ok) {
-    const status = result.status && result.status >= 400 && result.status < 600 ? result.status : 502;
-    const msg = result.error.length > 600 ? "Model request failed" : result.error;
-    return NextResponse.json({ error: msg }, { status });
+    const { status, body } = llmApiErrorResponseBody({
+      provider,
+      httpStatus: result.status,
+      rawError: result.error,
+    });
+    return NextResponse.json(body, { status });
   }
 
-  return NextResponse.json({ ok: true, text: result.text });
+  return NextResponse.json({
+    ok: true,
+    text: result.text,
+    ...(result.outputTruncated ? { warning: buildOutputTruncatedWarning(provider) } : {}),
+  });
 }

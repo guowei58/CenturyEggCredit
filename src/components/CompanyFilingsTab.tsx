@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
+import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 import { Card, DataTable } from "@/components/ui";
 
 type Filing = { form: string; filingDate: string; description: string; docUrl: string };
@@ -253,6 +254,28 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
     return list;
   }, [data?.filings, quickFilter, searchQuery]);
 
+  const searchNotes = useMemo(() => {
+    if (!data?.filings?.length) return [];
+    const notes = [
+      `Loaded ${data.filings.length.toLocaleString()} recent filing(s) from SEC EDGAR submissions for CIK ${data.cik} (${data.companyName}).`,
+      "Filter chips and the form search box apply client-side only; they do not re-query EDGAR.",
+    ];
+    if (viaLookup) {
+      notes.push(
+        `Viewing selected CIK ${data.cik}; sidebar ticker ${safeTicker} is unchanged for save actions.`,
+      );
+    }
+    if (relatedRows.length > 0) {
+      notes.push(
+        `${relatedRows.length} related entity label(s) indexed under this CIK — use the Entity list to open another CIK’s filings.`,
+      );
+    }
+    if (filteredFilings.length !== data.filings.length) {
+      notes.push(`${filteredFilings.length.toLocaleString()} row(s) match the current filter.`);
+    }
+    return notes;
+  }, [data, viaLookup, safeTicker, relatedRows.length, filteredFilings.length]);
+
   const relatedSubsidiariesPanel = (
     <div
       className="mb-2 rounded border px-2 py-1.5"
@@ -402,6 +425,7 @@ export function CompanyFilingsTab({ ticker }: { ticker: string }) {
           style={{ borderColor: "var(--border2)", background: "var(--bg)", color: "var(--text)" }}
         />
       </div>
+      <RegulatorySearchNotes notes={searchNotes} className="mb-4" />
       {filteredFilings.length === 0 ? (
         <p className="text-sm py-4" style={{ color: "var(--muted2)" }}>
           No filings match the current filter.

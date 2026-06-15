@@ -1,0 +1,206 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenue,html:revenue,Revenue,0,0
+income_statement,html:expenses,html:expenses,Expenses:,1,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of sales,3,0
+income_statement,html:research-development-and-patent,html:research-development-and-patent,"Research, development and patent",4,0
+income_statement,html:selling-general-and-administrative,html:selling-general-and-administrative,"Selling, general and administrative",5,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,6,0
+income_statement,html:loss-from-operations,html:loss-from-operations,Loss from operations,8,0
+income_statement,html:other-income-expense,html:other-income-expense,Other income (expense):,9,0
+income_statement,html:investment-income,html:investment-income,Investment income,10,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,11,0
+income_statement,html:interest-expense-related-to-sale-of-future-royalties,html:interest-expense-related-to-sale-of-future-royalties,Interest expense related to sale of future royalties,13,0
+income_statement,html:gain-loss-on-investments-net,html:gain-loss-on-investments-net,"Gain (loss) on investments, net",16,0
+income_statement,html:other-income-expense-net,html:other-income-expense-net,"Other income (expense), net",18,0
+income_statement,html:loss-before-income-tax-benefit-expense,html:loss-before-income-tax-benefit-expense,Loss before income tax benefit (expense),19,0
+income_statement,html:income-tax-benefit-expense,html:income-tax-benefit-expense,Income tax benefit (expense),20,0
+income_statement,html:net-loss,html:net-loss,Net loss,21,0
+income_statement,html:basic-net-loss-per-share-in-dollars-per-share,html:basic-net-loss-per-share-in-dollars-per-share,Basic net loss per share (in Dollars per share),23,0
+income_statement,html:diluted-net-loss-per-share-in-dollars-per-share,html:diluted-net-loss-per-share-in-dollars-per-share,Diluted net loss per share (in Dollars per share),24,0
+income_statement,html:shares-used-in-computing-basic-net-loss-per-share-in-shares,html:shares-used-in-computing-basic-net-loss-per-share-in-shares,Shares used in computing basic net loss per share (in Shares),25,0
+income_statement,html:shares-used-in-computing-diluted-net-loss-per-share-in-shares,html:shares-used-in-computing-diluted-net-loss-per-share-in-shares,Shares used in computing diluted net loss per share (in Shares),26,0
+income_statement,html:product-sales-net-member,html:product-sales-net-member,"Product Sales, Net [Member]",27,0
+income_statement,html:revenue-2,html:revenue-2,Revenue:,28,0
+income_statement,html:revenue-3,html:revenue-3,Revenue,29,0
+income_statement,html:royalty-revenue-member,html:royalty-revenue-member,Royalty Revenue [Member],31,0
+income_statement,html:revenue-4,html:revenue-4,Revenue:,32,0
+income_statement,html:revenue-5,html:revenue-5,Revenue,33,0
+income_statement,html:other-commercial-revenue-member,html:other-commercial-revenue-member,Other Commercial Revenue [Member],35,0
+income_statement,html:revenue-6,html:revenue-6,Revenue:,36,0
+income_statement,html:revenue-7,html:revenue-7,Revenue,37,0
+income_statement,html:commercial-revenue-member,html:commercial-revenue-member,Commercial Revenue [Member],38,0
+income_statement,html:revenue-8,html:revenue-8,Revenue:,39,0
+income_statement,html:revenue-9,html:revenue-9,Revenue,40,0
+income_statement,html:collaborative-agreement-revenue-member,html:collaborative-agreement-revenue-member,Collaborative Agreement Revenue [Member],41,0
+income_statement,html:revenue-10,html:revenue-10,Revenue:,42,0
+income_statement,html:revenue-11,html:revenue-11,Revenue,43,0
+income_statement,html:wainua-joint-development-revenue-member,html:wainua-joint-development-revenue-member,WAINUA Joint Development Revenue [Member],44,0
+income_statement,html:revenue-12,html:revenue-12,Revenue:,45,0
+income_statement,html:revenue-13,html:revenue-13,Revenue,46,0
+income_statement,html:research-and-development-revenue-member,html:research-and-development-revenue-member,Research and Development Revenue [Member],47,0
+income_statement,html:revenue-14,html:revenue-14,Revenue:,48,0
+income_statement,html:revenue-15,html:revenue-15,Revenue,49,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,2,0
+balance_sheet,html:contracts-receivable,html:contracts-receivable,Contracts receivable,4,0
+balance_sheet,html:inventories,html:inventories,Inventories,5,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,6,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,7,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant and equipment, net",8,0
+balance_sheet,html:right-of-use-assets,html:right-of-use-assets,Right-of-use assets,11,0
+balance_sheet,html:deposits-and-other-assets,html:deposits-and-other-assets,Deposits and other assets,12,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,13,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,14,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,15,0
+balance_sheet,html:accrued-compensation,html:accrued-compensation,Accrued compensation,17,0
+balance_sheet,html:accrued-liabilities,html:accrued-liabilities,Accrued liabilities,18,0
+balance_sheet,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,19,0
+balance_sheet,html:0-percent-convertible-senior-notes-due-2026-net,html:0-percent-convertible-senior-notes-due-2026-net,"0 percent convertible senior notes due 2026, net",26,0
+balance_sheet,html:current-portion-of-deferred-contract-revenue,html:current-portion-of-deferred-contract-revenue,Current portion of deferred contract revenue,27,0
+balance_sheet,html:other-current-liabilities,html:other-current-liabilities,Other current liabilities,28,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,30,0
+balance_sheet,html:long-term-deferred-contract-revenue,html:long-term-deferred-contract-revenue,Long-term deferred contract revenue,31,0
+balance_sheet,html:liability-related-to-sale-of-future-royalties-net,html:liability-related-to-sale-of-future-royalties-net,"Liability related to sale of future royalties, net",36,0
+balance_sheet,html:long-term-lease-liabilities,html:long-term-lease-liabilities,Long-term lease liabilities,37,0
+balance_sheet,html:long-term-obligations,html:long-term-obligations,Long-term obligations,40,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,41,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders’ equity:,42,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-163-304-875-and-157-908-815-shares-issued-and-outstanding-at-december-31-2025-and-december-31-2024-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-163-304-875-and-157-908-815-shares-issued-and-outstanding-at-december-31-2025-and-december-31-2024-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 163,304,875 and 157,908,815 shares issued and outstanding at December 31, 2025 and December 31, 2024, respectively",52,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,53,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,54,0
+balance_sheet,html:accumulated-deficit,html:accumulated-deficit,Accumulated deficit,55,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,60,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders’ equity,61,0
+balance_sheet,html:0-notes-due-2030-member,html:0-notes-due-2030-member,0% Notes due 2030 [Member],63,0
+balance_sheet,html:current-liabilities-2,html:current-liabilities-2,Current liabilities:,64,0
+balance_sheet,html:convertible-senior-notes-net,html:convertible-senior-notes-net,"Convertible senior notes, net",67,0
+balance_sheet,html:1-75-notes-due-2028-member,html:1-75-notes-due-2028-member,1.75% Notes due 2028 [Member],69,0
+balance_sheet,html:current-liabilities-3,html:current-liabilities-3,Current liabilities:,70,0
+balance_sheet,html:convertible-senior-notes-net-2,html:convertible-senior-notes-net-2,"Convertible senior notes, net",73,0
+balance_sheet,html:0-notes-due-2026-member,html:0-notes-due-2026-member,0% Notes due 2026 [Member],75,0
+balance_sheet,html:current-liabilities-4,html:current-liabilities-4,Current liabilities:,76,0
+balance_sheet,html:convertible-senior-notes-net-3,html:convertible-senior-notes-net-3,"Convertible senior notes, net",77,0
+cash_flow,html:net-loss,html:net-loss,Net loss,1,0
+cash_flow,html:adjustments-to-reconcile-net-loss-to-net-cash-used-in-operating-activities,html:adjustments-to-reconcile-net-loss-to-net-cash-used-in-operating-activities,Adjustments to reconcile net loss to net cash used in operating activities:,2,0
+cash_flow,html:depreciation,html:depreciation,Depreciation,3,0
+cash_flow,html:amortization-of-right-of-use-operating-lease-assets,html:amortization-of-right-of-use-operating-lease-assets,Amortization of right-of-use operating lease assets,4,0
+cash_flow,html:amortization-of-other-assets,html:amortization-of-other-assets,Amortization of other assets,6,0
+cash_flow,html:amortization-of-discount-on-investments-net,html:amortization-of-discount-on-investments-net,"Amortization of discount on investments, net",7,0
+cash_flow,html:amortization-of-debt-issuance-costs,html:amortization-of-debt-issuance-costs,Amortization of debt issuance costs,8,0
+cash_flow,html:non-cash-royalty-revenue-related-to-sale-of-royalties,html:non-cash-royalty-revenue-related-to-sale-of-royalties,Non-cash royalty revenue related to sale of royalties,11,0
+cash_flow,html:non-cash-interest-related-to-sale-of-future-royalties,html:non-cash-interest-related-to-sale-of-future-royalties,Non-cash interest related to sale of future royalties,12,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,13,0
+cash_flow,html:gain-on-early-retirement-of-debt,html:gain-on-early-retirement-of-debt,Gain on early retirement of debt,14,0
+cash_flow,html:inducement-expense-related-to-early-retirement-of-debt,html:inducement-expense-related-to-early-retirement-of-debt,Inducement expense related to early retirement of debt,15,0
+cash_flow,html:non-cash-losses-gains-related-to-disposal-of-property-plant-and-equipment,html:non-cash-losses-gains-related-to-disposal-of-property-plant-and-equipment,"Non-cash losses (gains) related to disposal of property, plant and equipment",16,0
+cash_flow,html:loss-gain-on-investments-net,html:loss-gain-on-investments-net,"Loss (gain) on investments, net",20,0
+cash_flow,html:non-cash-losses-related-to-other-assets,html:non-cash-losses-related-to-other-assets,Non-cash losses related to other assets,21,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,22,0
+cash_flow,html:contracts-receivable,html:contracts-receivable,Contracts receivable,24,0
+cash_flow,html:inventories,html:inventories,Inventories,25,0
+cash_flow,html:other-current-and-long-term-assets,html:other-current-and-long-term-assets,Other current and long-term assets,26,0
+cash_flow,html:accounts-payable,html:accounts-payable,Accounts payable,27,0
+cash_flow,html:income-taxes,html:income-taxes,Income taxes,28,0
+cash_flow,html:accrued-compensation,html:accrued-compensation,Accrued compensation,29,0
+cash_flow,html:accrued-liabilities-and-other-liabilities,html:accrued-liabilities-and-other-liabilities,Accrued liabilities and other liabilities,31,0
+cash_flow,html:deferred-contract-revenue,html:deferred-contract-revenue,Deferred contract revenue,32,0
+cash_flow,html:net-cash-used-in-operating-activities,html:net-cash-used-in-operating-activities,Net cash used in operating activities,33,0
+cash_flow,html:investing-activities,html:investing-activities,Investing activities:,34,0
+cash_flow,html:purchases-of-short-term-investments,html:purchases-of-short-term-investments,Purchases of short-term investments,35,0
+cash_flow,html:proceeds-from-sale-of-short-term-investments,html:proceeds-from-sale-of-short-term-investments,Proceeds from sale of short-term investments,36,0
+cash_flow,html:purchases-of-property-plant-and-equipment,html:purchases-of-property-plant-and-equipment,"Purchases of property, plant and equipment",37,0
+cash_flow,html:acquisition-of-licenses-and-other-assets-net,html:acquisition-of-licenses-and-other-assets-net,"Acquisition of licenses and other assets, net",39,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net cash used in investing activities,43,0
+cash_flow,html:financing-activities,html:financing-activities,Financing activities:,44,0
+cash_flow,html:proceeds-from-issuance-of-common-stock-through-equity-plans-net,html:proceeds-from-issuance-of-common-stock-through-equity-plans-net,"Proceeds from issuance of common stock through equity plans, net",46,0
+cash_flow,html:proceeds-from-issuance-of-common-stock-in-public-offering-net,html:proceeds-from-issuance-of-common-stock-in-public-offering-net,"Proceeds from issuance of common stock in public offering, net",47,0
+cash_flow,html:proceeds-from-sale-of-future-royalties,html:proceeds-from-sale-of-future-royalties,Proceeds from sale of future royalties,58,0
+cash_flow,html:payments-of-transaction-costs-related-to-sale-of-future-royalties,html:payments-of-transaction-costs-related-to-sale-of-future-royalties,Payments of transaction costs related to sale of future royalties,59,0
+cash_flow,html:proceeds-from-real-estate-transaction,html:proceeds-from-real-estate-transaction,Proceeds from real estate transaction,60,0
+cash_flow,html:principal-payments-on-mortgage-debt,html:principal-payments-on-mortgage-debt,Principal payments on mortgage debt,67,0
+cash_flow,html:net-cash-provided-by-financing-activities,html:net-cash-provided-by-financing-activities,Net cash provided by financing activities,72,0
+cash_flow,html:repurchase-of-200-million-principal-amount-of-0-percent-convertible-senior-notes-due-2026,html:repurchase-of-200-million-principal-amount-of-0-percent-convertible-senior-notes-due-2026,Repurchase of $200 million principal amount of 0 percent convertible senior notes due 2026,73,0
+cash_flow,html:repayment-of-0-125-percent-convertible-senior-notes-due-2024,html:repayment-of-0-125-percent-convertible-senior-notes-due-2024,Repayment of 0.125 percent convertible senior notes due 2024,74,0
+cash_flow,html:effects-of-exchange-rates-on-cash,html:effects-of-exchange-rates-on-cash,Effects of exchange rates on cash,75,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents,html:net-increase-decrease-in-cash-and-cash-equivalents,Net increase (decrease) in cash and cash equivalents,76,0
+balance_sheet,ions:EscrowDeposits,ions:EscrowDeposits,Escrow deposit for maturity of 0 percent convertible senior notes due April 2026,3,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation,16,0
+balance_sheet,us-gaap:ConvertibleDebtCurrent,us-gaap:ConvertibleDebtCurrent,0 percent convertible senior notes due April 2026,20,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,29,0
+balance_sheet,us-gaap:ConvertibleDebtNoncurrent,us-gaap:ConvertibleDebtNoncurrent,"0 percent convertible senior notes due 2030, net",32,0
+balance_sheet,us-gaap:ConvertibleDebtNoncurrent@R25,us-gaap:ConvertibleDebtNoncurrent@R25,"1.75 percent convertible senior notes due 2028, net",33,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Long-term obligations,38,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $0.001 par value; 300,000,000 shares authorized, 165,902,064 and 163,304,875 shares issued and outstanding at March 31, 2026 and December 31, 2025, respectively",43,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders' equity,56,0
+cash_flow,ions:IncreaseDecreaseInEscrowDeposits,ions:IncreaseDecreaseInEscrowDeposits,Escrow deposit for maturity of 0 percent convertible senior notes due April 2026,23,0
+balance_sheet,us-gaap:ConvertibleDebtNoncurrent@R24,us-gaap:ConvertibleDebtNoncurrent@R24,"0 percent convertible senior notes, net",34,0
+cash_flow,us-gaap:ProceedsFromConvertibleDebt,us-gaap:ProceedsFromConvertibleDebt,Proceeds from issuance of 1.75 percent convertible senior notes,48,0
+cash_flow,us-gaap:PaymentsOfDebtIssuanceCosts,us-gaap:PaymentsOfDebtIssuanceCosts,1.75 percent convertible senior notes issuance costs,52,0
+income_statement,html:loss-on-investments,html:loss-on-investments,Loss on investments,14,0
+income_statement,html:gain-loss-on-sale-of-real-estate-assets,html:gain-loss-on-sale-of-real-estate-assets,Gain (loss) on sale of real estate assets,15,0
+income_statement,html:spinraza-royalties-member,html:spinraza-royalties-member,SPINRAZA Royalties [Member],30,0
+income_statement,html:wainua-royalties-member,html:wainua-royalties-member,WAINUA Royalties [Member],34,0
+balance_sheet,html:0-125-percent-convertible-senior-notes-net,html:0-125-percent-convertible-senior-notes-net,"0.125 percent convertible senior notes, net",21,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-157-908-815-and-144-340-526-shares-issued-and-outstanding-at-december-31-2024-and-december-31-2023-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-157-908-815-and-144-340-526-shares-issued-and-outstanding-at-december-31-2024-and-december-31-2023-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 157,908,815 and 144,340,526 shares issued and outstanding at December 31, 2024 and December 31, 2023, respectively",44,0
+balance_sheet,html:1-75-percent-convertible-senior-notes-member,html:1-75-percent-convertible-senior-notes-member,1.75 Percent Convertible Senior Notes [Member],62,0
+balance_sheet,html:0-percent-convertible-senior-notes-member,html:0-percent-convertible-senior-notes-member,0 Percent Convertible Senior Notes [Member],68,0
+cash_flow,html:loss-gain-on-sale-of-real-estate-assets,html:loss-gain-on-sale-of-real-estate-assets,Loss (gain) on sale of real estate assets,17,0
+cash_flow,html:proceeds-from-sale-of-real-estate-assets,html:proceeds-from-sale-of-real-estate-assets,Proceeds from sale of real estate assets,38,0
+cash_flow,html:payments-of-tax-withholdings-related-to-vesting-of-employee-stock-awards-and-exercise-of-employee-stock-options,html:payments-of-tax-withholdings-related-to-vesting-of-employee-stock-awards-and-exercise-of-employee-stock-options,Payments of tax withholdings related to vesting of employee stock awards and exercise of employee stock options,68,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-144-340-526-and-142-057-736-shares-issued-and-outstanding-at-december-31-2023-and-december-31-2022-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-144-340-526-and-142-057-736-shares-issued-and-outstanding-at-december-31-2023-and-december-31-2022-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 144,340,526 and 142,057,736 shares issued and outstanding at December 31, 2023 and December 31, 2022, respectively",45,0
+balance_sheet,html:0-125-percent-convertible-senior-notes-member,html:0-125-percent-convertible-senior-notes-member,0.125 Percent Convertible Senior Notes [Member],74,0
+cash_flow,html:purchases-of-strategic-investments,html:purchases-of-strategic-investments,Purchases of strategic investments,40,0
+cash_flow,html:repayment-of-remaining-principal-amount-of-1-percent-convertible-senior-notes-at-maturity,html:repayment-of-remaining-principal-amount-of-1-percent-convertible-senior-notes-at-maturity,Repayment of remaining principal amount of 1 percent convertible senior notes at maturity,61,0
+cash_flow,html:proceeds-from-issuance-of-warrants,html:proceeds-from-issuance-of-warrants,Proceeds from issuance of warrants,62,0
+cash_flow,html:purchase-of-note-hedges,html:purchase-of-note-hedges,Purchase of note hedges,63,0
+balance_sheet,us-gaap:LongTermLoansFromBank,us-gaap:LongTermLoansFromBank,Long-term mortgage debt,39,0
+balance_sheet,us-gaap:FiniteLivedIntangibleAssetsNet,us-gaap:FiniteLivedIntangibleAssetsNet,"Patents, net",9,0
+balance_sheet,ions:LongTermObligationsExcludingConvertibleDebtCurrent,ions:LongTermObligationsExcludingConvertibleDebtCurrent,Current portion of long-term obligations,22,0
+balance_sheet,ions:LongTermObligationsExcludingConvertibleDebtNoncurrent,ions:LongTermObligationsExcludingConvertibleDebtNoncurrent,"Long-term obligations, less current portion",35,0
+cash_flow,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,Purchase of Bicycle Therapeutics plc common stock,41,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-142-057-736-and-141-210-015-shares-issued-and-outstanding-at-december-31-2022-and-december-31-2021-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-142-057-736-and-141-210-015-shares-issued-and-outstanding-at-december-31-2022-and-december-31-2021-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 142,057,736 and 141,210,015 shares issued and outstanding at December 31, 2022 and December 31, 2021, respectively",46,0
+cash_flow,html:gain-on-investments,html:gain-on-investments,Gain on investments,18,0
+cash_flow,html:royalty-monetization-issuance-costs,html:royalty-monetization-issuance-costs,Royalty monetization issuance costs,50,0
+cash_flow,html:repurchase-of-247-9-million-principal-amount-of-1-percent-convertible-senior-notes,html:repurchase-of-247-9-million-principal-amount-of-1-percent-convertible-senior-notes,Repurchase of $247.9 million principal amount of 1 percent convertible senior notes,54,0
+cash_flow,html:repurchases-and-retirements-of-common-stock,html:repurchases-and-retirements-of-common-stock,Repurchases and retirements of common stock,64,0
+cash_flow,html:purchase-of-noncontrolling-interest-of-akcea-therapeutics-inc-including-cash-payments-for-cancellation-of-akcea-therapeutics-inc-equity-awards,html:purchase-of-noncontrolling-interest-of-akcea-therapeutics-inc-including-cash-payments-for-cancellation-of-akcea-therapeutics-inc-equity-awards,"Purchase of noncontrolling interest of Akcea Therapeutics, Inc., including cash payments for cancellation of Akcea Therapeutics, Inc. equity awards",69,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,Short-term investments,1,0
+income_statement,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on early retirement of debt,17,0
+cash_flow,us-gaap:PaymentsOfMergerRelatedCostsFinancingActivities,us-gaap:PaymentsOfMergerRelatedCostsFinancingActivities,Payments of transaction costs for Akcea merger,65,0
+income_statement,html:income-loss-from-operations,html:income-loss-from-operations,Income (loss) from operations,7,0
+income_statement,html:net-income-loss-attributable-to-ionis-pharmaceuticals-inc-common-stockholders,html:net-income-loss-attributable-to-ionis-pharmaceuticals-inc-common-stockholders,"Net income (loss) attributable to Ionis Pharmaceuticals, Inc. common stockholders",22,0
+balance_sheet,html:1-percent-convertible-senior-notes-net,html:1-percent-convertible-senior-notes-net,"1 percent convertible senior notes, net",23,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-141-210-015-and-140-365-594-shares-issued-and-outstanding-at-december-31-2021-and-december-31-2020-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-141-210-015-and-140-365-594-shares-issued-and-outstanding-at-december-31-2021-and-december-31-2020-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 141,210,015 and 140,365,594 shares issued and outstanding at December 31, 2021 and December 31, 2020, respectively",47,0
+cash_flow,html:net-income-loss,html:net-income-loss,Net income (loss),0,0
+cash_flow,html:amortization-of-patents,html:amortization-of-patents,Amortization of patents,5,0
+cash_flow,html:principal-payments-on-line-of-credit,html:principal-payments-on-line-of-credit,Principal payments on line of credit,70,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Long-term deferred tax assets,10,0
+balance_sheet,ions:LongTermDebtAndLeaseObligationCurrentAndOtherCurrentLiabilities,ions:LongTermDebtAndLeaseObligationCurrentAndOtherCurrentLiabilities,Current portion of long-term obligations and other current liabilities,24,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,"Noncontrolling interest in Akcea Therapeutics, Inc.",58,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total stockholders’ equity,59,0
+cash_flow,us-gaap:AmortizationOfDebtDiscountPremium,us-gaap:AmortizationOfDebtDiscountPremium,Amortization of convertible senior notes discount,9,0
+income_statement,html:cost-of-products-sold,html:cost-of-products-sold,Cost of products sold,2,0
+balance_sheet,html:1-percent-convertible-senior-notes,html:1-percent-convertible-senior-notes,1 percent convertible senior notes,25,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-140-365-594-and-140-339-615-shares-issued-and-outstanding-at-december-31-2020-and-december-31-2019-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-140-365-594-and-140-339-615-shares-issued-and-outstanding-at-december-31-2020-and-december-31-2019-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 140,365,594 and 140,339,615 shares issued and outstanding at December 31, 2020 and December 31, 2019, respectively",48,0
+balance_sheet,html:total-ionis-stockholders-equity,html:total-ionis-stockholders-equity,Total Ionis stockholders' equity,57,0
+balance_sheet,html:convertible-senior-notes,html:convertible-senior-notes,Convertible senior notes,65,0
+balance_sheet,html:1-percent-convertible-senior-notes-member,html:1-percent-convertible-senior-notes-member,1 Percent Convertible Senior Notes [Member],66,0
+balance_sheet,html:1-percent-convertible-senior-notes-2,html:1-percent-convertible-senior-notes-2,1 percent convertible senior notes,71,0
+balance_sheet,html:convertible-senior-notes-2,html:convertible-senior-notes-2,Convertible senior notes,72,0
+cash_flow,html:accrued-liabilities-and-deferred-rent,html:accrued-liabilities-and-deferred-rent,Accrued liabilities and deferred rent,30,0
+cash_flow,html:proceeds-from-the-issuance-of-common-stock-to-biogen,html:proceeds-from-the-issuance-of-common-stock-to-biogen,Proceeds from the issuance of common stock to Biogen,71,0
+income_statement,html:loss-on-extinguishment-of-financing-liability-for-leased-facility,html:loss-on-extinguishment-of-financing-liability-for-leased-facility,Loss on extinguishment of financing liability for leased facility,12,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-140-339-615-and-137-928-828-shares-issued-and-outstanding-at-december-31-2019-and-december-31-2018-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-140-339-615-and-137-928-828-shares-issued-and-outstanding-at-december-31-2019-and-december-31-2018-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 140,339,615 and 137,928,828 shares issued and outstanding at December 31, 2019 and December 31, 2018, respectively",49,0
+cash_flow,html:amortization-of-long-term-financing-liability-for-leased-facility,html:amortization-of-long-term-financing-liability-for-leased-facility,Amortization of long-term financing liability for leased facility,10,0
+cash_flow,html:loss-on-extinguishment-of-financing-liability-for-leased-facility,html:loss-on-extinguishment-of-financing-liability-for-leased-facility,Loss on extinguishment of financing liability for leased facility,19,0
+cash_flow,html:proceeds-from-the-sale-of-regulus-therapeutics-inc,html:proceeds-from-the-sale-of-regulus-therapeutics-inc,"Proceeds from the sale of Regulus Therapeutics, Inc.",42,0
+cash_flow,html:principal-payments-on-debt-and-capital-lease-obligations,html:principal-payments-on-debt-and-capital-lease-obligations,Principal payments on debt and capital lease obligations,66,0
+cash_flow,html:proceeds-from-building-mortgage-debt-net-of-issuance-costs,html:proceeds-from-building-mortgage-debt-net-of-issuance-costs,"Proceeds from building mortgage debt, net of issuance costs",49,0
+cash_flow,html:proceeds-from-the-sale-of-akcea-therapeutics-inc-common-stock-to-novartis-in-a-private-placement,html:proceeds-from-the-sale-of-akcea-therapeutics-inc-common-stock-to-novartis-in-a-private-placement,"Proceeds from the sale of Akcea Therapeutics, Inc. common stock to Novartis in a private placement",53,0
+cash_flow,html:offering-costs-paid,html:offering-costs-paid,Offering costs paid,55,0
+cash_flow,html:payment-to-settle-financing-liability-for-leased-facility,html:payment-to-settle-financing-liability-for-leased-facility,Payment to settle financing liability for leased facility,56,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-139-623-937-and-137-928-828-shares-issued-and-outstanding-at-march-31-2019-unaudited-and-december-31-2018-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-139-623-937-and-137-928-828-shares-issued-and-outstanding-at-march-31-2019-unaudited-and-december-31-2018-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 139,623,937 and 137,928,828 shares issued and outstanding at March 31, 2019 (unaudited) and December 31, 2018, respectively",50,0
+cash_flow,html:proceeds-from-equity-awards,html:proceeds-from-equity-awards,Proceeds from equity awards,45,0
+balance_sheet,html:common-stock-0-001-par-value-300-000-000-shares-authorized-137-928-828-and-124-976-373-shares-issued-and-outstanding-at-december-31-2018-and-december-31-2017-respectively,html:common-stock-0-001-par-value-300-000-000-shares-authorized-137-928-828-and-124-976-373-shares-issued-and-outstanding-at-december-31-2018-and-december-31-2017-respectively,"Common stock, $0.001 par value; 300,000,000 shares authorized, 137,928,828 and 124,976,373 shares issued and outstanding at December 31, 2018 and December 31, 2017, respectively",51,0
+cash_flow,html:proceeds-from-borrowing-on-line-of-credit-facility,html:proceeds-from-borrowing-on-line-of-credit-facility,Proceeds from borrowing on line of credit facility,51,0
+cash_flow,html:excess-tax-benefits-from-stock-based-compensation-awards,html:excess-tax-benefits-from-stock-based-compensation-awards,Excess tax benefits from stock-based compensation awards,57,0

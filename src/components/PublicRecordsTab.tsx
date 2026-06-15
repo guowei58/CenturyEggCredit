@@ -3,6 +3,7 @@
 import DOMPurify from "dompurify";
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { Card } from "@/components/ui";
+import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 import {
   PUBLIC_RECORD_CATEGORY_DESCRIPTIONS,
   PUBLIC_RECORD_CATEGORY_LABELS,
@@ -1122,11 +1123,26 @@ export function PublicRecordsTab({
         ? UCC_DISCLAIMER
         : null;
 
+  const searchNotes = useMemo(() => {
+    const legal = profileDraft.legalNames ?? [];
+    const subs = profileDraft.subsidiaryNames ?? [];
+    const notes = [
+      "Legal names and subsidiaries saved here feed search hints on Litigation, Enforcements, FCC Filings, Patent IP, and other Regulatory Documents tabs.",
+    ];
+    if (profileDraft.companyName?.trim()) {
+      notes.push(`Primary company name: ${profileDraft.companyName.trim()}.`);
+    }
+    if (legal.length > 0) notes.push(`${legal.length} legal name(s) on profile.`);
+    if (subs.length > 0) notes.push(`${subs.length} subsidiary search name(s) on profile.`);
+    return notes;
+  }, [profileDraft.companyName, profileDraft.legalNames, profileDraft.subsidiaryNames]);
+
   if (!tk) return <p className="text-sm text-[var(--muted)]">Select a company.</p>;
 
   if (profileOnly) {
     return (
       <div className="space-y-6">
+        <RegulatorySearchNotes notes={searchNotes} className="" />
         <PublicRecordsProfileCard
           loading={loading}
           secBusy={secBusy}
@@ -1143,6 +1159,7 @@ export function PublicRecordsTab({
 
   return (
     <div className="space-y-6">
+      <RegulatorySearchNotes notes={searchNotes} className="" />
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(15.5rem,20rem)_minmax(0,1fr)] lg:items-start lg:gap-0 lg:pt-3">
         <aside
           className="order-first shrink-0 lg:sticky lg:top-0 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto lg:border-r lg:border-[var(--border)] lg:pr-6"

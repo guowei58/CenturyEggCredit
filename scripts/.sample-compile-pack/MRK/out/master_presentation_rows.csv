@@ -1,0 +1,144 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Sales,0,0
+income_statement,html:costs-expenses-and-other,html:costs-expenses-and-other,"Costs, Expenses and Other",1,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales,2,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative",3,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research and development,4,0
+income_statement,us-gaap:RestructuringCharges,us-gaap:RestructuringCharges,Restructuring costs,5,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,"Other (income) expense, net",6,0
+income_statement,mrk:CostsExpensesAndOther,mrk:CostsExpensesAndOther,costs expenses and other costs expenses and other costs expenses and other,7,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income Before Taxes,8,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Taxes on Income,9,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net Income,10,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Less: Net Income Attributable to Noncontrolling Interests,12,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,"Net Income Attributable to Merck & Co., Inc.",13,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,"Basic Earnings per Common Share Attributable to Merck & Co., Inc. Common Shareholders",14,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,"Earnings per Common Share Assuming Dilution Attributable to Merck & Co., Inc. Common Shareholders",17,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:MarketableSecuritiesCurrent,us-gaap:MarketableSecuritiesCurrent,Short-term investments,1,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,Accounts receivable (net of allowance for doubtful accounts of $97 in 2025 and $89 in 2024),2,0
+balance_sheet,us-gaap:InventoryNoncurrent,us-gaap:InventoryNoncurrent,"Inventories (excludes inventories of $5,681 in 2025 and $4,193 in 2024classified in Other assets - see Note 7)",3,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,6,0
+balance_sheet,us-gaap:MarketableSecuritiesNoncurrent,us-gaap:MarketableSecuritiesNoncurrent,Investments,7,0
+balance_sheet,html:property-plant-and-equipment-at-cost,html:property-plant-and-equipment-at-cost,"Property, Plant and Equipment (at cost)",9,0
+balance_sheet,us-gaap:Land,us-gaap:Land,Land,10,0
+balance_sheet,us-gaap:BuildingsAndImprovementsGross,us-gaap:BuildingsAndImprovementsGross,Buildings,11,0
+balance_sheet,us-gaap:MachineryAndEquipmentGross,us-gaap:MachineryAndEquipmentGross,"Machinery, equipment and office furnishings",12,0
+balance_sheet,us-gaap:ConstructionInProgressGross,us-gaap:ConstructionInProgressGross,Construction in progress,13,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,property plant and equipment gross property plant and equipment gross,14,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Less: accumulated depreciation,15,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,property plant and equipment net property plant and equipment net,16,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,17,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Other Intangibles, Net",18,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other Assets,19,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,assets assets,21,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,Liabilities and Equity,22,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities,23,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Loans payable and current portion of long-term debt,24,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Trade accounts payable,25,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Accrued and other current liabilities,26,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Income taxes payable,27,0
+balance_sheet,us-gaap:DividendsPayableCurrent,us-gaap:DividendsPayableCurrent,Dividends payable,28,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,31,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-Term Debt,32,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred Income Taxes,33,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other Noncurrent Liabilities,34,0
+balance_sheet,html:merck-co-inc-stockholders-equity,html:merck-co-inc-stockholders-equity,"Merck & Co., Inc. Stockholders’ Equity",36,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock, $0.50 par valueAuthorized - 6,500,000,000 sharesIssued - 3,577,103,522 shares in 2025 and 2024",40,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Other paid-in capital,41,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,42,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,43,0
+balance_sheet,us-gaap:StockholdersEquityBeforeTreasuryStock,us-gaap:StockholdersEquityBeforeTreasuryStock,stockholders equity before treasury stock stockholders equity before treasury stock,47,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Less treasury stock, at cost: 1,102,476,756 shares in 2025 and 1,049,466,187 shares in 2024",50,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,"Total Merck & Co., Inc. stockholders’ equity",51,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling Interests,52,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,53,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,liabilities and stockholders equity liabilities and stockholders equity,54,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,0,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-operating-activities,Adjustments to reconcile net income to net cash provided by operating activities:,8,0
+cash_flow,us-gaap:AdjustmentForAmortization,us-gaap:AdjustmentForAmortization,Amortization,9,0
+cash_flow,us-gaap:Depreciation,us-gaap:Depreciation,Depreciation,10,0
+cash_flow,us-gaap:ImpairmentOfIntangibleAssetsExcludingGoodwill,us-gaap:ImpairmentOfIntangibleAssetsExcludingGoodwill,Intangible asset impairment charges,11,0
+cash_flow,us-gaap:EquitySecuritiesFvNiGainLoss,us-gaap:EquitySecuritiesFvNiGainLoss,"Income from investments in equity securities, net",12,0
+cash_flow,us-gaap:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff,us-gaap:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff,Charges for certain research and development asset acquisitions,14,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,16,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Share-based compensation,17,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,Other,18,0
+cash_flow,html:net-changes-in-assets-and-liabilities,html:net-changes-in-assets-and-liabilities,Net changes in assets and liabilities:,23,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Accounts receivable,24,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,25,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableTrade,us-gaap:IncreaseDecreaseInAccountsPayableTrade,Trade accounts payable,26,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedLiabilities,us-gaap:IncreaseDecreaseInAccruedLiabilities,Accrued and other current liabilities,27,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,Income taxes payable,28,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,Noncurrent liabilities,29,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,Other,30,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net Cash Provided by Operating Activities,31,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash Flows from Investing Activities,32,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Capital expenditures,33,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Purchases of securities and other investments,35,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfOtherInvestments,us-gaap:ProceedsFromSaleAndMaturityOfOtherInvestments,Proceeds from sales of securities and other investments,36,0
+cash_flow,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,Proceeds from sale of Seagen Inc. common stock,37,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisition of Verona Pharma plc, net of cash acquired",38,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessTwoNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessTwoNetOfCashAcquired,"Acquisition of Eyebiotech Limited, net of cash acquired",39,0
+cash_flow,mrk:PaymentsToAcquireBusinessFour,mrk:PaymentsToAcquireBusinessFour,Acquisition of Elanco Animal Health Incorporated aqua business,40,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessThreeNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessThreeNetOfCashAcquired,"Acquisition of Harpoon Therapeutics, Inc., net of cash acquired",41,0
+cash_flow,mrk:PaymentsToAcquireGlobalRights,mrk:PaymentsToAcquireGlobalRights,Acquisition of MK-1045 from Curon Pharmaceutical,42,0
+cash_flow,mrk:PaymentsToAcquireBusinessFiveNetOfCashAcquired,mrk:PaymentsToAcquireBusinessFiveNetOfCashAcquired,"Acquisition of Prometheus Biosciences, Inc., net of cash acquired",49,0
+cash_flow,mrk:PaymentsToAcquireBusinessSixNetOfCashAcquired,mrk:PaymentsToAcquireBusinessSixNetOfCashAcquired,"Acquisition of Imago BioSciences Inc., net of cash acquired",50,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other,51,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net Cash Used in Investing Activities,52,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,Cash Flows from Financing Activities,53,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Payments on debt,55,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfDebt,us-gaap:ProceedsFromIssuanceOfDebt,Proceeds from issuance of debt,56,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Purchases of treasury stock,58,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Dividends paid to stockholders,59,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from exercise of stock options,60,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other,61,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net Cash Used in Financing Activities,64,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Effect of Exchange Rate Changes on Cash, Cash Equivalents and Restricted Cash",66,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Net Increase (Decrease) in Cash, Cash Equivalents and Restricted Cash",67,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,Net change in short-term borrowings,54,0
+cash_flow,mrk:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationOrJointVentureFormationWriteoffAssetAcquisitionFour,mrk:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationOrJointVentureFormationWriteoffAssetAcquisitionFour,Charge for the acquisition of Eyebiotech Limited,13,0
+cash_flow,mrk:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationOrJointVentureFormationWriteoffAssetAcquisitionTwo,mrk:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationOrJointVentureFormationWriteoffAssetAcquisitionTwo,"Charge for the acquisition of Harpoon Therapeutics, Inc.",43,0
+cash_flow,mrk:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationOrJointVentureFormationWriteoffAssetAcquisitionThree,mrk:ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationOrJointVentureFormationWriteoffAssetAcquisitionThree,"Charge for the acquisition of Prometheus Biosciences, Inc.",44,0
+cash_flow,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales,19,0
+cash_flow,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative",20,0
+cash_flow,us-gaap:RestructuringCharges,us-gaap:RestructuringCharges,Restructuring costs,15,0
+cash_flow,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income Before Taxes,21,0
+cash_flow,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Taxes on Income,22,0
+cash_flow,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,"Basic Earnings per Common Share Attributable to Merck & Co., Inc. Common Shareholders",1,0
+cash_flow,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,"Earnings per Common Share Assuming Dilution Attributable to Merck & Co., Inc. Common Shareholders",3,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,"Income from Discontinued Operations, Net of Taxes and Amounts Attributable to Noncontrolling Interests",11,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,Income from Continuing Operations,15,0
+income_statement,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerBasicShare,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerBasicShare,Income from Discontinued Operations,16,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,Income from Continuing Operations,18,0
+income_statement,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerDilutedShare,Income from Discontinued Operations,19,0
+cash_flow,mrk:DisposalGroupIncludingDiscontinuedOperationsDistributionReceived,mrk:DisposalGroupIncludingDiscontinuedOperationsDistributionReceived,Distribution from Organon & Co.,57,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivitiesContinuingOperations,us-gaap:NetCashProvidedByUsedInFinancingActivitiesContinuingOperations,Net Cash (Used in) Provided by Financing Activities of Continuing Operations,62,0
+cash_flow,html:cash-flows-from-discontinued-operations,html:cash-flows-from-discontinued-operations,Cash Flows from Discontinued Operations,63,0
+cash_flow,us-gaap:NetCashProvidedByUsedInDiscontinuedOperations,us-gaap:NetCashProvidedByUsedInDiscontinuedOperations,Net Cash Flows Provided by Discontinued Operations,65,0
+cash_flow,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,Purchase of Seagen Inc. common stock,34,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current assets of discontinued operations,5,0
+balance_sheet,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,us-gaap:DisposalGroupIncludingDiscontinuedOperationAssetsNoncurrent,Noncurrent Assets of Discontinued Operations,20,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Current liabilities of discontinued operations,29,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationNoncurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationNoncurrent,Noncurrent Liabilities of Discontinued Operations,35,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Less treasury stock, at cost:1,051,780,149 shares in 2021 and 1,046,877,695 shares in 2020",48,0
+cash_flow,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity,"Income from Discontinued Operations, Net of Taxes and Amounts Attributable to Noncontrolling Interests",2,0
+cash_flow,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,Income from Continuing Operations,4,0
+cash_flow,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerBasicShare,us-gaap:DiscontinuedOperationIncomeLossFromDiscontinuedOperationNetOfTaxPerBasicShare,Income from Discontinued Operations,5,0
+cash_flow,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,Income from Continuing Operations,6,0
+cash_flow,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare,Income from Discontinued Operations,7,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $0.50 par valueAuthorized - 6,500,000,000 sharesIssued - 3,577,103,522 shares in 2020 and 2019",37,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Less treasury stock, at cost:1,047,935,095 shares in 2020 and 1,038,087,496 shares in 2019",49,0
+cash_flow,mrk:ChargeForFuturePaymentsRelatedToCollaborationLicenseOptions,mrk:ChargeForFuturePaymentsRelatedToCollaborationLicenseOptions,Charge for future payments related to collaboration license options,45,0
+cash_flow,us-gaap:GainLossOnContractTermination,us-gaap:GainLossOnContractTermination,Charge for collaboration termination,46,0
+cash_flow,us-gaap:TaxCutsAndJobsActOf2017IncompleteAccountingTransitionTaxForAccumulatedForeignEarningsProvisionalIncomeTaxExpense,us-gaap:TaxCutsAndJobsActOf2017IncompleteAccountingTransitionTaxForAccumulatedForeignEarningsProvisionalIncomeTaxExpense,Provisional charge for one-time transition tax related to the enactment of U.S. tax legislation,47,0
+balance_sheet,html:property-plant-and-equipment-at-cost-net-of-accumulated-depreciation-of-16-623in-2019-and-16-324-in-2018,html:property-plant-and-equipment-at-cost-net-of-accumulated-depreciation-of-16-623in-2019-and-16-324-in-2018,"Property, Plant and Equipment, at cost, net of accumulated depreciation of $16,623in 2019 and $16,324 in 2018",8,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,30,0
+balance_sheet,html:common-stock-0-50-par-valueauthorized-6-500-000-000-sharesissued-3-577-103-522-shares-in-2019-and-2018,html:common-stock-0-50-par-valueauthorized-6-500-000-000-sharesissued-3-577-103-522-shares-in-2019-and-2018,"Common stock, $0.50 par valueAuthorized - 6,500,000,000 sharesIssued - 3,577,103,522 shares in 2019 and 2018",38,0
+balance_sheet,html:less-treasury-stock-at-cost-994-032-308-shares-in-2019-and-984-543-979-shares-in-2018,html:less-treasury-stock-at-cost-994-032-308-shares-in-2019-and-984-543-979-shares-in-2018,"Less treasury stock, at cost:994,032,308 shares in 2019 and 984,543,979 shares in 2018",44,0
+balance_sheet,html:total-merck-co-inc-stockholders-equity,html:total-merck-co-inc-stockholders-equity,"Total Merck & Co., Inc. stockholders’ equity",46,0
+balance_sheet,html:common-stock-0-50-par-valueauthorized-6-500-000-000-sharesissued-3-577-103-522-shares-in-2018-and-2017,html:common-stock-0-50-par-valueauthorized-6-500-000-000-sharesissued-3-577-103-522-shares-in-2018-and-2017,"Common stock, $0.50 par valueAuthorized - 6,500,000,000 sharesIssued - 3,577,103,522 shares in 2018 and 2017",39,0
+balance_sheet,html:less-treasury-stock-at-cost-984-543-979-shares-in-2018-and-880-491-914-shares-in-2017,html:less-treasury-stock-at-cost-984-543-979-shares-in-2018-and-880-491-914-shares-in-2017,"Less treasury stock, at cost:984,543,979 shares in 2018 and 880,491,914 shares in 2017",45,0
+cash_flow,html:charge-related-to-the-settlement-of-worldwide-keytruda-patent-litigation,html:charge-related-to-the-settlement-of-worldwide-keytruda-patent-litigation,Charge related to the settlement of worldwide Keytruda patent litigation,48,0

@@ -24,7 +24,13 @@ export type AsPresentedStatementForExcel = {
   workbookValueScale?: WorkbookNumericScale;
   /** When true, income statement sheet uses hybrid instance/SEC-display rule (see Meta note). */
   primaryGridUsesRaw?: boolean;
-  periods: Array<{ key: string; label: string; shortLabel?: string }>;
+  periods: Array<{
+    key: string;
+    label: string;
+    shortLabel?: string;
+    start?: string | null;
+    end?: string | null;
+  }>;
   rows: Array<{
     concept: string;
     label: string;
@@ -89,6 +95,16 @@ export function buildAsPresentedStatementsWorkbook(params: AsPresentedExcelParam
         : "No _cal.xml in package or fetch failed — rollup checks skipped.",
     ]
   );
+  meta.push(["", ""]);
+  meta.push(["Period columns", ""]);
+  meta.push(["Sheet", "Column", "Period key", "Header", "Start", "End"]);
+  for (const stmt of params.statements) {
+    const tab = sheetName(stmt.title);
+    stmt.periods.forEach((p, idx) => {
+      const header = p.shortLabel?.trim() ? p.shortLabel : p.label;
+      meta.push([tab, 4 + idx, p.key, header, p.start ?? "", p.end ?? ""]);
+    });
+  }
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(meta), sheetName("Meta"));
 
   const valHeader: (string | number)[][] = [

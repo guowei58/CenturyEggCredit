@@ -64,7 +64,6 @@ export async function GET(
       ok: result.ok,
       best: result.best,
       savedDocument: result.savedDocument ?? null,
-      metaFilename: result.metaFilename ?? null,
       metadata: {
         discoveredAt: result.metadata.discoveredAt,
         input: result.metadata.input,

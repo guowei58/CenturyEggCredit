@@ -83,7 +83,12 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
         tabs: [
           "Capital Structure",
           "Org Chart",
-          "Credit Agreements & Indentures",
+          "Credit Docs List",
+          "Credit Agreement",
+          "First Lien Notes",
+          "2nd Lien Notes",
+          "Unsecured Notes",
+          "Other Credit Documents",
           "Entity Mapper",
         ],
       },
@@ -153,7 +158,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "Research Roadmap",
-          "Earnings Releases",
           "Mgmt Presentations & Transcripts",
           "Industry Publications",
           "Industry Contacts",
@@ -165,7 +169,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
         tabs: [
           "News & Events",
           "Ratings Research Links",
-          "Broker Research Reports",
+          "Broker Activities",
           "The Cap Stack Rumor Mill",
           "Twitter Sentiment",
           "Substack",
@@ -185,6 +189,8 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "AI Memo and Deck",
           "Literary References",
           "Biblical References",
+          "How to Look Like a Dumbass",
+          "Next Quarter Earnings Transcript",
         ],
       },
     ],

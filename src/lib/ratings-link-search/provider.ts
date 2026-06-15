@@ -13,7 +13,7 @@ export function getSearchProviderFromEnv():
       error: {
         code: "missing_env",
         message:
-          "Web search uses Serper (https://serper.dev). Set SERPER_API_KEY in .env.local for Ratings links, Broker Research, Research Finder, and Substack discovery.",
+          "Web search uses Serper (https://serper.dev). Set SERPER_API_KEY in .env.local for Ratings links, Broker Activities, Research Finder, and Substack discovery.",
       },
     };
   }

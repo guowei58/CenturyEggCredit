@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
+import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 import { Card, DataTable } from "@/components/ui";
 import { formatOdpPatentQueryString } from "@/lib/uspto-ip";
 import { confidenceLevelColors, matchConfidenceFromQuery } from "@/lib/matchConfidenceFromQuery";
@@ -94,10 +95,12 @@ export function CompanyTrademarkIpTab({
   const [odpPatentRows, setOdpPatentRows] = useState<OdpPatentRow[]>([]);
   /** Raw `q` sent to the API for the current result set (`null` = server uses company name / ticker). */
   const [pagingQ, setPagingQ] = useState<string | null>(null);
+  const [subsidiaryCollapseSignal, setSubsidiaryCollapseSignal] = useState(0);
 
   const runPatentSearch = useCallback(
     async (qParam: string | undefined) => {
       if (!safeTicker) return;
+      setSubsidiaryCollapseSignal((n) => n + 1);
       setLoading(true);
       setError(null);
       try {
@@ -163,6 +166,25 @@ export function CompanyTrademarkIpTab({
     void runPatentSearch(undefined);
   }, [safeTicker, companyName, runPatentSearch]);
 
+  const searchNotes = useMemo(() => {
+    if (!payload) return [];
+    const notes = [...payload.notices];
+    notes.unshift(`Query: "${payload.queryUsed}".`);
+    if (payload.odpConfigured) {
+      notes.push(
+        `ODP patent applications: ${odpPatentRows.length.toLocaleString()} loaded of ${payload.totalOdp.toLocaleString()} match(es) in index.`,
+      );
+      if (payload.patentsViewConfigured) {
+        notes.push(
+          `PatentsView enrichment: ${payload.assigneeCandidates.length} assignee name match(es); ${payload.patentsViewBlocks.length} granted-patent block(s) shown.`,
+        );
+      } else {
+        notes.push("PatentsView enrichment not configured (optional).");
+      }
+    }
+    return notes;
+  }, [payload, odpPatentRows.length]);
+
   if (!safeTicker) {
     return (
       <p className="text-sm" style={{ color: "var(--muted)" }}>
@@ -177,6 +199,7 @@ export function CompanyTrademarkIpTab({
         ticker={safeTicker}
         companyName={companyName}
         disabled={loading || loadingMoreOdp}
+        searchCollapseSignal={subsidiaryCollapseSignal}
         disclaimer="Subsidiaries from your saved Public Records profile (Exhibit 21 grid when present, otherwise the subsidiary name table). Use these as search queries. Verify matches on USPTO."
         onPickName={(name) => {
           setQueryDraft(formatOdpPatentQueryString(name));
@@ -205,12 +228,9 @@ export function CompanyTrademarkIpTab({
             {loading ? "Searching…" : "Search USPTO"}
           </button>
         </div>
-        {activeQuery && (
-          <p className="mt-2 text-[10px]" style={{ color: "var(--muted)" }}>
-            Last query: <span className="font-mono">{activeQuery}</span>
-          </p>
-        )}
       </Card>
+
+      <RegulatorySearchNotes notes={searchNotes} className="" />
 
       {error && (
         <div className="rounded border border-[var(--danger)]/40 bg-[var(--danger)]/10 px-3 py-2 text-sm" style={{ color: "var(--danger)" }}>
@@ -235,37 +255,13 @@ export function CompanyTrademarkIpTab({
             </a>
             <SaveFilingLinkButton ticker={safeTicker} url={payload.links.odpSignup} />
           </span>
-          {payload.notices.map((n) => (
-            <p key={n} className="mt-2 text-[11px]" style={{ color: "var(--muted)" }}>
-              {n}
-            </p>
-          ))}
         </Card>
-      )}
-
-      {payload?.odpConfigured && payload.notices.length > 0 && (
-        <div className="rounded border border-[var(--border)] bg-[var(--card2)]/40 px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-          {payload.notices.map((n) => (
-            <p key={n}>{n}</p>
-          ))}
-        </div>
       )}
 
       {payload?.odpConfigured && (
         <Card
           title={`Patent applications (ODP) — ${payload.totalOdp.toLocaleString()} match(es) in index`}
         >
-          <p className="mb-2 text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
-            The Open Data Portal returns at most {ODP_PAGE_LIMIT} rows per request; the title is the total hit count in the
-            index, not how many rows are shown below. Load more appends the next page so you can scroll through everything.{" "}
-            <span style={{ color: "var(--muted2)" }}>
-              Confidence compares your query tokens to assignee, title, and inventors (heuristic; not a USPTO score).
-            </span>
-          </p>
-          <p className="mb-3 text-[11px] font-medium" style={{ color: "var(--muted2)" }}>
-            Showing {odpPatentRows.length.toLocaleString()} row(s) loaded
-            {payload.totalOdp > 0 ? ` of ${payload.totalOdp.toLocaleString()} reported.` : "."}
-          </p>
           {odpPatentRows.length === 0 ? (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
               No application rows returned for this query. Try the full legal name, a subsidiary, or a distinct keyword.
@@ -348,16 +344,6 @@ export function CompanyTrademarkIpTab({
               </button>
             </div>
           )}
-          <p className="mt-3 text-[10px]" style={{ color: "var(--muted)" }}>
-            Prosecution and file history:{" "}
-            <span className="inline-flex flex-wrap items-center gap-x-0.5 align-middle">
-              <a href={payload.links.patentCenter} className="underline" target="_blank" rel="noreferrer">
-                Patent Center
-              </a>
-              <SaveFilingLinkButton ticker={safeTicker} url={payload.links.patentCenter} />
-            </span>
-            . ODP search is keyword-style; results may include unrelated filings if the name is generic.
-          </p>
         </Card>
       )}
 

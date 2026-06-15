@@ -61,13 +61,10 @@ type PacerSearchResponse = {
   unbilledPageCount?: number | null;
 };
 
-/** Set true to re-enable PACER Case Locator party search (may incur PACER charges). */
-const LITIGATION_PACER_ENABLED = false;
-
 const COURTLISTENER_PAGE_SIZE = 50;
 const COURTLISTENER_MAX_PAGES = 100;
-const PACER_PAGE_SIZE = 54;
-const PACER_MAX_PAGES = 100;
+/** PACER Case Locator: one party-search page only (case summaries; user opens case on PACER for filings). */
+const PACER_MAX_PAGES = 1;
 const COURTLISTENER_MAX_429_RETRIES = 1;
 const COURTLISTENER_MAX_ELAPSED_MS = 15_000;
 const PACER_MAX_ELAPSED_MS = 15_000;
@@ -98,6 +95,13 @@ function pacerOtp(): string | undefined {
   return process.env.PACER_OTP?.trim();
 }
 
+/** When PACER_USERNAME + PACER_PASSWORD are set. Set LITIGATION_PACER_ENABLED=false to disable. */
+function litigationPacerEnabled(): boolean {
+  const flag = process.env.LITIGATION_PACER_ENABLED?.trim().toLowerCase();
+  if (flag === "false" || flag === "0" || flag === "off") return false;
+  return Boolean(pacerUsername() && pacerPassword());
+}
+
 function normalizePhrase(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
@@ -111,13 +115,34 @@ function buildNameVariants(params: RegulatorySearchParams): string[] {
     .filter(Boolean);
   const variants = new Set<string>();
   for (const item of raw) {
-    variants.add(item);
-    const noSuffix = normalizePhrase(item.replace(/[.,]/g, " ").replace(CORPORATE_SUFFIX_PATTERN, " "));
-    if (noSuffix && noSuffix.length >= 4) variants.add(noSuffix);
-    const commaHead = normalizePhrase(item.split(",")[0] ?? "");
-    if (commaHead && commaHead.length >= 4) variants.add(commaHead);
+    for (const variant of nameVariantsFromPhrase(item)) variants.add(variant);
   }
   return [...variants].slice(0, 12);
+}
+
+function nameVariantsFromPhrase(item: string): string[] {
+  const normalized = normalizePhrase(item);
+  if (!normalized) return [];
+  const variants = new Set<string>([normalized]);
+  const noSuffix = normalizePhrase(normalized.replace(/[.,]/g, " ").replace(CORPORATE_SUFFIX_PATTERN, " "));
+  if (noSuffix && noSuffix.length >= 4) variants.add(noSuffix);
+  const commaHead = normalizePhrase(normalized.split(",")[0] ?? "");
+  if (commaHead && commaHead.length >= 4) variants.add(commaHead);
+  return [...variants];
+}
+
+/** Caption/party filter variants — search box only when the user entered a query. */
+function buildCaptionMatchVariants(params: RegulatorySearchParams): string[] {
+  const query = normalizePhrase(String(params.query ?? ""));
+  if (query) {
+    const variants = nameVariantsFromPhrase(query).filter((variant) => variant.length >= 4);
+    const out = (variants.length ? variants : [query]).sort((a, b) => b.length - a.length);
+    return out;
+  }
+  return buildNameVariants(params)
+    .map((variant) => normalizePhrase(variant))
+    .filter((variant) => variant.length >= 4)
+    .sort((a, b) => b.length - a.length);
 }
 
 function stripHtml(value: string | null | undefined): string {
@@ -141,13 +166,6 @@ function entityTokens(value: string): string[] {
     .split(" ")
     .map((token) => token.trim())
     .filter((token) => token.length >= 2);
-}
-
-function buildCaptionMatchVariants(params: RegulatorySearchParams): string[] {
-  return buildNameVariants(params)
-    .map((variant) => normalizePhrase(variant))
-    .filter((variant) => variant.length >= 4)
-    .sort((a, b) => b.length - a.length);
 }
 
 function captionContainsEntity(caption: string, variants: string[]): boolean {
@@ -174,6 +192,19 @@ export function courtListenerRowMatchesEntity(row: CourtListenerSearchRow, param
   const title = String(row.caseNameFull ?? row.caseName ?? "").trim();
   if (!title) return false;
   return captionContainsEntity(title, variants);
+}
+
+export function pacerRowMatchesEntity(row: PacerPartyRow, params: RegulatorySearchParams): boolean {
+  const variants = buildCaptionMatchVariants(params);
+  if (!variants.length) return true;
+
+  const caseRow = row.courtCase ?? {};
+  const title = String(caseRow.caseTitle ?? row.caseTitle ?? "").trim();
+  const matchedParty = [String(row.firstName ?? "").trim(), String(row.lastName ?? "").trim()].filter(Boolean).join(" ");
+  if (!title && !matchedParty) return false;
+  if (title && captionContainsEntity(title, variants)) return true;
+  if (matchedParty && captionContainsEntity(matchedParty, variants)) return true;
+  return false;
 }
 
 function asCourtListenerCaseUrl(row: CourtListenerSearchRow): string {
@@ -229,6 +260,16 @@ export function buildCourtListenerQuery(variants: string[]): string {
   return selected.replace(/"/g, '\\"');
 }
 
+/** Term sent to CourtListener / PACER — always the search-box query (not auto-picked subsidiaries). */
+export function litigationApiSearchQuery(params: RegulatorySearchParams): string {
+  const query = normalizePhrase(String(params.query ?? ""));
+  const chosen =
+    query ||
+    normalizePhrase(String(params.companyName ?? "")) ||
+    normalizePhrase(String(params.ticker ?? ""));
+  return chosen.replace(/"/g, '\\"');
+}
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -281,6 +322,74 @@ function dedupeLitigationResults(rows: RegulatorySearchResult[]): RegulatorySear
   return out;
 }
 
+type LitigationPullStats = {
+  clRaw: number;
+  clShown: number;
+  pacerRaw: number;
+  pacerShown: number;
+  combinedAfterDedupe: number;
+};
+
+function buildLitigationPullSummary(
+  params: RegulatorySearchParams,
+  opts: {
+    pacerEnabled: boolean;
+    courtListener: Awaited<ReturnType<typeof searchCourtListener>>;
+    pacer: Awaited<ReturnType<typeof searchPacer>> | { ok: false; warning?: string; rows: PacerPartyRow[] };
+    stats: LitigationPullStats;
+  }
+): string[] {
+  const searchName = litigationApiSearchQuery(params);
+  const state = normalizeStateFilter(params.state)?.toUpperCase();
+  const lines: string[] = [];
+
+  lines.push(
+    `Query sent to both sources: "${searchName}"${state ? ` · state filter ${state}` : ""}.`
+  );
+
+  if (!courtListenerToken()) {
+    lines.push("CourtListener / RECAP: skipped — COURTLISTENER_API_TOKEN not set.");
+  } else if (!opts.courtListener.ok) {
+    lines.push(
+      `CourtListener / RECAP: 0 in table — ${opts.courtListener.warning ?? "search failed"}.`
+    );
+  } else {
+    const rawMeta = opts.courtListener.raw as { count?: number; pagesFetched?: number } | null;
+    const apiTotal = Number(rawMeta?.count ?? NaN);
+    const pages = Number(rawMeta?.pagesFetched ?? 0);
+    const parts = [`${opts.stats.clShown} in table`, `${opts.stats.clRaw} raw docket row(s) fetched`];
+    if (Number.isFinite(apiTotal) && apiTotal >= 0) parts.push(`${apiTotal} total match(es) reported by CourtListener`);
+    if (pages > 0) parts.push(`${pages} page(s) retrieved`);
+    const filtered = opts.stats.clRaw - opts.stats.clShown;
+    if (filtered > 0) parts.push(`${filtered} dropped (entity not in case caption)`);
+    lines.push(`CourtListener / RECAP: ${parts.join(" · ")}.`);
+  }
+
+  if (!opts.pacerEnabled) {
+    lines.push(
+      "PACER Case Locator: skipped — set PACER_USERNAME + PACER_PASSWORD (or LITIGATION_PACER_ENABLED=false)."
+    );
+  } else if (!opts.pacer.ok) {
+    lines.push(
+      `PACER Case Locator: 0 in table — ${summarizePacerWarning(opts.pacer.warning ?? "search failed")}.`
+    );
+  } else {
+    const rawMeta = opts.pacer.raw as { totalElements?: number; searchName?: string } | null;
+    const apiTotal = Number(rawMeta?.totalElements ?? NaN);
+    const parts = [`${opts.stats.pacerShown} in table`, `${opts.stats.pacerRaw} raw party row(s) fetched`, "first page only"];
+    if (Number.isFinite(apiTotal) && apiTotal >= 0) parts.push(`${apiTotal} total match(es) reported by PACER`);
+    const filtered = opts.stats.pacerRaw - opts.stats.pacerShown;
+    if (filtered > 0) parts.push(`${filtered} dropped (entity not in caption/party name)`);
+    lines.push(`PACER Case Locator: ${parts.join(" · ")}.`);
+  }
+
+  lines.push(
+    `Combined table: ${opts.stats.combinedAfterDedupe} row(s) after in-source dedupe (same case may appear once per source).`
+  );
+
+  return lines;
+}
+
 function summarizePacerWarning(warning: string): string {
   const text = String(warning ?? "").replace(/\s+/g, " ").trim();
   if (!text) return text;
@@ -306,8 +415,7 @@ async function searchCourtListener(params: RegulatorySearchParams) {
   if (!token) {
     return { ok: false as const, warning: "CourtListener not configured: set COURTLISTENER_API_TOKEN to enable RECAP litigation search." };
   }
-  const variants = buildNameVariants(params);
-  const q = buildCourtListenerQuery(variants);
+  const q = litigationApiSearchQuery(params);
   if (!q) {
     return { ok: false as const, warning: "CourtListener search skipped because no usable litigation query was available." };
   }
@@ -490,8 +598,8 @@ async function searchPacer(params: RegulatorySearchParams) {
       warning: "PACER search not configured: set PACER_USERNAME and PACER_PASSWORD to enable PACER Case Locator party search.",
     };
   }
-  const variants = buildNameVariants(params);
-  if (!variants.length) {
+  const searchName = litigationApiSearchQuery(params);
+  if (!searchName) {
     return { ok: false as const, warning: "PACER search skipped because no usable litigation query was available." };
   }
 
@@ -512,38 +620,73 @@ async function searchPacer(params: RegulatorySearchParams) {
   let totalPages = 0;
   const startedAt = Date.now();
 
-  for (const searchName of variants) {
-    let page = 0;
-    while (page < PACER_MAX_PAGES) {
-      if (Date.now() - startedAt > PACER_MAX_ELAPSED_MS) {
-        warnings.push(
-          `PACER search hit the ${Math.round(PACER_MAX_ELAPSED_MS / 1000)}s time budget; showing ${rows.length} PACER result(s) retrieved so far.`
-        );
-        return {
-          ok: true as const,
-          requestUrl: firstRequestUrl,
-          raw: { totalElements, totalPages, firstPage: firstRaw, warnings },
-          rows,
-          warnings,
-        };
-      }
-      const url = new URL(`https://pcl.uscourts.gov/pcl-public-api/rest/parties/find?page=${page}`);
-      if (!firstRequestUrl) firstRequestUrl = url.toString();
-      const body: Record<string, unknown> = {
-        lastName: searchName,
-        exactNameMatch: false,
+  let page = 0;
+  while (page < PACER_MAX_PAGES) {
+    if (Date.now() - startedAt > PACER_MAX_ELAPSED_MS) {
+      warnings.push(
+        `PACER search hit the ${Math.round(PACER_MAX_ELAPSED_MS / 1000)}s time budget; showing ${rows.length} PACER case(s) retrieved so far.`
+      );
+      break;
+    }
+    const url = new URL(`https://pcl.uscourts.gov/pcl-public-api/rest/parties/find?page=${page}`);
+    if (!firstRequestUrl) firstRequestUrl = url.toString();
+    const body: Record<string, unknown> = {
+      lastName: searchName,
+      exactNameMatch: false,
+    };
+    if (stateFilter) {
+      body.courtId = [stateFilter];
+    }
+    if (params.startDate || params.endDate) {
+      body.courtCase = {
+        dateFiledFrom: params.startDate || undefined,
+        dateFiledTo: params.endDate || undefined,
       };
-      if (stateFilter) {
-        body.courtId = [stateFilter];
+    }
+
+    let res: Response;
+    try {
+      res = await fetchWithTimeout(
+        url.toString(),
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "X-NEXT-GEN-CSO": auth.token,
+            "User-Agent": "CenturyEggCredit research app (mailto:support@example.com)",
+          },
+          body: JSON.stringify(body),
+        },
+        PACER_FETCH_TIMEOUT_MS
+      );
+    } catch (error) {
+      if (rows.length > 0) {
+        warnings.push(
+          `PACER request timed out after ${Math.round(PACER_FETCH_TIMEOUT_MS / 1000)}s; showing ${rows.length} PACER case(s) retrieved before timeout.`
+        );
+        break;
       }
-      if (params.startDate || params.endDate) {
-        body.courtCase = {
-          dateFiledFrom: params.startDate || undefined,
-          dateFiledTo: params.endDate || undefined,
+      return {
+        ok: false as const,
+        warning: error instanceof Error ? error.message : "PACER request timed out.",
+        requestUrl: url.toString(),
+      };
+    }
+    let raw = (await res.json().catch(() => null)) as PacerSearchResponse | { status?: number; message?: string } | null;
+
+    if (res.status === 401) {
+      const refreshed = await fetchPacerToken();
+      if (!refreshed || !refreshed.ok) {
+        return {
+          ok: false as const,
+          warning: refreshed?.warning ?? "PACER authentication failed.",
+          requestUrl: url.toString(),
+          raw: refreshed?.raw ?? raw,
         };
       }
-
-      let res: Response;
+      auth = refreshed;
       try {
         res = await fetchWithTimeout(
           url.toString(),
@@ -561,107 +704,50 @@ async function searchPacer(params: RegulatorySearchParams) {
           PACER_FETCH_TIMEOUT_MS
         );
       } catch (error) {
-        if (rows.length > 0) {
-          warnings.push(
-            `PACER request timed out after ${Math.round(PACER_FETCH_TIMEOUT_MS / 1000)}s; showing ${rows.length} PACER result(s) retrieved before timeout.`
-          );
-          return {
-            ok: true as const,
-            requestUrl: firstRequestUrl,
-            raw: { totalElements, totalPages, firstPage: firstRaw, warnings },
-            rows,
-            warnings,
-          };
-        }
         return {
           ok: false as const,
-          warning: error instanceof Error ? error.message : "PACER request timed out.",
+          warning: error instanceof Error ? error.message : "PACER request timed out after token refresh.",
           requestUrl: url.toString(),
         };
       }
-      let raw = (await res.json().catch(() => null)) as PacerSearchResponse | { status?: number; message?: string } | null;
-
-      if (res.status === 401) {
-        const refreshed = await fetchPacerToken();
-        if (!refreshed || !refreshed.ok) {
-          return {
-            ok: false as const,
-            warning: refreshed?.warning ?? "PACER authentication failed.",
-            requestUrl: url.toString(),
-            raw: refreshed?.raw ?? raw,
-          };
-        }
-        auth = refreshed;
-        try {
-          res = await fetchWithTimeout(
-            url.toString(),
-            {
-              method: "POST",
-              cache: "no-store",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-NEXT-GEN-CSO": auth.token,
-                "User-Agent": "CenturyEggCredit research app (mailto:support@example.com)",
-              },
-              body: JSON.stringify(body),
-            },
-            PACER_FETCH_TIMEOUT_MS
-          );
-        } catch (error) {
-          return {
-            ok: false as const,
-            warning: error instanceof Error ? error.message : "PACER request timed out after token refresh.",
-            requestUrl: url.toString(),
-          };
-        }
-        raw = (await res.json().catch(() => null)) as PacerSearchResponse | { status?: number; message?: string } | null;
-      }
-
-      if (!res.ok) {
-        return {
-          ok: false as const,
-          warning:
-            String((raw as { message?: string } | null)?.message ?? "").trim() ||
-            `PACER party search failed (HTTP ${res.status}).`,
-          requestUrl: url.toString(),
-          raw,
-        };
-      }
-
-      const pagePayload = raw as PacerSearchResponse | null;
-      if (!firstRaw) firstRaw = pagePayload;
-      const pageRows = (pagePayload?.content ?? []) as PacerPartyRow[];
-      rows.push(...pageRows);
-
-      const pageInfo = pagePayload?.pageInfo ?? {};
-      totalPages = Math.max(totalPages, Number(pageInfo.totalPages ?? totalPages));
-      totalElements = Math.max(
-        totalElements,
-        Number(pageInfo.totalElements ?? pagePayload?.recordCount ?? totalElements)
-      );
-      const currentPage = Number(pageInfo.number ?? page);
-      const responseSize = Number(pageInfo.size ?? pagePayload?.size ?? PACER_PAGE_SIZE);
-      const hasMoreByPageInfo = Number.isFinite(totalPages) && totalPages > currentPage + 1;
-      const hasMoreByCount =
-        Number.isFinite(totalElements) &&
-        totalElements > 0 &&
-        (currentPage + 1) * Math.max(responseSize, 1) < totalElements;
-      if (!hasMoreByPageInfo && !hasMoreByCount) break;
-      page += 1;
+      raw = (await res.json().catch(() => null)) as PacerSearchResponse | { status?: number; message?: string } | null;
     }
+
+    if (!res.ok) {
+      return {
+        ok: false as const,
+        warning:
+          String((raw as { message?: string } | null)?.message ?? "").trim() ||
+          `PACER party search failed (HTTP ${res.status}).`,
+        requestUrl: url.toString(),
+        raw,
+      };
+    }
+
+    const pagePayload = raw as PacerSearchResponse | null;
+    if (!firstRaw) firstRaw = pagePayload;
+    const pageRows = (pagePayload?.content ?? []) as PacerPartyRow[];
+    rows.push(...pageRows);
+
+    const pageInfo = pagePayload?.pageInfo ?? {};
+    totalPages = Math.max(totalPages, Number(pageInfo.totalPages ?? totalPages));
+    totalElements = Math.max(
+      totalElements,
+      Number(pageInfo.totalElements ?? pagePayload?.recordCount ?? totalElements)
+    );
+    break;
   }
 
-  if (totalPages > PACER_MAX_PAGES) {
+  if (totalPages > 1 || (totalElements > 0 && totalElements > rows.length)) {
     warnings.push(
-      `PACER returned more than ${PACER_MAX_PAGES} page(s); results were truncated at the documented immediate-search limit.`
+      `PACER Case Locator returned ${totalElements || "multiple"} case(s); showing ${rows.length} on this page. Open a case on PACER to view filings (may incur PACER fees).`
     );
   }
 
   return {
     ok: true as const,
     requestUrl: firstRequestUrl,
-    raw: { totalElements, totalPages, firstPage: firstRaw, warnings },
+    raw: { totalElements, totalPages, firstPage: firstRaw, warnings, searchName },
     rows,
     warnings,
   };
@@ -671,24 +757,23 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
   sourceId: "litigation",
   validateConfig: () => {
     const hasCourtListener = Boolean(courtListenerToken());
-    const hasPacer =
-      LITIGATION_PACER_ENABLED && Boolean(pacerUsername() && pacerPassword());
+    const hasPacer = litigationPacerEnabled();
     if (hasCourtListener || hasPacer) {
       return {
         ok: true,
         mode: "api_key",
         message:
           hasCourtListener && hasPacer
-            ? "Using CourtListener / RECAP and PACER Case Locator."
+            ? "Using CourtListener / RECAP and PACER Case Locator (case summaries only; open a case on PACER for filings)."
             : hasCourtListener
               ? "Using CourtListener / RECAP for federal litigation search."
-              : "Using PACER Case Locator only. CourtListener / RECAP is optional if COURTLISTENER_API_TOKEN is added.",
+              : "Using PACER Case Locator (case summaries only; open a case on PACER for filings). CourtListener / RECAP is optional if COURTLISTENER_API_TOKEN is added.",
       };
     }
     return {
       ok: false,
       mode: "missing_key",
-      message: "Set COURTLISTENER_API_TOKEN for CourtListener / RECAP litigation search.",
+      message: "Set COURTLISTENER_API_TOKEN and/or PACER_USERNAME + PACER_PASSWORD for litigation search.",
       envKeyName: "COURTLISTENER_API_TOKEN",
     };
   },
@@ -696,24 +781,30 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
     const q = params.query?.trim();
     if (!q) return { ok: false, error: "Search query required." };
 
+    const pacerEnabled = litigationPacerEnabled();
     const courtListener = await searchCourtListener(params);
-    const pacer = LITIGATION_PACER_ENABLED
+    const pacer = pacerEnabled
       ? await searchPacer(params)
       : { ok: false as const, warning: undefined, warnings: [] as string[], rows: [] as PacerPartyRow[], requestUrl: undefined, raw: null };
     const retrievedAt = new Date().toISOString();
-    const warnings: string[] = [];
+    const detailWarnings: string[] = [];
     const results: RegulatorySearchResult[] = [];
+    const clRaw = courtListener.ok ? courtListener.rows.length : 0;
+    const pacerRaw = pacer.ok ? pacer.rows.length : 0;
+    let clShown = 0;
+    let pacerShown = 0;
 
-    if (!courtListener.ok && courtListener.warning) warnings.push(courtListener.warning);
-    if (courtListener.ok && courtListener.warnings?.length) warnings.push(...courtListener.warnings);
-    if (LITIGATION_PACER_ENABLED) {
-      if (!pacer.ok && pacer.warning) warnings.push(summarizePacerWarning(pacer.warning));
-      if (pacer.ok && pacer.warnings?.length) warnings.push(...pacer.warnings);
+    if (!courtListener.ok && courtListener.warning) detailWarnings.push(courtListener.warning);
+    if (courtListener.ok && courtListener.warnings?.length) detailWarnings.push(...courtListener.warnings);
+    if (pacerEnabled) {
+      if (!pacer.ok && pacer.warning) detailWarnings.push(summarizePacerWarning(pacer.warning));
+      if (pacer.ok && pacer.warnings?.length) detailWarnings.push(...pacer.warnings);
     }
 
     if (courtListener.ok) {
       for (const row of courtListener.rows) {
         if (!courtListenerRowMatchesEntity(row, params)) continue;
+        clShown += 1;
         const title = String(row.caseNameFull ?? row.caseName ?? "").trim() || "Federal litigation docket";
         const detailUrl = asCourtListenerCaseUrl(row);
         const docketNumber = String(row.docketNumber ?? "").trim();
@@ -749,17 +840,10 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
       }
     }
 
-    if (LITIGATION_PACER_ENABLED && pacer.ok) {
-      const pageInfo = (pacer.raw as { pageInfo?: Record<string, unknown> } | null)?.pageInfo ?? {};
-      const totalPages = Number(pageInfo.totalPages ?? 0);
-      const totalElements = Number(pageInfo.totalElements ?? 0);
-      if (totalPages > 1 || totalElements > pacer.rows.length) {
-        warnings.push(
-          `PACER Case Locator returned ${totalElements || "multiple"} matches across ${totalPages || "multiple"} page(s); this tab only retrieves the first page to avoid unexpected PACER search charges.`
-        );
-      }
-
+    if (pacerEnabled && pacer.ok) {
       for (const row of pacer.rows) {
+        if (!pacerRowMatchesEntity(row, params)) continue;
+        pacerShown += 1;
         const caseRow = row.courtCase ?? {};
         const title = String(caseRow.caseTitle ?? row.caseTitle ?? "").trim() || "PACER case";
         const docketNumber = String(caseRow.caseNumberFull ?? row.caseNumberFull ?? "").trim();
@@ -781,7 +865,7 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
           matched_entity_confidence: confidence,
           title,
           record_type: "case",
-          record_subtype: "PACER party search",
+          record_subtype: "PACER case summary",
           description: [court ? `Court: ${court}` : "", natureOfSuit ? `Nature of suit: ${natureOfSuit}` : ""].filter(Boolean).join(" · ") || undefined,
           filing_or_record_date: dateFiled || undefined,
           last_updated: dateClosed || undefined,
@@ -790,11 +874,10 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
           docket_number: docketNumber || undefined,
           agency_identifier: String(caseRow.caseId ?? row.caseId ?? "").trim() || undefined,
           detail_url: detailUrl,
-          document_url: detailUrl,
           raw_json: row,
           confidence,
           importance_score: confidence === "High" ? 85 : confidence === "Medium" ? 60 : 30,
-          notes: "PACER search may incur charges outside this app; refine the query and continue on PACER for exhaustive review.",
+          notes: "Case summary only. View case on PACER to see docket entries and filings (may incur PACER fees).",
           retrieved_at: retrievedAt,
           request_url: pacer.requestUrl,
         });
@@ -808,6 +891,20 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
       if (diff !== 0) return diff;
       return String(b.filing_or_record_date ?? "").localeCompare(String(a.filing_or_record_date ?? ""));
     });
+
+    const pullSummary = buildLitigationPullSummary(params, {
+      pacerEnabled,
+      courtListener,
+      pacer,
+      stats: {
+        clRaw,
+        clShown,
+        pacerRaw,
+        pacerShown,
+        combinedAfterDedupe: deduped.length,
+      },
+    });
+    const warnings = [...pullSummary, ...new Set(detailWarnings)];
 
     if (deduped.length === 0) {
       return {
@@ -826,7 +923,7 @@ export const litigationAdapter: RegulatoryAgencyAdapter = {
       requestUrl: courtListener.ok ? courtListener.requestUrl : pacer.ok ? pacer.requestUrl : undefined,
       raw: { courtListener: courtListener.ok ? courtListener.raw : null, pacer: pacer.ok ? pacer.raw : null },
       results: deduped,
-      warnings: warnings.length ? [...new Set(warnings)] : undefined,
+      warnings,
     };
   },
 };

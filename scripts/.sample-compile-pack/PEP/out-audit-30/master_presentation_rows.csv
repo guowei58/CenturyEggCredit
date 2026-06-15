@@ -1,0 +1,171 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:net-revenue,html:net-revenue,Net Revenue,0,0
+income_statement,html:cost-of-sales,html:cost-of-sales,Cost of sales,2,0
+income_statement,html:gross-profit,html:gross-profit,Gross profit,3,0
+income_statement,html:selling-general-and-administrative-expenses,html:selling-general-and-administrative-expenses,"Selling, general and administrative expenses",4,0
+income_statement,html:gain-associated-with-the-juice-transaction,html:gain-associated-with-the-juice-transaction,Gain associated with the Juice Transaction,5,0
+income_statement,html:impairment-of-intangible-assets-excluding-goodwill,html:impairment-of-intangible-assets-excluding-goodwill,Impairment of Intangible Assets (Excluding Goodwill),6,0
+income_statement,html:operating-profit,html:operating-profit,Operating Profit,7,0
+income_statement,html:other-pension-and-retiree-medical-benefits-income,html:other-pension-and-retiree-medical-benefits-income,Other pension and retiree medical benefits income,9,0
+income_statement,html:net-interest-expense-and-other,html:net-interest-expense-and-other,Net interest expense and other,10,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,Income before income taxes,12,0
+income_statement,html:provision-for-income-taxes,html:provision-for-income-taxes,Provision for income taxes,13,0
+income_statement,html:net-income,html:net-income,Net income,14,0
+income_statement,html:less-net-income-attributable-to-noncontrolling-interests,html:less-net-income-attributable-to-noncontrolling-interests,Less: Net income attributable to noncontrolling interests,15,0
+income_statement,html:net-income-attributable-to-pepsico,html:net-income-attributable-to-pepsico,Net Income Attributable to PepsiCo,16,0
+income_statement,html:net-income-attributable-to-pepsico-per-common-share,html:net-income-attributable-to-pepsico-per-common-share,Net Income Attributable to PepsiCo per Common Share,17,0
+income_statement,html:basic,html:basic,Basic,18,0
+income_statement,html:diluted,html:diluted,Diluted,19,0
+income_statement,html:weighted-average-common-shares-outstanding,html:weighted-average-common-shares-outstanding,Weighted-average common shares outstanding,20,0
+income_statement,html:basic-2,html:basic-2,Basic,21,0
+income_statement,html:diluted-2,html:diluted-2,Diluted,22,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term Investments,1,0
+balance_sheet,html:accounts-and-notes-receivable-net,html:accounts-and-notes-receivable-net,"Accounts and notes receivable, net",4,0
+balance_sheet,html:inventories,html:inventories,Inventories,6,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,11,0
+balance_sheet,html:disposal-group-including-discontinued-operation-assets,html:disposal-group-including-discontinued-operation-assets,"Disposal Group, Including Discontinued Operation, Assets",16,0
+balance_sheet,html:assets-current,html:assets-current,"Assets, Current",17,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, Plant and Equipment, net",18,0
+balance_sheet,html:amortizable-intangible-assets-net,html:amortizable-intangible-assets-net,"Amortizable Intangible Assets, net",19,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,20,0
+balance_sheet,html:indefinite-lived-intangible-assets-excluding-goodwill,html:indefinite-lived-intangible-assets-excluding-goodwill,Indefinite-lived Intangible Assets (Excluding Goodwill),25,0
+balance_sheet,html:equity-method-investments,html:equity-method-investments,Equity Method Investments,26,0
+balance_sheet,html:deferred-income-tax-assets-net,html:deferred-income-tax-assets-net,"Deferred Income Tax Assets, Net",27,0
+balance_sheet,html:other-assets,html:other-assets,Other Assets,28,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,29,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,LIABILITIES AND EQUITY,30,0
+balance_sheet,html:short-term-debt-obligations,html:short-term-debt-obligations,Short-term debt obligations,33,0
+balance_sheet,html:accounts-payable-and-other-current-liabilities,html:accounts-payable-and-other-current-liabilities,Accounts payable and other current liabilities,34,0
+balance_sheet,html:disposal-group-including-discontinued-operation-liabilities,html:disposal-group-including-discontinued-operation-liabilities,"Disposal Group, Including Discontinued Operation, Liabilities",37,0
+balance_sheet,html:liabilities-current,html:liabilities-current,"Liabilities, Current",38,0
+balance_sheet,html:long-term-debt-obligations,html:long-term-debt-obligations,Long-Term Debt Obligations,40,0
+balance_sheet,html:deferred-income-tax-liabilities-net,html:deferred-income-tax-liabilities-net,"Deferred Income Tax Liabilities, Net",44,0
+balance_sheet,html:other-liabilities-noncurrent,html:other-liabilities-noncurrent,"Other Liabilities, Noncurrent",45,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities,46,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,47,0
+balance_sheet,html:common-stock-authorized,html:common-stock-authorized,"Common stock, authorized",49,0
+balance_sheet,html:common-stock-issued,html:common-stock-issued,"Common stock, issued",50,0
+balance_sheet,html:pepsico-common-shareholders-equity,html:pepsico-common-shareholders-equity,PepsiCo Common Shareholders’ Equity,51,0
+balance_sheet,html:common-stock-par-value-12-3-per-share-authorized-3-600-shares-issued-net-of-repurchased-common-stock-at-par-value-1-380-and-1-391-shares-respectively,html:common-stock-par-value-12-3-per-share-authorized-3-600-shares-issued-net-of-repurchased-common-stock-at-par-value-1-380-and-1-391-shares-respectively,"Common stock, par value 12/3¢ per share (authorized 3,600 shares, issued, net of repurchased common stock at par value: 1,380 and 1,391 shares, respectively)",53,0
+balance_sheet,html:additional-paid-in-capital-common-stock,html:additional-paid-in-capital-common-stock,"Additional Paid in Capital, Common Stock",56,0
+balance_sheet,html:retained-earnings-accumulated-deficit,html:retained-earnings-accumulated-deficit,Retained Earnings (Accumulated Deficit),57,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss-net-of-tax,html:accumulated-other-comprehensive-income-loss-net-of-tax,"Accumulated Other Comprehensive Income (Loss), Net of Tax",60,0
+balance_sheet,html:repurchased-common-stock-shares,html:repurchased-common-stock-shares,"Repurchased common stock, shares",62,0
+balance_sheet,html:treasury-stock-value,html:treasury-stock-value,"Treasury Stock, Value",63,0
+balance_sheet,html:stockholders-equity-attributable-to-parent,html:stockholders-equity-attributable-to-parent,Stockholders' Equity Attributable to Parent,64,0
+balance_sheet,html:stockholders-equity-attributable-to-noncontrolling-interest,html:stockholders-equity-attributable-to-noncontrolling-interest,Stockholders' Equity Attributable to Noncontrolling Interest,73,0
+balance_sheet,html:total-equity,html:total-equity,Total Equity,74,0
+balance_sheet,html:liabilities-and-equity-2,html:liabilities-and-equity-2,Liabilities and Equity,76,0
+balance_sheet,html:other-investments,html:other-investments,Other Investments,78,0
+balance_sheet,html:operating-lease-right-of-use-asset-statement-of-financial-position-extensible-enumeration,html:operating-lease-right-of-use-asset-statement-of-financial-position-extensible-enumeration,"Operating Lease, Right-of-Use Asset, Statement of Financial Position [Extensible Enumeration]",79,0
+cash_flow,html:net-income,html:net-income,Net income,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:gain-associated-with-the-juice-transaction,html:gain-associated-with-the-juice-transaction,Gain associated with the Juice Transaction,2,0
+cash_flow,html:impairment-and-other-charges,html:impairment-and-other-charges,Impairment and other charges,5,0
+cash_flow,html:operating-lease-right-of-use-asset-amortization,html:operating-lease-right-of-use-asset-amortization,Operating lease right-of-use asset amortization,9,0
+cash_flow,html:share-based-compensation-expense,html:share-based-compensation-expense,Share-based compensation expense,10,0
+cash_flow,html:restructuring-and-impairment-charges,html:restructuring-and-impairment-charges,Restructuring and impairment charges,11,0
+cash_flow,html:cash-payments-for-restructuring-charges,html:cash-payments-for-restructuring-charges,Cash payments for restructuring charges,12,0
+cash_flow,html:acquisition-and-divestiture-related-charges,html:acquisition-and-divestiture-related-charges,Acquisition and divestiture-related charges,14,0
+cash_flow,html:cash-payments-for-acquisition-and-divestiture-related-charges,html:cash-payments-for-acquisition-and-divestiture-related-charges,Cash payments for acquisition and divestiture-related charges,15,0
+cash_flow,html:pension-and-retiree-medical-plan-expenses,html:pension-and-retiree-medical-plan-expenses,Pension and retiree medical plan expenses,16,0
+cash_flow,html:pension-and-retiree-medical-plan-contributions,html:pension-and-retiree-medical-plan-contributions,Pension and retiree medical plan contributions,17,0
+cash_flow,html:deferred-income-taxes-and-other-tax-charges-and-credits,html:deferred-income-taxes-and-other-tax-charges-and-credits,Deferred income taxes and other tax charges and credits,18,0
+cash_flow,html:tax-expense-related-to-the-tcj-act,html:tax-expense-related-to-the-tcj-act,Tax expense related to the TCJ Act,21,0
+cash_flow,html:tax-payments-related-to-the-tcj-act,html:tax-payments-related-to-the-tcj-act,Tax payments related to the TCJ Act,22,0
+cash_flow,html:change-in-assets-and-liabilities-abstract,html:change-in-assets-and-liabilities-abstract,Change in assets and liabilities [Abstract],23,0
+cash_flow,html:accounts-and-notes-receivable,html:accounts-and-notes-receivable,Accounts and notes receivable,24,0
+cash_flow,html:inventories,html:inventories,Inventories,25,0
+cash_flow,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,27,0
+cash_flow,html:accounts-payable-and-other-current-liabilities,html:accounts-payable-and-other-current-liabilities,Accounts payable and other current liabilities,28,0
+cash_flow,html:income-taxes-payable,html:income-taxes-payable,Income taxes payable,29,0
+cash_flow,html:other-net,html:other-net,"Other, net",30,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net Cash Provided by Operating Activities,31,0
+cash_flow,html:investing-activities,html:investing-activities,Investing Activities,32,0
+cash_flow,html:capital-spending,html:capital-spending,Capital spending,33,0
+cash_flow,html:sales-of-property-plant-and-equipment,html:sales-of-property-plant-and-equipment,"Sales of property, plant and equipment",34,0
+cash_flow,html:acquisitions-net-of-cash-acquired-investments-in-noncontrolled-affiliates-and-purchases-of-intangible-and-other-assets,html:acquisitions-net-of-cash-acquired-investments-in-noncontrolled-affiliates-and-purchases-of-intangible-and-other-assets,"Acquisitions, net of cash acquired, investments in noncontrolled affiliates and purchases of intangible and other assets",37,0
+cash_flow,html:proceeds-associated-with-the-juice-transaction,html:proceeds-associated-with-the-juice-transaction,Proceeds associated with the Juice Transaction,38,0
+cash_flow,html:other-divestitures-sales-of-investments-in-noncontrolled-affiliates-and-other-assets,html:other-divestitures-sales-of-investments-in-noncontrolled-affiliates-and-other-assets,"Other divestitures, sales of investments in noncontrolled affiliates and other assets",39,0
+cash_flow,html:short-term-investments-by-original-maturity,html:short-term-investments-by-original-maturity,"Short-term investments, by original maturity:",40,0
+cash_flow,html:more-than-three-months-purchases,html:more-than-three-months-purchases,More than three months - purchases,41,0
+cash_flow,html:more-than-three-months-maturities,html:more-than-three-months-maturities,More than three months - maturities,42,0
+cash_flow,html:three-months-or-less-net,html:three-months-or-less-net,"Three months or less, net",43,0
+cash_flow,html:other-investing-net,html:other-investing-net,"Other investing, net",44,0
+cash_flow,html:net-cash-used-for-investing-activities,html:net-cash-used-for-investing-activities,Net Cash Used for Investing Activities,45,0
+cash_flow,html:financing-activities,html:financing-activities,Financing Activities,46,0
+cash_flow,html:proceeds-from-issuances-of-long-term-debt,html:proceeds-from-issuances-of-long-term-debt,Proceeds from issuances of long-term debt,47,0
+cash_flow,html:payments-of-long-term-debt,html:payments-of-long-term-debt,Payments of long-term debt,48,0
+cash_flow,html:debt-redemptions-cash-tender-offers,html:debt-redemptions-cash-tender-offers,Debt redemptions/cash tender offers,49,0
+cash_flow,html:short-term-borrowings-by-original-maturity,html:short-term-borrowings-by-original-maturity,"Short-term borrowings, by original maturity",50,0
+cash_flow,html:more-than-three-months-proceeds,html:more-than-three-months-proceeds,More than three months - proceeds,51,0
+cash_flow,html:more-than-three-months-payments,html:more-than-three-months-payments,More than three months - payments,52,0
+cash_flow,html:three-months-or-less-net-2,html:three-months-or-less-net-2,"Three months or less, net",53,0
+cash_flow,html:payments-of-acquisition-related-contingent-consideration,html:payments-of-acquisition-related-contingent-consideration,Payments of acquisition-related contingent consideration,54,0
+cash_flow,html:cash-dividends-paid,html:cash-dividends-paid,Cash dividends paid,55,0
+cash_flow,html:share-repurchases-common,html:share-repurchases-common,Share repurchases - common,56,0
+cash_flow,html:proceeds-from-exercises-of-stock-options,html:proceeds-from-exercises-of-stock-options,Proceeds from exercises of stock options,58,0
+cash_flow,html:withholding-tax-payments-on-restricted-stock-units-rsus-and-performance-stock-units-psus-converted,html:withholding-tax-payments-on-restricted-stock-units-rsus-and-performance-stock-units-psus-converted,Withholding tax payments on restricted stock units (RSUs) and performance stock units (PSUs) converted,60,0
+cash_flow,html:other-financing,html:other-financing,Other financing,61,0
+cash_flow,html:net-cash-used-for-provided-by-financing-activities,html:net-cash-used-for-provided-by-financing-activities,Net Cash (Used for)/Provided by Financing Activities,62,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents-and-restricted-cash,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents-and-restricted-cash,Effect of exchange rate changes on cash and cash equivalents and restricted cash,63,0
+cash_flow,html:net-decrease-increase-in-cash-and-cash-equivalents-and-restricted-cash,html:net-decrease-increase-in-cash-and-cash-equivalents-and-restricted-cash,Net (Decrease)/Increase in Cash and Cash Equivalents and Restricted Cash,64,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,"Accounts and notes receivable, less allowance ($225 and $230, respectively)",2,0
+balance_sheet,us-gaap:InventoryRawMaterialsAndSupplies,us-gaap:InventoryRawMaterialsAndSupplies,Raw materials and packaging,7,0
+balance_sheet,us-gaap:InventoryWorkInProcess,us-gaap:InventoryWorkInProcess,Work-in-process,8,0
+balance_sheet,us-gaap:InventoryFinishedGoods,us-gaap:InventoryFinishedGoods,Finished goods,9,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,inventory net inventory net,10,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total Current Assets,12,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,"Property, plant and equipment",14,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Accumulated depreciation,15,0
+balance_sheet,us-gaap:IndefiniteLivedIntangibleAssetsExcludingGoodwill,us-gaap:IndefiniteLivedIntangibleAssetsExcludingGoodwill,Other Indefinite-Lived Intangible Assets,21,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Investments in Noncontrolled Affiliates,22,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred Income Taxes,23,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities,31,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total Current Liabilities,35,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred Income Taxes,41,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other Liabilities,43,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Capital in excess of par value,54,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,58,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Repurchased common stock, in excess of par value (499 and 500 shares, respectively)",59,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,52,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total Liabilities and Equity,75,0
+cash_flow,pep:ProductRecallRelatedImpactPreTax,pep:ProductRecallRelatedImpactPreTax,Product recall-related impact,6,0
+cash_flow,pep:PaymentsForProductRecallRelatedImpact,pep:PaymentsForProductRecallRelatedImpact,Cash payments for product recall-related impact,8,0
+balance_sheet,html:treasury-stock-common-shares,html:treasury-stock-common-shares,"Treasury Stock, Common, Shares",61,0
+balance_sheet,html:accounts-receivable-allowance-for-credit-loss-current,html:accounts-receivable-allowance-for-credit-loss-current,"Accounts Receivable, Allowance for Credit Loss, Current",80,0
+cash_flow,html:indirect-tax-impact,html:indirect-tax-impact,Indirect tax impact,7,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperation,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperation,Assets held for sale,13,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,Liabilities held for sale,36,0
+cash_flow,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,us-gaap:ImpairmentOfIntangibleAssetsIndefinitelivedExcludingGoodwill,Brand portfolio impairment charges,3,0
+cash_flow,pep:ChargesRelatedToTheRussiaUkraineWarPreTax,pep:ChargesRelatedToTheRussiaUkraineWarPreTax,Russia-Ukraine conflict charges,4,0
+cash_flow,us-gaap:TaxCutsAndJobsActOf2017IncomeTaxExpenseBenefit,us-gaap:TaxCutsAndJobsActOf2017IncomeTaxExpenseBenefit,Net tax related to the Tax Cuts and Jobs Act (TCJ Act),19,0
+cash_flow,pep:AcquisitionofSodaStreamnetofcashandcashequivalentsacquired,pep:AcquisitionofSodaStreamnetofcashandcashequivalentsacquired,Acquisition of SodaStream International Ltd. (SodaStream),35,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Interest income and other,11,0
+balance_sheet,us-gaap:RestrictedCashCurrent,us-gaap:RestrictedCashCurrent,Restricted cash,3,0
+balance_sheet,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,Deferred Income Taxes,24,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred Income Taxes,42,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfRedeemableConvertiblePreferredStock,us-gaap:PaymentsForRepurchaseOfRedeemableConvertiblePreferredStock,Share repurchases - preferred,57,0
+income_statement,html:net-periodic-defined-benefits-expense-reversal-of-expense-excluding-service-cost-component,html:net-periodic-defined-benefits-expense-reversal-of-expense-excluding-service-cost-component,"Net Periodic Defined Benefits Expense (Reversal of Expense), Excluding Service Cost Component",8,0
+income_statement,html:2-for-further-unaudited-information-on-certain-items-that-impacted-our-financial-performance-see-item-6-selected-financial-data,html:2-for-further-unaudited-information-on-certain-items-that-impacted-our-financial-performance-see-item-6-selected-financial-data,"[2] For further unaudited information on certain items that impacted our financial performance, see “Item 6. Selected Financial Data.”",1,0
+balance_sheet,html:inventories-1,html:inventories-1,Inventories [1],5,0
+balance_sheet,html:short-term-debt-obligations-2,html:short-term-debt-obligations-2,Short-term debt obligations [2],32,0
+balance_sheet,html:long-term-debt-obligations-2,html:long-term-debt-obligations-2,Long-Term Debt Obligations [2],39,0
+balance_sheet,html:preferred-stock-no-par-value,html:preferred-stock-no-par-value,"Preferred Stock, no par value",48,0
+balance_sheet,html:preferred-stock,html:preferred-stock,Preferred Stock,77,0
+balance_sheet,html:additional-paid-in-capital-member,html:additional-paid-in-capital-member,Additional Paid-in Capital [Member],65,0
+balance_sheet,html:retained-earnings-member,html:retained-earnings-member,Retained Earnings [Member],66,0
+balance_sheet,html:aoci-attributable-to-parent-member,html:aoci-attributable-to-parent-member,AOCI Attributable to Parent [Member],67,0
+balance_sheet,html:treasury-stock-member,html:treasury-stock-member,Treasury Stock [Member],68,0
+balance_sheet,html:common-stock,html:common-stock,Common Stock,69,0
+balance_sheet,html:1-approximately-5-of-the-inventory-cost-in-2018-and-2017-were-computed-using-the-lifo-method-the-differences-between-lifo-and-fifo-methods-of-valuing-these-inventories-were-not-material-2-amounts-are-shown-net-of-unamortized-net-discounts-of-119-million-and-155-million-for-2018-and-2017-respectively,html:1-approximately-5-of-the-inventory-cost-in-2018-and-2017-were-computed-using-the-lifo-method-the-differences-between-lifo-and-fifo-methods-of-valuing-these-inventories-were-not-material-2-amounts-are-shown-net-of-unamortized-net-discounts-of-119-million-and-155-million-for-2018-and-2017-respectively,"[1] Approximately 5% of the inventory cost in 2018 and 2017 were computed using the LIFO method. The differences between LIFO and FIFO methods of valuing these inventories were not material. [2] Amounts are shown net of unamortized net discounts of $119 million and $155 million for 2018 and 2017, respectively.",70,0
+balance_sheet,html:1-approximately-5-of-the-inventory-cost-in-2018-and-2017-were-computed-using-the-lifo-method-the-differences-between-lifo-and-fifo-methods-of-valuing-these-inventories-were-not-material,html:1-approximately-5-of-the-inventory-cost-in-2018-and-2017-were-computed-using-the-lifo-method-the-differences-between-lifo-and-fifo-methods-of-valuing-these-inventories-were-not-material,[1] Approximately 5% of the inventory cost in 2018 and 2017 were computed using the LIFO method. The differences between LIFO and FIFO methods of valuing these inventories were not material.,71,0
+balance_sheet,html:2-amounts-are-shown-net-of-unamortized-net-discounts-of-119-million-and-155-million-for-2018-and-2017-respectively,html:2-amounts-are-shown-net-of-unamortized-net-discounts-of-119-million-and-155-million-for-2018-and-2017-respectively,"[2] Amounts are shown net of unamortized net discounts of $119 million and $155 million for 2018 and 2017, respectively.",72,0
+cash_flow,html:charge-related-to-the-transaction-with-tingyi,html:charge-related-to-the-transaction-with-tingyi,Charge related to the transaction with Tingyi,13,0
+cash_flow,html:acquisition-of-sodastream-net-of-cash-and-cash-equivalents-acquired,html:acquisition-of-sodastream-net-of-cash-and-cash-equivalents-acquired,"Acquisition of SodaStream, net of cash and cash equivalents acquired",36,0
+cash_flow,html:withholding-tax-payments-on-rsus-psus-and-pepunits-converted,html:withholding-tax-payments-on-rsus-psus-and-pepunits-converted,"Withholding tax payments on RSUs, PSUs and PEPunits converted",59,0
+cash_flow,html:cash-and-cash-equivalents-and-restricted-cash-end-of-year,html:cash-and-cash-equivalents-and-restricted-cash-end-of-year,"Cash and Cash Equivalents and Restricted Cash, End of Year",65,0
+balance_sheet,html:common-stock-par-value,html:common-stock-par-value,"Common stock, par value",55,0
+cash_flow,html:payments-for-merger-related-costs,html:payments-for-merger-related-costs,Payments for Merger Related Costs,26,0
+cash_flow,html:tax-cuts-and-jobs-act-income-tax-expense-benefit,html:tax-cuts-and-jobs-act-income-tax-expense-benefit,"Tax Cuts and Jobs Act, Income Tax Expense (Benefit)",20,0

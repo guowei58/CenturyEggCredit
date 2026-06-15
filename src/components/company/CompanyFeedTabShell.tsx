@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 export type CompanyFeedSortOption = { value: string; label: string };
 
@@ -16,9 +16,10 @@ type CompanyFeedTabShellProps = {
   refreshLabel?: string;
   /** When true, default button label is "Refresh" instead of "Load". */
   hasPayload?: boolean;
-  sortValue: string;
-  onSortChange: (value: string) => void;
-  sortOptions: CompanyFeedSortOption[];
+  /** When omitted or empty, the sort control is hidden. */
+  sortValue?: string;
+  onSortChange?: (value: string) => void;
+  sortOptions?: CompanyFeedSortOption[];
   error?: ReactNode;
   /** When there is no cached payload yet (not an error). */
   emptyState?: ReactNode;
@@ -53,6 +54,7 @@ export function CompanyFeedTabShell({
   statsSection,
   children,
 }: CompanyFeedTabShellProps) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const btnLabel =
     refreshBusy ? "Loading…" : refreshLabel ?? (hasPayload ? "Refresh" : "Load");
 
@@ -72,43 +74,54 @@ export function CompanyFeedTabShell({
         </p>
       ) : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-        <div>
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-            Sort by
-          </div>
-          <select
-            value={sortValue}
-            onChange={(e) => onSortChange(e.target.value)}
-            className="min-w-[11rem] rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
-            style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          {sortOptions?.length ? (
+            <label className="flex shrink-0 items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+                Sort by
+              </span>
+              <select
+                value={sortValue ?? sortOptions[0].value}
+                onChange={(e) => onSortChange?.(e.target.value)}
+                className="min-w-[9rem] rounded-md border bg-[var(--card)] px-2.5 py-1.5 text-sm"
+                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+              >
+                {sortOptions.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          {filterSection ? (
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((open) => !open)}
+              className="shrink-0 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90"
+              style={{ borderColor: "var(--border2)", color: "var(--muted2)", background: "var(--card)" }}
+              aria-expanded={filtersOpen}
+            >
+              {filtersOpen ? "▾" : "▸"} {filterSectionTitle}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={refreshDisabled || refreshBusy}
+            className="ml-auto shrink-0 rounded-md border px-3 py-1.5 text-sm font-semibold transition-opacity disabled:opacity-50"
+            style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "rgba(0,212,170,0.08)" }}
           >
-            {sortOptions.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+            {btnLabel}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={onRefresh}
-          disabled={refreshDisabled || refreshBusy}
-          className="rounded-md border px-4 py-2 text-sm font-semibold transition-opacity disabled:opacity-50"
-          style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "rgba(0,212,170,0.08)" }}
-        >
-          {btnLabel}
-        </button>
+        {filterSection && filtersOpen ? (
+          <div className="rounded-md border px-3 py-2" style={{ borderColor: "var(--border2)" }}>
+            {filterSection}
+          </div>
+        ) : null}
       </div>
-
-      {filterSection ? (
-        <details className="rounded-md border px-3 py-2" style={{ borderColor: "var(--border2)" }}>
-          <summary className="cursor-pointer select-none text-xs font-semibold" style={{ color: "var(--muted2)" }}>
-            {filterSectionTitle}
-          </summary>
-          <div className="mt-3">{filterSection}</div>
-        </details>
-      ) : null}
 
       {error ? (
         <div

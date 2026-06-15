@@ -11,7 +11,8 @@ import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/co
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
-import { OrgChartExcelFileBox } from "@/components/OrgChartExcelFileBox";
+import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
+import { GenericExcelWorkbookFileBox } from "@/components/GenericExcelWorkbookFileBox";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
@@ -124,7 +125,10 @@ export function HistoricalFinancialsAiWorkflow({
         the instructions). Save notes or output below and attach the per-ticker Excel workbook. Ground numbers in original filings and your
         spreadsheet—not third-party aggregators.
       </p>
-      <div className="flex flex-col gap-6 lg:flex-row">
+      <TabPromptSlideOutShell
+        hasMainContent={savedContent.trim().length > 0}
+        main={
+          <div className="flex flex-col gap-6 lg:flex-row">
         {isSavedResponseCollapsed ? (
           <div className="flex w-full justify-start lg:w-[44px] lg:flex-none">
             <button
@@ -221,7 +225,7 @@ export function HistoricalFinancialsAiWorkflow({
                 Minimize Excel File
               </button>
             </div>
-            <OrgChartExcelFileBox
+            <GenericExcelWorkbookFileBox
               ticker={safeTicker}
               apiBasePath="/api/historical-financials-excel"
               emptyMessage="Select a company to upload the historical financial model (.xlsx)."
@@ -232,7 +236,10 @@ export function HistoricalFinancialsAiWorkflow({
           </div>
         )}
 
-        <div className="flex w-full flex-col lg:w-80 flex-shrink-0 gap-3">
+          </div>
+        }
+        prompt={
+          <div className="flex w-full flex-col gap-3">
           <div>
             <p className="text-xs mb-2" style={{ color: "var(--muted2)" }}>
               Forensic extraction prompt (SEC / XBRL). Open in AI; copy attaches to clipboard. {CHATGPT_DEEPSEEK_GEMINI_LONG_URL_NOTICES}
@@ -321,8 +328,9 @@ export function HistoricalFinancialsAiWorkflow({
               </p>
             )}
           </div>
-        </div>
-      </div>
+          </div>
+        }
+      />
     </>
   );
 

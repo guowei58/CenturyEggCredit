@@ -1,0 +1,105 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Product sales,0,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3,Other revenues,1,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4,revenue from contract with customer excluding assessed tax revenue from contract with customer excluding assessed tax revenue from contract with customer excluding assessed tax,2,0
+income_statement,html:expenses,html:expenses,Expenses,3,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of goods sold (excluding amortization and impairments of intangible assets),4,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold@R7,us-gaap:CostOfGoodsAndServicesSold@R7,Cost of other revenues,5,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative (Note 3)",6,0
+income_statement,us-gaap:ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost,us-gaap:ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost,Research and development,7,0
+income_statement,blco:AmortizationOfIntangibleAssetsExcludingAmortizationAllocatedToRevenuesCostOfGoodSold,blco:AmortizationOfIntangibleAssetsExcludingAmortizationAllocatedToRevenuesCostOfGoodSold,Amortization of intangible assets,8,0
+income_statement,us-gaap:OtherOperatingIncomeExpenseNet,us-gaap:OtherOperatingIncomeExpenseNet,"Other expense, net",9,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,costs and expenses costs and expenses costs and expenses,10,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,11,0
+income_statement,us-gaap:InvestmentIncomeInterest,us-gaap:InvestmentIncomeInterest,Interest income,12,0
+income_statement,us-gaap:InterestExpenseDebt,us-gaap:InterestExpenseDebt,Interest expense,13,0
+income_statement,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on extinguishment of debt,14,0
+income_statement,us-gaap:ForeignCurrencyTransactionGainLossBeforeTax,us-gaap:ForeignCurrencyTransactionGainLossBeforeTax,Foreign exchange and other,15,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Loss before provision for income taxes,16,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes,17,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net loss,18,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Net income attributable to noncontrolling interest,19,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net loss attributable to Bausch + Lomb Corporation,20,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Basic and diluted loss per share attributable to Bausch + Lomb Corporation,21,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic weighted-average common shares,22,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted weighted-average common shares,23,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:RestrictedCashCurrent,us-gaap:RestrictedCashCurrent,Restricted cash,1,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,"Trade receivables, net",2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,"Inventories, net",3,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets (Note 3),4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,5,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment, net",6,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",7,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,8,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,"Deferred tax assets, net",9,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other non-current assets (Note 3),10,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,11,0
+balance_sheet,html:liabilities,html:liabilities,Liabilities,12,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,13,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable (Note 3),14,0
+balance_sheet,us-gaap:AccruedLiabilitiesCurrent,us-gaap:AccruedLiabilitiesCurrent,Accrued and other current liabilities,15,0
+balance_sheet,blco:LongTermDebtAndSecuredBorrowingCurrent,blco:LongTermDebtAndSecuredBorrowingCurrent,Current portion of long-term debt and other financial liabilities,17,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,18,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,"Deferred tax liabilities, net",19,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other non-current liabilities,20,0
+balance_sheet,blco:LongTermDebtAndSecuredBorrowingNoncurrent,blco:LongTermDebtAndSecuredBorrowingNoncurrent,Long-term debt and other financial liabilities,23,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,24,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies (Notes 19 and 20),25,0
+balance_sheet,html:equity,html:equity,Equity,26,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common shares, no par value, unlimited shares authorized, 354,209,319 and 352,402,374 issued and outstanding at December 31, 2025 and December 31, 2024, respectively",27,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,28,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated deficit,29,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,31,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Bausch + Lomb Corporation shareholders’ equity,32,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,33,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,34,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,35,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net loss,0,0
+cash_flow,html:adjustments-to-reconcile-net-loss-to-net-cash-provided-by-operating-activities,html:adjustments-to-reconcile-net-loss-to-net-cash-provided-by-operating-activities,Adjustments to reconcile net loss to net cash provided by operating activities:,1,0
+cash_flow,us-gaap:DepreciationAndAmortization,us-gaap:DepreciationAndAmortization,Depreciation and amortization of intangible assets,2,0
+cash_flow,us-gaap:AmortizationOfFinancingCostsAndDiscounts,us-gaap:AmortizationOfFinancingCostsAndDiscounts,"Amortization and write-off of debt premiums, discounts and issuance costs",3,0
+cash_flow,us-gaap:AssetImpairmentCharges,us-gaap:AssetImpairmentCharges,Asset impairments,4,0
+cash_flow,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,us-gaap:BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1,Acquisition-related contingent consideration,5,0
+cash_flow,blco:AllowancesForLossesOnAccountsReceivableAndInventories,blco:AllowancesForLossesOnAccountsReceivableAndInventories,Allowances for losses on trade receivables and inventories,6,0
+cash_flow,blco:DeferredIncomeTaxNoncashExpenseBenefit,blco:DeferredIncomeTaxNoncashExpenseBenefit,Deferred income taxes,7,0
+cash_flow,us-gaap:GainLossOnDispositionOfAssets1,us-gaap:GainLossOnDispositionOfAssets1,Gain on sale of assets,8,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Share-based compensation,10,0
+cash_flow,us-gaap:ForeignCurrencyTransactionGainLossUnrealized,us-gaap:ForeignCurrencyTransactionGainLossUnrealized,Foreign exchange gain,11,0
+cash_flow,blco:DerivativeGainExcludedComponent,blco:DerivativeGainExcludedComponent,Gain excluded from hedge effectiveness,12,0
+cash_flow,us-gaap:GainsLossesOnExtinguishmentOfDebt,us-gaap:GainsLossesOnExtinguishmentOfDebt,Loss on extinguishment of debt,13,0
+cash_flow,blco:AmortizationOfInventoryStepUpFromAcquisition,blco:AmortizationOfInventoryStepUpFromAcquisition,Amortization of inventory step-up resulting from acquisitions,14,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,Other,15,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,16,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Trade receivables,17,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,18,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,Prepaid expenses and other current assets,19,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,"Accounts payable, accrued and other liabilities",20,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by (used in) operating activities,21,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash Flows From Investing Activities,22,0
+cash_flow,us-gaap:PaymentsToAcquireOtherInvestments,us-gaap:PaymentsToAcquireOtherInvestments,Acquisitions and other investments,23,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,"Purchases of property, plant and equipment",25,0
+cash_flow,us-gaap:PaymentsToAcquireMarketableSecurities,us-gaap:PaymentsToAcquireMarketableSecurities,Purchases of marketable securities,26,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,Proceeds from sale of marketable securities,27,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinessesNetOfCashDivested,us-gaap:ProceedsFromDivestitureOfBusinessesNetOfCashDivested,"Proceeds from sale of assets and businesses, net of costs to sell",28,0
+cash_flow,us-gaap:ProceedsFromDerivativeInstrumentInvestingActivities,us-gaap:ProceedsFromDerivativeInstrumentInvestingActivities,Interest settlements from cross-currency swaps,29,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used in investing activities,30,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,Cash Flows From Financing Activities,31,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,"Issuance of long-term debt, net of discounts, and other financial liabilities",32,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayments of debt,33,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Payment of employee withholding taxes related to share-based awards,34,0
+cash_flow,us-gaap:PaymentsOfDebtIssuanceCosts,us-gaap:PaymentsOfDebtIssuanceCosts,Payments of financing costs,36,0
+cash_flow,us-gaap:PaymentsToMinorityShareholders,us-gaap:PaymentsToMinorityShareholders,Payments of noncontrolling interest distributions,37,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other,40,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided by financing activities,41,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Effect of exchange rate changes on cash and cash equivalents and restricted cash,42,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net increase (decrease) in cash and cash equivalents and restricted cash,43,0
+cash_flow,us-gaap:ProceedsFromLegalSettlements,us-gaap:ProceedsFromLegalSettlements,Additions (payments) of accrued legal settlements,9,0
+cash_flow,us-gaap:ProceedsFromStockOptionsExercised,us-gaap:ProceedsFromStockOptionsExercised,Proceeds from exercise of stock options,35,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current portion of long-term debt,16,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,21,0
+cash_flow,blco:NetBorrowingsFinancingActivities,blco:NetBorrowingsFinancingActivities,Net borrowings under BHC pooled financing arrangements (Note 3),38,0
+cash_flow,blco:NetTransfersFinancingActivities,blco:NetTransfersFinancingActivities,Net transfers to BHC (Note 3),39,0
+cash_flow,us-gaap:PaymentsToAcquireIntangibleAssets,us-gaap:PaymentsToAcquireIntangibleAssets,Acquisitions of intangible assets (3),24,0
+balance_sheet,blco:NetParentInvestment,blco:NetParentInvestment,BHC investment,30,0
+balance_sheet,us-gaap:NotesPayableRelatedPartiesNoncurrent,us-gaap:NotesPayableRelatedPartiesNoncurrent,BHC Purchase Debt (Note 4),22,0

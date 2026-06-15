@@ -212,7 +212,8 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
           style={{ color: "var(--muted2)" }}
         >
           <li>
-            Click <strong>Refresh sources</strong> to upload/update ingested files.
+            Click <strong>Refresh sources</strong> to rescan Capital Structure section saved tabs and documents, plus the
+            saved <strong>business model</strong> tab.
           </li>
           <li>Pick the AI model.</li>
           <li>
@@ -291,6 +292,9 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
           >
             Refresh sources
           </button>
+          <span className="text-[11px]" style={{ color: "var(--muted2)" }}>
+            Uses Capital Structure section tabs/docs plus the saved business model tab only.
+          </span>
           {data?.cacheStale && data.cachedMarkdown && (
             <span className="text-[11px]" style={{ color: "var(--warn)" }}>
               Sources changed since last run — run again for an updated memo.
@@ -683,7 +687,7 @@ export function CompanyLmeAnalysisTab({ ticker }: { ticker: string }) {
         <Card title="LME analysis output">
           <p className="text-sm" style={{ color: "var(--muted2)" }}>
             {data
-              ? "No analysis yet. Save capital structure / org chart / subsidiary / covenant sources, then click Run LME analysis."
+              ? "No analysis yet. Save Capital Structure section tabs/docs and the business model tab, then click Run LME analysis."
               : "Saved LME output will appear here after you run analysis."}
           </p>
         </Card>

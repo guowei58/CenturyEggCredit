@@ -1,5 +1,6 @@
-import type { NormalizedXPost, XSourceProviderId } from "../types";
+import type { NormalizedXPost, XPostMedia, XSourceProviderId } from "../types";
 import { parseIsoOrNull, postUrlFromId } from "../utils";
+import { resolveTweetDisplayText, resolveTweetMedia, type XApiMedia } from "./tweetText";
 
 type XTweet = {
   id: string;
@@ -21,7 +22,10 @@ type XTweet = {
     cashtags?: Array<{ tag?: string }>;
     hashtags?: Array<{ tag?: string }>;
     mentions?: Array<{ username?: string }>;
+    urls?: Array<{ url?: string; expanded_url?: string; display_url?: string }>;
   };
+  note_tweet?: { text?: string };
+  attachments?: { media_keys?: string[] };
   referenced_tweets?: Array<{ type?: string; id?: string }>;
 };
 
@@ -30,6 +34,7 @@ type XUser = { id: string; username?: string; name?: string };
 export function normalizeTweet(params: {
   tweet: XTweet;
   usersById: Map<string, XUser>;
+  mediaByKey?: Map<string, XApiMedia>;
   sourceProvider: XSourceProviderId;
   matchedTicker: string;
   companyName?: string;
@@ -57,10 +62,14 @@ export function normalizeTweet(params: {
 
   const pm = t.public_metrics;
   const repostCount = pm?.repost_count ?? pm?.retweet_count ?? null;
+  const { text, isTruncatedPreview } = resolveTweetDisplayText(t);
+  const media: XPostMedia[] = resolveTweetMedia(t, params.mediaByKey ?? new Map());
 
   return {
     id: t.id,
-    text: (t.text ?? "").trim(),
+    text,
+    isTruncatedPreview,
+    media,
     authorId: t.author_id ?? null,
     authorUsername: author?.username ?? null,
     authorName: author?.name ?? null,

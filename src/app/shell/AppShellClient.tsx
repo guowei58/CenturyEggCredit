@@ -92,6 +92,20 @@ export default function AppShellClient() {
     setCompanyTab(getFirstTabIdForTopSection(companyTopSection));
   }, [companyTab, companyTopSection]);
 
+  /** Broker Research Reports renamed to Broker Activities; fix bookmarked tab id. */
+  useEffect(() => {
+    if (companyTab !== "broker-research-reports") return;
+    if (companyTopSection !== "research") setCompanyTopSection("research");
+    setCompanyTab("broker-activities");
+  }, [companyTab, companyTopSection]);
+
+  /** Earnings Releases tab removed; bounce saved or bookmarked state. */
+  useEffect(() => {
+    if (companyTab !== "earnings-releases") return;
+    if (companyTopSection !== "research") setCompanyTopSection("research");
+    setCompanyTab("research-roadmap");
+  }, [companyTab, companyTopSection]);
+
   /** Forensic Accounting tab renamed to Forensic Analysis; fix bookmarked tab id. */
   useEffect(() => {
     if (companyTab !== "forensic-accounting") return;

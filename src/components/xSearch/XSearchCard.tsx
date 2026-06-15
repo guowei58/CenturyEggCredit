@@ -22,9 +22,51 @@ export function XSearchCard({ post, ticker }: { post: NormalizedXPost; ticker: s
         </span>
       </div>
 
-      <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed" style={{ color: "var(--text)" }}>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed" style={{ color: "var(--text)" }}>
         {post.text}
       </p>
+
+      {post.media?.length ? (
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {post.media.map((m, i) => {
+            const imgSrc = m.type === "photo" ? m.url ?? m.previewUrl : m.previewUrl ?? m.url;
+            if (!imgSrc) {
+              return (
+                <div
+                  key={`${post.id}-media-${i}`}
+                  className="rounded-md border px-3 py-2 text-xs"
+                  style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
+                >
+                  Attached {m.type} — open post on X to view
+                </div>
+              );
+            }
+            return (
+              <a
+                key={`${post.id}-media-${i}`}
+                href={post.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block overflow-hidden rounded-md border"
+                style={{ borderColor: "var(--border2)" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imgSrc}
+                  alt={m.altText ?? (m.type === "photo" ? "Tweet image" : `Tweet ${m.type}`)}
+                  className="max-h-80 w-full object-contain"
+                  style={{ background: "var(--surface2)" }}
+                />
+                {m.type !== "photo" ? (
+                  <span className="block px-2 py-1 text-[10px]" style={{ color: "var(--muted)" }}>
+                    {m.type} — open on X to play
+                  </span>
+                ) : null}
+              </a>
+            );
+          })}
+        </div>
+      ) : null}
 
       {post.matchSignals.length > 0 && (
         <p className="mt-2 text-[11px]" style={{ color: "var(--muted2)" }}>

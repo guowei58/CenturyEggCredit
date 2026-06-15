@@ -1,0 +1,1301 @@
+{
+  "input_dir": "C:\\Users\\admin\\Desktop\\CenturyEggCredit\\scripts\\.audit-truth-batch\\work\\HTZ\\in",
+  "workbook_count_loaded": 30,
+  "workbook_count_compiled": 30,
+  "skipped_html_only_batch": [],
+  "html_only_workbooks_included": [
+    "10-K_2019-02-25_0001657853-19-000005.xlsx",
+    "10-Q_2019-05-07_0001657853-19-000047.xlsx",
+    "10-Q_2019-08-07_0001657853-19-000134.xlsx",
+    "10-Q_2019-11-05_0001657853-19-000146.xlsx",
+    "10-Q_2020-05-11_0001657853-20-000049.xlsx",
+    "10-Q_2020-08-10_0001657853-20-000077.xlsx",
+    "10-Q_2020-11-09_0001657853-20-000114.xlsx",
+    "10-Q_2021-05-07_0001657853-21-000013.xlsx",
+    "10-Q_2021-08-09_0001657853-21-000074.xlsx",
+    "10-Q_2021-10-28_0001657853-21-000092.xlsx",
+    "10-Q_2022-04-27_0001657853-22-000045.xlsx",
+    "10-Q_2022-07-28_0001657853-22-000076.xlsx",
+    "10-Q_2022-10-27_0001657853-22-000089.xlsx",
+    "10-Q_2023-04-27_0001657853-23-000075.xlsx",
+    "10-Q_2023-07-27_0001657853-23-000103.xlsx",
+    "10-Q_2023-10-26_0001657853-23-000152.xlsx",
+    "10-Q_2024-04-25_0001657853-24-000058.xlsx",
+    "10-Q_2024-08-01_0001657853-24-000105.xlsx",
+    "10-Q_2024-11-12_0001657853-24-000136.xlsx",
+    "10-Q_2025-05-12_0001657853-25-000057.xlsx",
+    "10-Q_2025-08-07_0001657853-25-000094.xlsx",
+    "10-Q_2025-11-04_0001657853-25-000134.xlsx",
+    "10-Q_2026-05-08_0001657853-26-000024.xlsx"
+  ],
+  "tagged_only_workbooks": [
+    "10-K_2020-02-25_0001657853-20-000007.xlsx",
+    "10-K_2021-02-26_0001657853-21-000006.xlsx",
+    "10-K_2022-02-23_0001657853-22-000012.xlsx",
+    "10-K_2023-02-07_0001657853-23-000039.xlsx",
+    "10-K_2024-02-12_0001657853-24-000022.xlsx",
+    "10-K_2025-02-18_0001657853-25-000015.xlsx",
+    "10-K_2026-02-26_0001657853-26-000008.xlsx"
+  ],
+  "master_workbook": "10-K_2026-02-26_0001657853-26-000008.xlsx",
+  "master_row_count": 297,
+  "concept_map_count": 575,
+  "mapped_facts": 10036,
+  "unresolved_facts": 0,
+  "consolidated_cell_count": 2816,
+  "conflict_count": 102,
+  "within_file_sum_count": 89,
+  "inventory": {
+    "workbooks": [
+      {
+        "file": "10-K_2019-02-25_0001657853-19-000005.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 290
+        },
+        "headline_periods": [
+          "FY18"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY16",
+            "FY17",
+            "FY18"
+          ],
+          "balance_sheet": [
+            "FY17",
+            "FY18"
+          ],
+          "cash_flow": [
+            "FY16",
+            "FY17",
+            "FY18"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2020-02-25_0001657853-20-000007.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "htz/htzz": 40,
+          "us-gaap": 240
+        },
+        "headline_periods": [
+          "FY19"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY17",
+            "FY18",
+            "FY19"
+          ],
+          "balance_sheet": [
+            "FY18",
+            "FY19"
+          ],
+          "cash_flow": [
+            "FY17",
+            "FY18",
+            "FY19"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2021-02-26_0001657853-21-000006.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "htz/htzz": 65,
+          "us-gaap": 226
+        },
+        "headline_periods": [
+          "FY20"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY18",
+            "FY19",
+            "FY20"
+          ],
+          "balance_sheet": [
+            "FY19",
+            "FY20"
+          ],
+          "cash_flow": [
+            "FY18",
+            "FY19",
+            "FY20"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2022-02-23_0001657853-22-000012.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "us-gaap": 248,
+          "htz/htzz": 67
+        },
+        "headline_periods": [
+          "FY21"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY19",
+            "FY20",
+            "FY21"
+          ],
+          "balance_sheet": [
+            "FY20",
+            "FY21"
+          ],
+          "cash_flow": [
+            "FY19",
+            "FY20",
+            "FY21"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2023-02-07_0001657853-23-000039.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "us-gaap": 262,
+          "htz/htzz": 44
+        },
+        "headline_periods": [
+          "FY22"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY20",
+            "FY21",
+            "FY22"
+          ],
+          "balance_sheet": [
+            "FY21",
+            "FY22"
+          ],
+          "cash_flow": [
+            "FY20",
+            "FY21",
+            "FY22"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2024-02-12_0001657853-24-000022.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "us-gaap": 257,
+          "htz/htzz": 43
+        },
+        "headline_periods": [
+          "FY23"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY21",
+            "FY22",
+            "FY23"
+          ],
+          "balance_sheet": [
+            "FY22",
+            "FY23"
+          ],
+          "cash_flow": [
+            "FY21",
+            "FY22",
+            "FY23"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2025-02-18_0001657853-25-000015.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "us-gaap": 237,
+          "htz/htzz": 36
+        },
+        "headline_periods": [
+          "FY24"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY22",
+            "FY23",
+            "FY24"
+          ],
+          "balance_sheet": [
+            "FY23",
+            "FY24"
+          ],
+          "cash_flow": [
+            "FY22",
+            "FY23",
+            "FY24"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-K_2026-02-26_0001657853-26-000008.xlsx",
+        "is_10k": true,
+        "has_xbrl_tags": true,
+        "concept_mix": {
+          "us-gaap": 245,
+          "htz/htzz": 31
+        },
+        "headline_periods": [
+          "FY25"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "FY23",
+            "FY24",
+            "FY25"
+          ],
+          "balance_sheet": [
+            "FY24",
+            "FY25"
+          ],
+          "cash_flow": [
+            "FY23",
+            "FY24",
+            "FY25"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2019-05-07_0001657853-19-000047.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 402
+        },
+        "headline_periods": [
+          "1Q19"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q18",
+            "1Q19"
+          ],
+          "balance_sheet": [
+            "1Q19",
+            "FY18"
+          ],
+          "cash_flow": [
+            "1Q18",
+            "1Q19"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2019-08-07_0001657853-19-000134.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 480
+        },
+        "headline_periods": [
+          "2Q19"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q18",
+            "2Q19"
+          ],
+          "balance_sheet": [
+            "2Q19",
+            "FY18"
+          ],
+          "cash_flow": [
+            "2Q18",
+            "2Q19"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2019-11-05_0001657853-19-000146.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 484
+        },
+        "headline_periods": [
+          "3Q19"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q18",
+            "3Q19"
+          ],
+          "balance_sheet": [
+            "3Q19",
+            "FY18"
+          ],
+          "cash_flow": [
+            "3Q18",
+            "3Q19"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2020-05-11_0001657853-20-000049.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 404
+        },
+        "headline_periods": [
+          "1Q20"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q19",
+            "1Q20"
+          ],
+          "balance_sheet": [
+            "1Q20",
+            "FY19"
+          ],
+          "cash_flow": [
+            "1Q19",
+            "1Q20"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2020-08-10_0001657853-20-000077.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 412
+        },
+        "headline_periods": [
+          "2Q20"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q19",
+            "2Q20"
+          ],
+          "balance_sheet": [
+            "2Q20"
+          ],
+          "cash_flow": [
+            "2Q19",
+            "2Q20"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2020-11-09_0001657853-20-000114.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 420
+        },
+        "headline_periods": [
+          "3Q20"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q19",
+            "3Q20"
+          ],
+          "balance_sheet": [
+            "3Q20"
+          ],
+          "cash_flow": [
+            "3Q19",
+            "3Q20"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2021-05-07_0001657853-21-000013.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 438
+        },
+        "headline_periods": [
+          "1Q21"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q20",
+            "1Q21"
+          ],
+          "balance_sheet": [
+            "1Q21",
+            "FY20"
+          ],
+          "cash_flow": [
+            "1Q20",
+            "1Q21"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2021-08-09_0001657853-21-000074.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 574
+        },
+        "headline_periods": [
+          "2Q21"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q20",
+            "2Q21"
+          ],
+          "balance_sheet": [
+            "2Q21",
+            "FY20"
+          ],
+          "cash_flow": [
+            "2Q20",
+            "2Q21"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2021-10-28_0001657853-21-000092.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 587
+        },
+        "headline_periods": [
+          "3Q21"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q20",
+            "3Q21"
+          ],
+          "balance_sheet": [
+            "3Q21",
+            "FY20"
+          ],
+          "cash_flow": [
+            "3Q20",
+            "3Q21"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2022-04-27_0001657853-22-000045.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 300
+        },
+        "headline_periods": [
+          "1Q22"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q21",
+            "1Q22"
+          ],
+          "balance_sheet": [
+            "1Q22",
+            "FY21"
+          ],
+          "cash_flow": [
+            "1Q21",
+            "1Q22"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2022-07-28_0001657853-22-000076.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 362
+        },
+        "headline_periods": [
+          "2Q22"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q21",
+            "2Q22"
+          ],
+          "balance_sheet": [
+            "2Q22",
+            "FY21"
+          ],
+          "cash_flow": [
+            "2Q21",
+            "2Q22"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2022-10-27_0001657853-22-000089.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 368
+        },
+        "headline_periods": [
+          "3Q22"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q21",
+            "3Q22"
+          ],
+          "balance_sheet": [
+            "3Q22",
+            "FY21"
+          ],
+          "cash_flow": [
+            "3Q21",
+            "3Q22"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2023-04-27_0001657853-23-000075.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 284
+        },
+        "headline_periods": [
+          "1Q23"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q22",
+            "1Q23"
+          ],
+          "balance_sheet": [
+            "1Q23",
+            "FY22"
+          ],
+          "cash_flow": [
+            "1Q22",
+            "1Q23"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2023-07-27_0001657853-23-000103.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 328
+        },
+        "headline_periods": [
+          "2Q23"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q22",
+            "2Q23"
+          ],
+          "balance_sheet": [
+            "2Q23",
+            "FY22"
+          ],
+          "cash_flow": [
+            "2Q22",
+            "2Q23"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2023-10-26_0001657853-23-000152.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 248
+        },
+        "headline_periods": [
+          "3Q23"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q22",
+            "3Q23"
+          ],
+          "balance_sheet": [
+            "3Q23",
+            "FY22"
+          ],
+          "cash_flow": [
+            "3Q22",
+            "3Q23"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2024-04-25_0001657853-24-000058.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 206
+        },
+        "headline_periods": [
+          "1Q24"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q23",
+            "1Q24"
+          ],
+          "balance_sheet": [
+            "1Q24",
+            "FY23"
+          ],
+          "cash_flow": [
+            "1Q23",
+            "1Q24"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2024-08-01_0001657853-24-000105.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 246
+        },
+        "headline_periods": [
+          "2Q24"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q23",
+            "2Q24"
+          ],
+          "balance_sheet": [
+            "2Q24",
+            "FY23"
+          ],
+          "cash_flow": [
+            "2Q23",
+            "2Q24"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2024-11-12_0001657853-24-000136.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 256
+        },
+        "headline_periods": [
+          "3Q24"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q23",
+            "3Q24"
+          ],
+          "balance_sheet": [
+            "3Q24",
+            "FY23"
+          ],
+          "cash_flow": [
+            "3Q23",
+            "3Q24"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2025-05-12_0001657853-25-000057.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 202
+        },
+        "headline_periods": [
+          "1Q25"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q24",
+            "1Q25"
+          ],
+          "balance_sheet": [
+            "1Q25",
+            "FY24"
+          ],
+          "cash_flow": [
+            "1Q24",
+            "1Q25"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2025-08-07_0001657853-25-000094.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 244
+        },
+        "headline_periods": [
+          "2Q25"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "2Q24",
+            "2Q25"
+          ],
+          "balance_sheet": [
+            "2Q25",
+            "FY24"
+          ],
+          "cash_flow": [
+            "2Q24",
+            "2Q25"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2025-11-04_0001657853-25-000134.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 260
+        },
+        "headline_periods": [
+          "3Q25"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "3Q24",
+            "3Q25"
+          ],
+          "balance_sheet": [
+            "3Q25",
+            "FY24"
+          ],
+          "cash_flow": [
+            "3Q24",
+            "3Q25"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      },
+      {
+        "file": "10-Q_2026-05-08_0001657853-26-000024.xlsx",
+        "is_10k": false,
+        "has_xbrl_tags": false,
+        "concept_mix": {
+          "html": 200
+        },
+        "headline_periods": [
+          "1Q26"
+        ],
+        "periods_by_statement": {
+          "income_statement": [
+            "1Q25",
+            "1Q26"
+          ],
+          "balance_sheet": [
+            "1Q26",
+            "FY25"
+          ],
+          "cash_flow": [
+            "1Q25",
+            "1Q26"
+          ]
+        },
+        "periods_dropped_by_xbrl_filter": {}
+      }
+    ]
+  },
+  "missing_revenues_by_headline_10q": [
+    {
+      "file": "10-Q_2023-04-27_0001657853-23-000075.xlsx",
+      "headline_period": "1Q23",
+      "raw_revenue_facts": 0,
+      "raw_revenue_detail": [],
+      "mapped_to_revenues": 0,
+      "mapped_values": []
+    },
+    {
+      "file": "10-Q_2024-04-25_0001657853-24-000058.xlsx",
+      "headline_period": "1Q24",
+      "raw_revenue_facts": 0,
+      "raw_revenue_detail": [],
+      "mapped_to_revenues": 0,
+      "mapped_values": []
+    },
+    {
+      "file": "10-Q_2025-05-12_0001657853-25-000057.xlsx",
+      "headline_period": "1Q25",
+      "raw_revenue_facts": 0,
+      "raw_revenue_detail": [],
+      "mapped_to_revenues": 0,
+      "mapped_values": []
+    },
+    {
+      "file": "10-Q_2026-05-08_0001657853-26-000024.xlsx",
+      "headline_period": "1Q26",
+      "raw_revenue_facts": 0,
+      "raw_revenue_detail": [],
+      "mapped_to_revenues": 0,
+      "mapped_values": []
+    }
+  ],
+  "bad_concept_map_collapses": [
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "balance_sheet",
+      "canonical": "us-gaap:PropertySubjectToOrAvailableForOperatingLeaseNet",
+      "html_concepts": [
+        "html:total-revenue-earning-vehicles-net",
+        "html:revenue-earning-vehicles-net"
+      ],
+      "count": 2
+    },
+    {
+      "issue": "cash_rollforward_components_same_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "html_concepts": [
+        "html:cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-at-beginning-of-period",
+        "html:cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-at-end-of-period",
+        "html:cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-at-end-of-period-1-549",
+        "html:cash-and-cash-equivalents-and-restricted-cash-and-cash-equivalents-at-beginning-of-period-1",
+        "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period-1",
+        "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+        "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period-2",
+        "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period"
+      ]
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:DepreciationNonproduction",
+      "html_concepts": [
+        "html:depreciation-and-amortization-non-vehicle",
+        "html:non-vehicle",
+        "html:depreciation-and-amortization-non-vehicle-29"
+      ],
+      "count": 3
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:IncreaseDecreaseInAccruedLiabilities",
+      "html_concepts": [
+        "html:accrued-liabilities",
+        "html:purchases-of-revenue-earning-vehicles-included-in-accounts-payable-and-accrued-liabilities-net-of-incentives"
+      ],
+      "count": 2
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:InterestPaidNet",
+      "html_concepts": [
+        "html:vehicle",
+        "html:vehicles",
+        "html:purchases-of-non-vehicle-capital-assets-included-in-liabilities-subject-to-compromise",
+        "html:revenue-earning-vehicles-and-non-vehicle-capital-assets-acquired-through-capital-lease",
+        "html:the-hertz-corporation-vehicles",
+        "html:the-hertz-corporation-non-vehicle",
+        "html:sales-of-revenue-earning-vehicles-included-in-receivables",
+        "html:depreciation-of-revenue-earning-vehicles-net"
+      ],
+      "count": 8
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:OtherOperatingActivitiesCashFlowStatement",
+      "html_concepts": [
+        "html:other",
+        "html:technology-related-intangible-and-other-asset-impairments",
+        "html:proceeds-from-property-and-other-equipment-disposed-of-or-to-be-disposed-of",
+        "html:sales-of-revenue-earning-vehicles-included-in-other-receivables",
+        "html:sales-type-capital-lease-of-revenue-earning-vehicles-included-in-other-receivables"
+      ],
+      "count": 5
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:PaymentsToAcquireOtherPropertyPlantAndEquipment",
+      "html_concepts": [
+        "html:non-vehicle-capital-asset-expenditures",
+        "html:capital-asset-expenditures-non-vehicle"
+      ],
+      "count": 2
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:ProceedsFromSaleOfOtherPropertyPlantAndEquipment",
+      "html_concepts": [
+        "html:proceeds-from-disposal-of-non-vehicle-capital-assets",
+        "html:proceeds-from-non-vehicle-capital-assets-disposed-of",
+        "html:proceeds-from-non-vehicle-capital-assets-disposed-of-or-to-be-disposed-of"
+      ],
+      "count": 3
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "cash_flow",
+      "canonical": "us-gaap:RepaymentsOfDebt",
+      "html_concepts": [
+        "html:repayments-of-debt",
+        "html:repayments-of-vehicle-debt",
+        "html:repayments-of-non-vehicle-debt"
+      ],
+      "count": 3
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "income_statement",
+      "canonical": "us-gaap:DepreciationAndAmortization",
+      "html_concepts": [
+        "html:non-vehicle-depreciation-and-amortization",
+        "html:non-vehicle"
+      ],
+      "count": 2
+    },
+    {
+      "issue": "multiple_html_vehicle_labels_same_usgaap_row",
+      "statement": "income_statement",
+      "canonical": "us-gaap:InterestExpenseOperating",
+      "html_concepts": [
+        "html:vehicle",
+        "html:vehicles",
+        "html:the-hertz-corporation-vehicles",
+        "html:the-hertz-corporation-non-vehicle",
+        "html:worldwide-vehicle-rental"
+      ],
+      "count": 5
+    },
+    {
+      "issue": "depreciation_mapped_to_revenues",
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "html_concepts": [
+        "html:revenues",
+        "html:depreciation-of-revenue-earning-vehicles-and-lease-charges",
+        "html:total-revenues"
+      ],
+      "notes": [
+        "Fuzzy label match to us-gaap:Revenues (from HTZ_SEC-XBRL-financials_as-presented_10-Q_2021-10-28_0001657853-21-000092.xlsx)",
+        "Normalized label 'revenue' matched master us-gaap:Revenues (from HTZ_SEC-XBRL-financials_as-presented_10-Q_2025-11-04_0001657853-25-000134.xlsx)",
+        "Normalized label 'revenue' matched master us-gaap:Revenues (from HTZ_SEC-XBRL-financials_as-presented_10-Q_2021-05-07_0001657853-21-000013.xlsx)"
+      ]
+    }
+  ],
+  "duplicate_vehicle_master_rows": [
+    {
+      "statement": "balance_sheet",
+      "label": "Vehicle",
+      "canonical_rows": [
+        "us-gaap:RestrictedCashAndCashEquivalents",
+        "us-gaap:AccountsReceivableNet",
+        "us-gaap:AccountsPayableCurrentAndNoncurrent",
+        "us-gaap:DebtAndCapitalLeaseObligations",
+        "html:vehicle"
+      ]
+    },
+    {
+      "statement": "balance_sheet",
+      "label": "Vehicles",
+      "canonical_rows": [
+        "htz:PropertySubjecttoorAvailableforOperatingLeaseCars",
+        "html:vehicles"
+      ]
+    }
+  ],
+  "revenues_cell_trace": [
+    {
+      "period": "1Q22",
+      "consolidated_value": 1810.0,
+      "in_audit": true
+    },
+    {
+      "period": "1Q23",
+      "consolidated_value": null,
+      "in_audit": false
+    },
+    {
+      "period": "1Q24",
+      "consolidated_value": null,
+      "in_audit": false
+    },
+    {
+      "period": "2Q23",
+      "consolidated_value": 2437.0,
+      "in_audit": true
+    },
+    {
+      "period": "2Q24",
+      "consolidated_value": 2353.0,
+      "in_audit": true
+    },
+    {
+      "period": "3Q23",
+      "consolidated_value": 2703.0,
+      "in_audit": true
+    },
+    {
+      "period": "3Q24",
+      "consolidated_value": 2576.0,
+      "in_audit": true
+    },
+    {
+      "period": "FY22",
+      "consolidated_value": 8685.0,
+      "in_audit": true
+    },
+    {
+      "period": "FY23",
+      "consolidated_value": 9371.0,
+      "in_audit": true
+    },
+    {
+      "period": "FY24",
+      "consolidated_value": 9049.0,
+      "in_audit": true
+    }
+  ],
+  "sample_within_file_sums_is_revenues": [
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "1Q19",
+      "value": 5398.0,
+      "file": "10-Q_2019-05-07_0001657853-19-000047.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2019-05-07_0001657853-19-000047.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "2Q19",
+      "value": 17978.0,
+      "file": "10-Q_2019-08-07_0001657853-19-000134.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2019-08-07_0001657853-19-000134.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "3Q19",
+      "value": 25698.0,
+      "file": "10-Q_2019-11-05_0001657853-19-000146.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2019-11-05_0001657853-19-000146.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "1Q20",
+      "value": 5200.0,
+      "file": "10-Q_2020-05-11_0001657853-20-000049.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2020-05-11_0001657853-20-000049.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "2Q20",
+      "value": 10966.0,
+      "file": "10-Q_2020-08-10_0001657853-20-000077.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:total-revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:total-revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2020-08-10_0001657853-20-000077.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "3Q20",
+      "value": 14544.0,
+      "file": "10-Q_2020-11-09_0001657853-20-000114.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:total-revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:total-revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2020-11-09_0001657853-20-000114.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "1Q21",
+      "value": 3064.0,
+      "file": "10-Q_2021-05-07_0001657853-21-000013.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:total-revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:total-revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2021-05-07_0001657853-21-000013.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "2Q21",
+      "value": 11018.0,
+      "file": "10-Q_2021-08-09_0001657853-21-000074.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2021-08-09_0001657853-21-000074.xlsx"
+    },
+    {
+      "statement": "income_statement",
+      "canonical": "us-gaap:Revenues",
+      "label": "Revenues",
+      "period": "3Q21",
+      "value": 16188.0,
+      "file": "10-Q_2021-10-28_0001657853-21-000092.xlsx",
+      "raw_concepts": "html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues",
+      "formula": "SUM(html:depreciation-of-revenue-earning-vehicles-and-lease-charges + html:revenues) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2021-10-28_0001657853-21-000092.xlsx"
+    }
+  ],
+  "sample_within_file_sums_cf_cash": [
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "FY18",
+      "value": 2914.0,
+      "file": "10-K_2019-02-25_0001657853-19-000005.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-K_2019-02-25_0001657853-19-000005.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "FY20",
+      "value": 4488.0,
+      "file": "10-K_2021-02-26_0001657853-21-000006.xlsx",
+      "raw_concepts": "htz:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingAmountsHeldForSale + us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "formula": "SUM(htz:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingAmountsHeldForSale + us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents) in HTZ_SEC-XBRL-financials_as-presented_10-K_2021-02-26_0001657853-21-000006.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "FY21",
+      "value": 6879.0,
+      "file": "10-K_2022-02-23_0001657853-22-000012.xlsx",
+      "raw_concepts": "htz:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingAmountsHeldForSale + us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "formula": "SUM(htz:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingAmountsHeldForSale + us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents) in HTZ_SEC-XBRL-financials_as-presented_10-K_2022-02-23_0001657853-22-000012.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "1Q19",
+      "value": 4832.0,
+      "file": "10-Q_2019-05-07_0001657853-19-000047.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2019-05-07_0001657853-19-000047.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "2Q19",
+      "value": 4128.0,
+      "file": "10-Q_2019-08-07_0001657853-19-000134.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2019-08-07_0001657853-19-000134.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "3Q19",
+      "value": 4210.0,
+      "file": "10-Q_2019-11-05_0001657853-19-000146.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2019-11-05_0001657853-19-000146.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "1Q20",
+      "value": 5538.0,
+      "file": "10-Q_2020-05-11_0001657853-20-000049.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2020-05-11_0001657853-20-000049.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "2Q20",
+      "value": 7313.0,
+      "file": "10-Q_2020-08-10_0001657853-20-000077.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2020-08-10_0001657853-20-000077.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "3Q20",
+      "value": 6456.0,
+      "file": "10-Q_2020-11-09_0001657853-20-000114.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2020-11-09_0001657853-20-000114.xlsx"
+    },
+    {
+      "statement": "cash_flow",
+      "canonical": "us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
+      "label": "Cash and cash equivalents and restricted cash and cash equivalents at beginning of period",
+      "period": "2Q21",
+      "value": 8518.0,
+      "file": "10-Q_2021-08-09_0001657853-21-000074.xlsx",
+      "raw_concepts": "html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period-1 + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period-2 + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period",
+      "formula": "SUM(html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period-1 + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-beginning-of-period-2 + html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-end-of-period) in HTZ_SEC-XBRL-financials_as-presented_10-Q_2021-08-09_0001657853-21-000074.xlsx"
+    }
+  ]
+}

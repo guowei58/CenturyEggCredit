@@ -141,7 +141,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
       return NextResponse.json(
         {
           error:
-            "No substantive sources found. Save responses under Capital Structure, Org Chart, Subsidiary List, and Credit Agreements & Indentures (or upload .txt/.md covenant excerpts and Capital Structure / Org Chart / Subsidiary List Excel files), then try again.",
+            "No substantive LME sources found. Save Capital Structure section tabs/docs and the business model tab, then try again.",
         },
         { status: 400 }
       );

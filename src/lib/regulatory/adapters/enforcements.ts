@@ -52,35 +52,54 @@ function normalizePhrase(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
-function acronymFromPhrase(value: string): string | null {
-  const suffixPattern =
-    /^(incorporated|inc|corp|corporation|company|co|holdings?|group|llc|ltd|limited|plc|lp|na)$/i;
-  const parts = normalizePhrase(value)
-    .replace(/[.,/()]/g, " ")
+const ENFORCEMENT_QUERY_STOPWORDS = new Set([
+  "inc",
+  "corp",
+  "corporation",
+  "company",
+  "co",
+  "llc",
+  "ltd",
+  "limited",
+  "group",
+  "holdings",
+  "holding",
+  "plc",
+  "lp",
+  "na",
+  "the",
+  "and",
+]);
+
+/** Significant tokens for enforcement relevance — drops generic corporate suffix words like "inc" / "group". */
+export function significantEnforcementQueryTokens(query: string): string[] {
+  return normalizePhrase(query)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
-    .map((part) => part.trim())
-    .filter((part) => part && !suffixPattern.test(part));
-  if (parts.length < 2) return null;
-  const acronym = parts.map((part) => part[0]).join("").toUpperCase();
-  if (!/^[A-Z0-9]{3,8}$/.test(acronym)) return null;
-  return acronym;
+    .filter((word) => word.length >= 2 && !ENFORCEMENT_QUERY_STOPWORDS.has(word));
 }
 
-function buildNameVariants(params: RegulatorySearchParams): string[] {
-  const raw = [params.query, params.companyName, params.ticker, ...(params.entityNames ?? [])]
-    .map((value) => normalizePhrase(String(value ?? "")))
-    .filter(Boolean);
-  const suffixPattern =
-    /\b(incorporated|inc|corp(?:oration)?|company|co|holdings?|group|llc|l\.l\.c\.|ltd|limited|plc|lp|l\.p\.|na|n\.a\.)\b/gi;
-  const variants = new Set<string>();
-  for (const item of raw) {
-    variants.add(item);
-    const noSuffix = normalizePhrase(item.replace(/[.,]/g, " ").replace(suffixPattern, " "));
-    if (noSuffix && noSuffix.length >= 4) variants.add(noSuffix);
-    const acronym = acronymFromPhrase(item);
-    if (acronym) variants.add(acronym);
+function tokenAppearsInText(token: string, text: string): boolean {
+  if (!token || !text) return false;
+  if (token.length <= 2) return text.toLowerCase().includes(token.toLowerCase());
+  const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:[^a-z0-9]|$)`, "i").test(text);
+}
+
+/** Row must mention the user's query tokens (word-boundary), not just generic enforcement keywords. */
+export function enforcementTextMatchesQuery(query: string, ...parts: (string | null | undefined)[]): boolean {
+  const tokens = significantEnforcementQueryTokens(query);
+  if (!tokens.length) {
+    const fallback = normalizePhrase(query);
+    return fallback.length >= 4 && tokenAppearsInText(fallback.toLowerCase(), parts.join(" "));
   }
-  return [...variants].slice(0, 10);
+  const combined = parts.map((part) => String(part ?? "")).join(" ");
+  return tokens.every((token) => tokenAppearsInText(token, combined));
+}
+
+function enforcementApiQuery(params: RegulatorySearchParams): string {
+  return clean(params.query);
 }
 
 function parseEpochDate(value: string | number | null | undefined): string | undefined {
@@ -108,71 +127,68 @@ function scoreImportance(confidence: "High" | "Medium" | "Low", strongSignal: bo
 }
 
 async function searchDoj(params: RegulatorySearchParams) {
-  const q = clean(params.query);
-  const variants = buildNameVariants(params);
+  const q = enforcementApiQuery(params);
+  if (!q) return { results: [] as RegulatorySearchResult[], warnings: ["DOJ search skipped: empty query."] };
   const warnings: string[] = [];
   const results: RegulatorySearchResult[] = [];
   const seen = new Set<string>();
   const retrievedAt = new Date().toISOString();
 
-  await Promise.all(
-    variants.map(async (variant) => {
-      const url = new URL("https://www.justice.gov/api/v1/press_releases.json");
-      url.searchParams.set("fields", "title,url,uuid,date,body");
-      url.searchParams.set("pagesize", "10");
-      url.searchParams.set("sort", "date");
-      url.searchParams.set("direction", "DESC");
-      url.searchParams.set("parameters[title]", variant);
+  const url = new URL("https://www.justice.gov/api/v1/press_releases.json");
+  url.searchParams.set("fields", "title,url,uuid,date,body");
+  url.searchParams.set("pagesize", "25");
+  url.searchParams.set("sort", "date");
+  url.searchParams.set("direction", "DESC");
+  url.searchParams.set("parameters[title]", q);
 
-      try {
-        const res = await fetch(url.toString(), { cache: "no-store", headers: { accept: "application/json" } });
-        const raw = (await res.json().catch(() => null)) as { results?: DojPressReleaseRow[] } | null;
-        if (!res.ok) {
-          warnings.push(`DOJ enforcement search failed for "${variant}" (HTTP ${res.status}).`);
-          return;
-        }
+  try {
+    const res = await fetch(url.toString(), { cache: "no-store", headers: { accept: "application/json" } });
+    const raw = (await res.json().catch(() => null)) as { results?: DojPressReleaseRow[] } | null;
+    if (!res.ok) {
+      warnings.push(`DOJ enforcement search failed for "${q}" (HTTP ${res.status}).`);
+      return { results, warnings };
+    }
 
-        for (const row of raw?.results ?? []) {
-          const title = stripHtml(row.title);
-          const description = stripHtml(row.body);
-          const detailUrl = clean(row.url);
-          const confidence = matchConfidenceFromQuery(q, [title, description, variant]);
-          const strongSignal = DOJ_ENFORCEMENT_KEYWORDS.test(`${title} ${description}`);
-          if (confidence === "Low" && !strongSignal) continue;
-          const key = clean(row.uuid) || detailUrl || title;
-          if (!key || seen.has(key)) continue;
-          seen.add(key);
+    for (const row of raw?.results ?? []) {
+      const title = stripHtml(row.title);
+      const description = stripHtml(row.body);
+      const detailUrl = clean(row.url);
+      if (!enforcementTextMatchesQuery(q, title, description)) continue;
+      const confidence = matchConfidenceFromQuery(q, [title, description]);
+      if (confidence === "Low") continue;
+      const strongSignal = DOJ_ENFORCEMENT_KEYWORDS.test(`${title} ${description}`);
+      const key = clean(row.uuid) || detailUrl || title;
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
 
-          results.push({
-            result_id: rid(),
-            source_id: "enforcements",
-            source_name: "Enforcements",
-            agency: "DOJ",
-            category: "Federal Enforcement / DOJ Press Releases",
-            query_used: q,
-            matched_entity: variant,
-            matched_entity_confidence: confidence,
-            title: title || "DOJ enforcement press release",
-            record_type: strongSignal ? "enforcement press release" : "press release",
-            record_subtype: "DOJ",
-            description: description.slice(0, 360) || undefined,
-            filing_or_record_date: parseEpochDate(row.date),
-            detail_url: detailUrl || undefined,
-            document_url: detailUrl || undefined,
-            source_quote: description.slice(0, 280) || undefined,
-            raw_json: row,
-            confidence,
-            importance_score: scoreImportance(confidence, strongSignal),
-            notes: strongSignal ? "Matched from DOJ enforcement-related press release coverage." : undefined,
-            retrieved_at: retrievedAt,
-            request_url: url.toString(),
-          });
-        }
-      } catch (error) {
-        warnings.push(`DOJ enforcement search failed for "${variant}": ${String(error)}`);
-      }
-    }),
-  );
+      results.push({
+        result_id: rid(),
+        source_id: "enforcements",
+        source_name: "Enforcements",
+        agency: "DOJ",
+        category: "Federal Enforcement / DOJ Press Releases",
+        query_used: q,
+        matched_entity: q,
+        matched_entity_confidence: confidence,
+        title: title || "DOJ enforcement press release",
+        record_type: strongSignal ? "enforcement press release" : "press release",
+        record_subtype: "DOJ",
+        description: description.slice(0, 360) || undefined,
+        filing_or_record_date: parseEpochDate(row.date),
+        detail_url: detailUrl || undefined,
+        document_url: detailUrl || undefined,
+        source_quote: description.slice(0, 280) || undefined,
+        raw_json: row,
+        confidence,
+        importance_score: scoreImportance(confidence, strongSignal),
+        notes: strongSignal ? "Matched from DOJ enforcement-related press release coverage." : undefined,
+        retrieved_at: retrievedAt,
+        request_url: url.toString(),
+      });
+    }
+  } catch (error) {
+    warnings.push(`DOJ enforcement search failed for "${q}": ${String(error)}`);
+  }
 
   return { results, warnings };
 }
@@ -216,90 +232,88 @@ function parseFtcCaseRows(html: string): FtcCaseRow[] {
 }
 
 async function searchFtc(params: RegulatorySearchParams) {
-  const q = clean(params.query);
-  const variants = buildNameVariants(params);
+  const q = enforcementApiQuery(params);
+  if (!q) return { results: [] as RegulatorySearchResult[], warnings: ["FTC search skipped: empty query."] };
   const warnings: string[] = [];
   const results: RegulatorySearchResult[] = [];
   const seen = new Set<string>();
   const retrievedAt = new Date().toISOString();
 
-  await Promise.all(
-    variants.map(async (variant) => {
-      const url = new URL("https://www.ftc.gov/legal-library/browse/cases-proceedings");
-      url.searchParams.set("search", variant);
-      url.searchParams.set("items_per_page", "10");
-      url.searchParams.set("sort_by", "search_api_relevance");
+  const url = new URL("https://www.ftc.gov/legal-library/browse/cases-proceedings");
+  url.searchParams.set("search", q);
+  url.searchParams.set("items_per_page", "10");
+  url.searchParams.set("sort_by", "search_api_relevance");
 
-      try {
-        const res = await fetch(url.toString(), { cache: "no-store", headers: FTC_BROWSER_HEADERS });
-        const html = await res.text();
-        if (!res.ok) {
-          warnings.push(`FTC enforcement search failed for "${variant}" (HTTP ${res.status}).`);
-          return;
-        }
-        if (/abusive automated request|PWH-Alert/i.test(html)) {
-          warnings.push(
-            `FTC blocked automated retrieval for "${variant}". The tab still links to FTC's official cases library, but some FTC rows may be unavailable until the site allows the request.`,
-          );
-          return;
-        }
+  try {
+    const res = await fetch(url.toString(), { cache: "no-store", headers: FTC_BROWSER_HEADERS });
+    const html = await res.text();
+    if (!res.ok) {
+      warnings.push(`FTC enforcement search failed for "${q}" (HTTP ${res.status}).`);
+      return { results, warnings };
+    }
+    if (/abusive automated request|PWH-Alert/i.test(html)) {
+      warnings.push(
+        `FTC blocked automated retrieval for "${q}". The tab still links to FTC's official cases library, but some FTC rows may be unavailable until the site allows the request.`,
+      );
+      return { results, warnings };
+    }
 
-        for (const row of parseFtcCaseRows(html)) {
-          const confidence = matchConfidenceFromQuery(q, [
-            row.title,
-            row.description,
-            row.matterNumber,
-            row.docketNumber,
-          ]);
-          if (confidence === "Low") continue;
-          const key = row.detailUrl || row.title;
-          if (!key || seen.has(key)) continue;
-          seen.add(key);
+    for (const row of parseFtcCaseRows(html)) {
+      if (!enforcementTextMatchesQuery(q, row.title, row.description, row.matterNumber, row.docketNumber)) continue;
+      const confidence = matchConfidenceFromQuery(q, [
+        row.title,
+        row.description,
+        row.matterNumber,
+        row.docketNumber,
+      ]);
+      if (confidence === "Low") continue;
+      const key = row.detailUrl || row.title;
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
 
-          results.push({
-            result_id: rid(),
-            source_id: "enforcements",
-            source_name: "Enforcements",
-            agency: "FTC",
-            category: "Federal Enforcement / FTC Cases and Proceedings",
-            query_used: q,
-            matched_entity: variant,
-            matched_entity_confidence: confidence,
-            title: row.title,
-            record_type: row.actionType || "FTC case",
-            record_subtype: "FTC cases and proceedings",
-            description: row.description,
-            filing_or_record_date: row.lastUpdated,
-            status: row.caseStatus,
-            docket_number: row.docketNumber,
-            agency_identifier: row.matterNumber || row.docketNumber,
-            detail_url: row.detailUrl,
-            document_url: row.detailUrl,
-            source_quote: row.description?.slice(0, 280),
-            raw_json: row,
-            confidence,
-            importance_score: scoreImportance(confidence, /pending|federal/i.test(`${row.caseStatus} ${row.actionType}`)),
-            notes: [
-              row.caseStatus ? `Case status: ${row.caseStatus}` : "",
-              row.matterNumber ? `FTC matter number: ${row.matterNumber}` : "",
-              row.docketNumber ? `Docket: ${row.docketNumber}` : "",
-            ]
-              .filter(Boolean)
-              .join(". ") || undefined,
-            retrieved_at: retrievedAt,
-            request_url: url.toString(),
-          });
-        }
-      } catch (error) {
-        warnings.push(`FTC enforcement search failed for "${variant}": ${String(error)}`);
-      }
-    }),
-  );
+      results.push({
+        result_id: rid(),
+        source_id: "enforcements",
+        source_name: "Enforcements",
+        agency: "FTC",
+        category: "Federal Enforcement / FTC Cases and Proceedings",
+        query_used: q,
+        matched_entity: q,
+        matched_entity_confidence: confidence,
+        title: row.title,
+        record_type: row.actionType || "FTC case",
+        record_subtype: "FTC cases and proceedings",
+        description: row.description,
+        filing_or_record_date: row.lastUpdated,
+        status: row.caseStatus,
+        docket_number: row.docketNumber,
+        agency_identifier: row.matterNumber || row.docketNumber,
+        detail_url: row.detailUrl,
+        document_url: row.detailUrl,
+        source_quote: row.description?.slice(0, 280),
+        raw_json: row,
+        confidence,
+        importance_score: scoreImportance(confidence, /pending|federal/i.test(`${row.caseStatus} ${row.actionType}`)),
+        notes: [
+          row.caseStatus ? `Case status: ${row.caseStatus}` : "",
+          row.matterNumber ? `FTC matter number: ${row.matterNumber}` : "",
+          row.docketNumber ? `Docket: ${row.docketNumber}` : "",
+        ]
+          .filter(Boolean)
+          .join(". ") || undefined,
+        retrieved_at: retrievedAt,
+        request_url: url.toString(),
+      });
+    }
+  } catch (error) {
+    warnings.push(`FTC enforcement search failed for "${q}": ${String(error)}`);
+  }
 
   return { results, warnings };
 }
 
 async function searchDol(params: RegulatorySearchParams) {
+  const q = enforcementApiQuery(params);
   const response = await oshaAdapter.search(params);
   if (!response.ok) {
     return {
@@ -308,7 +322,12 @@ async function searchDol(params: RegulatorySearchParams) {
     };
   }
 
-  const results = response.results.slice(0, 12).map((row) => ({
+  const results = response.results
+    .filter((row) =>
+      enforcementTextMatchesQuery(q, row.title, row.matched_entity, row.description, row.facility_name, row.notes),
+    )
+    .slice(0, 12)
+    .map((row) => ({
     ...row,
     result_id: rid(),
     source_id: "enforcements",

@@ -1,0 +1,131 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,orcl:CloudServicesAndLicenseSupportRevenue,orcl:CloudServicesAndLicenseSupportRevenue,Cloud services and license support,0,0
+income_statement,orcl:CloudLicenseAndOnPremiseLicenseRevenue,orcl:CloudLicenseAndOnPremiseLicenseRevenue,Cloud license and on-premise license,2,0
+income_statement,orcl:HardwareRevenues,orcl:HardwareRevenues,Hardware,3,0
+income_statement,orcl:SalesRevenueServicesNet1,orcl:SalesRevenueServicesNet1,Services,4,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Total revenues,5,0
+income_statement,html:operating-expenses,html:operating-expenses,Operating expenses:,6,0
+income_statement,orcl:CloudServicesAndLicenseSupportExpenses,orcl:CloudServicesAndLicenseSupportExpenses,Cloud services and license support(1),8,0
+income_statement,orcl:HardwareExpenses,orcl:HardwareExpenses,Hardware(1),9,0
+income_statement,orcl:ServicesExpense,orcl:ServicesExpense,Services(1),10,0
+income_statement,us-gaap:SellingAndMarketingExpense,us-gaap:SellingAndMarketingExpense,Sales and marketing(1),11,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research and development,12,0
+income_statement,us-gaap:GeneralAndAdministrativeExpense,us-gaap:GeneralAndAdministrativeExpense,General and administrative,13,0
+income_statement,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangible assets,14,0
+income_statement,us-gaap:BusinessCombinationAcquisitionRelatedCosts,us-gaap:BusinessCombinationAcquisitionRelatedCosts,Acquisition related and other,15,0
+income_statement,us-gaap:RestructuringCharges,us-gaap:RestructuringCharges,Restructuring,16,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,Total operating expenses,17,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating income,18,0
+income_statement,us-gaap:InterestExpense,us-gaap:InterestExpense,Interest expense,19,0
+income_statement,orcl:NonoperatingIncomeExpenseIncludingEliminationOfNetIncomeLossAttributableToNoncontrollingInterests,orcl:NonoperatingIncomeExpenseIncludingEliminationOfNetIncomeLossAttributableToNoncontrollingInterests,"Non-operating income (expenses), net",20,0
+income_statement,orcl:IncomeLossFromContinuingOperationsIncludingNoncontrollingInterestBeforeIncomeTaxesExtraordinaryItems,orcl:IncomeLossFromContinuingOperationsIncludingNoncontrollingInterestBeforeIncomeTaxesExtraordinaryItems,Income before income taxes,21,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Provision for income taxes,23,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income,24,0
+income_statement,html:earnings-per-share,html:earnings-per-share,Earnings per share:,26,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,27,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted,28,0
+income_statement,html:weighted-average-common-shares-outstanding,html:weighted-average-common-shares-outstanding,Weighted average common shares outstanding:,29,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,30,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,31,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,us-gaap:AvailableForSaleSecuritiesDebtSecuritiesCurrent,Marketable securities,1,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Trade receivables, net of allowances for credit losses of $557 and $485 as of May 31, 2025 and May 31, 2024, respectively",6,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,7,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,8,0
+balance_sheet,html:non-current-assets,html:non-current-assets,Non-current assets:,9,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment, net",10,0
+balance_sheet,us-gaap:FiniteLivedIntangibleAssetsNet,us-gaap:FiniteLivedIntangibleAssetsNet,"Intangible assets, net",11,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,13,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,14,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other non-current assets,15,0
+balance_sheet,us-gaap:AssetsNoncurrent,us-gaap:AssetsNoncurrent,Total non-current assets,17,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,18,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS’ EQUITY,22,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,23,0
+balance_sheet,us-gaap:NotesPayableCurrent,us-gaap:NotesPayableCurrent,"Notes payable and other borrowings, current",25,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,26,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation and related benefits,27,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Deferred revenues,28,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,29,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,31,0
+balance_sheet,html:non-current-liabilities,html:non-current-liabilities,Non-current liabilities:,32,0
+balance_sheet,us-gaap:LongTermNotesAndLoans,us-gaap:LongTermNotesAndLoans,"Notes payable and other borrowings, non-current",33,0
+balance_sheet,us-gaap:AccruedIncomeTaxesNoncurrent,us-gaap:AccruedIncomeTaxesNoncurrent,Income taxes payable,34,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating lease liabilities,36,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other non-current liabilities,37,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total non-current liabilities,39,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,40,0
+balance_sheet,html:oracle-corporation-stockholders-equity,html:oracle-corporation-stockholders-equity,Oracle Corporation stockholders’ equity:,43,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred stock, $0.01 par value—authorized: 1.0 shares; outstanding: none",44,0
+balance_sheet,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,us-gaap:CommonStocksIncludingAdditionalPaidInCapital,"Common stock, $0.01 par value and additional paid in capital—authorized: 11,000 shares; outstanding: 2,807 shares and 2,755 shares as of May 31, 2025 and 2024, respectively",50,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Accumulated deficit,51,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,52,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Oracle Corporation stockholders’ equity,55,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,56,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total stockholders’ equity,58,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders’ equity,60,0
+cash_flow,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income,0,0
+cash_flow,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-operating-activities,html:adjustments-to-reconcile-net-income-to-net-cash-provided-by-operating-activities,Adjustments to reconcile net income to net cash provided by operating activities:,1,0
+cash_flow,us-gaap:Depreciation,us-gaap:Depreciation,Depreciation,2,0
+cash_flow,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Amortization of intangible assets,3,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income taxes,5,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Stock-based compensation,6,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,"Other, net",7,0
+cash_flow,html:changes-in-operating-assets-and-liabilities-net-of-effects-from-acquisitions,html:changes-in-operating-assets-and-liabilities-net-of-effects-from-acquisitions,"Changes in operating assets and liabilities, net of effects from acquisitions:",9,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,"Increase in trade receivables, net",10,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,Decrease in prepaid expenses and other assets,11,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndOtherOperatingLiabilities,Decrease in accounts payable and other liabilities,12,0
+cash_flow,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,us-gaap:IncreaseDecreaseInAccruedIncomeTaxesPayable,Decrease in income taxes payable,13,0
+cash_flow,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,Increase in deferred revenues,14,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by operating activities,15,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,16,0
+cash_flow,us-gaap:PaymentsToAcquireInvestments,us-gaap:PaymentsToAcquireInvestments,Purchases of marketable securities and other investments,17,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfAvailableForSaleSecurities,us-gaap:ProceedsFromSaleAndMaturityOfAvailableForSaleSecurities,Proceeds from sales and maturities of marketable securities and other investments,18,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisitions, net of cash acquired",19,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,Capital expenditures,20,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used for investing activities,21,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,Cash flows from financing activities:,22,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Payments for repurchases of common stock,23,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfCommonStock,us-gaap:ProceedsFromIssuanceOfCommonStock,Proceeds from issuances of common stock,24,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Shares repurchased for tax withholdings upon vesting of restricted stock-based awards,25,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Payments of dividends to stockholders,27,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,us-gaap:ProceedsFromRepaymentsOfCommercialPaper,"Proceeds from issuances of (repayments of) commercial paper, net",30,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfSeniorLongTermDebt,us-gaap:ProceedsFromIssuanceOfSeniorLongTermDebt,"Proceeds from issuances of senior notes and term loan credit agreements, net of issuance costs",31,0
+cash_flow,us-gaap:RepaymentsOfDebt,us-gaap:RepaymentsOfDebt,Repayments of senior notes and term loan credit agreements,32,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,"Other financing activities, net",33,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash provided by (used for) financing activities,34,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,Effect of exchange rate changes on cash and cash equivalents,35,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net increase (decrease) in cash and cash equivalents,36,0
+income_statement,orcl:SoftwareRevenues,orcl:SoftwareRevenues,Software,1,0
+income_statement,orcl:CloudAndSoftwareExpenses,orcl:CloudAndSoftwareExpenses,Cloud and software(1),7,0
+income_statement,us-gaap:PreferredStockDividendsIncomeStatementImpact,us-gaap:PreferredStockDividendsIncomeStatementImpact,Preferred stock dividends,25,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfConvertiblePreferredStock,us-gaap:ProceedsFromIssuanceOfConvertiblePreferredStock,"Proceeds from issuances of mandatory convertible preferred stock, net of issuance costs",26,0
+cash_flow,us-gaap:RepaymentsOfCommercialPaper,us-gaap:RepaymentsOfCommercialPaper,"Repayments of commercial paper, net",28,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred tax liabilities,35,0
+balance_sheet,html:liabilities-and-stockholders-deficit,html:liabilities-and-stockholders-deficit,LIABILITIES AND STOCKHOLDERS' DEFICIT,19,0
+balance_sheet,html:oracle-corporation-stockholders-deficit,html:oracle-corporation-stockholders-deficit,Oracle Corporation stockholders' deficit:,41,0
+income_statement,html:provision-for-benefit-from-income-taxes,html:provision-for-benefit-from-income-taxes,(Provision for) benefit from income taxes,22,0
+balance_sheet,html:trade-receivables-net-of-allowances-for-credit-losses-of-428-and-362-as-of-may-31-2023-and-may-31-2022-respectively,html:trade-receivables-net-of-allowances-for-credit-losses-of-428-and-362-as-of-may-31-2023-and-may-31-2022-respectively,"Trade receivables, net of allowances for credit losses of $428 and $362 as of May 31, 2023 and May 31, 2022, respectively",2,0
+balance_sheet,html:goodwill-net,html:goodwill-net,"Goodwill, net",12,0
+balance_sheet,html:total-non-current-assets,html:total-non-current-assets,Total non-current assets,16,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,30,0
+balance_sheet,html:total-non-current-liabilities,html:total-non-current-liabilities,Total non-current liabilities,38,0
+balance_sheet,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-2-713-shares-and-2-665-shares-as-of-may-31-2023-and-2022-respectively,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-2-713-shares-and-2-665-shares-as-of-may-31-2023-and-2022-respectively,"Common stock, $0.01 par value and additional paid in capital authorized: 11,000 shares; outstanding: 2,713 shares and 2,665 shares as of May 31, 2023 and 2022, respectively",45,0
+balance_sheet,html:total-oracle-corporation-stockholders-equity-deficit,html:total-oracle-corporation-stockholders-equity-deficit,Total Oracle Corporation stockholders' equity (deficit),53,0
+balance_sheet,html:total-liabilities-and-stockholders-equity-deficit,html:total-liabilities-and-stockholders-equity-deficit,Total liabilities and stockholders' equity (deficit),59,0
+cash_flow,html:repayments-of-senior-notes-and-other-borrowings,html:repayments-of-senior-notes-and-other-borrowings,Repayments of senior notes and other borrowings,8,0
+cash_flow,us-gaap:ProceedsFromDebtNetOfIssuanceCosts,us-gaap:ProceedsFromDebtNetOfIssuanceCosts,"Proceeds from borrowings, net of issuance costs",29,0
+balance_sheet,html:liabilities-and-stockholders-deficit-equity,html:liabilities-and-stockholders-deficit-equity,LIABILITIES AND STOCKHOLDERS' (DEFICIT) EQUITY,20,0
+balance_sheet,html:oracle-corporation-stockholders-deficit-equity,html:oracle-corporation-stockholders-deficit-equity,Oracle Corporation stockholders’ (deficit) equity:,42,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,LIABILITIES AND EQUITY,21,0
+balance_sheet,html:trade-receivables-net-of-allowances-for-doubtful-accounts-of-373-and-409-as-of-may-31-2021-and-may-31-2020-respectively,html:trade-receivables-net-of-allowances-for-doubtful-accounts-of-373-and-409-as-of-may-31-2021-and-may-31-2020-respectively,"Trade receivables, net of allowances for doubtful accounts of $373 and $409 as of May 31, 2021 and May 31, 2020, respectively",3,0
+balance_sheet,html:notes-payable-current,html:notes-payable-current,"Notes payable, current",24,0
+balance_sheet,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-2-814-shares-and-3-067-shares-as-of-may-31-2021-and-2020-respectively,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-2-814-shares-and-3-067-shares-as-of-may-31-2021-and-2020-respectively,"Common stock, $0.01 par value and additional paid in capital—authorized: 11,000 shares; outstanding: 2,814 shares and 3,067 shares as of May 31, 2021 and 2020, respectively",46,0
+balance_sheet,html:total-oracle-corporation-stockholders-equity,html:total-oracle-corporation-stockholders-equity,Total Oracle Corporation stockholders' equity,54,0
+balance_sheet,html:total-equity,html:total-equity,Total equity,57,0
+cash_flow,html:allowances-for-doubtful-accounts-receivable,html:allowances-for-doubtful-accounts-receivable,Allowances for doubtful accounts receivable,4,0
+balance_sheet,html:trade-receivables-net-of-allowances-for-doubtful-accounts-of-351-and-370-as-of-february-28-2019-and-may-31-2018-respectively,html:trade-receivables-net-of-allowances-for-doubtful-accounts-of-351-and-370-as-of-february-28-2019-and-may-31-2018-respectively,"Trade receivables, net of allowances for doubtful accounts of $351 and $370 as of February 28, 2019 and May 31, 2018, respectively",4,0
+balance_sheet,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-3-443-shares-and-3-997-shares-as-of-february-28-2019-and-may-31-2018-respectively,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-3-443-shares-and-3-997-shares-as-of-february-28-2019-and-may-31-2018-respectively,"Common stock, $0.01 par value and additional paid in capital—authorized: 11,000 shares; outstanding: 3,443 shares and 3,997 shares as of February 28, 2019 and May 31, 2018, respectively",47,0
+balance_sheet,html:accumulated-deficit-retained-earnings,html:accumulated-deficit-retained-earnings,(Accumulated deficit) retained earnings,49,0
+balance_sheet,html:trade-receivables-net-of-allowances-for-doubtful-accounts-of-371-and-370-as-of-may-31-2019-and-may-31-2018-respectively,html:trade-receivables-net-of-allowances-for-doubtful-accounts-of-371-and-370-as-of-may-31-2019-and-may-31-2018-respectively,"Trade receivables, net of allowances for doubtful accounts of $371 and $370 as of May 31, 2019 and May 31, 2018, respectively",5,0
+balance_sheet,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-3-359-shares-and-3-997-shares-as-of-may-31-2019-and-may-31-2018-respectively,html:common-stock-0-01-par-value-and-additional-paid-in-capital-authorized-11-000-shares-outstanding-3-359-shares-and-3-997-shares-as-of-may-31-2019-and-may-31-2018-respectively,"Common stock, $0.01 par value and additional paid in capital—authorized: 11,000 shares; outstanding: 3,359 shares and 3,997 shares as of May 31, 2019 and May 31, 2018, respectively",48,0

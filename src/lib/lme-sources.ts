@@ -1,9 +1,7 @@
 /**
- * Aggregate Capital Structure section sources for LME analysis (saved text + Excel + credit docs),
- * with priority tiers (saved responses → covenant saves → SEC/transcripts/decks → bulk) and optional
+ * Aggregate Capital Structure section documents for LME analysis, plus the saved
+ * Business Model tab, with optional
  * embedding retrieval for long documents (same embedding stack as KPI).
- * Saved Documents from Postgres are filtered to the same work-product rules as Capital Structure ingest
- * (`capstructure` scope) plus an LME topic gate — not every saved HTML/PDF is included.
  */
 
 import path from "path";
@@ -12,8 +10,6 @@ import { readSavedContent } from "@/lib/saved-content-hybrid";
 import { CREDIT_AGREEMENTS_SAVED_KEYS } from "@/lib/covenant-sources";
 import { listCreditAgreementsFiles } from "@/lib/credit-agreements-files";
 import { workspaceReadFile } from "@/lib/user-ticker-workspace-store";
-import { listAllUserSavedDocumentsBodiesForIngest } from "@/lib/user-workspace-store";
-import { userSavedDocumentIncludedInLmeCorpus } from "@/lib/lme-saved-documents-filter";
 import { listCapitalStructureExcels, getCapitalStructureExcelBuffer } from "@/lib/capital-structure-excel";
 import { listOrgChartExcels, getOrgChartExcelBuffer } from "@/lib/org-chart-excel";
 import { listSubsidiaryListExcels, getSubsidiaryListExcelBuffer } from "@/lib/subsidiary-list-excel";
@@ -60,15 +56,10 @@ export type LmeSourcePart = {
   charsInitial: number;
 };
 
-const CAPITAL_STRUCTURE_TEXT_KEYS: ReadonlyArray<{ key: string; label: string }> = [
+const LME_SAVED_TAB_KEYS: ReadonlyArray<{ key: string; label: string }> = [
+  { key: "business-model", label: "Business Model — Saved response" },
   { key: "capital-structure", label: "Capital Structure — Saved response" },
-];
-
-const ORG_CHART_TEXT_KEYS: ReadonlyArray<{ key: string; label: string }> = [
   { key: "org-chart-prompt", label: "Org Chart — Saved response" },
-];
-
-const SUBSIDIARY_LIST_TEXT_KEYS: ReadonlyArray<{ key: string; label: string }> = [
   { key: "subsidiary-list", label: "Subsidiary List — Saved response" },
 ];
 
@@ -115,7 +106,7 @@ export function lmeRawSourcesFingerprint(rawDocs: LmeRawDocument[]): string {
 
 export function formatSourcesForLme(ticker: string, parts: LmeSourcePart[]): string {
   const sym = ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  const header = `Ticker: ${sym}\nThe blocks below combine (1) saved tab responses in priority order, (2) covenant / credit-agreement saves and uploads, (3) Saved Documents that pass LME filters (cap-structure work-product ingest rules plus debt/SEC-style filename checks—not every saved file), (4) Excel extracts from Capital Structure / Org Chart / Subsidiary List trees, and (5) when retrieval is enabled, typically one embedding-ranked context pack assembled from the full ingested corpus under the character ceiling (otherwise per-source blocks with optional ranked excerpts for long documents only). Use them as the primary factual basis.\n\n`;
+  const header = `Ticker: ${sym}\nThe blocks below combine (1) saved tabs from the Capital Structure section plus the saved Business Model tab, (2) uploaded credit / covenant documents from the Capital Structure section, (3) Excel extracts from Capital Structure / Org Chart / Subsidiary List trees, and (4) when retrieval is enabled, typically one embedding-ranked context pack assembled from that corpus under the character ceiling (otherwise per-source blocks with optional ranked excerpts for long documents only). General Saved Documents outside the Capital Structure section are not included. Use them as the primary factual basis.\n\n`;
   const blocks = parts.map(
     (p) =>
       `==========\nSOURCE: ${p.label}${p.key ? ` [key:${p.key}]` : ""}${p.file ? ` [file:${p.file}]` : ""}\n==========\n${p.content}\n`
@@ -149,19 +140,7 @@ export async function collectLmeRawDocuments(ticker: string, userId?: string | n
     });
   };
 
-  for (const { key, label } of CAPITAL_STRUCTURE_TEXT_KEYS) {
-    const raw = (await readSavedContent(ticker, key, userId))?.trim() ?? "";
-    if (!raw) continue;
-    push({ tier: 0, label, key, raw });
-  }
-
-  for (const { key, label } of ORG_CHART_TEXT_KEYS) {
-    const raw = (await readSavedContent(ticker, key, userId))?.trim() ?? "";
-    if (!raw) continue;
-    push({ tier: 0, label, key, raw });
-  }
-
-  for (const { key, label } of SUBSIDIARY_LIST_TEXT_KEYS) {
+  for (const { key, label } of LME_SAVED_TAB_KEYS) {
     const raw = (await readSavedContent(ticker, key, userId))?.trim() ?? "";
     if (!raw) continue;
     push({ tier: 0, label, key, raw });
@@ -194,27 +173,6 @@ export async function collectLmeRawDocuments(ticker: string, userId?: string | n
           } catch {
             /* skip */
           }
-        }
-      }
-
-      const savedDocs = await listAllUserSavedDocumentsBodiesForIngest(userId, sym);
-      for (const { filename, body } of savedDocs) {
-        const fn = filename.trim();
-        if (!fn) continue;
-        const gate = userSavedDocumentIncludedInLmeCorpus(fn, body.length);
-        if (!gate.ok) continue;
-        try {
-          const extracted = (await extractBytesForAi(fn, body)).trim();
-          if (!extracted) continue;
-          const tier = tierForExtractedBody(fn, extracted);
-          push({
-            tier,
-            label: `Saved Documents — ${fn}`,
-            file: fn,
-            raw: extracted,
-          });
-        } catch {
-          /* skip */
         }
       }
 

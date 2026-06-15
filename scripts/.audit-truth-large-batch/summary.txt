@@ -1,0 +1,15 @@
+Large-cap workbook truth audit — 30 tickers (seed 20260522)
+Tickers: SBUX, AXP, BMY, SPGI, CSCO, ABBV, PM, NEE, NFLX, MCD, NKE, TJX, GILD, LIN, SO, COST, REGN, SLB, CRM, TXN, CVS, MS, HON, GS, IBM, KO, AMGN, AMD, UPS, BKNG
+
+Strict check: every reported IS/BS/CF cell on period-primary workbooks must match compiled;
+no extra reported cells or lines. (Derived quarters excluded.)
+
+Clean (exact match): 30
+With mismatches: 0
+Pipeline errors (no compile / no issues captured): 0
+
+Issues by type:
+
+Issues by statement:
+
+── All mismatches ──

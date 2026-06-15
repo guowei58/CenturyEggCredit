@@ -40,11 +40,10 @@ export const companyAnalysisTabs = [
   "Ratings Research Links",
   "News & Events",
   "Mgmt Presentations & Transcripts",
-  "Earnings Releases",
   "Company History",
   "Capital Allocation",
   "Credit Timeline",
-  "Broker Research Reports",
+  "Broker Activities",
   "Substack",
   "Company Reputation",
   "Twitter Sentiment",
@@ -64,6 +63,8 @@ export const companyAnalysisWorkOutputTabs = [
   "AI Memo and Deck",
   "Literary References",
   "Biblical References",
+  "How to Look Like a Dumbass",
+  "Next Quarter Earnings Transcript",
   "Dear Diary",
 ] as const;
 

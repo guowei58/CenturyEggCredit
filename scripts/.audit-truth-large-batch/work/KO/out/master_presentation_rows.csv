@@ -1,0 +1,168 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenues,html:revenues,Revenues,0,0
+income_statement,html:cost-of-goods-and-services-sold,html:cost-of-goods-and-services-sold,Cost of Goods and Services Sold,1,0
+income_statement,html:gross-profit,html:gross-profit,GROSS PROFIT,2,0
+income_statement,html:selling-general-and-administrative-expense,html:selling-general-and-administrative-expense,"Selling, General and Administrative Expense",3,0
+income_statement,html:other-cost-and-expense-operating,html:other-cost-and-expense-operating,"Other Cost and Expense, Operating",7,0
+income_statement,html:operating-income,html:operating-income,OPERATING INCOME,8,0
+income_statement,html:interest-income,html:interest-income,Interest income,9,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,10,0
+income_statement,html:equity-income-loss-net,html:equity-income-loss-net,Equity income (loss) - net,11,0
+income_statement,html:other-income-loss-net,html:other-income-loss-net,Other income (loss) - net,12,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,INCOME BEFORE INCOME TAXES,13,0
+income_statement,html:income-taxes,html:income-taxes,Income taxes,14,0
+income_statement,html:consolidated-net-income,html:consolidated-net-income,CONSOLIDATED NET INCOME,17,0
+income_statement,html:net-income-loss-attributable-to-noncontrolling-interest,html:net-income-loss-attributable-to-noncontrolling-interest,Net Income (Loss) Attributable to Noncontrolling Interest,18,0
+income_statement,html:net-income-attributable-to-shareowners-of-the-coca-cola-company,html:net-income-attributable-to-shareowners-of-the-coca-cola-company,NET INCOME ATTRIBUTABLE TO SHAREOWNERS OF THE COCA-COLA COMPANY,19,0
+income_statement,html:basic-net-income-per-share-in-dollars-per-share,html:basic-net-income-per-share-in-dollars-per-share,BASIC NET INCOME PER SHARE (in dollars per share),20,0
+income_statement,html:diluted-net-income-per-share-in-dollars-per-share,html:diluted-net-income-per-share-in-dollars-per-share,DILUTED NET INCOME PER SHARE (in dollars per share),21,0
+income_statement,html:average-shares-outstanding-in-shares,html:average-shares-outstanding-in-shares,AVERAGE SHARES OUTSTANDING (in shares),22,0
+income_statement,html:effect-of-dilutive-securities-in-shares,html:effect-of-dilutive-securities-in-shares,Effect of dilutive securities (in shares),23,0
+income_statement,html:average-shares-outstanding-assuming-dilution-in-shares,html:average-shares-outstanding-assuming-dilution-in-shares,AVERAGE SHARES OUTSTANDING ASSUMING DILUTION (in shares),24,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,18,0
+balance_sheet,html:short-term-investments,html:short-term-investments,Short-term investments,19,0
+balance_sheet,html:total-cash-cash-equivalents-and-short-term-investments,html:total-cash-cash-equivalents-and-short-term-investments,"TOTAL CASH, CASH EQUIVALENTS AND SHORT-TERM INVESTMENTS",20,0
+balance_sheet,html:marketable-securities,html:marketable-securities,Marketable securities,21,0
+balance_sheet,html:trade-accounts-receivable-less-allowances-of-526-and-524-respectively,html:trade-accounts-receivable-less-allowances-of-526-and-524-respectively,"Trade accounts receivable, less allowances of $526 and $524, respectively",24,0
+balance_sheet,html:inventories,html:inventories,Inventories,25,0
+balance_sheet,html:prepaid-expenses-and-other-assets,html:prepaid-expenses-and-other-assets,Prepaid expenses and other assets,26,0
+balance_sheet,html:total-current-assets,html:total-current-assets,TOTAL CURRENT ASSETS,30,0
+balance_sheet,html:equity-method-investments,html:equity-method-investments,EQUITY METHOD INVESTMENTS,31,0
+balance_sheet,html:other-investments,html:other-investments,OTHER INVESTMENTS,32,0
+balance_sheet,html:other-assets,html:other-assets,OTHER ASSETS,33,0
+balance_sheet,html:deferred-income-tax-assets,html:deferred-income-tax-assets,Deferred Income Tax Assets,35,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"PROPERTY, PLANT AND EQUIPMENT - net",37,0
+balance_sheet,html:trademarks-with-indefinite-lives,html:trademarks-with-indefinite-lives,TRADEMARKS WITH INDEFINITE LIVES,38,0
+balance_sheet,html:goodwill,html:goodwill,GOODWILL,40,0
+balance_sheet,html:other-intangible-assets,html:other-intangible-assets,OTHER INTANGIBLE ASSETS,41,0
+balance_sheet,html:total-assets,html:total-assets,TOTAL ASSETS,42,0
+balance_sheet,html:current-liabilities,html:current-liabilities,CURRENT LIABILITIES,44,0
+balance_sheet,html:accounts-payable-and-accrued-expenses,html:accounts-payable-and-accrued-expenses,Accounts payable and accrued expenses,53,0
+balance_sheet,html:notes-and-loans-payable-current,html:notes-and-loans-payable-current,"Notes and Loans Payable, Current",55,0
+balance_sheet,html:current-maturities-of-long-term-debt,html:current-maturities-of-long-term-debt,Current maturities of long-term debt,56,0
+balance_sheet,html:accrued-income-taxes,html:accrued-income-taxes,Accrued income taxes,57,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,TOTAL CURRENT LIABILITIES,60,0
+balance_sheet,html:long-term-debt,html:long-term-debt,LONG-TERM DEBT,61,0
+balance_sheet,html:other-liabilities,html:other-liabilities,OTHER LIABILITIES,62,0
+balance_sheet,html:deferred-income-tax-liabilities,html:deferred-income-tax-liabilities,Deferred Income Tax Liabilities,64,0
+balance_sheet,html:the-coca-cola-company-shareowners-equity,html:the-coca-cola-company-shareowners-equity,THE COCA-COLA COMPANY SHAREOWNERS' EQUITY,65,0
+balance_sheet,html:common-stock-0-25-par-value-authorized-11-200-shares-issued-7-040-shares,html:common-stock-0-25-par-value-authorized-11-200-shares-issued-7-040-shares,"Common stock, $0.25 par value; authorized — 11,200 shares; issued — 7,040 shares",77,0
+balance_sheet,html:capital-surplus,html:capital-surplus,Capital surplus,78,0
+balance_sheet,html:reinvested-earnings,html:reinvested-earnings,Reinvested earnings,79,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),80,0
+balance_sheet,html:treasury-stock-at-cost-2-738-and-2-760-shares-respectively,html:treasury-stock-at-cost-2-738-and-2-760-shares-respectively,"Treasury stock, at cost — 2,738 and 2,760 shares, respectively",83,0
+balance_sheet,html:equity-attributable-to-shareowners-of-the-coca-cola-company,html:equity-attributable-to-shareowners-of-the-coca-cola-company,EQUITY ATTRIBUTABLE TO SHAREOWNERS OF THE COCA-COLA COMPANY,84,0
+balance_sheet,html:equity-attributable-to-noncontrolling-interests,html:equity-attributable-to-noncontrolling-interests,EQUITY ATTRIBUTABLE TO NONCONTROLLING INTERESTS,85,0
+balance_sheet,html:total-equity,html:total-equity,TOTAL EQUITY,86,0
+balance_sheet,html:total-liabilities-and-equity,html:total-liabilities-and-equity,TOTAL LIABILITIES AND EQUITY,87,0
+cash_flow,html:consolidated-net-income,html:consolidated-net-income,CONSOLIDATED NET INCOME,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,3,0
+cash_flow,html:stock-based-compensation-expense,html:stock-based-compensation-expense,Stock-based compensation expense,4,0
+cash_flow,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,5,0
+cash_flow,html:equity-income-loss-net-of-dividends,html:equity-income-loss-net-of-dividends,Equity (income) loss - net of dividends,6,0
+cash_flow,html:foreign-currency-adjustments,html:foreign-currency-adjustments,Foreign currency adjustments,7,0
+cash_flow,html:significant-gains-losses-on-sales-of-assets-net,html:significant-gains-losses-on-sales-of-assets-net,Significant (gains) losses on sales of assets - net,8,0
+cash_flow,html:other-operating-charges,html:other-operating-charges,Other operating charges,9,0
+cash_flow,html:other-items,html:other-items,Other items,10,0
+cash_flow,html:net-change-in-operating-assets-and-liabilities,html:net-change-in-operating-assets-and-liabilities,Net change in operating assets and liabilities,11,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,12,0
+cash_flow,html:investing-activities,html:investing-activities,INVESTING ACTIVITIES,13,0
+cash_flow,html:purchases-of-investments,html:purchases-of-investments,Purchases of investments,14,0
+cash_flow,html:proceeds-from-disposals-of-investments,html:proceeds-from-disposals-of-investments,Proceeds from disposals of investments,15,0
+cash_flow,html:acquisitions-of-businesses-equity-method-investments-and-nonmarketable-securities,html:acquisitions-of-businesses-equity-method-investments-and-nonmarketable-securities,"Acquisitions of businesses, equity method investments and nonmarketable securities",16,0
+cash_flow,html:proceeds-from-disposals-of-businesses-equity-method-investments-and-nonmarkatable-securities,html:proceeds-from-disposals-of-businesses-equity-method-investments-and-nonmarkatable-securities,"Proceeds from disposals of businesses, equity method investments and nonmarkatable securities",17,0
+cash_flow,html:purchases-of-property-plant-and-equipment,html:purchases-of-property-plant-and-equipment,"Purchases of property, plant and equipment",18,0
+cash_flow,html:proceeds-from-disposals-of-property-plant-and-equipment,html:proceeds-from-disposals-of-property-plant-and-equipment,"Proceeds from disposals of property, plant and equipment",19,0
+cash_flow,html:other-investing-activities,html:other-investing-activities,Other investing activities,21,0
+cash_flow,html:net-cash-provided-by-used-in-investing-activities,html:net-cash-provided-by-used-in-investing-activities,Net cash provided by (used in) investing activities,22,0
+cash_flow,html:financing-activities,html:financing-activities,FINANCING ACTIVITIES,23,0
+cash_flow,html:issuances-of-debt,html:issuances-of-debt,Issuances of debt,25,0
+cash_flow,html:payments-of-debt,html:payments-of-debt,Payments of debt,26,0
+cash_flow,html:issuances-of-stock,html:issuances-of-stock,Issuances of stock,27,0
+cash_flow,html:purchases-of-stock-for-treasury,html:purchases-of-stock-for-treasury,Purchases of stock for treasury,28,0
+cash_flow,html:dividends,html:dividends,Dividends,29,0
+cash_flow,html:other-financing-activities,html:other-financing-activities,Other financing activities,31,0
+cash_flow,html:net-cash-provided-by-used-in-financing-activities,html:net-cash-provided-by-used-in-financing-activities,Net cash provided by (used in) financing activities,32,0
+cash_flow,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents,html:effect-of-exchange-rate-changes-on-cash-and-cash-equivalents,EFFECT OF EXCHANGE RATE CHANGES ON CASH AND CASH EQUIVALENTS,34,0
+cash_flow,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,CASH AND CASH EQUIVALENTS,35,0
+cash_flow,html:net-increase-decrease-in-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-during-the-year,html:net-increase-decrease-in-cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-during-the-year,"Net increase (decrease) in cash, cash equivalents, restricted cash and restricted cash equivalents during the year",36,0
+cash_flow,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-the-beginning-of-the-year,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-the-beginning-of-the-year,"Cash, Cash Equivalents, Restricted Cash and Restricted Cash Equivalents at the Beginning of the Year",37,0
+cash_flow,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-the-end-of-the-year,html:cash-cash-equivalents-restricted-cash-and-restricted-cash-equivalents-at-the-end-of-the-year,"Cash, Cash Equivalents, Restricted Cash and Restricted Cash Equivalents at the End of the Year",38,0
+cash_flow,html:restricted-cash-and-restricted-cash-equivalents-not-included-in-cash-and-cash-equivalents-on-balance-sheet,html:restricted-cash-and-restricted-cash-equivalents-not-included-in-cash-and-cash-equivalents-on-balance-sheet,Restricted Cash and Restricted Cash Equivalents not included in Cash and Cash Equivalents on Balance Sheet,39,0
+balance_sheet,html:trade-accounts-receivable-less-allowances-of-489-and-477-respectively,html:trade-accounts-receivable-less-allowances-of-489-and-477-respectively,"Trade accounts receivable, less allowances of $489 and $477, respectively",22,0
+balance_sheet,html:assets-held-for-sale,html:assets-held-for-sale,Assets held for sale,27,0
+balance_sheet,html:assets-held-for-sale-discontinuing-operations,html:assets-held-for-sale-discontinuing-operations,Assets held for sale - discontinuing operations,28,0
+balance_sheet,html:deferred-tax-assets-net-noncurrent,html:deferred-tax-assets-net-noncurrent,"Deferred Tax Assets, Net, Noncurrent",34,0
+balance_sheet,html:bottlers-franchise-rights-with-indefinite-lives,html:bottlers-franchise-rights-with-indefinite-lives,BOTTLERS' FRANCHISE RIGHTS WITH INDEFINITE LIVES,39,0
+balance_sheet,html:liabilities-held-for-sale,html:liabilities-held-for-sale,Liabilities held for sale,58,0
+balance_sheet,html:liabilities-held-for-sale-discontinued-operations,html:liabilities-held-for-sale-discontinued-operations,"Liabilities Held for Sale, Discontinued Operations",59,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,DEFERRED INCOME TAXES,63,0
+balance_sheet,html:common-stock-0-25-par-value-authorized-11-200-shares-issued-7-040-and-7-040-shares-respectively,html:common-stock-0-25-par-value-authorized-11-200-shares-issued-7-040-and-7-040-shares-respectively,"Common stock, $0.25 par value; Authorized — 11,200 shares; Issued — 7,040 and 7,040 shares, respectively",66,0
+balance_sheet,html:treasury-stock-at-cost-2-772-and-2-781-shares-respectively,html:treasury-stock-at-cost-2-772-and-2-781-shares-respectively,"Treasury stock, at cost — 2,772 and 2,781 shares, respectively",81,0
+income_statement,html:other-operating-charges,html:other-operating-charges,Other operating charges,4,0
+income_statement,html:net-income-from-continuing-operations,html:net-income-from-continuing-operations,NET INCOME FROM CONTINUING OPERATIONS,15,0
+income_statement,html:income-from-discontinued-operations-net-of-income-taxes-of-36-and-40-respectively,html:income-from-discontinued-operations-net-of-income-taxes-of-36-and-40-respectively,"Income from discontinued operations (net of income taxes of $36 and $40, respectively)",16,0
+balance_sheet,html:trade-accounts-receivable-less-allowances-of-492-and-489-respectively,html:trade-accounts-receivable-less-allowances-of-492-and-489-respectively,"Trade accounts receivable, less allowances of $492 and $489, respectively",23,0
+balance_sheet,html:assets-held-for-sale-discontinued-operations,html:assets-held-for-sale-discontinued-operations,Assets held for sale — discontinued operations,29,0
+balance_sheet,html:property-plant-and-equipment-less-accumulated-depreciation-of-8-032-and-8-013-respectively,html:property-plant-and-equipment-less-accumulated-depreciation-of-8-032-and-8-013-respectively,"PROPERTY, PLANT AND EQUIPMENT, less accumulated depreciation of$8,032 and $8,013, respectively",36,0
+balance_sheet,html:liabilities-and-equity,html:liabilities-and-equity,LIABILITIES AND EQUITY,43,0
+balance_sheet,html:loans-and-notes-payable,html:loans-and-notes-payable,Loans and notes payable,54,0
+balance_sheet,html:treasury-stock-at-cost-2-772-and-2-772-shares-respectively,html:treasury-stock-at-cost-2-772-and-2-772-shares-respectively,"Treasury stock, at cost — 2,772 and 2,772 shares, respectively",82,0
+cash_flow,html:income-loss-from-discontinued-operations,html:income-loss-from-discontinued-operations,(Income) loss from discontinued operations,1,0
+cash_flow,html:net-income-from-continuing-operations,html:net-income-from-continuing-operations,Net income from continuing operations,2,0
+cash_flow,html:cash-flows-from-discontinued-operations,html:cash-flows-from-discontinued-operations,CASH FLOWS FROM DISCONTINUED OPERATIONS,33,0
+cash_flow,html:net-cash-provided-by-discontinued-operations,html:net-cash-provided-by-discontinued-operations,Net cash provided by discontinued operations,24,0
+income_statement,us-gaap:OtherCostAndExpenseOperating,us-gaap:OtherCostAndExpenseOperating,Other operating charges,5,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,0,0
+balance_sheet,us-gaap:OtherShortTermInvestments,us-gaap:OtherShortTermInvestments,Short-term investments,1,0
+balance_sheet,us-gaap:CashCashEquivalentsAndShortTermInvestments,us-gaap:CashCashEquivalentsAndShortTermInvestments,"Total Cash, Cash Equivalents and Short-Term Investments",2,0
+balance_sheet,us-gaap:MarketableSecuritiesCurrent,us-gaap:MarketableSecuritiesCurrent,Marketable securities,3,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Trade accounts receivable, less allowances of $524 and $501, respectively",4,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,5,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other assets,6,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total Current Assets,7,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Equity method investments,8,0
+balance_sheet,ko:AvailableForSaleSecuritiesAndCostMethodInvestments,ko:AvailableForSaleSecuritiesAndCostMethodInvestments,Other investments,9,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,10,0
+balance_sheet,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,us-gaap:DeferredTaxAssetsLiabilitiesNetNoncurrent,Deferred income tax assets,11,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment, less accumulated depreciation of$8,222 and $8,335, respectively",12,0
+balance_sheet,us-gaap:IndefiniteLivedTrademarks,us-gaap:IndefiniteLivedTrademarks,Trademarks with indefinite lives,13,0
+balance_sheet,us-gaap:IndefiniteLivedFranchiseRights,us-gaap:IndefiniteLivedFranchiseRights,Bottlers' franchise rights with indefinite lives,14,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,15,0
+balance_sheet,ko:OtherIndefiniteLivedAndFiniteLivedIntangibleAssets,ko:OtherIndefiniteLivedAndFiniteLivedIntangibleAssets,Other intangible assets,16,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,17,0
+balance_sheet,us-gaap:AccountsPayableAndAccruedLiabilitiesCurrent,us-gaap:AccountsPayableAndAccruedLiabilitiesCurrent,Accounts payable and accrued expenses,45,0
+balance_sheet,us-gaap:NotesAndLoansPayableCurrent,us-gaap:NotesAndLoansPayableCurrent,Loans and notes payable,46,0
+balance_sheet,us-gaap:LongTermDebtCurrent,us-gaap:LongTermDebtCurrent,Current maturities of long-term debt,47,0
+balance_sheet,us-gaap:AccruedIncomeTaxesCurrent,us-gaap:AccruedIncomeTaxesCurrent,Accrued income taxes,48,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total Current Liabilities,49,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,50,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other liabilities,51,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income tax liabilities,52,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Common stock, $0.25 par value; authorized — 11,200 shares;issued — 7,040 and 7,040 shares, respectively",67,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Capital surplus,68,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Reinvested earnings,69,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),70,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury stock, at cost — 2,765 and 2,772 shares, respectively",71,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Equity Attributable to Shareowners of The Coca-Cola Company,72,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Equity attributable to noncontrolling interests,73,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total Equity,74,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total Liabilities and Equity,75,0
+balance_sheet,us-gaap:MarketableSecurities,us-gaap:MarketableSecurities,Marketable securities,88,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income tax assets,89,0
+balance_sheet,us-gaap:NotesAndLoansPayable,us-gaap:NotesAndLoansPayable,Loans and notes payable,90,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income tax liabilities,91,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,"Trade accounts receivable, less allowances of $549 and $524, respectively",92,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentOwnedAccumulatedDepreciation,us-gaap:PropertyPlantAndEquipmentOwnedAccumulatedDepreciation,"Property, plant and equipment, less accumulated depreciation of $8,539 and $8,083, respectively",93,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock, $0.25 par value; authorized — 11,200 shares; issued — 7,040 shares",76,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Treasury stock, at cost — 2,745 and 2,760 shares, respectively",94,0
+balance_sheet,us-gaap:OtherInvestments,us-gaap:OtherInvestments,Other investments,95,0
+balance_sheet,us-gaap:OtherIntangibleAssetsNet,us-gaap:OtherIntangibleAssetsNet,Other intangible assets,96,0
+cash_flow,ko:CollateralPaidReceivedAssociatedWithHedgingActivitiesNet,ko:CollateralPaidReceivedAssociatedWithHedgingActivitiesNet,Collateral (paid) received associated with hedging activities — net,20,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Treasury stock, at cost — 2,716 and 2,712 shares, respectively",101,0
+income_statement,us-gaap:OtherSellingGeneralAndAdministrativeExpense,us-gaap:OtherSellingGeneralAndAdministrativeExpense,Other operating charges,6,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current maturities of long-term debt,97,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,98,0
+cash_flow,us-gaap:ProceedsFromMinorityShareholders,us-gaap:ProceedsFromMinorityShareholders,Proceeds from sale of a noncontrolling interest,30,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperation,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperation,Assets held for sale,99,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,Liabilities held for sale,100,0

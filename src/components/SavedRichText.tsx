@@ -9,6 +9,7 @@ import remarkBreaks from "remark-breaks";
 import DOMPurify from "dompurify";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { linkifyBareUrlsInElement } from "@/lib/linkify-bare-urls-in-html";
+import { buildCreditDocSaveLabelMap, lookupCreditDocSaveLabel } from "@/lib/extract-credit-doc-save-label";
 import { saveRemoteUrlForTicker } from "@/lib/save-remote-url-client";
 
 let domPurifyLinkHookInstalled = false;
@@ -37,12 +38,14 @@ function SavedHtmlContentWithSaveButtons({
   ticker,
   showAnalyze,
   onLinkAnalyzeRef,
+  saveLabelByUrl,
 }: {
   html: string;
   ticker: string;
   showAnalyze: boolean;
   /** Ref so click handlers always call the latest callback without re-running the effect on every parent render. */
   onLinkAnalyzeRef: RefObject<((url: string) => void) | undefined>;
+  saveLabelByUrl: Map<string, string>;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -89,7 +92,10 @@ function SavedHtmlContentWithSaveButtons({
         void (async () => {
           btn.disabled = true;
           btn.textContent = "…";
-          const r = await saveRemoteUrlForTicker(ticker.trim(), href, "saved-documents");
+          const saveTitle = lookupCreditDocSaveLabel(saveLabelByUrl, href);
+          const r = await saveRemoteUrlForTicker(ticker.trim(), href, "saved-documents", {
+            title: saveTitle,
+          });
           if (r.ok) {
             btn.textContent = "Saved";
             btn.style.color = "var(--accent)";
@@ -122,7 +128,7 @@ function SavedHtmlContentWithSaveButtons({
         span.appendChild(btnAnalyze);
       }
     });
-  }, [html, ticker, showAnalyze]);
+  }, [html, ticker, showAnalyze, saveLabelByUrl]);
 
   return <div ref={ref} className="saved-html-content" />;
 }
@@ -143,6 +149,7 @@ export function SavedRichText({
   const showAnalyze = Boolean(onLinkAnalyze) && showSave;
   const onLinkAnalyzeRef = useRef(onLinkAnalyze);
   onLinkAnalyzeRef.current = onLinkAnalyze;
+  const saveLabelByUrl = useMemo(() => buildCreditDocSaveLabelMap(content), [content]);
 
   const components = useMemo(
     () => ({
@@ -150,6 +157,7 @@ export function SavedRichText({
         const { node: _node, children, href, ...rest } = props;
         const h = typeof href === "string" ? href.trim() : "";
         const canSave = showSave && isHttpUrl(h);
+        const saveTitle = h ? lookupCreditDocSaveLabel(saveLabelByUrl, h) : undefined;
         const link = (
           <a
             {...rest}
@@ -165,7 +173,7 @@ export function SavedRichText({
         return (
           <span className="inline-flex flex-wrap items-center gap-x-0.5 align-baseline max-w-full">
             {link}
-            <SaveFilingLinkButton ticker={safeTicker} url={h} mode="saved-documents" />
+            <SaveFilingLinkButton ticker={safeTicker} url={h} mode="saved-documents" saveTitle={saveTitle} />
             {showAnalyze ? (
               <button
                 type="button"
@@ -208,7 +216,7 @@ export function SavedRichText({
         );
       },
     }),
-    [showSave, safeTicker, showAnalyze]
+    [showSave, safeTicker, showAnalyze, saveLabelByUrl]
   );
 
   const looksLikeHtml =
@@ -228,6 +236,7 @@ export function SavedRichText({
           ticker={safeTicker}
           showAnalyze={showAnalyze}
           onLinkAnalyzeRef={onLinkAnalyzeRef}
+          saveLabelByUrl={saveLabelByUrl}
         />
       );
     }

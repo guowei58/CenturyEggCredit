@@ -5,7 +5,7 @@ const PROVIDER_IDS = PRODUCTION_NEWS_PROVIDER_IDS;
 export type KnownNewsProviderId = (typeof PROVIDER_IDS)[number];
 
 export const DEFAULT_TIMEOUT_MS = 8_000;
-export const DEFAULT_MAX_RESULTS = 50;
+export const DEFAULT_MAX_RESULTS = 100;
 export const DEFAULT_FINAL_LIMIT = 100;
 
 function parseBool(v: string | undefined, defaultTrue: boolean): boolean {

@@ -105,3 +105,13 @@ export function parseCompanyLookupInput(
   if (ticker.length > 12) return { kind: "name", normalized: trimmed };
   return { kind: "ticker", normalized: ticker };
 }
+
+/** Normalize workspace key for API routes and Postgres (CIK, PRIV slug, or ticker). */
+export function sanitizeWorkspaceKey(raw: string): string | null {
+  const t = raw.trim();
+  if (!t) return null;
+  if (isCikWorkspaceKey(t)) return t;
+  if (isPrivateWorkspaceKey(t)) return t.toUpperCase();
+  const ticker = t.toUpperCase().replace(/[^A-Z0-9.-]/g, "");
+  return ticker.length > 0 && ticker.length <= 12 ? ticker : null;
+}

@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { Card, DataTable } from "@/components/ui";
 import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
+import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 import { confidenceLevelColors, matchConfidenceFromQuery } from "@/lib/matchConfidenceFromQuery";
 
 type EcfsFilingRow = {
@@ -54,10 +55,12 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
   const [error, setError] = useState<string | null>(null);
   const [helpLinks, setHelpLinks] = useState<{ ecfs?: string; signup?: string } | null>(null);
   const [payload, setPayload] = useState<ApiOk | null>(null);
+  const [subsidiaryCollapseSignal, setSubsidiaryCollapseSignal] = useState(0);
 
   const runFetch = useCallback(
     async (qParam: string | undefined) => {
       if (!safeTicker) return;
+      setSubsidiaryCollapseSignal((n) => n + 1);
       setLoading(true);
       setError(null);
       setHelpLinks(null);
@@ -93,6 +96,13 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
     void runFetch(undefined);
   }, [safeTicker, runFetch]);
 
+  const searchNotes = useMemo(() => {
+    if (!payload) return [];
+    const notes = [`Query: "${payload.query_used}".`, `${payload.count} filing row(s) returned.`];
+    if (payload.ecfs_search_note) notes.push(payload.ecfs_search_note);
+    return notes;
+  }, [payload]);
+
   if (!safeTicker) {
     return (
       <Card title="FCC Filings">
@@ -108,6 +118,7 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
       <SubsidiaryQuerySuggestionsCard
         ticker={safeTicker}
         disabled={loading}
+        searchCollapseSignal={subsidiaryCollapseSignal}
         disclaimer="Subsidiaries from your saved Public Records profile (Exhibit 21 grid when present, otherwise the subsidiary name table). Use these as ECFS keyword searches. Verify matches."
         onPickName={(name) => {
           setQueryDraft(name);
@@ -140,23 +151,13 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
           </button>
         </div>
 
-        {payload?.company_name && (
-          <p className="text-[11px] mt-2" style={{ color: "var(--muted)" }}>
-            SEC name: <span style={{ color: "var(--text)" }}>{payload.company_name}</span>
-            {activeQuery ? (
-              <>
-                {" "}
-                · Query: <span className="font-mono">{activeQuery}</span>
-              </>
-            ) : null}
-          </p>
-        )}
-
         {loading && !payload && (
           <p className="text-sm py-6" style={{ color: "var(--muted)" }}>
             Loading ECFS results…
           </p>
         )}
+
+        <RegulatorySearchNotes notes={searchNotes} />
 
         {error && (
           <div
@@ -192,12 +193,6 @@ export function CompanyFccFilingsTab({ ticker }: { ticker: string }) {
 
         {payload && (
           <>
-            <p className="text-[11px] mt-4 leading-relaxed" style={{ color: "var(--muted2)" }}>
-              {payload.ecfs_search_note}{" "}
-              <span style={{ color: "var(--muted)" }}>
-                Confidence compares your search words to filer names, proceedings, and preview text (heuristic, not an FCC score).
-              </span>
-            </p>
             {payload.filings.length === 0 ? (
               <p className="text-sm py-6" style={{ color: "var(--muted2)" }}>
                 No filings returned for this query. Try a shorter keyword, a subsidiary name, or confirm the company files

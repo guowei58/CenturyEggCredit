@@ -1,0 +1,162 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:PremiumsEarnedNet,us-gaap:PremiumsEarnedNet,Insurance premiums earned,0,0
+income_statement,brka:SalesAndServiceRevenue,brka:SalesAndServiceRevenue,Sales and service revenues,1,0
+income_statement,us-gaap:OperatingLeaseLeaseIncome,us-gaap:OperatingLeaseLeaseIncome,Leasing revenues,2,0
+income_statement,brka:InvestmentIncomeInterestDividendAndOther,brka:InvestmentIncomeInterestDividendAndOther,"Interest, dividend and other investment income",3,0
+income_statement,us-gaap:Revenues,us-gaap:Revenues,revenues revenues revenues,4,0
+income_statement,html:railroad-utilities-and-energy,html:railroad-utilities-and-energy,"Railroad, Utilities and Energy:",5,0
+income_statement,brka:RailroadTransportationRevenues,brka:RailroadTransportationRevenues,Railroad transportation revenues,6,0
+income_statement,brka:UtilityAndEnergyOperatingRevenues,brka:UtilityAndEnergyOperatingRevenues,Utility and energy operating revenues,7,0
+income_statement,brka:ServiceRevenuesAndOtherIncome,brka:ServiceRevenuesAndOtherIncome,Service revenues and other income,8,0
+income_statement,us-gaap:Revenues@R11,us-gaap:Revenues@R11,revenues revenues revenues,9,0
+income_statement,us-gaap:Revenues@R12,us-gaap:Revenues@R12,Total revenues,10,0
+income_statement,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Investment gains (losses),11,0
+income_statement,html:costs-and-expenses,html:costs-and-expenses,Costs and expenses:,13,0
+income_statement,html:insurance-and-other,html:insurance-and-other,Insurance and Other:,14,0
+income_statement,us-gaap:LiabilityForUnpaidClaimsAndClaimsAdjustmentExpenseIncurredClaims1,us-gaap:LiabilityForUnpaidClaimsAndClaimsAdjustmentExpenseIncurredClaims1,Insurance losses and loss adjustment expenses,15,0
+income_statement,us-gaap:PolicyholderBenefitsAndClaimsIncurredNet,us-gaap:PolicyholderBenefitsAndClaimsIncurredNet,"Life, annuity and health insurance benefits",16,0
+income_statement,brka:InsuranceUnderwritingExpenses,brka:InsuranceUnderwritingExpenses,Insurance underwriting expenses,17,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of sales and services,18,0
+income_statement,brka:CostOfLeasing,brka:CostOfLeasing,Cost of leasing,19,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative expenses",20,0
+income_statement,us-gaap:InterestExpense,us-gaap:InterestExpense,Interest expense,22,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,costs and expenses costs and expenses costs and expenses,23,0
+income_statement,html:railroad-utilities-and-energy-2,html:railroad-utilities-and-energy-2,"Railroad, Utilities and Energy:",24,0
+income_statement,us-gaap:OperatingExpenses,us-gaap:OperatingExpenses,Freight rail transportation expenses,25,0
+income_statement,brka:CostsOfServicesAndOperatingExpenses,brka:CostsOfServicesAndOperatingExpenses,Utilities and energy cost of sales and other expenses,26,0
+income_statement,us-gaap:OtherExpenses,us-gaap:OtherExpenses,Other expenses,27,0
+income_statement,us-gaap:InterestExpense@R28,us-gaap:InterestExpense@R28,Interest expense,28,0
+income_statement,us-gaap:CostsAndExpenses@R29,us-gaap:CostsAndExpenses@R29,costs and expenses costs and expenses costs and expenses,30,0
+income_statement,us-gaap:CostsAndExpenses@R30,us-gaap:CostsAndExpenses@R30,Total costs and expenses,31,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments,Earnings before income taxes and equity method earnings,32,0
+income_statement,us-gaap:IncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromEquityMethodInvestments,Equity method earnings (losses),33,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Earnings before income taxes,34,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax expense,35,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net earnings,36,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Earnings attributable to noncontrolling interests,37,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net earnings attributable to Berkshire shareholders,38,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Net earnings per average equivalent Class Ashare,39,0
+income_statement,us-gaap:EarningsPerShareBasic@R39,us-gaap:EarningsPerShareBasic@R39,Net earnings per average equivalent Class Bshare*,40,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Average equivalent Class Ashares outstanding,41,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R41,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic@R41,Average equivalent Class Bshares outstanding,42,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents*,0,0
+balance_sheet,brka:USTreasuryBills,brka:USTreasuryBills,Short-term investments in U.S. Treasury Bills**,1,0
+balance_sheet,us-gaap:AvailableForSaleSecuritiesDebtSecurities,us-gaap:AvailableForSaleSecuritiesDebtSecurities,Investments in fixed maturity securities,2,0
+balance_sheet,us-gaap:EquitySecuritiesFvNi,us-gaap:EquitySecuritiesFvNi,Investments in equity securities,3,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Equity method investments,4,0
+balance_sheet,us-gaap:NotesReceivableNet,us-gaap:NotesReceivableNet,Loans and finance receivables,5,0
+balance_sheet,us-gaap:PremiumsAndOtherReceivablesNet,us-gaap:PremiumsAndOtherReceivablesNet,Other receivables,6,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,7,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant and equipment",9,0
+balance_sheet,us-gaap:PropertySubjectToOrAvailableForOperatingLeaseNet,us-gaap:PropertySubjectToOrAvailableForOperatingLeaseNet,Equipment held for lease,10,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,14,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,Other intangible assets,15,0
+balance_sheet,brka:UnamortizedDeferredChargesOnReinsuranceAssumed,brka:UnamortizedDeferredChargesOnReinsuranceAssumed,Deferred charges - retroactive reinsurance,18,0
+balance_sheet,us-gaap:OtherAssets,us-gaap:OtherAssets,Other,19,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,assets assets,20,0
+balance_sheet,html:railroad-utilities-and-energy,html:railroad-utilities-and-energy,"Railroad, Utilities and Energy:",21,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue@R18,us-gaap:CashAndCashEquivalentsAtCarryingValue@R18,Cash and cash equivalents*,22,0
+balance_sheet,brka:AccountsAndOtherReceivablesNet,brka:AccountsAndOtherReceivablesNet,Receivables,23,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet@R20,us-gaap:PropertyPlantAndEquipmentNet@R20,"Property, plant and equipment",26,0
+balance_sheet,us-gaap:Goodwill@R21,us-gaap:Goodwill@R21,Goodwill,27,0
+balance_sheet,us-gaap:RegulatoryAssets,us-gaap:RegulatoryAssets,Regulatory assets,28,0
+balance_sheet,us-gaap:OtherAssets@R23,us-gaap:OtherAssets@R23,Other,30,0
+balance_sheet,us-gaap:Assets@R24,us-gaap:Assets@R24,assets assets,31,0
+balance_sheet,us-gaap:Assets@R25,us-gaap:Assets@R25,Total assets,32,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net earnings,0,0
+cash_flow,html:adjustments-to-reconcile-net-earnings-to-operating-cash-flows,html:adjustments-to-reconcile-net-earnings-to-operating-cash-flows,Adjustments to reconcile net earnings to operating cash flows:,1,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Investment (gains) losses,2,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,3,0
+cash_flow,us-gaap:AccretionAmortizationOfDiscountsAndPremiumsInvestments,us-gaap:AccretionAmortizationOfDiscountsAndPremiumsInvestments,"Discount accretion on investments, principally U.S. Treasury Bills",4,0
+cash_flow,us-gaap:EquityMethodInvestmentOtherThanTemporaryImpairment,us-gaap:EquityMethodInvestmentOtherThanTemporaryImpairment,Equity method investment impairment losses,5,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,Other,6,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,7,0
+cash_flow,us-gaap:IncreaseDecreaseInLiabilityForClaimsAndClaimsAdjustmentExpenseReserve,us-gaap:IncreaseDecreaseInLiabilityForClaimsAndClaimsAdjustmentExpenseReserve,Unpaid losses and loss adjustment expenses,8,0
+cash_flow,brka:IncreaseDecreaseInDeferredChargesRetroactiveReinsurance,brka:IncreaseDecreaseInDeferredChargesRetroactiveReinsurance,Deferred charges - retroactive reinsurance,9,0
+cash_flow,us-gaap:IncreaseDecreaseInUnearnedPremiums,us-gaap:IncreaseDecreaseInUnearnedPremiums,Unearned insurance premiums,10,0
+cash_flow,us-gaap:IncreaseDecreaseInReceivables,us-gaap:IncreaseDecreaseInReceivables,Receivables and originated loans,11,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingAssets,us-gaap:IncreaseDecreaseInOtherOperatingAssets,Other assets,13,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,us-gaap:IncreaseDecreaseInOtherOperatingLiabilities,Other liabilities,14,0
+cash_flow,us-gaap:IncreaseDecreaseInIncomeTaxes,us-gaap:IncreaseDecreaseInIncomeTaxes,Income taxes,15,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash flows from operating activities,16,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,17,0
+cash_flow,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,us-gaap:PaymentsToAcquireEquitySecuritiesFvNi,Purchases of equity securities,18,0
+cash_flow,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,us-gaap:ProceedsFromSaleOfEquitySecuritiesFvNi,Sales of equity securities,19,0
+cash_flow,brka:PaymentsToAcquireUSTreasuryBillsAndAvailableForSaleSecuritiesDebt,brka:PaymentsToAcquireUSTreasuryBillsAndAvailableForSaleSecuritiesDebt,Purchases of U.S. Treasury Bills and fixed maturity securities,20,0
+cash_flow,brka:ProceedsFromSaleOfUSTreasuryBillsAndAvailableForSaleSecuritiesDebt,brka:ProceedsFromSaleOfUSTreasuryBillsAndAvailableForSaleSecuritiesDebt,Sales of U.S. Treasury Bills and fixed maturity securities,21,0
+cash_flow,brka:ProceedsFromRedemptionsAndMaturitiesOfUSTreasuryBillsAndAvailableForSaleSecuritiesDebt,brka:ProceedsFromRedemptionsAndMaturitiesOfUSTreasuryBillsAndAvailableForSaleSecuritiesDebt,Redemptions and maturities of U.S. Treasury Bills and fixed maturity securities,22,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisitions of businesses, net of cash acquired",25,0
+cash_flow,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,us-gaap:PaymentsToAcquirePropertyPlantAndEquipment,"Purchases of property, plant and equipment and equipment held for lease",26,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Other,27,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash flows from investing activities,28,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,Cash flows from financing activities:,29,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Proceeds from borrowings of insurance and other businesses,30,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayments of borrowings of insurance and other businesses,31,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt@R31,us-gaap:ProceedsFromIssuanceOfLongTermDebt@R31,"Proceeds from borrowings of railroad, utilities and energy businesses",32,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt@R32,us-gaap:RepaymentsOfLongTermDebt@R32,"Repayments of borrowings of railroad, utilities and energy businesses",33,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,us-gaap:ProceedsFromRepaymentsOfShortTermDebt,"Changes in short-term borrowings, net",34,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Acquisitions of treasury stock,35,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,"Other, principally transactions with noncontrolling interests",36,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash flows from financing activities,37,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Effects of foreign currency exchange rate changes,38,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Increase in cash and cash equivalents and restricted cash,39,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Inventories,12,0
+income_statement,us-gaap:GoodwillAndIntangibleAssetImpairment,us-gaap:GoodwillAndIntangibleAssetImpairment,Goodwill and intangible asset impairments,21,0
+cash_flow,us-gaap:PaymentsToAcquireLoansReceivable,us-gaap:PaymentsToAcquireLoansReceivable,Purchases of loans and finance receivables,23,0
+cash_flow,us-gaap:ProceedsFromCollectionOfLoansReceivable,us-gaap:ProceedsFromCollectionOfLoansReceivable,Collections of loans and finance receivables,24,0
+income_statement,us-gaap:GainLossOnDerivativeInstrumentsNetPretax,us-gaap:GainLossOnDerivativeInstrumentsNetPretax,Derivative contract gains (losses),12,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,11,0
+balance_sheet,html:deferred-charges-under-retroactive-reinsurance-contracts,html:deferred-charges-under-retroactive-reinsurance-contracts,Deferred charges under retroactive reinsurance contracts,12,0
+balance_sheet,html:liabilities,html:liabilities,LIABILITIES,33,0
+balance_sheet,html:income-taxes-principally-deferred,html:income-taxes-principally-deferred,"Income taxes, principally deferred",34,0
+balance_sheet,html:unpaid-losses-and-loss-adjustment-expenses,html:unpaid-losses-and-loss-adjustment-expenses,Unpaid losses and loss adjustment expenses,35,0
+balance_sheet,html:unpaid-losses-and-loss-adjustment-expenses-under-retroactive-reinsurance-contracts,html:unpaid-losses-and-loss-adjustment-expenses-under-retroactive-reinsurance-contracts,Unpaid losses and loss adjustment expenses under retroactive reinsurance contracts,36,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,37,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders' equity:,38,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,39,0
+balance_sheet,html:capital-in-excess-of-par-value,html:capital-in-excess-of-par-value,Capital in excess of par value,40,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,41,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,42,0
+balance_sheet,html:treasury-stock-at-cost,html:treasury-stock-at-cost,"Treasury stock, at cost",43,0
+balance_sheet,html:berkshire-hathaway-shareholders-equity,html:berkshire-hathaway-shareholders-equity,Berkshire Hathaway shareholders' equity,44,0
+balance_sheet,html:noncontrolling-interests,html:noncontrolling-interests,Noncontrolling interests,45,0
+balance_sheet,html:total-shareholders-equity,html:total-shareholders-equity,Total shareholders' equity,46,0
+balance_sheet,html:total-liabilities-and-shareholders-equity,html:total-liabilities-and-shareholders-equity,Total liabilities and shareholders' equity,47,0
+balance_sheet,html:insurance-and-other-member,html:insurance-and-other-member,Insurance and Other [Member],48,0
+balance_sheet,html:cash-and-cash-equivalents-3,html:cash-and-cash-equivalents-3,Cash and cash equivalents [3],49,0
+balance_sheet,html:property-plant-and-equipment,html:property-plant-and-equipment,"Property, plant and equipment",8,0
+balance_sheet,html:goodwill-2,html:goodwill-2,Goodwill,13,0
+balance_sheet,html:deferred-charges-under-retroactive-reinsurance-contracts-2,html:deferred-charges-under-retroactive-reinsurance-contracts-2,Deferred charges under retroactive reinsurance contracts,16,0
+balance_sheet,html:other,html:other,Other,17,0
+balance_sheet,html:liabilities-2,html:liabilities-2,LIABILITIES,50,0
+balance_sheet,html:unpaid-losses-and-loss-adjustment-expenses-2,html:unpaid-losses-and-loss-adjustment-expenses-2,Unpaid losses and loss adjustment expenses,51,0
+balance_sheet,html:unpaid-losses-and-loss-adjustment-expenses-under-retroactive-reinsurance-contracts-2,html:unpaid-losses-and-loss-adjustment-expenses-under-retroactive-reinsurance-contracts-2,Unpaid losses and loss adjustment expenses under retroactive reinsurance contracts,52,0
+balance_sheet,html:unearned-premiums,html:unearned-premiums,Unearned premiums,53,0
+balance_sheet,html:life-annuity-and-health-insurance-benefits,html:life-annuity-and-health-insurance-benefits,"Life, annuity and health insurance benefits",54,0
+balance_sheet,html:other-policyholder-liabilities,html:other-policyholder-liabilities,Other policyholder liabilities,55,0
+balance_sheet,html:accounts-payable-accruals-and-other-liabilities,html:accounts-payable-accruals-and-other-liabilities,"Accounts payable, accruals and other liabilities",56,0
+balance_sheet,html:derivative-contract-liabilities,html:derivative-contract-liabilities,Derivative contract liabilities,57,0
+balance_sheet,html:aircraft-repurchase-liabilities-and-unearned-lease-revenues,html:aircraft-repurchase-liabilities-and-unearned-lease-revenues,Aircraft repurchase liabilities and unearned lease revenues,58,0
+balance_sheet,html:notes-payable-and-other-borrowings,html:notes-payable-and-other-borrowings,Notes payable and other borrowings,59,0
+balance_sheet,html:total-liabilities-2,html:total-liabilities-2,Total liabilities,60,0
+balance_sheet,html:railroad-utilities-and-energy-member,html:railroad-utilities-and-energy-member,"Railroad, Utilities and Energy [Member]",61,0
+balance_sheet,html:cash-and-cash-equivalents-3-2,html:cash-and-cash-equivalents-3-2,Cash and cash equivalents [3],62,0
+balance_sheet,html:property-plant-and-equipment-2,html:property-plant-and-equipment-2,"Property, plant and equipment",24,0
+balance_sheet,html:goodwill-3,html:goodwill-3,Goodwill,25,0
+balance_sheet,html:other-2,html:other-2,Other,29,0
+balance_sheet,html:liabilities-3,html:liabilities-3,LIABILITIES,63,0
+balance_sheet,html:accounts-payable-accruals-and-other-liabilities-2,html:accounts-payable-accruals-and-other-liabilities-2,"Accounts payable, accruals and other liabilities",64,0
+balance_sheet,html:regulatory-liabilities,html:regulatory-liabilities,Regulatory liabilities,65,0
+balance_sheet,html:notes-payable-and-other-borrowings-2,html:notes-payable-and-other-borrowings-2,Notes payable and other borrowings,66,0
+balance_sheet,html:total-liabilities-3,html:total-liabilities-3,Total liabilities,67,0
+balance_sheet,html:1-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-16-6-billion-apple-inc-48-5-billion-bank-of-america-corporation-25-4-billion-the-coca-cola-company-18-7-billion-and-wells-fargo-company-20-9-billion-2-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-14-5-billion-apple-inc-40-3-billion-bank-of-america-corporation-22-6-billion-the-coca-cola-company-18-9-billion-and-wells-fargo-company-20-7-billion-3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-2-1-billion-at-march-31-2019-and-3-9-billion-at-december-31-2018,html:1-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-16-6-billion-apple-inc-48-5-billion-bank-of-america-corporation-25-4-billion-the-coca-cola-company-18-7-billion-and-wells-fargo-company-20-9-billion-2-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-14-5-billion-apple-inc-40-3-billion-bank-of-america-corporation-22-6-billion-the-coca-cola-company-18-9-billion-and-wells-fargo-company-20-7-billion-3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-2-1-billion-at-march-31-2019-and-3-9-billion-at-december-31-2018,"[1] Approximately 68% of the aggregate fair value was concentrated in five companies (American Express Company - $16.6 billion; Apple Inc. - $48.5 billion; Bank of America Corporation - $25.4 billion; The Coca-Cola Company - $18.7 billion and Wells Fargo & Company - $20.9 billion). [2] Approximately 68% of the aggregate fair value was concentrated in five companies (American Express Company - $14.5 billion; Apple Inc. - $40.3 billion; Bank of America Corporation - $22.6 billion; The Coca-Cola Company - $18.9 billion and Wells Fargo & Company - $20.7 billion). [3] Cash and cash equivalents includes U.S. Treasury Bills with maturities of three months or less when purchased of $2.1 billion at March 31, 2019 and $3.9 billion at December 31, 2018.",68,0
+balance_sheet,html:1-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-16-6-billion-apple-inc-48-5-billion-bank-of-america-corporation-25-4-billion-the-coca-cola-company-18-7-billion-and-wells-fargo-company-20-9-billion,html:1-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-16-6-billion-apple-inc-48-5-billion-bank-of-america-corporation-25-4-billion-the-coca-cola-company-18-7-billion-and-wells-fargo-company-20-9-billion,[1] Approximately 68% of the aggregate fair value was concentrated in five companies (American Express Company - $16.6 billion; Apple Inc. - $48.5 billion; Bank of America Corporation - $25.4 billion; The Coca-Cola Company - $18.7 billion and Wells Fargo & Company - $20.9 billion).,70,0
+balance_sheet,html:2-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-14-5-billion-apple-inc-40-3-billion-bank-of-america-corporation-22-6-billion-the-coca-cola-company-18-9-billion-and-wells-fargo-company-20-7-billion,html:2-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-14-5-billion-apple-inc-40-3-billion-bank-of-america-corporation-22-6-billion-the-coca-cola-company-18-9-billion-and-wells-fargo-company-20-7-billion,[2] Approximately 68% of the aggregate fair value was concentrated in five companies (American Express Company - $14.5 billion; Apple Inc. - $40.3 billion; Bank of America Corporation - $22.6 billion; The Coca-Cola Company - $18.9 billion and Wells Fargo & Company - $20.7 billion).,71,0
+balance_sheet,html:3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-2-1-billion-at-march-31-2019-and-3-9-billion-at-december-31-2018,html:3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-2-1-billion-at-march-31-2019-and-3-9-billion-at-december-31-2018,"[3] Cash and cash equivalents includes U.S. Treasury Bills with maturities of three months or less when purchased of $2.1 billion at March 31, 2019 and $3.9 billion at December 31, 2018.",74,0
+income_statement,html:34-399,html:34-399,"34,399",29,0
+balance_sheet,html:1-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-14-5-billion-apple-inc-40-3-billion-bank-of-america-corporation-22-6-billion-the-coca-cola-company-18-9-billion-and-wells-fargo-company-20-7-billion-2-approximately-65-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-15-1-billion-apple-inc-28-2-billion-bank-of-america-corporation-20-7-billion-the-coca-cola-company-18-4-billion-and-wells-fargo-company-29-3-billion-3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-3-9-billion-at-december-31-2018-and-5-7-billion-at-december-31-2017,html:1-approximately-68-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-14-5-billion-apple-inc-40-3-billion-bank-of-america-corporation-22-6-billion-the-coca-cola-company-18-9-billion-and-wells-fargo-company-20-7-billion-2-approximately-65-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-15-1-billion-apple-inc-28-2-billion-bank-of-america-corporation-20-7-billion-the-coca-cola-company-18-4-billion-and-wells-fargo-company-29-3-billion-3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-3-9-billion-at-december-31-2018-and-5-7-billion-at-december-31-2017,"[1] Approximately 68% of the aggregate fair value was concentrated in five companies (American Express Company - $14.5 billion; Apple Inc. - $40.3 billion; Bank of America Corporation - $22.6 billion; The Coca-Cola Company - $18.9 billion and Wells Fargo & Company - $20.7 billion). [2] Approximately 65% of the aggregate fair value was concentrated in five companies (American Express Company - $15.1 billion; Apple Inc. - $28.2 billion; Bank of America Corporation - $20.7 billion; The Coca-Cola Company - $18.4 billion and Wells Fargo & Company - $29.3 billion). [3] Cash and cash equivalents includes U.S. Treasury Bills with maturities of three months or less when purchased of $3.9 billion at December 31, 2018 and $5.7 billion at December 31, 2017.",69,0
+balance_sheet,html:2-approximately-65-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-15-1-billion-apple-inc-28-2-billion-bank-of-america-corporation-20-7-billion-the-coca-cola-company-18-4-billion-and-wells-fargo-company-29-3-billion,html:2-approximately-65-of-the-aggregate-fair-value-was-concentrated-in-five-companies-american-express-company-15-1-billion-apple-inc-28-2-billion-bank-of-america-corporation-20-7-billion-the-coca-cola-company-18-4-billion-and-wells-fargo-company-29-3-billion,[2] Approximately 65% of the aggregate fair value was concentrated in five companies (American Express Company - $15.1 billion; Apple Inc. - $28.2 billion; Bank of America Corporation - $20.7 billion; The Coca-Cola Company - $18.4 billion and Wells Fargo & Company - $29.3 billion).,72,0
+balance_sheet,html:3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-3-9-billion-at-december-31-2018-and-5-7-billion-at-december-31-2017,html:3-cash-and-cash-equivalents-includes-u-s-treasury-bills-with-maturities-of-three-months-or-less-when-purchased-of-3-9-billion-at-december-31-2018-and-5-7-billion-at-december-31-2017,"[3] Cash and cash equivalents includes U.S. Treasury Bills with maturities of three months or less when purchased of $3.9 billion at December 31, 2018 and $5.7 billion at December 31, 2017.",73,0
+cash_flow,html:cash-and-cash-equivalents-and-restricted-cash-at-beginning-of-year,html:cash-and-cash-equivalents-and-restricted-cash-at-beginning-of-year,Cash and cash equivalents and restricted cash at beginning of year,40,0
+cash_flow,html:cash-and-cash-equivalents-and-restricted-cash-at-end-of-year,html:cash-and-cash-equivalents-and-restricted-cash-at-end-of-year,Cash and cash equivalents and restricted cash at end of year *,41,0
+cash_flow,html:cash-and-cash-equivalents-and-restricted-cash-at-end-of-year-are-comprised-of-the-following,html:cash-and-cash-equivalents-and-restricted-cash-at-end-of-year-are-comprised-of-the-following,* Cash and cash equivalents and restricted cash at end of year are comprised of the following:,42,0

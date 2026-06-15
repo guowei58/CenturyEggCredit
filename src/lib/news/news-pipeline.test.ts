@@ -21,7 +21,7 @@ import { createAlphaVantageNewsProvider } from "./providers/alphaVantage";
 import { createFinnhubNewsProvider } from "./providers/finnhub";
 import { createMarketauxNewsProvider } from "./providers/marketaux";
 import { buildNewsApiKeywordQuery } from "./providers/newsapi";
-import { hostnameMatchesNewsApiAllowlist } from "./newsApiDomains";
+import { buildGoogleNewsSiteGroup, hostnameMatchesNewsApiAllowlist } from "./newsApiDomains";
 import { MOCK_NEWS_API_KEY } from "./providers/mockNewsProvider";
 import { rankArticles } from "./rank";
 import type { NormalizedNewsArticle, ProviderConfig } from "./types";
@@ -85,7 +85,19 @@ describe("NewsAPI helpers", () => {
     expect(hostnameMatchesNewsApiAllowlist("www.reuters.com")).toBe(true);
     expect(hostnameMatchesNewsApiAllowlist("reuters.com")).toBe(true);
     expect(hostnameMatchesNewsApiAllowlist("news.bloomberg.com")).toBe(true);
+    expect(hostnameMatchesNewsApiAllowlist("www.economist.com")).toBe(true);
+    expect(hostnameMatchesNewsApiAllowlist("www.cnbc.com")).toBe(true);
     expect(hostnameMatchesNewsApiAllowlist("example.com")).toBe(false);
+  });
+
+  it("buildGoogleNewsSiteGroup includes newly added publishers", () => {
+    const group = buildGoogleNewsSiteGroup();
+    expect(group).toContain("site:nytimes.com");
+    expect(group).toContain("site:economist.com");
+    expect(group).toContain("site:cnbc.com");
+    expect(group).toContain("site:marketwatch.com");
+    expect(group).toContain("site:barrons.com");
+    expect(group).toContain("site:fortune.com");
   });
 });
 

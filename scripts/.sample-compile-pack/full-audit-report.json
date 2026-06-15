@@ -1,0 +1,3650 @@
+{
+  "seed": 20260613,
+  "tickers": 50,
+  "compiled_ok": 49,
+  "aggregate_issue_counts": {
+    "FY_IN_QUARTERLY_SHEET": 44,
+    "MISSING_6M_9M_IN_EXCEL": 42,
+    "COMPILE_FAILED": 1,
+    "THIN_FILING_HISTORY": 1
+  },
+  "tickers_with_empty_excel_columns": [],
+  "tickers_with_workbook_truth_issues": [],
+  "tickers_with_missing_ytd_columns": [
+    "XOM",
+    "NVDA",
+    "UNH",
+    "WMT",
+    "AAPL",
+    "AMZN",
+    "GOOGL",
+    "JNJ",
+    "HD",
+    "JPM",
+    "V",
+    "META",
+    "NKE",
+    "PFE",
+    "SPGI",
+    "TMO",
+    "MCD",
+    "KO",
+    "AMD",
+    "CAT",
+    "PM",
+    "INTU",
+    "TXN",
+    "ORCL",
+    "MRK",
+    "PEGA",
+    "NXST",
+    "BIO",
+    "EMR",
+    "FICO",
+    "PH",
+    "DECK",
+    "ITW",
+    "MIDD",
+    "BLCO",
+    "GIII",
+    "GEN",
+    "PRGS",
+    "MGRC",
+    "CALX",
+    "CEVA",
+    "PDFS"
+  ],
+  "tickers_with_loader_no_header": [],
+  "audits": [
+    {
+      "ticker": "PG",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 46,
+      "total_facts": 2601,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "XOM",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5398,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5278,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {},
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "BRK.B",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q20",
+          "fill": "2/43"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q21",
+          "fill": "2/43"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q22",
+          "fill": "2/43"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q23",
+          "fill": "2/43"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q24",
+          "fill": "2/43"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q25",
+          "fill": "2/43"
+        }
+      ],
+      "sparse_count": 6,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 46,
+      "total_facts": 3178,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "compileOk": false,
+      "filingsSaved": 25,
+      "filingsFailed": 5,
+      "pipeline_error": "564590-19-012709.xlsx \ufffd\ufffd 2 concepts (html:acquisition-of-companies-net-of-cash-acquired-and-purchases-of-intangible-and-other-assets, html:other-net) summed to 135.0\r\n2026-06-14 03:04:26,047 [INFO] consolidator: SUM-WITHIN-FILE: cash_flow/us-gaap:ProceedsFromPaymentsForOtherFinancingActivities/1Q23 in MSFT_SEC-XBRL-financials_as-presented_10-Q_2023-04-25_0000950170-23-014423.xlsx \ufffd\ufffd 2 concepts (html:acquisition-of-companies-net-of-cash-acquired-and-purchases-of-intangible-and-other-assets, html:",
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "UNH",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6055,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "WMT",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6634,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25",
+          "FY26"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "AAPL",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5399,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "AMZN",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 7240,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY22",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 4574,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "JNJ",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q20",
+          "fill": "15/63"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q20",
+          "fill": "15/63"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "2Q21",
+          "fill": "15/63"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q21",
+          "fill": "15/63"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q25",
+          "fill": "15/63"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q25",
+          "fill": "15/63"
+        }
+      ],
+      "sparse_count": 6,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5416,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "HD",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 74,
+      "total_facts": 4123,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {},
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "JPM",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "BS_Quarterly",
+          "period": "4Q20",
+          "fill": "32/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "FY20",
+          "fill": "32/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "1Q21",
+          "fill": "16/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "2Q21",
+          "fill": "16/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "3Q21",
+          "fill": "16/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "4Q21",
+          "fill": "32/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "FY21",
+          "fill": "32/141"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "1Q22",
+          "fill": "32/141"
+        }
+      ],
+      "sparse_count": 22,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 7246,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24"
+        ],
+        "CF_Quarterly": [
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "V",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 7214,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "META",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5195,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "NKE",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 4774,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "PFE",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6735,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "BA",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 25,
+      "total_facts": 1997,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "SPGI",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6145,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "TMO",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5620,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "MCD",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6694,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "KO",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 84,
+      "total_facts": 5644,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "AMD",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5451,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY22"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "CAT",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "3Q23",
+          "fill": "5/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q23",
+          "fill": "4/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q24",
+          "fill": "6/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "2Q24",
+          "fill": "5/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "3Q24",
+          "fill": "5/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q24",
+          "fill": "4/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q25",
+          "fill": "6/28"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "2Q25",
+          "fill": "5/28"
+        }
+      ],
+      "sparse_count": 29,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 64,
+      "total_facts": 2911,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "9M22",
+          "9M23"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "PM",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 3476,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "INTU",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6818,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "TXN",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6107,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "ORCL",
+      "compileOk": true,
+      "filingsSaved": 29,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 87,
+      "total_facts": 5881,
+      "files_processed": 29,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY22",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY22",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "MRK",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5444,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "COST",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 4986,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {},
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "PEGA",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5946,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "NXST",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "BS_Quarterly",
+          "period": "1Q20",
+          "fill": "35/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "2Q20",
+          "fill": "33/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "3Q20",
+          "fill": "35/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "4Q20",
+          "fill": "33/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "FY20",
+          "fill": "33/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "1Q21",
+          "fill": "32/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "2Q21",
+          "fill": "32/166"
+        },
+        {
+          "sheet": "BS_Quarterly",
+          "period": "3Q21",
+          "fill": "33/166"
+        }
+      ],
+      "sparse_count": 34,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 87,
+      "total_facts": 6501,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "BIO",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 4197,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "EMR",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 4897,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "ETN",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q21",
+          "fill": "2/40"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q23",
+          "fill": "2/40"
+        }
+      ],
+      "sparse_count": 2,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 29,
+      "total_facts": 2044,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY21",
+          "FY23"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY22"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "FICO",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5790,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "PH",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q24",
+          "fill": "3/20"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "FY24",
+          "fill": "4/20"
+        }
+      ],
+      "sparse_count": 2,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5741,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "DECK",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5913,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25",
+          "FY26"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25",
+          "FY26"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY24",
+          "FY26"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "ITW",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 66,
+      "total_facts": 3826,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {},
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "MIDD",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "BS_Quarterly",
+          "period": "1Q20",
+          "fill": "11/73"
+        }
+      ],
+      "sparse_count": 1,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5072,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "BLCO",
+      "compileOk": true,
+      "filingsSaved": 17,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 51,
+      "total_facts": 3131,
+      "files_processed": 17,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "GIII",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 7144,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {},
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "SCVL",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5093,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "GEN",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5891,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "6M26",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25",
+          "9M26"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25",
+          "FY26"
+        ],
+        "BS_Quarterly": [
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25",
+          "FY26"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "PRGS",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q21",
+          "fill": "4/79"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q23",
+          "fill": "4/79"
+        }
+      ],
+      "sparse_count": 2,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6656,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "MGRC",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5610,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "CALX",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 89,
+      "total_facts": 5456,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "CEVA",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q24",
+          "fill": "5/36"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "3Q24",
+          "fill": "5/36"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q24",
+          "fill": "6/36"
+        }
+      ],
+      "sparse_count": 3,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 6007,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "PDFS",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q20",
+          "fill": "13/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "3Q20",
+          "fill": "19/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q20",
+          "fill": "5/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "FY20",
+          "fill": "5/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "1Q21",
+          "fill": "14/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "3Q21",
+          "fill": "15/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "4Q21",
+          "fill": "2/89"
+        },
+        {
+          "sheet": "IS_Quarterly",
+          "period": "FY21",
+          "fill": "4/89"
+        }
+      ],
+      "sparse_count": 58,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 86,
+      "total_facts": 5046,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {
+        "IS_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M22",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M21",
+          "9M22",
+          "9M23",
+          "9M24",
+          "9M25"
+        ],
+        "CF_Quarterly": [
+          "6M20",
+          "6M21",
+          "6M23",
+          "6M24",
+          "6M25",
+          "9M20",
+          "9M23",
+          "9M24",
+          "9M25"
+        ]
+      },
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    },
+    {
+      "ticker": "MGPI",
+      "compileOk": true,
+      "filingsSaved": 30,
+      "filingsFailed": 0,
+      "pipeline_error": null,
+      "empty_cols": [],
+      "sparse_cols": [],
+      "sparse_count": 0,
+      "workbook_truth_issues": 0,
+      "sheets_processed": 90,
+      "total_facts": 5473,
+      "files_processed": 30,
+      "missing_6m_9m_in_excel": {},
+      "fy_columns_in_quarterly_sheet": {
+        "IS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "BS_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ],
+        "CF_Quarterly": [
+          "FY20",
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25"
+        ]
+      },
+      "loader": {
+        "no_header": 0,
+        "xbrl_zero": 0,
+        "drop_empty_col": 0,
+        "wt_issues": 0
+      }
+    }
+  ]
+}

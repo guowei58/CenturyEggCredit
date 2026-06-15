@@ -7,6 +7,7 @@ import path from "path";
 import { CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS } from "@/data/capital-structure-prompt";
 import { ORG_CHART_SAMPLE_IMAGE_PATHS } from "@/data/org-chart-prompt";
 import type { ChatUserContentPart } from "@/lib/chat-multimodal-types";
+import { imageMediaTypeFromBufferAndName } from "@/lib/image-media-type";
 
 const ALLOWED = new Set<string>([...CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS, ...ORG_CHART_SAMPLE_IMAGE_PATHS]);
 
@@ -45,13 +46,7 @@ export async function loadPublicSampleImagesAsParts(paths: string[]): Promise<
     if (total > MAX_TOTAL_BYTES) {
       return { ok: false, error: "Sample images exceed size limit." };
     }
-    const ext = path.extname(abs).toLowerCase();
-    const media =
-      ext === ".png"
-        ? "image/png"
-        : ext === ".jpg" || ext === ".jpeg"
-          ? "image/jpeg"
-          : null;
+    const media = imageMediaTypeFromBufferAndName(buf, abs);
     if (!media) {
       return { ok: false, error: `Unsupported image type: ${webPath}` };
     }

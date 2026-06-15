@@ -162,12 +162,6 @@ export function RatingsResearchLinks({
 
   return (
     <CompanyFeedTabShell
-      description={
-        <>
-          Official links from Fitch, Moody&apos;s, and S&amp;P (issuer/issue pages, rating actions, research) discovered via web search.
-          We only show agency domains — no paywalled body text is scraped or reproduced. Results stay saved until you refresh.
-        </>
-      }
       onRefresh={() => void runSearch()}
       refreshBusy={loading}
       hasPayload={Boolean(payload)}
@@ -187,8 +181,8 @@ export function RatingsResearchLinks({
             className="rounded-md border border-dashed px-3 py-3 text-center text-sm leading-relaxed"
             style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
           >
-            No saved results for this ticker yet. Set query fields in <strong style={{ color: "var(--text)" }}>Search options & filters</strong>{" "}
-            if needed, then click <strong style={{ color: "var(--text)" }}>Search agency links</strong>.
+            No saved results for this ticker yet. Open <strong style={{ color: "var(--text)" }}>Search options & filters</strong> if needed,
+            then click <strong style={{ color: "var(--text)" }}>Search agency links</strong>.
           </div>
         ) : undefined
       }
@@ -279,7 +273,7 @@ export function RatingsResearchLinks({
       ) : null}
 
       {payload && visible.length > 0 ? (
-        <ul className="space-y-4">
+        <ul className="flex flex-col divide-y" style={{ borderColor: "var(--border2)" }}>
           {visible.map((item) => (
             <li key={item.id}>
               <RatingsResearchLinkCard

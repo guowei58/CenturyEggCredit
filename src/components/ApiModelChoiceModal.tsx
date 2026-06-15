@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { AiProvider } from "@/lib/ai-provider";
-import { presetsForProvider, sanitizeClientModelId } from "@/lib/ai-model-options";
+import { sanitizeClientModelId } from "@/lib/ai-model-options";
 import type { ModelRunChoice } from "@/lib/ai-model-prefs-client";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import { useAllAiModelPresets } from "@/hooks/useAiModelPresets";
 
 const CUSTOM = "__custom__";
 const SAVED = "__saved__";
@@ -37,10 +38,11 @@ export function ApiModelChoiceModal({
   onConfirm,
 }: Props) {
   const { ready, preferences } = useUserPreferences();
+  const { presetsByProvider, refreshIfStale } = useAllAiModelPresets();
   const [selectValue, setSelectValue] = useState<string>(SAVED);
   const [custom, setCustom] = useState("");
 
-  const presets = provider ? presetsForProvider(provider) : [];
+  const presets = provider ? presetsByProvider[provider] : [];
 
   const savedLine = useMemo(() => {
     if (!provider) return "";
@@ -55,9 +57,10 @@ export function ApiModelChoiceModal({
 
   useEffect(() => {
     if (!open || !provider) return;
+    refreshIfStale();
     setSelectValue(SAVED);
     setCustom("");
-  }, [open, provider, preferences.aiModels]);
+  }, [open, provider, preferences.aiModels, refreshIfStale]);
 
   if (!open || !provider) return null;
 

@@ -1,0 +1,138 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,html:revenues,html:revenues,Revenues,0,0
+income_statement,html:costs-and-expenses,html:costs-and-expenses,Costs and Expenses:,1,0
+income_statement,html:operating-excluding-depreciation-and-amortization,html:operating-excluding-depreciation-and-amortization,Operating (excluding depreciation and amortization),2,0
+income_statement,html:selling-general-and-administrative,html:selling-general-and-administrative,"Selling, general and administrative",3,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,4,0
+income_statement,html:gain-loss-on-asset-sales-and-disposals-net,html:gain-loss-on-asset-sales-and-disposals-net,"(Gain) loss on asset sales and disposals, net",5,0
+income_statement,html:asset-impairments,html:asset-impairments,Asset impairments,8,0
+income_statement,html:total-costs-and-expenses,html:total-costs-and-expenses,Total Costs and Expenses,9,0
+income_statement,html:income-loss-from-operations,html:income-loss-from-operations,Income (loss) from operations,10,0
+income_statement,html:interest-expense-net,html:interest-expense-net,"Interest expense, net",11,0
+income_statement,html:other-income-expense-net,html:other-income-expense-net,"Other income (expense), net",12,0
+income_statement,html:income-loss-before-income-taxes-and-equity-method-investment-income-loss-net,html:income-loss-before-income-taxes-and-equity-method-investment-income-loss-net,"Income (loss) before income taxes and equity method investment income (loss), net",13,0
+income_statement,html:income-tax-provision-benefit,html:income-tax-provision-benefit,Income tax (provision) benefit,15,0
+income_statement,html:income-before-equity-method-investment-income-loss-net,html:income-before-equity-method-investment-income-loss-net,"Income before equity method investment income (loss), net",16,0
+income_statement,html:equity-method-investment-income-loss-net,html:equity-method-investment-income-loss-net,"Equity method investment income (loss), net",18,0
+income_statement,html:net-income-loss,html:net-income-loss,Net income (loss),19,0
+income_statement,html:net-income-loss-per-common-share,html:net-income-loss-per-common-share,Net Income (Loss) per Common Share:,23,0
+income_statement,html:basic-in-dollars-per-share,html:basic-in-dollars-per-share,Basic (in dollars per share),24,0
+income_statement,html:diluted-in-dollars-per-share,html:diluted-in-dollars-per-share,Diluted (in dollars per share),25,0
+income_statement,html:weighted-average-common-shares-outstanding,html:weighted-average-common-shares-outstanding,Weighted Average Common Shares Outstanding:,26,0
+income_statement,html:basic-in-shares,html:basic-in-shares,Basic (in shares),27,0
+income_statement,html:diluted-in-shares,html:diluted-in-shares,Diluted (in shares),30,0
+income_statement,html:unrealized-gain-loss-on-cash-flow-hedges-and-other-net-of-tax,html:unrealized-gain-loss-on-cash-flow-hedges-and-other-net-of-tax,"Unrealized gain (loss) on cash flow hedges and other, net of tax",31,0
+income_statement,html:comprehensive-income-loss,html:comprehensive-income-loss,Comprehensive income (loss),32,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",1,0
+balance_sheet,html:prepaid-and-other-current-assets,html:prepaid-and-other-current-assets,Prepaid and other current assets,3,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total Current Assets,4,0
+balance_sheet,html:equity-investments,html:equity-investments,Equity investments,6,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant and equipment, net",7,0
+balance_sheet,html:intangible-assets-net,html:intangible-assets-net,"Intangible assets, net",8,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,9,0
+balance_sheet,html:other-noncurrent-assets,html:other-noncurrent-assets,Other noncurrent assets,10,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,11,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities:,12,0
+balance_sheet,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,13,0
+balance_sheet,html:deferred-revenue,html:deferred-revenue,Deferred revenue,15,0
+balance_sheet,html:current-portion-of-long-term-debt,html:current-portion-of-long-term-debt,Current portion of long-term debt,16,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total Current Liabilities,18,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,19,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,20,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,22,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total Liabilities,23,0
+balance_sheet,html:commitments-and-contingencies-refer-to-note-17,html:commitments-and-contingencies-refer-to-note-17,Commitments and contingencies (refer to note 17),24,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders' Equity:,25,0
+balance_sheet,html:preferred-stock-0-01-par-value-4-000-000-shares-authorized-none-issued-or-outstanding,html:preferred-stock-0-01-par-value-4-000-000-shares-authorized-none-issued-or-outstanding,"Preferred stock ($0.01 par value; 4,000,000 shares authorized; none issued or outstanding)",26,0
+balance_sheet,html:common-stock-0-01-par-value-40-000-000-shares-authorized-6-175-399-shares-issued-and-5-635-219-and-5-619-365-shares-outstanding-as-of-december-31-2025-and-2024-respectively,html:common-stock-0-01-par-value-40-000-000-shares-authorized-6-175-399-shares-issued-and-5-635-219-and-5-619-365-shares-outstanding-as-of-december-31-2025-and-2024-respectively,"Common stock ($0.01 par value; 40,000,000 shares authorized; 6,175,399 shares issued; and 5,635,219 and 5,619,365 shares outstanding as of December 31, 2025 and 2024, respectively)",27,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,28,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,29,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),31,0
+balance_sheet,html:treasury-stock-at-cost-540-180-and-556-034-shares-held-as-of-december-31-2025-and-2024-respectively,html:treasury-stock-at-cost-540-180-and-556-034-shares-held-as-of-december-31-2025-and-2024-respectively,"Treasury stock, at cost (540,180 and 556,034 shares held as of December 31, 2025 and 2024, respectively)",32,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total Stockholders' Equity,34,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total Liabilities and Stockholders' Equity,35,0
+cash_flow,html:net-loss,html:net-loss,Net loss,0,0
+cash_flow,html:adjustments-to-reconcile-net-income-loss-to-net-cash-provided-by-operating-activities,html:adjustments-to-reconcile-net-income-loss-to-net-cash-provided-by-operating-activities,Adjustments to reconcile net income (loss) to net cash provided by operating activities:,1,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,2,0
+cash_flow,html:amortization-of-debt-discount-and-issuance-costs,html:amortization-of-debt-discount-and-issuance-costs,Amortization of debt discount and issuance costs,4,0
+cash_flow,html:equity-based-compensation,html:equity-based-compensation,Equity-based compensation,5,0
+cash_flow,html:gain-on-debt-extinguishments,html:gain-on-debt-extinguishments,Gain on debt extinguishments,7,0
+cash_flow,html:write-off-of-debt-issuance-costs,html:write-off-of-debt-issuance-costs,Write-off of debt issuance costs,8,0
+cash_flow,html:change-in-deferred-income-taxes,html:change-in-deferred-income-taxes,Change in deferred income taxes,9,0
+cash_flow,html:gain-loss-on-asset-sales-and-disposals-net,html:gain-loss-on-asset-sales-and-disposals-net,"(Gain) loss on asset sales and disposals, net",10,0
+cash_flow,html:gain-loss-on-sales-of-equity-investments,html:gain-loss-on-sales-of-equity-investments,(Gain) loss on sales of equity investments,15,0
+cash_flow,html:equity-method-investment-income-loss-net,html:equity-method-investment-income-loss-net,"Equity method investment (income) loss, net",16,0
+cash_flow,html:fair-value-adjustments,html:fair-value-adjustments,Fair value adjustments,17,0
+cash_flow,html:gain-on-mbi-amendment,html:gain-on-mbi-amendment,Gain on MBI Amendment,19,0
+cash_flow,html:asset-impairments,html:asset-impairments,Asset impairments,20,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,21,0
+cash_flow,html:accounts-receivable-net,html:accounts-receivable-net,"Accounts receivable, net",22,0
+cash_flow,html:prepaid-and-other-current-assets,html:prepaid-and-other-current-assets,Prepaid and other current assets,24,0
+cash_flow,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,25,0
+cash_flow,html:deferred-revenue,html:deferred-revenue,Deferred revenue,26,0
+cash_flow,html:other,html:other,Other,28,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net cash provided by operating activities,29,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,30,0
+cash_flow,html:purchase-of-business,html:purchase-of-business,Purchase of business,33,0
+cash_flow,html:cash-paid-for-mbi-amendment,html:cash-paid-for-mbi-amendment,Cash paid for MBI Amendment,34,0
+cash_flow,html:cash-paid-for-debt-and-equity-investments,html:cash-paid-for-debt-and-equity-investments,Cash paid for debt and equity investments,35,0
+cash_flow,html:dividends-received,html:dividends-received,Dividends received,36,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures,37,0
+cash_flow,html:change-in-accrued-expenses-related-to-capital-expenditures,html:change-in-accrued-expenses-related-to-capital-expenditures,Change in accrued expenses related to capital expenditures,40,0
+cash_flow,html:purchase-of-wireless-licenses,html:purchase-of-wireless-licenses,Purchase of wireless licenses,41,0
+cash_flow,html:proceeds-from-sales-of-property-plant-and-equipment,html:proceeds-from-sales-of-property-plant-and-equipment,"Proceeds from sales of property, plant and equipment",42,0
+cash_flow,html:proceeds-from-asset-sales-and-disposals,html:proceeds-from-asset-sales-and-disposals,Proceeds from asset sales and disposals,44,0
+cash_flow,html:proceeds-from-sales-of-equity-investments,html:proceeds-from-sales-of-equity-investments,Proceeds from sales of equity investments,46,0
+cash_flow,html:net-cash-used-by-investing-activities,html:net-cash-used-by-investing-activities,Net cash used by investing activities,48,0
+cash_flow,html:cash-flows-from-financing-activities,html:cash-flows-from-financing-activities,Cash flows from financing activities:,49,0
+cash_flow,html:proceeds-from-debt-borrowings,html:proceeds-from-debt-borrowings,Proceeds from debt borrowings,52,0
+cash_flow,html:payment-of-debt-issuance-costs,html:payment-of-debt-issuance-costs,Payment of debt issuance costs,53,0
+cash_flow,html:debt-repayments,html:debt-repayments,Debt repayments,55,0
+cash_flow,html:repurchase-of-common-stock,html:repurchase-of-common-stock,Repurchase of common stock,56,0
+cash_flow,html:payment-of-withholding-tax-for-equity-awards,html:payment-of-withholding-tax-for-equity-awards,Payment of withholding tax for equity awards,57,0
+cash_flow,html:dividends-paid-to-stockholders,html:dividends-paid-to-stockholders,Dividends paid to stockholders,58,0
+cash_flow,html:net-cash-used-by-financing-activities,html:net-cash-used-by-financing-activities,Net cash used by financing activities,61,0
+cash_flow,html:change-in-cash-and-cash-equivalents,html:change-in-cash-and-cash-equivalents,Change in cash and cash equivalents,62,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax provision,14,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Deferred revenue,14,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total Current Liabilities,17,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Stockholders' Equity,33,0
+cash_flow,us-gaap:GainLossOnDispositionOfIntangibleAssets,us-gaap:GainLossOnDispositionOfIntangibleAssets,Gain on sale of fiber-to-the-tower contract rights,11,0
+cash_flow,us-gaap:ProceedsFromSaleOfIntangibleAssets,us-gaap:ProceedsFromSaleOfIntangibleAssets,Proceeds from sale of fiber-to-the-tower contract rights,47,0
+income_statement,html:gain-loss-on-sales-of-businesses-net,html:gain-loss-on-sales-of-businesses-net,"(Gain) loss on sales of businesses, net",6,0
+cash_flow,html:proceeds-from-sales-of-businesses,html:proceeds-from-sales-of-businesses,Proceeds from sales of businesses,45,0
+cash_flow,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,(Gain) loss on sales of businesses,12,0
+cash_flow,html:non-cash-interest-expense-net,html:non-cash-interest-expense-net,"Non-cash interest expense, net",3,0
+cash_flow,html:gain-on-step-acquisition,html:gain-on-step-acquisition,Gain on step acquisition,18,0
+cash_flow,html:purchase-of-businesses-net-of-cash-acquired,html:purchase-of-businesses-net-of-cash-acquired,"Purchase of businesses, net of cash acquired",31,0
+cash_flow,html:payments-on-long-term-debt,html:payments-on-long-term-debt,Payments on long-term debt,54,0
+cash_flow,html:deposits-received-for-asset-construction,html:deposits-received-for-asset-construction,Deposits received for asset construction,59,0
+balance_sheet,us-gaap:IncomeTaxesReceivable,us-gaap:IncomeTaxesReceivable,Income taxes receivable,2,0
+balance_sheet,us-gaap:DerivativeLiabilitiesNoncurrent,us-gaap:DerivativeLiabilitiesNoncurrent,Interest rate swap liability,21,0
+cash_flow,us-gaap:IncreaseDecreaseInIncomeTaxesReceivable,us-gaap:IncreaseDecreaseInIncomeTaxesReceivable,Income taxes receivable,23,0
+cash_flow,html:proceeds-from-equity-issuance,html:proceeds-from-equity-issuance,Proceeds from equity issuance,50,0
+cash_flow,html:cash-and-cash-equivalents-beginning-of-period,html:cash-and-cash-equivalents-beginning-of-period,"Cash and cash equivalents, beginning of period",63,0
+cash_flow,html:cash-and-cash-equivalents-end-of-period,html:cash-and-cash-equivalents-end-of-period,"Cash and cash equivalents, end of period",64,0
+cash_flow,html:supplemental-cash-flow-disclosures,html:supplemental-cash-flow-disclosures,Supplemental cash flow disclosures:,65,0
+cash_flow,html:cash-paid-for-interest-net-of-capitalized-interest,html:cash-paid-for-interest-net-of-capitalized-interest,"Cash paid for interest, net of capitalized interest",66,0
+cash_flow,html:cash-paid-for-income-taxes-net-of-refunds-received,html:cash-paid-for-income-taxes-net-of-refunds-received,"Cash paid for income taxes, net of refunds received",67,0
+income_statement,html:gain-on-sale-of-business,html:gain-on-sale-of-business,Gain on sale of business,7,0
+balance_sheet,html:accumulated-other-comprehensive-loss,html:accumulated-other-comprehensive-loss,Accumulated other comprehensive loss,30,0
+cash_flow,html:gain-on-sale-of-business,html:gain-on-sale-of-business,Gain on sale of business,13,0
+cash_flow,html:purchase-of-equity-investments,html:purchase-of-equity-investments,Purchase of equity investments,32,0
+income_statement,us-gaap:InterestOnConvertibleDebtNetOfTax,us-gaap:InterestOnConvertibleDebtNetOfTax,"Add: Convertible Notes interest expense, net of tax",20,0
+income_statement,html:denominator,html:denominator,Denominator:,21,0
+income_statement,us-gaap:IncrementalCommonSharesAttributableToShareBasedPaymentArrangements,us-gaap:IncrementalCommonSharesAttributableToShareBasedPaymentArrangements,Effect of dilutive equity-based compensation awards(1),28,0
+income_statement,us-gaap:IncrementalCommonSharesAttributableToConversionOfDebtSecurities,us-gaap:IncrementalCommonSharesAttributableToConversionOfDebtSecurities,Effect of dilution from if-converted Convertible Notes(2),29,0
+income_statement,us-gaap:AntidilutiveSecuritiesExcludedFromComputationOfEarningsPerShareAmount,us-gaap:AntidilutiveSecuritiesExcludedFromComputationOfEarningsPerShareAmount,Anti-dilutive shares from equity-based compensation awards(1),22,0
+cash_flow,html:issuance-of-note-receivable,html:issuance-of-note-receivable,Issuance of note receivable,43,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Equity method investment,5,0
+income_statement,html:equity-method-investment-earnings,html:equity-method-investment-earnings,Equity method investment earnings,17,0
+cash_flow,html:equity-method-investment-earnings,html:equity-method-investment-earnings,Equity method investment earnings,14,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfBankOverdrafts,us-gaap:ProceedsFromRepaymentsOfBankOverdrafts,Change in cash overdraft,60,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt,html:proceeds-from-issuance-of-long-term-debt,Proceeds from issuance of long-term debt,51,0
+cash_flow,html:gain-on-sale-of-cable-system,html:gain-on-sale-of-cable-system,Gain on sale of cable system,6,0
+cash_flow,html:decrease-in-income-taxes-payable,html:decrease-in-income-taxes-payable,Decrease in income taxes payable,27,0
+cash_flow,html:proceeds-from-sale-of-cable-system-net,html:proceeds-from-sale-of-cable-system-net,"Proceeds from sale of cable system, net",38,0
+cash_flow,html:acquisition-of-cable-system,html:acquisition-of-cable-system,Acquisition of cable system,39,0

@@ -1,0 +1,297 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,15,0
+balance_sheet,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,us-gaap:AllowanceForDoubtfulAccountsReceivableCurrent,Accounts receivable – net of related allowance for credit loss of $429 and $375,18,0
+balance_sheet,us-gaap:PrepaidExpenseCurrent,us-gaap:PrepaidExpenseCurrent,Inventories,20,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid and other current assets,22,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,23,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property, Plant and Equipment – Net",26,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill – Net,27,0
+balance_sheet,us-gaap:IndefiniteLivedLicenseAgreements,us-gaap:IndefiniteLivedLicenseAgreements,Licenses – Net,28,0
+balance_sheet,us-gaap:OtherIntangibleAssetsNet,us-gaap:OtherIntangibleAssetsNet,Other Intangible Assets – Net,33,0
+balance_sheet,us-gaap:EquityMethodInvestments,us-gaap:EquityMethodInvestments,Investments in and Advances to Equity Affiliates,34,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating Lease Right-Of-Use Assets,35,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other Assets,37,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total Assets,38,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,Liabilities and Stockholders’ Equity,39,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current Liabilities,40,0
+balance_sheet,us-gaap:DebtCurrent,us-gaap:DebtCurrent,Debt maturing within one year,48,0
+balance_sheet,us-gaap:AccountsPayableAndAccruedLiabilitiesCurrent,us-gaap:AccountsPayableAndAccruedLiabilitiesCurrent,Accounts payable and accrued liabilities,51,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Advanced billings and customer deposits,55,0
+balance_sheet,us-gaap:DividendsPayableCurrent,us-gaap:DividendsPayableCurrent,Dividends payable,56,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,58,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-Term Debt,59,0
+balance_sheet,html:deferred-credits-and-other-noncurrent-liabilities,html:deferred-credits-and-other-noncurrent-liabilities,Deferred Credits and Other Noncurrent Liabilities,60,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Noncurrent deferred tax liabilities,66,0
+balance_sheet,us-gaap:PostemploymentBenefitsLiabilityNoncurrent,us-gaap:PostemploymentBenefitsLiabilityNoncurrent,Postemployment benefit obligation,67,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating lease liabilities,68,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,69,0
+balance_sheet,us-gaap:DeferredCreditsAndOtherLiabilitiesNoncurrent,us-gaap:DeferredCreditsAndOtherLiabilitiesNoncurrent,Total deferred credits and other noncurrent liabilities,71,0
+balance_sheet,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,us-gaap:RedeemableNoncontrollingInterestEquityCarryingAmount,Redeemable Noncontrolling Interest,72,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders’ Equity,73,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Preferred stock ($1 par value, 10,000,000 authorized at December 31, 2025 and December 31, 2024):",89,0
+balance_sheet,us-gaap:PreferredStockSharesOutstanding,us-gaap:PreferredStockSharesOutstanding,"Series A (48,000 issued and outstanding at December 31, 2025 and December 31, 2024)",90,0
+balance_sheet,us-gaap:PreferredStockSharesIssued,us-gaap:PreferredStockSharesIssued,"Series B (20,000 issued and 0 outstanding at December 31, 2025 and 20,000 issued and outstanding at December 31, 2024)",91,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Common stock ($1 par value, 14,000,000,000 authorized at December 31, 2025 andDecember 31, 2024: issued 7,620,748,598 at December 31, 2025 and December 31, 2024)",92,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Additional paid-in capital,93,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,94,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Treasury stock (583,246,242 at December 31, 2025 and 444,853,148 at December 31, 2024, at cost)",101,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),102,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interest,103,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total stockholders’ equity,104,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total Liabilities and Stockholders’ Equity,105,0
+income_statement,html:service,html:service,Service,0,0
+income_statement,html:equipment,html:equipment,Equipment,1,0
+income_statement,html:total-operating-revenues,html:total-operating-revenues,Total operating revenues,2,0
+income_statement,html:broadcast-programming-and-operations,html:broadcast-programming-and-operations,"Broadcast, programming and operations",3,0
+income_statement,html:other-cost-of-revenues-exclusive-of-depreciation-and-amortization-shown-separately-below,html:other-cost-of-revenues-exclusive-of-depreciation-and-amortization-shown-separately-below,Other cost of revenues (exclusive of depreciation and amortization shown separately below),4,0
+income_statement,html:selling-general-and-administrative,html:selling-general-and-administrative,"Selling, general and administrative",5,0
+income_statement,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,6,0
+income_statement,html:total-operating-expenses,html:total-operating-expenses,Total operating expenses,7,0
+income_statement,html:operating-income,html:operating-income,Operating Income,8,0
+income_statement,html:interest-expense,html:interest-expense,Interest expense,9,0
+income_statement,html:equity-in-net-income-loss-of-affiliates,html:equity-in-net-income-loss-of-affiliates,Equity in net income (loss) of affiliates,10,0
+income_statement,html:other-income-expense-net,html:other-income-expense-net,Other income (expense) - net,11,0
+income_statement,html:total-other-income-expense,html:total-other-income-expense,Total other income (expense),12,0
+income_statement,html:income-before-income-taxes,html:income-before-income-taxes,Income Before Income Taxes,13,0
+income_statement,html:net-income,html:net-income,Net Income,14,0
+income_statement,html:less-net-income-attributable-to-noncontrolling-interest,html:less-net-income-attributable-to-noncontrolling-interest,Less: Net Income Attributable to Noncontrolling Interest,15,0
+income_statement,html:net-income-attributable-to-at-t,html:net-income-attributable-to-at-t,Net Income Attributable to AT&T,16,0
+income_statement,html:diluted-earnings-per-share-attributable-to-at-t,html:diluted-earnings-per-share-attributable-to-at-t,Diluted Earnings Per Share Attributable to AT&T,17,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:accounts-receivable-net-of-allowances-for-doubtful-accounts-of-907-and-663,html:accounts-receivable-net-of-allowances-for-doubtful-accounts-of-907-and-663,Accounts receivable - net of allowances for doubtful accounts of $907 and $663,1,0
+balance_sheet,html:prepaid-expenses,html:prepaid-expenses,Prepaid expenses,2,0
+balance_sheet,html:other-current-assets,html:other-current-assets,Other current assets,3,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,4,0
+balance_sheet,html:noncurrent-inventories-and-theatrical-film-and-television-production-costs,html:noncurrent-inventories-and-theatrical-film-and-television-production-costs,Noncurrent inventories and theatrical film and television production costs,5,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, Plant and Equipment - Net",6,0
+balance_sheet,html:goodwill,html:goodwill,Goodwill,7,0
+balance_sheet,html:licenses,html:licenses,Licenses,8,0
+balance_sheet,html:trademarks-and-tradenames-net,html:trademarks-and-tradenames-net,Trademarks And Tradenames - Net,9,0
+balance_sheet,html:distribution-networks-net,html:distribution-networks-net,Distribution Networks - Net,10,0
+balance_sheet,html:other-intangible-assets-net,html:other-intangible-assets-net,Other Intangible Assets - Net,11,0
+balance_sheet,html:investments-in-and-advances-to-equity-affiliates,html:investments-in-and-advances-to-equity-affiliates,Investments In and Advances to Equity Affiliates,12,0
+balance_sheet,html:other-assets,html:other-assets,Other Assets,13,0
+balance_sheet,html:total-assets,html:total-assets,Total Assets,14,0
+balance_sheet,html:debt-maturing-within-one-year,html:debt-maturing-within-one-year,Debt maturing within one year,41,0
+balance_sheet,html:accounts-payable-and-accrued-liabilities,html:accounts-payable-and-accrued-liabilities,Accounts payable and accrued liabilities,42,0
+balance_sheet,html:advanced-billings-and-customer-deposits,html:advanced-billings-and-customer-deposits,Advanced billings and customer deposits,43,0
+balance_sheet,html:accrued-taxes,html:accrued-taxes,Accrued taxes,44,0
+balance_sheet,html:dividends-payable,html:dividends-payable,Dividends payable,45,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,46,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-Term Debt,47,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,61,0
+balance_sheet,html:postemployment-benefit-obligation,html:postemployment-benefit-obligation,Postemployment benefit obligation,62,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,63,0
+balance_sheet,html:total-deferred-credits-and-other-noncurrent-liabilities,html:total-deferred-credits-and-other-noncurrent-liabilities,Total deferred credits and other noncurrent liabilities,64,0
+balance_sheet,html:common-stock-1-par-value-14-000-000-000-authorized-at-december-31-2018-and-2017-issued-7-620-748-598-at-december-31-2018-and-6-495-231-088-at-2017,html:common-stock-1-par-value-14-000-000-000-authorized-at-december-31-2018-and-2017-issued-7-620-748-598-at-december-31-2018-and-6-495-231-088-at-2017,"Common stock ($1 par value, 14,000,000,000 authorized at December 31, 2018 and 2017: issued 7,620,748,598 at December 31, 2018 and 6,495,231,088 at 2017)",74,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,75,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,76,0
+balance_sheet,html:treasury-stock-339-120-073-at-december-31-2018-and-355-806-544-at-december-31-2017-at-cost,html:treasury-stock-339-120-073-at-december-31-2018-and-355-806-544-at-december-31-2017-at-cost,"Treasury stock (339,120,073 at December 31, 2018 and 355,806,544 at December 31, 2017, at cost)",77,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,78,0
+balance_sheet,html:noncontrolling-interest,html:noncontrolling-interest,Noncontrolling interest,79,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,80,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total Liabilities and Stockholders' Equity,81,0
+cash_flow,html:net-income,html:net-income,Net Income,0,0
+cash_flow,html:depreciation-and-amortization,html:depreciation-and-amortization,Depreciation and amortization,1,0
+cash_flow,html:undistributed-earnings-from-investments-in-equity-affiliates,html:undistributed-earnings-from-investments-in-equity-affiliates,Undistributed earnings from investments in equity affiliates,2,0
+cash_flow,html:provision-for-uncollectible-accounts,html:provision-for-uncollectible-accounts,Provision for uncollectible accounts,3,0
+cash_flow,html:changes-in-operating-assets-and-liabilities,html:changes-in-operating-assets-and-liabilities,Changes in operating assets and liabilities:,4,0
+cash_flow,html:accounts-receivable,html:accounts-receivable,Accounts receivable,5,0
+cash_flow,html:accounts-payable-and-other-accrued-liabilities,html:accounts-payable-and-other-accrued-liabilities,Accounts payable and other accrued liabilities,6,0
+cash_flow,html:equipment-installment-receivables-and-related-sales,html:equipment-installment-receivables-and-related-sales,Equipment installment receivables and related sales,7,0
+cash_flow,html:deferred-customer-contract-acquisition-and-fulfillment-costs,html:deferred-customer-contract-acquisition-and-fulfillment-costs,Deferred customer contract acquisition and fulfillment costs,8,0
+cash_flow,html:retirement-benefit-funding,html:retirement-benefit-funding,Retirement benefit funding,9,0
+cash_flow,html:other-net,html:other-net,Other - net,10,0
+cash_flow,html:total-adjustments,html:total-adjustments,Total adjustments,11,0
+cash_flow,html:net-cash-provided-by-operating-activities,html:net-cash-provided-by-operating-activities,Net Cash Provided by Operating Activities,12,0
+cash_flow,html:purchase-of-property-and-equipment,html:purchase-of-property-and-equipment,Purchase of property and equipment,13,0
+cash_flow,html:interest-during-construction,html:interest-during-construction,Interest during construction,14,0
+cash_flow,html:acquisitions-net-of-cash-acquired,html:acquisitions-net-of-cash-acquired,"Acquisitions, net of cash acquired",15,0
+cash_flow,html:purchases-sales-of-securities-net,html:purchases-sales-of-securities-net,"(Purchases) sales of securities, net",16,0
+cash_flow,html:other,html:other,Other,17,0
+cash_flow,html:net-cash-used-in-investing-activities,html:net-cash-used-in-investing-activities,Net Cash Used in Investing Activities,18,0
+cash_flow,html:net-change-in-short-term-borrowings-with-original-maturities-of-three-months-or-less,html:net-change-in-short-term-borrowings-with-original-maturities-of-three-months-or-less,Net change in short-term borrowings with original maturities of three months or less,19,0
+cash_flow,html:issuance-of-other-short-term-borrowings,html:issuance-of-other-short-term-borrowings,Issuance of other short-term borrowings,20,0
+cash_flow,html:issuance-of-long-term-debt,html:issuance-of-long-term-debt,Issuance of long-term debt,21,0
+cash_flow,html:repayment-of-long-term-debt,html:repayment-of-long-term-debt,Repayment of long-term debt,22,0
+cash_flow,html:purchase-of-treasury-stock,html:purchase-of-treasury-stock,Purchase of treasury stock,23,0
+cash_flow,html:issuance-of-treasury-stock,html:issuance-of-treasury-stock,Issuance of treasury stock,24,0
+cash_flow,html:dividends-paid,html:dividends-paid,Dividends paid,25,0
+cash_flow,html:cash-and-cash-equivalents-and-restricted-cash-beginning-of-year,html:cash-and-cash-equivalents-and-restricted-cash-beginning-of-year,Cash and cash equivalents and restricted cash beginning of year,26,0
+cash_flow,html:cash-and-cash-equivalents-and-restricted-cash-end-of-period,html:cash-and-cash-equivalents-and-restricted-cash-end-of-period,Cash and Cash Equivalents and Restricted Cash End of Period,27,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable - net of allowances for doubtful accounts of $1,235 and $907",16,0
+balance_sheet,us-gaap:OtherAssetsCurrent,us-gaap:OtherAssetsCurrent,Other current assets,21,0
+balance_sheet,t:NoncurrentInventoriesAndFilmCosts,t:NoncurrentInventoriesAndFilmCosts,Noncurrent inventories and theatrical film and television production costs,24,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, Plant and Equipment – Net",25,0
+balance_sheet,us-gaap:IndefiniteLivedIntangibleAssetsExcludingGoodwill,us-gaap:IndefiniteLivedIntangibleAssetsExcludingGoodwill,Trademarks and Trade Names – Net,29,0
+balance_sheet,us-gaap:CustomerAdvancesAndDepositsCurrent,us-gaap:CustomerAdvancesAndDepositsCurrent,Advanced billings and customer deposits,52,0
+balance_sheet,us-gaap:TaxesPayableCurrent,us-gaap:TaxesPayableCurrent,Accrued taxes,53,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,65,0
+balance_sheet,html:preferred-stock-1-par-value-5-cumulative-10-000-000-authorized-48-000-shares-issued,html:preferred-stock-1-par-value-5-cumulative-10-000-000-authorized-48-000-shares-issued,"Preferred stock ($1 par value, 5% cumulative, 10,000,000 authorized, 48,000 shares issued",82,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"and outstanding at December 31, 2019 and 0 issued and outstanding at December 31, 2018)",83,0
+balance_sheet,html:common-stock-1-par-value-14-000-000-000-authorized-at-december-31-2019-and,html:common-stock-1-par-value-14-000-000-000-authorized-at-december-31-2019-and,"Common stock ($1 par value, 14,000,000,000 authorized at December 31, 2019 and",84,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"December 31, 2018: issued 7,620,748,598 at December 31, 2019 and at December 31, 2018)",85,0
+balance_sheet,html:treasury-stock-366-193-458-at-december-31-2019-and-339-120-073-at-december-31-2018,html:treasury-stock-366-193-458-at-december-31-2019-and-339-120-073-at-december-31-2018,"Treasury stock (366,193,458 at December 31, 2019 and 339,120,073 at December 31, 2018,",95,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,at cost),96,0
+balance_sheet,html:the-accompanying-notes-are-an-integral-part-of-the-consolidated-financial-statements,html:the-accompanying-notes-are-an-integral-part-of-the-consolidated-financial-statements,The accompanying notes are an integral part of the consolidated financial statements.,106,0
+balance_sheet,us-gaap:FiniteLivedIntangibleAssetsNet,us-gaap:FiniteLivedIntangibleAssetsNet,Trademarks and Trade Names – Net,30,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Advanced billings and customer deposits,54,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Treasury stock (494,826,583 at December 31, 2020and 366,193,458 at December 31, 2019, at cost)",97,0
+balance_sheet,us-gaap:DueToRelatedPartiesCurrent,us-gaap:DueToRelatedPartiesCurrent,Note payable to DIRECTV,49,0
+balance_sheet,us-gaap:DueToRelatedPartiesNoncurrent,us-gaap:DueToRelatedPartiesNoncurrent,Noncurrent portion of note payable to DIRECTV,70,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Assets from discontinued operations,107,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperationCurrent,Liabilities from discontinued operations,57,0
+income_statement,html:income-tax-expense,html:income-tax-expense,Income tax expense,21,0
+income_statement,html:weighted-average-number-of-common-shares-outstanding-basic-in-millions,html:weighted-average-number-of-common-shares-outstanding-basic-in-millions,Weighted Average Number of Common Shares Outstanding – Basic (in millions),22,0
+income_statement,html:weighted-average-number-of-common-shares-outstanding-with-dilution-in-millions,html:weighted-average-number-of-common-shares-outstanding-with-dilution-in-millions,Weighted Average Number of Common Shares Outstanding – with Dilution (in millions),30,0
+income_statement,html:see-notes-to-consolidated-financial-statements,html:see-notes-to-consolidated-financial-statements,See Notes to Consolidated Financial Statements.,38,0
+balance_sheet,html:accounts-receivable-net-of-allowances-for-doubtful-accounts-of-905-and-907,html:accounts-receivable-net-of-allowances-for-doubtful-accounts-of-905-and-907,Accounts receivable - net of allowances for doubtful accounts of $905 and $907,108,0
+balance_sheet,html:property-plant-and-equipment,html:property-plant-and-equipment,"Property, plant and equipment",109,0
+balance_sheet,html:less-accumulated-depreciation-and-amortization,html:less-accumulated-depreciation-and-amortization,Less: accumulated depreciation and amortization,118,0
+balance_sheet,html:licenses-net,html:licenses-net,Licenses – Net,110,0
+balance_sheet,html:trademarks-and-trade-names-net,html:trademarks-and-trade-names-net,Trademarks and Trade Names – Net,119,0
+balance_sheet,html:operating-lease-right-of-use-assets,html:operating-lease-right-of-use-assets,Operating Lease Right-of-Use Assets,111,0
+balance_sheet,html:operating-lease-liabilities,html:operating-lease-liabilities,Operating lease liabilities,112,0
+balance_sheet,html:common-stock-1-par-value-14-000-000-000-authorized-at-march-31-2019-and-december-31-2018-issued-7-620-748-598-at-march-31-2019-and-december-31-2018,html:common-stock-1-par-value-14-000-000-000-authorized-at-march-31-2019-and-december-31-2018-issued-7-620-748-598-at-march-31-2019-and-december-31-2018,"Common stock ($1 par value, 14,000,000,000 authorized at March 31, 2019 and December 31, 2018: issued 7,620,748,598 at March 31, 2019 and December 31, 2018)",86,0
+balance_sheet,html:treasury-stock-323-523-763-at-march-31-2019-and-339-120-073,html:treasury-stock-323-523-763-at-march-31-2019-and-339-120-073,"Treasury stock (323,523,763 at March 31, 2019 and 339,120,073",113,0
+balance_sheet,html:at-december-31-2018-at-cost,html:at-december-31-2018-at-cost,"at December 31, 2018, at cost)",120,0
+balance_sheet,html:see-notes-to-consolidated-financial-statements,html:see-notes-to-consolidated-financial-statements,See Notes to Consolidated Financial Statements.,114,0
+cash_flow,html:amortization-of-television-and-film-costs,html:amortization-of-television-and-film-costs,Amortization of television and film costs,30,0
+cash_flow,html:deferred-income-tax-expense,html:deferred-income-tax-expense,Deferred income tax expense,31,0
+cash_flow,html:net-gain-loss-from-investments-net-of-impairments,html:net-gain-loss-from-investments-net-of-impairments,"Net (gain) loss from investments, net of impairments",60,0
+cash_flow,html:actuarial-gain-loss-on-pension-and-postretirement-benefits,html:actuarial-gain-loss-on-pension-and-postretirement-benefits,Actuarial (gain) loss on pension and postretirement benefits,71,0
+cash_flow,html:other-current-assets-inventories-and-theatrical-film-and-television-production-costs,html:other-current-assets-inventories-and-theatrical-film-and-television-production-costs,"Other current assets, inventories and theatrical film and television production costs",32,0
+cash_flow,html:capital-expenditures,html:capital-expenditures,Capital expenditures:,33,0
+cash_flow,html:dispositions,html:dispositions,Dispositions,34,0
+cash_flow,html:advances-to-and-investments-in-equity-affiliates-net,html:advances-to-and-investments-in-equity-affiliates-net,"Advances to and investments in equity affiliates, net",35,0
+cash_flow,html:repayment-of-other-short-term-borrowings,html:repayment-of-other-short-term-borrowings,Repayment of other short-term borrowings,36,0
+cash_flow,html:net-cash-used-in-financing-activities,html:net-cash-used-in-financing-activities,Net Cash Used in Financing Activities,37,0
+cash_flow,html:net-increase-decrease-in-cash-and-cash-equivalents-and-restricted-cash,html:net-increase-decrease-in-cash-and-cash-equivalents-and-restricted-cash,Net increase (decrease) in cash and cash equivalents and restricted cash,61,0
+cash_flow,html:see-notes-to-consolidated-financial-statements,html:see-notes-to-consolidated-financial-statements,See Notes to Consolidated Financial Statements.,38,0
+income_statement,t:Service,t:Service,Service,18,0
+income_statement,t:Equipment,t:Equipment,Equipment,19,0
+income_statement,us-gaap:Revenues,us-gaap:Revenues,Total operating revenues,20,0
+income_statement,us-gaap:CostOfGoodsSoldExcludingDepreciationDepletionAndAmortization,us-gaap:CostOfGoodsSoldExcludingDepreciationDepletionAndAmortization,Equipment,23,0
+income_statement,us-gaap:CostOfServicesExcludingDepreciationDepletionAndAmortization,us-gaap:CostOfServicesExcludingDepreciationDepletionAndAmortization,"Broadcast, programming and operations",31,0
+income_statement,us-gaap:OtherCostOfOperatingRevenue,us-gaap:OtherCostOfOperatingRevenue,Other cost of revenues (exclusive of depreciation and amortization shown separately below),39,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general and administrative",44,0
+income_statement,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,46,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,Total operating expenses,48,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Operating Income,50,0
+income_statement,us-gaap:InterestExpense,us-gaap:InterestExpense,Interest expense,24,0
+income_statement,us-gaap:IncomeLossFromEquityMethodInvestments,us-gaap:IncomeLossFromEquityMethodInvestments,Equity in net income (loss) of affiliates,32,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Other income (expense) – net,40,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,Total other income (expense),45,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income Before Income Taxes,47,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax expense,49,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net Income,51,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Less: Net Income Attributable to Noncontrolling Interest,52,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net Income Attributable to AT&T,54,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic Earnings Per Share Attributable to AT&T,55,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted Earnings Per Share Attributable to AT&T,56,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Weighted Average Number of Common Shares Outstanding – Basic (in millions),57,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Weighted Average Number of Common Shares Outstanding – with Dilution (in millions),58,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,"Property, plant and equipment",115,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Less: accumulated depreciation and amortization,121,0
+balance_sheet,t:TrademarksAndTradenamesNet,t:TrademarksAndTradenamesNet,Trademarks and Trade Names – Net,31,0
+balance_sheet,t:DistributionNetworksNet,t:DistributionNetworksNet,Distribution Networks – Net,32,0
+cash_flow,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,28,0
+cash_flow,t:AmortizationOfFilmAndTelevisionCosts,t:AmortizationOfFilmAndTelevisionCosts,Amortization of television and film costs,62,0
+cash_flow,us-gaap:IncomeLossFromEquityMethodInvestmentsNetOfDividendsOrDistributions,us-gaap:IncomeLossFromEquityMethodInvestmentsNetOfDividendsOrDistributions,Undistributed earnings from investments in equity affiliates,72,0
+cash_flow,us-gaap:ProvisionForDoubtfulAccounts,us-gaap:ProvisionForDoubtfulAccounts,Provision for uncollectible accounts,78,0
+cash_flow,us-gaap:DeferredIncomeTaxExpenseBenefit,us-gaap:DeferredIncomeTaxExpenseBenefit,Deferred income tax expense,83,0
+cash_flow,us-gaap:GainLossOnSalesOfAssetsAndAssetImpairmentCharges,us-gaap:GainLossOnSalesOfAssetsAndAssetImpairmentCharges,"Net (gain) loss from investments, net of impairments",88,0
+cash_flow,us-gaap:DefinedBenefitPlanActuarialGainLoss,us-gaap:DefinedBenefitPlanActuarialGainLoss,Actuarial (gain) loss on pension and postretirement benefits,93,0
+cash_flow,us-gaap:IncreaseDecreaseInReceivables,us-gaap:IncreaseDecreaseInReceivables,Accounts receivable,39,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingAssets,us-gaap:IncreaseDecreaseInOtherOperatingAssets,"Other current assets, inventories and theatrical film and television production costs",63,0
+cash_flow,us-gaap:IncreaseDecreaseInOperatingLiabilities,us-gaap:IncreaseDecreaseInOperatingLiabilities,Accounts payable and other accrued liabilities,73,0
+cash_flow,t:IncreaseDecreaseInNetOperatingAssetsEquipInstallmentReceivablesAndRelatedAssetSales,t:IncreaseDecreaseInNetOperatingAssetsEquipInstallmentReceivablesAndRelatedAssetSales,Equipment installment receivables and related sales,79,0
+cash_flow,t:IncreaseDecreaseInOperatingAssetsDeferredFulfillmentCosts,t:IncreaseDecreaseInOperatingAssetsDeferredFulfillmentCosts,Deferred customer contract acquisition and fulfillment costs,84,0
+cash_flow,t:PensionAndOtherPostretirementBenefitAdjustment,t:PensionAndOtherPostretirementBenefitAdjustment,Employee retirement benefits,89,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,us-gaap:IncreaseDecreaseInOtherOperatingCapitalNet,Other - net,94,0
+cash_flow,us-gaap:AdjustmentsToReconcileNetIncomeLossToCashProvidedByUsedInOperatingActivities,us-gaap:AdjustmentsToReconcileNetIncomeLossToCashProvidedByUsedInOperatingActivities,Total adjustments,97,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net Cash Provided by Operating Activities,101,0
+cash_flow,us-gaap:PaymentsToAcquireProductiveAssets,us-gaap:PaymentsToAcquireProductiveAssets,Purchase of property and equipment,40,0
+cash_flow,us-gaap:InterestPaidCapitalized,us-gaap:InterestPaidCapitalized,Interest during construction,64,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisitions, net of cash acquired",74,0
+cash_flow,us-gaap:ProceedsFromDivestitureOfBusinessesAndInterestsInAffiliates,us-gaap:ProceedsFromDivestitureOfBusinessesAndInterestsInAffiliates,Dispositions,80,0
+cash_flow,us-gaap:PaymentsForProceedsFromInvestments,us-gaap:PaymentsForProceedsFromInvestments,"(Purchases), sales and settlements of securities and investments, net",85,0
+cash_flow,t:AdvancesInvestmentsInCollectionsPaymentsFromAffiliates,t:AdvancesInvestmentsInCollectionsPaymentsFromAffiliates,"Advances to and investments in equity affiliates, net",90,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net Cash Used in Investing Activities,98,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfShortTermDebtMaturingInThreeMonthsOrLess,us-gaap:ProceedsFromRepaymentsOfShortTermDebtMaturingInThreeMonthsOrLess,Net change in short-term borrowings with original maturities of three months or less,41,0
+cash_flow,us-gaap:ProceedsFromOtherShortTermDebt,us-gaap:ProceedsFromOtherShortTermDebt,Issuance of other short-term borrowings,65,0
+cash_flow,us-gaap:RepaymentsOfOtherShortTermDebt,us-gaap:RepaymentsOfOtherShortTermDebt,Repayment of other short-term borrowings,75,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Issuance of long-term debt,81,0
+cash_flow,us-gaap:RepaymentsOfLongTermDebt,us-gaap:RepaymentsOfLongTermDebt,Repayment of long-term debt,86,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Purchase of treasury stock,91,0
+cash_flow,us-gaap:ProceedsFromSaleOfTreasuryStock,us-gaap:ProceedsFromSaleOfTreasuryStock,Issuance of treasury stock,95,0
+cash_flow,us-gaap:PaymentsOfDividendsCommonStock,us-gaap:PaymentsOfDividendsCommonStock,Dividends paid,99,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other,102,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net Cash Used in Financing Activities,103,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,Net increase (decrease) in cash and cash equivalents and restricted cash,104,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,Cash and cash equivalents and restricted cash beginning of year,105,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Equipment,53,0
+balance_sheet,html:common-stock-1-par-value-14-000-000-000-authorized-at-september-30-2019-and,html:common-stock-1-par-value-14-000-000-000-authorized-at-september-30-2019-and,"Common stock ($1 par value, 14,000,000,000 authorized at September 30, 2019 and",87,0
+balance_sheet,html:treasury-stock-317-374-689-at-september-30-2019-and-339-120-073-december-31-2018,html:treasury-stock-317-374-689-at-september-30-2019-and-339-120-073-december-31-2018,"Treasury stock (317,374,689 at September 30, 2019 and 339,120,073 December 31, 2018,",98,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,42,0
+cash_flow,us-gaap:IncreaseDecreaseInPensionAndPostretirementObligations,us-gaap:IncreaseDecreaseInPensionAndPostretirementObligations,Pension and postretirement benefit expense (credit),43,0
+cash_flow,us-gaap:IncreaseDecreaseInOtherAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInOtherAccountsPayableAndAccruedLiabilities,Accounts payable and other accrued liabilities,44,0
+cash_flow,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,us-gaap:PaymentsForProceedsFromOtherInvestingActivities,Cash collections of deferred purchase price,45,0
+cash_flow,us-gaap:RepaymentsOfLongtermLoansFromVendors,us-gaap:RepaymentsOfLongtermLoansFromVendors,Payment of vendor financing,46,0
+cash_flow,us-gaap:ProceedsFromMinorityShareholders,us-gaap:ProceedsFromMinorityShareholders,Issuance of preferred interests in subsidiary,47,0
+income_statement,us-gaap:PreferredStockDividendsIncomeStatementImpact,us-gaap:PreferredStockDividendsIncomeStatementImpact,Less: Preferred Stock Dividends,25,0
+income_statement,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,us-gaap:NetIncomeLossAvailableToCommonStockholdersBasic,Net Income Attributable to Common Stock,33,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,"Accounts receivable - net of allowances for doubtful accounts of $1,651 and $1,235",17,0
+balance_sheet,html:preferred-stock-1-par-value-10-000-000-authorized,html:preferred-stock-1-par-value-10-000-000-authorized,"Preferred stock ($1 par value, 10,000,000 authorized):",88,0
+balance_sheet,html:series-b-20-000-issued-and-outstanding-at-march-31-2020,html:series-b-20-000-issued-and-outstanding-at-march-31-2020,"Series B (20,000 issued and outstanding at March 31, 2020",116,0
+balance_sheet,html:series-c-70-000-issued-and-outstanding-at-march-31-2020,html:series-c-70-000-issued-and-outstanding-at-march-31-2020,"Series C (70,000 issued and outstanding at March 31, 2020",122,0
+balance_sheet,html:common-stock-1-par-value-14-000-000-000-authorized-at-march-31-2020-and,html:common-stock-1-par-value-14-000-000-000-authorized-at-march-31-2020-and,"Common stock ($1 par value, 14,000,000,000 authorized at March 31, 2020 and",123,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,117,0
+balance_sheet,html:treasury-stock-495-533-462-at-march-31-2020-and-366-193-458-at-december-31-2019,html:treasury-stock-495-533-462-at-march-31-2020-and-366-193-458-at-december-31-2019,"Treasury stock (495,533,462 at March 31, 2020 and 366,193,458 at December 31, 2019,",99,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfPreferredStockAndPreferenceStock,us-gaap:ProceedsFromIssuanceOfPreferredStockAndPreferenceStock,Issuance of preferred stock,48,0
+income_statement,us-gaap:GoodwillImpairmentLoss,us-gaap:GoodwillImpairmentLoss,Asset impairments and abandonments,26,0
+income_statement,html:basic-earnings-per-share-attributable-to,html:basic-earnings-per-share-attributable-to,Basic Earnings Per Share Attributable to,27,0
+balance_sheet,html:series-b-20-000-issued-and-outstanding-at-june-30-2020,html:series-b-20-000-issued-and-outstanding-at-june-30-2020,"Series B (20,000 issued and outstanding at June 30, 2020",125,0
+balance_sheet,html:series-c-70-000-issued-and-outstanding-at-june-30-2020,html:series-c-70-000-issued-and-outstanding-at-june-30-2020,"Series C (70,000 issued and outstanding at June 30, 2020",127,0
+balance_sheet,html:common-stock-1-par-value-14-000-000-000-authorized-at-june-30-2020-and,html:common-stock-1-par-value-14-000-000-000-authorized-at-june-30-2020-and,"Common stock ($1 par value, 14,000,000,000 authorized at June 30, 2020 and",129,0
+balance_sheet,html:treasury-stock-495-425-902-at-june-30-2020-and-366-193-458-december-31-2019,html:treasury-stock-495-425-902-at-june-30-2020-and-366-193-458-december-31-2019,"Treasury stock (495,425,902 at June 30, 2020 and 366,193,458 December 31, 2019,",100,0
+cash_flow,us-gaap:GoodwillImpairmentLoss,us-gaap:GoodwillImpairmentLoss,Asset impairments and abandonments,49,0
+balance_sheet,t:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,t:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,"Property, plant and equipment",124,0
+balance_sheet,t:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,t:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,Less: accumulated depreciation and amortization,126,0
+income_statement,t:GoodwillImpairmentLossAndAssetsDisposedOfByMethodOtherThanSaleInPeriodOfDispositionLossOnDisposition,t:GoodwillImpairmentLossAndAssetsDisposedOfByMethodOtherThanSaleInPeriodOfDispositionLossOnDisposition,Asset impairments and abandonments,34,0
+balance_sheet,us-gaap:DepositsAssetsNoncurrent,us-gaap:DepositsAssetsNoncurrent,Deposits on Wireless Licenses,36,0
+cash_flow,t:GoodwillImpairmentLossAndAssetsDisposedOfByMethodOtherThanSaleInPeriodOfDispositionLossOnDisposition,t:GoodwillImpairmentLossAndAssetsDisposedOfByMethodOtherThanSaleInPeriodOfDispositionLossOnDisposition,Asset impairments and abandonments,66,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetBeforeAccumulatedDepreciationAndAmortization,"Property, plant and equipment",128,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAccumulatedDepreciationAndAmortization,Less: accumulated depreciation and amortization,130,0
+cash_flow,us-gaap:RepaymentsOfRelatedPartyDebt,us-gaap:RepaymentsOfRelatedPartyDebt,"Note payable to DIRECTV, net of payments of $361",67,0
+cash_flow,us-gaap:ProceedsFromEquityMethodInvestmentDividendsOrDistributionsReturnOfCapital,us-gaap:ProceedsFromEquityMethodInvestmentDividendsOrDistributionsReturnOfCapital,Distributions from DIRECTV in excess of cumulative equity in earnings,50,0
+cash_flow,us-gaap:ProceedsFromRepaymentsOfRelatedPartyDebt,us-gaap:ProceedsFromRepaymentsOfRelatedPartyDebt,Repayment of note payable to DIRECTV,76,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest,Income from Continuing Operations,28,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTax,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTax,"Income (loss) from discontinued operations, net of tax",35,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,us-gaap:IncomeLossFromContinuingOperationsPerBasicShare,Basic Earnings Per Share from continuing operations,36,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerBasicShare,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerBasicShare,Basic Earnings Per Share from discontinued operations,41,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,us-gaap:IncomeLossFromContinuingOperationsPerDilutedShare,Diluted Earnings Per Share from continuing operations,37,0
+income_statement,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare,us-gaap:IncomeLossFromDiscontinuedOperationsNetOfTaxPerDilutedShare,Diluted Earnings Per Share from discontinued operations,42,0
+cash_flow,us-gaap:IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest,Income from continuing operations,29,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivitiesContinuingOperations,us-gaap:NetCashProvidedByUsedInOperatingActivitiesContinuingOperations,Net Cash Provided by Operating Activities from Continuing Operations,51,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivitiesContinuingOperations,us-gaap:NetCashProvidedByUsedInInvestingActivitiesContinuingOperations,Net Cash Used in Investing Activities from Continuing Operations,52,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivitiesContinuingOperations,us-gaap:NetCashProvidedByUsedInFinancingActivitiesContinuingOperations,Net Cash (Used in) Provided by Financing Activities from Continuing Operations,53,0
+cash_flow,us-gaap:NetCashProvidedByUsedInContinuingOperations,us-gaap:NetCashProvidedByUsedInContinuingOperations,Net (decrease) increase in cash and cash equivalents and restricted cash from continuing operations,68,0
+cash_flow,html:cash-flows-from-discontinued-operations,html:cash-flows-from-discontinued-operations,Cash flows from Discontinued Operations:,77,0
+cash_flow,us-gaap:CashProvidedByUsedInOperatingActivitiesDiscontinuedOperations,us-gaap:CashProvidedByUsedInOperatingActivitiesDiscontinuedOperations,Cash (used in) provided by operating activities,82,0
+cash_flow,us-gaap:CashProvidedByUsedInInvestingActivitiesDiscontinuedOperations,us-gaap:CashProvidedByUsedInInvestingActivitiesDiscontinuedOperations,Cash provided by (used in) investing activities,87,0
+cash_flow,us-gaap:CashProvidedByUsedInFinancingActivitiesDiscontinuedOperations,us-gaap:CashProvidedByUsedInFinancingActivitiesDiscontinuedOperations,Cash provided by (used in) financing activities,92,0
+cash_flow,us-gaap:NetCashProvidedByUsedInDiscontinuedOperations,us-gaap:NetCashProvidedByUsedInDiscontinuedOperations,Net (decrease) increase in cash and cash equivalents and restricted cash from discontinued operations,96,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseExcludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseExcludingExchangeRateEffect,Net (decrease) increase in cash and cash equivalents and restricted cash,100,0
+balance_sheet,us-gaap:NotesPayableRelatedPartiesCurrentAndNoncurrent,us-gaap:NotesPayableRelatedPartiesCurrentAndNoncurrent,Note payable to DIRECTV,50,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,19,0
+cash_flow,t:DefinedBenefitPlanActuarialAndSettlementGainLoss,t:DefinedBenefitPlanActuarialAndSettlementGainLoss,Actuarial and settlement (gain) loss on pension and postretirement benefits - net,54,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfRedeemableNoncontrollingInterest,us-gaap:PaymentsForRepurchaseOfRedeemableNoncontrollingInterest,Redemption of preferred interests in subsidiary,55,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsAttributableToNoncontrollingEntity,us-gaap:IncomeLossFromContinuingOperationsAttributableToNoncontrollingEntity,Less: Net Income Attributable to Noncontrolling Interest,29,0
+income_statement,us-gaap:PreferredStockDividendsAndOtherAdjustments,us-gaap:PreferredStockDividendsAndOtherAdjustments,Preferred Stock Dividends and Redemption Gain,43,0
+cash_flow,us-gaap:GainLossOnInvestments,us-gaap:GainLossOnInvestments,Net (gain) loss on investments,69,0
+cash_flow,us-gaap:IncreaseDecreaseInIncomeTaxes,us-gaap:IncreaseDecreaseInIncomeTaxes,Changes in income taxes,56,0
+cash_flow,us-gaap:ProceedsFromRepurchaseOfRedeemablePreferredStock,us-gaap:ProceedsFromRepurchaseOfRedeemablePreferredStock,Redemption of preferred stock,70,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffectContinuingOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffectContinuingOperations,Net increase (decrease) in cash and cash equivalents and restricted cash from continuing operations,57,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffectDisposalGroupIncludingDiscontinuedOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffectDisposalGroupIncludingDiscontinuedOperations,Net increase (decrease) in cash and cash equivalents and restricted cash from discontinued operations,58,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations,Cash and cash equivalents and restricted cash beginning of year,59,0

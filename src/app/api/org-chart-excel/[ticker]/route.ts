@@ -2,8 +2,14 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { getOrgChartExcelBuffer, listOrgChartExcels, saveOrgChartExcelFile } from "@/lib/org-chart-excel";
+import {
+  excelWorkbookPreviewJson,
+  isPreviewRequest,
+  parsePreviewMaxParam,
+} from "@/lib/excel-workbook-preview-api";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function GET(request: Request, { params }: { params: Promise<{ ticker: string }> }) {
@@ -18,6 +24,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ tick
   if (file) {
     const buf = await getOrgChartExcelBuffer(userId, ticker, file);
     if (!buf) return NextResponse.json({ error: "File not found" }, { status: 404 });
+
+    if (isPreviewRequest(url.searchParams.get("preview"))) {
+      return excelWorkbookPreviewJson(buf, {
+        sheet: url.searchParams.get("sheet"),
+        maxRows: parsePreviewMaxParam(url.searchParams.get("maxRows")),
+        maxCols: parsePreviewMaxParam(url.searchParams.get("maxCols")),
+      });
+    }
+
     return new NextResponse(new Uint8Array(buf), {
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

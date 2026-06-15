@@ -1,0 +1,97 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net sales,0,0
+income_statement,us-gaap:CostOfRevenue,us-gaap:CostOfRevenue,Cost of products sold,6,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,Selling and administrative expense,21,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research and development expense,22,0
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,Interest expense - net,23,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,Other expense (income) - net,27,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before income taxes,28,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax expense,29,0
+income_statement,us-gaap:ProfitLoss,us-gaap:ProfitLoss,Net income,30,0
+income_statement,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,us-gaap:NetIncomeLossAttributableToNoncontrollingInterest,Less net income for noncontrolling interests,31,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income attributable to Eaton ordinary shareholders,32,0
+income_statement,html:net-income-per-share-attributable-to-eaton-ordinary-shareholders,html:net-income-per-share-attributable-to-eaton-ordinary-shareholders,Net income per share attributable to Eaton ordinary shareholders,33,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Diluted,34,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Basic,35,0
+income_statement,html:weighted-average-number-of-ordinary-shares-outstanding,html:weighted-average-number-of-ordinary-shares-outstanding,Weighted-average number of ordinary shares outstanding,36,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Diluted,37,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Basic,38,0
+income_statement,us-gaap:CommonStockDividendsPerShareDeclared,us-gaap:CommonStockDividendsPerShareDeclared,Cash dividends declared per ordinary share,39,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash,0,0
+balance_sheet,us-gaap:ShortTermInvestments,us-gaap:ShortTermInvestments,Short-term investments,1,0
+balance_sheet,us-gaap:ReceivablesNetCurrent,us-gaap:ReceivablesNetCurrent,Accounts receivable - net,2,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventory,3,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,4,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,6,0
+balance_sheet,html:property-plant-and-equipment,html:property-plant-and-equipment,"Property, plant and equipment",7,0
+balance_sheet,etn:LandAndBuildings,etn:LandAndBuildings,Land and buildings,8,0
+balance_sheet,us-gaap:MachineryAndEquipmentGross,us-gaap:MachineryAndEquipmentGross,Machinery and equipment,9,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentGross,us-gaap:PropertyPlantAndEquipmentGross,"Gross property, plant and equipment",10,0
+balance_sheet,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment,Accumulated depreciation,11,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Net property, plant and equipment",12,0
+balance_sheet,html:other-noncurrent-assets,html:other-noncurrent-assets,Other noncurrent assets,13,0
+balance_sheet,us-gaap:Goodwill,us-gaap:Goodwill,Goodwill,14,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,Other intangible assets,15,0
+balance_sheet,us-gaap:OperatingLeaseRightOfUseAsset,us-gaap:OperatingLeaseRightOfUseAsset,Operating lease assets,16,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred income taxes,17,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other assets,20,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,21,0
+balance_sheet,html:liabilities-and-shareholders-equity,html:liabilities-and-shareholders-equity,Liabilities and shareholders’ equity,22,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities,23,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Short-term debt,24,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent,Current portion of long-term debt,25,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,26,0
+balance_sheet,us-gaap:EmployeeRelatedLiabilitiesCurrent,us-gaap:EmployeeRelatedLiabilitiesCurrent,Accrued compensation,27,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other current liabilities,28,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,30,0
+balance_sheet,html:noncurrent-liabilities,html:noncurrent-liabilities,Noncurrent liabilities,32,0
+balance_sheet,us-gaap:LongTermDebtAndCapitalLeaseObligations,us-gaap:LongTermDebtAndCapitalLeaseObligations,Long-term debt,33,0
+balance_sheet,us-gaap:DefinedBenefitPensionPlanLiabilitiesNoncurrent,us-gaap:DefinedBenefitPensionPlanLiabilitiesNoncurrent,Pension liabilities,34,0
+balance_sheet,us-gaap:OtherPostretirementDefinedBenefitPlanLiabilitiesNoncurrent,us-gaap:OtherPostretirementDefinedBenefitPlanLiabilitiesNoncurrent,Other postretirement benefits liabilities,35,0
+balance_sheet,us-gaap:OperatingLeaseLiabilityNoncurrent,us-gaap:OperatingLeaseLiabilityNoncurrent,Operating lease liabilities,36,0
+balance_sheet,us-gaap:DeferredIncomeTaxLiabilitiesNet,us-gaap:DeferredIncomeTaxLiabilitiesNet,Deferred income taxes,37,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,40,0
+balance_sheet,us-gaap:LiabilitiesNoncurrent,us-gaap:LiabilitiesNoncurrent,Total noncurrent liabilities,41,0
+balance_sheet,html:shareholders-equity,html:shareholders-equity,Shareholders’ equity,43,0
+balance_sheet,us-gaap:CommonStockSharesOutstanding,us-gaap:CommonStockSharesOutstanding,Ordinary shares (388.3 million outstanding in 2026 and 387.9 million in 2025),44,0
+balance_sheet,us-gaap:AdditionalPaidInCapitalCommonStock,us-gaap:AdditionalPaidInCapitalCommonStock,Capital in excess of par value,48,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,49,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive loss,50,0
+balance_sheet,us-gaap:DeferredCompensationEquity,us-gaap:DeferredCompensationEquity,Shares held in trust,51,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total Eaton shareholders’ equity,52,0
+balance_sheet,us-gaap:MinorityInterest,us-gaap:MinorityInterest,Noncontrolling interests,53,0
+balance_sheet,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest,Total equity,54,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and equity,55,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R3,Electrical Global,1,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R4,Aerospace,2,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R5,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R5,Vehicle,3,0
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R6,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax@R6,eMobility,4,0
+income_statement,html:other-segment-items,html:other-segment-items,Other segment items,5,0
+income_statement,us-gaap:CostOfRevenue@R10,us-gaap:CostOfRevenue@R10,Electrical Global,7,0
+income_statement,us-gaap:CostOfRevenue@R11,us-gaap:CostOfRevenue@R11,Aerospace,8,0
+income_statement,us-gaap:CostOfRevenue@R12,us-gaap:CostOfRevenue@R12,Vehicle,9,0
+income_statement,us-gaap:CostOfRevenue@R13,us-gaap:CostOfRevenue@R13,eMobility,10,0
+income_statement,us-gaap:CostOfRevenue@R14,us-gaap:CostOfRevenue@R14,Total other segment items,11,0
+income_statement,html:segment-operating-profit-loss,html:segment-operating-profit-loss,Segment operating profit (loss),12,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Electrical Americas,13,0
+income_statement,us-gaap:OperatingIncomeLoss@R17,us-gaap:OperatingIncomeLoss@R17,Electrical Global,14,0
+income_statement,us-gaap:OperatingIncomeLoss@R18,us-gaap:OperatingIncomeLoss@R18,Aerospace,15,0
+income_statement,us-gaap:OperatingIncomeLoss@R19,us-gaap:OperatingIncomeLoss@R19,Vehicle,16,0
+income_statement,us-gaap:OperatingIncomeLoss@R20,us-gaap:OperatingIncomeLoss@R20,eMobility,17,0
+income_statement,us-gaap:OperatingIncomeLoss@R21,us-gaap:OperatingIncomeLoss@R21,Total segment operating profit,18,0
+income_statement,html:corporate,html:corporate,Corporate,19,0
+income_statement,us-gaap:AmortizationOfIntangibleAssets,us-gaap:AmortizationOfIntangibleAssets,Intangible asset amortization expense,20,0
+income_statement,etn:PensionAndOtherPostretirementBenefitsCostReversalOfCostAdditionalReconciliation,etn:PensionAndOtherPostretirementBenefitsCostReversalOfCostAdditionalReconciliation,Pension and other postretirement benefits income,24,0
+income_statement,us-gaap:RestructuringCharges,us-gaap:RestructuringCharges,Restructuring program charges,26,0
+balance_sheet,html:deferred-income-taxes,html:deferred-income-taxes,Deferred income taxes,18,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,31,0
+balance_sheet,html:deferred-income-taxes-2,html:deferred-income-taxes-2,Deferred income taxes,38,0
+balance_sheet,html:total-noncurrent-liabilities,html:total-noncurrent-liabilities,Total noncurrent liabilities,42,0
+income_statement,us-gaap:GainLossOnSaleOfBusiness,us-gaap:GainLossOnSaleOfBusiness,Gain on sale of business,25,0
+balance_sheet,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,us-gaap:AssetsOfDisposalGroupIncludingDiscontinuedOperationCurrent,Assets held for sale,5,0
+balance_sheet,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,us-gaap:LiabilitiesOfDisposalGroupIncludingDiscontinuedOperation,Liabilities held for sale,29,0
+balance_sheet,us-gaap:CommonStockValueOutstanding,us-gaap:CommonStockValueOutstanding,Ordinary shares (400.1 million outstanding in 2020 and 413.3 million in 2019),45,0
+balance_sheet,html:ordinary-shares-413-3-million-outstanding-in-2019-and-423-6-million-in-2018,html:ordinary-shares-413-3-million-outstanding-in-2019-and-423-6-million-in-2018,Ordinary shares (413.3 million outstanding in 2019 and 423.6 million in 2018),46,0
+balance_sheet,us-gaap:DeferredTaxAssetsNetNoncurrent,us-gaap:DeferredTaxAssetsNetNoncurrent,Deferred income taxes,19,0
+balance_sheet,us-gaap:DeferredTaxLiabilitiesNoncurrent,us-gaap:DeferredTaxLiabilitiesNoncurrent,Deferred income taxes,39,0
+balance_sheet,html:ordinary-shares-423-1-million-outstanding-in-2019-and-423-6-million-in-2018,html:ordinary-shares-423-1-million-outstanding-in-2019-and-423-6-million-in-2018,Ordinary shares (423.1 million outstanding in 2019 and 423.6 million in 2018),47,0

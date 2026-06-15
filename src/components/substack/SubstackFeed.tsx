@@ -84,11 +84,11 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
 
   return (
     <CompanyFeedTabShell
-      description="Coverage-first discovery of public Substack posts mentioning this ticker. Indexed registry plus optional live Serper discovery. Results are saved per ticker until you refresh."
       onRefresh={run}
       refreshBusy={loading}
       refreshDisabled={!tk}
       hasPayload={Boolean(data)}
+      refreshLabel={data ? "Refresh" : "Load Substack"}
       sortValue={sortMode}
       onSortChange={(v) => setSortMode(v as SortMode)}
       sortOptions={[
@@ -105,7 +105,7 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
             style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
           >
             No saved Substack run for this ticker yet. Open <strong style={{ color: "var(--text)" }}>Search options & filters</strong> if
-            needed, then click <strong style={{ color: "var(--text)" }}>Load</strong>.
+            needed, then click <strong style={{ color: "var(--text)" }}>Load Substack</strong>.
           </p>
         ) : undefined
       }
@@ -133,17 +133,22 @@ export function SubstackFeed({ ticker, companyName }: { ticker: string; companyN
               Live discovery (Serper)
             </label>
           </div>
-          <details className="rounded-md border px-3 py-2" style={{ borderColor: "var(--border2)" }}>
-            <summary className="cursor-pointer text-xs font-semibold" style={{ color: "var(--muted2)" }}>
+          <div className="border-t pt-3" style={{ borderColor: "var(--border2)" }}>
+            <div className="mb-2 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
               Coverage & index
-            </summary>
-            <div className="mt-3">
-              <SubstackCoveragePanel data={data} />
             </div>
-          </details>
+            <SubstackCoveragePanel data={data} />
+          </div>
         </div>
       }
-      filterSectionTitle="Search options & filters"
+      statsSection={
+        data && !error ? (
+          <p className="text-[11px]" style={{ color: "var(--muted)" }}>
+            {data.results.length} post{data.results.length === 1 ? "" : "s"} (indexed {data.stats.indexedMatches}, live{" "}
+            {data.stats.liveDiscoveryMatches})
+          </p>
+        ) : null
+      }
     >
       <SubstackSearchResults items={displayResults} ticker={tk} />
     </CompanyFeedTabShell>

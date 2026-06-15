@@ -162,7 +162,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
       const noSources =
         lower.includes("no substantive") ||
         lower.includes("no ingestible workspace") ||
-        lower.includes("no sources found");
+        lower.includes("no sources found") ||
+        lower.includes("no forensic sources");
       const keyHint = msg === USER_LLM_KEY_SETTINGS_HINT;
       if (noSources) {
         return NextResponse.json({ error: msg }, { status: 400 });

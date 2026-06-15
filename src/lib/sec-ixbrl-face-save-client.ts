@@ -77,6 +77,8 @@ export function faceStatementToWorkbookShape(
         { label: p.label, shortLabel: p.shortLabel, end: p.end, start: p.start },
         filing.form
       ),
+      start: p.start,
+      end: p.end,
     })),
     rows: stmt.rows.map((r) => ({
       concept:

@@ -86,6 +86,9 @@ def is_interest_expense_leg(raw_concept: str) -> bool:
     if is_interest_income_leg(raw_concept):
         return False
     loc = _local(raw_concept)
+    # HTZ and others tag total expense subtotals with "…IncludingInterestExpense" in the name.
+    if re.search(r"^Cost(?:s)?AndExpenses", loc, re.I):
+        return False
     if re.search(r"InterestExpense|InterestCosts|AmortizationOfFinancingCosts|DebtRelatedCommitmentFees", loc, re.I):
         return True
     return False

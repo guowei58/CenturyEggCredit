@@ -1,0 +1,176 @@
+statement_type,canonical_row_id,master_raw_concept,display_label,display_order,depth
+income_statement,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax,Net product sales,1,0
+income_statement,html:expenses,html:expenses,Expenses:,5,0
+income_statement,us-gaap:ResearchAndDevelopmentExpense,us-gaap:ResearchAndDevelopmentExpense,Research and development,6,0
+income_statement,regn:AcquiredInProcessResearchAndDevelopment,regn:AcquiredInProcessResearchAndDevelopment,Acquired in-process research and development,7,0
+income_statement,us-gaap:SellingGeneralAndAdministrativeExpense,us-gaap:SellingGeneralAndAdministrativeExpense,"Selling, general, and administrative",8,0
+income_statement,us-gaap:CostOfGoodsAndServicesSold,us-gaap:CostOfGoodsAndServicesSold,Cost of goods sold,9,0
+income_statement,us-gaap:OtherOperatingIncomeExpenseNet,us-gaap:OtherOperatingIncomeExpenseNet,"Other operating (income) expense, net",12,0
+income_statement,us-gaap:CostsAndExpenses,us-gaap:CostsAndExpenses,costs and expenses costs and expenses costs and expenses,13,0
+income_statement,us-gaap:OperatingIncomeLoss,us-gaap:OperatingIncomeLoss,Income from operations,14,0
+income_statement,html:other-income-expense,html:other-income-expense,Other income (expense):,15,0
+income_statement,us-gaap:OtherNonoperatingIncomeExpense,us-gaap:OtherNonoperatingIncomeExpense,"Other income (expense), net",16,0
+income_statement,us-gaap:InterestExpenseNonoperating,us-gaap:InterestExpenseNonoperating,Interest expense,17,0
+income_statement,us-gaap:NonoperatingIncomeExpense,us-gaap:NonoperatingIncomeExpense,nonoperating income expense nonoperating income expense nonoperating income expense,18,0
+income_statement,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,us-gaap:IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,Income before income taxes,19,0
+income_statement,us-gaap:IncomeTaxExpenseBenefit,us-gaap:IncomeTaxExpenseBenefit,Income tax expense,20,0
+income_statement,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income,21,0
+income_statement,us-gaap:EarningsPerShareBasic,us-gaap:EarningsPerShareBasic,Net income per share - basic,22,0
+income_statement,us-gaap:EarningsPerShareDiluted,us-gaap:EarningsPerShareDiluted,Net income per share - diluted,23,0
+income_statement,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,us-gaap:WeightedAverageNumberOfSharesOutstandingBasic,Weighted average shares outstanding - basic,24,0
+income_statement,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding,Weighted average shares outstanding - diluted,25,0
+income_statement,us-gaap:OtherComprehensiveIncomeUnrealizedHoldingGainLossOnSecuritiesArisingDuringPeriodNetOfTax,us-gaap:OtherComprehensiveIncomeUnrealizedHoldingGainLossOnSecuritiesArisingDuringPeriodNetOfTax,Unrealized gain on debt securities,26,0
+income_statement,us-gaap:OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationAdjustmentNetOfTaxPortionAttributableToParent,us-gaap:OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationAdjustmentNetOfTaxPortionAttributableToParent,Gain (loss) on foreign currency translation,29,0
+income_statement,us-gaap:ComprehensiveIncomeNetOfTax,us-gaap:ComprehensiveIncomeNetOfTax,Comprehensive income,30,0
+income_statement,html:the-accompanying-notes-are-an-integral-part-of-the-financial-statements,html:the-accompanying-notes-are-an-integral-part-of-the-financial-statements,The accompanying notes are an integral part of the financial statements.,31,0
+balance_sheet,us-gaap:CashAndCashEquivalentsAtCarryingValue,us-gaap:CashAndCashEquivalentsAtCarryingValue,Cash and cash equivalents,12,0
+balance_sheet,us-gaap:MarketableSecuritiesCurrent,us-gaap:MarketableSecuritiesCurrent,Marketable securities,13,0
+balance_sheet,us-gaap:AccountsReceivableNetCurrent,us-gaap:AccountsReceivableNetCurrent,"Accounts receivable, net",14,0
+balance_sheet,us-gaap:InventoryNet,us-gaap:InventoryNet,Inventories,17,0
+balance_sheet,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,us-gaap:PrepaidExpenseAndOtherAssetsCurrent,Prepaid expenses and other current assets,18,0
+balance_sheet,us-gaap:AssetsCurrent,us-gaap:AssetsCurrent,Total current assets,19,0
+balance_sheet,us-gaap:MarketableSecuritiesNoncurrent,us-gaap:MarketableSecuritiesNoncurrent,Marketable securities,20,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,us-gaap:PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,"Property, plant, and equipment, net",22,0
+balance_sheet,us-gaap:IntangibleAssetsNetExcludingGoodwill,us-gaap:IntangibleAssetsNetExcludingGoodwill,"Intangible assets, net",23,0
+balance_sheet,us-gaap:DeferredIncomeTaxAssetsNet,us-gaap:DeferredIncomeTaxAssetsNet,Deferred tax assets,24,0
+balance_sheet,us-gaap:OtherAssetsNoncurrent,us-gaap:OtherAssetsNoncurrent,Other noncurrent assets,25,0
+balance_sheet,us-gaap:Assets,us-gaap:Assets,Total assets,26,0
+balance_sheet,html:liabilities-and-stockholders-equity,html:liabilities-and-stockholders-equity,LIABILITIES AND STOCKHOLDERS' EQUITY,27,0
+balance_sheet,html:current-liabilities,html:current-liabilities,Current liabilities:,28,0
+balance_sheet,us-gaap:AccountsPayableCurrent,us-gaap:AccountsPayableCurrent,Accounts payable,39,0
+balance_sheet,us-gaap:AccruedLiabilitiesAndOtherLiabilities,us-gaap:AccruedLiabilitiesAndOtherLiabilities,Accrued expenses and other current liabilities,40,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityCurrent,us-gaap:ContractWithCustomerLiabilityCurrent,Deferred revenue,43,0
+balance_sheet,us-gaap:LiabilitiesCurrent,us-gaap:LiabilitiesCurrent,Total current liabilities,45,0
+balance_sheet,us-gaap:LongTermDebtNoncurrent,us-gaap:LongTermDebtNoncurrent,Long-term debt,46,0
+balance_sheet,us-gaap:FinanceLeaseLiabilityNoncurrent,us-gaap:FinanceLeaseLiabilityNoncurrent,Finance lease liabilities,47,0
+balance_sheet,us-gaap:ContractWithCustomerLiabilityNoncurrent,us-gaap:ContractWithCustomerLiabilityNoncurrent,Deferred revenue,48,0
+balance_sheet,us-gaap:OtherLiabilitiesNoncurrent,us-gaap:OtherLiabilitiesNoncurrent,Other noncurrent liabilities,49,0
+balance_sheet,us-gaap:Liabilities,us-gaap:Liabilities,Total liabilities,50,0
+balance_sheet,us-gaap:CommitmentsAndContingencies,us-gaap:CommitmentsAndContingencies,Commitments and contingencies,51,0
+balance_sheet,html:stockholders-equity,html:stockholders-equity,Stockholders' equity:,52,0
+balance_sheet,us-gaap:PreferredStockParOrStatedValuePerShare,us-gaap:PreferredStockParOrStatedValuePerShare,"Preferred Stock, par value $.01 per share; 30.0 shares authorized; shares issued and outstanding - none",67,0
+balance_sheet,us-gaap:CommonStockParOrStatedValuePerShare,us-gaap:CommonStockParOrStatedValuePerShare,"Class A Stock, convertible, par value $.001 per share; 40.0 shares authorized; shares issued and outstanding - 1.8 in 2025 and 2024",68,0
+balance_sheet,us-gaap:AdditionalPaidInCapital,us-gaap:AdditionalPaidInCapital,Additional paid-in capital,69,0
+balance_sheet,us-gaap:RetainedEarningsAccumulatedDeficit,us-gaap:RetainedEarningsAccumulatedDeficit,Retained earnings,70,0
+balance_sheet,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,us-gaap:AccumulatedOtherComprehensiveIncomeLossNetOfTax,Accumulated other comprehensive income (loss),71,0
+balance_sheet,us-gaap:TreasuryStockCommonShares,us-gaap:TreasuryStockCommonShares,"Treasury Stock, at cost; 33.7 shares in 2025 and 28.2 shares in 2024",74,0
+balance_sheet,us-gaap:StockholdersEquity,us-gaap:StockholdersEquity,Total stockholders' equity,75,0
+balance_sheet,us-gaap:LiabilitiesAndStockholdersEquity,us-gaap:LiabilitiesAndStockholdersEquity,Total liabilities and stockholders' equity,76,0
+balance_sheet,html:the-accompanying-notes-are-an-integral-part-of-the-financial-statements,html:the-accompanying-notes-are-an-integral-part-of-the-financial-statements,The accompanying notes are an integral part of the financial statements.,77,0
+cash_flow,us-gaap:NetIncomeLoss,us-gaap:NetIncomeLoss,Net income,0,0
+cash_flow,us-gaap:DepreciationDepletionAndAmortization,us-gaap:DepreciationDepletionAndAmortization,Depreciation and amortization,1,0
+cash_flow,us-gaap:ShareBasedCompensation,us-gaap:ShareBasedCompensation,Stock-based compensation expense,3,0
+cash_flow,regn:MarketableAndOtherSecuritiesGainLoss,regn:MarketableAndOtherSecuritiesGainLoss,"(Gains) losses on marketable and other securities, net",4,0
+cash_flow,us-gaap:OtherNoncashIncomeExpense,us-gaap:OtherNoncashIncomeExpense,"Other, net",5,0
+cash_flow,us-gaap:IncreaseDecreaseInDeferredIncomeTaxes,us-gaap:IncreaseDecreaseInDeferredIncomeTaxes,Deferred income taxes,6,0
+cash_flow,html:changes-in-assets-and-liabilities,html:changes-in-assets-and-liabilities,Changes in assets and liabilities:,9,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsReceivable,us-gaap:IncreaseDecreaseInAccountsReceivable,Decrease (increase) in accounts receivable,11,0
+cash_flow,us-gaap:IncreaseDecreaseInInventories,us-gaap:IncreaseDecreaseInInventories,Increase in inventories,12,0
+cash_flow,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,us-gaap:IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets,Increase in prepaid expenses and other assets,13,0
+cash_flow,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,us-gaap:IncreaseDecreaseInContractWithCustomerLiability,(Decrease) increase in deferred revenue,14,0
+cash_flow,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,us-gaap:IncreaseDecreaseInAccountsPayableAndAccruedLiabilities,"Increase in accounts payable, accrued expenses, and other liabilities",15,0
+cash_flow,us-gaap:AdjustmentsToReconcileNetIncomeLossToCashProvidedByUsedInOperatingActivities,us-gaap:AdjustmentsToReconcileNetIncomeLossToCashProvidedByUsedInOperatingActivities,Total adjustments,16,0
+cash_flow,us-gaap:NetCashProvidedByUsedInOperatingActivities,us-gaap:NetCashProvidedByUsedInOperatingActivities,Net cash provided by operating activities,17,0
+cash_flow,html:cash-flows-from-investing-activities,html:cash-flows-from-investing-activities,Cash flows from investing activities:,18,0
+cash_flow,us-gaap:PaymentsToAcquireMarketableSecurities,us-gaap:PaymentsToAcquireMarketableSecurities,Purchases of marketable and other securities,19,0
+cash_flow,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,us-gaap:ProceedsFromSaleAndMaturityOfMarketableSecurities,Sales or maturities of marketable and other securities,20,0
+cash_flow,us-gaap:PaymentsToAcquireProductiveAssets,us-gaap:PaymentsToAcquireProductiveAssets,Capital expenditures,21,0
+cash_flow,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,us-gaap:ProceedsFromSaleOfPropertyPlantAndEquipment,"Proceeds from sale of property, plant, and equipment",22,0
+cash_flow,regn:PaymentsToAcquireIntangibleAssets1,regn:PaymentsToAcquireIntangibleAssets1,Payments for intangible assets,23,0
+cash_flow,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,us-gaap:PaymentsToAcquireBusinessesNetOfCashAcquired,"Acquisitions, net of cash acquired",24,0
+cash_flow,us-gaap:NetCashProvidedByUsedInInvestingActivities,us-gaap:NetCashProvidedByUsedInInvestingActivities,Net cash used in investing activities,25,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfCommonStock,us-gaap:ProceedsFromIssuanceOfCommonStock,Proceeds from issuance of Common Stock,33,0
+cash_flow,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,us-gaap:PaymentsRelatedToTaxWithholdingForShareBasedCompensation,Payments in connection with Common Stock tendered for employee tax obligations,34,0
+cash_flow,us-gaap:PaymentsForRepurchaseOfCommonStock,us-gaap:PaymentsForRepurchaseOfCommonStock,Repurchases of Common Stock,35,0
+cash_flow,us-gaap:PaymentsOfDividends,us-gaap:PaymentsOfDividends,Dividends paid,39,0
+cash_flow,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,us-gaap:ProceedsFromPaymentsForOtherFinancingActivities,Other,40,0
+cash_flow,us-gaap:NetCashProvidedByUsedInFinancingActivities,us-gaap:NetCashProvidedByUsedInFinancingActivities,Net cash used in financing activities,41,0
+cash_flow,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Effect of exchange rate changes on cash, cash equivalents, and restricted cash",42,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect,"Net increase (decrease) in cash, cash equivalents, and restricted cash",43,0
+cash_flow,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,us-gaap:CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents,"Cash, cash equivalents, and restricted cash at beginning of period",44,0
+cash_flow,html:supplemental-disclosure-of-cash-flow-information,html:supplemental-disclosure-of-cash-flow-information,Supplemental disclosure of cash flow information,45,0
+cash_flow,us-gaap:InterestPaidNet,us-gaap:InterestPaidNet,Cash paid for interest (net of amounts capitalized),46,0
+cash_flow,html:the-accompanying-notes-are-an-integral-part-of-the-financial-statements,html:the-accompanying-notes-are-an-integral-part-of-the-financial-statements,The accompanying notes are an integral part of the financial statements.,49,0
+income_statement,html:revenues,html:revenues,Revenues,0,0
+income_statement,html:sanofi-product-and-service-other,html:sanofi-product-and-service-other,"Sanofi | Product and service, other",10,0
+balance_sheet,html:cash-and-cash-equivalents,html:cash-and-cash-equivalents,Cash and cash equivalents,0,0
+balance_sheet,html:marketable-securities,html:marketable-securities,Marketable securities,1,0
+balance_sheet,html:accounts-receivable-trade-net,html:accounts-receivable-trade-net,"Accounts receivable - trade, net",2,0
+balance_sheet,html:accounts-receivable-from-sanofi,html:accounts-receivable-from-sanofi,Accounts receivable from Sanofi,3,0
+balance_sheet,html:accounts-receivable-from-bayer,html:accounts-receivable-from-bayer,Accounts receivable from Bayer,4,0
+balance_sheet,html:inventories,html:inventories,Inventories,5,0
+balance_sheet,html:prepaid-expenses-and-other-current-assets,html:prepaid-expenses-and-other-current-assets,Prepaid expenses and other current assets,6,0
+balance_sheet,html:total-current-assets,html:total-current-assets,Total current assets,7,0
+balance_sheet,html:property-plant-and-equipment-net,html:property-plant-and-equipment-net,"Property, plant, and equipment, net",8,0
+balance_sheet,html:deferred-tax-assets,html:deferred-tax-assets,Deferred tax assets,9,0
+balance_sheet,html:other-noncurrent-assets,html:other-noncurrent-assets,Other noncurrent assets,10,0
+balance_sheet,html:total-assets,html:total-assets,Total assets,11,0
+balance_sheet,html:accounts-payable,html:accounts-payable,Accounts payable,29,0
+balance_sheet,html:accrued-expenses-and-other-current-liabilities,html:accrued-expenses-and-other-current-liabilities,Accrued expenses and other current liabilities,30,0
+balance_sheet,html:deferred-revenue-current,html:deferred-revenue-current,"Deferred revenue, current",31,0
+balance_sheet,html:total-current-liabilities,html:total-current-liabilities,Total current liabilities,32,0
+balance_sheet,html:capital-and-facility-lease-obligations,html:capital-and-facility-lease-obligations,Capital and facility lease obligations,33,0
+balance_sheet,html:deferred-revenue-noncurrent,html:deferred-revenue-noncurrent,"Deferred revenue, noncurrent",34,0
+balance_sheet,html:other-noncurrent-liabilities,html:other-noncurrent-liabilities,Other noncurrent liabilities,35,0
+balance_sheet,html:total-liabilities,html:total-liabilities,Total liabilities,36,0
+balance_sheet,html:commitments-and-contingencies,html:commitments-and-contingencies,Commitments and contingencies,37,0
+balance_sheet,html:preferred-stock-01-par-value-30-0000-000-shares-authorized-issued-and-outstanding-none,html:preferred-stock-01-par-value-30-0000-000-shares-authorized-issued-and-outstanding-none,"Preferred Stock, $.01 par value; 30,0000,000 shares authorized; issued and outstanding - none",53,0
+balance_sheet,html:additional-paid-in-capital,html:additional-paid-in-capital,Additional paid-in capital,54,0
+balance_sheet,html:retained-earnings,html:retained-earnings,Retained earnings,55,0
+balance_sheet,html:accumulated-other-comprehensive-loss-income,html:accumulated-other-comprehensive-loss-income,Accumulated other comprehensive (loss) income,56,0
+balance_sheet,html:treasury-stock-at-cost-3-990-021-shares-in-2018-and-3-763-868-shares-in-2017,html:treasury-stock-at-cost-3-990-021-shares-in-2018-and-3-763-868-shares-in-2017,"Treasury Stock, at cost; 3,990,021 shares in 2018 and 3,763,868 shares in 2017",57,0
+balance_sheet,html:total-stockholders-equity,html:total-stockholders-equity,Total stockholders' equity,58,0
+balance_sheet,html:total-liabilities-and-stockholders-equity,html:total-liabilities-and-stockholders-equity,Total liabilities and stockholders' equity,59,0
+balance_sheet,html:class-a-stock,html:class-a-stock,Class A Stock,60,0
+balance_sheet,html:common-stock,html:common-stock,Common stock,61,0
+balance_sheet,html:sanofi,html:sanofi,Sanofi,62,0
+balance_sheet,html:other,html:other,Other,63,0
+cash_flow,html:non-cash-compensation-expense,html:non-cash-compensation-expense,Non-cash compensation expense,2,0
+cash_flow,html:increase-in-sanofi-bayer-and-trade-accounts-receivable,html:increase-in-sanofi-bayer-and-trade-accounts-receivable,"Increase in Sanofi, Bayer, and trade accounts receivable",10,0
+cash_flow,html:proceeds-in-connection-with-capital-and-facility-lease-obligations,html:proceeds-in-connection-with-capital-and-facility-lease-obligations,Proceeds in connection with capital and facility lease obligations,26,0
+cash_flow,html:repayments-of-convertible-senior-notes,html:repayments-of-convertible-senior-notes,Repayments of convertible senior notes,27,0
+cash_flow,html:payments-in-connection-with-reduction-of-outstanding-warrants,html:payments-in-connection-with-reduction-of-outstanding-warrants,Payments in connection with reduction of outstanding warrants,28,0
+cash_flow,html:cash-paid-for-income-taxes,html:cash-paid-for-income-taxes,Cash paid for income taxes,47,0
+income_statement,html:unrealized-loss-gain-on-cash-flow-hedges,html:unrealized-loss-gain-on-cash-flow-hedges,Unrealized (loss) gain on cash flow hedges,27,0
+balance_sheet,html:finance-lease-liabilities,html:finance-lease-liabilities,Finance lease liabilities,78,0
+balance_sheet,html:preferred-stock-01-par-value-30-000-000-shares-authorized-issued-and-outstanding-none,html:preferred-stock-01-par-value-30-000-000-shares-authorized-issued-and-outstanding-none,"Preferred Stock, $.01 par value; 30,000,000 shares authorized; issued and outstanding - none",64,0
+balance_sheet,html:accumulated-other-comprehensive-income-loss,html:accumulated-other-comprehensive-income-loss,Accumulated other comprehensive income (loss),79,0
+balance_sheet,html:treasury-stock-at-cost-4-860-123-shares-in-2019-and-3-990-021-shares-in-2018,html:treasury-stock-at-cost-4-860-123-shares-in-2019-and-3-990-021-shares-in-2018,"Treasury Stock, at cost; 4,860,123 shares in 2019 and 3,990,021 shares in 2018",85,0
+cash_flow,html:proceeds-in-connection-with-finance-lease-liabilities,html:proceeds-in-connection-with-finance-lease-liabilities,Proceeds in connection with finance lease liabilities,29,0
+balance_sheet,html:other-liabilities-sanofi,html:other-liabilities-sanofi,Other liabilities - Sanofi,80,0
+balance_sheet,html:long-term-debt,html:long-term-debt,Long-term debt,86,0
+balance_sheet,html:commitments-and-contingencies-note-10,html:commitments-and-contingencies-note-10,Commitments and contingencies (Note 10),81,0
+balance_sheet,html:accumulated-other-comprehensive-income,html:accumulated-other-comprehensive-income,Accumulated other comprehensive income,90,0
+balance_sheet,html:treasury-stock-at-cost-16-431-520-shares-in-2020-and-4-860-123-shares-in-2019,html:treasury-stock-at-cost-16-431-520-shares-in-2020-and-4-860-123-shares-in-2019,"Treasury Stock, at cost; 16,431,520 shares in 2020 and 4,860,123 shares in 2019",92,0
+balance_sheet,html:current-assets,html:current-assets,Current assets:,82,0
+balance_sheet,html:accounts-receivable,html:accounts-receivable,Accounts receivable,87,0
+cash_flow,html:proceeds-from-issuance-of-long-term-debt-net-of-issuance-costs,html:proceeds-from-issuance-of-long-term-debt-net-of-issuance-costs,"Proceeds from issuance of long-term debt, net of issuance costs",30,0
+cash_flow,html:proceeds-from-bridge-loan-facility,html:proceeds-from-bridge-loan-facility,Proceeds from bridge loan facility,31,0
+cash_flow,html:repayment-of-bridge-loan-facility,html:repayment-of-bridge-loan-facility,Repayment of bridge loan facility,32,0
+income_statement,us-gaap:OtherComprehensiveIncomeLossCashFlowHedgeGainLossAfterReclassificationAndTax,us-gaap:OtherComprehensiveIncomeLossCashFlowHedgeGainLossAfterReclassificationAndTax,Unrealized gain (loss) on cash flow hedges,28,0
+balance_sheet,us-gaap:FinanceLeaseLiabilityCurrent,us-gaap:FinanceLeaseLiabilityCurrent,Finance lease liabilities,41,0
+balance_sheet,us-gaap:TreasuryStockShares,us-gaap:TreasuryStockShares,"Treasury Stock, at cost; 19,392,961 shares in 2021 and 16,431,520 shares in 2020",72,0
+cash_flow,us-gaap:ProceedsFromIssuanceOfLongTermDebt,us-gaap:ProceedsFromIssuanceOfLongTermDebt,Proceeds from issuance of long-term debt,36,0
+cash_flow,us-gaap:ProceedsFromShortTermDebt,us-gaap:ProceedsFromShortTermDebt,Proceeds from bridge loan facility,37,0
+cash_flow,us-gaap:RepaymentsOfShortTermDebt,us-gaap:RepaymentsOfShortTermDebt,Repayment of bridge loan facility,38,0
+cash_flow,us-gaap:IncomeTaxesPaidNet,us-gaap:IncomeTaxesPaidNet,Cash paid for income taxes,48,0
+cash_flow,us-gaap:ResearchAndDevelopmentInProcess,us-gaap:ResearchAndDevelopmentInProcess,Acquired in-process research and development in connection with asset acquisition,7,0
+cash_flow,regn:AcquiredInProcessResearchAndDevelopmentAssetAcquisition,regn:AcquiredInProcessResearchAndDevelopmentAssetAcquisition,Acquired in-process research and development in connection with asset acquisition,8,0
+income_statement,html:sanofi-collaboration-revenue,html:sanofi-collaboration-revenue,Sanofi collaboration revenue,2,0
+income_statement,html:bayer-collaboration-revenue,html:bayer-collaboration-revenue,Bayer collaboration revenue,3,0
+income_statement,html:other-revenue,html:other-revenue,Other revenue,4,0
+income_statement,html:cost-of-collaboration-and-contract-manufacturing,html:cost-of-collaboration-and-contract-manufacturing,Cost of collaboration and contract manufacturing,11,0
+balance_sheet,html:deferred-revenue-from-sanofi,html:deferred-revenue-from-sanofi,Deferred revenue from Sanofi,88,0
+balance_sheet,html:deferred-revenue-other,html:deferred-revenue-other,Deferred revenue - other,91,0
+balance_sheet,html:class-a-stock-convertible-001-par-value-40-000-000-shares-authorized-shares-issued-and-outstanding-1-911-354-in-2019-and-2018,html:class-a-stock-convertible-001-par-value-40-000-000-shares-authorized-shares-issued-and-outstanding-1-911-354-in-2019-and-2018,"Class A Stock, convertible, $.001 par value; 40,000,000 shares authorized; shares issued and outstanding - 1,911,354 in 2019 and 2018",83,0
+balance_sheet,html:common-stock-001-par-value-320-000-000-shares-authorized-shares-issued-111-718-248-in-2019-and-111-084-951-in-2018,html:common-stock-001-par-value-320-000-000-shares-authorized-shares-issued-111-718-248-in-2019-and-111-084-951-in-2018,"Common Stock, $.001 par value; 320,000,000 shares authorized; shares issued - 111,718,248 in 2019 and 111,084,951 in 2018",89,0
+balance_sheet,html:treasury-stock-at-cost-4-046-627-shares-in-2019-and-3-990-021-shares-in-2018,html:treasury-stock-at-cost-4-046-627-shares-in-2019-and-3-990-021-shares-in-2018,"Treasury Stock, at cost; 4,046,627 shares in 2019 and 3,990,021 shares in 2018",84,0
+balance_sheet,us-gaap:AccountsReceivableRelatedPartiesCurrent,us-gaap:AccountsReceivableRelatedPartiesCurrent,Accounts receivable from Sanofi,15,0
+balance_sheet,us-gaap:AccountsAndNotesReceivableNet,us-gaap:AccountsAndNotesReceivableNet,Accounts receivable from Bayer,16,0
+balance_sheet,us-gaap:PropertyPlantAndEquipmentNet,us-gaap:PropertyPlantAndEquipmentNet,"Property, plant, and equipment, net",21,0
+balance_sheet,us-gaap:AccountsPayableCurrentAndNoncurrent,us-gaap:AccountsPayableCurrentAndNoncurrent,Accounts payable,38,0
+balance_sheet,us-gaap:PreferredStockValue,us-gaap:PreferredStockValue,"Preferred Stock, $.01 par value; 30,000,000 shares authorized; issued and outstanding - none",65,0
+balance_sheet,us-gaap:CommonStockValue,us-gaap:CommonStockValue,"Class A Stock, convertible, $.001 par value; 40,000,000 shares authorized; shares issued and outstanding - 1,911,354 in 2019 and 2018",66,0
+balance_sheet,us-gaap:TreasuryStockValue,us-gaap:TreasuryStockValue,"Treasury Stock, at cost; 4,018,269 shares in 2019 and 3,990,021 shares in 2018",73,0
+balance_sheet,us-gaap:OtherLiabilitiesCurrent,us-gaap:OtherLiabilitiesCurrent,Other liabilities - Sanofi,44,0
+balance_sheet,us-gaap:ShortTermBorrowings,us-gaap:ShortTermBorrowings,Debt,42,0

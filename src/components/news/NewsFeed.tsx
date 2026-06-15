@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
 import { rankArticles } from "@/lib/news/rank";
+import { isLikelyTickerInstrumentPage } from "@/lib/news/stockPageFilter";
 import type { NewsAggregationResponse, NewsQueryParams } from "@/lib/news/types";
 import { NewsCard } from "./NewsCard";
 
@@ -43,6 +44,7 @@ export function NewsFeed({
   const [payload, setPayload] = useState<NewsAggregationResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hadRealCompanyNameRef = useRef(false);
 
   useEffect(() => {
     if (!tk) {
@@ -55,6 +57,10 @@ export function NewsFeed({
     setPayload(cached);
     setError(null);
   }, [tk, prefsReady, feedCacheBlob]);
+
+  useEffect(() => {
+    hadRealCompanyNameRef.current = false;
+  }, [tk]);
 
   const aliasList = useMemo(
     () => aliasesText.split(",").map((s) => s.trim()).filter((s) => s.length >= 2),
@@ -109,10 +115,27 @@ export function NewsFeed({
     }
   }, [tk, name, updatePreferences]);
 
-  const visible = useMemo(
-    () => (payload ? rankArticles(payload.articles, rankQuery, sortMode) : []),
-    [payload, rankQuery, sortMode]
-  );
+  /** When SEC/company name finishes loading, refetch once so Google News gets full entity terms. */
+  useEffect(() => {
+    const realName = Boolean(name && name.toUpperCase() !== tk.toUpperCase());
+    if (!realName) return;
+    if (hadRealCompanyNameRef.current) return;
+    hadRealCompanyNameRef.current = true;
+    if (!payload || loading) return;
+    void fetchNews();
+  }, [name, tk, payload, loading, fetchNews]);
+
+  const visible = useMemo(() => {
+    if (!payload) return [];
+    return rankArticles(payload.articles, rankQuery, sortMode).filter(
+      (article) =>
+        !isLikelyTickerInstrumentPage({
+          title: article.title,
+          url: article.url,
+          sourceDomain: article.sourceDomain,
+        })
+    );
+  }, [payload, rankQuery, sortMode]);
 
   if (!tk) {
     return null;
@@ -120,13 +143,6 @@ export function NewsFeed({
 
   return (
     <CompanyFeedTabShell
-      description={
-        <>
-          Yahoo Finance headlines for this symbol (often including company releases) plus Google News from major outlets — WSJ, FT,
-          Bloomberg, Yahoo Finance, Reuters, and AP. Results stay saved for this ticker until you refresh. Use optional aliases (below) to
-          tune the Google News query and on-page relevance; you can change sort without refetching.
-        </>
-      }
       onRefresh={() => void fetchNews()}
       refreshBusy={loading}
       hasPayload={Boolean(payload)}
@@ -181,7 +197,7 @@ export function NewsFeed({
           No articles returned for this ticker.
         </p>
       ) : null}
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col divide-y" style={{ borderColor: "var(--border2)" }}>
         {visible.map((article) => (
           <li key={article.id}>
             <NewsCard article={article} ticker={tk} />

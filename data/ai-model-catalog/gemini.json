@@ -1,0 +1,117 @@
+{
+  "fetchedAt": "2026-06-15T01:09:05.268Z",
+  "discovered": [
+    {
+      "id": "gemini-2.5-flash",
+      "label": "Gemini 2.5 Flash"
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "label": "Gemini 2.5 Pro"
+    },
+    {
+      "id": "gemini-2.0-flash",
+      "label": "Gemini 2.0 Flash"
+    },
+    {
+      "id": "gemini-2.0-flash-001",
+      "label": "Gemini 2.0 Flash 001"
+    },
+    {
+      "id": "gemini-2.0-flash-lite-001",
+      "label": "Gemini 2.0 Flash-Lite 001"
+    },
+    {
+      "id": "gemini-2.0-flash-lite",
+      "label": "Gemini 2.0 Flash-Lite"
+    },
+    {
+      "id": "gemini-2.5-flash-preview-tts",
+      "label": "Gemini 2.5 Flash Preview TTS"
+    },
+    {
+      "id": "gemini-2.5-pro-preview-tts",
+      "label": "Gemini 2.5 Pro Preview TTS"
+    },
+    {
+      "id": "gemini-flash-latest",
+      "label": "Gemini Flash Latest"
+    },
+    {
+      "id": "gemini-flash-lite-latest",
+      "label": "Gemini Flash-Lite Latest"
+    },
+    {
+      "id": "gemini-pro-latest",
+      "label": "Gemini Pro Latest"
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "label": "Gemini 2.5 Flash-Lite"
+    },
+    {
+      "id": "gemini-2.5-flash-image",
+      "label": "Nano Banana"
+    },
+    {
+      "id": "gemini-3-pro-preview",
+      "label": "Gemini 3 Pro Preview"
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "label": "Gemini 3 Flash Preview"
+    },
+    {
+      "id": "gemini-3.1-pro-preview",
+      "label": "Gemini 3.1 Pro Preview"
+    },
+    {
+      "id": "gemini-3.1-pro-preview-customtools",
+      "label": "Gemini 3.1 Pro Preview Custom Tools"
+    },
+    {
+      "id": "gemini-3.1-flash-lite-preview",
+      "label": "Gemini 3.1 Flash Lite Preview"
+    },
+    {
+      "id": "gemini-3.1-flash-lite",
+      "label": "Gemini 3.1 Flash Lite"
+    },
+    {
+      "id": "gemini-3-pro-image-preview",
+      "label": "Nano Banana Pro"
+    },
+    {
+      "id": "gemini-3-pro-image",
+      "label": "Nano Banana Pro"
+    },
+    {
+      "id": "gemini-3.1-flash-image-preview",
+      "label": "Nano Banana 2"
+    },
+    {
+      "id": "gemini-3.1-flash-image",
+      "label": "Nano Banana 2"
+    },
+    {
+      "id": "gemini-3.5-flash",
+      "label": "Gemini 3.5 Flash"
+    },
+    {
+      "id": "gemini-3.1-flash-tts-preview",
+      "label": "Gemini 3.1 Flash TTS Preview"
+    },
+    {
+      "id": "gemini-robotics-er-1.5-preview",
+      "label": "Gemini Robotics-ER 1.5 Preview"
+    },
+    {
+      "id": "gemini-robotics-er-1.6-preview",
+      "label": "Gemini Robotics-ER 1.6 Preview"
+    },
+    {
+      "id": "gemini-2.5-computer-use-preview-10-2025",
+      "label": "Gemini 2.5 Computer Use Preview 10-2025"
+    }
+  ]
+}
