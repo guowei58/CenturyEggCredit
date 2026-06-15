@@ -1,9 +1,11 @@
 import { getCompanyProfile, getFilingsByTicker, type SecFiling } from "@/lib/sec-edgar";
 import { dedupeHashFor, dedupeNewsItems } from "./dedupe";
+import { watchlistNewsDisplayLabel } from "./display-label";
 import { formatNyDateKey, isWithinRollingHours } from "./dates";
 import { resolveTradePublications } from "./industry-source-map";
 import { fetchGoogleNewsSearch } from "./rss";
 import { classifyOutletFromUrl } from "./classify-source";
+import { fetchNewsEventsTabItemsForDay } from "./news-events-ingest";
 import type { DailyNewsBatchPayload, DailyNewsItem, DailyNewsTickerBlock } from "./types";
 
 const MATERIAL_FORMS = new Set([
@@ -352,6 +354,19 @@ export async function buildDailyNewsPayload(
       ...rssToItems(ticker, companyName, prWireArts, windowEnd, "company"),
     ]);
 
+    let newsEventsItems: DailyNewsItem[] = [];
+    try {
+      const newsEvents = await fetchNewsEventsTabItemsForDay(ticker, companyName, windowEnd);
+      newsEventsItems = newsEvents.items;
+      newsEvents.sourcesUsed.forEach((s) => sourcesUsed.add(s));
+      fetchErrors.push(...newsEvents.fetchErrors);
+    } catch (e) {
+      fetchErrors.push({
+        source: `news-events:${ticker}`,
+        message: e instanceof Error ? e.message : String(e),
+      });
+    }
+
     const industryArts: typeof majorArts = [];
     const industryBroadItems: DailyNewsItem[] = [];
     for (const tr of trades) {
@@ -366,7 +381,7 @@ export async function buildDailyNewsPayload(
     }
     const industryRss = rssToItems(ticker, companyName, industryArts, windowEnd, "industry");
 
-    const companyNews = companyRss;
+    const companyNews = dedupeNewsItems([...companyRss, ...newsEventsItems]);
     const industryNews = dedupeNewsItems([...industryRss, ...industryBroadItems]);
     const secFilings = dedupeNewsItems(secItems);
 
@@ -393,7 +408,7 @@ export async function buildDailyNewsPayload(
       firstUsableHeadline(secFilings) ||
       firstUsableHeadline(companyNews) ||
       `no notable ticker-specific items in the summary window.`;
-    topBullets.push(`${ticker}: ${first}`);
+    topBullets.push(`${watchlistNewsDisplayLabel(ticker, companyName)}: ${first}`);
   }
 
   const generatedAt = windowEnd.toISOString();

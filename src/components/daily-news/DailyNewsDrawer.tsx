@@ -1,8 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DailyNewsBatchPayload, DailyNewsTickerBlock } from "@/lib/daily-news/types";
 import { DailyNewsMark } from "@/components/daily-news/DailyNewsMark";
+import {
+  buildAggregateNewsRows,
+  formatAggregateNewsCategory,
+  formatAggregateNewsDate,
+} from "@/lib/daily-news/aggregate-news";
+import {
+  usesTickerStyleNewsBadge,
+  watchlistNewsDisplayLabel,
+} from "@/lib/daily-news/display-label";
 
 async function readJsonResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -110,7 +119,7 @@ export function DailyNewsDrawer({
   return (
     <>
       <div
-        className="fixed bottom-0 right-0 z-[198] flex h-full w-[min(100vw,720px)] flex-col border-l transition-transform duration-200 ease-out"
+        className="fixed bottom-0 right-0 z-[198] flex h-full w-[min(calc(100vw-2rem),1080px)] flex-col border-l transition-transform duration-200 ease-out"
         style={{
           background: "var(--panel)",
           borderColor: "var(--border)",
@@ -222,138 +231,6 @@ export function DailyNewsDrawer({
   );
 }
 
-function ItemList({
-  title,
-  items,
-  empty,
-}: {
-  title: string;
-  items: Array<{ headline: string; summary: string; url: string; source: string; whyItMatters?: string }>;
-  empty: string;
-}) {
-  if (!items.length) {
-    return (
-      <div className="mb-6 pt-1.5">
-        <h4
-          className="mb-2 text-xs font-bold uppercase tracking-wider sm:text-sm"
-          style={{ color: "var(--accent)" }}
-        >
-          {title}
-        </h4>
-        <div
-          className="rounded-lg border px-3 py-3 text-xs leading-relaxed sm:px-4 sm:py-3.5 sm:text-sm"
-          style={{ borderColor: "var(--border2)", background: "var(--card)" }}
-        >
-          <p className="m-0" style={{ color: "var(--muted2)" }}>
-            {empty}
-          </p>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="mb-6 pt-1.5">
-      <h4
-        className="mb-3 text-xs font-bold uppercase tracking-wider sm:text-sm"
-        style={{ color: "var(--accent)" }}
-      >
-        {title}
-      </h4>
-      <ul className="space-y-3">
-        {items.map((it, i) => (
-          <li
-            key={`${it.url}-${i}`}
-            className="rounded-lg border px-3 py-3 text-sm leading-snug sm:px-4 sm:py-3.5"
-            style={{ borderColor: "var(--border2)", background: "var(--card)" }}
-          >
-            <div className="text-base font-semibold leading-tight sm:text-[1.05rem]" style={{ color: "var(--text)" }}>
-              {it.headline}
-            </div>
-            <div className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-              {it.summary}
-            </div>
-            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: "var(--muted2)" }}>
-              <span>{it.source}</span>
-              <a href={it.url} target="_blank" rel="noopener noreferrer" className="font-medium underline" style={{ color: "var(--accent)" }}>
-                Open link
-              </a>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function TickerSection({ tk, data }: { tk: string; data: DailyNewsTickerBlock }) {
-  const pubs = data.industryPublications ?? [];
-  return (
-    <section
-      id={`daily-news-ticker-${tk}`}
-      className="mb-8 rounded-xl border p-4 last:mb-0 sm:p-5"
-      style={{
-        borderColor: "var(--border)",
-        background: "var(--card)",
-        boxShadow: "0 1px 0 rgba(0,0,0,0.06)",
-      }}
-    >
-      <div className="flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4" style={{ borderColor: "var(--border2)" }}>
-        <div className="min-w-0">
-          <div className="font-mono text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: "var(--accent)" }}>
-            {tk}
-          </div>
-          <div className="mt-1 text-sm font-medium leading-snug sm:text-base" style={{ color: "var(--text)" }}>
-            {data.companyName}
-          </div>
-        </div>
-        {pubs.length > 0 ? (
-          <details
-            className="w-full shrink-0 rounded-lg border sm:mt-1 sm:w-auto sm:min-w-[16rem]"
-            style={{ borderColor: "var(--border2)", background: "var(--sb)" }}
-          >
-            <summary
-              className="cursor-pointer list-none px-3 py-2 text-[10px] font-semibold uppercase tracking-wide marker:content-none"
-              style={{ color: "var(--muted)" }}
-            >
-              <span className="flex items-center justify-between gap-3">
-                <span>Industry publications scanned</span>
-                <span className="rounded-full border px-2 py-0.5 text-[9px]" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-                  {pubs.length}
-                </span>
-              </span>
-            </summary>
-            <div className="border-t px-3 pb-3 pt-2 text-xs leading-relaxed sm:text-sm" style={{ borderColor: "var(--border2)" }}>
-              <ul className="list-inside list-disc space-y-1.5 pl-0.5" style={{ color: "var(--text)" }}>
-                {pubs.map((p) => (
-                  <li key={p.id}>
-                    <span className="font-medium">{p.name}</span>
-                    <span style={{ color: "var(--muted2)" }}> ({p.siteDomain})</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </details>
-        ) : null}
-      </div>
-      <ItemList
-        title="SEC filings (last window)"
-        items={data.secFilings}
-        empty="No prioritized filings in the last 24h window."
-      />
-      <ItemList
-        title="Company news & press releases"
-        items={data.companyNews}
-        empty="No major headlines or distributor press releases in the automated sweep (matches prioritize the legal company name)."
-      />
-      <ItemList
-        title="Industry / trade press"
-        items={data.industryNews}
-        empty="No industry headlines in the automated sweep (includes each publication’s recent top stories plus ticker-scanned items)."
-      />
-    </section>
-  );
-}
-
 /** Strip intro line when it duplicates the card heading (payload includes it + we render title above). */
 function topLevelSummaryBodyLines(raw: string): string[] {
   const lines = raw.split(/\r?\n/);
@@ -369,32 +246,69 @@ function dedupeTickerInBullet(line: string): string {
   return line.replace(/^(\s*•\s+)([A-Z0-9._-]+):\s*\2:\s*/i, "$1$2: ");
 }
 
-function TopLevelSummaryBulletLine({ line }: { line: string }) {
+function resolveBulletWorkspaceKey(
+  labelPart: string,
+  summaryByTicker: Record<string, DailyNewsTickerBlock>
+): string | null {
+  const raw = labelPart.trim();
+  if (!raw) return null;
+  if (summaryByTicker[raw]) return raw;
+  const upper = raw.toUpperCase();
+  if (summaryByTicker[upper]) return upper;
+
+  for (const [tk, block] of Object.entries(summaryByTicker)) {
+    if (block.companyName.trim() === raw) return tk;
+    if (watchlistNewsDisplayLabel(tk, block.companyName) === raw) return tk;
+  }
+  return null;
+}
+
+function TopLevelSummaryBulletLine({
+  line,
+  summaryByTicker,
+}: {
+  line: string;
+  summaryByTicker: Record<string, DailyNewsTickerBlock>;
+}) {
   const normalized = dedupeTickerInBullet(line);
-  const m = normalized.match(/^(\s*•\s+)([A-Z][A-Z0-9._-]*):\s*(.*)$/);
+  const m = normalized.match(/^(\s*•\s+)([^:]+):\s*(.*)$/);
   if (m) {
-    const [, prefix, ticker, rest] = m;
-    const anchorId = `daily-news-ticker-${ticker}`;
+    const [, prefix, labelPart, rest] = m;
+    const workspaceKey = resolveBulletWorkspaceKey(labelPart.trim(), summaryByTicker);
+    const block = workspaceKey ? summaryByTicker[workspaceKey] : undefined;
+    const display = workspaceKey
+      ? watchlistNewsDisplayLabel(workspaceKey, block?.companyName)
+      : labelPart.trim();
+    const tickerChip = workspaceKey ? usesTickerStyleNewsBadge(workspaceKey) : /^[A-Z][A-Z0-9._-]*$/.test(labelPart.trim());
+    const anchorId = workspaceKey ? `daily-news-aggregate-${workspaceKey}` : null;
     return (
       <p className="m-0 leading-relaxed" style={{ color: "var(--text)" }}>
         {prefix}
-        <button
-          type="button"
-          className="mr-1.5 inline-block align-baseline rounded-md px-2 py-0.5 font-mono text-[0.9em] font-bold tabular-nums tracking-tight hover:opacity-90"
-          style={{
-            background: "rgba(0, 212, 170, 0.14)",
-            color: "var(--accent)",
-            border: "1px solid rgba(0, 212, 170, 0.4)",
-          }}
-          onClick={() => {
-            const el = document.getElementById(anchorId);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }}
-          title={`Jump to ${ticker}`}
-          aria-label={`Jump to ${ticker} news section`}
-        >
-          {ticker}
-        </button>
+        {anchorId ? (
+          <button
+            type="button"
+            className={`mr-1.5 inline-block align-baseline rounded-md px-2 py-0.5 text-[0.9em] font-bold leading-snug hover:opacity-90 ${
+              tickerChip ? "font-mono tabular-nums tracking-tight" : ""
+            }`}
+            style={{
+              background: "rgba(0, 212, 170, 0.14)",
+              color: "var(--accent)",
+              border: "1px solid rgba(0, 212, 170, 0.4)",
+            }}
+            onClick={() => {
+              const el = document.getElementById(anchorId);
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            title={`Jump to ${display} in news list`}
+            aria-label={`Jump to ${display} in news list`}
+          >
+            {display}
+          </button>
+        ) : (
+          <span className="mr-1.5 font-semibold" style={{ color: "var(--accent)" }}>
+            {display}
+          </span>
+        )}
         <span>: {rest}</span>
       </p>
     );
@@ -409,8 +323,10 @@ function TopLevelSummaryBulletLine({ line }: { line: string }) {
 function DailyNewsBody({ block }: { block: BatchRow }) {
   const p = block.payload;
   const summaryLines = topLevelSummaryBodyLines(p.topLevelSummary);
+  const aggregateRows = useMemo(() => buildAggregateNewsRows(p), [p]);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div
         className="rounded-xl border px-4 py-4 text-sm leading-relaxed sm:px-5 sm:py-5"
         style={{ borderColor: "var(--border)", background: "var(--sb)" }}
@@ -420,7 +336,7 @@ function DailyNewsBody({ block }: { block: BatchRow }) {
         </div>
         <div className="mt-3 space-y-2 font-sans text-sm leading-relaxed sm:text-base">
           {summaryLines.map((line, i) => (
-            <TopLevelSummaryBulletLine key={i} line={line} />
+            <TopLevelSummaryBulletLine key={i} line={line} summaryByTicker={p.summaryByTicker} />
           ))}
         </div>
         <div className="mt-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
@@ -433,13 +349,93 @@ function DailyNewsBody({ block }: { block: BatchRow }) {
           </div>
         ) : null}
       </div>
-      <div className="space-y-8">
-        {p.tickers.map((tk) => {
-          const data = p.summaryByTicker[tk];
-          if (!data) return null;
-          return <TickerSection key={tk} tk={tk} data={data} />;
-        })}
+      <AggregateNewsPanel rows={aggregateRows} />
+    </div>
+  );
+}
+
+function AggregateNewsPanel({ rows }: { rows: ReturnType<typeof buildAggregateNewsRows> }) {
+  const firstRowAnchorByKey = useMemo(() => {
+    const seen = new Set<string>();
+    const anchors = new Map<string, string>();
+    for (const row of rows) {
+      if (seen.has(row.workspaceKey)) continue;
+      seen.add(row.workspaceKey);
+      anchors.set(row.workspaceKey, `daily-news-aggregate-${row.workspaceKey}`);
+    }
+    return anchors;
+  }, [rows]);
+
+  if (rows.length === 0) {
+    return (
+      <div
+        className="rounded-xl border px-4 py-6 text-sm leading-relaxed sm:px-5"
+        style={{ borderColor: "var(--border)", background: "var(--card)", color: "var(--muted2)" }}
+      >
+        No news items in this digest window.
       </div>
+    );
+  }
+
+  return (
+    <div
+      className="overflow-hidden rounded-xl border text-xs sm:text-sm"
+      style={{ borderColor: "var(--border)", background: "var(--card)" }}
+    >
+      <div
+        className="grid grid-cols-[minmax(5rem,6.5rem)_4rem_minmax(4.5rem,5.5rem)_minmax(4rem,5.5rem)_1fr] gap-x-2 border-b px-3 py-2 font-semibold uppercase tracking-wide sm:grid-cols-[minmax(6rem,7.5rem)_4.5rem_minmax(5rem,6rem)_minmax(4.5rem,6rem)_1fr] sm:px-4 sm:text-[10px]"
+        style={{ borderColor: "var(--border2)", color: "var(--muted)", background: "var(--sb)" }}
+      >
+        <span>Company</span>
+        <span>Date</span>
+        <span>Type</span>
+        <span>Source</span>
+        <span>Headline</span>
+      </div>
+      <ul className="divide-y" style={{ borderColor: "var(--border2)" }}>
+        {rows.map((row, i) => {
+          const anchorId =
+            rows.findIndex((r) => r.workspaceKey === row.workspaceKey) === i
+              ? firstRowAnchorByKey.get(row.workspaceKey)
+              : undefined;
+          return (
+          <li
+            key={`${row.url}-${row.workspaceKey}-${i}`}
+            id={anchorId}
+            className="min-w-0 scroll-mt-4"
+          >
+            <a
+              href={row.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="grid grid-cols-[minmax(5rem,6.5rem)_4rem_minmax(4.5rem,5.5rem)_minmax(4rem,5.5rem)_1fr] items-center gap-x-2 px-3 py-2 leading-snug transition-colors hover:bg-[var(--sb)] sm:grid-cols-[minmax(6rem,7.5rem)_4.5rem_minmax(5rem,6rem)_minmax(4.5rem,6rem)_1fr] sm:px-4"
+              title={`${formatAggregateNewsCategory(row.category)} — ${row.headline}`}
+            >
+              <span
+                className={`min-w-0 truncate font-semibold ${
+                  usesTickerStyleNewsBadge(row.workspaceKey) ? "font-mono tabular-nums" : ""
+                }`}
+                style={{ color: "var(--accent)" }}
+              >
+                {row.displayLabel}
+              </span>
+              <span className="shrink-0 tabular-nums" style={{ color: "var(--muted2)" }}>
+                {formatAggregateNewsDate(row.publishedAt)}
+              </span>
+              <span className="min-w-0 truncate text-[10px] font-medium sm:text-xs" style={{ color: "var(--muted2)" }}>
+                {formatAggregateNewsCategory(row.category)}
+              </span>
+              <span className="min-w-0 truncate" style={{ color: "var(--muted)" }}>
+                {row.source}
+              </span>
+              <span className="min-w-0 truncate font-medium" style={{ color: "var(--text)" }}>
+                {row.headline}
+              </span>
+            </a>
+          </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

@@ -199,11 +199,15 @@ function mapRssToArticle(
 
 async function fetchGoogleNewsRows(params: NewsQueryParams, perBatchCap: number): Promise<RssArticle[]> {
   const batches = GOOGLE_NEWS_SITE_BATCHES;
+  const fromDay = params.from?.slice(0, 10);
+  const toDay = params.to?.slice(0, 10);
+  const googleWhen =
+    fromDay && toDay && fromDay === toDay ? "1d" : MAJOR_OUTLET_GOOGLE_NEWS_WHEN;
   const settled = await Promise.allSettled(
     batches.map(async (batch) => {
       const siteGroup = buildGoogleNewsSiteGroupForDomains(batch);
       const query = buildEntityQuery(params, siteGroup);
-      return fetchGoogleNewsRssSearch(query, perBatchCap, MAJOR_OUTLET_GOOGLE_NEWS_WHEN);
+      return fetchGoogleNewsRssSearch(query, perBatchCap, googleWhen);
     })
   );
 

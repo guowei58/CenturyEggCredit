@@ -19,6 +19,22 @@ export type LmeUserMessageCharBreakdown = {
   totalUserMessageChars: number;
 };
 
+export function buildLmeAnalysisUserMessage(sourcesFormatted: string): {
+  user: string;
+  userMessageBreakdown: LmeUserMessageCharBreakdown;
+} {
+  const user = `${LME_ANALYSIS_USER_SPEC}${LME_USER_MESSAGE_SOURCE_BRIDGE}${sourcesFormatted}`;
+  return {
+    user,
+    userMessageBreakdown: {
+      taskSpecChars: LME_ANALYSIS_USER_SPEC.length,
+      bridgeChars: LME_USER_MESSAGE_SOURCE_BRIDGE.length,
+      formattedSourcesChars: sourcesFormatted.length,
+      totalUserMessageChars: user.length,
+    },
+  };
+}
+
 export async function synthesizeLmeAnalysisMarkdown(
   sourcesFormatted: string,
   provider: AiProvider,
@@ -35,13 +51,7 @@ export async function synthesizeLmeAnalysisMarkdown(
     }
   | { ok: false; error: string }
 > {
-  const user = `${LME_ANALYSIS_USER_SPEC}${LME_USER_MESSAGE_SOURCE_BRIDGE}${sourcesFormatted}`;
-  const userMessageBreakdown: LmeUserMessageCharBreakdown = {
-    taskSpecChars: LME_ANALYSIS_USER_SPEC.length,
-    bridgeChars: LME_USER_MESSAGE_SOURCE_BRIDGE.length,
-    formattedSourcesChars: sourcesFormatted.length,
-    totalUserMessageChars: user.length,
-  };
+  const { user, userMessageBreakdown } = buildLmeAnalysisUserMessage(sourcesFormatted);
 
   const result = await llmCompleteSingle(provider, LME_ANALYSIS_SYSTEM, user, {
     maxTokens: LLM_MAX_OUTPUT_TOKENS,

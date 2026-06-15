@@ -77,32 +77,23 @@ Produce the full output in Markdown now, following the task format exactly. Cite
 `.trim();
 }
 
-export async function runForensicAccountingAnalysisGeneration(params: {
+export async function buildForensicAccountingPromptPackage(params: {
   ticker: string;
-  provider: AiProvider;
   companyName?: string;
-  models: ForensicResolvedModels;
-  apiKeys: LlmCallApiKeys;
-  temperature?: number;
   userId: string | null;
+  apiKeys: LlmCallApiKeys;
 }): Promise<
   | {
       ok: true;
-      markdown: string;
+      systemPrompt: string;
+      userPrompt: string;
       sourcePack: string;
-      sentSystemMessage: string;
-      sentUserMessage: string;
       diagnostics: ForensicAccountingRunDiagnostics;
       sourceFingerprint: string;
+      packingStats: LmeRunPackingStats;
     }
   | { ok: false; error: string }
 > {
-  const cfg = loadCreditMemoConfig();
-  const ai = params.provider;
-  if (!isProviderConfigured(ai, params.apiKeys)) {
-    return { ok: false, error: USER_LLM_KEY_SETTINGS_HINT };
-  }
-
   const sym = params.ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (!sym) {
     return { ok: false, error: "Invalid ticker" };
@@ -172,6 +163,60 @@ export async function runForensicAccountingAnalysisGeneration(params: {
     userMessageBreakdown,
   };
 
+  return {
+    ok: true,
+    systemPrompt: FORENSIC_ACCOUNTING_SYSTEM_PROMPT,
+    userPrompt: user,
+    sourcePack: evidenceFormatted,
+    diagnostics,
+    sourceFingerprint: bundled.sourceFingerprint,
+    packingStats,
+  };
+}
+
+export async function runForensicAccountingAnalysisGeneration(params: {
+  ticker: string;
+  provider: AiProvider;
+  companyName?: string;
+  models: ForensicResolvedModels;
+  apiKeys: LlmCallApiKeys;
+  temperature?: number;
+  userId: string | null;
+}): Promise<
+  | {
+      ok: true;
+      markdown: string;
+      sourcePack: string;
+      sentSystemMessage: string;
+      sentUserMessage: string;
+      diagnostics: ForensicAccountingRunDiagnostics;
+      sourceFingerprint: string;
+    }
+  | { ok: false; error: string }
+> {
+  const cfg = loadCreditMemoConfig();
+  const ai = params.provider;
+  if (!isProviderConfigured(ai, params.apiKeys)) {
+    return { ok: false, error: USER_LLM_KEY_SETTINGS_HINT };
+  }
+
+  const sym = params.ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (!sym) {
+    return { ok: false, error: "Invalid ticker" };
+  }
+
+  const built = await buildForensicAccountingPromptPackage({
+    ticker: sym,
+    companyName: params.companyName,
+    userId: params.userId,
+    apiKeys: params.apiKeys,
+  });
+  if (!built.ok) {
+    return built;
+  }
+
+  const { userPrompt: user, diagnostics, sourcePack: evidenceFormatted, sourceFingerprint } = built;
+
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
 
   const result = await llmCompleteSingle(ai, FORENSIC_ACCOUNTING_SYSTEM_PROMPT, user, {
@@ -195,6 +240,6 @@ export async function runForensicAccountingAnalysisGeneration(params: {
     sentSystemMessage: FORENSIC_ACCOUNTING_SYSTEM_PROMPT,
     sentUserMessage: user,
     diagnostics,
-    sourceFingerprint: bundled.sourceFingerprint,
+    sourceFingerprint,
   };
 }

@@ -1,13 +1,16 @@
 import path from "path";
 
 import { SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
-
-import { classifySourceFilename } from "./fileClassifier";
+import {
+  isPeriodFinancialsEarningsTranscriptFilename,
+  isPeriodFinancialsMgmtPresentationFilename,
+} from "@/lib/kpi-workspace-sources";
 
 /**
  * Which Work Product UI triggered folder ingest — used for KPI-only path rules and logging.
  * Generated tab artifacts are listed in `GENERATED_WORK_PRODUCT_ARTIFACT_BASES`; most scopes skip them,
- * while **memo** additionally allowlists KPI / Forensic / LME / Recommendation markdown (see `memoDeckRestrictedIngestKeep`).
+ * while **memo** allowlists KPI / Forensic / LME / Recommendation markdown plus saved tabs, latest 10-K/10-Q,
+ * and Period Financials presentations/transcripts (see `buildMemoDeckIngestAllowSet`).
  */
 export type WorkProductIngestScope =
   | "memo"
@@ -95,7 +98,7 @@ const GENERATED_WORK_PRODUCT_ARTIFACT_BASES = new Set(
  * These stay in {@link GENERATED_WORK_PRODUCT_ARTIFACT_BASES} for other scopes but are allowed when `scope === "memo"`.
  */
 const MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES = new Set(
-  ["kpi-latest.md", "forensic-accounting-latest.md", "lme-analysis.md", "cs-recommendation-latest.md", "entity-mapper-latest.md"].map((s) =>
+  ["kpi-latest.md", "forensic-accounting-latest.md", "lme-analysis.md", "cs-recommendation-latest.md"].map((s) =>
     s.toLowerCase()
   )
 );
@@ -118,23 +121,98 @@ const MEMO_DECK_SAVED_RESPONSE_TXT_BASENAMES = buildMemoDeckSavedResponseTxtBase
 /** Tabs that save HTML instead of `.txt` but use the same “saved response” UI. */
 const MEMO_DECK_SAVED_RESPONSE_HTML_BASENAMES = new Set(["employee-contacts.html", "industry-contacts.html"]);
 
+function normalizeWorkspaceRelPath(relPath: string): string {
+  return relPath.replace(/\\/g, "/").replace(/^\/+/, "").toLowerCase();
+}
+
+export function looksLikeTenKFilename(filename: string): boolean {
+  const base = path.basename(filename.replace(/\\/g, "/"));
+  return /(^|[_\s-])10-?k([_\s.-]|$)/i.test(base);
+}
+
+export function looksLikeTenQFilename(filename: string): boolean {
+  const base = path.basename(filename.replace(/\\/g, "/"));
+  return /(^|[_\s-])10-?q([_\s.-]|$)/i.test(base);
+}
+
+function extractSecFilingSortKey(filename: string): number {
+  const base = path.basename(filename.replace(/\\/g, "/")).toLowerCase();
+  const yearMatch = /(?:10-?k|10-?q)[^0-9]{0,8}(\d{4})/i.exec(base) ?? /(\d{4})/.exec(base);
+  const year = yearMatch ? Number(yearMatch[1]) : 0;
+  const quarterMatch = /(?:q|quarter[_-]?)([1-4])/i.exec(base);
+  const quarter = quarterMatch ? Number(quarterMatch[1]) : 0;
+  return year * 10 + quarter;
+}
+
+function pickLatestSecFilingPath(candidates: string[], kind: "10-K" | "10-Q"): string | null {
+  const filtered = candidates.filter((rel) =>
+    kind === "10-K" ? looksLikeTenKFilename(rel) : looksLikeTenQFilename(rel)
+  );
+  if (filtered.length === 0) return null;
+  return [...filtered].sort((a, b) => extractSecFilingSortKey(b) - extractSecFilingSortKey(a))[0] ?? null;
+}
+
+function isMemoDeckWorkProductMarkdown(relPath: string): boolean {
+  const base = path.basename(relPath.replace(/\\/g, "/")).toLowerCase();
+  return MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES.has(base);
+}
+
+function isMemoDeckSavedTabResponse(relPath: string): boolean {
+  const base = path.basename(relPath.replace(/\\/g, "/")).toLowerCase();
+  return MEMO_DECK_SAVED_RESPONSE_TXT_BASENAMES.has(base) || MEMO_DECK_SAVED_RESPONSE_HTML_BASENAMES.has(base);
+}
+
+function isMemoDeckPeriodFinancialsSource(relPath: string): boolean {
+  const base = path.basename(relPath.replace(/\\/g, "/"));
+  return (
+    isPeriodFinancialsMgmtPresentationFilename(base) || isPeriodFinancialsEarningsTranscriptFilename(base)
+  );
+}
+
+/**
+ * AI Memo & Deck ingest allowlist built from the full materialized workspace file list.
+ * Includes: KPI / Forensic / LME / Recommendation outputs, all saved-tab `.txt` responses,
+ * latest 10-K and latest 10-Q, and all Period Financials management presentations and earnings transcripts.
+ */
+export function buildMemoDeckIngestAllowSet(allRelPaths: string[]): Set<string> {
+  const allowed = new Set<string>();
+  const secCandidates: string[] = [];
+
+  for (const rel of allRelPaths) {
+    const norm = normalizeWorkspaceRelPath(rel);
+    if (isMemoDeckWorkProductMarkdown(rel)) {
+      allowed.add(norm);
+      continue;
+    }
+    if (isMemoDeckSavedTabResponse(rel)) {
+      allowed.add(norm);
+      continue;
+    }
+    if (isMemoDeckPeriodFinancialsSource(rel)) {
+      allowed.add(norm);
+      continue;
+    }
+    if (looksLikeTenKFilename(rel) || looksLikeTenQFilename(rel)) {
+      secCandidates.push(rel);
+    }
+  }
+
+  const latestTenK = pickLatestSecFilingPath(secCandidates, "10-K");
+  const latestTenQ = pickLatestSecFilingPath(secCandidates, "10-Q");
+  if (latestTenK) allowed.add(normalizeWorkspaceRelPath(latestTenK));
+  if (latestTenQ) allowed.add(normalizeWorkspaceRelPath(latestTenQ));
+
+  return allowed;
+}
+
 /**
  * Whether a workspace-relative path is ingested for **AI Memo & Deck** (`workProductIngestScope: "memo"`).
- * Keeps: saved-tab `.txt` (and contacts `.html`), KPI / Forensic / LME / Recommendation markdown outputs,
- * and files classified as SEC filings or presentations (`fileClassifier.ts`), plus common SEC EDGAR
- * `dex10…` exhibit basenames when the classifier returns `other`.
+ * Prefer {@link buildMemoDeckIngestAllowSet} during folder ingest so latest 10-K / 10-Q can be resolved globally.
  */
 export function memoDeckRestrictedIngestKeep(relPath: string): boolean {
-  const base = path.basename(relPath.replace(/\\/g, "/")).toLowerCase();
-
-  if (MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES.has(base)) return true;
-  if (MEMO_DECK_SAVED_RESPONSE_TXT_BASENAMES.has(base)) return true;
-  if (MEMO_DECK_SAVED_RESPONSE_HTML_BASENAMES.has(base)) return true;
-
-  const cat = classifySourceFilename(relPath);
-  if (cat === "sec_filing" || cat === "presentation") return true;
-  // SEC EDGAR material-contract exhibits often appear as `dex101`…`dex1012` glued to accession digits in the basename.
-  if (/dex10\d{1,4}/i.test(base)) return true;
+  if (isMemoDeckWorkProductMarkdown(relPath)) return true;
+  if (isMemoDeckSavedTabResponse(relPath)) return true;
+  if (isMemoDeckPeriodFinancialsSource(relPath)) return true;
   return false;
 }
 
@@ -209,7 +287,8 @@ function kpiOnlyWorkspaceSkip(normalizedRel: string, baseLower: string): { skip:
  */
 export function workspaceFileSkippedForWorkProductIngest(
   relPath: string,
-  scope: WorkProductIngestScope
+  scope: WorkProductIngestScope,
+  opts?: { memoDeckAllowSet?: Set<string> }
 ): { skip: boolean; parseNote?: string } {
   const n = relPath.replace(/\\/g, "/").replace(/^\/+/, "").toLowerCase();
   const base = path.basename(n);
@@ -258,13 +337,24 @@ export function workspaceFileSkippedForWorkProductIngest(
           "Excluded: generated credit memo markdown from this workspace (saved AI Memo output—not ingested as research).",
       };
     }
+    if (opts?.memoDeckAllowSet) {
+      const norm = normalizeWorkspaceRelPath(relPath);
+      if (opts.memoDeckAllowSet.has(norm)) {
+        return { skip: false };
+      }
+      return {
+        skip: true,
+        parseNote:
+          "Excluded for AI Memo & Deck ingest: only KPI / Forensic / LME / Recommendation outputs, saved tab .txt responses (plus employee/industry contacts .html), latest 10-K and latest 10-Q, and Period Financials management presentations and earnings transcripts are included.",
+      };
+    }
     if (memoDeckRestrictedIngestKeep(relPath)) {
       return { skip: false };
     }
     return {
       skip: true,
       parseNote:
-        "Excluded for AI Memo & Deck ingest: only saved tab .txt (plus employee/industry contacts .html), KPI / Forensic / LME / Recommendation markdown outputs, SEC filings (including common `dex10…` exhibit filenames), and presentation-class files (by filename/path heuristics) are included.",
+        "Excluded for AI Memo & Deck ingest: only KPI / Forensic / LME / Recommendation outputs, saved tab .txt responses (plus employee/industry contacts .html), latest 10-K and latest 10-Q, and Period Financials management presentations and earnings transcripts are included.",
     };
   }
 

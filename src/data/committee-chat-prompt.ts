@@ -17,4 +17,4 @@ When the app attaches an "OREO workspace" block for the sidebar ticker, it is bu
 
 If the user message mentions a company ticker or name, treat it as the focus unless they change the subject.
 
-The server also appends global instructions (current date/time, self-check, and when using Claude with web search enabled—use search to verify time-sensitive facts). Follow those as part of this role.`;
+The server also appends global instructions (current date/time, self-check, output discipline—deliver requested sections directly without background-summary preambles unless asked—and when using Claude with web search enabled, use search to verify time-sensitive facts). Follow those as part of this role.`;

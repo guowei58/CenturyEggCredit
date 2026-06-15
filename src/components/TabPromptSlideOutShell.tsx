@@ -35,6 +35,11 @@ export function TabPromptSlideOutShell({
   main,
   prompt,
   toolbar,
+  toolbarAlign = "end",
+  collapsibleToolbar = false,
+  collapseToolbarWhen = false,
+  collapsibleToolbarLabel = "Setup",
+  hasPromptContent = false,
   className = "",
 }: {
   /** When true, the main response / excel area has saved or loaded content. */
@@ -43,10 +48,22 @@ export function TabPromptSlideOutShell({
   prompt: ReactNode;
   /** Optional strip always visible above main (e.g. Excel upload). */
   toolbar?: ReactNode;
+  /** `end` = right-aligned strip (Excel upload); `start` = full-width left-aligned (work product sources). */
+  toolbarAlign?: "start" | "end";
+  /** When true, toolbar can slide up behind a compact restore bar (AI Memo setup strip). */
+  collapsibleToolbar?: boolean;
+  /** When true, auto-collapse the toolbar (e.g. after saved memo is on screen). */
+  collapseToolbarWhen?: boolean;
+  collapsibleToolbarLabel?: string;
+  /** When true, keep / reopen the right-hand prompt drawer (e.g. restored context window). */
+  hasPromptContent?: boolean;
   className?: string;
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(() => hasPromptContent || !hasMainContent);
+  const [toolbarOpen, setToolbarOpen] = useState(() => !(collapsibleToolbar && collapseToolbarWhen));
   const prevHasMainContent = useRef(hasMainContent);
+  const prevCollapseToolbarWhen = useRef(collapseToolbarWhen);
+  const prevHasPromptContent = useRef(hasPromptContent);
   const { top, height } = useCompanyTabWorkspaceInsets();
 
   const insetStyle: CSSProperties | undefined =
@@ -60,17 +77,77 @@ export function TabPromptSlideOutShell({
   useEffect(() => {
     const wasEmpty = !prevHasMainContent.current;
     const nowHasContent = hasMainContent;
-    if (wasEmpty && nowHasContent) {
+    if (wasEmpty && nowHasContent && !hasPromptContent) {
       setOpen(false);
     } else if (!wasEmpty && !nowHasContent) {
       setOpen(true);
     }
     prevHasMainContent.current = hasMainContent;
-  }, [hasMainContent]);
+  }, [hasMainContent, hasPromptContent]);
+
+  useLayoutEffect(() => {
+    if (!collapsibleToolbar) return;
+    const prev = prevCollapseToolbarWhen.current;
+    const now = collapseToolbarWhen;
+    if (!prev && now) {
+      setToolbarOpen(false);
+    } else if (prev && !now) {
+      setToolbarOpen(true);
+    }
+    prevCollapseToolbarWhen.current = now;
+  }, [collapseToolbarWhen, collapsibleToolbar]);
+
+  useLayoutEffect(() => {
+    const prev = prevHasPromptContent.current;
+    const now = hasPromptContent;
+    if (!prev && now) {
+      setOpen(true);
+    }
+    prevHasPromptContent.current = now;
+  }, [hasPromptContent]);
+
+  const toolbarNode = toolbar ? (
+    <div
+      className={`tab-prompt-slide-out-toolbar${toolbarAlign === "start" ? " tab-prompt-slide-out-toolbar--start" : ""}`}
+    >
+      {toolbar}
+    </div>
+  ) : null;
 
   return (
     <div className={`tab-prompt-slide-out-root ${className}`.trim()} style={insetStyle}>
-      {toolbar ? <div className="tab-prompt-slide-out-toolbar">{toolbar}</div> : null}
+      {toolbarNode && collapsibleToolbar ? (
+        <div className="tab-slide-up-root">
+          {collapseToolbarWhen ? (
+            <div className="tab-slide-up-restore">
+              <span className="tab-slide-up-restore-label">{collapsibleToolbarLabel}</span>
+              <span className="tab-slide-up-restore-actions">
+                <button
+                  type="button"
+                  className="tab-slide-up-restore-btn"
+                  disabled={toolbarOpen}
+                  onClick={() => setToolbarOpen(true)}
+                >
+                  Show
+                </button>
+                <button
+                  type="button"
+                  className="tab-slide-up-restore-btn"
+                  disabled={!toolbarOpen}
+                  onClick={() => setToolbarOpen(false)}
+                >
+                  Hide
+                </button>
+              </span>
+            </div>
+          ) : null}
+          <div className={`tab-slide-up-panel${!toolbarOpen ? " tab-slide-up-panel--collapsed" : ""}`}>
+            <div className="tab-slide-up-panel-inner">{toolbarNode}</div>
+          </div>
+        </div>
+      ) : (
+        toolbarNode
+      )}
 
       <div className="tab-prompt-slide-out-main">{main}</div>
 

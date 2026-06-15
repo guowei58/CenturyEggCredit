@@ -13,9 +13,10 @@ import { getActiveCreditMemoTemplate } from "@/lib/creditMemo/templateStore";
 import { buildTemplateDocxHintsBlock } from "@/lib/creditMemo/templatePromptBlocks";
 import type { CreditMemoResolvedModels } from "@/lib/creditMemo/generateMemo";
 import type { LmeUserMessageCharBreakdown } from "@/lib/lme-analysis-synthesis";
+import { formatWorkProductPromptForExternalCopy } from "@/lib/work-product-prompt-format";
 import { buildCreditDeckPptxBuffer, type DeckSlideSpec } from "./pptxBuilder";
 
-const DECK_SYSTEM = `You are a senior credit and equity research analyst building a first-draft PowerPoint credit deck.
+export const CREDIT_DECK_SYSTEM_PROMPT = `You are a senior credit and equity research analyst building a first-draft PowerPoint credit deck.
 
 Rules:
 - Use ONLY facts supported by the EVIDENCE and FILE INVENTORY. If something is not in the evidence, do not invent it — use an empty bullet list or a single bullet "[need additional information]".
@@ -72,7 +73,7 @@ function alignSlidesToOutline(outline: MemoOutline, parsed: Array<{ title: strin
   });
 }
 
-function buildDeckUserPrompt(params: {
+export function buildDeckUserPrompt(params: {
   deckTitle: string;
   ticker: string;
   outline: MemoOutline;
@@ -106,38 +107,28 @@ ${evidence}
 Return ONLY the JSON object with a "slides" array. Each item's "title" must exactly match one of the numbered titles above, in order.`.trim();
 }
 
-export async function runCreditDeckGeneration(params: {
+export async function buildCreditDeckPromptPackage(params: {
   userId: string;
   project: CreditMemoProject;
   targetWords: number;
   deckTitle: string;
-  provider: AiProvider;
   useTemplate?: boolean;
-  models: CreditMemoResolvedModels;
   apiKeys: LlmCallApiKeys;
-  temperature?: number;
 }): Promise<
   | {
       ok: true;
       outline: MemoOutline;
-      buffer: Buffer;
-      filename: string;
-      sentSystemMessage: string;
-      sentUserMessage: string;
+      systemPrompt: string;
+      userPrompt: string;
+      copyPrompt: string;
       userMessageBreakdown: LmeUserMessageCharBreakdown;
       evidenceDiagnostics: CreditMemoEvidenceDiagnostics;
       retrievalUsed: boolean;
     }
   | { ok: false; error: string }
 > {
-  const cfg = loadCreditMemoConfig();
-  const ai = params.provider;
-  if (!isProviderConfigured(ai, params.apiKeys)) {
-    return { ok: false, error: USER_LLM_KEY_SETTINGS_HINT };
-  }
-
   if (params.project.sources.length === 0) {
-    return { ok: false, error: 'Please click on "Refresh sources"' };
+    return { ok: false, error: 'Please click "Refresh sources" first.' };
   }
 
   let outline = planMemoOutline(params.targetWords, params.project.sources);
@@ -179,12 +170,76 @@ export async function runCreditDeckGeneration(params: {
     evidence,
   });
   const userMessageBreakdown = computeMemoUserMessageBreakdown(user, evidence);
+  const system = CREDIT_DECK_SYSTEM_PROMPT;
+
+  return {
+    ok: true,
+    outline,
+    systemPrompt: system,
+    userPrompt: user,
+    copyPrompt: formatWorkProductPromptForExternalCopy(system, user),
+    userMessageBreakdown,
+    evidenceDiagnostics: diagnostics,
+    retrievalUsed: diagnostics.mode === "retrieval",
+  };
+}
+
+export async function runCreditDeckGeneration(params: {
+  userId: string;
+  project: CreditMemoProject;
+  targetWords: number;
+  deckTitle: string;
+  provider: AiProvider;
+  useTemplate?: boolean;
+  models: CreditMemoResolvedModels;
+  apiKeys: LlmCallApiKeys;
+  temperature?: number;
+}): Promise<
+  | {
+      ok: true;
+      outline: MemoOutline;
+      buffer: Buffer;
+      filename: string;
+      sentSystemMessage: string;
+      sentUserMessage: string;
+      userMessageBreakdown: LmeUserMessageCharBreakdown;
+      evidenceDiagnostics: CreditMemoEvidenceDiagnostics;
+      retrievalUsed: boolean;
+    }
+  | { ok: false; error: string }
+> {
+  const cfg = loadCreditMemoConfig();
+  const ai = params.provider;
+  if (!isProviderConfigured(ai, params.apiKeys)) {
+    return { ok: false, error: USER_LLM_KEY_SETTINGS_HINT };
+  }
+
+  const built = await buildCreditDeckPromptPackage({
+    userId: params.userId,
+    project: params.project,
+    targetWords: params.targetWords,
+    deckTitle: params.deckTitle,
+    useTemplate: params.useTemplate,
+    apiKeys: params.apiKeys,
+  });
+  if (!built.ok) {
+    return built;
+  }
+
+  const {
+    outline,
+    systemPrompt: system,
+    userPrompt: user,
+    userMessageBreakdown,
+    evidenceDiagnostics: diagnostics,
+    retrievalUsed,
+  } = built;
 
   const { claudeModel, openaiModel, geminiModel, deepseekModel } = params.models;
 
   const deckMaxTokens = Math.min(LLM_MAX_OUTPUT_TOKENS, Math.max(4_000, cfg.maxOutputTokens));
 
-  const result = await llmCompleteSingle(ai, DECK_SYSTEM, user, {
+  const result = await llmCompleteSingle(ai, system, user, {
     maxTokens: deckMaxTokens,
     claudeModel,
     openaiModel,
@@ -233,10 +288,10 @@ export async function runCreditDeckGeneration(params: {
     outline,
     buffer,
     filename,
-    sentSystemMessage: DECK_SYSTEM,
+    sentSystemMessage: system,
     sentUserMessage: user,
     userMessageBreakdown,
     evidenceDiagnostics: diagnostics,
-    retrievalUsed: diagnostics.mode === "retrieval",
+    retrievalUsed,
   };
 }

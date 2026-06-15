@@ -9,6 +9,7 @@ export default defineConfig({
       "src/lib/ratings-link-search/**/*.test.ts",
       "src/lib/regulatory/**/*.test.ts",
       "src/lib/news/**/*.test.ts",
+      "src/lib/daily-news/**/*.test.ts",
       "src/lib/brokerResearch/**/*.test.ts",
       "src/lib/analystActivity/**/*.test.ts",
       "src/lib/xSearch/**/*.test.ts",

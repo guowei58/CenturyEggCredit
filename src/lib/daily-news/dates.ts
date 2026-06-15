@@ -51,6 +51,15 @@ export function isWithinRollingHours(isoDate: string, windowEnd: Date, hours: nu
   return d.getTime() >= windowEnd.getTime() - ms && d.getTime() <= windowEnd.getTime();
 }
 
+/** True when `publishedAt` falls on the given America/New_York calendar date (`YYYY-MM-DD`). */
+export function publishedOnNyDateKey(publishedAt: string | null | undefined, dateKey: string): boolean {
+  if (!publishedAt?.trim()) return false;
+  const raw = publishedAt.trim();
+  const d = new Date(raw.length === 10 ? `${raw}T12:00:00Z` : raw);
+  if (Number.isNaN(d.getTime())) return raw.slice(0, 10) === dateKey;
+  return formatNyDateKey(d) === dateKey;
+}
+
 /** Hour (0–23) in America/New_York for the given instant. */
 export function getNyHour(d: Date): number {
   const h = new Intl.DateTimeFormat("en-US", { timeZone: NY, hour: "numeric", hour12: false }).format(d);

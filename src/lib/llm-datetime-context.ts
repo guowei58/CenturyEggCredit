@@ -3,6 +3,8 @@
  * context. Raw provider APIs do not, so models often treat "today" as their training cutoff (e.g. mid-2024).
  * Prepend this to system prompts so API completions align with those UIs for timelines, filing recency, and "as of".
  */
+import { LLM_DIRECT_OUTPUT_INSTRUCTION } from "@/lib/llm-output-directive";
+
 export function augmentLlmSystemPromptWithCurrentTime(systemPrompt: string): string {
   const now = new Date();
   const iso = now.toISOString();
@@ -33,7 +35,7 @@ Accuracy and self-check (required):
 - If no search tool is available (typical for DeepSeek/OpenAI/Gemini API unless the host adds one), do not claim you browsed the web. Give your best answer and, for critical time-sensitive items, add a short "verify" line with concrete sources (e.g. SEC EDGAR, company IR, rating agency).
 `;
 
-/** Prepends current time and appends rigor / verification instructions for all cloud API completions. */
+/** Prepends current time and appends rigor / verification / output-discipline instructions for all cloud API completions. */
 export function augmentLlmFullSystemPrompt(systemPrompt: string): string {
-  return `${augmentLlmSystemPromptWithCurrentTime(systemPrompt)}${LLM_VERIFICATION_SUFFIX}`;
+  return `${augmentLlmSystemPromptWithCurrentTime(systemPrompt)}${LLM_VERIFICATION_SUFFIX}${LLM_DIRECT_OUTPUT_INSTRUCTION}`;
 }

@@ -55,7 +55,7 @@ export async function POST(req: Request, { params }: { params: { ticker: string 
   const llmModelUsed = creditMemoPrimaryModelId(provider, models);
 
   const jobId = newJobId();
-  const memoTitle = `${project.ticker} — How to Look Like a Dumbass`;
+  const memoTitle = `${project.ticker} — Shorting at 50c`;
   const targetWords = 12_000;
 
   const result = await runHowToLookLikeADumbassGeneration({

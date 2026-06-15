@@ -37,11 +37,23 @@ export const KPI_COMMENTARY_RETRIEVAL_QUERY = [
   "MD&A risk factors critical accounting estimates controls segment footnotes tables",
 ].join("\n");
 
-export type LmeRetrievalPackTask = "lme" | "kpi" | "forensic";
+/** Embedding query for creative Work Product tabs (literary, biblical, shorting, earnings transcript). */
+export const CREATIVE_WORKSPACE_RETRIEVAL_QUERY = [
+  "credit analysis investment thesis risk reward leverage liquidity covenant maturity",
+  "KPI operating metrics revenue margin EBITDA free cash flow guidance segment outlook",
+  "forensic accounting controls revenue recognition working capital quality of earnings",
+  "LME debt refinance amend extend exchange consent waiver restructuring liability management",
+  "earnings call transcript prepared remarks Q&A management outlook strategy capital allocation",
+  "capital structure recommendation protection downside recovery scenario distressed bear case",
+  "AI credit memo deck narrative management credibility turnaround restructuring industry dynamics",
+].join("\n");
+
+export type LmeRetrievalPackTask = "lme" | "kpi" | "forensic" | "creative";
 
 export function retrievalQueryForTask(task: LmeRetrievalPackTask): string {
   if (task === "kpi") return KPI_COMMENTARY_RETRIEVAL_QUERY;
   if (task === "forensic") return FORENSIC_RETRIEVAL_QUERY;
+  if (task === "creative") return CREATIVE_WORKSPACE_RETRIEVAL_QUERY;
   return LME_RETRIEVAL_QUERY;
 }
 

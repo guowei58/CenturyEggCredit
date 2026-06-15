@@ -17,12 +17,26 @@ const KPI_USER_CLOSING = `
 ---
 Produce the full output in Markdown now. Follow the output rules exactly.`;
 
-function buildKpiTaskSpecBlock(ticker: string, companyName?: string): string {
+export function buildKpiCommentaryUserMessage(
+  sourcesFormatted: string,
+  ticker: string,
+  companyName?: string
+): { user: string; userMessageBreakdown: KpiCommentaryUserMessageBreakdown } {
   const co = companyName?.trim() ? `Company: ${companyName.trim()}\n` : "";
-  return `# TICKER
+  const taskSpec = `# TICKER
 ${ticker}
 ${co}# TASK
 ${KPI_TASK_PROMPT}${KPI_USER_CLOSING}`;
+  const user = `${taskSpec}${LME_USER_MESSAGE_SOURCE_BRIDGE}${sourcesFormatted}`;
+  return {
+    user,
+    userMessageBreakdown: {
+      taskSpecChars: taskSpec.length,
+      bridgeChars: LME_USER_MESSAGE_SOURCE_BRIDGE.length,
+      formattedSourcesChars: sourcesFormatted.length,
+      totalUserMessageChars: user.length,
+    },
+  };
 }
 
 export type KpiCommentaryUserMessageBreakdown = LmeUserMessageCharBreakdown;
@@ -45,14 +59,7 @@ export async function synthesizeKpiCommentaryMarkdown(
     }
   | { ok: false; error: string }
 > {
-  const taskSpec = buildKpiTaskSpecBlock(ticker, companyName);
-  const user = `${taskSpec}${LME_USER_MESSAGE_SOURCE_BRIDGE}${sourcesFormatted}`;
-  const userMessageBreakdown: KpiCommentaryUserMessageBreakdown = {
-    taskSpecChars: taskSpec.length,
-    bridgeChars: LME_USER_MESSAGE_SOURCE_BRIDGE.length,
-    formattedSourcesChars: sourcesFormatted.length,
-    totalUserMessageChars: user.length,
-  };
+  const { user, userMessageBreakdown } = buildKpiCommentaryUserMessage(sourcesFormatted, ticker, companyName);
 
   const cfg = loadCreditMemoConfig();
   const maxTokens = Math.min(cfg.maxOutputTokens, LLM_MAX_OUTPUT_TOKENS);

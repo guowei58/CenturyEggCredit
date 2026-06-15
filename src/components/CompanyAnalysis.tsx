@@ -57,10 +57,8 @@ import {
 } from "@/components/CompanyCreditAgreementsIndenturesTab";
 import { CompanyAiCreditMemoTab } from "@/components/CompanyAiCreditMemoTab";
 import { CompanyCapStructureRecommendationTab } from "@/components/CompanyCapStructureRecommendationTab";
-import { CompanyLiteraryReferencesTab } from "@/components/CompanyLiteraryReferencesTab";
-import { CompanyBiblicalReferencesTab } from "@/components/CompanyBiblicalReferencesTab";
-import { CompanyHowToLookLikeADumbassTab } from "@/components/CompanyHowToLookLikeADumbassTab";
-import { CompanyNextQuarterEarningsTranscriptTab } from "@/components/CompanyNextQuarterEarningsTranscriptTab";
+import { CompanyOtherMemosTab } from "@/components/CompanyOtherMemosTab";
+import { resolveOtherMemoTabId } from "@/data/other-memos-config";
 import { CompanyForensicAnalysisTab } from "@/components/CompanyForensicAnalysisTab";
 import { CompanyCreditTimelineTab } from "@/components/CompanyCreditTimelineTab";
 import { CompanySubstackTab } from "@/components/CompanySubstackTab";
@@ -172,6 +170,12 @@ export function CompanyAnalysis({
     }
   }, [activeTab, onTabChange, onTopSectionChange]);
 
+  useEffect(() => {
+    if (activeTab === "how-to-look-like-a-dumbass") {
+      onTabChange("shorting-at-50c");
+    }
+  }, [activeTab, onTabChange]);
+
   const co = ticker ? getCompanyBarData(ticker, companyName) : null;
   /** EdgarTools tab removed from nav; map stale id to SEC Filings without a one-frame flash. */
   const resolvedTab =
@@ -193,6 +197,8 @@ export function CompanyAnalysis({
           ? "other-regulatory-filings"
         : activeTab === tabLabelToId("OCC Institution Data")
           ? "other-regulatory-filings"
+        : activeTab === "how-to-look-like-a-dumbass"
+          ? "shorting-at-50c"
         : activeTab;
 
   const effectiveTopSection = topSection === ("credit-decision-dashboard" as never) ? "work-product" : topSection;
@@ -258,7 +264,50 @@ export function CompanyAnalysis({
           {/* Level 2: sub-tabs for the active top-level section only (secondary) */}
           {groups.length > 0 &&
             !savedDocsActive &&
-            !(groups.length === 1 && (groups[0]?.tabs?.length ?? 0) <= 1) && (
+            !(groups.length === 1 && (groups[0]?.tabs?.length ?? 0) <= 1) &&
+            (effectiveTopSection === "work-product" ? (
+              <div className="nav-secondary nav-work-product-row flex w-full min-w-0 flex-shrink-0 flex-wrap items-center gap-x-3 gap-y-1 px-6 py-1 sm:px-8">
+                {(() => {
+                  const coreGroup = groups.find((g) => !g.label) ?? groups[0];
+                  const dreamersGroup = groups.find((g) => g.label) ?? groups[1];
+                  const coreTabs = (coreGroup?.tabs ?? []).map((label) => ({ id: tabLabelToId(label), label }));
+                  const dreamerTabs = (dreamersGroup?.tabs ?? []).map((label) => ({ id: tabLabelToId(label), label }));
+                  return (
+                    <>
+                      <TabBar
+                        tabs={coreTabs}
+                        activeId={resolvedTab}
+                        onSelect={(id) => onTabChange(id)}
+                        variant="company"
+                        className="!px-0"
+                      />
+                      {dreamerTabs.length > 0 ? (
+                        <>
+                          <div
+                            className="nav-wp-divider hidden h-5 w-px shrink-0 sm:block"
+                            style={{ background: "var(--border2)" }}
+                            aria-hidden
+                          />
+                          <span
+                            className="w-full shrink-0 text-[9px] font-semibold uppercase tracking-wider sm:w-auto"
+                            style={{ color: "var(--muted)" }}
+                          >
+                            {dreamersGroup?.label ?? "For the Dreamers"}
+                          </span>
+                          <TabBar
+                            tabs={dreamerTabs}
+                            activeId={resolvedTab}
+                            onSelect={(id) => onTabChange(id)}
+                            variant="company"
+                            className="min-w-0 flex-1 !px-0"
+                          />
+                        </>
+                      ) : null}
+                    </>
+                  );
+                })()}
+              </div>
+            ) : (
             <div className="nav-secondary flex flex-shrink-0 w-full flex-col">
               {groups.map((group, gi) => {
                 const tabs = (group.tabs ?? []).map((label) => ({ id: tabLabelToId(label), label }));
@@ -283,7 +332,7 @@ export function CompanyAnalysis({
                 );
               })}
             </div>
-          )}
+            ))}
 
           <div className="min-h-0 flex-1 overflow-hidden">
             {resolvedTab === "sec-xbrl-financials" ? (
@@ -583,17 +632,11 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   if (tabId === "recommendation") {
     return <CompanyCapStructureRecommendationTab ticker={ticker} />;
   }
-  if (tabId === "literary-references") {
-    return <CompanyLiteraryReferencesTab ticker={ticker} companyName={companyName} />;
-  }
-  if (tabId === "biblical-references") {
-    return <CompanyBiblicalReferencesTab ticker={ticker} companyName={companyName} />;
-  }
-  if (tabId === "how-to-look-like-a-dumbass") {
-    return <CompanyHowToLookLikeADumbassTab ticker={ticker} companyName={companyName} />;
-  }
-  if (tabId === "next-quarter-earnings-transcript") {
-    return <CompanyNextQuarterEarningsTranscriptTab ticker={ticker} companyName={companyName} />;
+  const otherMemoTabId = resolveOtherMemoTabId(tabId);
+  if (otherMemoTabId) {
+    return (
+      <CompanyOtherMemosTab ticker={ticker} companyName={companyName} activeMemoTabId={otherMemoTabId} />
+    );
   }
   if (tabId === "ai-memo-and-deck" || tabId === "ai-credit-memo") {
     return <CompanyAiCreditMemoTab ticker={ticker} companyName={companyName} />;

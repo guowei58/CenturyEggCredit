@@ -158,6 +158,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       {
         tabs: [
           "Research Roadmap",
+          "Company Reputation",
           "Mgmt Presentations & Transcripts",
           "Industry Publications",
           "Industry Contacts",
@@ -173,7 +174,6 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "The Cap Stack Rumor Mill",
           "Twitter Sentiment",
           "Substack",
-          "Company Reputation",
         ],
       },
     ],
@@ -181,15 +181,14 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
   "work-product": {
     groups: [
       {
+        tabs: ["KPI Commentary", "Forensic Analysis", "LME Analysis", "Recommendation", "AI Memo and Deck"],
+      },
+      {
+        label: "For the Dreamers",
         tabs: [
-          "KPI Commentary",
-          "Forensic Analysis",
-          "LME Analysis",
-          "Recommendation",
-          "AI Memo and Deck",
           "Literary References",
           "Biblical References",
-          "How to Look Like a Dumbass",
+          "Shorting at 50c",
           "Next Quarter Earnings Transcript",
         ],
       },

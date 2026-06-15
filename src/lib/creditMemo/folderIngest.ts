@@ -7,7 +7,7 @@ import { extractPdfAsPlainTextForIngest, extractTickerFileForAi } from "@/lib/ti
 import { loadCreditMemoConfig } from "./config";
 import { classifySourceFilename } from "./fileClassifier";
 import type { WorkProductIngestScope } from "./workProductIngestScope";
-import { isMemoDeckLibraryWorkspacePath, workspaceFileSkippedForWorkProductIngest } from "./workProductIngestScope";
+import { isMemoDeckLibraryWorkspacePath, workspaceFileSkippedForWorkProductIngest, buildMemoDeckIngestAllowSet } from "./workProductIngestScope";
 import type { CreditMemoProject, ExtractedTableRecord, SourceChunkRecord, SourceFileRecord } from "./types";
 import type { SourceCategory } from "./types";
 import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
@@ -199,6 +199,11 @@ export async function ingestTickerFolder(params: {
   let excludedExcelCount = 0;
   let excludedGeneratedWorkProductCount = 0;
 
+  const memoDeckAllowSet =
+    ingestScope === "memo" || ingestScope === "generic"
+      ? buildMemoDeckIngestAllowSet(files.map((f) => f.rel))
+      : undefined;
+
   for (const f of files) {
     const ext = path.extname(f.rel).toLowerCase();
     const category: SourceCategory = classifySourceFilename(f.rel);
@@ -245,7 +250,7 @@ export async function ingestTickerFolder(params: {
       continue;
     }
 
-    const wpSkip = workspaceFileSkippedForWorkProductIngest(f.rel, ingestScope);
+    const wpSkip = workspaceFileSkippedForWorkProductIngest(f.rel, ingestScope, { memoDeckAllowSet });
     if (wpSkip.skip) {
       excludedGeneratedWorkProductCount += 1;
       const sid = stableId(["src", params.projectId, f.rel]);

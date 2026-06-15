@@ -886,6 +886,16 @@
     border-bottom: 1px solid var(--border2);
   }
 
+  .nav-work-product-row {
+    padding: 0.125rem 0;
+    background: var(--panel);
+  }
+
+  .nav-work-product-row .tab-bar-company {
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+  }
+
   /* Company analysis Level 2: small chip-style tabs, subdued */
   .tab-bar-company {
     padding: 0.125rem 0 0.375rem;
@@ -1151,6 +1161,14 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 0.5rem;
+  }
+  .tab-prompt-slide-out-toolbar--start {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .tab-prompt-slide-out-toolbar--start > * {
+    width: 100%;
+    min-width: 0;
   }
   .excel-workbook-upload-strip {
     display: flex;

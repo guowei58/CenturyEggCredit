@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildMemoDeckIngestAllowSet,
   isMemoDeckLibraryWorkspacePath,
   kpiFilenameSuggestsCreditAgreementOrIndenture,
   memoDeckRestrictedIngestKeep,
   workspaceFileSkippedForWorkProductIngest,
 } from "./workProductIngestScope";
+
+function memoAllows(allPaths: string[], rel: string): boolean {
+  const allow = buildMemoDeckIngestAllowSet(allPaths);
+  return !workspaceFileSkippedForWorkProductIngest(rel, "memo", { memoDeckAllowSet: allow }).skip;
+}
 
 describe("isMemoDeckLibraryWorkspacePath", () => {
   it("flags index, memos, and decks under the library tree", () => {
@@ -57,14 +63,23 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
   });
 
   it("memo scope ingests KPI, forensic, LME, and recommendation markdown but not meta, packs, or other generated tabs", () => {
-    expect(workspaceFileSkippedForWorkProductIngest("kpi-latest.md", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("forensic-accounting-latest.md", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("lme-analysis.md", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("cs-recommendation-latest.md", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("kpi-latest-meta.json", "memo").skip).toBe(true);
-    expect(workspaceFileSkippedForWorkProductIngest("kpi-latest-source-pack.txt", "memo").skip).toBe(true);
-    expect(workspaceFileSkippedForWorkProductIngest("literary-references-latest.md", "memo").skip).toBe(true);
-    expect(workspaceFileSkippedForWorkProductIngest("ai-credit-memo-buffett.md", "memo").skip).toBe(true);
+    const paths = [
+      "kpi-latest.md",
+      "forensic-accounting-latest.md",
+      "lme-analysis.md",
+      "cs-recommendation-latest.md",
+      "kpi-latest-meta.json",
+      "literary-references-latest.md",
+    ];
+    expect(memoAllows(paths, "kpi-latest.md")).toBe(true);
+    expect(memoAllows(paths, "forensic-accounting-latest.md")).toBe(true);
+    expect(memoAllows(paths, "lme-analysis.md")).toBe(true);
+    expect(memoAllows(paths, "cs-recommendation-latest.md")).toBe(true);
+    expect(memoAllows(paths, "kpi-latest-meta.json")).toBe(false);
+    expect(memoAllows(paths, "kpi-latest-source-pack.txt")).toBe(false);
+    expect(memoAllows(paths, "literary-references-latest.md")).toBe(false);
+    expect(memoAllows(paths, "ai-credit-memo-buffett.md")).toBe(false);
+    expect(memoAllows(paths, "entity-mapper-latest.md")).toBe(false);
   });
 
   it("forensic scope skips KPI and other tabs’ generated files", () => {
@@ -73,15 +88,35 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
     expect(workspaceFileSkippedForWorkProductIngest("ai-credit-memo-buffett.md", "forensic").skip).toBe(true);
   });
 
-  it("memo scope still ingests dex101-style SEC filenames (SEC filing classifier)", () => {
-    expect(workspaceFileSkippedForWorkProductIngest("__ceg_user_saved_documents__/d353521dex101.html", "memo").skip).toBe(false);
+  it("memo scope keeps only latest 10-K and latest 10-Q among SEC filings", () => {
+    const paths = [
+      "__ceg_user_saved_documents__/MSFT_10-K-FY2022.html",
+      "__ceg_user_saved_documents__/MSFT_10-K-FY2024.html",
+      "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q1.html",
+      "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q3.html",
+      "__ceg_user_saved_documents__/d353521dex101.html",
+    ];
+    expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-K-FY2024.html")).toBe(true);
+    expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-K-FY2022.html")).toBe(false);
+    expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q3.html")).toBe(true);
+    expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q1.html")).toBe(false);
+    expect(memoAllows(paths, "__ceg_user_saved_documents__/d353521dex101.html")).toBe(false);
   });
 
-  it("memo scope keeps saved-tab txt and skips unrelated research files", () => {
-    expect(workspaceFileSkippedForWorkProductIngest("overview.txt", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("employee-contacts.html", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("research/foo.txt", "memo").skip).toBe(true);
-    expect(memoDeckRestrictedIngestKeep("research/investor-deck-roadshow.pdf")).toBe(true);
+  it("memo scope keeps saved-tab txt, mgmt presentations, and earnings transcripts", () => {
+    const paths = [
+      "overview.txt",
+      "employee-contacts.html",
+      "MSFT_earnings-transcript_2024-Q3.txt",
+      "MSFT-mgmt-presentation.pdf",
+      "research/notes.txt",
+    ];
+    expect(memoAllows(paths, "overview.txt")).toBe(true);
+    expect(memoAllows(paths, "employee-contacts.html")).toBe(true);
+    expect(memoAllows(paths, "MSFT_earnings-transcript_2024-Q3.txt")).toBe(true);
+    expect(memoAllows(paths, "MSFT-mgmt-presentation.pdf")).toBe(true);
+    expect(memoAllows(paths, "research/notes.txt")).toBe(false);
+    expect(memoDeckRestrictedIngestKeep("research/investor-deck-roadshow.pdf")).toBe(false);
   });
 
   it("always skips deck library tree and ai-credit-deck.txt", () => {
@@ -95,7 +130,26 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
     ).toBe(true);
     expect(workspaceFileSkippedForWorkProductIngest("credit-memo/kpi-embeddings/x.json", "memo").skip).toBe(true);
     expect(workspaceFileSkippedForWorkProductIngest("Credit-Memo/state.json", "kpi").skip).toBe(true);
-    expect(workspaceFileSkippedForWorkProductIngest("research/10k.txt", "memo").skip).toBe(false);
-    expect(workspaceFileSkippedForWorkProductIngest("research/notes.txt", "memo").skip).toBe(true);
+  });
+});
+
+describe("buildMemoDeckIngestAllowSet", () => {
+  it("includes all five source categories", () => {
+    const allow = buildMemoDeckIngestAllowSet([
+      "kpi-latest.md",
+      "overview.txt",
+      "MSFT_10-K-FY2024.html",
+      "MSFT_10-K-FY2022.html",
+      "MSFT_10-Q-2024-Q2.html",
+      "AAPL-mgmt-presentation.pdf",
+      "AAPL_earnings-transcript_2024-Q1.txt",
+    ]);
+    expect(allow.has("kpi-latest.md")).toBe(true);
+    expect(allow.has("overview.txt")).toBe(true);
+    expect(allow.has("msft_10-k-fy2024.html")).toBe(true);
+    expect(allow.has("msft_10-k-fy2022.html")).toBe(false);
+    expect(allow.has("msft_10-q-2024-q2.html")).toBe(true);
+    expect(allow.has("aapl-mgmt-presentation.pdf")).toBe(true);
+    expect(allow.has("aapl_earnings-transcript_2024-q1.txt")).toBe(true);
   });
 });

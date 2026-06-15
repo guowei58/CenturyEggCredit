@@ -117,6 +117,8 @@ export const SAVED_DATA_FILES: Record<string, string> = {
   "credit-decision-dashboard-latest-meta": "credit-decision-dashboard-latest-meta.json",
   "credit-decision-dashboard-latest-source-pack": "credit-decision-dashboard-latest-source-pack.txt",
   "credit-decision-dashboard-inputs": "credit-decision-dashboard-inputs.json",
+  /** Cached memo/deck context-window prompts (per product type) until the user rebuilds. */
+  "ai-memo-deck-built-prompt-cache": "ai-memo-deck-built-prompt-cache.json",
 };
 
 /**

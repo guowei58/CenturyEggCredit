@@ -17,6 +17,23 @@ import type { LmeUserMessageCharBreakdown } from "@/lib/lme-analysis-synthesis";
 /** Separator + banner before pasted sources (parallel to `LME_USER_MESSAGE_SOURCE_BRIDGE`). */
 export const CS_RECOMMENDATION_USER_MESSAGE_SOURCE_BRIDGE = `\n\n---\n\nSOURCE DOCUMENTS (use as sole factual basis for capital-structure protection claims):\n\n`;
 
+export function buildCapStructureRecommendationUserMessage(sourcesFormatted: string): {
+  user: string;
+  userMessageBreakdown: LmeUserMessageCharBreakdown;
+} {
+  const taskSpec = CAP_STRUCTURE_PROTECTION_TASK_PROMPT.trim();
+  const user = `${taskSpec}${CS_RECOMMENDATION_USER_MESSAGE_SOURCE_BRIDGE}${sourcesFormatted}`;
+  return {
+    user,
+    userMessageBreakdown: {
+      taskSpecChars: taskSpec.length,
+      bridgeChars: CS_RECOMMENDATION_USER_MESSAGE_SOURCE_BRIDGE.length,
+      formattedSourcesChars: sourcesFormatted.length,
+      totalUserMessageChars: user.length,
+    },
+  };
+}
+
 export async function synthesizeCapStructureRecommendationMarkdown(
   sourcesFormatted: string,
   provider: AiProvider,
@@ -33,14 +50,7 @@ export async function synthesizeCapStructureRecommendationMarkdown(
     }
   | { ok: false; error: string }
 > {
-  const taskSpec = CAP_STRUCTURE_PROTECTION_TASK_PROMPT.trim();
-  const user = `${taskSpec}${CS_RECOMMENDATION_USER_MESSAGE_SOURCE_BRIDGE}${sourcesFormatted}`;
-  const userMessageBreakdown: LmeUserMessageCharBreakdown = {
-    taskSpecChars: taskSpec.length,
-    bridgeChars: CS_RECOMMENDATION_USER_MESSAGE_SOURCE_BRIDGE.length,
-    formattedSourcesChars: sourcesFormatted.length,
-    totalUserMessageChars: user.length,
-  };
+  const { user, userMessageBreakdown } = buildCapStructureRecommendationUserMessage(sourcesFormatted);
 
   const result = await llmCompleteSingle(provider, CAP_STRUCTURE_RECOMMENDATION_SYSTEM_PROMPT, user, {
     maxTokens: LLM_MAX_OUTPUT_TOKENS,

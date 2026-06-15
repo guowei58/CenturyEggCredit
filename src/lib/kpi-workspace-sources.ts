@@ -132,15 +132,34 @@ export function isWorkspaceEmbeddingVectorCachePath(relPath: string): boolean {
   return INTERNAL_EMBEDDING_WORKSPACE_PREFIXES.some((p) => n.startsWith(p));
 }
 
+function isKpiPeriodFinancialsMgmtPresentationFilename(name: string): boolean {
+  const n = name.trim().toLowerCase();
+  if (!n) return false;
+  return n.includes("_mgmt-presentation_") || n.includes("-mgmt-presentation.");
+}
+
+function isKpiPeriodFinancialsEarningsTranscriptFilename(name: string): boolean {
+  const n = name.trim().toLowerCase();
+  if (!n) return false;
+  return n.includes("_earnings-transcript_") || n.includes("roic-earnings-transcript-");
+}
+
+/** Period Financials management presentation saved to Saved Documents. */
+export function isPeriodFinancialsMgmtPresentationFilename(name: string): boolean {
+  return isKpiPeriodFinancialsMgmtPresentationFilename(name);
+}
+
+/** Period Financials earnings transcript saved to Saved Documents. */
+export function isPeriodFinancialsEarningsTranscriptFilename(name: string): boolean {
+  return isKpiPeriodFinancialsEarningsTranscriptFilename(name);
+}
+
 function isKpiPeriodFinancialsSourceFilename(name: string): boolean {
   const n = name.trim().toLowerCase();
   if (!n) return false;
   if (n.endsWith(".meta.json")) return false;
   return (
-    n.includes("_mgmt-presentation_") ||
-    n.includes("-mgmt-presentation.") ||
-    n.includes("_earnings-transcript_") ||
-    n.includes("roic-earnings-transcript-")
+    isKpiPeriodFinancialsMgmtPresentationFilename(n) || isKpiPeriodFinancialsEarningsTranscriptFilename(n)
   );
 }
 

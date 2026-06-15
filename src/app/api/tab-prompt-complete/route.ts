@@ -26,7 +26,7 @@ const DEFAULT_SYSTEM = `You are a senior credit and equity research assistant. T
 
 Answer thoroughly. Use Markdown (headings, lists, tables) when it improves clarity. Follow any output structure the user asked for. Do not invent facts; if information is missing, say so briefly.
 
-The server prepends the current date/time and adds rigor instructions (self-check; for Claude with web search—verify recent facts when needed). Treat those as binding.`;
+The server prepends the current date/time and adds rigor, verification, and output-discipline instructions (deliver requested sections directly; no background-summary preamble unless asked; self-check; for Claude with web search—verify recent facts when needed). Treat those as binding.`;
 
 /**
  * POST { provider, userPrompt, systemPrompt?, maxTokens?, samplePublicPaths?, claudeModel?, openaiModel?, geminiModel?, deepseekModel? }

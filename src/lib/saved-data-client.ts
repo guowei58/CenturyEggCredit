@@ -86,6 +86,8 @@ export type SavedDataKey =
   | "kpi-latest"
   | "kpi-latest-meta"
   | "kpi-latest-source-pack"
+  | "lme-analysis"
+  | "lme-analysis-meta"
   | "forensic-accounting-latest"
   | "forensic-accounting-latest-meta"
   | "forensic-accounting-latest-source-pack"
@@ -104,7 +106,8 @@ export type SavedDataKey =
   | "credit-decision-dashboard-latest"
   | "credit-decision-dashboard-latest-meta"
   | "credit-decision-dashboard-latest-source-pack"
-  | "credit-decision-dashboard-inputs";
+  | "credit-decision-dashboard-inputs"
+  | "ai-memo-deck-built-prompt-cache";
 
 /** No-op compatibility POST so clients can "warm" the session before first save. */
 export async function initTickerSaveFolder(ticker: string): Promise<void> {

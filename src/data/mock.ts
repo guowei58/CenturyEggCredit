@@ -63,7 +63,7 @@ export const companyAnalysisWorkOutputTabs = [
   "AI Memo and Deck",
   "Literary References",
   "Biblical References",
-  "How to Look Like a Dumbass",
+  "Shorting at 50c",
   "Next Quarter Earnings Transcript",
   "Dear Diary",
 ] as const;
