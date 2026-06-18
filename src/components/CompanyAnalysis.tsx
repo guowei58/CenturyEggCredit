@@ -292,7 +292,7 @@ export function CompanyAnalysis({
                             className="w-full shrink-0 text-[9px] font-semibold uppercase tracking-wider sm:w-auto"
                             style={{ color: "var(--muted)" }}
                           >
-                            {dreamersGroup?.label ?? "For the Dreamers"}
+                            {dreamersGroup?.label ?? "For the Hallucinators ---\u003e"}
                           </span>
                           <TabBar
                             tabs={dreamerTabs}

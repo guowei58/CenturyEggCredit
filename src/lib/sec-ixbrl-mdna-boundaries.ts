@@ -938,3 +938,170 @@ export function findBestSegmentNoteRange(acc: string, notes: NotesSectionBounds)
   }
   return best;
 }
+
+/** Subsection within MD&A covering revenue / results-of-operations discussion. */
+export type MdnaRevenueSectionBounds = {
+  start: number;
+  end: number;
+  startLabel: string;
+  endLabel: string;
+  confidence: "high" | "medium" | "low";
+};
+
+const MIN_MDNA_REVENUE_SPAN_CHARS = 1200;
+const MDNA_REVENUE_START_SKIP_CHARS = 220;
+
+const MDNA_REVENUE_START_PATTERNS: readonly { re: RegExp; label: string; priority: number }[] = [
+  { re: /\bRESULTS\s+OF\s+OPERATIONS\b/gi, label: "Results of Operations", priority: 100 },
+  { re: /\bCONSOLIDATED\s+RESULTS\b/gi, label: "Consolidated Results", priority: 95 },
+  { re: /\bCONSOLIDATED\s+FINANCIAL\s+RESULTS\b/gi, label: "Consolidated Financial Results", priority: 92 },
+  { re: /\bOVERVIEW\s+OF\s+(?:OUR\s+)?(?:RESULTS|OPERATIONS|FINANCIAL\s+RESULTS)\b/gi, label: "Overview of Results", priority: 88 },
+  { re: /\b(?:NET\s+)?REVENUES?\s+AND\s+(?:EXPENSES|COSTS)\b/gi, label: "Revenues and Expenses", priority: 86 },
+  { re: /\bNET\s+SALES\b/gi, label: "Net Sales", priority: 84 },
+  { re: /\b(?:TOTAL\s+)?(?:NET\s+)?REVENUES?\b/gi, label: "Revenues", priority: 70 },
+];
+
+const MDNA_REVENUE_END_PATTERNS: readonly { re: RegExp; label: string }[] = [
+  { re: /\bLIQUIDITY\s+AND\s+CAPITAL\s+RESOURCES\b/i, label: "Liquidity and Capital Resources" },
+  { re: /\bLIQUIDITY\s+AND\s+CAPITAL\b/i, label: "Liquidity and Capital" },
+  { re: /\bCAPITAL\s+RESOURCES\b/i, label: "Capital Resources" },
+  { re: /\bCRITICAL\s+ACCOUNTING\b/i, label: "Critical Accounting" },
+  { re: /\bNON[-\s]*GAAP\s+FINANCIAL\s+MEASURES\b/i, label: "Non-GAAP Financial Measures" },
+  { re: /\bCONTRACTUAL\s+OBLIGATIONS\b/i, label: "Contractual Obligations" },
+  { re: /\bOFF[-\s]BALANCE\s+SHEET\b/i, label: "Off-Balance Sheet" },
+  { re: /\bQUANTITATIVE\s+AND\s+QUALITATIVE\s+DISCLOSURES\b/i, label: "Item 7A / 3 Quantitative Disclosures" },
+];
+
+/**
+ * Locate the revenue / results-of-operations slice inside detected MD&A bounds.
+ * Falls back to the full MD&A span when no subsection heading matches.
+ */
+export function findMdnaRevenueSectionBounds(
+  acc: string,
+  mdnaBounds: { start: number; end: number },
+  _form?: string
+): MdnaRevenueSectionBounds | null {
+  const mdnaStart = mdnaBounds.start;
+  const mdnaEnd = mdnaBounds.end;
+  if (mdnaEnd <= mdnaStart + MIN_MDNA_REVENUE_SPAN_CHARS) return null;
+
+  const slice = acc.slice(mdnaStart, mdnaEnd);
+  const searchFrom = MDNA_REVENUE_START_SKIP_CHARS;
+
+  let bestStart: { rel: number; label: string; priority: number } | null = null;
+  for (const { re, label, priority } of MDNA_REVENUE_START_PATTERNS) {
+    re.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(slice)) !== null) {
+      if (m.index < searchFrom) continue;
+      const cand = { rel: m.index, label, priority };
+      if (
+        !bestStart ||
+        cand.priority > bestStart.priority ||
+        (cand.priority === bestStart.priority && cand.rel < bestStart.rel)
+      ) {
+        bestStart = cand;
+      }
+    }
+  }
+
+  const start = bestStart ? mdnaStart + bestStart.rel : mdnaStart + searchFrom;
+  const startLabel = bestStart?.label ?? "MD&A (fallback)";
+  const startConfidence: MdnaRevenueSectionBounds["confidence"] = bestStart
+    ? bestStart.priority >= 84
+      ? "high"
+      : "medium"
+    : "low";
+
+  const tail = acc.slice(start + 1, mdnaEnd);
+  let end = mdnaEnd;
+  let endLabel = "(MD&A end)";
+  for (const { re, label } of MDNA_REVENUE_END_PATTERNS) {
+    re.lastIndex = 0;
+    const m = re.exec(tail);
+    if (m && m.index >= MIN_MDNA_REVENUE_SPAN_CHARS - 200) {
+      const abs = start + 1 + m.index;
+      if (abs < end) {
+        end = abs;
+        endLabel = label;
+      }
+    }
+  }
+
+  if (end - start < MIN_MDNA_REVENUE_SPAN_CHARS) {
+    end = Math.min(mdnaEnd, start + Math.max(MIN_MDNA_REVENUE_SPAN_CHARS, mdnaEnd - mdnaStart));
+    endLabel = end >= mdnaEnd ? "(MD&A end)" : endLabel;
+  }
+
+  return {
+    start,
+    end,
+    startLabel,
+    endLabel,
+    confidence: startConfidence,
+  };
+}
+
+/** All notes blocks with segment / disaggregated-revenue relevance (not just the single best pick). */
+export function findAllSegmentRevenueNoteRanges(
+  acc: string,
+  notes: NotesSectionBounds,
+  minScore = SEGMENT_NOTE_MIN_SCORE_MEDIUM
+): SegmentNotePick[] {
+  const slice = acc.slice(notes.start, notes.end);
+  const noteStarts = collectNoteBlockStartIndicesInSlice(slice);
+  const picks: SegmentNotePick[] = [];
+
+  for (let i = 0; i < noteStarts.length; i++) {
+    const ns = noteStarts[i]!;
+    const blockStart = notes.start + ns.idx;
+    const blockEndRel = computeStructuralNoteEndOffset(noteStarts, i, slice.length);
+    const blockEnd = notes.start + blockEndRel;
+    const blockText = acc.slice(blockStart, blockEnd);
+    const headingLine = blockText.slice(0, Math.min(blockText.length, 220)).replace(/\s+/g, " ").trim();
+    const bodySnippet = blockText.slice(0, 4500);
+
+    const sc = scoreSegmentNoteCandidate(headingLine, bodySnippet);
+    if (sc.total < minScore) continue;
+
+    let confidence: SegmentNotePick["confidence"] = "low";
+    if (sc.total >= SEGMENT_NOTE_MIN_SCORE_HIGH) confidence = "high";
+    else if (sc.total >= SEGMENT_NOTE_MIN_SCORE_MEDIUM) confidence = "medium";
+
+    picks.push({
+      start: blockStart,
+      end: blockEnd,
+      headingText: headingLine.slice(0, 200),
+      score: sc.total,
+      headingScore: sc.headingScore,
+      bodyScore: sc.bodyScore,
+      confidence,
+      warnings: [],
+    });
+  }
+
+  if (picks.length === 0) {
+    const fallback = findSegmentKeywordFallbackPick(acc, notes);
+    if (fallback) picks.push(fallback);
+  }
+
+  picks.sort((a, b) => a.start - b.start);
+  return picks;
+}
+
+function offsetInRange(off: number, range: { start: number; end: number } | null | undefined): boolean {
+  return range != null && off >= range.start && off < range.end;
+}
+
+/** True when a table offset falls in any of the given note ranges. */
+export function tableOffsetInSegmentNoteRanges(
+  off: number,
+  ranges: readonly { start: number; end: number }[]
+): { start: number; end: number } | null {
+  for (const r of ranges) {
+    if (off >= r.start && off < r.end) return r;
+  }
+  return null;
+}
+
+export { offsetInRange as tableOffsetInRange };

@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-15T01:09:05.264Z",
+  "fetchedAt": "2026-06-18T01:34:40.268Z",
   "discovered": [
     {
       "id": "claude-fable-5",
@@ -36,14 +36,6 @@
     {
       "id": "claude-opus-4-1-20250805",
       "label": "Claude Opus 4.1"
-    },
-    {
-      "id": "claude-opus-4-20250514",
-      "label": "Claude Opus 4"
-    },
-    {
-      "id": "claude-sonnet-4-20250514",
-      "label": "Claude Sonnet 4"
     }
   ]
 }

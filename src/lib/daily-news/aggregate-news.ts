@@ -31,23 +31,26 @@ function pushItems(
   }
 }
 
-/** Flatten all ticker news blocks into one list, newest first. */
+/** Flatten all ticker news blocks into one list, in watchlist ticker order (newest first within each ticker). */
 export function buildAggregateNewsRows(payload: DailyNewsBatchPayload): AggregateNewsRow[] {
   const rows: AggregateNewsRow[] = [];
   for (const tk of payload.tickers) {
     const block = payload.summaryByTicker[tk];
     if (!block) continue;
     const displayLabel = watchlistNewsDisplayLabel(tk, block.companyName);
-    pushItems(rows, tk, displayLabel, block.secFilings, "SEC");
-    pushItems(rows, tk, displayLabel, block.companyNews, "Company");
-    pushItems(rows, tk, displayLabel, block.industryNews, "Industry");
+    const tickerRows: AggregateNewsRow[] = [];
+    pushItems(tickerRows, tk, displayLabel, block.secFilings, "SEC");
+    pushItems(tickerRows, tk, displayLabel, block.companyNews, "Company");
+    pushItems(tickerRows, tk, displayLabel, block.industryNews, "Industry");
+    tickerRows.sort(
+      (a, b) =>
+        b.publishedAt.localeCompare(a.publishedAt) ||
+        a.category.localeCompare(b.category) ||
+        a.headline.localeCompare(b.headline)
+    );
+    rows.push(...tickerRows);
   }
-  return rows.sort(
-    (a, b) =>
-      b.publishedAt.localeCompare(a.publishedAt) ||
-      a.displayLabel.localeCompare(b.displayLabel) ||
-      a.headline.localeCompare(b.headline)
-  );
+  return rows;
 }
 
 export function formatAggregateNewsDate(publishedAt: string): string {

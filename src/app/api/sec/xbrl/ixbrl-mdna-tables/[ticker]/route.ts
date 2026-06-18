@@ -27,23 +27,44 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
         ? false
         : undefined;
 
-  const bundle = await buildIxbrlMdnaTablesBundle(sym, {
-    accessionNumber: acc || undefined,
-    includeUncertainBoundaries,
-    includeLowConfidenceTables,
-  });
+  try {
+    const bundle = await buildIxbrlMdnaTablesBundle(sym, {
+      accessionNumber: acc || undefined,
+      includeUncertainBoundaries,
+      includeLowConfidenceTables,
+    });
 
-  if (!bundle.ok) {
-    const status =
-      bundle.error === "SEC submissions not found for ticker"
-        ? 404
-        : bundle.error === "No 10-K/10-Q filings found"
+    if (!bundle.ok) {
+      const status =
+        bundle.error === "SEC submissions not found for ticker"
           ? 404
-          : bundle.error === "Filing has no primary document path"
-            ? 400
-            : 502;
-    return NextResponse.json(bundle, { status });
-  }
+          : bundle.error === "No 10-K/10-Q filings found"
+            ? 404
+            : bundle.error === "Filing has no primary document path"
+              ? 400
+              : 502;
+      return NextResponse.json(bundle, { status });
+    }
 
-  return NextResponse.json(bundle);
+    return NextResponse.json(bundle);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Inline XBRL extraction failed";
+    console.error("[ixbrl-mdna-tables]", sym, acc || "(latest)", message);
+    return NextResponse.json(
+      {
+        ok: false,
+        error: message,
+        ticker: sym,
+        mdnaHeadingFound: false,
+        segmentHeadingFound: false,
+        mdnaTableHit: false,
+        mdnaSectionHtml: null,
+        mdnaSectionHtmlTruncated: false,
+        tables: [],
+        ebitdaReconciliation: { status: "none", tables: [] },
+        revenueDrivers: { status: "none", tables: [], revenueSectionFound: false },
+      },
+      { status: 500 }
+    );
+  }
 }

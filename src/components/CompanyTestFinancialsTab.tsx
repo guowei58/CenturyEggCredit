@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import DOMPurify from "dompurify";
 import { Card, TabBar } from "@/components/ui";
 import {
@@ -32,6 +32,7 @@ import type {
   EarningsPressReleasePayload,
   IxbrlExtractionDiagnostics,
   IxbrlEbitdaReconciliation,
+  IxbrlRevenueDrivers,
 } from "@/lib/sec-ixbrl-mdna-tables";
 import type { NarrativeDiagFinding } from "@/lib/sec-ixbrl-narrative-self-diagnostics";
 import {
@@ -42,7 +43,15 @@ import {
   DebtFootnoteFilingPanel,
   type DebtFootnoteFilingPayload,
 } from "@/components/DebtFootnoteFilingPanel";
+import { AdjustedEbitdaReconciliationPanel } from "@/components/AdjustedEbitdaReconciliationPanel";
+import { RevenueDriversPanel } from "@/components/RevenueDriversPanel";
+import { resolveAdjustedEbitdaDisplay } from "@/lib/adjusted-ebitda-display";
 import type { DebtFootnoteRollForward } from "@/lib/debt-footnote-display";
+import {
+  getPeriodFinancialsPeriodCache,
+  patchPeriodFinancialsPeriodCache,
+  periodFinancialsCacheKey,
+} from "@/lib/period-financials-period-cache";
 
 type NarrativeBatchDiagnosticsResponse =
   | {
@@ -87,7 +96,9 @@ type TestSubTabId =
   | "management-presentation"
   | "earnings-transcript"
   | "mdna"
-  | "debt-footnote";
+  | "debt-footnote"
+  | "adjusted-ebitda"
+  | "revenue-drivers";
 
 const TEST_SUB_TABS: readonly { id: TestSubTabId; label: string }[] = [
   { id: "financials", label: "Financials" },
@@ -96,6 +107,8 @@ const TEST_SUB_TABS: readonly { id: TestSubTabId; label: string }[] = [
   { id: "earnings-transcript", label: "Earnings Transcript" },
   { id: "mdna", label: "MD&A" },
   { id: "debt-footnote", label: "Debt footnote" },
+  { id: "adjusted-ebitda", label: "Adjusted EBITDA" },
+  { id: "revenue-drivers", label: "Revenue Drivers" },
 ];
 
 type DebtFootnoteApiJson =
@@ -190,6 +203,7 @@ type IxbrlMdnaJson =
       mdnaSectionHtmlTruncated?: boolean;
       diagnostics?: IxbrlExtractionDiagnostics;
       ebitdaReconciliation?: IxbrlEbitdaReconciliation;
+      revenueDrivers?: IxbrlRevenueDrivers;
       earningsPressRelease?: EarningsPressReleasePayload;
       earningsSlideDeck?: EarningsPressReleasePayload;
       selected?: {
@@ -206,6 +220,60 @@ type IxbrlMdnaJson =
 
 type PresentedStatement = FacePresentedStatementForSave;
 type ApiResponse = SecIxbrlFacePresentedApiResponse;
+
+const FINANCIAL_STATEMENT_SECTION: Record<
+  FaceStatementId,
+  { label: string; accent: string }
+> = {
+  "income-statement": { label: "Income statement", accent: "var(--accent)" },
+  "balance-sheet": { label: "Balance sheet", accent: "var(--warn)" },
+  "cash-flow": { label: "Cash flow", accent: "var(--blue)" },
+};
+
+function financialStatementSectionMeta(statementId: FaceStatementId) {
+  return (
+    FINANCIAL_STATEMENT_SECTION[statementId] ?? {
+      label: statementId.replace(/-/g, " "),
+      accent: "var(--muted2)",
+    }
+  );
+}
+
+function FinancialStatementSectionBox({
+  statementId,
+  title,
+  units,
+  children,
+}: {
+  statementId: FaceStatementId;
+  title: string;
+  units?: string;
+  children: ReactNode;
+}) {
+  const { label, accent } = financialStatementSectionMeta(statementId);
+
+  return (
+    <section
+      className="space-y-3 rounded-lg border border-[var(--border)] p-4"
+      style={{
+        borderLeftWidth: "4px",
+        borderLeftColor: accent,
+        background: `color-mix(in srgb, var(--panel) 88%, ${accent} 12%)`,
+      }}
+    >
+      <div>
+        <div className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: accent }}>
+          {label}
+        </div>
+        <div className="mt-1 text-sm font-medium text-[var(--text)]">
+          {title}
+          {units ? ` — ${units}` : ""}
+        </div>
+      </div>
+      {children}
+    </section>
+  );
+}
 
 function EarningsExhibitSecLink({ href }: { href: string }) {
   return (
@@ -468,19 +536,29 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
   const periods = stmt.periods;
   const rows = stmt.rows;
   const statementId = stmt.id as FaceStatementId;
+  const sectionAccent = financialStatementSectionMeta(statementId).accent;
+  const tableBg = "var(--panel)";
   return (
-    <Card title={`${stmt.title}${stmt.units ? ` — ${stmt.units}` : ""}`}>
-      <div className="overflow-auto">
-        <table className="min-w-[920px] w-full border-collapse text-sm">
+    <FinancialStatementSectionBox statementId={statementId} title={stmt.title} units={stmt.units}>
+      <div className="overflow-auto rounded border border-[var(--border)]" style={{ background: tableBg }}>
+        <table className="min-w-[920px] w-full border-collapse text-sm" style={{ background: tableBg }}>
           <thead>
-            <tr>
-              <th className="sticky left-0 z-10 bg-[var(--panel)] px-3 py-2 text-left text-sm font-medium" style={{ color: "var(--muted2)" }}>
+            <tr style={{ background: tableBg }}>
+              <th
+                className="sticky left-0 z-10 px-3 py-2 text-left text-sm font-medium"
+                style={{ color: "var(--muted2)", background: tableBg }}
+              >
                 Line
               </th>
               {periods.map((p) => {
                 const head = (p.shortLabel?.trim() ? p.shortLabel : p.label) || p.label;
                 return (
-                  <th key={p.key} className="whitespace-nowrap px-3 py-2 text-right align-bottom text-sm" style={{ color: "var(--muted2)" }} title={p.label}>
+                  <th
+                    key={p.key}
+                    className="whitespace-nowrap px-3 py-2 text-right align-bottom text-sm"
+                    style={{ color: "var(--muted2)", background: tableBg }}
+                    title={p.label}
+                  >
                     <span className="inline-block max-w-[160px] whitespace-normal leading-snug">{head}</span>
                   </th>
                 );
@@ -490,25 +568,30 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
           <tbody>
             {rows.map((r, idx) => {
               const emphasis = faceStatementRowEmphasis(r, statementId);
+              const hasNumericData = Object.values(r.values ?? {}).some(
+                (v) => v !== null && Number.isFinite(v)
+              );
               const rowBg =
-                emphasis === "subtotal"
-                  ? "color-mix(in srgb, var(--accent) 11%, var(--panel))"
-                  : emphasis === "heading"
-                    ? "color-mix(in srgb, var(--muted) 7%, var(--panel))"
-                    : idx % 2 === 1
-                      ? "color-mix(in srgb, var(--muted) 4%, var(--panel))"
-                      : "var(--panel)";
+                emphasis === "subtotal" && hasNumericData
+                  ? `color-mix(in srgb, ${sectionAccent} 11%, var(--panel))`
+                  : tableBg;
               const labelWeight = emphasis === "normal" ? 400 : 600;
               const valueWeight = emphasis === "subtotal" ? 600 : 400;
               const labelColor = emphasis === "heading" ? "var(--muted2)" : "var(--text)";
+              const rowBorderTop =
+                idx === 0
+                  ? undefined
+                  : emphasis === "subtotal" && hasNumericData
+                    ? `1px solid color-mix(in srgb, ${sectionAccent} 28%, var(--border2))`
+                    : "1px solid var(--border2)";
+              const subtotalBorderBottom =
+                emphasis === "subtotal" && hasNumericData
+                  ? `1px solid color-mix(in srgb, ${sectionAccent} 28%, var(--border2))`
+                  : undefined;
               return (
               <tr
                 key={`${r.concept}-${idx}`}
-                className="border-t"
-                style={{
-                  borderColor: emphasis === "subtotal" ? "color-mix(in srgb, var(--accent) 28%, var(--border2))" : "var(--border2)",
-                  background: rowBg,
-                }}
+                style={{ background: rowBg }}
               >
                 <td
                   className="sticky left-0 z-10 px-3 py-2"
@@ -518,6 +601,8 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
                     background: rowBg,
                     paddingLeft: `${10 + Math.min(10, r.depth) * 14}px`,
                     fontStyle: emphasis === "heading" ? "italic" : "normal",
+                    borderTop: rowBorderTop,
+                    borderBottom: subtotalBorderBottom,
                   }}
                   title={`${r.concept}${r.cellIxByPeriod?.[periods[0]?.key ?? ""]?.xbrlConcept ? ` · ${r.cellIxByPeriod[periods[0]!.key]!.xbrlConcept}` : ""}`}
                 >
@@ -535,6 +620,9 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
                       color: emphasis === "heading" ? "var(--muted)" : "var(--text)",
                       fontWeight: valueWeight,
                       opacity: cellText === "—" ? 0.55 : 1,
+                      background: rowBg,
+                      borderTop: rowBorderTop,
+                      borderBottom: subtotalBorderBottom,
                     }}
                     title={meta?.xbrlConcept ? `${visible ?? ""} · ix:${meta.xbrlConcept} · raw:${r.rawValues[p.key] ?? "—"}` : visible ?? ""}
                   >
@@ -548,7 +636,7 @@ function StatementAsPresentedTable({ stmt }: { stmt: PresentedStatement }) {
           </tbody>
         </table>
       </div>
-    </Card>
+    </FinancialStatementSectionBox>
   );
 }
 
@@ -727,6 +815,35 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     const tkChanged = lastAsPresentedTkRef.current !== tk;
     lastAsPresentedTkRef.current = tk;
     let cancelled = false;
+
+    const accForCache = selectedAcc.trim();
+    const faceCached =
+      !tkChanged && accForCache
+        ? getPeriodFinancialsPeriodCache(periodFinancialsCacheKey(tk, accForCache))?.face
+        : undefined;
+
+    if (faceCached) {
+      setData((prev) => ({
+        ...(prev ?? {}),
+        ok: faceCached.ok,
+        error: faceCached.error,
+        ticker: tk,
+        cik: prev?.cik,
+        companyName: prev?.companyName,
+        filings: prev?.filings ?? [],
+        selected: faceCached.selected ?? prev?.selected,
+        statements: faceCached.statements,
+        validation: faceCached.validation,
+        extractionQa: faceCached.extractionQa,
+        calculationLinkbaseLoaded: faceCached.calculationLinkbaseLoaded,
+      }));
+      setErr(faceCached.error ?? null);
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
     setLoading(true);
     setErr(null);
     if (tkChanged) {
@@ -756,6 +873,21 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
         const msg = (j.error ?? "").trim() || "Failed to load Period Financials HTML-face data";
 
         if (cancelled) return;
+
+        const accession = j.selected?.accessionNumber ?? selectedAcc;
+        if (accession) {
+          patchPeriodFinancialsPeriodCache(tk, accession, {
+            face: {
+              ok: res.ok && j.ok !== false,
+              statements: j.statements ?? [],
+              validation: j.validation,
+              extractionQa: j.extractionQa,
+              calculationLinkbaseLoaded: j.calculationLinkbaseLoaded,
+              selected: j.selected,
+              error: res.ok && j.ok !== false ? undefined : msg,
+            },
+          });
+        }
 
         if (res.ok && j.ok !== false) {
           setData((prev) => ({
@@ -798,23 +930,41 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     };
   }, [tk, selectedAcc]);
 
-  /** Clear narrative tab data immediately when the filing period changes (financials load first). */
+  /** Restore narrative tab payloads from session cache when revisiting a period. */
   useEffect(() => {
-    if (!tk) return;
-    setIxbrl(null);
-    setIxErr(null);
-    setIxLoading(false);
-    setDebtFootnote(null);
-    setDebtErr(null);
-    setDebtLoading(false);
+    if (!tk || !selectedAcc) return;
     setMgmtDiscoverySaveUrl(null);
     setMgmtDiscoveryAlreadySaved(false);
+    const snap = getPeriodFinancialsPeriodCache(periodFinancialsCacheKey(tk, selectedAcc));
+    if (!snap) {
+      setIxbrl(null);
+      setIxErr(null);
+      setIxLoading(false);
+      setDebtFootnote(null);
+      setDebtErr(null);
+      setDebtLoading(false);
+      return;
+    }
+    if (snap.ixbrl !== undefined) {
+      setIxbrl(snap.ixbrl as IxbrlMdnaJson | null);
+      setIxErr(snap.ixErr ?? null);
+      setIxLoading(false);
+    }
+    if (snap.debtFootnote !== undefined) {
+      setDebtFootnote(snap.debtFootnote as DebtFootnoteApiJson | null);
+      setDebtErr(snap.debtErr ?? null);
+      setDebtLoading(false);
+    }
   }, [tk, selectedAcc]);
 
   const financialsSettled = !loading;
 
   useEffect(() => {
     if (!tk || !financialsSettled || !selectedAcc) return;
+    const cacheKey = periodFinancialsCacheKey(tk, selectedAcc);
+    const cached = getPeriodFinancialsPeriodCache(cacheKey);
+    if (cached?.ixErr == null && cached?.ixbrl != null) return;
+
     let cancelled = false;
     setIxLoading(true);
     setIxErr(null);
@@ -826,16 +976,32 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           `/api/sec/xbrl/ixbrl-mdna-tables/${encodeURIComponent(tk)}${qs}`,
           { cache: "no-store" }
         );
-        const j = (await res.json()) as IxbrlMdnaJson;
+        const raw = await res.text();
+        if (!raw.trim()) {
+          throw new Error(`Inline XBRL fetch failed (${res.status}): empty response`);
+        }
+        let j: IxbrlMdnaJson;
+        try {
+          j = JSON.parse(raw) as IxbrlMdnaJson;
+        } catch {
+          throw new Error(`Inline XBRL fetch failed (${res.status}): invalid JSON response`);
+        }
         if (cancelled) return;
         if (!res.ok || j.ok === false) {
-          setIxErr(j.error ?? `Inline XBRL fetch failed (${res.status})`);
+          const errMsg = j.error ?? `Inline XBRL fetch failed (${res.status})`;
+          patchPeriodFinancialsPeriodCache(tk, selectedAcc, { ixbrl: null, ixErr: errMsg });
+          setIxErr(errMsg);
           setIxbrl(null);
           return;
         }
+        patchPeriodFinancialsPeriodCache(tk, selectedAcc, { ixbrl: j, ixErr: null });
         setIxbrl(j);
       } catch (e) {
-        if (!cancelled) setIxErr(e instanceof Error ? e.message : "Inline XBRL fetch failed");
+        if (!cancelled) {
+          const errMsg = e instanceof Error ? e.message : "Inline XBRL fetch failed";
+          patchPeriodFinancialsPeriodCache(tk, selectedAcc, { ixbrl: null, ixErr: errMsg });
+          setIxErr(errMsg);
+        }
       } finally {
         if (!cancelled) setIxLoading(false);
       }
@@ -847,6 +1013,10 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
 
   useEffect(() => {
     if (!tk || !financialsSettled || !selectedAcc) return;
+    const cacheKey = periodFinancialsCacheKey(tk, selectedAcc);
+    const cached = getPeriodFinancialsPeriodCache(cacheKey);
+    if (cached?.debtFootnote !== undefined) return;
+
     let cancelled = false;
     setDebtLoading(true);
     setDebtErr(null);
@@ -860,13 +1030,20 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
         const j = (await res.json()) as DebtFootnoteApiJson;
         if (cancelled) return;
         if (!res.ok || j.ok === false || !j.filing) {
-          setDebtErr(j.error ?? `Debt footnote fetch failed (${res.status})`);
+          const errMsg = j.error ?? `Debt footnote fetch failed (${res.status})`;
+          patchPeriodFinancialsPeriodCache(tk, selectedAcc, { debtFootnote: null, debtErr: errMsg });
+          setDebtErr(errMsg);
           setDebtFootnote(null);
           return;
         }
+        patchPeriodFinancialsPeriodCache(tk, selectedAcc, { debtFootnote: j, debtErr: null });
         setDebtFootnote(j);
       } catch (e) {
-        if (!cancelled) setDebtErr(e instanceof Error ? e.message : "Debt footnote fetch failed");
+        if (!cancelled) {
+          const errMsg = e instanceof Error ? e.message : "Debt footnote fetch failed";
+          patchPeriodFinancialsPeriodCache(tk, selectedAcc, { debtFootnote: null, debtErr: errMsg });
+          setDebtErr(errMsg);
+        }
       } finally {
         if (!cancelled) setDebtLoading(false);
       }
@@ -942,8 +1119,37 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     period: managementPresentationDiscoveryPeriod,
     reportDate: ixbrlReportDate ?? selectedFiling?.reportDate ?? null,
     enabled: mgmtDiscoveryPrefetchEnabled,
+    cacheAccession: selectedAcc || null,
     onDiscoverySaveUrlChange: onMgmtDiscoverySaveUrlChange,
   });
+
+  const ixMdnaFilingUrl =
+    ixbrl?.ok === true
+      ? secFilingPrimaryDocUrl(ixbrl.cik, ixbrl.selected?.accessionNumber, ixbrl.selected?.primaryDocument)
+      : null;
+
+  const earningsReleaseSecUrl =
+    ixbrl?.ok === true
+      ? (() => {
+          const embedded = ixbrl.earningsPressRelease?.source.primaryDocumentUrl?.trim();
+          if (embedded) return embedded;
+          const er = ixbrl.ebitdaReconciliation;
+          if (!er) return null;
+          const fromDetected = er.supplementalSource?.primaryDocumentUrl ?? null;
+          const fromSuggestion = er.suggestedPressRelease?.primaryDocumentUrl ?? null;
+          const urlRaw = (fromDetected ?? fromSuggestion)?.trim();
+          return urlRaw && urlRaw.length > 0 ? urlRaw : null;
+        })()
+      : null;
+
+  const adjustedEbitdaDisplay = useMemo(
+    () =>
+      resolveAdjustedEbitdaDisplay(ixbrl?.ok === true ? ixbrl.ebitdaReconciliation : undefined, {
+        periodicSecUrl: ixMdnaFilingUrl,
+        pressSecUrl: earningsReleaseSecUrl,
+      }),
+    [ixbrl, ixMdnaFilingUrl, earningsReleaseSecUrl]
+  );
 
   if (!tk) {
     return (
@@ -955,25 +1161,11 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
     );
   }
 
-  const ixMdnaFilingUrl =
-    ixbrl?.ok === true
-      ? secFilingPrimaryDocUrl(ixbrl.cik, ixbrl.selected?.accessionNumber, ixbrl.selected?.primaryDocument)
-      : null;
-
-  /** When tables came from a nearby 8-K / Exhibit 99, or we suggest that URL after a failed scan (fallback if API omits embedded HTML). */
-  const earningsReleaseSecUrl =
-    ixbrl?.ok === true
-      ? (() => {
-          const embedded = ixbrl.earningsPressRelease?.source.primaryDocumentUrl?.trim();
-          if (embedded) return embedded;
-          const er = ixbrl.ebitdaReconciliation;
-          if (!er) return null;
-          const fromDetected = er.status === "tables" ? er.supplementalSource?.primaryDocumentUrl : null;
-          const fromSuggestion = er.suggestedPressRelease?.primaryDocumentUrl ?? null;
-          const urlRaw = (fromDetected ?? fromSuggestion)?.trim();
-          return urlRaw && urlRaw.length > 0 ? urlRaw : null;
-        })()
-      : null;
+  const adjustedEbitdaSecUrl =
+    adjustedEbitdaDisplay.sections.find((s) => s.source === "press_release")?.secUrl ??
+    adjustedEbitdaDisplay.sections.find((s) => s.source === "mdna")?.secUrl ??
+    ixMdnaFilingUrl ??
+    earningsReleaseSecUrl;
 
   const pressReleasePayload =
     ixbrl?.ok === true
@@ -1074,7 +1266,20 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
         };
       case "mdna":
       case "debt-footnote":
+      case "revenue-drivers":
         return resolvePeriodicSecFilingSaveTarget();
+      case "adjusted-ebitda": {
+        const pressSection = adjustedEbitdaDisplay.sections.find((s) => s.source === "press_release");
+        if (pressSection?.secUrl && pressSection.tables.length > 0) {
+          return {
+            kind: "url",
+            url: pressSection.secUrl,
+            filenameBase: `${tk}_adjusted-ebitda-8K_${periodSlug}`,
+            title: `${tk} adjusted EBITDA (press release) · ${selectedPeriodLabel ?? selectedFiling?.filingDate ?? "period"}`,
+          };
+        }
+        return resolvePeriodicSecFilingSaveTarget();
+      }
       default:
         return { kind: "unavailable", reason: "Nothing to save." };
     }
@@ -1173,8 +1378,11 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           ? tabSaveErr[tabId]
           : saveTarget.kind === "financials-xlsx"
             ? "Save HTML-face workbook to Saved Documents"
-            : tabId === "mdna" || tabId === "debt-footnote"
-              ? "Save primary 10-Q/10-K to Saved Documents (covers MD&A and debt footnotes)"
+            : tabId === "mdna" || tabId === "debt-footnote" || tabId === "revenue-drivers" || tabId === "adjusted-ebitda"
+              ? tabId === "adjusted-ebitda" &&
+                adjustedEbitdaDisplay.sections.some((s) => s.source === "press_release" && s.tables.length > 0)
+                ? "Save earnings press release to Saved Documents (as PDF)"
+                : "Save primary 10-Q/10-K to Saved Documents (covers MD&A and debt footnotes)"
               : "Save to Saved Documents (as PDF)";
     const saveLabel =
       tabSavePhase[tabId] === "err"
@@ -1502,7 +1710,7 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
       {narrativeBatch ? <NarrativeBatchDiagnosticCard result={narrativeBatch} /> : null}
 
       {!loading && !err && statements.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {xbrlPrimaryStatementsFilingUrl ? (
             <div className="flex justify-end">
               <a
@@ -1762,6 +1970,111 @@ export function CompanyTestFinancialsTab({ ticker }: { ticker: string }) {
           ) : (
             <p className="text-sm" style={{ color: "var(--muted2)" }}>
               No debt footnote extracted for this filing.
+            </p>
+          )}
+        </Card>
+      ) : null}
+
+      {contentTabId === "adjusted-ebitda" ? (
+        <Card
+          className="!p-3 sm:!p-4 [&_.card-header]:!mb-1.5"
+          title={`Adjusted EBITDA — ${tk}`}
+          titleAside={
+            selectedFiling && (ixMdnaFilingUrl || earningsReleaseSecUrl) ? (
+              <span className="ml-auto flex flex-wrap items-center gap-2">
+                {selectedFiling.accessionNumber && filingPeriodLabels.has(selectedFiling.accessionNumber) ? (
+                  <span className="text-[10px] text-[var(--muted)]">
+                    {formatPeriodFinancialsFilingLabel(
+                      selectedFiling,
+                      filingPeriodLabels.get(selectedFiling.accessionNumber)!
+                    )}
+                  </span>
+                ) : null}
+                {ixMdnaFilingUrl ? <EarningsExhibitSecLink href={ixMdnaFilingUrl} /> : null}
+                {earningsReleaseSecUrl && earningsReleaseSecUrl !== ixMdnaFilingUrl ? (
+                  <a
+                    href={earningsReleaseSecUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 text-[11px] font-medium normal-case tracking-normal text-[var(--accent)] underline underline-offset-2"
+                  >
+                    Press release
+                  </a>
+                ) : null}
+              </span>
+            ) : null
+          }
+        >
+          {narrativeTabsLoading ? (
+            <p className="text-sm" style={{ color: "var(--muted2)" }}>
+              Loading MD&amp;A and earnings materials from SEC filing…
+            </p>
+          ) : ixErr ? (
+            <p className="text-sm" style={{ color: "var(--warn)" }}>
+              {ixErr}
+            </p>
+          ) : ixbrl?.ok === true ? (
+            <AdjustedEbitdaReconciliationPanel
+              display={adjustedEbitdaDisplay}
+              periodicSecUrl={ixMdnaFilingUrl}
+            />
+          ) : (
+            <p className="text-sm" style={{ color: "var(--muted2)" }}>
+              No data.
+            </p>
+          )}
+        </Card>
+      ) : null}
+
+      {contentTabId === "revenue-drivers" ? (
+        <Card
+          className="!p-3 sm:!p-4 [&_.card-header]:!mb-1.5"
+          title={`Revenue Drivers — ${tk}`}
+          titleAside={
+            selectedFiling && (ixMdnaFilingUrl || earningsReleaseSecUrl) ? (
+              <span className="ml-auto flex flex-wrap items-center gap-2">
+                {selectedFiling.accessionNumber && filingPeriodLabels.has(selectedFiling.accessionNumber) ? (
+                  <span className="text-[10px] text-[var(--muted)]">
+                    {formatPeriodFinancialsFilingLabel(
+                      selectedFiling,
+                      filingPeriodLabels.get(selectedFiling.accessionNumber)!
+                    )}
+                  </span>
+                ) : null}
+                {ixMdnaFilingUrl ? <EarningsExhibitSecLink href={ixMdnaFilingUrl} /> : null}
+                {earningsReleaseSecUrl && earningsReleaseSecUrl !== ixMdnaFilingUrl ? (
+                  <a
+                    href={earningsReleaseSecUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 text-[11px] font-medium normal-case tracking-normal text-[var(--accent)] underline underline-offset-2"
+                  >
+                    Press release
+                  </a>
+                ) : null}
+              </span>
+            ) : null
+          }
+        >
+          {narrativeTabsLoading ? (
+            <p className="text-sm" style={{ color: "var(--muted2)" }}>
+              Loading MD&amp;A from SEC filing…
+            </p>
+          ) : ixErr ? (
+            <p className="text-sm" style={{ color: "var(--warn)" }}>
+              {ixErr}
+            </p>
+          ) : ixbrl?.ok === true ? (
+            <RevenueDriversPanel
+              revenueDrivers={
+                ixbrl.revenueDrivers ?? { status: "none", tables: [], revenueSectionFound: false }
+              }
+              periodicSecUrl={ixMdnaFilingUrl}
+              periodicForm={selectedFiling?.form ?? null}
+            />
+          ) : (
+            <p className="text-sm" style={{ color: "var(--muted2)" }}>
+              No data.
             </p>
           )}
         </Card>

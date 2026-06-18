@@ -9,7 +9,7 @@ import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
-import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
+import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
@@ -137,7 +137,7 @@ export function CompanyPresentationsTab({
         hasMainContent={savedContent.trim().length > 0}
         main={
           <SavedResponseExpandableShell
-          className="min-w-0 flex-1"
+          className={SAVED_RESPONSE_SHELL_CLASS}
           ticker={safeTicker}
           linkSourceText={isEditing ? editDraft : savedContent}
         >
@@ -147,7 +147,7 @@ export function CompanyPresentationsTab({
                 value={editDraft}
                 onChange={setEditDraft}
                 placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek response here, then click Save."
-                className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+                className={SAVED_RESPONSE_EDIT_CLASS}
                 style={{ borderColor: "var(--border2)", color: "var(--text)" }}
               />
               <button
@@ -162,7 +162,7 @@ export function CompanyPresentationsTab({
           ) : (
             <>
               <div
-                className={`min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+                className={SAVED_RESPONSE_VIEW_CLASS}
                 style={{ color: "var(--text)" }}
               >
                 {savedContent ? <SavedRichText content={savedContent} ticker={safeTicker} /> : (

@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
+import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 
@@ -78,7 +78,7 @@ export function CompanyNotesThoughtsTab({ ticker }: { ticker: string }) {
     <Card title={`Notes & Thoughts — ${safeTicker}`}>
       <SavedResponseExpandableShell
         title="Saved notes"
-        className="min-w-0 flex-1"
+        className={SAVED_RESPONSE_SHELL_CLASS}
         ticker={safeTicker}
         linkSourceText={isEditing ? editDraft : savedContent}
       >
@@ -88,7 +88,7 @@ export function CompanyNotesThoughtsTab({ ticker }: { ticker: string }) {
               value={editDraft}
               onChange={setEditDraft}
               placeholder="Write notes, links, and loose thoughts here, then click Save."
-              className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+              className={SAVED_RESPONSE_EDIT_CLASS}
               style={{ borderColor: "var(--border2)", color: "var(--text)" }}
             />
             <button
@@ -103,7 +103,7 @@ export function CompanyNotesThoughtsTab({ ticker }: { ticker: string }) {
         ) : (
           <>
             <div
-              className={`min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+              className={SAVED_RESPONSE_VIEW_CLASS}
               style={{ color: "var(--text)" }}
             >
               {savedContent ? (

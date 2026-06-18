@@ -398,11 +398,11 @@
   }
 
   /**
-   * SEC tables often use inline white / pale-blue zebra rows while we force light body text.
-   * Strip those backgrounds and apply dark-theme zebra so contrast stays high.
+   * SEC tables often use inline white / pale-blue row backgrounds while we force light body text.
+   * Strip those backgrounds; total/subtotal rows use `.ixbrl-narrative-total-row` separately.
    */
   .saved-html-content.sec-debt-footnote-html table {
-    background: var(--card) !important;
+    background: var(--panel) !important;
   }
 
   .saved-html-content.sec-debt-footnote-html table tr {
@@ -412,15 +412,25 @@
   .saved-html-content.sec-debt-footnote-html table th {
     color: var(--muted2) !important;
     background: var(--panel) !important;
+    border: none !important;
   }
 
-  .saved-html-content.sec-debt-footnote-html table td {
+  .saved-html-content.sec-debt-footnote-html:not(.period-narrative-financial-table) table td {
     color: var(--text) !important;
-    background: transparent !important;
+    background: var(--panel) !important;
+    border: none !important;
   }
 
-  .saved-html-content.sec-debt-footnote-html table tbody tr:nth-child(even) td {
-    background: rgba(255, 255, 255, 0.055) !important;
+  .saved-html-content.sec-debt-footnote-html.period-narrative-financial-table table td {
+    color: var(--text) !important;
+    background: var(--panel) !important;
+  }
+
+  /** Press-release / MD&A tables: strip filing underlines (segmented black lines between cells). Links keep underline below. */
+  .saved-html-content.sec-debt-footnote-html table u,
+  .saved-html-content.sec-debt-footnote-html table td *:not(a),
+  .saved-html-content.sec-debt-footnote-html table th *:not(a) {
+    text-decoration: none !important;
   }
 
   .saved-html-content.sec-debt-footnote-html table caption {
@@ -789,6 +799,45 @@
   .saved-html-content.sec-debt-footnote-html .ixbrl-ebitda-press-release-root table th p {
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html tr.ixbrl-narrative-total-row {
+    background: color-mix(in srgb, var(--accent) 11%, var(--panel)) !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html tr.ixbrl-narrative-total-row td,
+  .saved-html-content.sec-debt-footnote-html tr.ixbrl-narrative-total-row th {
+    font-weight: 600 !important;
+    background: color-mix(in srgb, var(--accent) 11%, var(--panel)) !important;
+    border-top: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border2)) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border2)) !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html tr.ixbrl-narrative-total-row td:not(:first-child),
+  .saved-html-content.sec-debt-footnote-html tr.ixbrl-narrative-total-row th:not(:first-child) {
+    font-weight: 600 !important;
+  }
+
+  /** Revenue Drivers & Adjusted EBITDA — match Period Financials face grid row lines. */
+  .saved-html-content.sec-debt-footnote-html.period-narrative-financial-table table {
+    border-collapse: collapse !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html.period-narrative-financial-table table td,
+  .saved-html-content.sec-debt-footnote-html.period-narrative-financial-table table th {
+    padding: 0.5rem 0.75rem !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border2) !important;
+  }
+
+  .saved-html-content.sec-debt-footnote-html.period-narrative-financial-table table tr.ixbrl-narrative-total-row td,
+  .saved-html-content.sec-debt-footnote-html.period-narrative-financial-table table tr.ixbrl-narrative-total-row th {
+    font-weight: 600 !important;
+    background: color-mix(in srgb, var(--accent) 11%, var(--panel)) !important;
+    border-top: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border2)) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border2)) !important;
   }
 
 

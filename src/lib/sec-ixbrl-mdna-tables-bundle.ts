@@ -27,12 +27,15 @@ import {
   classifyEarningsExhibitHtml,
   extractEbitdaReconciliationFromIxbrlHtml,
   extractPressReleaseBodyHtmlForDisplay,
+  extractRevenueDriversFromHtml,
   extractSlideDeckBodyHtmlForDisplay,
   fetchIxbrlMdnaTablesFromFiling,
+  mergeRevenueDriversWithPress,
   MAX_EARNINGS_PRESS_RELEASE_HTML_CHARS,
   pickEarningsMainAndDeck,
   type EarningsPressReleasePayload,
   type IxbrlEbitdaSupplementalSource,
+  type IxbrlEbitdaTable,
 } from "@/lib/sec-ixbrl-mdna-tables";
 
 const NEARBY_8K_MAX_ATTEMPTS = 10;
@@ -67,6 +70,7 @@ export type IxbrlMdnaTablesBundle =
       tables: unknown[];
       diagnostics?: unknown;
       ebitdaReconciliation: unknown;
+      revenueDrivers: unknown;
       earningsPressRelease?: EarningsPressReleasePayload;
       earningsSlideDeck?: EarningsPressReleasePayload;
     }
@@ -90,6 +94,7 @@ export type IxbrlMdnaTablesBundle =
       mdnaSectionHtmlTruncated: false;
       tables: [];
       ebitdaReconciliation: { status: "none"; tables: [] };
+      revenueDrivers: { status: "none"; tables: []; revenueSectionFound: false };
     };
 
 async function pace(): Promise<void> {
@@ -282,6 +287,7 @@ export async function buildIxbrlMdnaTablesBundle(
       mdnaSectionHtmlTruncated: false,
       tables: [],
       ebitdaReconciliation: { status: "none", tables: [] },
+      revenueDrivers: { status: "none", tables: [], revenueSectionFound: false },
     };
   }
 
@@ -302,6 +308,7 @@ export async function buildIxbrlMdnaTablesBundle(
       mdnaSectionHtmlTruncated: false,
       tables: [],
       ebitdaReconciliation: { status: "none", tables: [] },
+      revenueDrivers: { status: "none", tables: [], revenueSectionFound: false },
     };
   }
 
@@ -330,6 +337,7 @@ export async function buildIxbrlMdnaTablesBundle(
       mdnaSectionHtmlTruncated: false,
       tables: [],
       ebitdaReconciliation: { status: "none", tables: [] },
+      revenueDrivers: { status: "none", tables: [], revenueSectionFound: false },
     };
   }
 
@@ -355,6 +363,7 @@ export async function buildIxbrlMdnaTablesBundle(
       mdnaSectionHtmlTruncated: false,
       tables: [],
       ebitdaReconciliation: { status: "none", tables: [] },
+      revenueDrivers: { status: "none", tables: [], revenueSectionFound: false },
     };
   }
 
@@ -388,6 +397,7 @@ export async function buildIxbrlMdnaTablesBundle(
       mdnaSectionHtmlTruncated: false,
       tables: [],
       ebitdaReconciliation: { status: "none", tables: [] },
+      revenueDrivers: { status: "none", tables: [], revenueSectionFound: false },
     };
   }
 
@@ -418,90 +428,98 @@ export async function buildIxbrlMdnaTablesBundle(
   const toTry = toTryEarnings.length > 0 ? toTryEarnings : toTryAll;
 
   let ebitdaReconciliation = extracted.ebitdaReconciliation;
+  const mdnaEbitdaTables: IxbrlEbitdaTable[] = ebitdaReconciliation.tables.filter((t) => t.inMdna);
+  let pressEbitdaTables: IxbrlEbitdaTable[] = [];
+  let ebitdaPressSource: IxbrlEbitdaSupplementalSource | null = null;
   let capturedPressReleaseHtml: string | null = null;
 
-  if (ebitdaReconciliation.status !== "tables") {
-    const nearbyTried = toTry.length;
-    let suggestedPressRelease: IxbrlEbitdaSupplementalSource | null = null;
+  const nearbyTried = toTry.length;
+  let suggestedPressRelease: IxbrlEbitdaSupplementalSource | null = null;
 
-    outer: for (let i = 0; i < toTry.length; i++) {
-      const k8 = toTry[i]!;
-      const issuerCik = filingsRes.cik;
-      const issuerCikNum = parseInt(issuerCik.replace(/\D/g, ""), 10);
+  outer: for (let i = 0; i < toTry.length; i++) {
+    const k8 = toTry[i]!;
+    const issuerCik = filingsRes.cik;
+    const issuerCikNum = parseInt(issuerCik.replace(/\D/g, ""), 10);
 
-      const accKey = secAccessionDedupeKey(k8.accessionNumber);
-      const cached = accKey ? primaryHtmlByAccessionKey.get(accKey) : undefined;
-      const htmlPrimary =
-        cached !== undefined ? cached : await fetchEdgarPrimaryDocumentHtml(issuerCik, k8);
-      if (htmlPrimary) {
-        const alt = extractEbitdaReconciliationFromIxbrlHtml(htmlPrimary, "8-K", {
+    const accKey = secAccessionDedupeKey(k8.accessionNumber);
+    const cached = accKey ? primaryHtmlByAccessionKey.get(accKey) : undefined;
+    const htmlPrimary =
+      cached !== undefined ? cached : await fetchEdgarPrimaryDocumentHtml(issuerCik, k8);
+    if (htmlPrimary) {
+      const alt = extractEbitdaReconciliationFromIxbrlHtml(htmlPrimary, "8-K", {
+        includeUncertainBoundaries: false,
+      });
+      if (alt.status === "tables" && alt.tables.length > 0) {
+        const primaryDocumentUrl = secArchivesPrimaryDocumentUrl(issuerCik, k8);
+        if (primaryDocumentUrl != null) {
+          capturedPressReleaseHtml = htmlPrimary;
+          pressEbitdaTables = alt.tables.map((t) => ({ ...t, inMdna: false }));
+          ebitdaPressSource = {
+            form: k8.form,
+            filingDate: k8.filingDate,
+            accessionNumber: k8.accessionNumber,
+            primaryDocument: k8.primaryDocument,
+            primaryDocumentUrl,
+            documentRole: "primary",
+          };
+          break outer;
+        }
+      }
+    }
+
+    await pace();
+
+    const exhibitNames = await rankedExhibit99HtmlFor8KFiling(issuerCik, k8);
+
+    if (i === 0) {
+      suggestedPressRelease = await resolvePressReleaseSourceFromRankedHtml(issuerCik, k8, exhibitNames);
+    }
+
+    for (const exhibitFile of exhibitNames) {
+      const htmlEx = await fetchArchivesFilingFileHtml(issuerCik, k8.accessionNumber, exhibitFile);
+      if (htmlEx) {
+        const altEx = extractEbitdaReconciliationFromIxbrlHtml(htmlEx, "8-K", {
           includeUncertainBoundaries: false,
         });
-        if (alt.status === "tables" && alt.tables.length > 0) {
-          const primaryDocumentUrl = secArchivesPrimaryDocumentUrl(issuerCik, k8);
-          if (primaryDocumentUrl != null) {
-            capturedPressReleaseHtml = htmlPrimary;
-            ebitdaReconciliation = {
-              ...alt,
-              supplementalSource: {
-                form: k8.form,
-                filingDate: k8.filingDate,
-                accessionNumber: k8.accessionNumber,
-                primaryDocument: k8.primaryDocument,
-                primaryDocumentUrl,
-                documentRole: "primary",
-              },
-              nearby8KScan: { candidatesTried: nearbyTried },
-            };
+        if (altEx.status === "tables" && altEx.tables.length > 0 && Number.isFinite(issuerCikNum) && issuerCikNum > 0) {
+          const supplementalSource = ixbrlSourceFor8KAttachment(issuerCik, issuerCikNum, k8, exhibitFile);
+          if (supplementalSource) {
+            capturedPressReleaseHtml = htmlEx;
+            pressEbitdaTables = altEx.tables.map((t) => ({ ...t, inMdna: false }));
+            ebitdaPressSource = supplementalSource;
             break outer;
           }
         }
       }
-
       await pace();
-
-      const exhibitNames = await rankedExhibit99HtmlFor8KFiling(issuerCik, k8);
-
-      if (i === 0) {
-        suggestedPressRelease = await resolvePressReleaseSourceFromRankedHtml(issuerCik, k8, exhibitNames);
-      }
-
-      for (const exhibitFile of exhibitNames) {
-        const htmlEx = await fetchArchivesFilingFileHtml(issuerCik, k8.accessionNumber, exhibitFile);
-        if (htmlEx) {
-          const altEx = extractEbitdaReconciliationFromIxbrlHtml(htmlEx, "8-K", {
-            includeUncertainBoundaries: false,
-          });
-          if (altEx.status === "tables" && altEx.tables.length > 0 && Number.isFinite(issuerCikNum) && issuerCikNum > 0) {
-            const supplementalSource = ixbrlSourceFor8KAttachment(issuerCik, issuerCikNum, k8, exhibitFile);
-            if (supplementalSource) {
-              capturedPressReleaseHtml = htmlEx;
-              ebitdaReconciliation = {
-                ...altEx,
-                supplementalSource,
-                nearby8KScan: { candidatesTried: nearbyTried },
-              };
-              break outer;
-            }
-          }
-        }
-        await pace();
-      }
-
-      if (i + 1 < toTry.length) await pace();
     }
 
-    if (ebitdaReconciliation.status !== "tables" && nearbyTried > 0) {
-      ebitdaReconciliation = {
-        ...ebitdaReconciliation,
-        nearby8KScan: { candidatesTried: nearbyTried },
-        ...(suggestedPressRelease ? { suggestedPressRelease } : {}),
-      };
-    }
+    if (i + 1 < toTry.length) await pace();
   }
 
-  let pressSrc: IxbrlEbitdaSupplementalSource | null =
-    ebitdaReconciliation.supplementalSource ?? ebitdaReconciliation.suggestedPressRelease ?? null;
+  const combinedEbitdaTables = [...mdnaEbitdaTables, ...pressEbitdaTables];
+  const ebitdaStatus =
+    combinedEbitdaTables.length > 0
+      ? ("tables" as const)
+      : ebitdaReconciliation.status === "mention_only"
+        ? ("mention_only" as const)
+        : ("none" as const);
+
+  ebitdaReconciliation = {
+    status: ebitdaStatus,
+    tables: combinedEbitdaTables,
+    ...(ebitdaPressSource ? { supplementalSource: ebitdaPressSource } : {}),
+    ...(ebitdaStatus !== "tables" && nearbyTried > 0
+      ? {
+          nearby8KScan: { candidatesTried: nearbyTried },
+          ...(suggestedPressRelease ? { suggestedPressRelease } : {}),
+        }
+      : ebitdaPressSource && nearbyTried > 0
+        ? { nearby8KScan: { candidatesTried: nearbyTried } }
+        : {}),
+  };
+
+  let pressSrc: IxbrlEbitdaSupplementalSource | null = ebitdaPressSource ?? suggestedPressRelease ?? null;
   if (!pressSrc && toTry.length > 0) {
     await pace();
     pressSrc = await buildPressReleaseSourceFor8K(filingsRes.cik, toTry[0]!);
@@ -511,6 +529,34 @@ export async function buildIxbrlMdnaTablesBundle(
   if (!rawPressHtml && pressSrc) {
     await pace();
     rawPressHtml = await fetchPressReleaseFullHtml(filingsRes.cik, pressSrc);
+  }
+
+  let revenueDrivers = extracted.revenueDrivers;
+  if (rawPressHtml) {
+    const pressRevenueTables = extractRevenueDriversFromHtml(rawPressHtml, {
+      sectionLabel: "Press release",
+    });
+    if (pressRevenueTables.length > 0 && pressSrc) {
+      revenueDrivers = mergeRevenueDriversWithPress(revenueDrivers, pressRevenueTables, pressSrc);
+    }
+  }
+
+  if (combinedEbitdaTables.length === 0 && pressEbitdaTables.length === 0 && rawPressHtml) {
+    const fromPress = extractEbitdaReconciliationFromIxbrlHtml(rawPressHtml, "8-K", {
+      includeUncertainBoundaries: false,
+    });
+    if (fromPress.status === "tables" && fromPress.tables.length > 0 && pressSrc) {
+      pressEbitdaTables = fromPress.tables.map((t) => ({ ...t, inMdna: false }));
+      ebitdaReconciliation = {
+        status: "tables",
+        tables: [...mdnaEbitdaTables, ...pressEbitdaTables],
+        supplementalSource: pressSrc,
+        ...(ebitdaReconciliation.nearby8KScan ? { nearby8KScan: ebitdaReconciliation.nearby8KScan } : {}),
+        ...(ebitdaReconciliation.suggestedPressRelease && !ebitdaReconciliation.nearby8KScan
+          ? { suggestedPressRelease: ebitdaReconciliation.suggestedPressRelease }
+          : {}),
+      };
+    }
   }
 
   let earningsPressRelease: EarningsPressReleasePayload | undefined;
@@ -627,6 +673,7 @@ export async function buildIxbrlMdnaTablesBundle(
     tables: extracted.tables,
     diagnostics: extracted.diagnostics,
     ebitdaReconciliation,
+    revenueDrivers: revenueDrivers,
     earningsPressRelease,
     earningsSlideDeck,
   };

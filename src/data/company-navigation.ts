@@ -184,7 +184,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
         tabs: ["KPI Commentary", "Forensic Analysis", "LME Analysis", "Recommendation", "AI Memo and Deck"],
       },
       {
-        label: "For the Dreamers",
+        label: "For the Hallucinators --->",
         tabs: [
           "Literary References",
           "Biblical References",

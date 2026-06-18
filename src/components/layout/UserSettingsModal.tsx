@@ -340,9 +340,9 @@ export function UserSettingsModal({
                   {USER_LLM_API_KEYS_POLICY}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-                  Keys below are stored with your login and are not shared with other users. Use the in-app &quot;Claude API&quot;,
-                  &quot;ChatGPT API&quot;, &quot;Gemini API&quot;, and &quot;DeepSeek API&quot; actions from AI Chat, research tabs,
-                  credit memo tools, and elsewhere.
+                  Keys below are optional — use them only if you want in-app &quot;Claude API&quot;,
+                  &quot;ChatGPT API&quot;, &quot;Gemini API&quot;, and &quot;DeepSeek API&quot; runs from AI Chat, research tabs,
+                  credit memo tools, and elsewhere. They are stored with your login and are not shared with other users.
                 </p>
               </>
             )}

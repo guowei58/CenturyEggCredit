@@ -350,11 +350,7 @@ function Table({
               const rowBg =
                 emphasis === "subtotal"
                   ? "color-mix(in srgb, var(--accent) 11%, var(--panel))"
-                  : emphasis === "heading"
-                    ? "color-mix(in srgb, var(--muted) 7%, var(--panel))"
-                    : i % 2 === 1
-                      ? "color-mix(in srgb, var(--muted) 4%, var(--panel))"
-                      : "var(--panel)";
+                  : "var(--panel)";
               const labelWeight = emphasis === "normal" ? 400 : 600;
               const valueWeight = emphasis === "subtotal" ? 600 : 400;
               const labelColor = emphasis === "heading" ? "var(--muted2)" : "var(--text)";

@@ -7,7 +7,7 @@ import {
   fillHistoricalFinancialsPromptPlaceholders,
   HISTORICAL_FINANCIALS_PROMPT_TEMPLATE,
 } from "@/data/historical-financials-prompt";
-import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
+import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
@@ -142,7 +142,7 @@ export function HistoricalFinancialsAiWorkflow({
           </div>
         ) : (
           <SavedResponseExpandableShell
-            className="min-w-0 flex-1 gap-4 overflow-y-auto"
+            className={SAVED_RESPONSE_SHELL_CLASS}
             headerActions={
               <button
                 type="button"
@@ -162,7 +162,7 @@ export function HistoricalFinancialsAiWorkflow({
                   value={editDraft}
                   onChange={setEditDraft}
                   placeholder="Paste your AI response (notes, caveats, sheet map, etc.), then click Save."
-                  className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+                  className={SAVED_RESPONSE_EDIT_CLASS}
                   style={{
                     borderColor: "var(--border2)",
                     color: "var(--text)",
@@ -180,7 +180,7 @@ export function HistoricalFinancialsAiWorkflow({
             ) : (
               <>
                 <div
-                  className={`min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+                  className={SAVED_RESPONSE_VIEW_CLASS}
                   style={{ color: "var(--text)" }}
                 >
                   {savedContent ? (

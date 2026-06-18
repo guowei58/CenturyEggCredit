@@ -10,7 +10,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
-import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
+import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
@@ -1441,7 +1441,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   const memoMainPanel = (
     <div className="flex min-w-0 flex-1 flex-col gap-4">
       {memoLibraryPanel}
-      <SavedResponseExpandableShell className="min-w-0 flex-1" ticker={tk} linkSourceText={isEditing ? editDraft : markdown ?? ""}>
+      <SavedResponseExpandableShell className={SAVED_RESPONSE_SHELL_CLASS} ticker={tk} linkSourceText={isEditing ? editDraft : markdown ?? ""}>
       {!isEditing && markdown?.trim() ? (
         <>
           <p className="mb-2 text-[11px] leading-snug" style={{ color: "var(--muted2)" }}>
@@ -1504,7 +1504,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             value={editDraft}
             onChange={setEditDraft}
             placeholder="Paste your Claude, ChatGPT, Gemini, or DeepSeek memo here, then click Save to Library."
-            className={`min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+            className={SAVED_RESPONSE_EDIT_CLASS}
             style={{ borderColor: "var(--border2)", color: "var(--text)" }}
           />
           <button
@@ -1520,7 +1520,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       ) : (
         <>
           <div
-            className={`credit-memo-word-preview min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+            className={`credit-memo-word-preview ${SAVED_RESPONSE_VIEW_CLASS}`}
             style={{ color: "var(--text)" }}
           >
             {markdown?.trim() ? (

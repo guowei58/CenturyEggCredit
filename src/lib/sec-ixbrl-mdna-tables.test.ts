@@ -9,6 +9,9 @@ import {
   extractPressReleaseBodyHtmlForDisplay,
   extractSlideDeckBodyHtmlForDisplay,
   filingTextMentionsEbitdaMeasures,
+  filingTextMentionsRevenueDrivers,
+  countRevenueDriverStatementLineHits,
+  scoreRevenueDriverTableCandidate,
   indexIxbrlBodyFlatText,
   isPlausibleDataTable,
   mergeDollarOnlyCellsInRow,
@@ -457,5 +460,86 @@ describe("buildMdnaSectionDisplayHtml", () => {
     expect(out).toBeTruthy();
     expect(out!).toContain("Membership fees");
     expect(out!).not.toMatch(/text-indent\s*:\s*-/i);
+  });
+});
+
+describe("filingTextMentionsRevenueDrivers", () => {
+  it("detects revenue and segment tables", () => {
+    expect(filingTextMentionsRevenueDrivers("Total net revenues by segment")).toBe(true);
+    expect(filingTextMentionsRevenueDrivers("Disaggregated revenue by geographic region")).toBe(true);
+    expect(filingTextMentionsRevenueDrivers("Adjusted EBITDA reconciliation")).toBe(false);
+  });
+});
+
+describe("revenue driver statement filtering", () => {
+  const cfRows: string[][] = [
+    ["Net income", "100"],
+    ["Depreciation and amortization", "20"],
+    ["Net cash provided by operating activities", "80"],
+    ["Capital expenditures", "(15)"],
+    ["Net cash used in investing activities", "(15)"],
+    ["Cash flows from financing activities", "10"],
+    ["Net increase in cash", "75"],
+  ];
+
+  const bsRows: string[][] = [
+    ["Cash and cash equivalents", "100"],
+    ["Accounts receivable", "50"],
+    ["Inventories", "30"],
+    ["Total current assets", "180"],
+    ["Property, plant and equipment", "400"],
+    ["Goodwill", "120"],
+    ["Total assets", "700"],
+    ["Accounts payable", "40"],
+    ["Total current liabilities", "90"],
+    ["Long-term debt", "200"],
+    ["Total liabilities", "290"],
+    ["Total stockholders equity", "410"],
+  ];
+
+  const segmentRevenueRows: string[][] = [
+    ["Segment", "Q1", "Q2"],
+    ["North America revenue", "100", "110"],
+    ["Europe revenue", "80", "85"],
+    ["Total net revenues", "180", "195"],
+  ];
+
+  it("counts balance sheet and cash flow line hits", () => {
+    expect(countRevenueDriverStatementLineHits(bsRows).balanceSheet).toBeGreaterThanOrEqual(8);
+    expect(countRevenueDriverStatementLineHits(cfRows).cashFlow).toBeGreaterThanOrEqual(4);
+    expect(countRevenueDriverStatementLineHits(segmentRevenueRows).balanceSheet).toBe(0);
+    expect(countRevenueDriverStatementLineHits(segmentRevenueRows).cashFlow).toBe(0);
+  });
+
+  it("rejects consolidated cash flow tables even when scored in revenue section", () => {
+    const hay = "Consolidated statements of cash flows\n" + cfRows.map((r) => r.join(" ")).join("\n");
+    expect(scoreRevenueDriverTableCandidate(hay, cfRows, { inRevenueSection: true, factCount: 4 })).toBe(0);
+  });
+
+  it("rejects balance sheet tables with many BS line items", () => {
+    const hay = "Consolidated balance sheets\n" + bsRows.map((r) => r.join(" ")).join("\n");
+    expect(scoreRevenueDriverTableCandidate(hay, bsRows, { inSegmentNote: true, factCount: 6 })).toBe(0);
+  });
+
+  it("still accepts segment revenue tables", () => {
+    const hay = "Revenue by segment\n" + segmentRevenueRows.map((r) => r.join(" ")).join("\n");
+    expect(
+      scoreRevenueDriverTableCandidate(hay, segmentRevenueRows, { inRevenueSection: true, factCount: 3 })
+    ).toBeGreaterThanOrEqual(24);
+  });
+
+  it("deducts score for mixed tables with cash flow lines", () => {
+    const mixedRows: string[][] = [
+      ["Total net revenues", "500"],
+      ["Net cash provided by operating activities", "80"],
+      ["Capital expenditures", "(15)"],
+      ["Free cash flow", "65"],
+    ];
+    const hay = mixedRows.map((r) => r.join(" ")).join("\n");
+    const pure = scoreRevenueDriverTableCandidate("Total net revenues by segment\nNorth America revenue", segmentRevenueRows, {
+      inRevenueSection: true,
+    });
+    const mixed = scoreRevenueDriverTableCandidate(hay, mixedRows, { inRevenueSection: true });
+    expect(mixed).toBeLessThan(pure);
   });
 });

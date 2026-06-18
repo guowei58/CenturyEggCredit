@@ -6,12 +6,19 @@
 import * as cheerio from "cheerio";
 import type { ChildNode, Element as DomElement, Text } from "domhandler";
 
+import {
+  applyNarrativeTableTotalRowHighlightCheerio,
+} from "@/lib/sec-narrative-table-display";
 import { edgarArchivesFolderCikCandidates, getSecEdgarUserAgent } from "@/lib/sec-edgar";
-import type { MdnaBounds, NotesSectionBounds, SegmentNotePick } from "@/lib/sec-ixbrl-mdna-boundaries";
+import type { MdnaBounds, MdnaRevenueSectionBounds, NotesSectionBounds, SegmentNotePick } from "@/lib/sec-ixbrl-mdna-boundaries";
 import {
   buildNotesSectionBounds,
+  findAllSegmentRevenueNoteRanges,
   findBestSegmentNoteRange,
   findMdnaBounds,
+  findMdnaRevenueSectionBounds,
+  tableOffsetInRange,
+  tableOffsetInSegmentNoteRanges,
 } from "@/lib/sec-ixbrl-mdna-boundaries";
 
 export type IxbrlFilingSection = "mdna" | "segment";
@@ -21,7 +28,11 @@ export type TableConfidence = "high" | "medium" | "low";
 /** `"app"` — column collapse, $-merge, typography normalization for our grid viewer; `"filing"` — security + ix facts only (press-release fidelity). */
 export type IxbrlTableDisplayFidelity = "app" | "filing";
 
-export type BuildDisplayTableHtmlOptions = { fidelity?: IxbrlTableDisplayFidelity };
+export type BuildDisplayTableHtmlOptions = {
+  fidelity?: IxbrlTableDisplayFidelity;
+  /** When true (MD&A tables), keep inline `ix:nonFraction` tags instead of formatted spans. */
+  preserveIxTags?: boolean;
+};
 
 export type IxbrlHtmlTable = {
   id: string;
@@ -104,6 +115,27 @@ export type IxbrlEbitdaReconciliation = {
   suggestedPressRelease?: IxbrlEbitdaSupplementalSource;
   /** Set when we attempted a nearby-8-K scan from the periodic filing date. */
   nearby8KScan?: { candidatesTried: number };
+};
+
+export type IxbrlRevenueDriversSource = "mdna_revenue" | "mdna_segment" | "segment_note" | "press_release";
+
+export type IxbrlRevenueDriversTable = {
+  caption: string | null;
+  tableHtml: string | null;
+  factCount: number;
+  textOffset: number;
+  source: IxbrlRevenueDriversSource;
+  /** Human-readable slice label for UI grouping. */
+  sectionLabel: string;
+};
+
+export type IxbrlRevenueDrivers = {
+  status: "tables" | "mention_only" | "none";
+  tables: IxbrlRevenueDriversTable[];
+  revenueSectionFound: boolean;
+  revenueSectionLabel?: string;
+  /** When revenue tables were found in a linked earnings 8-K / Exhibit 99. */
+  supplementalSource?: IxbrlEbitdaSupplementalSource;
 };
 
 /** Full earnings / press release document (Exhibit 99 HTML or 8-K primary) embedded in the ixbrl-mdna-tables API response. */
@@ -393,6 +425,7 @@ export type IxbrlMdnaTablesPayload =
       tables: IxbrlHtmlTable[];
       diagnostics: IxbrlExtractionDiagnostics;
       ebitdaReconciliation: IxbrlEbitdaReconciliation;
+      revenueDrivers: IxbrlRevenueDrivers;
     }
   | { ok: false; error: string };
 
@@ -1198,6 +1231,10 @@ function stripTablePresentationForTableRoot($frag: cheerio.CheerioAPI, table: Do
     if (tag === "td" || tag === "th" || tag === "col" || tag === "colgroup" || tag === "tr") {
       $el.removeAttr("width");
     }
+    if (tag === "u") {
+      $el.replaceWith($el.html() ?? "");
+      return;
+    }
     if (tag === "td" || tag === "th") {
       $el.removeAttr("align");
     }
@@ -1236,6 +1273,8 @@ export function buildDisplayTableHtml(
   if (!wrap.length) return null;
 
   scrubIxbrlFragmentForDisplay($frag, wrap, opts);
+
+  applyNarrativeTableTotalRowHighlightCheerio($frag, wrap);
 
   const inner = wrap.html();
   return inner && inner.length > 0 ? inner : null;
@@ -1304,14 +1343,16 @@ function scrubIxbrlFragmentForDisplay(
   });
 
   const nfEls: DomElement[] = [];
-  root.find("*").each((_, node) => {
-    if (node.type !== "tag") return;
-    const el = node as DomElement;
-    if (isNonFractionTag(el.name ?? "")) nfEls.push(el);
-  });
-  for (const el of nfEls) {
-    const fmt = parseNonFractionUsd($frag, el);
-    if (fmt != null) $frag(el).replaceWith(`<span class="ixbrl-nf">${fmt}</span>`);
+  if (!opts?.preserveIxTags) {
+    root.find("*").each((_, node) => {
+      if (node.type !== "tag") return;
+      const el = node as DomElement;
+      if (isNonFractionTag(el.name ?? "")) nfEls.push(el);
+    });
+    for (const el of nfEls) {
+      const fmt = parseNonFractionUsd($frag, el);
+      if (fmt != null) $frag(el).replaceWith(`<span class="ixbrl-nf">${fmt}</span>`);
+    }
   }
 
   stripNegativeTextIndentInTableCells($frag, root);
@@ -1551,7 +1592,7 @@ function buildEbitdaReconciliationPayload(
     if (score < 26) continue;
 
     const caption = tableCaption($, tbl);
-    const tableHtml = buildDisplayTableHtml($, tbl, { fidelity: "filing" });
+    const tableHtml = buildDisplayTableHtml($, tbl, { fidelity: "filing", preserveIxTags: inMdna });
     if (!tableHtml) continue;
     const cand: EbitdaCand = { off, score, caption, tableHtml, inMdna, factCount };
     const prev = byOff.get(off);
@@ -1584,6 +1625,390 @@ function buildEbitdaReconciliationPayload(
 
   return { status: "none", tables: [] };
 }
+
+function tableHaystackForRevenue($: cheerio.CheerioAPI, table: DomElement, rows: string[][]): string {
+  return tableHaystackForEbitda($, table, rows);
+}
+
+/**
+ * Detect revenue drivers, segment revenue, and disaggregation tables.
+ * Exported for unit tests.
+ */
+export function filingTextMentionsRevenueDrivers(s: string): boolean {
+  if (!s || s.length < 4) return false;
+  const t = normalizeFilingPhraseHyphens(s).toLowerCase();
+  if (/\b(?:total\s+)?(?:net\s+)?(?:revenues?|sales)\b/.test(t)) return true;
+  if (/\bsegment\s+(?:revenue|information|results|profit|margin)\b/.test(t)) return true;
+  if (/\b(?:reportable|operating)\s+segment/.test(t)) return true;
+  if (/\bdisaggregated\s+revenue\b/.test(t)) return true;
+  if (/\brevenue\s+by\s+(?:segment|geograph|product|service|channel|customer|business)\b/.test(t)) return true;
+  if (/\b(?:product|service|geographic|regional|channel)\s+(?:revenue|sales)\b/.test(t)) return true;
+  if (/\b(?:organic|inorganic|acquisition|volume|pricing|price\s+increase|fx|foreign\s+exchange)\b/.test(t) && /\brevenue/.test(t))
+    return true;
+  return false;
+}
+
+export type RevenueDriverStatementLineHits = {
+  balanceSheet: number;
+  cashFlow: number;
+};
+
+const REVENUE_DRIVER_BS_LINE_PATTERNS: readonly RegExp[] = [
+  /\btotal assets\b/,
+  /\btotal liabilities\b/,
+  /\b(?:stockholders?|shareholders?)(?:['']|\u2019)?s?\s+equity\b/,
+  /\btotal (?:stockholders?|shareholders?)(?:['']|\u2019)?s?\s+equity\b/,
+  /\btotal equity\b/,
+  /\bcurrent assets\b/,
+  /\bcurrent liabilities\b/,
+  /\b(?:cash and cash equivalents|cash & cash equivalents)\b/,
+  /\baccounts receivable\b/,
+  /\b(?:inventories|inventory)\b/,
+  /\bproperty,?\s+(?:plant\s+and\s+)?equipment\b/,
+  /\b(?:goodwill|intangible assets)\b/,
+  /\blong[-\s]term debt\b/,
+  /\b(?:retained earnings|accumulated deficit)\b/,
+  /\baccounts payable\b/,
+  /\baccrued (?:expenses|liabilities|payroll)\b/,
+  /\b(?:prepaid expenses|other current assets)\b/,
+  /\b(?:deferred tax assets|deferred tax liabilities)\b/,
+];
+
+const REVENUE_DRIVER_CF_LINE_PATTERNS: readonly RegExp[] = [
+  /\bnet cash provided by operating activities\b/,
+  /\bnet cash (?:used in|provided by) operating activities\b/,
+  /\bnet cash (?:used in|provided by) investing activities\b/,
+  /\bnet cash (?:used in|provided by) financing activities\b/,
+  /\bcash flows? from operating activities\b/,
+  /\bcash flows? from investing activities\b/,
+  /\bcash flows? from financing activities\b/,
+  /\bnet (?:increase|decrease) in cash\b/,
+  /\b(?:capital expenditures|payments to acquire property)\b/,
+  /\bfree cash flow\b/,
+  /\badjustments to reconcile net (?:income|earnings)\b/,
+  /\b(?:supplemental )?cash flow information\b/,
+  /\bdepreciation and amortization\b/,
+  /\bproceeds from (?:debt|borrowings|issuance)\b/,
+  /\brepayments of (?:debt|borrowings|long[-\s]term debt)\b/,
+];
+
+/** Count balance-sheet and cash-flow row labels in a table grid (for revenue-driver filtering). */
+export function countRevenueDriverStatementLineHits(rows: string[][]): RevenueDriverStatementLineHits {
+  let balanceSheet = 0;
+  let cashFlow = 0;
+  for (const row of rows) {
+    const line = normalizeFilingPhraseHyphens(row.join(" ")).toLowerCase().trim();
+    if (line.length < 3) continue;
+    if (REVENUE_DRIVER_BS_LINE_PATTERNS.some((re) => re.test(line))) balanceSheet += 1;
+    if (REVENUE_DRIVER_CF_LINE_PATTERNS.some((re) => re.test(line))) cashFlow += 1;
+  }
+  return { balanceSheet, cashFlow };
+}
+
+function countRevenueDriverRevenueLineHits(rows: string[][]): number {
+  let hits = 0;
+  for (const row of rows) {
+    const line = normalizeFilingPhraseHyphens(row.join(" ")).toLowerCase().trim();
+    if (line.length < 3) continue;
+    if (filingTextMentionsRevenueDrivers(line)) hits += 1;
+  }
+  return hits;
+}
+
+/** Exported for unit tests. */
+export function scoreRevenueDriverTableCandidate(
+  haystack: string,
+  rows: string[][],
+  opts: {
+    inRevenueSection?: boolean;
+    inSegmentNote?: boolean;
+    inMdna?: boolean;
+    factCount?: number;
+  } = {}
+): number {
+  return scoreRevenueDriverCandidate(haystack, rows, {
+    inRevenueSection: opts.inRevenueSection ?? false,
+    inSegmentNote: opts.inSegmentNote ?? false,
+    inMdna: opts.inMdna ?? false,
+    factCount: opts.factCount ?? 0,
+  });
+}
+
+function scoreRevenueDriverCandidate(
+  haystack: string,
+  rows: string[][],
+  opts: {
+    inRevenueSection: boolean;
+    inSegmentNote: boolean;
+    inMdna: boolean;
+    factCount: number;
+  }
+): number {
+  const h = normalizeFilingPhraseHyphens(haystack).toLowerCase();
+  if (!filingTextMentionsRevenueDrivers(h)) return 0;
+
+  /** Exclude obvious non-revenue grids */
+  if (/\bebitda\b/.test(h) && !/\brevenue|sales|segment\b/.test(h)) return 0;
+  if (/\bdebt\b/.test(h) && !/\brevenue|sales|segment\b/.test(h)) return 0;
+
+  const statementHits = countRevenueDriverStatementLineHits(rows);
+  const revenueLineHits = countRevenueDriverRevenueLineHits(rows);
+  const { balanceSheet: bsHits, cashFlow: cfHits } = statementHits;
+
+  /** Face financial statements and CF roll-ups — reject outright */
+  if (/\bconsolidated\s+balance\s+sheets?\b/.test(h)) return 0;
+  if (/\bconsolidated\s+statements?\s+of\s+cash\s+flows?\b/.test(h)) return 0;
+  if (/\bcondensed consolidated\s+statements?\s+of\s+cash\s+flows?\b/.test(h)) return 0;
+  if (/\bstatements?\s+of\s+cash\s+flows?\b/.test(h) && cfHits >= 1) return 0;
+  if (cfHits >= 3) return 0;
+  if (bsHits >= 5) return 0;
+  if (bsHits >= 3 && cfHits >= 2) return 0;
+  if (
+    /\boperating activities\b/.test(h) &&
+    /\binvesting activities\b/.test(h) &&
+    /\bfinancing activities\b/.test(h)
+  ) {
+    return 0;
+  }
+  if ((bsHits + cfHits) >= 4 && revenueLineHits < 2) return 0;
+
+  let score = 0;
+  if (opts.inRevenueSection) score += 28;
+  if (opts.inSegmentNote) score += 26;
+  if (opts.inMdna) score += 12;
+  score += Math.min(24, opts.factCount * 4);
+
+  if (/\b(?:total\s+)?(?:net\s+)?revenues?\b/.test(h)) score += 32;
+  if (/\bnet\s+sales\b/.test(h)) score += 30;
+  if (/\bsegment\s+revenue/.test(h)) score += 38;
+  if (/\brevenue\s+by\s+(?:segment|geograph|product|service|channel|customer|business)/.test(h)) score += 40;
+  if (/\bdisaggregated\s+revenue\b/.test(h)) score += 36;
+  if (/\b(?:reportable|operating)\s+segment/.test(h)) score += 28;
+  if (/\b(?:product|service|geographic|regional)\s+(?:revenue|sales)\b/.test(h)) score += 24;
+  if (/\b(?:organic|volume|pricing|foreign\s+exchange|fx)\b/.test(h) && /\brevenue|sales\b/.test(h)) score += 14;
+
+  score -= bsHits * 16;
+  score -= cfHits * 20;
+  if (/\bbalance\s+sheet\b/.test(h)) score -= 28;
+  if (/\bcash\s+flows?\b/.test(h) && cfHits >= 1) score -= 32;
+
+  return Math.max(0, score);
+}
+
+type RevenueDriverCand = {
+  off: number;
+  score: number;
+  caption: string | null;
+  tableHtml: string | null;
+  factCount: number;
+  source: IxbrlRevenueDriversSource;
+  sectionLabel: string;
+};
+
+function buildRevenueDriversPayload(
+  $: cheerio.CheerioAPI,
+  tableOffsets: Map<DomElement, number>,
+  mdnaRange: { start: number; end: number } | null,
+  notesMeta: NotesSectionBounds | null,
+  flatText: string,
+  form: string
+): IxbrlRevenueDrivers {
+  let revenueSection: MdnaRevenueSectionBounds | null = null;
+  if (mdnaRange) {
+    revenueSection = findMdnaRevenueSectionBounds(flatText, mdnaRange, form);
+  }
+
+  const segmentNoteRanges = notesMeta ? findAllSegmentRevenueNoteRanges(flatText, notesMeta) : [];
+
+  const byOff = new Map<number, RevenueDriverCand>();
+
+  for (const [tbl, off] of Array.from(tableOffsets.entries())) {
+    const rows = extractTableGrid($, tbl);
+    if (rows.length === 0) continue;
+
+    const factCount = countNonFractionsInTable(tbl);
+    if (!isPlausibleDataTable(rows, factCount, { narrativeFinancialSection: true })) continue;
+    if (isLikelyTableOfContents(rows)) continue;
+
+    const inMdna = tableOffsetInRange(off, mdnaRange);
+    const inRevenueSection = tableOffsetInRange(off, revenueSection);
+    const segmentNoteHit = tableOffsetInSegmentNoteRanges(off, segmentNoteRanges);
+    const inSegmentNote = segmentNoteHit != null;
+
+    if (!inMdna && !inSegmentNote) continue;
+
+    const hay = tableHaystackForRevenue($, tbl, rows);
+    const score = scoreRevenueDriverCandidate(hay, rows, {
+      inRevenueSection,
+      inSegmentNote,
+      inMdna,
+      factCount,
+    });
+
+    const minScore = inSegmentNote ? 22 : inRevenueSection ? 24 : 32;
+    if (score < minScore) continue;
+
+    const colCount = rows.reduce((m, r) => Math.max(m, r.length), 0);
+    if (factCount < 1 && (rows.length < 2 || colCount < 2)) continue;
+
+    let source: IxbrlRevenueDriversSource = "mdna_segment";
+    let sectionLabel = "MD&A";
+    if (inSegmentNote) {
+      source = "segment_note";
+      const heading =
+        segmentNoteRanges.find((r) => off >= r.start && off < r.end)?.headingText?.trim() ?? "Segment note";
+      sectionLabel = heading.length > 80 ? `${heading.slice(0, 77)}…` : heading;
+    } else if (inRevenueSection) {
+      source = "mdna_revenue";
+      sectionLabel = revenueSection?.startLabel ?? "MD&A · Revenue";
+    } else if (inMdna) {
+      source = "mdna_segment";
+      sectionLabel = "MD&A · Segment";
+    }
+
+    const caption = tableCaption($, tbl);
+    const preserveIx = inMdna || inSegmentNote;
+    const tableHtml = buildDisplayTableHtml($, tbl, { fidelity: "filing", preserveIxTags: preserveIx });
+    if (!tableHtml) continue;
+
+    const cand: RevenueDriverCand = {
+      off,
+      score,
+      caption,
+      tableHtml,
+      factCount,
+      source,
+      sectionLabel,
+    };
+    const prev = byOff.get(off);
+    if (!prev || cand.score > prev.score) byOff.set(off, cand);
+  }
+
+  const sorted = [...byOff.values()].sort((a, b) => a.off - b.off);
+
+  if (sorted.length > 0) {
+    return {
+      status: "tables",
+      tables: sorted.map((c) => ({
+        caption: c.caption,
+        tableHtml: c.tableHtml,
+        factCount: c.factCount,
+        textOffset: c.off,
+        source: c.source,
+        sectionLabel: c.sectionLabel,
+      })),
+      revenueSectionFound: revenueSection != null,
+      revenueSectionLabel: revenueSection?.startLabel,
+    };
+  }
+
+  const mdnaSlice =
+    revenueSection != null
+      ? flatText.slice(revenueSection.start, Math.min(revenueSection.end, flatText.length))
+      : mdnaRange != null
+        ? flatText.slice(mdnaRange.start, Math.min(mdnaRange.end, flatText.length))
+        : "";
+
+  if (
+    filingTextMentionsRevenueDrivers(mdnaSlice) ||
+    segmentNoteRanges.some((r) => filingTextMentionsRevenueDrivers(flatText.slice(r.start, r.end)))
+  ) {
+    return {
+      status: "mention_only",
+      tables: [],
+      revenueSectionFound: revenueSection != null,
+      revenueSectionLabel: revenueSection?.startLabel,
+    };
+  }
+
+  return {
+    status: "none",
+    tables: [],
+    revenueSectionFound: revenueSection != null,
+    revenueSectionLabel: revenueSection?.startLabel,
+  };
+}
+
+/**
+ * Scan a press release / 8-K exhibit HTML for revenue-driver and segment revenue tables.
+ * No inline XBRL tagging (Exhibit 99 is usually plain HTML).
+ */
+export function extractRevenueDriversFromHtml(
+  html: string,
+  opts?: { sectionLabel?: string }
+): IxbrlRevenueDriversTable[] {
+  if (!html || html.length < 500) return [];
+  const $ = cheerio.load(html);
+  const { tableOffsets } = scanFilingTableZones($, "8-K", false);
+  const sectionLabel = opts?.sectionLabel ?? "Press release";
+  const byOff = new Map<number, RevenueDriverCand>();
+
+  for (const [tbl, off] of Array.from(tableOffsets.entries())) {
+    const rows = extractTableGrid($, tbl);
+    if (rows.length === 0) continue;
+
+    const factCount = countNonFractionsInTable(tbl);
+    if (!isPlausibleDataTable(rows, factCount, { narrativeFinancialSection: true })) continue;
+    if (isLikelyTableOfContents(rows)) continue;
+
+    const hay = tableHaystackForRevenue($, tbl, rows);
+    const score = scoreRevenueDriverCandidate(hay, rows, {
+      inRevenueSection: false,
+      inSegmentNote: false,
+      inMdna: false,
+      factCount,
+    });
+    if (score < 26) continue;
+
+    const colCount = rows.reduce((m, r) => Math.max(m, r.length), 0);
+    if (factCount < 1 && (rows.length < 2 || colCount < 2)) continue;
+
+    const caption = tableCaption($, tbl);
+    const tableHtml = buildDisplayTableHtml($, tbl, { fidelity: "filing", preserveIxTags: false });
+    if (!tableHtml) continue;
+
+    const cand: RevenueDriverCand = {
+      off,
+      score,
+      caption,
+      tableHtml,
+      factCount,
+      source: "press_release",
+      sectionLabel,
+    };
+    const prev = byOff.get(off);
+    if (!prev || cand.score > prev.score) byOff.set(off, cand);
+  }
+
+  return [...byOff.values()]
+    .sort((a, b) => a.off - b.off)
+    .map((c) => ({
+      caption: c.caption,
+      tableHtml: c.tableHtml,
+      factCount: c.factCount,
+      textOffset: c.off,
+      source: c.source,
+      sectionLabel: c.sectionLabel,
+    }));
+}
+
+function mergeRevenueDriversWithPress(
+  periodic: IxbrlRevenueDrivers,
+  pressTables: IxbrlRevenueDriversTable[],
+  supplementalSource?: IxbrlEbitdaSupplementalSource
+): IxbrlRevenueDrivers {
+  if (pressTables.length === 0) return periodic;
+  const combined = [...periodic.tables, ...pressTables];
+  return {
+    status: "tables",
+    tables: combined,
+    revenueSectionFound: periodic.revenueSectionFound,
+    revenueSectionLabel: periodic.revenueSectionLabel,
+    supplementalSource: supplementalSource ?? periodic.supplementalSource,
+  };
+}
+
+export { mergeRevenueDriversWithPress };
 
 /**
  * Scan a single EDGAR HTML document for EBITDA / Adjusted EBITDA–style reconciliation tables.
@@ -1673,6 +2098,8 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
     scanFilingTableZones($, params.form, includeUncertainBoundaries);
 
   const ebitdaReconciliation = buildEbitdaReconciliationPayload($, tableOffsets, mdnaRange, flatText);
+
+  const revenueDrivers = buildRevenueDriversPayload($, tableOffsets, mdnaRange, notesMeta, flatText, params.form);
 
   const mdnaSectionBlock =
     body ? buildMdnaSectionDisplayHtml($, body, elementSpans, mdnaRange) : { html: null as string | null, truncated: false };
@@ -1804,5 +2231,6 @@ export async function fetchIxbrlMdnaTablesFromFiling(params: {
     tables: out,
     diagnostics,
     ebitdaReconciliation,
+    revenueDrivers,
   };
 }

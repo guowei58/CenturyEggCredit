@@ -2,6 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { roicPeriodToPresentationPeriod } from "@/lib/presentations/discovery/period";
+import {
+  getPeriodFinancialsPeriodCache,
+  patchPeriodFinancialsPeriodCache,
+  periodFinancialsCacheKey,
+} from "@/lib/period-financials-period-cache";
 
 type DiscoveryBest = {
   title: string;
@@ -9,7 +14,7 @@ type DiscoveryBest = {
   file_type: string;
 };
 
-type DiscoveryResponse = {
+export type DiscoveryResponse = {
   ok: boolean;
   best: DiscoveryBest | null;
   savedDocument: { filename: string; openUrl: string; bytes: number } | null;
@@ -29,12 +34,15 @@ export function useManagementPresentationDiscovery({
   period,
   reportDate,
   enabled,
+  cacheAccession,
   onDiscoverySaveUrlChange,
 }: {
   ticker: string;
   period: string | null;
   reportDate?: string | null;
   enabled: boolean;
+  /** When set, discovery results are cached per ticker + accession for instant revisit. */
+  cacheAccession?: string | null;
   onDiscoverySaveUrlChange?: (info: { url: string | null; alreadySaved: boolean }) => void;
 }): ManagementPresentationDiscoveryState {
   const displayPeriod = roicPeriodToPresentationPeriod(period) ?? period;
@@ -66,6 +74,20 @@ export function useManagementPresentationDiscovery({
     setLoading(true);
     setNotFound(false);
 
+    const cacheKey =
+      cacheAccession?.trim() && ticker.trim()
+        ? periodFinancialsCacheKey(ticker, cacheAccession)
+        : null;
+    if (refreshKey === 0 && cacheKey) {
+      const cached = getPeriodFinancialsPeriodCache(cacheKey)?.mgmtDiscovery;
+      if (cached) {
+        setData(cached.data);
+        setNotFound(cached.notFound);
+        setLoading(false);
+        return;
+      }
+    }
+
     void (async () => {
       try {
         const qs = new URLSearchParams({
@@ -81,14 +103,32 @@ export function useManagementPresentationDiscovery({
         if (!res.ok || !json.best) {
           setData(null);
           setNotFound(true);
+          if (cacheKey) {
+            patchPeriodFinancialsPeriodCache(ticker, cacheAccession!, {
+              mgmtDiscovery: { data: null, notFound: true },
+            });
+          }
           return;
         }
         setData(json);
         if (!json.ok && !json.best) setNotFound(true);
+        if (cacheKey) {
+          patchPeriodFinancialsPeriodCache(ticker, cacheAccession!, {
+            mgmtDiscovery: {
+              data: json,
+              notFound: !json.ok && !json.best,
+            },
+          });
+        }
       } catch (e) {
         if (abort.signal.aborted) return;
         setData(null);
         setNotFound(true);
+        if (cacheKey) {
+          patchPeriodFinancialsPeriodCache(ticker, cacheAccession!, {
+            mgmtDiscovery: { data: null, notFound: true },
+          });
+        }
       } finally {
         if (!abort.signal.aborted) setLoading(false);
       }
@@ -98,7 +138,7 @@ export function useManagementPresentationDiscovery({
       abort.abort();
       if (abortRef.current === abort) abortRef.current = null;
     };
-  }, [displayPeriod, enabled, refreshKey, reportDate, ticker]);
+  }, [cacheAccession, displayPeriod, enabled, refreshKey, reportDate, ticker]);
 
   useEffect(() => {
     if (!onDiscoverySaveUrlChange) return;

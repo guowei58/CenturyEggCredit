@@ -10,6 +10,17 @@ import { saveRemoteUrlForTicker } from "@/lib/save-remote-url-client";
 /** Add to scroll areas and RichPasteTextarea in saved-response boxes so they fill space in fullscreen. */
 export const SAVED_RESPONSE_FS_FILL_CLASS = "saved-response-fs-fill";
 
+/** Outer frame in TabPromptSlideOutShell main — matches Business Model tab. */
+export const SAVED_RESPONSE_SHELL_CLASS = "min-w-0 flex-1";
+
+/** Paste / edit textarea — matches Business Model tab (`min-h-[50vh]` / `lg:min-h-[60vh]`). */
+export const SAVED_RESPONSE_EDIT_CLASS =
+  `min-h-[50vh] w-full flex-1 resize-y rounded border bg-[var(--card2)] px-3 py-3 text-sm leading-relaxed placeholder:font-sans focus:border-[var(--accent)] focus:outline-none lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`;
+
+/** Read-only scroll body — matches Business Model tab (`lg:max-h-[65vh]` caps height). */
+export const SAVED_RESPONSE_VIEW_CLASS =
+  `min-h-[50vh] flex-1 overflow-y-auto rounded border border-transparent px-0 py-2 text-sm leading-relaxed lg:min-h-[60vh] lg:max-h-[65vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`;
+
 /**
  * Wraps a saved-response panel: optional Fullscreen covers the viewport (Escape or Exit fullscreen).
  * Same DOM node — no duplicate editors. Use {@link SAVED_RESPONSE_FS_FILL_CLASS} on inner scroll/textarea.
@@ -27,7 +38,7 @@ export function SavedResponseExpandableShell({
 }: {
   title?: string;
   headerActions?: ReactNode;
-  /** Appended to the frame in normal (non-fullscreen) mode only — e.g. `min-w-0 flex-1 gap-4 overflow-y-auto` */
+  /** Appended to the frame in normal (non-fullscreen) mode only — use {@link SAVED_RESPONSE_SHELL_CLASS}. */
   className?: string;
   /** When false, omit `lg:min-h-[70vh]` (e.g. stacked Credit Agreements boxes). */
   fillViewportMinHeight?: boolean;

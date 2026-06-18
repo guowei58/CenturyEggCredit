@@ -1,0 +1,44 @@
+Adjusted EBITDA + Revenue Drivers benchmark
+Filings checked: 2866 (2788 loaded, 78 errors)
+Since year: 2019
+
+=== Adjusted EBITDA (filing-level) ===
+Tables found:     1716/2788 (61.5%)
+Mention only:     222/2788 (8.0%)
+Not found:        850/2788 (30.5%)
+Source MD&A:      599/1716 of found
+Source press 8-K: 1117/1716 of found
+
+=== Adjusted EBITDA (table-level IX tagging) ===
+Tables returned:  4629
+With inline XBRL: 10/4629 (0.2%)
+Without IX tags:  4619/4629
+
+=== Revenue Drivers (filing-level) ===
+Tables found:     2652/2788 (95.1%)
+Mention only:     71/2788 (2.5%)
+Not found:        65/2788 (2.3%)
+Revenue section:  2714/2788 (97.3%)
+
+=== Revenue Drivers (table-level IX tagging) ===
+Tables returned:  19495
+With inline XBRL: 3231/19495 (16.6%)
+Without IX tags:  16264/19495
+
+=== By form ===
+10-Q: EBITDA found 60.8% | Revenue found 95.5% | n=2079
+10-K: EBITDA found 63.6% | Revenue found 94.1% | n=709
+
+=== Tickers (lowest EBITDA hit) ===
+  BRK.B: EBITDA 0.0% | Revenue 100.0% | n=24
+  PG: EBITDA 0.0% | Revenue 100.0% | n=30
+  AMZN: EBITDA 0.0% | Revenue 100.0% | n=30
+  AAPL: EBITDA 0.0% | Revenue 100.0% | n=30
+  XOM: EBITDA 0.0% | Revenue 68.2% | n=22
+  JNJ: EBITDA 0.0% | Revenue 66.7% | n=30
+  UNH: EBITDA 0.0% | Revenue 100.0% | n=30
+  ORCL: EBITDA 0.0% | Revenue 100.0% | n=29
+  NKE: EBITDA 0.0% | Revenue 100.0% | n=30
+  TXN: EBITDA 0.0% | Revenue 100.0% | n=30
+  CAT: EBITDA 0.0% | Revenue 100.0% | n=29
+  HON: EBITDA 0.0% | Revenue 100.0% | n=24

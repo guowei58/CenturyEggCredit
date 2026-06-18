@@ -2,7 +2,7 @@
 
 import type { StyledSheetPreview } from "@/lib/excel-workbook-preview";
 import { ExcelStyledSheetPreview } from "@/components/ExcelStyledSheetPreview";
-import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS } from "@/components/SavedResponseExpandableShell";
+import { SavedResponseExpandableShell, SAVED_RESPONSE_FS_FILL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 
 export function ExcelWorkbookExpandableViewer({
   title,
@@ -37,7 +37,7 @@ export function ExcelWorkbookExpandableViewer({
     >
       {!hasWorkbook ? (
         <div
-          className={`flex min-h-[50vh] flex-1 items-center justify-center px-3 text-center text-sm lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+          className={`flex flex-1 items-center justify-center px-3 text-center text-sm ${SAVED_RESPONSE_VIEW_CLASS}`}
           style={{ color: "var(--muted2)" }}
         >
           {emptyMessage}
@@ -67,7 +67,7 @@ export function ExcelWorkbookExpandableViewer({
           <div className={`flex min-h-0 flex-1 flex-col overflow-hidden ${SAVED_RESPONSE_FS_FILL_CLASS}`}>
             <ExcelStyledSheetPreview
               preview={styledPreview}
-              className={`excel-workbook-sheet-preview min-h-[50vh] flex-1 overflow-auto lg:min-h-[60vh] ${SAVED_RESPONSE_FS_FILL_CLASS}`}
+              className={`excel-workbook-sheet-preview overflow-auto ${SAVED_RESPONSE_VIEW_CLASS}`}
             />
           </div>
 
