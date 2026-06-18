@@ -80,7 +80,7 @@ export type IxbrlExtractionDiagnostics = {
   rejectionReasons: Record<string, number>;
 };
 
-/** Extracted non-GAAP EBITDA / Adjusted EBITDA style reconciliation tables (MD&A or full document). */
+/** Extracted non-GAAP / Adjusted EBITDA reconciliation tables (MD&A or full document). */
 export type IxbrlEbitdaTable = {
   caption: string | null;
   tableHtml: string | null;
@@ -103,7 +103,7 @@ export type IxbrlEbitdaSupplementalSource = {
 };
 
 export type IxbrlEbitdaReconciliation = {
-  /** `tables` — one or more reconciliation grids found · `mention_only` — MD&A text references EBITDA but no qualifying table · `none` — no detection */
+  /** `tables` — one or more reconciliation grids found · `mention_only` — filing text references EBITDA / Non-GAAP measures but no qualifying table · `none` — no detection */
   status: "tables" | "mention_only" | "none";
   tables: IxbrlEbitdaTable[];
   /**
@@ -1459,8 +1459,8 @@ export function normalizeFilingPhraseHyphens(s: string): string {
 const RE_NON_GAAP_GAP = "non[-\\s]*gaap";
 
 /**
- * Detects common non-GAAP / adjusted earnings measures (EBITDA family and EPS / operating income / net income wording).
- * Exported for unit tests.
+ * Detects common non-GAAP / adjusted earnings measures (EBITDA family, Non-GAAP reconciliations,
+ * EPS / operating income / net income wording). Exported for unit tests.
  */
 export function filingTextMentionsEbitdaMeasures(s: string): boolean {
   if (!s || s.length < 4) return false;
@@ -1474,6 +1474,8 @@ export function filingTextMentionsEbitdaMeasures(s: string): boolean {
   if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+(diluted\\s+)?eps\\b`).test(t)) return true;
   /** Words between (e.g. "Non-GAAP diluted earnings per share") */
   if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+[^.\\n]{0,48}\\bearnings\\s+per\\s+share\\b`).test(t)) return true;
+  /** Section headers and captions (e.g. "Non-GAAP Financial Measures"). */
+  if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+financial\\s+measur`).test(t)) return true;
   /** Reconciliation tables often label "GAAP net income" / "GAAP diluted EPS" with a Non-GAAP total in the same grid. */
   if (/\bgaap\s+net\s+income\b/.test(t) && hasNonGaap) return true;
   if (
@@ -1482,6 +1484,9 @@ export function filingTextMentionsEbitdaMeasures(s: string): boolean {
   ) {
     return true;
   }
+  /** GAAP ↔ Non-GAAP bridge tables that omit EBITDA in row labels. */
+  if (hasNonGaap && /\bgaap\b/.test(t) && /\breconcili/.test(t)) return true;
+  if (hasNonGaap && /\badjusted\b/.test(t)) return true;
   /**
    * Cash-flow bridge in the same grid as Non-GAAP earnings (multi-section earnings tables: net income + EPS + FCF).
    */
@@ -1498,6 +1503,7 @@ export function filingTextMentionsEbitdaMeasures(s: string): boolean {
   if (/\bai\s*ebitda\b/.test(t)) return true;
   if (/\boperating\s+ebitda\b/.test(t)) return true;
   if (/\bebitda\b/.test(t)) return true;
+  if (hasNonGaap) return true;
   return false;
 }
 
@@ -1536,8 +1542,12 @@ function scoreEbitdaCandidate(haystack: string, inMdna: boolean, factCount: numb
   else if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+earnings\\b`).test(h)) score += 32;
   else if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+(diluted\\s+)?eps\\b`).test(h)) score += 32;
   else if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+[^.\\n]{0,48}\\bearnings\\s+per\\s+share\\b`).test(h)) score += 32;
+  else if (new RegExp(`\\b${RE_NON_GAAP_GAP}\\s+financial\\s+measur`).test(h)) score += 34;
   else if (gaapNet && hasNonGaap) score += 33;
   else if (gaapDilEps && hasNonGaap) score += 33;
+  else if (/reconcil/.test(h) && hasNonGaap) score += 32;
+  else if (/\badjusted\b/.test(h) && hasNonGaap) score += 30;
+  else if (/\bgaap\b/.test(h) && hasNonGaap) score += 28;
   else if (/\boperating\s+ebitda\b/.test(h)) score += 35;
   else if (/\bebitda\b/.test(h)) score += 28;
   else if (
@@ -1546,7 +1556,7 @@ function scoreEbitdaCandidate(haystack: string, inMdna: boolean, factCount: numb
     /\bnet\s+cash\s+provided\s+by\s+operating\s+activities\b/.test(h)
   ) {
     score += 30;
-  }
+  } else if (hasNonGaap) score += 28;
   if (hasNonGaap && /\bebitda\b/.test(h)) score += 12;
   if (/reconcil/.test(h) && /\bebitda\b/.test(h)) score += 10;
   if (/reconcil/.test(h) && hasNonGaap) score += 8;

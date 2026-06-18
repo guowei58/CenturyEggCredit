@@ -149,6 +149,20 @@ describe("extractEbitdaReconciliationFromIxbrlHtml", () => {
     expect(r.status).toBe("tables");
     expect(r.tables.length).toBeGreaterThanOrEqual(1);
   });
+
+  it("detects Non-GAAP reconciliation tables without an EBITDA row label", () => {
+    const html = `<!DOCTYPE html><html><body>${pad520}
+      <p>Non-GAAP Financial Measures</p>
+      <table><tbody>
+        <tr><td>GAAP net income</td><td>100</td><td>90</td></tr>
+        <tr><td>Stock-based compensation</td><td>10</td><td>8</td></tr>
+        <tr><td>Non-GAAP net income</td><td>110</td><td>98</td></tr>
+      </tbody></table>
+    </body></html>`;
+    const r = extractEbitdaReconciliationFromIxbrlHtml(html, "8-K", { includeUncertainBoundaries: false });
+    expect(r.status).toBe("tables");
+    expect(r.tables.length).toBeGreaterThanOrEqual(1);
+  });
 });
 
 describe("filingTextMentionsEbitdaMeasures", () => {
@@ -169,6 +183,10 @@ describe("filingTextMentionsEbitdaMeasures", () => {
     expect(filingTextMentionsEbitdaMeasures("Non-GAAP diluted EPS")).toBe(true);
     expect(filingTextMentionsEbitdaMeasures("non-GAAP earnings")).toBe(true);
     expect(filingTextMentionsEbitdaMeasures("Non-GAAP adjusted diluted earnings per share")).toBe(true);
+    expect(filingTextMentionsEbitdaMeasures("Non-GAAP Financial Measures")).toBe(true);
+    expect(filingTextMentionsEbitdaMeasures("Reconciliation of GAAP to Non-GAAP Results")).toBe(true);
+    expect(filingTextMentionsEbitdaMeasures("Adjusted non-GAAP measures")).toBe(true);
+    expect(filingTextMentionsEbitdaMeasures("Non-GAAP reconciliation")).toBe(true);
   });
 
   it("normalizes Unicode dashes in Non–GAAP (en dash / NB hyphen) and matches GAAP↔non-GAAP bridges", () => {

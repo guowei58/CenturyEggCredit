@@ -42,6 +42,7 @@ import { CompanyCompetitorsTab } from "@/components/CompanyCompetitorsTab";
 import { CompanyCustomersTab } from "@/components/CompanyCustomersTab";
 import { CompanySuppliersTab } from "@/components/CompanySuppliersTab";
 import { CompanyStartupRisksTab } from "@/components/CompanyStartupRisksTab";
+import { CompanyAiRiskTab } from "@/components/CompanyAiRiskTab";
 import { CompanySavedDocumentsTab } from "@/components/CompanySavedDocumentsTab";
 import { PublicRecordsTab } from "@/components/PublicRecordsTab";
 import { CompanyTrademarkIpTab } from "@/components/CompanyTrademarkIpTab";
@@ -619,6 +620,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "startup-risks") {
     return <CompanyStartupRisksTab ticker={ticker} />;
+  }
+  if (tabId === "ai-risk") {
+    return <CompanyAiRiskTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "risk-from-10k") {
     return <CompanyRiskFrom10kTab ticker={ticker} companyName={companyName} />;

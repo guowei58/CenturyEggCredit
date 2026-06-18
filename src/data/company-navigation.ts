@@ -58,6 +58,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
           "Customers",
           "Suppliers",
           "Startup Risks",
+          "AI Risk",
         ],
       },
     ],

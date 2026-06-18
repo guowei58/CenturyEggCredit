@@ -44,6 +44,7 @@ import { PORTERS_FIVE_FORCES_PROMPT_TEMPLATE } from "@/data/porters-five-forces-
 import { RECENT_EVENTS_PROMPT_TEMPLATE } from "@/data/recent-events-prompt";
 import { RESEARCH_ROADMAP_PROMPT_TEMPLATE } from "@/data/research-roadmap-prompt";
 import { STARTUP_RISKS_PROMPT_TEMPLATE } from "@/data/startup-risks-prompt";
+import { AI_RISK_PROMPT_TEMPLATE } from "@/data/ai-risk-prompt";
 import { SUBSIDIARY_LIST_PROMPT_TEMPLATE } from "@/data/subsidiary-list-prompt";
 import {
   modelOverridePayloadForProvider,
@@ -173,6 +174,11 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       label: "Startup risks",
       saveKey: "startup-risks",
       prompt: fill(ov("startup-risks", STARTUP_RISKS_PROMPT_TEMPLATE)),
+    },
+    {
+      label: "AI Risk",
+      saveKey: "ai-risk",
+      prompt: fill(ov("ai-risk", AI_RISK_PROMPT_TEMPLATE)),
     },
     {
       label: "Risk from 10-K",
