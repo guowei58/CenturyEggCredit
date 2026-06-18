@@ -10,6 +10,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
+import { WorkProductStepToolbar } from "@/components/WorkProductStepToolbar";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
@@ -297,6 +298,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   const selectedProductKeyRef = useRef(selectedProductKey);
   selectedProductKeyRef.current = selectedProductKey;
   const [lastRunGuide, setLastRunGuide] = useState<MemoDeckRunGuideState | null>(initialPrompt.lastRunGuide);
+  const [promptPanelOpen, setPromptPanelOpen] = useState(false);
 
   /** After session draft hydrate; avoids overwriting storage before load runs. */
   const [draftReady, setDraftReady] = useState(false);
@@ -838,13 +840,14 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         builtPromptCacheHydratedRef.current = true;
         const saved = await persistMemoDeckBuiltPromptCache(tk, cache, selectedProductKey);
         if (!saved) {
-          setPromptStatus("Context window ready in the Prompt panel (could not save to server — copy it before leaving).");
+          setPromptStatus("Context window ready — use step 3 to run through AI (could not save to server — copy before leaving).");
         } else {
-          setPromptStatus("Context window ready in the Prompt panel.");
+          setPromptStatus("Context window ready — use step 3 to run through AI.");
         }
       } else {
-        setPromptStatus("Context window ready in the Prompt panel.");
+        setPromptStatus("Context window ready — use step 3 to run through AI.");
       }
+      setPromptPanelOpen(true);
     } catch (e) {
       setGenError(e instanceof Error ? e.message : "Failed to build context window");
     } finally {
@@ -936,80 +939,56 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
   }
 
   const sourceToolbar = (
-    <div className="space-y-3">
-      <div>
-        <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-          Memo / deck type
+    <WorkProductStepToolbar
+      needsSignIn={needsSignIn}
+      signInMessage="Sign in to resolve your ticker workspace, ingest sources, and generate memos and decks. Saved output is stored per account."
+      refreshLabel={resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh sources"}
+      refreshDisabled={sourceBusy || needsSignIn}
+      onRefresh={() => void runResolve()}
+      refreshTitle="Rescan KPI, Forensic, LME, Recommendation, filings, and saved tab responses"
+      buildLoading={buildingPrompt}
+      buildDisabled={sourceBusy || !project || needsSignIn}
+      onBuild={() => void buildContextWindow()}
+      buildTitle={
+        project
+          ? `Assemble the ${selectedProduct.label} prompt with packed sources`
+          : "Complete step 1 first"
+      }
+      runDisabled={!builtPrompt?.copyPrompt}
+      onRunThroughAi={() => setPromptPanelOpen(true)}
+      error={genError}
+      header={
+        <div>
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+            Memo / deck type
+          </div>
+          <div className="flex flex-wrap items-stretch gap-2">
+            {MEMO_DECK_PRODUCT_OPTIONS.map((opt) => {
+              const selected = selectedProductKey === opt.key;
+              return (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => void selectProduct(opt.key)}
+                  className={MEMO_ACTION_BTN}
+                  style={{
+                    borderColor: "var(--accent)",
+                    color: "var(--accent)",
+                    background: selected ? "rgba(0,212,170,0.14)" : "transparent",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex flex-wrap items-stretch gap-2">
-          {MEMO_DECK_PRODUCT_OPTIONS.map((opt) => {
-            const selected = selectedProductKey === opt.key;
-            return (
-              <button
-                key={opt.key}
-                type="button"
-                onClick={() => void selectProduct(opt.key)}
-                className={MEMO_ACTION_BTN}
-                style={{
-                  borderColor: "var(--accent)",
-                  color: "var(--accent)",
-                  background: selected ? "rgba(0,212,170,0.14)" : "transparent",
-                }}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-        Choose the memo or deck type above, then click <strong>Refresh sources</strong> and{" "}
-        <strong>Build context window</strong>, then open the <strong>Prompt</strong> panel on the right to copy or run
-        the assembled prompt.
-      </p>
-      <p className="text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
-        Sources: KPI Commentary, Forensic Analysis, LME Analysis, and Recommendation work products; latest 10-K and
-        10-Q; all saved tab responses (.txt); Period Financials management presentations; and earnings transcripts.
-      </p>
-      {needsSignIn ? (
-        <p className="text-xs rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
-          Sign in to resolve your ticker workspace, ingest sources, and generate memos and decks. Saved output is stored per account.
-        </p>
-      ) : null}
+      }
+    >
       {refreshingSources && project ? (
         <p className="text-[11px] flex items-center gap-2" style={{ color: "var(--muted)" }}>
           <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--border2)] border-t-[var(--accent)]" />
           Refreshing sources…
-        </p>
-      ) : null}
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          disabled={sourceBusy || needsSignIn}
-          onClick={() => void runResolve()}
-          className="rounded border px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          {resolveLoading ? "Scanning…" : ingestLoading ? "Ingesting…" : "Refresh sources"}
-        </button>
-        <button
-          type="button"
-          disabled={sourceBusy || !project || needsSignIn}
-          onClick={() => void buildContextWindow()}
-          className="rounded border px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-          style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-        >
-          {buildingPrompt ? "Building…" : "Build context window"}
-        </button>
-        <span className="text-[10px]" style={{ color: "var(--muted)" }}>
-          {project
-            ? `${project.sources.length} source block${project.sources.length === 1 ? "" : "s"} indexed`
-            : "No ingested project yet"}
-        </span>
-      </div>
-      {genError ? (
-        <p className="text-xs" style={{ color: "var(--danger)" }}>
-          {genError}
         </p>
       ) : null}
       <details className="rounded border text-xs" style={{ borderColor: "var(--border2)" }} open={panel === "folder"}>
@@ -1136,7 +1115,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           <MemoDeckRunGuidePanel run={lastRunGuide} />
         </div>
       </details>
-    </div>
+    </WorkProductStepToolbar>
   );
 
   const promptPanel = (
@@ -1170,9 +1149,8 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           className="rounded border p-3 text-xs mb-3 min-h-[4rem] leading-relaxed"
           style={{ borderColor: "var(--border2)", color: "var(--muted)", background: "var(--card)" }}
         >
-          No context window yet. Expand <strong>Memo &amp; deck setup</strong> (top of page), then click{" "}
-          <strong>Build context window</strong> for <strong>{selectedProduct.label}</strong>. The full prompt blob
-          appears in this panel and is kept until you refresh sources or build again.
+          No context window yet. Complete <strong>step 2 — Build context window</strong> for{" "}
+          <strong>{selectedProduct.label}</strong>. The full prompt appears in this panel when ready.
         </div>
       )}
       <div className="tab-prompt-ai-actions-grid mb-2">
@@ -1558,6 +1536,8 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
       <TabPromptSlideOutShell
         hasMainContent={hasMainContent}
         hasPromptContent={Boolean(builtPrompt?.copyPrompt)}
+        promptPanelOpen={promptPanelOpen}
+        onPromptPanelOpenChange={setPromptPanelOpen}
         toolbarAlign="start"
         toolbar={sourceToolbar}
         collapsibleToolbar

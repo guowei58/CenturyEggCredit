@@ -8,6 +8,7 @@ import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
+import { WorkProductStepToolbar } from "@/components/WorkProductStepToolbar";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import {
@@ -79,6 +80,7 @@ export function CompanyOtherMemosTab({
   const [isEditing, setIsEditing] = useState(true);
 
   const [builtByKind, setBuiltByKind] = useState<Partial<Record<WorkProductPromptKind, BuiltPromptCacheEntry>>>({});
+  const [promptPanelOpen, setPromptPanelOpen] = useState(false);
 
   const builtPrompt = useMemo(() => {
     const fp = data?.currentFingerprint ?? "";
@@ -131,6 +133,7 @@ export function CompanyOtherMemosTab({
 
   useEffect(() => {
     setBuiltByKind({});
+    setPromptPanelOpen(false);
     setStatusMessage(null);
     setClipboardFailed(false);
   }, [safeTicker, data?.currentFingerprint]);
@@ -179,7 +182,8 @@ export function CompanyOtherMemosTab({
         ...prev,
         [config.kind]: { fingerprint: fp, prompt },
       }));
-      setStatusMessage(`Context window ready for ${config.title}.`);
+      setPromptPanelOpen(true);
+      setStatusMessage(`Context window ready for ${config.title} — use step 3 to run through AI.`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to build context window");
     } finally {
@@ -251,55 +255,32 @@ export function CompanyOtherMemosTab({
   const hasMainContent = savedContent.trim().length > 0;
 
   const sourceToolbar = (
-    <div className="space-y-3">
-      <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted2)" }}>
-        {config.whatYouGet} Click <strong>Refresh sources</strong>, then <strong>Build context window</strong> to create
-        the prompt blob. Open the <strong>Prompt</strong> pull tab on the right, run your AI there, and paste the answer
-        back here.
-      </p>
-      {needsSignIn ? (
-        <p className="text-xs rounded border px-3 py-2" style={{ borderColor: "var(--warn)", color: "var(--muted2)" }}>
-          Sign in to load saved sources, build the context window, and save responses.
-        </p>
-      ) : null}
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => void load()}
-          disabled={busy || !prefsReady}
-          className="rounded border px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-          style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-        >
-          {loading ? "Refreshing…" : "Refresh sources"}
-        </button>
-        <button
-          type="button"
-          onClick={() => void buildContextWindow()}
-          disabled={busy || !prefsReady || !data?.hasSubstantiveText || needsSignIn}
-          className="rounded border px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-          style={{ borderColor: "var(--accent)", color: "var(--accent)", background: "transparent" }}
-        >
-          {building ? "Building…" : "Build context window"}
-        </button>
-      </div>
-      {error ? (
-        <p className="text-xs" style={{ color: "var(--danger)" }}>
-          {error}
-        </p>
-      ) : null}
+    <WorkProductStepToolbar
+      needsSignIn={needsSignIn}
+      refreshLoading={loading}
+      refreshDisabled={busy || !prefsReady}
+      onRefresh={() => void load()}
+      buildLoading={building}
+      buildDisabled={busy || !prefsReady || !data?.hasSubstantiveText || needsSignIn}
+      onBuild={() => void buildContextWindow()}
+      buildTitle={
+        data?.hasSubstantiveText
+          ? `Assemble the ${config.title} prompt with packed sources`
+          : "Complete step 1 and ensure saved sources are available"
+      }
+      runDisabled={!builtPrompt}
+      onRunThroughAi={() => setPromptPanelOpen(true)}
+      error={error}
+    >
       <details className="rounded border text-xs" style={{ borderColor: "var(--border2)" }}>
         <summary className="cursor-pointer px-3 py-2 font-medium" style={{ color: "var(--muted2)" }}>
           {data
             ? `Shared source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} chars)`
             : "Shared source inventory"}
         </summary>
-        <SharedSourceInventoryBody
-          data={data}
-          loading={loading || !prefsReady}
-          needsSignIn={needsSignIn}
-        />
+        <SharedSourceInventoryBody data={data} loading={loading || !prefsReady} needsSignIn={needsSignIn} />
       </details>
-    </div>
+    </WorkProductStepToolbar>
   );
 
   const promptPanel = (
@@ -328,8 +309,7 @@ export function CompanyOtherMemosTab({
           className="rounded border p-3 text-xs mb-3 min-h-[4rem]"
           style={{ borderColor: "var(--border2)", color: "var(--muted)", background: "var(--card)" }}
         >
-          Build the context window above, then open the <strong>Prompt</strong> pull tab on the right to copy or run the
-          assembled prompt.
+          Complete <strong>step 2 — Build context window</strong> to assemble the full prompt here.
         </div>
       )}
       <div className="tab-prompt-ai-actions-grid mb-2">
@@ -420,6 +400,9 @@ export function CompanyOtherMemosTab({
     <Card title={`For the Hallucinators ---> — ${config.title} — ${safeTicker}`}>
       <TabPromptSlideOutShell
         hasMainContent={hasMainContent}
+        hasPromptContent={!!builtPrompt}
+        promptPanelOpen={promptPanelOpen}
+        onPromptPanelOpenChange={setPromptPanelOpen}
         toolbarAlign="start"
         toolbar={sourceToolbar}
         main={

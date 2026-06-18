@@ -40,6 +40,8 @@ export function TabPromptSlideOutShell({
   collapseToolbarWhen = false,
   collapsibleToolbarLabel = "Setup",
   hasPromptContent = false,
+  promptPanelOpen,
+  onPromptPanelOpenChange,
   className = "",
 }: {
   /** When true, the main response / excel area has saved or loaded content. */
@@ -57,14 +59,25 @@ export function TabPromptSlideOutShell({
   collapsibleToolbarLabel?: string;
   /** When true, keep / reopen the right-hand prompt drawer (e.g. restored context window). */
   hasPromptContent?: boolean;
+  /** Controlled prompt drawer open state (e.g. “Run through AI” step). */
+  promptPanelOpen?: boolean;
+  onPromptPanelOpenChange?: (open: boolean) => void;
   className?: string;
 }) {
-  const [open, setOpen] = useState(() => hasPromptContent || !hasMainContent);
+  const [internalOpen, setInternalOpen] = useState(() => hasPromptContent || !hasMainContent);
   const [toolbarOpen, setToolbarOpen] = useState(() => !(collapsibleToolbar && collapseToolbarWhen));
   const prevHasMainContent = useRef(hasMainContent);
   const prevCollapseToolbarWhen = useRef(collapseToolbarWhen);
   const prevHasPromptContent = useRef(hasPromptContent);
   const { top, height } = useCompanyTabWorkspaceInsets();
+
+  const promptPanelControlled = onPromptPanelOpenChange != null;
+  const open = promptPanelControlled ? (promptPanelOpen ?? false) : internalOpen;
+  const setOpen = (next: boolean | ((prev: boolean) => boolean)) => {
+    const resolved = typeof next === "function" ? next(open) : next;
+    if (promptPanelControlled) onPromptPanelOpenChange!(resolved);
+    else setInternalOpen(resolved);
+  };
 
   const insetStyle: CSSProperties | undefined =
     height > 0

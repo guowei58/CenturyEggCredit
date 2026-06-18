@@ -10,12 +10,6 @@ const CONFIG: WorkProductSourcedTabConfig = {
   title: "Recommendation",
   apiPath: "/api/cs-recommendation",
   savedContentKey: "cs-recommendation-latest",
-  refreshSourcesStep: (
-    <>
-      Click <strong>Refresh sources</strong> to rescan saved tab text files plus saved LME, KPI, and Forensic outputs.
-    </>
-  ),
-  sourceInventoryNote: "Uses saved tab .txt files and latest LME, KPI, and Forensic markdown outputs.",
   noSubstantiveMessage:
     "No substantive recommendation sources found. Save tab responses and/or LME, KPI, or Forensic outputs.",
   emptyOutputMessage:
