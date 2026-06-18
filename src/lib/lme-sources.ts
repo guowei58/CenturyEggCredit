@@ -106,7 +106,7 @@ export function lmeRawSourcesFingerprint(rawDocs: LmeRawDocument[]): string {
 
 export function formatSourcesForLme(ticker: string, parts: LmeSourcePart[]): string {
   const sym = ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  const header = `Ticker: ${sym}\nThe blocks below combine (1) saved tabs from the Capital Structure section plus the saved Business Model tab, (2) uploaded credit / covenant documents from the Capital Structure section, (3) Excel extracts from Capital Structure / Org Chart / Subsidiary List trees, and (4) when retrieval is enabled, typically one embedding-ranked context pack assembled from that corpus under the character ceiling (otherwise per-source blocks with optional ranked excerpts for long documents only). General Saved Documents outside the Capital Structure section are not included. Use them as the primary factual basis.\n\n`;
+  const header = `Ticker: ${sym}\nThe blocks below combine (1) saved tabs from the Capital Structure section plus the saved Business Model tab, (2) uploaded credit / covenant documents from the Capital Structure section, (3) Excel extracts from Capital Structure / Org Chart / Subsidiary List trees, packed sequentially in priority order up to ${LME_DEFAULT_BUNDLE_CHAR_CAP.toLocaleString()} characters (set LME_RETRIEVAL=1 for embedding-ranked excerpts instead). General Saved Documents outside the Capital Structure section are not included. Use them as the primary factual basis.\n\n`;
   const blocks = parts.map(
     (p) =>
       `==========\nSOURCE: ${p.label}${p.key ? ` [key:${p.key}]` : ""}${p.file ? ` [file:${p.file}]` : ""}\n==========\n${p.content}\n`

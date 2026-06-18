@@ -25,8 +25,10 @@ import {
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import type { CreditMemoProject, SourceChunkRecord } from "./types";
 import { buildEvidencePackSync } from "./evidencePack";
+import { MEMO_DECK_CONTEXT_MAX_CHARS } from "./config";
 import { sortSourcesForEvidence } from "./memoPlanner";
 import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
+import { joinSourceChunksWithoutOverlap } from "./chunkStitch";
 
 const STORAGE_PREFIX = "credit-memo/kpi-embeddings";
 
@@ -78,23 +80,22 @@ export function isKpiRetrievalEnabled(): boolean {
 }
 
 /**
- * AI Memo & Deck: chunk embeddings + cosine-ranked evidence pack (same stack as LME/KPI — OpenAI / Gemini / DeepSeek).
- * Set `MEMO_RETRIEVAL=0` to use sequential packing only (`MEMO_FALLBACK_MAX_EVIDENCE_CHARS` cap).
+ * AI Memo & Deck: sequential packing of all ingested memo-scope sources up to 400K chars.
+ * Set `MEMO_RETRIEVAL=1` to rank chunks by embedding similarity instead (smaller, query-focused window).
  */
 export function isMemoRetrievalEnabled(): boolean {
   const v = process.env.MEMO_RETRIEVAL?.trim().toLowerCase();
-  if (v === "0" || v === "false" || v === "off") return false;
-  return true;
+  return v === "1" || v === "true" || v === "on";
 }
 
-/** Ranked chunk body budget for memo/deck when retrieval succeeds (framing lines add a little on top). */
+/** Ranked chunk body budget when `MEMO_RETRIEVAL=1` and embeddings succeed. */
 export function memoRetrievalMaxEvidenceChars(): number {
-  return parseEnvInt("MEMO_RETRIEVAL_MAX_EVIDENCE_CHARS", 400_000, 20_000, 2_000_000);
+  return parseEnvInt("MEMO_RETRIEVAL_MAX_EVIDENCE_CHARS", MEMO_DECK_CONTEXT_MAX_CHARS, 20_000, 2_000_000);
 }
 
-/** Sequential evidence cap when retrieval is off, disabled, or fails (aligns with LME-style bundle scale). */
+/** Sequential evidence cap for memo/deck (all allowed sources, priority order). */
 export function memoFallbackMaxEvidenceChars(): number {
-  return parseEnvInt("MEMO_FALLBACK_MAX_EVIDENCE_CHARS", 400_000, 40_000, 2_000_000);
+  return parseEnvInt("MEMO_FALLBACK_MAX_EVIDENCE_CHARS", MEMO_DECK_CONTEXT_MAX_CHARS, 40_000, 2_000_000);
 }
 
 function l2normalize(v: number[]): number[] {
@@ -278,7 +279,7 @@ export function buildRankedChunkEvidencePack(
     if (src.parseStatus === "skipped") continue;
 
     const blockHead = `\n<<<BEGIN SOURCE: ${src.relPath} | category=${src.category} | status=${src.parseStatus}>>>\n`;
-    const body = list.map((c) => c.text).join("\n\n--- chunk ---\n\n");
+    const body = joinSourceChunksWithoutOverlap(list);
     const block = blockHead + body + `\n<<<END SOURCE: ${src.relPath}>>>\n`;
     parts.push(block);
   }
@@ -384,19 +385,35 @@ export async function resolveCreditMemoEvidencePack(params: {
   };
 
   if (!isMemoRetrievalEnabled()) {
-    const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+    const evidence = buildEvidencePackSync(project, {
+      maxChars: memoFallbackMaxEvidenceChars(),
+      query,
+      memoDeckOrder: true,
+    });
     return seqFallback(evidence, "retrieval_disabled");
   }
   if (!userId) {
-    const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+    const evidence = buildEvidencePackSync(project, {
+      maxChars: memoFallbackMaxEvidenceChars(),
+      query,
+      memoDeckOrder: true,
+    });
     return seqFallback(evidence, "no_user");
   }
   if (!hasAnyKpiEmbeddingKey(apiKeys)) {
-    const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+    const evidence = buildEvidencePackSync(project, {
+      maxChars: memoFallbackMaxEvidenceChars(),
+      query,
+      memoDeckOrder: true,
+    });
     return seqFallback(evidence, "no_embedding_key");
   }
   if (nonEmptyChunkCount === 0) {
-    const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+    const evidence = buildEvidencePackSync(project, {
+      maxChars: memoFallbackMaxEvidenceChars(),
+      query,
+      memoDeckOrder: true,
+    });
     return seqFallback(evidence, "no_chunks");
   }
 
@@ -406,14 +423,22 @@ export async function resolveCreditMemoEvidencePack(params: {
     const vectors = await ensureKpiChunkEmbeddings(userId, project, apiKeys);
     const qVec = await embedCreditMemoRetrievalQuery(query, apiKeys);
     if (!vectors || !qVec) {
-      const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+      const evidence = buildEvidencePackSync(project, {
+        maxChars: memoFallbackMaxEvidenceChars(),
+        query,
+        memoDeckOrder: true,
+      });
       return seqFallback(evidence, "embed_failed");
     }
     const cap = memoRetrievalMaxEvidenceChars();
     const picked = selectChunksForKpiEvidence(project, vectors, qVec, cap);
     const chunksEmbedded = Object.keys(vectors).length;
     if (picked.length === 0) {
-      const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+      const evidence = buildEvidencePackSync(project, {
+        maxChars: memoFallbackMaxEvidenceChars(),
+        query,
+        memoDeckOrder: true,
+      });
       return seqFallback(evidence, "empty_window");
     }
     const evidence = buildRankedChunkEvidencePack(
@@ -446,7 +471,11 @@ export async function resolveCreditMemoEvidencePack(params: {
     };
   } catch (e) {
     console.error("[memoRetrieval] ranked pack failed:", e instanceof Error ? e.message : e);
-    const evidence = buildEvidencePackSync(project, { maxChars: memoFallbackMaxEvidenceChars(), query });
+    const evidence = buildEvidencePackSync(project, {
+      maxChars: memoFallbackMaxEvidenceChars(),
+      query,
+      memoDeckOrder: true,
+    });
     return seqFallback(evidence, "error");
   }
 }

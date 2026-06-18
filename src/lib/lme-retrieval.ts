@@ -11,6 +11,7 @@ import { DEFAULT_EMBEDDING_DIMENSIONS, DEFAULT_EMBEDDING_MODEL } from "@/lib/ope
 import { FORENSIC_RETRIEVAL_QUERY } from "@/data/forensic-accounting-prompt";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import { workspaceReadUtf8, workspaceWriteUtf8 } from "@/lib/user-ticker-workspace-store";
+import { joinIndexedTextSlicesWithoutOverlap } from "@/lib/creditMemo/chunkStitch";
 
 const STORAGE_PREFIX = "credit-memo/lme-retrieval-embeddings";
 
@@ -91,9 +92,10 @@ export function lmeGlobalMaxChunksPerDocument(): number {
   return parseEnvInt("LME_GLOBAL_MAX_CHUNKS_PER_DOC", 40, 4, 200);
 }
 
-/** LME always attempts embedding retrieval on runs when API keys support it (`LME_RETRIEVAL` env is ignored). */
+/** Sequential pack by default; set `LME_RETRIEVAL=1` for embedding-ranked chunk windows. */
 export function isLmeRetrievalEnabled(): boolean {
-  return true;
+  const v = process.env.LME_RETRIEVAL?.trim().toLowerCase();
+  return v === "1" || v === "true" || v === "on";
 }
 
 export type LmeIndexedChunk = {
@@ -296,11 +298,32 @@ function formatChunkBlock(c: LmeIndexedChunk, task: LmeRetrievalPackTask): strin
 
 export function formatRetrievedChunksForPrompt(picked: LmeIndexedChunk[], task: LmeRetrievalPackTask = "lme"): string {
   if (!picked.length) return "";
+  const tag = task === "kpi" ? "KPI RETRIEVAL" : task === "forensic" ? "FORENSIC RETRIEVAL" : "LME RETRIEVAL";
   const intro =
     task === "kpi"
       ? "# RETRIEVED SOURCE FRAGMENTS (ranked for KPI / operating and financial commentary)\nThese excerpts are selected from your full ingested workspace corpus by embedding similarity to the KPI commentary task.\n\n"
       : task === "forensic"
         ? "# RETRIEVED SOURCE FRAGMENTS (ranked for forensic accounting / financial statement review)\nThese excerpts are selected from your resolved research-folder ingest by embedding similarity to the forensic accounting task.\n\n"
         : "# RETRIEVED SOURCE FRAGMENTS (ranked for LME / liability-management relevance)\nThese excerpts are selected from your full ingested corpus by embedding similarity to the LME task.\n\n";
-  return intro + picked.map((c) => formatChunkBlock(c, task)).join("\n\n---\n\n");
+
+  const byDoc = new Map<string, LmeIndexedChunk[]>();
+  for (const c of picked) {
+    if (!byDoc.has(c.docId)) byDoc.set(c.docId, []);
+    byDoc.get(c.docId)!.push(c);
+  }
+
+  const overlap = lmeChunkOverlapChars();
+  const blocks: string[] = [];
+  for (const chunks of byDoc.values()) {
+    chunks.sort((a, b) => a.chunkIndex - b.chunkIndex);
+    const label = chunks[0]!.label;
+    const body = joinIndexedTextSlicesWithoutOverlap(
+      chunks.map((c) => ({ chunkIndex: c.chunkIndex, text: c.text })),
+      overlap,
+      "\n\n---\n\n"
+    );
+    const head = `<<<${tag} | ${label} | ${chunks.length} excerpt(s)>>>\n`;
+    blocks.push(head + body);
+  }
+  return intro + blocks.join("\n\n---\n\n");
 }

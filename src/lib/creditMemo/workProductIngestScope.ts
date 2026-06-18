@@ -98,9 +98,13 @@ const GENERATED_WORK_PRODUCT_ARTIFACT_BASES = new Set(
  * These stay in {@link GENERATED_WORK_PRODUCT_ARTIFACT_BASES} for other scopes but are allowed when `scope === "memo"`.
  */
 const MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES = new Set(
-  ["kpi-latest.md", "forensic-accounting-latest.md", "lme-analysis.md", "cs-recommendation-latest.md"].map((s) =>
-    s.toLowerCase()
-  )
+  [
+    "kpi-latest.md",
+    "forensic-accounting-latest.md",
+    "lme-analysis.md",
+    "cs-recommendation-latest.md",
+    "xbrl-consolidated-financials-ai.md",
+  ].map((s) => s.toLowerCase())
 );
 
 /** Saved-tab `.txt` keys (materialized filenames) for memo ingest — excludes deck text and source packs. */
@@ -155,6 +159,16 @@ function pickLatestSecFilingPath(candidates: string[], kind: "10-K" | "10-Q"): s
 function isMemoDeckWorkProductMarkdown(relPath: string): boolean {
   const base = path.basename(relPath.replace(/\\/g, "/")).toLowerCase();
   return MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES.has(base);
+}
+
+/** Higher = earlier in AI Memo & Deck sequential evidence packs. */
+export function memoDeckEvidenceSourcePriority(relPath: string): number {
+  const base = path.basename(relPath.replace(/\\/g, "/")).toLowerCase();
+  if (MEMO_DECK_INCLUDED_WORK_PRODUCT_BASENAMES.has(base)) return 100;
+  if (isPeriodFinancialsMgmtPresentationFilename(base) || isPeriodFinancialsEarningsTranscriptFilename(base)) return 85;
+  if (MEMO_DECK_SAVED_RESPONSE_TXT_BASENAMES.has(base) || MEMO_DECK_SAVED_RESPONSE_HTML_BASENAMES.has(base)) return 75;
+  if (looksLikeTenKFilename(relPath) || looksLikeTenQFilename(relPath)) return 60;
+  return 50;
 }
 
 function isMemoDeckSavedTabResponse(relPath: string): boolean {

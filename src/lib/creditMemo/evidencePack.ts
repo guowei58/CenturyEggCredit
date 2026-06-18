@@ -1,19 +1,24 @@
-import { loadCreditMemoConfig } from "./config";
-import { sortSourcesForEvidence } from "./memoPlanner";
+import { loadCreditMemoConfig, MEMO_DECK_CONTEXT_MAX_CHARS } from "./config";
+import { sortSourcesForEvidence, sortMemoDeckSourcesForEvidence } from "./memoPlanner";
 import type { CreditMemoProject, SourceFileRecord } from "./types";
+import { joinSourceChunksWithoutOverlap } from "./chunkStitch";
 
 /**
  * Build capped evidence string with clear source boundaries for the LLM.
  *
- * Packing is **sequential only**: `sortSourcesForEvidence` order, then chunk index order within each
- * file, until the global `maxChars` budget is exhausted. Earlier sources get priority.
- *
- * `query` and `perFileMaxChars` in opts are ignored for now (previously: relevance + round-robin).
- * Reintroduce limits/strategies incrementally as needed.
+ * Packing is **sequential**: memo/deck sources in priority order, then chunk index order within each
+ * file (stitched without overlap duplication), until the global `maxChars` budget is exhausted.
  */
 export function buildEvidencePackSync(
   project: CreditMemoProject,
-  opts?: { maxChars?: number; query?: string; perFileMaxChars?: number; sourceIds?: Set<string> }
+  opts?: {
+    maxChars?: number;
+    query?: string;
+    perFileMaxChars?: number;
+    sourceIds?: Set<string>;
+    /** When true, order sources for AI Memo & Deck (work-product outputs first). */
+    memoDeckOrder?: boolean;
+  }
 ): string {
   const cfg = loadCreditMemoConfig();
   let budget = Math.round(opts?.maxChars ?? cfg.maxContextChars);
@@ -25,17 +30,20 @@ export function buildEvidencePackSync(
   budget -= header.length;
   parts.push(header);
 
-  const ordered = sid?.size ? sortSourcesForEvidence(project.sources).filter((s) => sid.has(s.id)) : sortSourcesForEvidence(project.sources);
+  const ordered = sid?.size
+    ? (opts?.memoDeckOrder ? sortMemoDeckSourcesForEvidence : sortSourcesForEvidence)(project.sources).filter((s) =>
+        sid.has(s.id)
+      )
+    : (opts?.memoDeckOrder ? sortMemoDeckSourcesForEvidence : sortSourcesForEvidence)(project.sources);
 
   for (const src of ordered) {
     if (src.parseStatus === "skipped") continue;
 
     const blockHead = `\n<<<BEGIN SOURCE: ${src.relPath} | category=${src.category} | status=${src.parseStatus}>>>\n`;
-    const body = project.chunks
+    const fileChunks = project.chunks
       .filter((c) => c.sourceFileId === src.id)
-      .sort((a, b) => a.chunkIndex - b.chunkIndex)
-      .map((c) => c.text)
-      .join("\n\n--- chunk ---\n\n");
+      .sort((a, b) => a.chunkIndex - b.chunkIndex);
+    const body = joinSourceChunksWithoutOverlap(fileChunks);
 
     if (!body.trim()) continue;
 

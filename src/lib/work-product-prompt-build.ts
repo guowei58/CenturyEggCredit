@@ -78,7 +78,7 @@ async function buildCreativeWorkspacePromptPackage(params: {
 }): Promise<{ ok: true; package: WorkProductPromptPackage } | { ok: false; error: string }> {
   const bundled = await gatherCreativeWorkspaceSources("other-memos", params.ticker, undefined, params.userId, {
     apiKeys: params.apiKeys,
-    useRetrieval: true,
+    useRetrieval: false,
   });
   if (!bundled.hasSubstantiveText) {
     return { ok: false, error: CREATIVE_NO_SOURCES_ERROR[params.kind] };
@@ -164,7 +164,7 @@ export async function buildWorkProductPromptPackage(params: {
   if (params.kind === "kpi") {
     const bundled = await gatherKpiCommentarySources(sym, undefined, params.userId, {
       apiKeys: params.apiKeys,
-      useRetrieval: true,
+      useRetrieval: false,
     });
     if (!bundled.hasSubstantiveText) {
       return {
@@ -203,7 +203,7 @@ export async function buildWorkProductPromptPackage(params: {
   if (params.kind === "lme") {
     const bundled = await gatherLmeSources(sym, undefined, params.userId, {
       apiKeys: params.apiKeys,
-      useRetrieval: true,
+      useRetrieval: false,
     });
     if (!bundled.hasSubstantiveText) {
       return {
@@ -263,7 +263,7 @@ export async function buildWorkProductPromptPackage(params: {
 
   const bundled = await gatherCsRecommendationSources(sym, undefined, params.userId, {
     apiKeys: params.apiKeys,
-    useRetrieval: true,
+    useRetrieval: false,
   });
   if (!bundled.hasSubstantiveText) {
     return {

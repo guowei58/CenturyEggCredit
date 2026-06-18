@@ -68,6 +68,7 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
       "forensic-accounting-latest.md",
       "lme-analysis.md",
       "cs-recommendation-latest.md",
+      "xbrl-consolidated-financials-ai.md",
       "kpi-latest-meta.json",
       "literary-references-latest.md",
     ];
@@ -75,6 +76,7 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
     expect(memoAllows(paths, "forensic-accounting-latest.md")).toBe(true);
     expect(memoAllows(paths, "lme-analysis.md")).toBe(true);
     expect(memoAllows(paths, "cs-recommendation-latest.md")).toBe(true);
+    expect(memoAllows(paths, "xbrl-consolidated-financials-ai.md")).toBe(true);
     expect(memoAllows(paths, "kpi-latest-meta.json")).toBe(false);
     expect(memoAllows(paths, "kpi-latest-source-pack.txt")).toBe(false);
     expect(memoAllows(paths, "literary-references-latest.md")).toBe(false);

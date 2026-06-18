@@ -7,7 +7,7 @@ import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "@/
 function fallbackReasonLabel(r: CreditMemoEvidenceDiagnostics["fallbackReason"]): string {
   switch (r) {
     case "retrieval_disabled":
-      return "MEMO_RETRIEVAL off (or 0/false)";
+      return "Sequential pack (default; set MEMO_RETRIEVAL=1 for ranked chunks)";
     case "no_embedding_key":
       return "No OpenAI, Gemini, or DeepSeek key for embeddings";
     case "no_user":
@@ -45,8 +45,9 @@ function EmptyRunGuideBody() {
       </p>
       <p className="mb-0 text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
         Ingest splits each source into chunks of up to {CREDIT_MEMO_CHUNK_MAX_CHARS.toLocaleString()} characters (overlap{" "}
-        {CREDIT_MEMO_CHUNK_OVERLAP_CHARS.toLocaleString()}). With an embedding-capable key, chunks are vectorized; the
-        outline is embedded as one query and rank-packed into the evidence cap.
+        {CREDIT_MEMO_CHUNK_OVERLAP_CHARS.toLocaleString()}). By default, sources are packed in priority order up to 400K
+        characters (work-product outputs and saved tabs first). Set <code className="text-[9px]">MEMO_RETRIEVAL=1</code> to
+        rank chunks by embedding similarity instead.
       </p>
     </div>
   );

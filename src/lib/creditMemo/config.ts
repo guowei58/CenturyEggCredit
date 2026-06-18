@@ -24,11 +24,18 @@ export function getResearchRootResolved(): string | null {
   return path.resolve(raw);
 }
 
+/** Default user-message evidence budget for AI Memo & Deck context windows. */
+export const MEMO_DECK_CONTEXT_MAX_CHARS = 400_000;
+
 export function loadCreditMemoConfig(): CreditMemoEnvConfig {
   return {
     researchRootDir: getResearchRootResolved(),
-    // No app-level evidence cap for now (CREDIT_MEMO_MAX_CONTEXT_CHARS ignored). Model/provider limits still apply.
-    maxContextChars: Number.MAX_SAFE_INTEGER,
+    maxContextChars: parseIntEnv(
+      process.env.CREDIT_MEMO_MAX_CONTEXT_CHARS,
+      MEMO_DECK_CONTEXT_MAX_CHARS,
+      40_000,
+      2_000_000
+    ),
     maxOutputTokens: parseIntEnv(process.env.CREDIT_MEMO_MAX_OUTPUT_TOKENS, LLM_MAX_OUTPUT_TOKENS, 4_000, LLM_MAX_OUTPUT_TOKENS),
     maxFilesPerIngest: parseIntEnv(process.env.CREDIT_MEMO_MAX_FILES, 500_000, 20, 10_000_000),
     maxIngestFileBytes: parseIntEnv(

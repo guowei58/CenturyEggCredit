@@ -21,7 +21,8 @@ function formatSourcesForForensicAnalysis(ticker: string, parts: LmeSourcePart[]
   const header =
     `Ticker: ${sym}\n` +
     `The blocks below are limited to five forensic inputs only: saved tab business model, saved tab how stuff works, the latest saved 10-K, saved tab risk from 10-K, and saved tab business risk analysis. ` +
-    `When retrieval is enabled, you receive embedding-ranked context under the same 400k default bundle ceiling as LME/KPI. ` +
+    `When retrieval is enabled (LME_RETRIEVAL=1), you receive embedding-ranked context under the same 400k default bundle ceiling. ` +
+    `By default, sources are packed sequentially in priority order up to that limit. ` +
     `Use them as the primary factual basis for forensic claims.\n\n`;
   const blocks = parts.map(
     (p) =>
@@ -101,7 +102,7 @@ export async function buildForensicAccountingPromptPackage(params: {
 
   const bundled = await gatherForensicWorkspaceSources(sym, undefined, params.userId, {
     apiKeys: params.apiKeys,
-    useRetrieval: true,
+    useRetrieval: false,
   });
 
   if (bundled.rawDocuments.length === 0) {

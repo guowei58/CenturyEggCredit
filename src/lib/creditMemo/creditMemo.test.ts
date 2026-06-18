@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import type { SourceFileRecord } from "./types";
 import { classifySourceFilename, categoryPriority } from "./fileClassifier";
-import { planMemoOutline, sortSourcesForEvidence } from "./memoPlanner";
+import { planMemoOutline, sortMemoDeckSourcesForEvidence, sortSourcesForEvidence } from "./memoPlanner";
+import { buildEvidencePackSync } from "./evidencePack";
+import { CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
+import type { CreditMemoProject } from "./types";
 
 function stubSource(partial: Pick<SourceFileRecord, "relPath" | "category">): SourceFileRecord {
   return {
@@ -48,5 +51,49 @@ describe("credit memo planner", () => {
     expect(sumWords).toBeGreaterThan(9_000);
     expect(sumWords).toBeLessThanOrEqual(10_500);
     expect(outline.sections.some((s) => s.id === "trade")).toBe(true);
+  });
+
+  it("sortMemoDeckSourcesForEvidence prioritizes work-product markdown before saved tabs and SEC", () => {
+    const ordered = sortMemoDeckSourcesForEvidence([
+      stubSource({ relPath: "overview.txt", category: "research" }),
+      stubSource({ relPath: "kpi-latest.md", category: "research" }),
+      stubSource({ relPath: "__ceg_user_saved_documents__/MSFT_10-K-FY2024.html", category: "sec_filing" }),
+    ]);
+    expect(ordered.map((s) => s.relPath)).toEqual([
+      "kpi-latest.md",
+      "overview.txt",
+      "__ceg_user_saved_documents__/MSFT_10-K-FY2024.html",
+    ]);
+  });
+});
+
+describe("buildEvidencePackSync", () => {
+  it("stitches overlapping chunks without duplicating boundary text", () => {
+    const overlap = "O".repeat(CREDIT_MEMO_CHUNK_OVERLAP_CHARS);
+    const project: CreditMemoProject = {
+      id: "p1",
+      ticker: "TEST",
+      resolvedFolderPath: "/research/TEST",
+      folderResolutionJson: null,
+      status: "ingested",
+      createdAt: "",
+      updatedAt: "",
+      sources: [
+        {
+          ...stubSource({ relPath: "notes.txt", category: "research" }),
+          id: "s1",
+          charExtracted: 100,
+        },
+      ],
+      chunks: [
+        { id: "c0", sourceFileId: "s1", chunkIndex: 0, text: `A-${overlap}`, sectionLabel: null },
+        { id: "c1", sourceFileId: "s1", chunkIndex: 1, text: `${overlap}B`, sectionLabel: null },
+      ],
+      tables: [],
+      ingestWarnings: [],
+    };
+    const pack = buildEvidencePackSync(project, { maxChars: 50_000, memoDeckOrder: true });
+    expect(pack).toContain(`A-${overlap}B`);
+    expect(pack).not.toContain(`${overlap}${overlap}`);
   });
 });

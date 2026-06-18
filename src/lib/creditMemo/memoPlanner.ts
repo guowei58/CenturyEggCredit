@@ -2,6 +2,7 @@ import type { MemoOutline, MemoOutlineSection } from "./types";
 import type { SourceFileRecord } from "./types";
 import { isTextLikePath } from "../text-like-extensions";
 import { categoryPriority, classifySourceFilename } from "./fileClassifier";
+import { memoDeckEvidenceSourcePriority } from "./workProductIngestScope";
 
 const BASE_SECTIONS: Array<{ id: string; title: string; baseWeight: number }> = [
   { id: "exec", title: "Executive summary & investment thesis", baseWeight: 10 },
@@ -162,6 +163,19 @@ export function sortSourcesForEvidence(sources: SourceFileRecord[]): SourceFileR
     if (tb !== ta) return tb - ta;
     const pa = categoryPriority(a.category);
     const pb = categoryPriority(b.category);
+    if (pb !== pa) return pb - pa;
+    return a.relPath.localeCompare(b.relPath, undefined, { sensitivity: "base" });
+  });
+}
+
+/** AI Memo & Deck: work-product outputs and saved tabs before latest SEC filings. */
+export function sortMemoDeckSourcesForEvidence(sources: SourceFileRecord[]): SourceFileRecord[] {
+  return [...sources].sort((a, b) => {
+    const skippedA = a.parseStatus === "skipped" ? 1 : 0;
+    const skippedB = b.parseStatus === "skipped" ? 1 : 0;
+    if (skippedA !== skippedB) return skippedA - skippedB;
+    const pa = memoDeckEvidenceSourcePriority(a.relPath);
+    const pb = memoDeckEvidenceSourcePriority(b.relPath);
     if (pb !== pa) return pb - pa;
     return a.relPath.localeCompare(b.relPath, undefined, { sensitivity: "base" });
   });
