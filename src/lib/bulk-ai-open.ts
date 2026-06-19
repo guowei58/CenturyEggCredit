@@ -67,6 +67,7 @@ import { readFetchJson } from "@/lib/fetch-json-response";
 import {
   countBulkStepsToRun,
   shouldSkipBulkStep,
+  type BulkUpdateRunOptions,
 } from "@/lib/bulk-update-preflight";
 
 export type { BulkUpdateMode, BulkStepPreflight, BulkUpdateRunOptions } from "@/lib/bulk-update-preflight";
