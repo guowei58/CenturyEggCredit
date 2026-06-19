@@ -7,6 +7,15 @@ export type CreditDocTableRowMeta = {
   filingDate?: string;
 };
 
+export type CreditDocListRow = {
+  securityFacility: string;
+  documentType: string;
+  documentTitle: string;
+  filingDate: string;
+  url: string;
+  label: string;
+};
+
 function normalizeUrlForMatch(url: string): string {
   try {
     const u = new URL(url.trim());
@@ -64,6 +73,7 @@ type ColumnIndices = {
   filingDate?: number;
   directLink?: number;
   filingLink?: number;
+  filingSource?: number;
 };
 
 function resolveColumnIndices(headers: string[]): ColumnIndices | null {
@@ -76,9 +86,18 @@ function resolveColumnIndices(headers: string[]): ColumnIndices | null {
     return -1;
   };
 
-  const directLink = find("direct document link", "direct link", "direct exhibit link", "exhibit link");
+  const directLink = find(
+    "direct document link",
+    "direct link",
+    "direct exhibit link",
+    "exhibit link",
+    "document link",
+    "sec link",
+    "source link"
+  );
   const filingLink = find("filing link", "parent filing link", "filing page");
-  if (directLink < 0 && filingLink < 0) return null;
+  const filingSource = find("filing source", "filing / source", "source");
+  if (directLink < 0 && filingLink < 0 && filingSource < 0) return null;
 
   const pick = (...needles: string[]) => {
     const i = find(...needles);
@@ -92,6 +111,7 @@ function resolveColumnIndices(headers: string[]): ColumnIndices | null {
     filingDate: pick("filing date"),
     directLink: directLink >= 0 ? directLink : undefined,
     filingLink: filingLink >= 0 ? filingLink : undefined,
+    filingSource: filingSource >= 0 ? filingSource : undefined,
   };
 }
 
@@ -100,13 +120,13 @@ function getCell(row: string[], index: number | undefined): string {
   return (row[index] ?? "").trim();
 }
 
-function indexRowFromTable(rows: string[][]): Map<string, string> {
-  const map = new Map<string, string>();
-  if (rows.length < 2) return map;
+function rowsFromTable(rows: string[][]): CreditDocListRow[] {
+  const out: CreditDocListRow[] = [];
+  if (rows.length < 2) return out;
 
   const headers = rows[0] ?? [];
   const cols = resolveColumnIndices(headers);
-  if (!cols) return map;
+  if (!cols) return out;
 
   for (const row of rows.slice(1)) {
     const meta: CreditDocTableRowMeta = {
@@ -118,17 +138,38 @@ function indexRowFromTable(rows: string[][]): Map<string, string> {
     const label = buildCreditDocSaveLabel(meta);
     if (!label) continue;
 
-    const linkCells = [cols.directLink, cols.filingLink]
+    const linkCells = [cols.directLink, cols.filingLink, cols.filingSource]
       .filter((i): i is number => i != null && i >= 0)
       .map((i) => getCell(row, i));
 
+    let url = "";
     for (const cell of linkCells) {
-      for (const url of urlsInText(cell)) {
-        map.set(normalizeUrlForMatch(url), label);
+      const found = urlsInText(cell);
+      if (found[0]) {
+        url = found[0];
+        break;
       }
     }
+    if (!url) continue;
+
+    out.push({
+      securityFacility: meta.securityFacility ?? "",
+      documentType: meta.documentType ?? "",
+      documentTitle: meta.documentTitle ?? "",
+      filingDate: meta.filingDate ?? "",
+      url,
+      label,
+    });
   }
 
+  return out;
+}
+
+function indexRowFromTable(rows: string[][]): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const row of rowsFromTable(rows)) {
+    map.set(normalizeUrlForMatch(row.url), row.label);
+  }
   return map;
 }
 
@@ -166,6 +207,33 @@ function parseHtmlTableRows(html: string): string[][][] {
     if (rows.length > 0) tables.push(rows);
   }
   return tables;
+}
+
+/** Parse structured rows from a saved Credit Docs List (markdown or HTML tables). */
+export function parseCreditDocListRows(content: string): CreditDocListRow[] {
+  const trimmed = content.trim();
+  if (!trimmed) return [];
+
+  const seen = new Set<string>();
+  const out: CreditDocListRow[] = [];
+
+  const push = (rows: CreditDocListRow[]) => {
+    for (const row of rows) {
+      const key = normalizeUrlForMatch(row.url);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(row);
+    }
+  };
+
+  for (const table of parseMarkdownTablesForExcel(trimmed)) {
+    push(rowsFromTable(table.rows));
+  }
+  for (const rows of parseHtmlTableRows(trimmed)) {
+    push(rowsFromTable(rows));
+  }
+
+  return out;
 }
 
 /** Build a map of normalized URL -> descriptive save label from credit-doc list tables. */

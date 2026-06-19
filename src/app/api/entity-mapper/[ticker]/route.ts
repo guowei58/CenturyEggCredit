@@ -13,7 +13,7 @@ import { getDeepSeekModel } from "@/lib/deepseek";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 function parseSnapshot(raw: string | null): EntityMapperV2Snapshot | null {
   if (!raw?.trim()) return null;
@@ -90,6 +90,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
   let discoverSecDocuments = true;
   let downloadExhibitsToSavedDocs = true;
   let maxSavedDocumentDownloads = 80;
+  let compactResponse = false;
   let modelBody: ModelOverrideBody = {};
 
   try {
@@ -99,6 +100,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
       discoverSecDocuments?: unknown;
       downloadExhibitsToSavedDocs?: unknown;
       maxSavedDocumentDownloads?: unknown;
+      compactResponse?: unknown;
       claudeModel?: unknown;
       openaiModel?: unknown;
       geminiModel?: unknown;
@@ -114,6 +116,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     if (typeof body?.maxSavedDocumentDownloads === "number" && Number.isFinite(body.maxSavedDocumentDownloads)) {
       maxSavedDocumentDownloads = Math.min(150, Math.max(1, Math.floor(body.maxSavedDocumentDownloads)));
     }
+    if (body?.compactResponse === true) compactResponse = true;
     modelBody = {
       claudeModel: body.claudeModel,
       openaiModel: body.openaiModel,
@@ -160,15 +163,28 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     return NextResponse.json({ error: result.error, code: result.code }, { status });
   }
 
-  return NextResponse.json({
-    ok: true,
-    snapshot: result.snapshot,
-    savedDocumentsSummary: result.savedDocumentsSummary
+  return NextResponse.json(
+    compactResponse
       ? {
-          attempted: result.savedDocumentsSummary.attempted,
-          savedCount: result.savedDocumentsSummary.saved.length,
-          failedCount: result.savedDocumentsSummary.failed.length,
+          ok: true,
+          savedDocumentsSummary: result.savedDocumentsSummary
+            ? {
+                attempted: result.savedDocumentsSummary.attempted,
+                savedCount: result.savedDocumentsSummary.saved.length,
+                failedCount: result.savedDocumentsSummary.failed.length,
+              }
+            : null,
         }
-      : null,
-  });
+      : {
+          ok: true,
+          snapshot: result.snapshot,
+          savedDocumentsSummary: result.savedDocumentsSummary
+            ? {
+                attempted: result.savedDocumentsSummary.attempted,
+                savedCount: result.savedDocumentsSummary.saved.length,
+                failedCount: result.savedDocumentsSummary.failed.length,
+              }
+            : null,
+        }
+  );
 }

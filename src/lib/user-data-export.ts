@@ -7,6 +7,10 @@ import JSZip from "jszip";
 
 import { prisma } from "@/lib/prisma";
 import { SAVED_DATA_FILES, sanitizeTicker } from "@/lib/saved-ticker-data";
+import {
+  buildConsolidatedTextfileFromRows,
+  CONSOLIDATED_TEXTFILE_NAME,
+} from "@/lib/user-data-export-consolidated-text";
 import { getWatchlistTickers } from "@/lib/user-workspace-store";
 
 /** `null` = export all ticker-scoped data; non-empty `Set` = only those normalized tickers (plus always `account/`). */
@@ -67,6 +71,7 @@ const README_BODY = [
   "",
   "tickers/<SYMBOL>/",
   "  saved-tabs/          — Research tab text stored on the server (.txt, .md, .html, .json)",
+  "  saved-tabs/CONSOLIDATED TEXTFILE.txt — Combined response-box and work-product text (excludes literary, biblical, shorting, earnings transcript)",
   "  saved-documents/     — Files saved under Saved Documents (PDF, Excel, etc.)",
   "  workspace/           — Excel exports, memo/deck outputs, and other API files",
   "",
@@ -147,6 +152,23 @@ export async function listPlannedExportEntries(userId: string, tickerFilter: Exp
     ORDER BY ticker ASC, data_key ASC
   `;
 
+  const tabDocsForConsolidated = await prisma.userTickerDocument.findMany({
+    where: {
+      userId,
+      ...(tickerFilter && tickerFilter.size > 0 ? { ticker: { in: Array.from(tickerFilter) } } : {}),
+    },
+    select: { ticker: true, dataKey: true, content: true },
+    orderBy: [{ ticker: "asc" }, { dataKey: "asc" }],
+  });
+  const tabRowsByTicker = new Map<string, Array<{ dataKey: string; content: string }>>();
+  for (const doc of tabDocsForConsolidated) {
+    if (!matchesExportTickerFilter(doc.ticker, tickerFilter)) continue;
+    if (!doc.content?.trim()) continue;
+    const bucket = tabRowsByTicker.get(doc.ticker) ?? [];
+    bucket.push({ dataKey: doc.dataKey, content: doc.content });
+    tabRowsByTicker.set(doc.ticker, bucket);
+  }
+
   for (const row of tabSizes) {
     const ticker = row.ticker;
     if (!matchesExportTickerFilter(ticker, tickerFilter)) continue;
@@ -164,6 +186,17 @@ export async function listPlannedExportEntries(userId: string, tickerFilter: Exp
         });
         return Buffer.from(doc?.content ?? "", "utf8");
       },
+    });
+  }
+
+  for (const [ticker, rows] of tabRowsByTicker) {
+    const consolidated = buildConsolidatedTextfileFromRows(ticker, rows);
+    if (!consolidated) continue;
+    const buf = Buffer.from(consolidated, "utf8");
+    out.push({
+      size: buf.length,
+      zipRelPath: `tickers/${safeZipPathSegment(ticker)}/saved-tabs/${CONSOLIDATED_TEXTFILE_NAME}`,
+      load: async () => Buffer.from(consolidated, "utf8"),
     });
   }
 

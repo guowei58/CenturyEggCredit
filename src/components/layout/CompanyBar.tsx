@@ -12,6 +12,12 @@ import {
 } from "@/lib/ai-chat-sessions";
 import { AI_CHAT_NAV_ICON_FRAME_CLASSNAME } from "./EggHocCommitteeMark";
 import { runBulkUpdateViaApi } from "@/lib/bulk-ai-open";
+import {
+  fetchBulkUpdatePreflight,
+  type BulkUpdateConfirmChoice,
+  type BulkUpdatePreflightResult,
+} from "@/lib/bulk-update-preflight";
+import { BulkUpdatePreflightModal } from "@/components/BulkUpdatePreflightModal";
 import { type AiProvider, normalizeAiProvider } from "@/lib/ai-provider";
 import { GEMINI_UI_BUTTON_COLOR } from "@/lib/gemini-open-url";
 import type { ModelRunChoice } from "@/lib/ai-model-prefs-client";
@@ -49,6 +55,11 @@ export function CompanyBar({
   const [bulkApiBusy, setBulkApiBusy] = useState<AiProvider | null>(null);
   const [bulkApiLine, setBulkApiLine] = useState<string | null>(null);
   const [bulkModelPick, setBulkModelPick] = useState<AiProvider | null>(null);
+  const [bulkPreflightOpen, setBulkPreflightOpen] = useState(false);
+  const [bulkPreflightLoading, setBulkPreflightLoading] = useState(false);
+  const [bulkPreflight, setBulkPreflight] = useState<BulkUpdatePreflightResult | null>(null);
+  const [bulkPreflightProvider, setBulkPreflightProvider] = useState<AiProvider | null>(null);
+  const [bulkPreflightChoice, setBulkPreflightChoice] = useState<ModelRunChoice | null>(null);
   const [aiChatNavUnread, setAiChatNavUnread] = useState(false);
   const { data: session, status: sessionStatus } = useSession();
   const { preferences } = useUserPreferences();
@@ -127,7 +138,39 @@ export function CompanyBar({
     setBulkModelPick(provider);
   }
 
+  function closeBulkPreflight() {
+    setBulkPreflightOpen(false);
+    setBulkPreflightLoading(false);
+    setBulkPreflight(null);
+    setBulkPreflightProvider(null);
+    setBulkPreflightChoice(null);
+  }
+
   async function continueBulkApiAfterModel(provider: AiProvider, choice: ModelRunChoice) {
+    setBulkPreflightProvider(provider);
+    setBulkPreflightChoice(choice);
+    setBulkPreflight(null);
+    setBulkPreflightLoading(true);
+    setBulkPreflightOpen(true);
+    try {
+      const preflight = await fetchBulkUpdatePreflight(bulkCtx());
+      setBulkPreflight(preflight);
+    } catch (e) {
+      closeBulkPreflight();
+      window.alert(e instanceof Error ? e.message : "Could not check saved tab status");
+    } finally {
+      setBulkPreflightLoading(false);
+    }
+  }
+
+  async function runBulkApiWithChoice(choice: BulkUpdateConfirmChoice) {
+    const provider = bulkPreflightProvider;
+    const modelChoice = bulkPreflightChoice;
+    const preflight = bulkPreflight;
+    if (!provider || !modelChoice || !preflight) return;
+
+    closeBulkPreflight();
+
     const who =
       provider === "claude"
         ? "Claude API"
@@ -136,11 +179,7 @@ export function CompanyBar({
           : provider === "gemini"
             ? "Gemini API"
             : "DeepSeek API";
-    const targetLabel = promptLabels.isPrivate ? promptLabels.displayName : data.ticker.toUpperCase();
-    const ok = window.confirm(
-      `${who} will run all research prompts for ${targetLabel} and overwrite (save over) any existing saved answers in those tabs.\n\nThis usually takes a long time—about 20–30 minutes in most situations—because each tab is run separately with pauses to respect API rate limits.\n\nContinue?`
-    );
-    if (!ok) return;
+
     setBulkApiBusy(provider);
     setBulkApiLine(null);
     try {
@@ -150,10 +189,15 @@ export function CompanyBar({
         (p) => {
           setBulkApiLine(`${who}: ${p.index}/${p.total} — ${p.label}`);
         },
-        choice
+        modelChoice,
+        {
+          mode: choice.mode,
+          preflight: preflight.steps,
+          refreshWorkProducts: choice.refreshWorkProducts,
+        }
       );
       setBulkApiLine(null);
-      const head = `Bulk API finished: ${r.ok} saved, ${r.fail} failed.`;
+      const head = `Bulk API finished: ${r.ok} saved, ${r.fail} failed${r.skipped ? `, ${r.skipped} skipped` : ""}${r.skippedExisting ? `, ${r.skippedExisting} left unchanged (already saved)` : ""}.`;
       if (r.errors.length) {
         window.alert(
           `${head}\n\n${r.errors.slice(0, 10).join("\n")}${r.errors.length > 10 ? "\n…" : ""}`
@@ -184,6 +228,15 @@ export function CompanyBar({
           setBulkModelPick(null);
           if (p) void continueBulkApiAfterModel(p, choice);
         }}
+      />
+      <BulkUpdatePreflightModal
+        open={bulkPreflightOpen}
+        provider={bulkPreflightProvider ?? "claude"}
+        targetLabel={promptLabels.isPrivate ? promptLabels.displayName : data.ticker.toUpperCase()}
+        preflight={bulkPreflight}
+        loading={bulkPreflightLoading}
+        onCancel={closeBulkPreflight}
+        onConfirm={(choice) => void runBulkApiWithChoice(choice)}
       />
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
         <div className="flex min-w-0 shrink-0 flex-wrap items-center gap-2 sm:gap-3.5">
@@ -238,7 +291,7 @@ export function CompanyBar({
                 type="button"
                 className={bulkBarBtnClass}
                 data-bulk-api="claude"
-                disabled={bulkApiBusy !== null || bulkModelPick !== null}
+                disabled={bulkApiBusy !== null || bulkModelPick !== null || bulkPreflightOpen}
                 style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
                 title="Runs every research prompt through the Claude API and saves each answer to the matching tab (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("claude")}
@@ -249,7 +302,7 @@ export function CompanyBar({
                 type="button"
                 className={bulkBarBtnClass}
                 data-bulk-api="openai"
-                disabled={bulkApiBusy !== null || bulkModelPick !== null}
+                disabled={bulkApiBusy !== null || bulkModelPick !== null || bulkPreflightOpen}
                 style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
                 title="Runs every research prompt through the OpenAI API and saves each answer to the matching tab (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("openai")}
@@ -260,7 +313,7 @@ export function CompanyBar({
                 type="button"
                 className={bulkBarBtnClass}
                 data-bulk-api="gemini"
-                disabled={bulkApiBusy !== null || bulkModelPick !== null}
+                disabled={bulkApiBusy !== null || bulkModelPick !== null || bulkPreflightOpen}
                 style={{ borderColor: GEMINI_UI_BUTTON_COLOR, color: GEMINI_UI_BUTTON_COLOR }}
                 title="Runs every research prompt through the Gemini API and saves each answer to the matching tab (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("gemini")}
@@ -271,7 +324,7 @@ export function CompanyBar({
                 type="button"
                 className={bulkBarBtnClass}
                 data-bulk-api="deepseek"
-                disabled={bulkApiBusy !== null || bulkModelPick !== null}
+                disabled={bulkApiBusy !== null || bulkModelPick !== null || bulkPreflightOpen}
                 style={{ borderColor: DEEPSEEK_BULK_COLOR, color: DEEPSEEK_BULK_COLOR }}
                 title="Runs every research prompt through the DeepSeek API and saves each answer (your key in User Settings, or a hosted account). Pauses ~10s between tabs and retries on rate limits—expect several minutes for a full run."
                 onClick={() => void startBulkApi("deepseek")}

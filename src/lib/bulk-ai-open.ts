@@ -4,10 +4,8 @@
 
 import {
   buildCreditAgreementsFindDocsAiPrompt,
-  getCreditAgreementsDocReviewAiPrompt,
   PROMPT_TEMPLATE as CREDIT_AGREEMENTS_FIND_DOCS_TEMPLATE,
-  DOC_REVIEW_PROMPT,
-} from "@/components/CompanyCreditAgreementsIndenturesTab";
+} from "@/lib/credit-agreements-prompts";
 import { buildCompanyHistoryAiPrompt, PROMPT_TEMPLATE as COMPANY_HISTORY_PROMPT_TEMPLATE } from "@/components/CompanyHistoryTab";
 import { buildCreditTimelineAiPrompt, CREDIT_TIMELINE_PROMPT_TEMPLATE } from "@/components/CompanyCreditTimelineTab";
 import { BUSINESS_MODEL_PROMPT_TEMPLATE } from "@/data/business-model-prompt";
@@ -56,6 +54,22 @@ import { saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
 import { LLM_MAX_OUTPUT_TOKENS } from "@/lib/llm-output-tokens";
 import { fillCompanyPromptTemplate, resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
+import { extractXlsxArrayBufferFromApiText } from "@/lib/extract-xlsx-from-api-text";
+import { pickCreditDocUrlForCategory } from "@/lib/bulk-credit-doc-match";
+import { BULK_CREDIT_DOC_CATEGORY_STEPS } from "@/lib/bulk-credit-doc-match";
+import type { CreditDocSavedBoxKey } from "@/lib/credit-doc-save-targets";
+import { CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS } from "@/data/capital-structure-prompt";
+import { ORG_CHART_SAMPLE_IMAGE_PATHS } from "@/data/org-chart-prompt";
+import type { WorkProductPromptKind } from "@/lib/work-product-prompt-build";
+import { fetchSavedTabContent } from "@/lib/saved-data-client";
+import { ensureQuarterlyEarningsPackageForBulk } from "@/lib/bulk-earnings-package";
+import { readFetchJson } from "@/lib/fetch-json-response";
+import {
+  countBulkStepsToRun,
+  shouldSkipBulkStep,
+} from "@/lib/bulk-update-preflight";
+
+export type { BulkUpdateMode, BulkStepPreflight, BulkUpdateRunOptions } from "@/lib/bulk-update-preflight";
 
 export type BulkOpenContext = {
   ticker: string;
@@ -69,12 +83,77 @@ function promptLabels(ctx: BulkOpenContext) {
 
 export type BulkPromptEntry = { label: string; prompt: string; saveKey: SavedDataKey };
 
-export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPromptEntry[] {
+export type BulkExcelTarget = "capital-structure" | "org-chart";
+
+export type BulkUpdateStep =
+  | {
+      type: "prompt";
+      label: string;
+      saveKey: SavedDataKey;
+      prompt: string;
+      systemPrompt?: string;
+      samplePublicPaths?: readonly string[];
+    }
+  | {
+      type: "excel-prompt";
+      label: string;
+      target: BulkExcelTarget;
+      prompt: string;
+      samplePublicPaths?: readonly string[];
+    }
+  | {
+      type: "credit-doc-analyze";
+      label: string;
+      saveKey: CreditDocSavedBoxKey;
+      category: CreditDocSavedBoxKey;
+    }
+  | { type: "entity-mapper"; label: string }
+  | { type: "earnings-package"; label: string }
+  | {
+      type: "work-product";
+      label: string;
+      kind: WorkProductPromptKind;
+      saveKey: SavedDataKey;
+      includeCompanyName?: boolean;
+    }
+  | { type: "ai-memo"; label: string; saveKey: SavedDataKey };
+
+export function buildBulkCapitalStructurePrompt(ctx: BulkOpenContext): string {
+  const tk = ctx.ticker.trim();
+  const ov = readPromptTemplateOverride;
+  return resolveCapitalStructurePrompt({
+    template: ov("capital-structure", CAPITAL_STRUCTURE_PROMPT_TEMPLATE),
+    ticker: tk,
+    companyName: ctx.companyName,
+    appOrigin: ctx.appOrigin || "",
+  });
+}
+
+export function buildBulkOrgChartPrompt(ctx: BulkOpenContext): string {
+  const tk = ctx.ticker.trim();
+  const ov = readPromptTemplateOverride;
+  return resolveOrgChartTemplate(ov("org-chart", ORG_CHART_PROMPT_TEMPLATE), {
+    ticker: tk,
+    companyName: ctx.companyName,
+    appOrigin: ctx.appOrigin || "",
+  });
+}
+
+export function buildBulkCreditDocsListPrompt(ctx: BulkOpenContext): string {
+  const { tickerForPrompt } = promptLabels(ctx);
+  const ov = readPromptTemplateOverride;
+  return buildCreditAgreementsFindDocsAiPrompt(
+    tickerForPrompt,
+    ov("credit-agreements-find-docs", CREDIT_AGREEMENTS_FIND_DOCS_TEMPLATE)
+  );
+}
+
+/** Research tabs only (excludes credit-docs list, Excel tabs, and credit-doc review — those run in dedicated bulk steps). */
+export function collectBulkResearchPromptEntries(ctx: BulkOpenContext): BulkPromptEntry[] {
   const tk = ctx.ticker.trim();
   if (!tk) return [];
   const labels = promptLabels(ctx);
   const { displayName: dn, tickerForPrompt, parenLabel: labelParen } = labels;
-  const origin = ctx.appOrigin || "";
   const fill = (template: string) => fillCompanyPromptTemplate(template, tk, ctx.companyName);
   const ov = readPromptTemplateOverride;
   const entries: BulkPromptEntry[] = [
@@ -208,25 +287,6 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       prompt: fillHistoricalFinancialsPromptPlaceholders(HISTORICAL_FINANCIALS_PROMPT_TEMPLATE, dn, tickerForPrompt),
     },
     {
-      label: "Capital structure",
-      saveKey: "capital-structure",
-      prompt: resolveCapitalStructurePrompt({
-        template: ov("capital-structure", CAPITAL_STRUCTURE_PROMPT_TEMPLATE),
-        ticker: tk,
-        companyName: ctx.companyName,
-        appOrigin: origin,
-      }),
-    },
-    {
-      label: "Org chart",
-      saveKey: "org-chart-prompt",
-      prompt: resolveOrgChartTemplate(ov("org-chart", ORG_CHART_PROMPT_TEMPLATE), {
-        ticker: tk,
-        companyName: ctx.companyName,
-        appOrigin: origin,
-      }),
-    },
-    {
       label: "Credit timeline",
       saveKey: "credit-timeline",
       prompt: buildCreditTimelineAiPrompt(tk, ov("credit-timeline", CREDIT_TIMELINE_PROMPT_TEMPLATE)),
@@ -241,21 +301,92 @@ export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPrompt
       saveKey: "capital-allocation",
       prompt: fill(ov("capital-allocation", CAPITAL_ALLOCATION_PROMPT_TEMPLATE)),
     },
-    {
-      label: "Credit agreements — find documents",
-      saveKey: "credit-agreements-indentures-other",
-      prompt: buildCreditAgreementsFindDocsAiPrompt(
-        tickerForPrompt,
-        ov("credit-agreements-find-docs", CREDIT_AGREEMENTS_FIND_DOCS_TEMPLATE)
-      ),
-    },
-    {
-      label: "Credit agreements — doc review",
-      saveKey: "credit-agreements-indentures-credit-agreement",
-      prompt: getCreditAgreementsDocReviewAiPrompt(ov("credit-agreements-doc-review", DOC_REVIEW_PROMPT)),
-    },
   ];
   return entries.filter((e) => e.prompt.trim().length > 0);
+}
+
+/** @deprecated Use `collectBulkUpdateSteps` for the full pipeline. */
+export function collectBulkClaudePromptEntries(ctx: BulkOpenContext): BulkPromptEntry[] {
+  return collectBulkResearchPromptEntries(ctx);
+}
+
+export function collectBulkUpdateSteps(ctx: BulkOpenContext): BulkUpdateStep[] {
+  const tk = ctx.ticker.trim();
+  if (!tk) return [];
+
+  const steps: BulkUpdateStep[] = [];
+  for (const e of collectBulkResearchPromptEntries(ctx)) {
+    steps.push({ type: "prompt", label: e.label, saveKey: e.saveKey, prompt: e.prompt });
+  }
+
+  steps.push({
+    type: "prompt",
+    label: "Credit Docs List",
+    saveKey: "credit-agreements-indentures-other",
+    prompt: buildBulkCreditDocsListPrompt(ctx),
+  });
+
+  steps.push({
+    type: "excel-prompt",
+    label: "Capital structure (Excel)",
+    target: "capital-structure",
+    prompt: buildBulkCapitalStructurePrompt(ctx),
+    samplePublicPaths: CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS,
+  });
+
+  steps.push({
+    type: "excel-prompt",
+    label: "Org chart (Excel)",
+    target: "org-chart",
+    prompt: buildBulkOrgChartPrompt(ctx),
+    samplePublicPaths: ORG_CHART_SAMPLE_IMAGE_PATHS,
+  });
+
+  for (const cat of BULK_CREDIT_DOC_CATEGORY_STEPS) {
+    steps.push({
+      type: "credit-doc-analyze",
+      label: cat.label,
+      saveKey: cat.category,
+      category: cat.category,
+    });
+  }
+
+  steps.push({ type: "entity-mapper", label: "Entity Mapper" });
+
+  steps.push({
+    type: "earnings-package",
+    label: "Quarterly earnings package (2 yrs)",
+  });
+
+  const workProducts: Array<{
+    kind: WorkProductPromptKind;
+    label: string;
+    saveKey: SavedDataKey;
+    includeCompanyName?: boolean;
+  }> = [
+    { kind: "kpi", label: "KPI Commentary", saveKey: "kpi-latest", includeCompanyName: true },
+    { kind: "forensic", label: "Forensic Accounting", saveKey: "forensic-accounting-latest", includeCompanyName: true },
+    { kind: "lme", label: "LME Analysis", saveKey: "lme-analysis" },
+    { kind: "recommendation", label: "Cap Structure Recommendation", saveKey: "cs-recommendation-latest" },
+    { kind: "literary", label: "Literary References", saveKey: "literary-references-latest" },
+    { kind: "biblical", label: "Biblical References", saveKey: "biblical-references-latest" },
+    { kind: "dumbass", label: "Shorting at 50c", saveKey: "how-to-look-like-a-dumbass-latest" },
+    { kind: "earnings-transcript", label: "Earnings Transcript", saveKey: "next-quarter-earnings-transcript-latest" },
+  ];
+
+  for (const wp of workProducts) {
+    steps.push({
+      type: "work-product",
+      label: wp.label,
+      kind: wp.kind,
+      saveKey: wp.saveKey,
+      includeCompanyName: wp.includeCompanyName,
+    });
+  }
+
+  steps.push({ type: "ai-memo", label: "AI Credit Memo", saveKey: "ai-credit-memo-latest" });
+
+  return steps;
 }
 
 /**
@@ -335,97 +466,372 @@ async function saveToServerWithRetries(
 
 export type BulkApiProgress = { index: number; total: number; label: string };
 
+async function completeTabPrompt(params: {
+  provider: AiProvider;
+  userPrompt: string;
+  systemPrompt?: string;
+  samplePublicPaths?: readonly string[];
+  modelPayload: Record<string, unknown>;
+}): Promise<string> {
+  let lastErr = "";
+  for (let attempt = 0; attempt < BULK_API_MAX_ATTEMPTS; attempt++) {
+    let res: Response;
+    let data: { ok?: boolean; text?: string; error?: string };
+    try {
+      res = await fetch("/api/tab-prompt-complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider: params.provider,
+          userPrompt: params.userPrompt.trim(),
+          systemPrompt: params.systemPrompt?.trim() || undefined,
+          maxTokens: LLM_MAX_OUTPUT_TOKENS,
+          samplePublicPaths: params.samplePublicPaths,
+          ...params.modelPayload,
+        }),
+      });
+      data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
+    } catch (netErr) {
+      lastErr = netErr instanceof Error ? netErr.message : String(netErr);
+      if (attempt < BULK_API_MAX_ATTEMPTS - 1 && isRetryableBulkError(0, lastErr)) {
+        await delay(bulkAttemptBackoffMs(attempt));
+        continue;
+      }
+      throw new Error(lastErr);
+    }
+
+    if (res.ok && data.ok === true && typeof data.text === "string") {
+      return data.text.trim();
+    }
+
+    lastErr = data.error || `Request failed (${res.status})`;
+    if (isNonRetryableHttpStatus(res.status)) throw new Error(lastErr);
+    if (isRetryableBulkError(res.status, lastErr) && attempt < BULK_API_MAX_ATTEMPTS - 1) {
+      await delay(bulkAttemptBackoffMs(attempt));
+      continue;
+    }
+    throw new Error(lastErr);
+  }
+  throw new Error(lastErr || "Prompt completion failed");
+}
+
+async function saveExcelFromApiText(
+  ticker: string,
+  text: string,
+  target: BulkExcelTarget
+): Promise<boolean> {
+  const buf = extractXlsxArrayBufferFromApiText(text);
+  if (!buf) return false;
+  const filename = `${ticker}-${target === "capital-structure" ? "capital-structure" : "org-chart"}-bulk-api.xlsx`;
+  const apiBase =
+    target === "capital-structure" ? "/api/capital-structure-excel" : "/api/org-chart-excel";
+  const blob = new Blob([buf], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const form = new FormData();
+  form.append("file", blob, filename);
+  form.append("filename", filename);
+  const res = await fetch(`${apiBase}/${encodeURIComponent(ticker)}`, { method: "POST", body: form });
+  const body = await readFetchJson<{ ok?: boolean }>(res, `${target} Excel upload`);
+  return res.ok && body.ok === true;
+}
+
+let creditDocsListCache: string | null = null;
+
+async function loadCreditDocsListContent(ticker: string): Promise<string> {
+  if (creditDocsListCache?.trim()) return creditDocsListCache;
+  const loaded = await fetchSavedTabContent(ticker, "credit-agreements-indentures-other");
+  creditDocsListCache = loaded;
+  return loaded;
+}
+
+async function runEntityMapperBulk(
+  ticker: string,
+  provider: AiProvider,
+  companyName: string | null | undefined,
+  modelPayload: Record<string, unknown>
+): Promise<void> {
+  const res = await fetch(`/api/entity-mapper/${encodeURIComponent(ticker)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      provider,
+      companyName: companyName?.trim() || undefined,
+      discoverSecDocuments: true,
+      downloadExhibitsToSavedDocs: false,
+      maxSavedDocumentDownloads: 80,
+      compactResponse: true,
+      ...modelPayload,
+    }),
+  });
+  const body = await readFetchJson<{ ok?: boolean; error?: string }>(res, "Entity Mapper");
+  if (!res.ok || body.ok === false) throw new Error(body.error ?? "Entity Mapper failed");
+}
+
+async function runWorkProductBulk(params: {
+  ticker: string;
+  kind: WorkProductPromptKind;
+  companyName: string | null | undefined;
+  includeCompanyName?: boolean;
+  provider: AiProvider;
+  modelPayload: Record<string, unknown>;
+}): Promise<string> {
+  const buildRes = await fetch(
+    `/api/work-product-prompt/${encodeURIComponent(params.kind)}/${encodeURIComponent(params.ticker)}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        companyName: params.includeCompanyName ? params.companyName?.trim() ?? "" : "",
+      }),
+    }
+  );
+  const built = (await buildRes.json()) as {
+    ok?: boolean;
+    error?: string;
+    systemPrompt?: string;
+    userPrompt?: string;
+  };
+  if (!buildRes.ok || !built.ok) {
+    throw new Error(built.error ?? "Failed to build work-product context window");
+  }
+  return completeTabPrompt({
+    provider: params.provider,
+    systemPrompt: built.systemPrompt,
+    userPrompt: built.userPrompt ?? "",
+    modelPayload: params.modelPayload,
+  });
+}
+
+async function runAiMemoBulk(params: {
+  ticker: string;
+  companyName: string | null | undefined;
+  provider: AiProvider;
+  modelPayload: Record<string, unknown>;
+}): Promise<string> {
+  const resolveRes = await fetch("/api/credit-memo/resolve", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ticker: params.ticker }),
+  });
+  const resolved = (await resolveRes.json()) as {
+    ok?: boolean;
+    error?: string;
+    chosen?: { path?: string };
+    resolutionMeta?: unknown;
+  };
+  const folderPath = resolved.chosen?.path?.trim();
+  if (!resolveRes.ok || !resolved.ok || !folderPath) {
+    throw new Error(resolved.error ?? "Could not resolve research folder for memo ingest");
+  }
+
+  const projectRes = await fetch("/api/credit-memo/project", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ticker: params.ticker,
+      folderPath,
+      resolutionMeta: resolved.resolutionMeta ?? { folderPath },
+      workProductIngestScope: "memo",
+    }),
+  });
+  const projectBody = (await projectRes.json()) as {
+    ok?: boolean;
+    error?: string;
+    project?: { id: string };
+  };
+  if (!projectRes.ok || !projectBody.project?.id) {
+    throw new Error(projectBody.error ?? "Memo source ingest failed");
+  }
+
+  const memoTitle = `${params.ticker.toUpperCase()} — Credit Memo`;
+  const promptRes = await fetch(
+    `/api/credit-memo/project/${encodeURIComponent(projectBody.project.id)}/memo-prompt`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targetWords: 10_000, memoTitle, useTemplate: true }),
+    }
+  );
+  const promptBody = (await promptRes.json()) as {
+    ok?: boolean;
+    error?: string;
+    systemPrompt?: string;
+    userPrompt?: string;
+  };
+  if (!promptRes.ok || !promptBody.ok) {
+    throw new Error(promptBody.error ?? "Failed to build memo context window");
+  }
+
+  return completeTabPrompt({
+    provider: params.provider,
+    systemPrompt: promptBody.systemPrompt,
+    userPrompt: promptBody.userPrompt ?? "",
+    modelPayload: params.modelPayload,
+  });
+}
+
 /**
- * Runs each bulk research prompt through the server LLM API, then writes the answer to the same
- * saved slot as the corresponding tab (server-backed save files).
+ * Runs the full bulk pipeline through the server LLM API and writes answers to saved tab slots.
  */
 export async function runBulkUpdateViaApi(
   ctx: BulkOpenContext,
   provider: AiProvider,
   onProgress?: (p: BulkApiProgress) => void,
   /** If omitted, uses the same per-provider payload as `modelOverridePayloadForProvider` (saved prefs). */
-  modelChoice?: ModelRunChoice
-): Promise<{ ok: number; fail: number; errors: string[] }> {
+  modelChoice?: ModelRunChoice,
+  options?: BulkUpdateRunOptions
+): Promise<{ ok: number; fail: number; errors: string[]; skipped: number; skippedExisting: number }> {
+  creditDocsListCache = null;
   const modelPayload =
     modelChoice !== undefined ? modelPayloadForRun(provider, modelChoice) : modelOverridePayloadForProvider(provider);
-  const entries = collectBulkClaudePromptEntries(ctx);
+  const stepsAll = collectBulkUpdateSteps(ctx);
   const tk = ctx.ticker.trim();
   const errors: string[] = [];
-  if (!tk) return { ok: 0, fail: 0, errors: [] };
+  if (!tk) return { ok: 0, fail: 0, errors: [], skipped: 0, skippedExisting: 0 };
+
+  const mode = options?.mode ?? "overwrite-all";
+  const preflight = options?.preflight;
+  const refreshWorkProducts = options?.refreshWorkProducts ?? mode === "missing-only";
+  const stepsToRunCount =
+    preflight && preflight.length === stepsAll.length
+      ? countBulkStepsToRun(stepsAll, preflight, mode, refreshWorkProducts)
+      : stepsAll.length;
 
   let ok = 0;
   let fail = 0;
-  const total = entries.length;
+  let skipped = 0;
+  let skippedExisting = 0;
+  let runIndex = 0;
 
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    onProgress?.({ index: i + 1, total, label: e.label });
+  for (let i = 0; i < stepsAll.length; i++) {
+    const step = stepsAll[i]!;
+
+    if (shouldSkipBulkStep(step, preflight?.[i], mode, refreshWorkProducts)) {
+      skippedExisting++;
+      continue;
+    }
+
+    runIndex++;
+    onProgress?.({ index: runIndex, total: stepsToRunCount, label: step.label });
 
     try {
-      let lastErr = "";
-
-      for (let attempt = 0; attempt < BULK_API_MAX_ATTEMPTS; attempt++) {
-        let res: Response;
-        let data: { ok?: boolean; text?: string; error?: string };
-        try {
-          res = await fetch("/api/tab-prompt-complete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              provider,
-              userPrompt: e.prompt.trim(),
-              maxTokens: LLM_MAX_OUTPUT_TOKENS,
-              ...modelPayload,
-            }),
-          });
-          data = (await res.json().catch(() => ({}))) as { ok?: boolean; text?: string; error?: string };
-        } catch (netErr) {
-          lastErr = netErr instanceof Error ? netErr.message : String(netErr);
-          const retryNet =
-            attempt < BULK_API_MAX_ATTEMPTS - 1 &&
-            isRetryableBulkError(0, lastErr);
-          if (retryNet) {
-            await delay(bulkAttemptBackoffMs(attempt));
-            continue;
+      if (step.type === "prompt") {
+        const text = await completeTabPrompt({
+          provider,
+          userPrompt: step.prompt,
+          systemPrompt: step.systemPrompt,
+          samplePublicPaths: step.samplePublicPaths,
+          modelPayload,
+        });
+        const saved = await saveToServerWithRetries(tk, step.saveKey, text);
+        if (!saved) {
+          fail++;
+          errors.push(`${step.label}: model replied but save failed after retries`);
+        } else {
+          ok++;
+          if (step.saveKey === "credit-agreements-indentures-other") {
+            creditDocsListCache = text;
           }
-          throw new Error(lastErr);
         }
-
-        if (res.ok && data.ok === true && typeof data.text === "string") {
-          const trimmed = data.text.trim();
-          const saved = await saveToServerWithRetries(tk, e.saveKey, trimmed);
-          if (!saved) {
-            fail++;
-            errors.push(
-              `${e.label}: ChatGPT replied but save to server failed after retries (often Postgres timeout — retry bulk when the app is stable)`
-            );
-          } else {
-            ok++;
-          }
-          break;
+      } else if (step.type === "excel-prompt") {
+        const text = await completeTabPrompt({
+          provider,
+          userPrompt: step.prompt,
+          samplePublicPaths: step.samplePublicPaths,
+          modelPayload,
+        });
+        const excelSaved = await saveExcelFromApiText(tk, text, step.target);
+        if (!excelSaved) {
+          fail++;
+          errors.push(
+            `${step.label}: API finished but no embedded .xlsx found — upload Excel manually on that tab`
+          );
+        } else {
+          ok++;
         }
-
-        lastErr = data.error || `Request failed (${res.status})`;
-        if (isNonRetryableHttpStatus(res.status)) {
-          throw new Error(lastErr);
-        }
-        const retryable = isRetryableBulkError(res.status, lastErr);
-        if (retryable && attempt < BULK_API_MAX_ATTEMPTS - 1) {
-          await delay(bulkAttemptBackoffMs(attempt));
+      } else if (step.type === "credit-doc-analyze") {
+        const listContent = await loadCreditDocsListContent(tk);
+        const match = pickCreditDocUrlForCategory(listContent, step.category);
+        if (!match) {
+          skipped++;
+          errors.push(`${step.label}: skipped — no matching row in Credit Docs List`);
           continue;
         }
-        throw new Error(lastErr);
+        onProgress?.({ index: runIndex, total: stepsToRunCount, label: `${step.label} — ${match.row.label || match.url}` });
+        const res = await fetch(`/api/bulk-credit-doc-analyze/${encodeURIComponent(tk)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            provider,
+            url: match.url,
+            saveKey: step.saveKey,
+            ...modelPayload,
+          }),
+        });
+        const body = await readFetchJson<{ ok?: boolean; error?: string }>(
+          res,
+          `${step.label} analysis`
+        );
+        if (!res.ok || !body.ok) throw new Error(body.error ?? "Credit doc analysis failed");
+        ok++;
+      } else if (step.type === "entity-mapper") {
+        await runEntityMapperBulk(tk, provider, ctx.companyName, modelPayload);
+        ok++;
+      } else if (step.type === "earnings-package") {
+        const earningsResult = await ensureQuarterlyEarningsPackageForBulk(
+          tk,
+          ctx.companyName,
+          (detail) => {
+            onProgress?.({ index: runIndex, total: stepsToRunCount, label: `${step.label} — ${detail}` });
+          }
+        );
+        if (earningsResult === "skipped") {
+          skipped++;
+        } else {
+          ok++;
+        }
+      } else if (step.type === "work-product") {
+        const text = await runWorkProductBulk({
+          ticker: tk,
+          kind: step.kind,
+          companyName: ctx.companyName,
+          includeCompanyName: step.includeCompanyName,
+          provider,
+          modelPayload,
+        });
+        const saved = await saveToServerWithRetries(tk, step.saveKey, text);
+        if (!saved) {
+          fail++;
+          errors.push(`${step.label}: model replied but save failed after retries`);
+        } else {
+          ok++;
+        }
+      } else if (step.type === "ai-memo") {
+        const text = await runAiMemoBulk({
+          ticker: tk,
+          companyName: ctx.companyName,
+          provider,
+          modelPayload,
+        });
+        const saved = await saveToServerWithRetries(tk, step.saveKey, text);
+        if (!saved) {
+          fail++;
+          errors.push(`${step.label}: model replied but save failed after retries`);
+        } else {
+          ok++;
+        }
       }
     } catch (err) {
       fail++;
-      errors.push(`${e.label}: ${err instanceof Error ? err.message : String(err)}`);
+      errors.push(`${step.label}: ${err instanceof Error ? err.message : String(err)}`);
     }
 
-    if (i < entries.length - 1) {
-      await new Promise((r) => setTimeout(r, BULK_API_STAGGER_MS));
+    if (runIndex < stepsToRunCount) {
+      await delay(BULK_API_STAGGER_MS);
     }
   }
 
-  return { ok, fail, errors };
+  return { ok, fail, errors, skipped, skippedExisting };
 }
 

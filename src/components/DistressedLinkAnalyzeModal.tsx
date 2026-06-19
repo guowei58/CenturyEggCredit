@@ -12,18 +12,12 @@ import {
   EMPTY_CREDIT_DOC_REVIEW_BACKGROUND,
   type CreditDocReviewBackground,
 } from "@/lib/credit-doc-review-background-client";
+import { buildDistressedPromptForUrl } from "@/lib/credit-doc-review-prompt-url";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import { saveToServer } from "@/lib/saved-data-client";
-
-export function buildDistressedPromptForUrl(basePrompt: string, url: string): string {
-  const u = url.trim();
-  const b = basePrompt.trim();
-  if (!u) return b;
-  return `${b}\n\n---\nSOURCE DOCUMENT LINK (open this URL and read the full credit agreement / indenture / amendment before answering — do not rely on summaries):\n${u}\n`;
-}
 
 type Props = {
   open: boolean;

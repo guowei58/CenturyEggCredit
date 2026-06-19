@@ -22,6 +22,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
   const formHint = (url.searchParams.get("form") ?? "").trim();
   const primaryDocumentHint = (url.searchParams.get("primaryDocument") ?? "").trim();
   const skipSubmissions = url.searchParams.get("skipSubmissions") === "1";
+  const filingsOnly = url.searchParams.get("filingsOnly") === "1";
 
   let filingsRes = skipSubmissions ? peekCachedFilingsByTicker(sym) : null;
   if (!filingsRes) {
@@ -37,6 +38,24 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
   let chosen = acc ? findPresentedFilingByAccession(filings, acc) : filings[0];
   if (!chosen && formHint && primaryDocumentHint) {
     chosen = filings.find((f) => f.form === formHint && f.primaryDocument === primaryDocumentHint);
+  }
+
+  const filingsPayload = filings.map((f) => ({
+    form: f.form,
+    filingDate: f.filingDate,
+    ...(f.reportDate?.trim() ? { reportDate: f.reportDate.trim() } : {}),
+    accessionNumber: f.accessionNumber,
+    primaryDocument: f.primaryDocument,
+  }));
+
+  if (filingsOnly) {
+    return NextResponse.json({
+      ok: true,
+      ticker: sym,
+      cik: filingsRes.cik,
+      companyName: filingsRes.companyName,
+      filings: filingsPayload,
+    });
   }
 
   if (!chosen) {
@@ -59,17 +78,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
       cik: filingsRes.cik,
       companyName: filingsRes.companyName,
       extractionMethod: "html_table_ixbrl",
-      ...(skipSubmissions
-        ? {}
-        : {
-            filings: filings.map((f) => ({
-              form: f.form,
-              filingDate: f.filingDate,
-              ...(f.reportDate?.trim() ? { reportDate: f.reportDate.trim() } : {}),
-              accessionNumber: f.accessionNumber,
-              primaryDocument: f.primaryDocument,
-            })),
-          }),
+      ...(skipSubmissions ? {} : { filings: filingsPayload }),
       selected: {
         form: chosen.form,
         filingDate: chosen.filingDate,
@@ -90,13 +99,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ ticker: 
         cik: filingsRes.cik,
         companyName: filingsRes.companyName,
         extractionMethod: "html_table_ixbrl",
-        filings: filings.map((f) => ({
-          form: f.form,
-          filingDate: f.filingDate,
-          ...(f.reportDate?.trim() ? { reportDate: f.reportDate.trim() } : {}),
-          accessionNumber: f.accessionNumber,
-          primaryDocument: f.primaryDocument,
-        })),
+        filings: filingsPayload,
         selected: chosen,
         statements: [],
       },

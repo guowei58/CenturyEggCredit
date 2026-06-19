@@ -10,19 +10,14 @@ import type {
 import type { Exhibit21UniverseRow } from "@/lib/entity-mapper-v2/types";
 import type { DebtInventoryItem } from "@/lib/entity-mapper-v2/types";
 import { ENTITY_MAPPER_V2_ROLE_COLUMNS } from "@/lib/entity-mapper-v2/roleColumns";
+import { parseJsonObjectWithRepair } from "@/lib/entity-mapper-v2/repair-json";
 import {
   buildRegistrantNormalizedSet,
   mergeSubsidiariesNotInExhibit21,
 } from "@/lib/entity-mapper-v2/subsidiariesNotInExhibit21";
 
 export function extractFirstJsonObject(raw: string): unknown {
-  const t = raw.trim();
-  const m = /^```(?:json)?\s*([\s\S]*?)```/im.exec(t);
-  const inner = (m ? m[1] : t).trim();
-  const start = inner.indexOf("{");
-  const end = inner.lastIndexOf("}");
-  if (start < 0 || end <= start) throw new Error("No JSON object found in model output");
-  return JSON.parse(inner.slice(start, end + 1));
+  return parseJsonObjectWithRepair(raw);
 }
 
 function sym(v: unknown): MatrixCellSymbol {
