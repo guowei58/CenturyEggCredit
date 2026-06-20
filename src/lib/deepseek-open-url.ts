@@ -3,6 +3,7 @@
  */
 
 import { CHATGPT_LONG_URL_NOTICE } from "@/lib/chatgpt-open-url";
+import { writeTextToClipboardBestEffort } from "@/lib/external-ai-clipboard";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 export const DEEPSEEK_CHAT_ORIGIN = "https://chat.deepseek.com/";
@@ -32,9 +33,9 @@ export async function openDeepSeekWithClipboard(
   if (!prompt.trim()) return;
   setStatusMessage(null);
   setClipboardFailed(false);
-  try {
-    await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-  } catch {
+  const payload = withPromptBenchmarkNotice(prompt);
+  const copied = await writeTextToClipboardBestEffort(payload);
+  if (!copied) {
     setClipboardFailed(true);
     openDeepSeekNewChatWindow();
     setStatusMessage(buildStatus(false, true));

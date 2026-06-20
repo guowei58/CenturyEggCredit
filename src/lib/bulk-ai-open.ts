@@ -9,8 +9,15 @@ import {
 import { buildCompanyHistoryAiPrompt, PROMPT_TEMPLATE as COMPANY_HISTORY_PROMPT_TEMPLATE } from "@/components/CompanyHistoryTab";
 import { buildCreditTimelineAiPrompt, CREDIT_TIMELINE_PROMPT_TEMPLATE } from "@/components/CompanyCreditTimelineTab";
 import { BUSINESS_MODEL_PROMPT_TEMPLATE } from "@/data/business-model-prompt";
-import { CAPITAL_STRUCTURE_PROMPT_TEMPLATE, resolveCapitalStructurePrompt } from "@/data/capital-structure-prompt";
+import {
+  CAPITAL_STRUCTURE_PROMPT_TEMPLATE,
+  resolveCapitalStructurePrompt,
+} from "@/data/capital-structure-prompt";
 import { COMPETITORS_PROMPT_TEMPLATE } from "@/data/competitors-prompt";
+import {
+  COMPETITOR_EARNINGS_READTHRUS_PROMPT_TEMPLATE,
+  fillCompetitorEarningsReadThrusPrompt,
+} from "@/data/competitor-earnings-readthrus-prompt";
 import { CUSTOMERS_PROMPT_TEMPLATE } from "@/data/customers-prompt";
 import { SUPPLIERS_PROMPT_TEMPLATE } from "@/data/suppliers-prompt";
 import { EMPLOYEE_CONTACTS_PROMPT_TEMPLATE } from "@/data/employee-contacts-prompt";
@@ -36,7 +43,7 @@ import {
 import { RISK_FROM_10K_PROMPT_TEMPLATE } from "@/data/risk-from-10k-prompt";
 import { BUSINESS_RISK_ANALYSIS_PROMPT_TEMPLATE } from "@/data/business-risk-analysis-prompt";
 import { COMPANY_REPUTATION_PROMPT_TEMPLATE } from "@/data/company-reputation-prompt";
-import { ORG_CHART_PROMPT_TEMPLATE, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
+import { ORG_CHART_PROMPT_TEMPLATE, ORG_CHART_SAMPLE_IMAGE_PATHS, resolveOrgChartTemplate } from "@/data/org-chart-prompt";
 import { INDUSTRY_HISTORY_DRIVERS_PROMPT_TEMPLATE } from "@/data/industry-history-drivers-prompt";
 import { PORTERS_FIVE_FORCES_PROMPT_TEMPLATE } from "@/data/porters-five-forces-prompt";
 import { RECENT_EVENTS_PROMPT_TEMPLATE } from "@/data/recent-events-prompt";
@@ -59,7 +66,6 @@ import { pickCreditDocUrlForCategory } from "@/lib/bulk-credit-doc-match";
 import { BULK_CREDIT_DOC_CATEGORY_STEPS } from "@/lib/bulk-credit-doc-match";
 import type { CreditDocSavedBoxKey } from "@/lib/credit-doc-save-targets";
 import { CAPITAL_STRUCTURE_SAMPLE_IMAGE_PATHS } from "@/data/capital-structure-prompt";
-import { ORG_CHART_SAMPLE_IMAGE_PATHS } from "@/data/org-chart-prompt";
 import type { WorkProductPromptKind } from "@/lib/work-product-prompt-build";
 import { fetchSavedTabContent } from "@/lib/saved-data-client";
 import { ensureQuarterlyEarningsPackageForBulk } from "@/lib/bulk-earnings-package";
@@ -217,6 +223,15 @@ export function collectBulkResearchPromptEntries(ctx: BulkOpenContext): BulkProm
       label: "Competitors",
       saveKey: "competitors",
       prompt: ov("competitors", COMPETITORS_PROMPT_TEMPLATE).replace(/\[INSERT TICKER\]/g, labelParen),
+    },
+    {
+      label: "Competitor Earnings ReadThrus",
+      saveKey: "competitor-earnings-readthrus",
+      prompt: fillCompetitorEarningsReadThrusPrompt(
+        ov("competitor-earnings-readthrus", COMPETITOR_EARNINGS_READTHRUS_PROMPT_TEMPLATE),
+        tk,
+        ctx.companyName
+      ),
     },
     {
       label: "Customers",
@@ -473,6 +488,8 @@ async function completeTabPrompt(params: {
   systemPrompt?: string;
   samplePublicPaths?: readonly string[];
   modelPayload: Record<string, unknown>;
+  researchSaveKey?: string;
+  workProductKind?: WorkProductPromptKind;
 }): Promise<string> {
   let lastErr = "";
   for (let attempt = 0; attempt < BULK_API_MAX_ATTEMPTS; attempt++) {
@@ -488,6 +505,8 @@ async function completeTabPrompt(params: {
           systemPrompt: params.systemPrompt?.trim() || undefined,
           maxTokens: LLM_MAX_OUTPUT_TOKENS,
           samplePublicPaths: params.samplePublicPaths,
+          researchSaveKey: params.researchSaveKey,
+          workProductKind: params.workProductKind,
           ...params.modelPayload,
         }),
       });
@@ -601,6 +620,7 @@ async function runWorkProductBulk(params: {
     systemPrompt: built.systemPrompt,
     userPrompt: built.userPrompt ?? "",
     modelPayload: params.modelPayload,
+    workProductKind: params.kind,
   });
 }
 
@@ -669,6 +689,7 @@ async function runAiMemoBulk(params: {
     systemPrompt: promptBody.systemPrompt,
     userPrompt: promptBody.userPrompt ?? "",
     modelPayload: params.modelPayload,
+    researchSaveKey: "ai-credit-memo-latest",
   });
 }
 
@@ -724,6 +745,7 @@ export async function runBulkUpdateViaApi(
           systemPrompt: step.systemPrompt,
           samplePublicPaths: step.samplePublicPaths,
           modelPayload,
+          researchSaveKey: step.saveKey,
         });
         const saved = await saveToServerWithRetries(tk, step.saveKey, text);
         if (!saved) {
@@ -741,6 +763,7 @@ export async function runBulkUpdateViaApi(
           userPrompt: step.prompt,
           samplePublicPaths: step.samplePublicPaths,
           modelPayload,
+          researchSaveKey: step.target === "capital-structure" ? "capital-structure" : "org-chart-prompt",
         });
         const excelSaved = await saveExcelFromApiText(tk, text, step.target);
         if (!excelSaved) {

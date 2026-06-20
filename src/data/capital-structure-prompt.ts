@@ -1,3 +1,5 @@
+import { EXCEL_API_OUTPUT_FORMAT_SECTION } from "@/lib/excel-api-deliverable";
+
 import { resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 
 /**
@@ -404,64 +406,7 @@ For each source entry, include where possible:
 - page / section reference if available
 
 ==================================================
-IF YOU CANNOT DIRECTLY CREATE THE EXCEL FILE
-==================================================
-If your environment cannot directly create a binary .xlsx file, then do all of the following:
-
-1. Generate code that creates the workbook, preferably using:
-- Python + openpyxl
-- Python + xlsxwriter
-- or another suitable Excel-writing library
-
-2. Make the code produce:
-- all worksheet tabs
-- headers
-- row structure
-- formulas
-- formatting
-- notes
-- source log
-- guarantor / collateral detail tab
-- pro forma logic if relevant
-
-3. Make the code executable with minimal or no modification.
-
-4. Do not stop at a markdown table unless absolutely necessary.
-
-The goal is a reproducible WORKING Excel workbook for {{TICKER}}.
-
-==================================================
-OUTPUT FORMAT
-==================================================
-Provide the result in this order:
-
-1. SHORT SUMMARY
-A brief paragraph summarizing:
-- total debt
-- key debt buckets
-- major maturities
-- major structural issues
-- key pro forma changes if relevant
-- most important guarantor / collateral / restricted-group observations
-
-2. EXCEL WORKBOOK
-Provide the working .xlsx file.
-
-3. NOTES
-Summarize the key assumptions briefly and also include them inside the workbook.
-
-4. SOURCE LOG
-Provide a tab or section showing the key sources used for each major debt instrument or calculation.
-
-5. FOLLOW-UP DILIGENCE FLAGS
-List a few important things that may need to be checked manually, such as:
-- missing debt prices
-- uncertain guarantor coverage
-- incomplete collateral disclosure
-- post-quarter-end refinancings
-- unresolved maturity or exchange details
-- subsidiary debt that may be economically important
-- restricted / unrestricted designation uncertainty
+${EXCEL_API_OUTPUT_FORMAT_SECTION}
 
 ==================================================
 IMPORTANT RULES
@@ -478,7 +423,7 @@ IMPORTANT RULES
 - preserve capital structure hierarchy and entity placement where relevant
 - do not guess when the answer is unclear
 - do not stop at headline debt balances; show the structural support for each security
-- the final output must be a working Excel spreadsheet or code that creates one
+- the final output must be a working Excel spreadsheet delivered as base64 per the output format above
 
 The final deliverable should feel like a real analyst-built capital structure workbook for {{TICKER}}, prepared for credit underwriting.
 

@@ -361,6 +361,7 @@ export function WorkProductSourcedAnalysisTab({
         <TabPromptApiButtons
           userPrompt={builtPrompt.userPrompt}
           systemPrompt={builtPrompt.systemPrompt}
+          workProductKind={config.kind}
           onResult={(text) => {
             setSavedContent(text);
             setIsEditing(false);

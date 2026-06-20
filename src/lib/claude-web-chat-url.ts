@@ -2,6 +2,7 @@
  * Claude web (claude.ai) — we do not put the prompt in the URL. Open a blank new chat and rely on clipboard.
  */
 
+import { writeTextToClipboardBestEffort } from "@/lib/external-ai-clipboard";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 export const CLAUDE_NEW_CHAT_URL = "https://claude.ai/new";
@@ -31,9 +32,9 @@ export async function openClaudeWithClipboard(
   if (!prompt.trim()) return;
   setStatusMessage(null);
   setClipboardFailed(false);
-  try {
-    await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-  } catch {
+  const payload = withPromptBenchmarkNotice(prompt);
+  const copied = await writeTextToClipboardBestEffort(payload);
+  if (!copied) {
     setClipboardFailed(true);
     openClaudeNewChatWindow();
     setStatusMessage(buildStatus(true));

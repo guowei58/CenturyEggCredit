@@ -2,6 +2,7 @@
  * ChatGPT web (chatgpt.com) — no prompt in the URL. Copy the prompt, then open a new chat; paste from the clipboard.
  */
 
+import { writeTextToClipboardBestEffort } from "@/lib/external-ai-clipboard";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 export const CHATGPT_NEW_CHAT_ORIGIN = "https://chatgpt.com/";
@@ -46,14 +47,16 @@ export async function openChatGptWithClipboard(
   if (!prompt.trim()) return;
   setStatusMessage(null);
   setClipboardFailed(false);
-  try {
-    await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-  } catch {
+
+  const payload = withPromptBenchmarkNotice(prompt);
+  const copied = await writeTextToClipboardBestEffort(payload);
+  if (!copied) {
     setClipboardFailed(true);
     openChatGptNewChatWindow();
     setStatusMessage(buildStatus(false, true));
     return;
   }
+
   setClipboardFailed(false);
   openChatGptNewChatWindow();
   setStatusMessage(buildStatus(false, false));

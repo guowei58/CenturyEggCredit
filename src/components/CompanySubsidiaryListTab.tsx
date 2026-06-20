@@ -321,6 +321,7 @@ export function CompanySubsidiaryListTab({ ticker }: { ticker: string }) {
                 </button>
               </div>
               <TabPromptApiButtons
+                researchSaveKey="subsidiary-list"
                 userPrompt={prompt}
                 onResult={() => {
                   setClipboardFailed(false);

@@ -1,10 +1,14 @@
 /**
  * Pull an embedded .xlsx workbook out of tab-prompt API markdown/text responses.
- * Models often return base64 inside fenced blocks or data URIs when asked for Excel output.
+ * Models should return base64 inside a ```xlsx fence when following excel-api-deliverable prompts.
  */
 
 function normalizeBase64(raw: string): string {
-  return raw.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+  let cleaned = raw.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+  const rem = cleaned.length % 4;
+  if (rem === 2) cleaned += "==";
+  else if (rem === 3) cleaned += "=";
+  return cleaned;
 }
 
 function tryDecodeBase64(raw: string): Uint8Array | null {
@@ -37,12 +41,22 @@ function firstValidXlsx(candidates: Array<Uint8Array | null>): ArrayBuffer | nul
   return null;
 }
 
+function collectFromFence(text: string): Uint8Array | null {
+  const m = /```xlsx\s*\n([\s\S]*?)```/i.exec(text);
+  if (!m?.[1]) return null;
+  return tryDecodeBase64(m[1]);
+}
+
 /**
  * Returns an ArrayBuffer for the first valid embedded .xlsx found in `text`, or null.
  */
 export function extractXlsxArrayBufferFromApiText(text: string): ArrayBuffer | null {
   const trimmed = text.trim();
   if (!trimmed) return null;
+
+  // Prefer explicit ```xlsx fences (excel-api-deliverable format).
+  const xlsxFence = collectFromFence(trimmed);
+  if (isLikelyXlsxBytes(xlsxFence)) return toArrayBuffer(xlsxFence);
 
   const candidates: Array<Uint8Array | null> = [];
 

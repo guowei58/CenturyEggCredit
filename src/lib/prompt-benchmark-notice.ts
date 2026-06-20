@@ -6,7 +6,7 @@
 import { withDirectOutputInstruction } from "@/lib/llm-output-directive";
 
 const NOTICE =
-  "\n\nI'm putting you in competition with the best frontier AI models of today, and your performance will be benchmarked.";
+  "\n\nI'm putting you in competition with the best frontier AI models of today. Your performance will be benchmarked on density of new credit-relevant facts — not length or repetition of baseline company/industry context.";
 
 function withBenchmarkNotice(prompt: string): string {
   const trimmed = prompt.trimEnd();

@@ -231,6 +231,7 @@ export function CompanyReputationTab({
             </button>
           </div>
           <TabPromptApiButtons
+            researchSaveKey="company-reputation"
             userPrompt={prompt}
             onResult={() => {
               setClipboardFailed(false);

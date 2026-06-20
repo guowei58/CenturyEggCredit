@@ -34,6 +34,7 @@ import type { LmeRunPackingStats } from "@/lib/lme-sources";
 import type { LmeUserMessageCharBreakdown } from "@/lib/lme-analysis-synthesis";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import { formatWorkProductPromptForExternalCopy } from "@/lib/work-product-prompt-format";
+import { applyResearchTabPromptStyle } from "@/lib/research-tab-output-style";
 
 export type WorkProductPromptKind =
   | "kpi"
@@ -66,6 +67,35 @@ function emptyCreativeUserBreakdown(userPromptLength: number): LmeUserMessageCha
     bridgeChars: 0,
     formattedSourcesChars: userPromptLength,
     totalUserMessageChars: userPromptLength,
+  };
+}
+
+export type WorkProductPromptPackage = {
+  kind: WorkProductPromptKind;
+  ticker: string;
+  systemPrompt: string;
+  userPrompt: string;
+  copyPrompt: string;
+  retrievalUsed: boolean;
+  packingStats: LmeRunPackingStats;
+  userMessageBreakdown: LmeUserMessageCharBreakdown;
+  sourceFingerprint: string;
+};
+
+function finalizeWorkProductPromptPackage(
+  kind: WorkProductPromptKind,
+  pkg: WorkProductPromptPackage
+): WorkProductPromptPackage {
+  const styled = applyResearchTabPromptStyle({
+    userPrompt: pkg.userPrompt,
+    systemPrompt: pkg.systemPrompt,
+    workProductKind: kind,
+  });
+  return {
+    ...pkg,
+    systemPrompt: styled.systemPrompt,
+    userPrompt: styled.userPrompt,
+    copyPrompt: formatWorkProductPromptForExternalCopy(styled.systemPrompt, styled.userPrompt),
   };
 }
 
@@ -113,7 +143,7 @@ async function buildCreativeWorkspacePromptPackage(params: {
 
   return {
     ok: true,
-    package: {
+    package: finalizeWorkProductPromptPackage(params.kind, {
       kind: params.kind,
       ticker: sym,
       systemPrompt,
@@ -123,21 +153,9 @@ async function buildCreativeWorkspacePromptPackage(params: {
       packingStats,
       userMessageBreakdown,
       sourceFingerprint: bundled.sourceFingerprint,
-    },
+    }),
   };
 }
-
-export type WorkProductPromptPackage = {
-  kind: WorkProductPromptKind;
-  ticker: string;
-  systemPrompt: string;
-  userPrompt: string;
-  copyPrompt: string;
-  retrievalUsed: boolean;
-  packingStats: LmeRunPackingStats;
-  userMessageBreakdown: LmeUserMessageCharBreakdown;
-  sourceFingerprint: string;
-};
 
 export async function buildWorkProductPromptPackage(params: {
   kind: WorkProductPromptKind;
@@ -186,7 +204,7 @@ export async function buildWorkProductPromptPackage(params: {
     const systemPrompt = KPI_SYSTEM_PROMPT;
     return {
       ok: true,
-      package: {
+      package: finalizeWorkProductPromptPackage("kpi", {
         kind: "kpi",
         ticker: sym,
         systemPrompt,
@@ -196,7 +214,7 @@ export async function buildWorkProductPromptPackage(params: {
         packingStats,
         userMessageBreakdown,
         sourceFingerprint: bundled.sourceFingerprint,
-      },
+      }),
     };
   }
 
@@ -221,7 +239,7 @@ export async function buildWorkProductPromptPackage(params: {
     const systemPrompt = LME_ANALYSIS_SYSTEM;
     return {
       ok: true,
-      package: {
+      package: finalizeWorkProductPromptPackage("lme", {
         kind: "lme",
         ticker: sym,
         systemPrompt,
@@ -231,7 +249,7 @@ export async function buildWorkProductPromptPackage(params: {
         packingStats,
         userMessageBreakdown,
         sourceFingerprint: bundled.sourceFingerprint,
-      },
+      }),
     };
   }
 
@@ -247,7 +265,7 @@ export async function buildWorkProductPromptPackage(params: {
     }
     return {
       ok: true,
-      package: {
+      package: finalizeWorkProductPromptPackage("forensic", {
         kind: "forensic",
         ticker: sym,
         systemPrompt: built.systemPrompt,
@@ -257,7 +275,7 @@ export async function buildWorkProductPromptPackage(params: {
         packingStats: built.packingStats,
         userMessageBreakdown: built.diagnostics.userMessageBreakdown,
         sourceFingerprint: built.sourceFingerprint,
-      },
+      }),
     };
   }
 
@@ -281,7 +299,7 @@ export async function buildWorkProductPromptPackage(params: {
   const systemPrompt = CAP_STRUCTURE_RECOMMENDATION_SYSTEM_PROMPT;
   return {
     ok: true,
-    package: {
+    package: finalizeWorkProductPromptPackage("recommendation", {
       kind: "recommendation",
       ticker: sym,
       systemPrompt,
@@ -291,6 +309,6 @@ export async function buildWorkProductPromptPackage(params: {
       packingStats,
       userMessageBreakdown,
       sourceFingerprint: bundled.sourceFingerprint,
-    },
+    }),
   };
 }

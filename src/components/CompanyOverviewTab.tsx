@@ -1,5 +1,5 @@
 "use client";
-import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
+import { copyExternalAiPrompt } from "@/lib/external-ai-clipboard";
 
 import { useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
@@ -95,13 +95,13 @@ export function CompanyOverviewTab({
     if (!prompt) return;
     setClipboardFailed(false);
     setStatusMessage(null);
-    try {
-      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-      setStatusMessage("Copied to clipboard.");
-    } catch {
+    const copied = await copyExternalAiPrompt(prompt);
+    if (!copied) {
       setClipboardFailed(true);
       setStatusMessage("Could not copy. Use the prompt below and copy manually.");
+      return;
     }
+    setStatusMessage("Copied to clipboard.");
   }
 
   function openInClaude() {
@@ -245,6 +245,7 @@ export function CompanyOverviewTab({
               </button>
             </div>
             <TabPromptApiButtons
+              researchSaveKey="overview"
               userPrompt={prompt}
               onResult={() => {
                 setClipboardFailed(false);

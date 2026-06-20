@@ -160,6 +160,7 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
         tabs: [
           "Research Roadmap",
           "Company Reputation",
+          "Competitor Earnings ReadThrus",
           "Mgmt Presentations & Transcripts",
           "Industry Publications",
           "Industry Contacts",

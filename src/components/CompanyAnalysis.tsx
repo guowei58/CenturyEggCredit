@@ -39,6 +39,7 @@ import { CompanyIndustryHistoryDriversTab } from "@/components/CompanyIndustryHi
 import { CompanyIndustryValueChainTab } from "@/components/CompanyIndustryValueChainTab";
 import { CompanyEnvironmentalClaimsTab } from "@/components/CompanyEnvironmentalClaimsTab";
 import { CompanyCompetitorsTab } from "@/components/CompanyCompetitorsTab";
+import { CompanyCompetitorEarningsReadThrusTab } from "@/components/CompanyCompetitorEarningsReadThrusTab";
 import { CompanyCustomersTab } from "@/components/CompanyCustomersTab";
 import { CompanySuppliersTab } from "@/components/CompanySuppliersTab";
 import { CompanyStartupRisksTab } from "@/components/CompanyStartupRisksTab";
@@ -611,6 +612,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "competitors") {
     return <CompanyCompetitorsTab ticker={ticker} companyName={companyName} />;
+  }
+  if (tabId === "competitor-earnings-readthrus") {
+    return <CompanyCompetitorEarningsReadThrusTab ticker={ticker} companyName={companyName} />;
   }
   if (tabId === "customers") {
     return <CompanyCustomersTab ticker={ticker} companyName={companyName} />;

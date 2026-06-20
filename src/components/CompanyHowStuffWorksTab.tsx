@@ -230,6 +230,7 @@ export function CompanyHowStuffWorksTab({
             </button>
           </div>
           <TabPromptApiButtons
+            researchSaveKey="how-stuff-works"
             userPrompt={prompt}
             onResult={() => {
               setClipboardFailed(false);

@@ -301,6 +301,7 @@ export function HistoricalFinancialsAiWorkflow({
               </button>
             </div>
             <TabPromptApiButtons
+              researchSaveKey="historical-financials-prompt"
               userPrompt={prompt}
               onResult={() => {
                 setClipboardFailed(false);

@@ -7,6 +7,7 @@ import {
   EXTERNAL_AI_URL_BEHAVIOR_NOTE,
   EXTERNAL_AI_URL_TRUNCATION_NOTE,
 } from "@/lib/chatgpt-open-url";
+import { writeTextToClipboardBestEffort } from "@/lib/external-ai-clipboard";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 /** Border/text for “Open in Gemini” / “Update all via Gemini” (yellow — distinct from ChatGPT red / DeepSeek blue). */
@@ -45,9 +46,9 @@ export async function openGeminiWithClipboard(
   if (!prompt.trim()) return;
   setStatusMessage(null);
   setClipboardFailed(false);
-  try {
-    await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-  } catch {
+  const payload = withPromptBenchmarkNotice(prompt);
+  const copied = await writeTextToClipboardBestEffort(payload);
+  if (!copied) {
     setClipboardFailed(true);
     openGeminiNewChatWindow();
     setStatusMessage(buildStatus(false, true));

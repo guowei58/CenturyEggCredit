@@ -1,19 +1,16 @@
 "use client";
-import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
-
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Card } from "@/components/ui";
 import { OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE } from "@/data/out-of-the-box-ideas-prompt";
 import { fetchSavedTabContent, saveToServer } from "@/lib/saved-data-client";
-import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
-import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
-import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
-import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
+import { OPEN_IN_EXTERNAL_AI_FULL_LINE } from "@/lib/gemini-open-url";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { SavedRichText } from "@/components/SavedRichText";
 import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { PromptTemplateBox } from "@/components/PromptTemplateBox";
+import { TabPromptOpenInAiButtons } from "@/components/TabPromptOpenInAiButtons";
+import { useTabPromptExport } from "@/lib/use-tab-prompt-export";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
@@ -51,6 +48,9 @@ export function CompanyOutOfTheBoxIdeasTab({ ticker }: { ticker: string }) {
   const { template: ootbTemplate } = usePromptTemplateOverride("out-of-the-box-ideas", OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE);
   const prompt = safeTicker ? fillCompanyPromptTemplate(ootbTemplate, safeTicker) : "";
 
+  const fillPrompt = useCallback(() => prompt, [prompt]);
+  const { onResolvedPromptChange, getPromptForExport, isEditingPrompt } = useTabPromptExport(fillPrompt);
+
   useEffect(() => {
     setStatusMessage(null);
     setClipboardFailed(false);
@@ -84,39 +84,6 @@ export function CompanyOutOfTheBoxIdeasTab({ ticker }: { ticker: string }) {
   function handleReplace() {
     setEditDraft(savedContent);
     setIsEditing(true);
-  }
-
-  async function copyToClipboard() {
-    if (!prompt) return;
-    setClipboardFailed(false);
-    setStatusMessage(null);
-    try {
-      await navigator.clipboard.writeText(withPromptBenchmarkNotice(prompt));
-      setStatusMessage("Copied to clipboard.");
-    } catch {
-      setClipboardFailed(true);
-      setStatusMessage("Could not copy. Use the prompt below and copy manually.");
-    }
-  }
-
-  function openInClaude() {
-    if (!prompt) return;
-    void openClaudeWithClipboard(prompt, setStatusMessage, setClipboardFailed);
-  }
-
-  function openInChatGPT() {
-    if (!prompt) return;
-    void openChatGptWithClipboard(prompt, setStatusMessage, setClipboardFailed);
-  }
-
-  function openInDeepSeek() {
-    if (!prompt) return;
-    openDeepSeekWithClipboard(prompt, setStatusMessage, setClipboardFailed);
-  }
-
-  function openInGemini() {
-    if (!prompt) return;
-    openGeminiWithClipboard(prompt, setStatusMessage, setClipboardFailed);
   }
 
   if (!safeTicker) {
@@ -191,55 +158,19 @@ export function CompanyOutOfTheBoxIdeasTab({ ticker }: { ticker: string }) {
             tabId="out-of-the-box-ideas"
             defaultTemplate={OUT_OF_THE_BOX_IDEAS_PROMPT_TEMPLATE}
             resolve={(tpl) => (safeTicker ? fillCompanyPromptTemplate(tpl, safeTicker) : "")}
+            onResolvedPromptChange={onResolvedPromptChange}
             className="mb-3"
           />
-          <div className="tab-prompt-ai-actions-grid mb-2">
-            <button
-              type="button"
-              onClick={openInClaude}
-              className="tab-prompt-ai-action-btn"
-              style={{
-                borderColor: "var(--accent)",
-                color: "var(--accent)",
-                background: "transparent",
-              }}
-            >
-              Open in Claude
-            </button>
-            <button
-              type="button"
-              onClick={openInChatGPT}
-              className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "var(--danger)", color: "var(--danger)", background: "transparent" }}
-            >
-              Open in ChatGPT
-            </button>
-            <button
-              type="button"
-              onClick={openInGemini}
-              className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "#EAB308", color: "#EAB308", background: "transparent" }}
-            >
-              Open in Gemini
-            </button>
-            <button
-              type="button"
-              onClick={openInDeepSeek}
-              className="tab-prompt-ai-action-btn"
-              style={{ borderColor: "#2563eb", color: "#2563eb", background: "transparent" }}
-            >
-              Open in DeepSeek
-            </button>
-            <button
-              type="button"
-              onClick={copyToClipboard}
-              className="tab-prompt-ai-action-btn tab-prompt-ai-action-btn--grid-singleton"
-              style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-            >
-              Copy prompt
-            </button>
-          </div>
-          <TabPromptApiButtons
+          
+<TabPromptOpenInAiButtons
+  prompt={prompt}
+  getPrompt={getPromptForExport}
+  isEditingPrompt={isEditingPrompt}
+  setStatusMessage={setStatusMessage}
+              setClipboardFailed={setClipboardFailed}
+            />
+            <TabPromptApiButtons
+            researchSaveKey="out-of-the-box-ideas"
             userPrompt={prompt}
             onResult={() => {
               setClipboardFailed(false);
@@ -261,7 +192,7 @@ export function CompanyOutOfTheBoxIdeasTab({ ticker }: { ticker: string }) {
               {linkify(statusMessage)}
             </p>
           )}
-          {clipboardFailed && prompt && (
+          {clipboardFailed && getPromptForExport().trim() && (
             <p className="text-[10px] mt-1" style={{ color: "var(--muted2)" }}>
               Select the prompt above and copy manually (Ctrl+C / Cmd+C).
             </p>

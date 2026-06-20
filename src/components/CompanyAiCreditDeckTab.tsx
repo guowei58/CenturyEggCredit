@@ -290,6 +290,7 @@ export function CompanyAiCreditDeckTab({ ticker }: { ticker: string }) {
                 </button>
               </div>
               <TabPromptApiButtons
+                researchSaveKey="ai-credit-deck"
                 userPrompt={prompt}
                 onResult={() => {
                   setClipboardFailed(false);

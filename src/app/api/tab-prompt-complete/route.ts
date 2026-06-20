@@ -14,6 +14,12 @@ import { WEB_SEARCH_TOOL, isClaudeWebSearchToolEnabled } from "@/lib/anthropic";
 import { isGeminiGoogleSearchEnabled } from "@/lib/gemini";
 import { isOpenAiWebSearchEnabled } from "@/lib/openai";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
+import { applyResearchTabPromptStyle } from "@/lib/research-tab-output-style";
+import {
+  buildExcelApiTruncatedWarning,
+  isExcelApiDeliverableSaveKey,
+  withExcelApiPromptNotice,
+} from "@/lib/excel-api-deliverable";
 
 export const dynamic = "force-dynamic";
 /** Large tab prompts (GPT-5 web search, Opus) can exceed 5 minutes on heavy tickers like MAGN. */
@@ -58,6 +64,9 @@ export async function POST(request: Request) {
     geminiModel?: unknown;
     deepseekModel?: unknown;
     ollamaModel?: unknown;
+    researchSaveKey?: unknown;
+    workProductKind?: unknown;
+    outputLayer?: unknown;
   };
 
   const provider = normalizeAiProvider(b.provider) as AiProvider | null;
@@ -77,7 +86,36 @@ export async function POST(request: Request) {
     );
   }
 
-  const user = withPromptBenchmarkNotice(trimmedUser);
+  const systemRaw =
+    typeof b.systemPrompt === "string" && b.systemPrompt.trim()
+      ? b.systemPrompt.trim().slice(0, MAX_SYSTEM_CHARS)
+      : DEFAULT_SYSTEM;
+
+  const researchSaveKey = typeof b.researchSaveKey === "string" ? b.researchSaveKey.trim() : undefined;
+  const workProductKind = typeof b.workProductKind === "string" ? b.workProductKind.trim() : undefined;
+  const outputLayerRaw = typeof b.outputLayer === "string" ? b.outputLayer.trim() : undefined;
+  const outputLayer =
+    outputLayerRaw === "canon" ||
+    outputLayerRaw === "delta" ||
+    outputLayerRaw === "credit-doc" ||
+    outputLayerRaw === "work-product" ||
+    outputLayerRaw === "creative" ||
+    outputLayerRaw === "excel-deliverable" ||
+    outputLayerRaw === "none"
+      ? outputLayerRaw
+      : undefined;
+
+  const styled = applyResearchTabPromptStyle({
+    userPrompt: trimmedUser,
+    systemPrompt: systemRaw,
+    researchSaveKey,
+    workProductKind,
+    outputLayer,
+  });
+
+  const excelDeliverable = isExcelApiDeliverableSaveKey(researchSaveKey);
+
+  const user = (excelDeliverable ? withExcelApiPromptNotice : withPromptBenchmarkNotice)(styled.userPrompt);
   if (user.length > MAX_USER_CHARS) {
     return NextResponse.json(
       { error: `Prompt too large (max ${MAX_USER_CHARS.toLocaleString()} characters).` },
@@ -85,10 +123,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const system =
-    typeof b.systemPrompt === "string" && b.systemPrompt.trim()
-      ? b.systemPrompt.trim().slice(0, MAX_SYSTEM_CHARS)
-      : DEFAULT_SYSTEM;
+  const system = styled.systemPrompt.slice(0, MAX_SYSTEM_CHARS);
 
   if (!isProviderConfigured(provider, bundle)) {
     const { status, body } = llmApiErrorResponseBody({
@@ -168,6 +203,12 @@ export async function POST(request: Request) {
   return NextResponse.json({
     ok: true,
     text: result.text,
-    ...(result.outputTruncated ? { warning: buildOutputTruncatedWarning(provider) } : {}),
+    ...(result.outputTruncated
+      ? {
+          warning: excelDeliverable
+            ? buildExcelApiTruncatedWarning()
+            : buildOutputTruncatedWarning(provider),
+        }
+      : {}),
   });
 }

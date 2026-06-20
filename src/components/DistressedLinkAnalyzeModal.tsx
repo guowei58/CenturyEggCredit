@@ -201,6 +201,7 @@ export function DistressedLinkAnalyzeModal({
             ))}
           </select>
           <TabPromptApiButtons
+            researchSaveKey={saveTargetKey}
             userPrompt={backgroundLoading ? "" : fullPrompt}
             requirePromptReviewBeforeRun
             onResult={() => {

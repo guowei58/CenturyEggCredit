@@ -1204,6 +1204,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
         <TabPromptApiButtons
           userPrompt={builtPrompt.userPrompt}
           systemPrompt={builtPrompt.systemPrompt}
+          researchSaveKey="ai-credit-memo-latest"
           onResult={(text) => {
             setMarkdown(text);
             setIsEditing(false);

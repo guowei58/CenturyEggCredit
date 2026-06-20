@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import type { AiProvider } from "@/lib/ai-provider";
 import { AI_PROVIDER_CHIP_SELECTED } from "@/lib/ai-provider";
 import { modelPayloadForRun, type ModelRunChoice } from "@/lib/ai-model-prefs-client";
+import type { SavedDataKey } from "@/lib/saved-data-client";
 import { USER_LLM_API_KEYS_POLICY } from "@/lib/llm-user-key-messages";
 import { userHasCloudApiKeyForProvider } from "@/lib/user-llm-api-key-guard";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
@@ -22,9 +23,18 @@ const LABELS: Record<AiProvider, string> = {
   deepseek: "DeepSeek API",
 };
 
+const TAB_API_RUN_HINT =
+  "Runs can take several minutes. You can browse other tabs — the response auto-saves when finished. Keep this browser tab open (don't refresh or close it); return here to view the result.";
+
+import type { WorkProductPromptKind } from "@/lib/work-product-prompt-build";
+
 type Props = {
   userPrompt: string;
   systemPrompt?: string;
+  /** Saved-tab key — selects canon vs delta output style on the server. */
+  researchSaveKey?: SavedDataKey | string;
+  /** Work-product kind — applies synthesis anti-restatement rules. */
+  workProductKind?: WorkProductPromptKind;
   maxOutputTokens?: number;
   /**
    * Public paths under `/public` (e.g. `/org-chart-sample-lumen.png`) sent to the tab-prompt API
@@ -48,6 +58,8 @@ type Props = {
 export function TabPromptApiButtons({
   userPrompt,
   systemPrompt,
+  researchSaveKey,
+  workProductKind,
   maxOutputTokens = LLM_MAX_OUTPUT_TOKENS,
   samplePublicPaths,
   onResult,
@@ -84,6 +96,8 @@ export function TabPromptApiButtons({
             userPrompt: trimmed,
             maxTokens: maxOutputTokens,
             ...(systemPrompt?.trim() ? { systemPrompt: systemPrompt.trim() } : {}),
+            ...(researchSaveKey ? { researchSaveKey } : {}),
+            ...(workProductKind ? { workProductKind } : {}),
             ...(samplePublicPaths?.length ? { samplePublicPaths: [...samplePublicPaths] } : {}),
             ...modelPayloadForRun(provider, choice),
           }),
@@ -111,7 +125,7 @@ export function TabPromptApiButtons({
         setPending(null);
       }
     },
-    [userPrompt, systemPrompt, maxOutputTokens, samplePublicPaths, onResult, persistAfterResult]
+    [userPrompt, systemPrompt, researchSaveKey, workProductKind, maxOutputTokens, samplePublicPaths, onResult, persistAfterResult]
   );
 
   const beginRun = useCallback(
@@ -208,6 +222,12 @@ export function TabPromptApiButtons({
       <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted2)" }}>
         Or run via API (BYOK in User Settings — hosted accounts use server keys)
       </div>
+      {pending ? (
+        <p className="mb-2 text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+          <span style={{ color: "var(--accent)" }}>{LABELS[pending]} running… </span>
+          {TAB_API_RUN_HINT}
+        </p>
+      ) : null}
       <div className="tab-prompt-ai-actions-grid">
         {API_PROVIDERS.map((p) => {
           const sel = AI_PROVIDER_CHIP_SELECTED[p];

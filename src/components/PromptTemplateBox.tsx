@@ -8,11 +8,13 @@ export function PromptTemplateBox({
   tabId,
   defaultTemplate,
   resolve,
+  onResolvedPromptChange,
   className = "",
 }: {
   tabId: string;
   defaultTemplate: string;
   resolve: (template: string) => string;
+  onResolvedPromptChange?: (resolved: string, isEditing?: boolean) => void;
   className?: string;
 }) {
   const { template, setTemplate, resetToDefault, isOverridden } = usePromptTemplateOverride(tabId, defaultTemplate);
@@ -27,6 +29,10 @@ export function PromptTemplateBox({
     () => withPromptBenchmarkNotice(resolve(isEditing ? draft : template)),
     [resolve, template, draft, isEditing]
   );
+
+  useEffect(() => {
+    onResolvedPromptChange?.(preview, isEditing);
+  }, [preview, isEditing, onResolvedPromptChange]);
 
   return (
     <div className={className}>

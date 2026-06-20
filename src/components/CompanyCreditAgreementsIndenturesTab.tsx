@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -446,6 +446,7 @@ export function CompanyCreditDocWorkspaceTab({
               </button>
             </div>
             <TabPromptApiButtons
+              researchSaveKey={config.saveKey}
               userPrompt={prompt}
               onResult={() => {
                 setClipboardFailed(false);

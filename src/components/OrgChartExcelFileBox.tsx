@@ -73,6 +73,7 @@ export function OrgChartTabPromptApiButtons({
   return (
     <TabPromptApiButtons
       userPrompt={userPrompt}
+      researchSaveKey="org-chart-prompt"
       samplePublicPaths={ORG_CHART_SAMPLE_IMAGE_PATHS}
       onRunStart={() => onApiStatus?.("")}
       onResult={() => {
@@ -83,7 +84,7 @@ export function OrgChartTabPromptApiButtons({
         const filename = `${safeTicker}-org-chart-api.xlsx`;
         const saved = await ingestFromApiText(text, filename);
         if (saved) {
-          onApiStatus?.("Excel workbook from API saved and shown in the viewer.");
+          onApiStatus?.("Excel workbook from API saved — showing in the viewer above.");
         } else {
           onApiStatus?.(
             "API finished. No embedded .xlsx was found in the response — upload the file manually if the model returned code or a download link."

@@ -22,6 +22,7 @@ import { sanitizeTicker } from "@/lib/saved-ticker-data";
 import { writeSavedContent } from "@/lib/saved-content-hybrid";
 import { USER_LLM_KEY_SETTINGS_HINT } from "@/lib/user-llm-keys";
 import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
+import { applyResearchTabPromptStyle } from "@/lib/research-tab-output-style";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -108,7 +109,11 @@ async function handleBulkCreditDocAnalyzePost(
   };
   const withBackground = appendRelevantBackgroundToDocReviewPrompt(basePrompt, background);
   const built = await buildCreditDocReviewUserPrompt(withBackground, url);
-  const userPrompt = withPromptBenchmarkNotice(built.prompt);
+  const styled = applyResearchTabPromptStyle({
+    userPrompt: built.prompt,
+    researchSaveKey: saveKey,
+  });
+  const userPrompt = withPromptBenchmarkNotice(styled.userPrompt);
 
   const models = resolveCommitteeChatModels(body);
   const result = await llmCompleteSingle(

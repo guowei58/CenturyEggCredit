@@ -197,7 +197,7 @@ export function useExcelWorkbookUpload({
 
         setWorkbookBuffer(buf.slice(0));
         await refresh();
-        await fetchPreview(body.item.filename, filename);
+        await fetchPreview(body.item.filename, filename, undefined, buf.slice(0));
         setStatus("Excel saved.");
         return true;
       } catch (e) {

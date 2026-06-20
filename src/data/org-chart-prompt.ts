@@ -1,4 +1,5 @@
 import { fillCompanyPromptTemplate } from "@/lib/company-prompt-labels";
+import { EXCEL_API_OUTPUT_FORMAT_SECTION } from "@/lib/excel-api-deliverable";
 
 /**
  * Forensic credit org-chart + Excel deliverable prompt for the Org Chart tab.
@@ -21,9 +22,7 @@ Your task is to create a credit-relevant corporate organizational structure char
 
 I want a buy-side / distressed-credit-quality deliverable that shows the legal and financing structure in a way that is actually useful for underwriting.
 
-I want two things:
-1. the analytical work to identify the important entities, reporting channels, and ownership relationships
-2. the final organizational chart produced as an EXCEL FILE (.xlsx), laid out on a worksheet using **merged and shaded Excel cells** (not shapes or drawing objects) so that it visually resembles the attached JPEG sample as closely as practical
+I want a buy-side / distressed-credit-quality **Excel workbook (.xlsx)** deliverable that shows the legal and financing structure in a way that is actually useful for underwriting. Do all analytical work inside the workbook (entity research belongs on supporting tabs and in Notes — not in the chat response).
 
 ==================================================
 CRITICAL — CELL-BASED CHART ONLY (NO SHAPES)
@@ -347,80 +346,7 @@ The chart should visually answer at a glance:
 5. which entities are most important
 6. whether there are structural ranking or separateness issues
 
-==================================================
-IF YOU CANNOT DIRECTLY CREATE THE EXCEL FILE
-==================================================
-If your environment cannot directly output a binary .xlsx file, then do ALL of the following:
-
-1. produce Python code using openpyxl, xlsxwriter, or another suitable library to create the Excel workbook using **cell merges, fills, borders, fonts, and values only**
-
-2. do **not** rely on VBA or Office Script to insert shapes or connectors; if you include helper code, it must only set cell properties (merge, fill, border, alignment, text)
-
-3. include a precise placement map with:
-- worksheet name
-- each entity box: top-left cell, row/col span (merge size), fill color, font color, border style
-- ownership label cells (row, column, text)
-- spacer row/column plan
-- column widths and row heights for major bands
-
-Do not stop at a written analysis only.
-The goal is a reproducible **cell-based** Excel chart that displays in standard spreadsheet previews.
-
-==================================================
-OUTPUT FORMAT
-==================================================
-Provide the answer in this order:
-
-1. SHORT ENTITY MAP SUMMARY
-Briefly explain:
-- who the top parent is
-- where the main operating business sits
-- where the main financing entities sit
-- where the key assets sit
-- what the most important structural and credit features are
-- any unusual quirks in the structure
-
-2. INCLUDED ENTITIES
-Provide a list or table of each included entity, labeled as applicable:
-- parent
-- holdco
-- operating
-- financing
-- issuer
-- co-issuer
-- guarantor
-- borrower
-- asset owner
-- regulated
-- legacy
-- unrestricted
-- grouped bucket
-
-3. ENTITY-LEVEL REPORTING AND PUBLIC INFORMATION SOURCES
-Provide a table with columns such as:
-- Entity
-- Role in structure
-- Reporting / filing type
-- Regulator / source
-- Public documents available
-- What those documents help confirm
-- Underwriting usefulness
-- Notes / limitations
-
-4. ORG CHART
-Create the organizational structure chart in Excel using **merged, shaded cells only**, closely following the attached JPEG sample layout and color logic.
-
-5. EXCEL FILE
-Provide the finished .xlsx workbook containing the cell-based chart on the "Org Chart" sheet and thoughtful commentary on the "Notes" sheet.
-
-6. SUPPORTING CODE
-If required by the environment, provide the Python (openpyxl / xlsxwriter) code used to generate the workbook — **cell formatting only, no drawing layer**.
-
-7. ASSUMPTIONS / UNCERTAINTIES
-List any ownership relationships, classifications, financial figures, or reporting-status items that are uncertain, estimated, or inferred.
-
-8. SOURCE SUPPORT
-For each major entity or relationship, briefly identify the supporting source.
+${EXCEL_API_OUTPUT_FORMAT_SECTION}
 
 ==================================================
 IMPORTANT RULES
@@ -440,7 +366,7 @@ IMPORTANT RULES
 - use color to signal importance, not decoration
 - do not invent unsupported structure or metrics
 
-The final deliverable should look like the attached sample translated into a **cell-formatted** Excel org chart for the target company, while also providing the reporting and filing roadmap needed to deepen the underwriting.`;
+The final deliverable should look like the attached sample translated into a **cell-formatted** Excel org chart for the target company.`;
 
 function sampleImageUrlsBlockForOrigin(appOrigin: string): string {
   const origin = appOrigin.trim();

@@ -231,6 +231,7 @@ export function CompanyBusinessRiskAnalysisTab({
             </button>
           </div>
           <TabPromptApiButtons
+            researchSaveKey="business-risk-analysis"
             userPrompt={prompt}
             onResult={() => {
               setClipboardFailed(false);

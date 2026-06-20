@@ -338,6 +338,7 @@ export function CompanyEmployeeContactsTab({
             </button>
           </div>
           <TabPromptApiButtons
+            researchSaveKey="employee-contacts"
             userPrompt={prompt}
             onResult={() => {
               setClipboardFailed(false);
