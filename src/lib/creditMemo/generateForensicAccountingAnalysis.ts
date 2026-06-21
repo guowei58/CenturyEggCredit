@@ -102,7 +102,7 @@ export async function buildForensicAccountingPromptPackage(params: {
 
   const bundled = await gatherForensicWorkspaceSources(sym, undefined, params.userId, {
     apiKeys: params.apiKeys,
-    useRetrieval: false,
+    useRetrieval: true,
   });
 
   if (bundled.rawDocuments.length === 0) {

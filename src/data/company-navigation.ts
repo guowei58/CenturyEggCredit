@@ -9,7 +9,8 @@ export type CompanyTopSectionId =
   | "documents"
   | "risk"
   | "research"
-  | "work-product";
+  | "work-product"
+  | "change-log";
 
 /** Sections shown in the company analysis top nav. (`roic-ai` is omitted on purpose; see `companyNav["roic-ai"]`.) */
 export const companyTopSections: Array<{ id: CompanyTopSectionId; label: string }> = [
@@ -20,6 +21,7 @@ export const companyTopSections: Array<{ id: CompanyTopSectionId; label: string 
   { id: "documents", label: "Regulatory Documents" },
   { id: "research", label: "Research" },
   { id: "work-product", label: "Work Product" },
+  { id: "change-log", label: "Key Updates" },
 ];
 
 type NavGroup = { label?: string; tabs: string[] };
@@ -196,9 +198,13 @@ export const companyNav: Record<CompanyTopSectionId, NavDefinition> = {
       },
     ],
   },
+  "change-log": {
+    groups: [],
+  },
 };
 
 export function getFirstTabIdForTopSection(topSection: CompanyTopSectionId): string {
+  if (topSection === "change-log") return "change-log";
   const firstLabel = companyNav[topSection]?.groups?.[0]?.tabs?.[0];
   return firstLabel ? tabLabelToId(firstLabel) : tabLabelToId("Public Records Profile");
 }

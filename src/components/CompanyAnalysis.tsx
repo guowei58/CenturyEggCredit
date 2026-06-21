@@ -85,6 +85,7 @@ import {
   ROIC_QUARTERLY_FINANCIAL_STATEMENTS_TAB_ID,
 } from "@/components/CompanyRoicAiV2StatementsTab";
 import { DownloadAllUserDataButton } from "@/components/DownloadAllUserDataButton";
+import { CompanyChangeLogTab } from "@/components/CompanyChangeLogTab";
 import { Card, EmptyState, TabBar } from "@/components/ui";
 
 /** Build company bar data: full mock for LUMN, else ticker/CIK + fetched name. */
@@ -207,6 +208,7 @@ export function CompanyAnalysis({
   const navDef = companyNav[effectiveTopSection];
   const groups = navDef?.groups ?? [];
   const savedDocsActive = resolvedTab === "saved-documents";
+  const changeLogActive = effectiveTopSection === "change-log";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -266,6 +268,7 @@ export function CompanyAnalysis({
           {/* Level 2: sub-tabs for the active top-level section only (secondary) */}
           {groups.length > 0 &&
             !savedDocsActive &&
+            !changeLogActive &&
             !(groups.length === 1 && (groups[0]?.tabs?.length ?? 0) <= 1) &&
             (effectiveTopSection === "work-product" ? (
               <div className="nav-secondary nav-work-product-row flex w-full min-w-0 flex-shrink-0 flex-wrap items-center gap-x-3 gap-y-1 px-6 py-1 sm:px-8">
@@ -337,7 +340,11 @@ export function CompanyAnalysis({
             ))}
 
           <div className="min-h-0 flex-1 overflow-hidden">
-            {resolvedTab === "sec-xbrl-financials" ? (
+            {changeLogActive ? (
+              <div className="flex h-full min-h-0 flex-col overflow-hidden px-5 py-4 sm:px-8 sm:py-5" data-company-tab-workspace>
+                <CompanyChangeLogTab ticker={ticker!} companyName={co.name} />
+              </div>
+            ) : resolvedTab === "sec-xbrl-financials" ? (
               <div className="flex h-full min-h-0 flex-col">
                 <CompanySecXbrlFinancialsTab ticker={ticker!} />
               </div>

@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { resolveLlmTemperatureFromPrefs } from "@/lib/llm-temperature";
 import { getUserPreferences } from "@/lib/user-preferences-store";
-import { buildLlmApiKeyBundle, type LlmCallApiKeys } from "@/lib/user-llm-keys";
+import { buildLlmApiKeyBundle, mergeLlmCallApiKeysWithProcessEnv, type LlmCallApiKeys } from "@/lib/user-llm-keys";
 
 export type AuthenticatedLlmContext = {
   userId: string;
@@ -23,7 +23,7 @@ export async function getAuthenticatedLlmContext(): Promise<
   if (!userId) return { ok: false, status: 401 };
   const email = typeof session.user?.email === "string" ? session.user.email : null;
   const prefs = await getUserPreferences(userId);
-  const bundle = buildLlmApiKeyBundle(email, prefs);
+  const bundle = mergeLlmCallApiKeysWithProcessEnv(buildLlmApiKeyBundle(email, prefs));
   const llmTemperature = resolveLlmTemperatureFromPrefs(prefs);
   return { ok: true, ctx: { userId, email, bundle, llmTemperature } };
 }

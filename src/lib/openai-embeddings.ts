@@ -26,6 +26,15 @@ function resolveOpenAiKey(apiKeys: LlmCallApiKeys | undefined): { key: string } 
 
 export type EmbeddingsResult = { ok: true; vectors: number[][] } | { ok: false; error: string };
 
+/** Proxy / network blips during long multi-batch embed runs. */
+const TRANSIENT_EMBED_FETCH =
+  /upstream connect error|disconnect\/reset|connection termination|ECONNRESET|ETIMEDOUT|EPIPE|socket hang up|fetch failed/i;
+
+function isTransientEmbedFetchError(status: number, raw: string): boolean {
+  if (status === 502 || status === 503 || status === 504) return true;
+  return TRANSIENT_EMBED_FETCH.test(raw);
+}
+
 /**
  * One API call per batch (max ~2048 inputs; we use smaller batches for payload safety).
  */
@@ -62,18 +71,40 @@ export async function embedTextsOpenAI(
     }
 
     let batchOk = false;
+    const maxTransient = 4;
     for (let r429 = 0; r429 < max429; r429++) {
-      const res = await fetch(OPENAI_EMBEDDINGS_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${key}`,
-        },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(timeoutMs),
-      });
+      let raw = "";
+      let res: Response | null = null;
+      for (let t = 0; t < maxTransient; t++) {
+        try {
+          res = await fetch(OPENAI_EMBEDDINGS_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${key}`,
+            },
+            body: JSON.stringify(body),
+            signal: AbortSignal.timeout(timeoutMs),
+          });
+          raw = await res.text();
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          if (t < maxTransient - 1 && TRANSIENT_EMBED_FETCH.test(msg)) {
+            await sleepMs(400 * 2 ** t + Math.floor(Math.random() * 200));
+            continue;
+          }
+          return { ok: false, error: msg.slice(0, 500) || "Embeddings fetch failed" };
+        }
+        if (!res.ok && isTransientEmbedFetchError(res.status, raw) && t < maxTransient - 1) {
+          await sleepMs(400 * 2 ** t + Math.floor(Math.random() * 200));
+          continue;
+        }
+        break;
+      }
+      if (!res) {
+        return { ok: false, error: "Embeddings fetch failed" };
+      }
 
-      const raw = await res.text();
       if (!res.ok) {
         if (isOpenAiRateLimitHttp(res.status, raw) && r429 < max429 - 1) {
           await sleepMs(parseOpenAiRetryAfterMs(res.headers, r429));

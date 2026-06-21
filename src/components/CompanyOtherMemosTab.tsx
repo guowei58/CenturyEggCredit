@@ -9,10 +9,15 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { WorkProductStepToolbar } from "@/components/WorkProductStepToolbar";
+import { WorkProductIngestSourcePicker } from "@/components/WorkProductIngestSourcePicker";
+import {
+  sumDocumentPackedChars,
+  WorkProductSourceInventoryTable,
+} from "@/components/WorkProductSourceInventoryTable";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
+import type { LmeDocumentPackedRow } from "@/lib/lme-sources";
 import {
-  OTHER_MEMOS_SHARED_API_PATH,
   OTHER_MEMO_CONFIGS,
   type OtherMemoTabId,
 } from "@/data/other-memos-config";
@@ -22,6 +27,18 @@ import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import type { WorkProductPromptKind } from "@/lib/work-product-prompt-build";
+import { applyWorkProductIngestPending } from "@/lib/work-product-ingest-client";
+import {
+  formatWorkProductSourceProgressLine,
+  pollWorkProductSourceProgress,
+} from "@/lib/work-product-source-progress-client";
+import type { LmeRunPackingStats } from "@/lib/lme-sources";
+import {
+  formatWorkProductContextBuildSummary,
+  readWorkProductContextBuildCache,
+  writeWorkProductContextBuildCache,
+  type WorkProductContextBuildCache,
+} from "@/lib/work-product-context-build-cache";
 
 type SourceRow = {
   label: string;
@@ -52,6 +69,8 @@ type BuiltPrompt = {
 type BuiltPromptCacheEntry = {
   fingerprint: string;
   prompt: BuiltPrompt;
+  documentRows?: LmeDocumentPackedRow[];
+  buildCache?: WorkProductContextBuildCache;
 };
 
 export function CompanyOtherMemosTab({
@@ -81,6 +100,7 @@ export function CompanyOtherMemosTab({
 
   const [builtByKind, setBuiltByKind] = useState<Partial<Record<WorkProductPromptKind, BuiltPromptCacheEntry>>>({});
   const [promptPanelOpen, setPromptPanelOpen] = useState(false);
+  const [refreshProgress, setRefreshProgress] = useState<string | null>(null);
 
   const builtPrompt = useMemo(() => {
     const fp = data?.currentFingerprint ?? "";
@@ -89,26 +109,78 @@ export function CompanyOtherMemosTab({
     return entry.prompt;
   }, [builtByKind, config.kind, data?.currentFingerprint]);
 
+  const activeDocumentRows = useMemo(() => {
+    const fp = data?.currentFingerprint ?? "";
+    const entry = builtByKind[config.kind];
+    if (!fp || !entry || entry.fingerprint !== fp) return null;
+    return entry.documentRows ?? null;
+  }, [builtByKind, config.kind, data?.currentFingerprint]);
+
+  const activeBuildCache = useMemo(() => {
+    const fp = data?.currentFingerprint ?? "";
+    const entry = builtByKind[config.kind];
+    if (!fp || !entry || entry.fingerprint !== fp) return null;
+    return entry.buildCache ?? null;
+  }, [builtByKind, config.kind, data?.currentFingerprint]);
+
+  const contextSummary = formatWorkProductContextBuildSummary(
+    activeBuildCache,
+    sumDocumentPackedChars(activeDocumentRows)
+  );
+
+  useEffect(() => {
+    if (!safeTicker || !data?.currentFingerprint) return;
+    const cached = readWorkProductContextBuildCache(config.kind, safeTicker);
+    if (!cached || cached.fingerprint !== data.currentFingerprint) return;
+    setBuiltByKind((prev) => {
+      const existing = prev[config.kind];
+      if (existing?.fingerprint === cached.fingerprint && existing.documentRows?.length) return prev;
+      return {
+        ...prev,
+        [config.kind]: {
+          fingerprint: cached.fingerprint,
+          prompt: existing?.prompt ?? {
+            systemPrompt: "",
+            userPrompt: "",
+            copyPrompt: "",
+            systemChars: 0,
+            userChars: 0,
+            retrievalUsed: cached.retrievalUsed,
+          },
+          documentRows: cached.documentRows,
+          buildCache: cached,
+        },
+      };
+    });
+  }, [safeTicker, config.kind, data?.currentFingerprint]);
+
   const load = useCallback(async () => {
     if (!safeTicker) return;
     setLoading(true);
     setError(null);
+    setRefreshProgress(null);
     try {
-      const res = await fetch(`${OTHER_MEMOS_SHARED_API_PATH}/${encodeURIComponent(safeTicker)}`);
-      const body = (await res.json()) as SourceGetResponse & { error?: string };
-      if (!res.ok) throw new Error(body.error ?? "Failed to load sources");
-      setData(body);
+      await applyWorkProductIngestPending(config.kind, safeTicker);
+      const stopPoll = pollWorkProductSourceProgress(config.kind, safeTicker, (progress) => {
+        setRefreshProgress(formatWorkProductSourceProgressLine(progress));
+      });
+      try {
+        const res = await fetch(
+          `/api/creative-workspace/${encodeURIComponent(config.kind)}/${encodeURIComponent(safeTicker)}`
+        );
+        const body = (await res.json()) as SourceGetResponse & { error?: string };
+        if (!res.ok) throw new Error(body.error ?? "Failed to load sources");
+        setData(body);
+      } finally {
+        stopPoll();
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load");
     } finally {
+      setRefreshProgress(null);
       setLoading(false);
     }
-  }, [safeTicker]);
-
-  useEffect(() => {
-    if (!prefsReady || !safeTicker) return;
-    void load();
-  }, [prefsReady, safeTicker, load]);
+  }, [safeTicker, config.kind]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -167,6 +239,7 @@ export function CompanyOtherMemosTab({
         userChars?: number;
         retrievalUsed?: boolean;
         sourceFingerprint?: string;
+        packingStats?: LmeRunPackingStats;
       };
       if (!res.ok || !body.ok) throw new Error(body.error ?? "Failed to build context window");
       const fp = body.sourceFingerprint ?? data?.currentFingerprint ?? "";
@@ -178,9 +251,29 @@ export function CompanyOtherMemosTab({
         userChars: body.userChars ?? 0,
         retrievalUsed: body.retrievalUsed === true,
       };
+      const buildCache: WorkProductContextBuildCache = {
+        fingerprint: fp,
+        builtAt: new Date().toISOString(),
+        retrievalUsed: body.retrievalUsed === true,
+        documentRows: body.packingStats?.documentRows ?? [],
+        packingStats: body.packingStats
+          ? {
+              packedPartsCharSum: body.packingStats.packedPartsCharSum,
+              bundleCharCap: body.packingStats.bundleCharCap,
+              retrievalUsed: body.packingStats.retrievalUsed,
+              retrievalPack: body.packingStats.retrievalPack,
+            }
+          : undefined,
+      };
+      writeWorkProductContextBuildCache(config.kind, safeTicker, buildCache);
       setBuiltByKind((prev) => ({
         ...prev,
-        [config.kind]: { fingerprint: fp, prompt },
+        [config.kind]: {
+          fingerprint: fp,
+          prompt,
+          documentRows: body.packingStats?.documentRows,
+          buildCache,
+        },
       }));
       setPromptPanelOpen(true);
       setStatusMessage(`Context window ready for ${config.title} — use step 3 to run through AI.`);
@@ -253,11 +346,13 @@ export function CompanyOtherMemosTab({
   const needsSignIn = authStatus !== "authenticated";
   const busy = loading || building;
   const hasMainContent = savedContent.trim().length > 0;
+  const packedTotal = sumDocumentPackedChars(activeDocumentRows);
 
   const sourceToolbar = (
     <WorkProductStepToolbar
       needsSignIn={needsSignIn}
       refreshLoading={loading}
+      refreshProgressDetail={refreshProgress}
       refreshDisabled={busy || !prefsReady}
       onRefresh={() => void load()}
       buildLoading={building}
@@ -275,11 +370,25 @@ export function CompanyOtherMemosTab({
       <details className="rounded border text-xs" style={{ borderColor: "var(--border2)" }}>
         <summary className="cursor-pointer px-3 py-2 font-medium" style={{ color: "var(--muted2)" }}>
           {data
-            ? `Shared source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} chars)`
+            ? activeDocumentRows
+              ? `Shared source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} available · ${packedTotal.toLocaleString()} in context)`
+              : `Shared source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} chars)`
             : "Shared source inventory"}
         </summary>
-        <SharedSourceInventoryBody data={data} loading={loading || !prefsReady} needsSignIn={needsSignIn} />
+        <SharedSourceInventoryBody
+          data={data}
+          loading={loading || !prefsReady}
+          needsSignIn={needsSignIn}
+          documentRows={activeDocumentRows}
+          contextSummary={contextSummary}
+        />
       </details>
+      <WorkProductIngestSourcePicker
+        kind={config.kind}
+        ticker={safeTicker}
+        needsSignIn={needsSignIn}
+        refreshKey={data?.currentFingerprint}
+      />
     </WorkProductStepToolbar>
   );
 
@@ -467,10 +576,14 @@ function SharedSourceInventoryBody({
   data,
   loading,
   needsSignIn,
+  documentRows,
+  contextSummary,
 }: {
   data: SourceGetResponse | null;
   loading: boolean;
   needsSignIn: boolean;
+  documentRows?: LmeDocumentPackedRow[] | null;
+  contextSummary?: string | null;
 }) {
   if (loading && !data) {
     return (
@@ -487,37 +600,26 @@ function SharedSourceInventoryBody({
     );
   }
   return (
-    <>
-      <div
-        className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-x-2 border-b px-3 py-1.5 text-[9px] font-semibold sm:grid-cols-[minmax(0,1fr)_6.75rem] sm:text-[10px]"
-        style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
-      >
-        <span>Source</span>
-        <span className="text-right">Chars</span>
-      </div>
-      <ul className="max-h-40 overflow-y-auto divide-y" style={{ borderColor: "var(--border2)" }}>
-        {data.sourceInventory.map((s) => (
-          <li
-            key={`${s.label}-${s.key ?? ""}-${s.charsInitial}`}
-            className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-x-2 px-3 py-1.5 sm:grid-cols-[minmax(0,1fr)_6.75rem]"
-            style={{ color: "var(--text)" }}
-          >
-            <span className="min-w-0 truncate" title={s.label}>
-              {s.label}
-              {s.truncated ? " · truncated" : ""}
-            </span>
-            <span className="text-right font-mono text-[10px] tabular-nums sm:text-[11px]" style={{ color: "var(--muted)" }}>
-              {s.isBinaryPlaceholder ? "—" : s.charsInitial.toLocaleString()}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {!data.hasSubstantiveText && !needsSignIn ? (
-        <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-          No substantive sources yet. Save at least one Work Product tab output and/or an earnings transcript from Period
-          Financials.
-        </p>
-      ) : null}
-    </>
+    <WorkProductSourceInventoryTable
+      rows={data.sourceInventory}
+      documentRows={documentRows}
+      contextSummary={contextSummary}
+      buildPendingHint={
+        data.hasSubstantiveText && !documentRows?.length && !needsSignIn ? (
+          <p className="px-3 py-2 text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
+            Complete <strong>step 2 — Build context window</strong> to see how much of each source is included and which
+            chunks were selected.
+          </p>
+        ) : null
+      }
+      emptyHint={
+        !data.hasSubstantiveText && !needsSignIn ? (
+          <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+            No substantive sources yet. Save at least one Work Product tab output and/or an earnings transcript from Period
+            Financials.
+          </p>
+        ) : null
+      }
+    />
   );
 }

@@ -34,7 +34,7 @@ export const KPI_COMMENTARY_RETRIEVAL_QUERY = [
   "segment results geographic mix same-store sales volume price mix guidance outlook assumptions",
   "non-GAAP reconciliation adjustments restructuring impairments one-time charges stock comp",
   "working capital inventory receivables payables capex maintenance growth investments",
-  "debt leverage net debt covenant baskets liquidity runway interest expense maturity schedule",
+  "earnings call transcript management presentation prepared remarks Q&A outlook",
   "MD&A risk factors critical accounting estimates controls segment footnotes tables",
 ].join("\n");
 
@@ -87,15 +87,75 @@ export function lmeGlobalRankMaxChunks(): number {
   return parseEnvInt("LME_GLOBAL_RANK_MAX_CHUNKS", 3_000, 200, 25_000);
 }
 
+/**
+ * When the corpus exceeds `maxChunks`, keep at least one chunk per document in the embed
+ * batch so user-added / late sources are not excluded from embedding entirely.
+ */
+export function capLmeChunksPreservingEachDocument(
+  chunks: LmeIndexedChunk[],
+  maxChunks: number
+): { capped: LmeIndexedChunk[]; corpusChunksWereCapped: boolean } {
+  if (chunks.length <= maxChunks) {
+    return { capped: chunks, corpusChunksWereCapped: false };
+  }
+
+  const byDoc = new Map<string, LmeIndexedChunk[]>();
+  for (const c of chunks) {
+    if (!byDoc.has(c.docId)) byDoc.set(c.docId, []);
+    byDoc.get(c.docId)!.push(c);
+  }
+
+  const reserved: LmeIndexedChunk[] = [];
+  const reservedIds = new Set<string>();
+  for (const docChunks of byDoc.values()) {
+    docChunks.sort((a, b) => a.chunkIndex - b.chunkIndex);
+    const first = docChunks[0]!;
+    if (!reservedIds.has(first.id)) {
+      reserved.push(first);
+      reservedIds.add(first.id);
+    }
+  }
+
+  if (reserved.length >= maxChunks) {
+    return { capped: reserved.slice(0, maxChunks), corpusChunksWereCapped: true };
+  }
+
+  const tail: LmeIndexedChunk[] = [];
+  for (const c of chunks) {
+    if (!reservedIds.has(c.id)) tail.push(c);
+  }
+
+  return {
+    capped: [...reserved, ...tail.slice(0, maxChunks - reserved.length)],
+    corpusChunksWereCapped: true,
+  };
+}
+
 /** Max chunks per document in the global ranked pack (diversity vs depth). */
 export function lmeGlobalMaxChunksPerDocument(): number {
   return parseEnvInt("LME_GLOBAL_MAX_CHUNKS_PER_DOC", 40, 4, 200);
 }
 
-/** Sequential pack by default; set `LME_RETRIEVAL=1` for embedding-ranked chunk windows. */
+/** KPI tab: max chunks from a user-added extra-ingest document (Extra ingestion sources picker). */
+export function kpiExtraIngestMaxChunksPerDocument(): number {
+  return parseEnvInt("KPI_EXTRA_INGEST_MAX_CHUNKS_PER_DOC", 5, 1, 20);
+}
+
+/** KPI tab: max chars when sequential fallback packs a user-added / credit-agreement extra. */
+export function kpiExtraIngestMaxPartChars(): number {
+  return parseEnvInt("KPI_EXTRA_INGEST_MAX_PART_CHARS", 20_000, 2_000, 80_000);
+}
+
+/** KPI tab: max chunks when an extra-ingest filename looks like a credit agreement / exhibit 10.x. */
+export function kpiCreditDocExtraIngestMaxChunksPerDocument(): number {
+  return parseEnvInt("KPI_CREDIT_DOC_EXTRA_MAX_CHUNKS_PER_DOC", 3, 1, 10);
+}
+
+/** Embedding-ranked chunk windows by default; set `LME_RETRIEVAL=0` to force sequential pack. */
 export function isLmeRetrievalEnabled(): boolean {
   const v = process.env.LME_RETRIEVAL?.trim().toLowerCase();
-  return v === "1" || v === "true" || v === "on";
+  if (v === "0" || v === "false" || v === "off") return false;
+  return true;
 }
 
 export type LmeIndexedChunk = {
@@ -256,7 +316,9 @@ export async function embedLmeRetrievalQuery(apiKeys: LlmCallApiKeys | undefined
 }
 
 /**
- * Greedy pack highest-scoring chunks until budgetChars; max per document for diversity.
+ * Pack highest-scoring chunks until budgetChars.
+ * Phase 1 reserves each document's best-scoring chunk so no source is omitted entirely.
+ * Phase 2 fills remaining budget by score up to maxPerDoc per document.
  */
 export function selectLmeChunksForBudget(
   queryVec: number[],
@@ -264,47 +326,89 @@ export function selectLmeChunksForBudget(
   vectors: Record<string, number[]>,
   budgetChars: number,
   maxPerDoc: number,
-  task: LmeRetrievalPackTask = "lme"
+  task: LmeRetrievalPackTask = "lme",
+  resolveMaxPerDoc: (docId: string) => number = () => maxPerDoc
 ): LmeIndexedChunk[] {
   const q = l2normalize(queryVec);
   const scored: { chunk: LmeIndexedChunk; score: number }[] = [];
+  const bestByDoc = new Map<string, { chunk: LmeIndexedChunk; score: number }>();
   for (const c of chunks) {
     const v = vectors[c.id];
     if (!v?.length) continue;
-    scored.push({ chunk: c, score: dot(q, l2normalize(v)) });
+    const score = dot(q, l2normalize(v));
+    scored.push({ chunk: c, score });
+    const prev = bestByDoc.get(c.docId);
+    if (!prev || score > prev.score) bestByDoc.set(c.docId, { chunk: c, score });
   }
   scored.sort((a, b) => b.score - a.score);
 
   const picked: LmeIndexedChunk[] = [];
+  const pickedIds = new Set<string>();
   let used = 0;
   const perDoc = new Map<string, number>();
-  for (const { chunk } of scored) {
+
+  const tryPick = (chunk: LmeIndexedChunk, ignoreBudget = false): boolean => {
+    if (pickedIds.has(chunk.id)) return false;
     const n = perDoc.get(chunk.docId) ?? 0;
-    if (n >= maxPerDoc) continue;
+    if (n >= resolveMaxPerDoc(chunk.docId)) return false;
     const block = formatChunkBlock(chunk, task);
-    if (used + block.length > budgetChars && picked.length > 0) break;
+    if (!ignoreBudget && used + block.length > budgetChars && picked.length > 0) return false;
     picked.push(chunk);
+    pickedIds.add(chunk.id);
     perDoc.set(chunk.docId, n + 1);
     used += block.length;
+    return true;
+  };
+
+  const docOrder = [...new Set(chunks.map((c) => c.docId))];
+  for (const docId of docOrder) {
+    const best = bestByDoc.get(docId);
+    if (best) tryPick(best.chunk, true);
   }
+
+  for (const { chunk } of scored) {
+    if (pickedIds.has(chunk.id)) continue;
+    const n = perDoc.get(chunk.docId) ?? 0;
+    if (n >= resolveMaxPerDoc(chunk.docId)) continue;
+    const block = formatChunkBlock(chunk, task);
+    if (used + block.length > budgetChars && picked.length > 0) break;
+    tryPick(chunk);
+  }
+
   return picked;
 }
 
 function formatChunkBlock(c: LmeIndexedChunk, task: LmeRetrievalPackTask): string {
-  const tag = task === "kpi" ? "KPI RETRIEVAL" : task === "forensic" ? "FORENSIC RETRIEVAL" : "LME RETRIEVAL";
+  const tag =
+    task === "kpi"
+      ? "KPI RETRIEVAL"
+      : task === "forensic"
+        ? "FORENSIC RETRIEVAL"
+        : task === "creative"
+          ? "WORK PRODUCT RETRIEVAL"
+          : "LME RETRIEVAL";
   const head = `<<<${tag} | ${c.label} | part ${c.chunkIndex + 1}/${c.chunkCount}>>>\n`;
   return head + c.text;
 }
 
 export function formatRetrievedChunksForPrompt(picked: LmeIndexedChunk[], task: LmeRetrievalPackTask = "lme"): string {
   if (!picked.length) return "";
-  const tag = task === "kpi" ? "KPI RETRIEVAL" : task === "forensic" ? "FORENSIC RETRIEVAL" : "LME RETRIEVAL";
+  const tag =
+    task === "kpi"
+      ? "KPI RETRIEVAL"
+      : task === "forensic"
+        ? "FORENSIC RETRIEVAL"
+        : task === "creative"
+          ? "WORK PRODUCT RETRIEVAL"
+          : "LME RETRIEVAL";
   const intro =
     task === "kpi"
-      ? "# RETRIEVED SOURCE FRAGMENTS (ranked for KPI / operating and financial commentary)\nThese excerpts are selected from your full ingested workspace corpus by embedding similarity to the KPI commentary task.\n\n"
+      ? "# RETRIEVED SOURCE FRAGMENTS (ranked for KPI / operating and financial commentary)\nEach ingested source contributes at least one excerpt; additional space is filled by embedding similarity to the KPI commentary task.\n\n"
       : task === "forensic"
-        ? "# RETRIEVED SOURCE FRAGMENTS (ranked for forensic accounting / financial statement review)\nThese excerpts are selected from your resolved research-folder ingest by embedding similarity to the forensic accounting task.\n\n"
-        : "# RETRIEVED SOURCE FRAGMENTS (ranked for LME / liability-management relevance)\nThese excerpts are selected from your full ingested corpus by embedding similarity to the LME task.\n\n";
+        ? "# RETRIEVED SOURCE FRAGMENTS (ranked for forensic accounting / financial statement review)\nEach ingested source contributes at least one excerpt; additional space is filled by embedding similarity to the forensic accounting task.\n\n"
+        : task === "creative"
+          ? "# RETRIEVED SOURCE FRAGMENTS (ranked for creative Work Product tabs)\nEach ingested source contributes at least one excerpt; additional space is filled by embedding similarity to the Work Product synthesis task.\n\n"
+          : "# RETRIEVED SOURCE FRAGMENTS (ranked for LME / liability-management relevance)\nEach ingested source contributes at least one excerpt; additional space is filled by embedding similarity to the LME task.\n\n";
 
   const byDoc = new Map<string, LmeIndexedChunk[]>();
   for (const c of picked) {

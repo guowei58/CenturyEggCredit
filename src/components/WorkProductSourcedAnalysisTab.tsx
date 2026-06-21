@@ -9,14 +9,32 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { WorkProductStepToolbar } from "@/components/WorkProductStepToolbar";
+import { WorkProductIngestSourcePicker } from "@/components/WorkProductIngestSourcePicker";
+import {
+  sumDocumentPackedChars,
+  WorkProductSourceInventoryTable,
+} from "@/components/WorkProductSourceInventoryTable";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { fetchSavedTabContent, saveToServer, type SavedDataKey } from "@/lib/saved-data-client";
+import type { LmeDocumentPackedRow } from "@/lib/lme-sources";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { OPEN_IN_EXTERNAL_AI_FULL_LINE, openGeminiWithClipboard } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
 import type { WorkProductPromptKind } from "@/lib/work-product-prompt-build";
+import { applyWorkProductIngestPending } from "@/lib/work-product-ingest-client";
+import {
+  formatWorkProductSourceProgressLine,
+  pollWorkProductSourceProgress,
+} from "@/lib/work-product-source-progress-client";
+import type { LmeRunPackingStats } from "@/lib/lme-sources";
+import {
+  formatWorkProductContextBuildSummary,
+  readWorkProductContextBuildCache,
+  writeWorkProductContextBuildCache,
+  type WorkProductContextBuildCache,
+} from "@/lib/work-product-context-build-cache";
 
 type SourceRow = {
   label: string;
@@ -81,32 +99,44 @@ export function WorkProductSourcedAnalysisTab({
     userChars: number;
     retrievalUsed: boolean;
   } | null>(null);
+  const [lastPackFingerprint, setLastPackFingerprint] = useState<string | null>(null);
+  const [lastDocumentRows, setLastDocumentRows] = useState<LmeDocumentPackedRow[] | null>(null);
+  const [lastPackingStats, setLastPackingStats] = useState<
+    Pick<LmeRunPackingStats, "packedPartsCharSum" | "bundleCharCap" | "retrievalUsed" | "retrievalPack"> | null
+  >(null);
+  const [lastBuildCache, setLastBuildCache] = useState<WorkProductContextBuildCache | null>(null);
   const [promptPanelOpen, setPromptPanelOpen] = useState(false);
+  const [refreshProgress, setRefreshProgress] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!safeTicker) return;
     setLoading(true);
     setError(null);
+    setRefreshProgress(null);
     try {
-      const res = await fetch(`${config.apiPath}/${encodeURIComponent(safeTicker)}`);
-      const body = (await res.json()) as SourceGetResponse & { error?: string };
-      if (!res.ok) throw new Error(body.error ?? "Failed to load sources");
-      setData(body);
-      if (body.cachedMarkdown?.trim()) {
-        setSavedContent(body.cachedMarkdown);
-        setIsEditing(false);
+      await applyWorkProductIngestPending(config.kind, safeTicker);
+      const stopPoll = pollWorkProductSourceProgress(config.kind, safeTicker, (progress) => {
+        setRefreshProgress(formatWorkProductSourceProgressLine(progress));
+      });
+      try {
+        const res = await fetch(`${config.apiPath}/${encodeURIComponent(safeTicker)}`);
+        const body = (await res.json()) as SourceGetResponse & { error?: string };
+        if (!res.ok) throw new Error(body.error ?? "Failed to load sources");
+        setData(body);
+        if (body.cachedMarkdown?.trim()) {
+          setSavedContent(body.cachedMarkdown);
+          setIsEditing(false);
+        }
+      } finally {
+        stopPoll();
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load");
     } finally {
+      setRefreshProgress(null);
       setLoading(false);
     }
-  }, [safeTicker, config.apiPath]);
-
-  useEffect(() => {
-    if (!prefsReady || !safeTicker) return;
-    void load();
-  }, [prefsReady, safeTicker, load]);
+  }, [safeTicker, config.apiPath, config.kind]);
 
   useEffect(() => {
     if (!safeTicker) return;
@@ -125,10 +155,32 @@ export function WorkProductSourcedAnalysisTab({
 
   useEffect(() => {
     setBuiltPrompt(null);
+    setLastPackFingerprint(null);
+    setLastDocumentRows(null);
+    setLastPackingStats(null);
     setPromptPanelOpen(false);
     setStatusMessage(null);
     setClipboardFailed(false);
   }, [safeTicker, data?.currentFingerprint]);
+
+  useEffect(() => {
+    if (!safeTicker) {
+      setLastBuildCache(null);
+      return;
+    }
+    const cached = readWorkProductContextBuildCache(config.kind, safeTicker);
+    if (cached && data?.currentFingerprint && cached.fingerprint === data.currentFingerprint) {
+      setLastBuildCache(cached);
+      setLastDocumentRows(cached.documentRows);
+      setLastPackFingerprint(cached.fingerprint);
+      setLastPackingStats(cached.packingStats ?? null);
+    } else if (cached && data?.currentFingerprint && cached.fingerprint !== data.currentFingerprint) {
+      setLastBuildCache(null);
+      setLastDocumentRows(null);
+      setLastPackFingerprint(null);
+      setLastPackingStats(null);
+    }
+  }, [safeTicker, config.kind, data?.currentFingerprint]);
 
   async function buildContextWindow() {
     if (!safeTicker) return;
@@ -155,8 +207,11 @@ export function WorkProductSourcedAnalysisTab({
         systemChars?: number;
         userChars?: number;
         retrievalUsed?: boolean;
+        sourceFingerprint?: string;
+        packingStats?: LmeRunPackingStats;
       };
       if (!res.ok || !body.ok) throw new Error(body.error ?? "Failed to build context window");
+      const fp = body.sourceFingerprint ?? data?.currentFingerprint ?? "";
       setBuiltPrompt({
         systemPrompt: body.systemPrompt ?? "",
         userPrompt: body.userPrompt ?? "",
@@ -165,6 +220,36 @@ export function WorkProductSourcedAnalysisTab({
         userChars: body.userChars ?? 0,
         retrievalUsed: body.retrievalUsed === true,
       });
+      setLastPackFingerprint(fp || null);
+      setLastDocumentRows(body.packingStats?.documentRows ?? null);
+      setLastPackingStats(
+        body.packingStats
+          ? {
+              packedPartsCharSum: body.packingStats.packedPartsCharSum,
+              bundleCharCap: body.packingStats.bundleCharCap,
+              retrievalUsed: body.packingStats.retrievalUsed,
+              retrievalPack: body.packingStats.retrievalPack,
+            }
+          : null
+      );
+      if (fp) {
+        const cache: WorkProductContextBuildCache = {
+          fingerprint: fp,
+          builtAt: new Date().toISOString(),
+          retrievalUsed: body.retrievalUsed === true,
+          documentRows: body.packingStats?.documentRows ?? [],
+          packingStats: body.packingStats
+            ? {
+                packedPartsCharSum: body.packingStats.packedPartsCharSum,
+                bundleCharCap: body.packingStats.bundleCharCap,
+                retrievalUsed: body.packingStats.retrievalUsed,
+                retrievalPack: body.packingStats.retrievalPack,
+              }
+            : undefined,
+        };
+        setLastBuildCache(cache);
+        writeWorkProductContextBuildCache(config.kind, safeTicker, cache);
+      }
       setPromptPanelOpen(true);
       setStatusMessage("Context window ready — use step 3 to run through AI.");
     } catch (e) {
@@ -236,11 +321,16 @@ export function WorkProductSourcedAnalysisTab({
   const needsSignIn = authStatus !== "authenticated";
   const busy = loading || building;
   const hasMainContent = savedContent.trim().length > 0;
+  const activeDocumentRows =
+    lastPackFingerprint && lastPackFingerprint === data?.currentFingerprint ? lastDocumentRows : null;
+  const packedTotal = sumDocumentPackedChars(activeDocumentRows);
+  const contextSummary = formatWorkProductContextBuildSummary(lastBuildCache, packedTotal);
 
   const sourceToolbar = (
     <WorkProductStepToolbar
       needsSignIn={needsSignIn}
       refreshLoading={loading}
+      refreshProgressDetail={refreshProgress}
       refreshDisabled={busy || !prefsReady}
       onRefresh={() => void load()}
       buildLoading={building}
@@ -267,7 +357,9 @@ export function WorkProductSourcedAnalysisTab({
       <details className="rounded border text-xs" style={{ borderColor: "var(--border2)" }}>
         <summary className="cursor-pointer px-3 py-2 font-medium" style={{ color: "var(--muted2)" }}>
           {data
-            ? `Source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} chars)`
+            ? activeDocumentRows
+              ? `Source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} available · ${packedTotal.toLocaleString()} in context)`
+              : `Source inventory (${data.sourceInventory.length} blocks, ${data.totalChars.toLocaleString()} chars)`
             : "Source inventory"}
         </summary>
         <SourceInventoryBody
@@ -275,8 +367,16 @@ export function WorkProductSourcedAnalysisTab({
           loading={loading || !prefsReady}
           noSubstantiveMessage={config.noSubstantiveMessage}
           needsSignIn={needsSignIn}
+          documentRows={activeDocumentRows}
+          contextSummary={contextSummary}
         />
       </details>
+      <WorkProductIngestSourcePicker
+        kind={config.kind}
+        ticker={safeTicker}
+        needsSignIn={needsSignIn}
+        refreshKey={data?.currentFingerprint}
+      />
     </WorkProductStepToolbar>
   );
 
@@ -292,8 +392,15 @@ export function WorkProductSourcedAnalysisTab({
         <>
           <p className="text-[10px] mb-2" style={{ color: "var(--muted)" }}>
             System {builtPrompt.systemChars.toLocaleString()} chars · User {builtPrompt.userChars.toLocaleString()} chars
-            {builtPrompt.retrievalUsed ? " · retrieval-ranked pack" : ""}
+            {builtPrompt.retrievalUsed ? " · retrieval-ranked pack" : " · sequential pack (no embedding retrieval)"}
           </p>
+          {!builtPrompt.retrievalUsed ? (
+            <p className="text-[10px] mb-2" style={{ color: "var(--warn)" }}>
+              Embedding retrieval did not run — large added documents may consume up to the per-source character cap
+              instead of ranked excerpts. Add an OpenAI or Gemini key (Settings) and rebuild, or remove credit agreements
+              from KPI extras (use LME instead).
+            </p>
+          ) : null}
           <div
             className="rounded border p-3 text-xs max-h-[min(55vh,24rem)] overflow-y-auto whitespace-pre-wrap mb-3"
             style={{ borderColor: "var(--border2)", color: "var(--text)", background: "var(--card)" }}
@@ -467,11 +574,15 @@ function SourceInventoryBody({
   loading,
   noSubstantiveMessage,
   needsSignIn,
+  documentRows,
+  contextSummary,
 }: {
   data: SourceGetResponse | null;
   loading: boolean;
   noSubstantiveMessage: string;
   needsSignIn: boolean;
+  documentRows?: LmeDocumentPackedRow[] | null;
+  contextSummary?: string | null;
 }) {
   if (loading && !data) {
     return (
@@ -488,36 +599,25 @@ function SourceInventoryBody({
     );
   }
   return (
-    <>
-      <div
-        className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-x-2 border-b px-3 py-1.5 text-[9px] font-semibold sm:grid-cols-[minmax(0,1fr)_6.75rem] sm:text-[10px]"
-        style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
-      >
-        <span>Source</span>
-        <span className="text-right">Chars</span>
-      </div>
-      <ul className="max-h-40 overflow-y-auto divide-y" style={{ borderColor: "var(--border2)" }}>
-        {data.sourceInventory.map((s) => (
-          <li
-            key={`${s.label}-${s.key ?? ""}-${s.charsInitial}`}
-            className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-x-2 px-3 py-1.5 sm:grid-cols-[minmax(0,1fr)_6.75rem]"
-            style={{ color: "var(--text)" }}
-          >
-            <span className="min-w-0 truncate" title={s.label}>
-              {s.label}
-              {s.truncated ? " · truncated" : ""}
-            </span>
-            <span className="text-right font-mono text-[10px] tabular-nums sm:text-[11px]" style={{ color: "var(--muted)" }}>
-              {s.isBinaryPlaceholder ? "—" : s.charsInitial.toLocaleString()}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {!data.hasSubstantiveText && !needsSignIn ? (
-        <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
-          {noSubstantiveMessage}
-        </p>
-      ) : null}
-    </>
+    <WorkProductSourceInventoryTable
+      rows={data.sourceInventory}
+      documentRows={documentRows}
+      contextSummary={contextSummary}
+      buildPendingHint={
+        data.hasSubstantiveText && !documentRows?.length && !needsSignIn ? (
+          <p className="px-3 py-2 text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
+            Complete <strong>step 2 — Build context window</strong> to see how much of each source is included and which
+            chunks were selected.
+          </p>
+        ) : null
+      }
+      emptyHint={
+        !data.hasSubstantiveText && !needsSignIn ? (
+          <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
+            {noSubstantiveMessage}
+          </p>
+        ) : null
+      }
+    />
   );
 }

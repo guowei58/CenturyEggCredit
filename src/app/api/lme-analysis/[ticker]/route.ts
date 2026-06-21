@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { readSavedContent, writeSavedContent } from "@/lib/saved-content-hybrid";
 import { gatherLmeSources, formatSourcesForLme } from "@/lib/lme-sources";
+import { runWorkProductInventoryGather } from "@/lib/work-product-source-progress";
 import { synthesizeLmeAnalysisMarkdown } from "@/lib/lme-analysis-synthesis";
 import { resolveProvider } from "@/lib/ai-provider";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
@@ -62,7 +63,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
   }
 
   try {
-    const bundled = await gatherLmeSources(sym, undefined, userId, { useRetrieval: false, inventoryOnly: true });
+    const bundled = await runWorkProductInventoryGather({
+      userId,
+      kind: "lme",
+      ticker: sym,
+      gather: (progressKey) =>
+        gatherLmeSources(sym, undefined, userId, {
+          useRetrieval: false,
+          inventoryOnly: true,
+          progressKey,
+        }),
+    });
     const fp = bundled.sourceFingerprint;
     const meta = parseMeta(await readSavedContent(sym, "lme-analysis-meta", userId));
     const cached = (await readSavedContent(sym, "lme-analysis", userId)) ?? "";

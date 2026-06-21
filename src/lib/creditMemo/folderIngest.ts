@@ -7,7 +7,8 @@ import { extractPdfAsPlainTextForIngest, extractTickerFileForAi } from "@/lib/ti
 import { loadCreditMemoConfig } from "./config";
 import { classifySourceFilename } from "./fileClassifier";
 import type { WorkProductIngestScope } from "./workProductIngestScope";
-import { isMemoDeckLibraryWorkspacePath, workspaceFileSkippedForWorkProductIngest, buildMemoDeckIngestAllowSet } from "./workProductIngestScope";
+import { buildMemoDeckIngestAllowSet, isMemoDeckLibraryWorkspacePath, workspaceFileSkippedForWorkProductIngest } from "./workProductIngestScope";
+import { mergeMemoDeckIngestAllowSet } from "@/lib/work-product-ingest-additions";
 import type { CreditMemoProject, ExtractedTableRecord, SourceChunkRecord, SourceFileRecord } from "./types";
 import type { SourceCategory } from "./types";
 import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
@@ -153,6 +154,8 @@ export async function ingestTickerFolder(params: {
   folderAbs: string;
   /** Controls which generated tab outputs are skipped (self-referential). Default `memo`. */
   workProductIngestScope?: WorkProductIngestScope;
+  /** When set, user-selected AI Memo & Deck ingestion extras are merged into the allowlist. */
+  userId?: string | null;
 }): Promise<{ project: CreditMemoProject; warnings: string[] }> {
   const ingestScope: WorkProductIngestScope = params.workProductIngestScope ?? "memo";
   const cfg = loadCreditMemoConfig();
@@ -201,7 +204,13 @@ export async function ingestTickerFolder(params: {
 
   const memoDeckAllowSet =
     ingestScope === "memo" || ingestScope === "generic"
-      ? buildMemoDeckIngestAllowSet(files.map((f) => f.rel))
+      ? params.userId
+        ? await mergeMemoDeckIngestAllowSet(
+            files.map((f) => f.rel),
+            params.ticker,
+            params.userId
+          )
+        : buildMemoDeckIngestAllowSet(files.map((f) => f.rel))
       : undefined;
 
   for (const f of files) {

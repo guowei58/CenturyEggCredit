@@ -16,6 +16,8 @@ export type WorkProductStepToolbarProps = {
   refreshLabel?: string;
   onRefresh: () => void;
   refreshTitle?: string;
+  /** Live status while refresh is running (e.g. "Extracting 3/16: deck.pdf…"). */
+  refreshProgressDetail?: string | null;
   buildLoading?: boolean;
   buildDisabled?: boolean;
   onBuild: () => void;
@@ -39,6 +41,7 @@ export function WorkProductStepToolbar({
   refreshLabel = "Refresh sources",
   onRefresh,
   refreshTitle = "Rescan saved sources for this tab",
+  refreshProgressDetail,
   buildLoading = false,
   buildDisabled = false,
   onBuild,
@@ -106,6 +109,11 @@ export function WorkProductStepToolbar({
           </button>
         </div>
       </div>
+      {refreshLoading && refreshProgressDetail ? (
+        <p className="text-xs tabular-nums" style={{ color: "var(--muted2)" }}>
+          {refreshProgressDetail}
+        </p>
+      ) : null}
       {error ? (
         <p className="text-xs" style={{ color: "var(--danger)" }}>
           {error}

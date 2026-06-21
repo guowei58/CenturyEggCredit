@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { Card } from "@/components/ui";
@@ -11,6 +11,8 @@ import { RichPasteTextarea } from "@/components/RichPasteTextarea";
 import { TabPromptApiButtons } from "@/components/TabPromptApiButtons";
 import { TabPromptSlideOutShell } from "@/components/TabPromptSlideOutShell";
 import { WorkProductStepToolbar } from "@/components/WorkProductStepToolbar";
+import { WorkProductIngestSourcePicker } from "@/components/WorkProductIngestSourcePicker";
+import { applyWorkProductIngestPending } from "@/lib/work-product-ingest-client";
 import { SavedResponseExpandableShell, SAVED_RESPONSE_EDIT_CLASS, SAVED_RESPONSE_SHELL_CLASS, SAVED_RESPONSE_VIEW_CLASS } from "@/components/SavedResponseExpandableShell";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
@@ -638,6 +640,7 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     setResolveLoading(true);
     let success: FolderResolveResult | null = null;
     try {
+      await applyWorkProductIngestPending("memo", tk);
       const res = await fetch("/api/credit-memo/resolve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -938,6 +941,35 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     openGeminiWithClipboard(copyPrompt, setPromptStatus, setClipboardFailed);
   }
 
+  const memoContextSummary = useMemo(() => {
+    const d = lastRunGuide?.evidenceDiagnostics;
+    if (!d?.sourceRows?.length) return null;
+    const packed = d.sourceRows.reduce((s, r) => s + r.packedChars, 0);
+    const mode =
+      d.mode === "retrieval"
+        ? d.corpusChunksWereCapped
+          ? `retrieval-ranked (${d.chunksEmbedded?.toLocaleString() ?? "?"} / ${d.nonEmptyChunkCount.toLocaleString()} chunks embedded)`
+          : "retrieval-ranked"
+        : d.fallbackReason === "embed_failed"
+          ? d.fallbackDetail
+            ? `sequential (embedding failed — ${d.fallbackDetail.slice(0, 80)})`
+            : "sequential (embedding failed — quota or API error)"
+          : d.fallbackReason === "error"
+            ? d.fallbackDetail
+              ? `sequential (${d.fallbackDetail.slice(0, 80)})`
+              : "sequential (retrieval error)"
+            : d.fallbackReason === "no_embedding_key"
+              ? "sequential (no OpenAI/Gemini embedding key)"
+              : d.fallbackReason === "retrieval_disabled"
+                ? "sequential (MEMO_RETRIEVAL=0)"
+                : "sequential";
+    const parts = [`${packed.toLocaleString()} chars in context`, mode, `${d.evidenceCharCap.toLocaleString()} cap`];
+    if (d.mode === "retrieval" && typeof d.chunksInWindow === "number") {
+      parts.push(`${d.chunksInWindow} chunks selected`);
+    }
+    return parts.join(" · ");
+  }, [lastRunGuide]);
+
   const sourceToolbar = (
     <WorkProductStepToolbar
       needsSignIn={needsSignIn}
@@ -1006,6 +1038,8 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
             ingestError={ingestError}
             needsSignIn={needsSignIn}
             listMaxHeightClass="max-h-[40vh]"
+            contextSourceRows={lastRunGuide?.evidenceDiagnostics.sourceRows}
+            contextSummary={memoContextSummary}
             emptyHint={
               <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
                 No indexed files yet. Click <strong>Refresh sources</strong> after signing in, or wait for the automatic resolve on first load.
@@ -1014,6 +1048,12 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
           />
         </div>
       </details>
+      <WorkProductIngestSourcePicker
+        kind="memo"
+        ticker={tk ?? ""}
+        needsSignIn={needsSignIn}
+        refreshKey={project ? `${project.sources.length}:${project.updatedAt}` : null}
+      />
       <details className="rounded border text-xs" style={{ borderColor: "var(--border2)" }} open={panel === "template"}>
         <summary
           className="cursor-pointer px-3 py-2 font-medium"

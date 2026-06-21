@@ -26,7 +26,7 @@ import {
   type CreativeWorkspacePromptKind,
 } from "@/lib/creative-workspace-sources";
 import { gatherKpiCommentarySources, formatSourcesForKpiCommentary } from "@/lib/kpi-workspace-sources";
-import { gatherLmeSources, formatSourcesForLme } from "@/lib/lme-sources";
+import { gatherLmeSources, formatSourcesForLme, LmeRetrievalRequiredError } from "@/lib/lme-sources";
 import { buildKpiCommentaryUserMessage } from "@/lib/kpi-commentary-synthesis";
 import { buildLmeAnalysisUserMessage } from "@/lib/lme-analysis-synthesis";
 import { buildCapStructureRecommendationUserMessage } from "@/lib/cap-structure-recommendation-synthesis";
@@ -108,7 +108,8 @@ async function buildCreativeWorkspacePromptPackage(params: {
 }): Promise<{ ok: true; package: WorkProductPromptPackage } | { ok: false; error: string }> {
   const bundled = await gatherCreativeWorkspaceSources("other-memos", params.ticker, undefined, params.userId, {
     apiKeys: params.apiKeys,
-    useRetrieval: false,
+    useRetrieval: true,
+    workProductTabKind: params.kind,
   });
   if (!bundled.hasSubstantiveText) {
     return { ok: false, error: CREATIVE_NO_SOURCES_ERROR[params.kind] };
@@ -164,6 +165,23 @@ export async function buildWorkProductPromptPackage(params: {
   apiKeys: LlmCallApiKeys;
   companyName?: string;
 }): Promise<{ ok: true; package: WorkProductPromptPackage } | { ok: false; error: string }> {
+  try {
+    return await buildWorkProductPromptPackageInner(params);
+  } catch (e) {
+    if (e instanceof LmeRetrievalRequiredError) {
+      return { ok: false, error: e.message };
+    }
+    throw e;
+  }
+}
+
+async function buildWorkProductPromptPackageInner(params: {
+  kind: WorkProductPromptKind;
+  ticker: string;
+  userId: string;
+  apiKeys: LlmCallApiKeys;
+  companyName?: string;
+}): Promise<{ ok: true; package: WorkProductPromptPackage } | { ok: false; error: string }> {
   const sym = params.ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (!sym) {
     return { ok: false, error: "Invalid ticker" };
@@ -182,13 +200,13 @@ export async function buildWorkProductPromptPackage(params: {
   if (params.kind === "kpi") {
     const bundled = await gatherKpiCommentarySources(sym, undefined, params.userId, {
       apiKeys: params.apiKeys,
-      useRetrieval: false,
+      useRetrieval: true,
     });
     if (!bundled.hasSubstantiveText) {
       return {
         ok: false,
         error:
-          "No substantive KPI sources found. Save at least one management presentation or earnings transcript from Period Financials, then refresh sources.",
+          "No substantive KPI sources found. Save at least one management presentation or earnings transcript from Period Financials, and/or save a Competitor Earnings ReadThrus response, then refresh sources.",
       };
     }
     const packingStats = bundled.packingStats;
@@ -221,7 +239,7 @@ export async function buildWorkProductPromptPackage(params: {
   if (params.kind === "lme") {
     const bundled = await gatherLmeSources(sym, undefined, params.userId, {
       apiKeys: params.apiKeys,
-      useRetrieval: false,
+      useRetrieval: true,
     });
     if (!bundled.hasSubstantiveText) {
       return {
@@ -281,7 +299,7 @@ export async function buildWorkProductPromptPackage(params: {
 
   const bundled = await gatherCsRecommendationSources(sym, undefined, params.userId, {
     apiKeys: params.apiKeys,
-    useRetrieval: false,
+    useRetrieval: true,
   });
   if (!bundled.hasSubstantiveText) {
     return {

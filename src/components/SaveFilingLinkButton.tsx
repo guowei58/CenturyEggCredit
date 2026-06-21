@@ -11,6 +11,7 @@ export function SaveFilingLinkButton({
   className = "",
   mode = "filings",
   saveTitle,
+  alreadySaved,
 }: {
   ticker: string;
   url: string;
@@ -19,10 +20,12 @@ export function SaveFilingLinkButton({
   mode?: SaveRemoteUrlMode;
   /** Optional descriptive title for Saved Documents (e.g. from credit-doc list table row). */
   saveTitle?: string;
+  /** When true, show persistent Saved label (URL already in document library). */
+  alreadySaved?: boolean;
 }) {
   const safeTicker = ticker?.trim() ?? "";
   const safeUrl = url?.trim() ?? "";
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [phase, setPhase] = useState<Phase>(alreadySaved ? "ok" : "idle");
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const okTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -31,6 +34,10 @@ export function SaveFilingLinkButton({
       if (okTimer.current) clearTimeout(okTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (alreadySaved) setPhase("ok");
+  }, [alreadySaved]);
 
   const onClick = useCallback(async () => {
     if (!safeTicker || !safeUrl) return;
@@ -51,19 +58,27 @@ export function SaveFilingLinkButton({
       }
       setPhase("ok");
       okTimer.current = setTimeout(() => {
-        setPhase("idle");
+        setPhase(alreadySaved ? "ok" : "idle");
         okTimer.current = null;
       }, 2200);
     } catch (e) {
       setErrMsg(e instanceof Error ? e.message : "Save failed.");
       setPhase("err");
     }
-  }, [safeTicker, safeUrl, mode, saveTitle]);
+  }, [safeTicker, safeUrl, mode, saveTitle, alreadySaved]);
 
   if (!safeTicker || !safeUrl) return null;
 
   const label =
-    phase === "saving" ? "…" : phase === "ok" ? "Saved" : phase === "err" ? "Retry" : "Save";
+    phase === "saving"
+      ? "…"
+      : phase === "ok"
+        ? "Saved"
+        : phase === "err"
+          ? "Retry"
+          : mode === "saved-documents"
+            ? "Save Document"
+            : "Save";
 
   return (
     <button

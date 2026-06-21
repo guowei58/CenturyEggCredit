@@ -3,6 +3,13 @@
 import type { ReactNode } from "react";
 
 import type { CreditMemoProject, SourceFileRecord } from "@/lib/creditMemo/types";
+import type { MemoEvidenceSourceRow } from "@/lib/creditMemo/evidencePack";
+import {
+  sumDocumentPackedChars,
+  WorkProductSourceInventoryTable,
+  workProductRowsHaveChunkCounts,
+} from "@/components/WorkProductSourceInventoryTable";
+import type { LmeDocumentPackedRow } from "@/lib/lme-sources";
 
 /** Files actually sent to the indexed source pack — excludes Excel, oversized, memo/deck outputs, etc. */
 function sourcesShownInInventory(sources: SourceFileRecord[]): SourceFileRecord[] {
@@ -14,10 +21,20 @@ function sourceInventoryRows(project: CreditMemoProject) {
   const rows = listed.map((s) => ({
     key: s.id,
     label: s.relPath,
-    chars: s.charExtracted,
+    charsInitial: s.charExtracted,
   }));
   const totalChars = listed.reduce((acc, s) => acc + s.charExtracted, 0);
   return { rows, totalChars, listedCount: listed.length };
+}
+
+function memoSourceRowsToDocumentRows(rows: MemoEvidenceSourceRow[]): LmeDocumentPackedRow[] {
+  return rows.map((r) => ({
+    label: r.relPath,
+    file: r.relPath,
+    charsAvailable: r.charsAvailable,
+    packedChars: r.packedChars,
+    chunksInWindow: r.chunksInWindow,
+  }));
 }
 
 export type SourceInventoryPanelProps = {
@@ -31,6 +48,10 @@ export type SourceInventoryPanelProps = {
   footnote?: ReactNode;
   /** When a finite number, the header appends UTF-8 byte length of the system + user prompts last sent to the model. */
   lastModelContextUtf8Bytes?: number | null;
+  /** Per-file context window breakdown from the last Build context window run. */
+  contextSourceRows?: MemoEvidenceSourceRow[] | null;
+  /** Summary line for the last context build (mode, cap, chunks). */
+  contextSummary?: string | null;
   listMaxHeightClass?: string;
   className?: string;
 };
@@ -43,18 +64,30 @@ export function SourceInventoryPanel({
   emptyHint,
   footnote,
   lastModelContextUtf8Bytes,
+  contextSourceRows,
+  contextSummary,
   listMaxHeightClass = "max-h-48",
   className,
 }: SourceInventoryPanelProps) {
   const inv = project ? sourceInventoryRows(project) : null;
   const hasScannedFiles = Boolean(project && project.sources.length > 0);
   const hasListedFiles = Boolean(inv && inv.rows.length > 0);
+  const documentRows = contextSourceRows?.length ? memoSourceRowsToDocumentRows(contextSourceRows) : null;
+  const packedTotal = sumDocumentPackedChars(documentRows);
+  const showChunks = workProductRowsHaveChunkCounts(documentRows);
 
   const defaultEmpty = (
     <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
       No indexed files yet. Click <strong>Refresh sources</strong> after signing in, or wait for the automatic resolve on first load.
     </p>
   );
+
+  const buildPendingHint = hasListedFiles && !documentRows?.length ? (
+    <p className="px-3 py-2 text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>
+      Complete <strong>step 2 — Build context window</strong> to see how much of each file is included and which chunks were
+      selected.
+    </p>
+  ) : null;
 
   return (
     <div
@@ -72,31 +105,27 @@ export function SourceInventoryPanel({
       >
         {inv
           ? (() => {
-              const base = `Source inventory (${inv.listedCount} indexed file${inv.listedCount === 1 ? "" : "s"}, ${inv.totalChars.toLocaleString()} characters from indexed text`;
+              const base = `Source inventory (${inv.listedCount} indexed file${inv.listedCount === 1 ? "" : "s"}, ${inv.totalChars.toLocaleString()} available`;
+              const ctx =
+                documentRows?.length
+                  ? ` · ${packedTotal.toLocaleString()} in context${showChunks ? ` · ${documentRows.reduce((s, d) => s + (d.chunksInWindow ?? 0), 0)} chunks` : ""}`
+                  : "";
               if (typeof lastModelContextUtf8Bytes === "number") {
-                return `${base}. Last model prompt: ${lastModelContextUtf8Bytes.toLocaleString()} UTF-8 bytes.)`;
+                return `${base}${ctx}. Last model prompt: ${lastModelContextUtf8Bytes.toLocaleString()} UTF-8 bytes.)`;
               }
-              return `${base})`;
+              return `${base}${ctx})`;
             })()
           : "Source inventory"}
       </div>
       {inv && hasListedFiles ? (
-        <ul className={`${listMaxHeightClass} overflow-y-auto divide-y`} style={{ borderColor: "var(--border2)" }}>
-          {inv.rows.map((s) => (
-            <li
-              key={s.key}
-              className="px-3 py-1.5 flex justify-between gap-2"
-              style={{ color: "var(--text)" }}
-            >
-              <span className="min-w-0 truncate font-mono text-[11px]" title={s.label}>
-                {s.label}
-              </span>
-              <span className="font-mono flex-shrink-0 text-[11px]" style={{ color: "var(--muted)" }}>
-                {s.chars.toLocaleString()}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className={listMaxHeightClass.includes("max-h") ? listMaxHeightClass : `${listMaxHeightClass} overflow-y-auto`}>
+          <WorkProductSourceInventoryTable
+            rows={inv.rows}
+            documentRows={documentRows}
+            contextSummary={contextSummary}
+            buildPendingHint={buildPendingHint}
+          />
+        </div>
       ) : null}
       {inv && hasScannedFiles && !hasListedFiles ? (
         <p className="px-3 py-2 text-[11px]" style={{ color: "var(--muted)" }}>
@@ -118,8 +147,8 @@ export function SourceInventoryPanel({
       ) : null}
       {project && hasScannedFiles ? (
         <p className="px-3 py-2 text-[11px] border-t" style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}>
-          {inv?.listedCount ?? 0} indexed file{(inv?.listedCount ?? 0) === 1 ? "" : "s"} — {project.chunks.length} chunks. Warnings:{" "}
-          {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
+          {inv?.listedCount ?? 0} indexed file{(inv?.listedCount ?? 0) === 1 ? "" : "s"} — {project.chunks.length} ingest
+          chunks. Warnings: {project.ingestWarnings?.length ? project.ingestWarnings.join("; ") : "none"}
         </p>
       ) : null}
       {footnote ? (

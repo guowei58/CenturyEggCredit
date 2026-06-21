@@ -4,7 +4,10 @@ import type { LmeUserMessageCharBreakdown } from "@/lib/lme-analysis-synthesis";
 import type { CreditMemoEvidenceDiagnostics } from "@/lib/creditMemo/kpiRetrieval";
 import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "@/lib/creditMemo/chunkConstants";
 
-function fallbackReasonLabel(r: CreditMemoEvidenceDiagnostics["fallbackReason"]): string {
+function fallbackReasonLabel(
+  r: CreditMemoEvidenceDiagnostics["fallbackReason"],
+  detail?: string
+): string {
   switch (r) {
     case "retrieval_disabled":
       return "Sequential pack (default; set MEMO_RETRIEVAL=1 for ranked chunks)";
@@ -15,11 +18,13 @@ function fallbackReasonLabel(r: CreditMemoEvidenceDiagnostics["fallbackReason"])
     case "no_chunks":
       return "No text chunks after ingest";
     case "embed_failed":
-      return "Embedding API failed or returned no query vector";
+      return detail
+        ? `Embedding API failed — ${detail.slice(0, 180)}`
+        : "Embedding API failed or returned no query vector";
     case "empty_window":
       return "Ranked window empty (unexpected)";
     case "error":
-      return "Exception during ranked pack";
+      return detail ? `Exception — ${detail.slice(0, 180)}` : "Exception during ranked pack";
     default:
       return "—";
   }
@@ -119,7 +124,7 @@ function RunGuideBody({ run }: { run: MemoDeckRunGuideState }) {
                     <span style={{ color: "var(--accent)" }}>Ranked pack</span>
                   ) : (
                     <span style={{ color: "var(--muted)" }}>
-                      Sequential — {d.fallbackReason ? fallbackReasonLabel(d.fallbackReason) : "—"}
+                      Sequential — {d.fallbackReason ? fallbackReasonLabel(d.fallbackReason, d.fallbackDetail) : "—"}
                     </span>
                   )}
                 </td>

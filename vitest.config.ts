@@ -59,6 +59,7 @@ export default defineConfig({
       "src/lib/sec-self-diagnostic-checklist.test.ts",
       "src/lib/sec-xbrl-is-presentation-filter.test.ts",
       "src/lib/creditMemo/**/*.test.ts",
+      "src/lib/change-log/**/*.test.ts",
       "src/lib/bulk-credit-doc-match.test.ts",
       "src/lib/bulk-earnings-package.test.ts",
       "src/lib/bulk-update-preflight.test.ts",

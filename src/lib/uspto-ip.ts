@@ -243,12 +243,18 @@ export function patentNumberToGooglePatentsUrl(patentNumber: string | null | und
   return `https://patents.google.com/patent/US${n}`;
 }
 
-export async function searchOdpPatentApplications(
+/** Default ODP patent search page size — kept small to stay under USPTO's ~6MB response cap. */
+export const ODP_PATENT_SEARCH_PAGE_SIZE = 10;
+
+async function fetchOdpPatentApplicationsPage(
   apiKey: string,
   query: string,
   offset: number,
   limit: number
-): Promise<{ total: number; hits: OdpPatentHit[] }> {
+): Promise<
+  | { ok: true; total: number; hits: OdpPatentHit[] }
+  | { ok: false; status: number; body: string }
+> {
   const capped = Math.min(Math.max(limit, 1), 50);
   // Official ODP path (see PEDS→ODP mapping): /patent/applications/search — not patent-applications.
   const res = await fetch("https://api.uspto.gov/api/v1/patent/applications/search", {
@@ -271,16 +277,40 @@ export async function searchOdpPatentApplications(
     const t = await res.text().catch(() => "");
     /** ODP returns HTTP 404 with a JSON body when the query matches no applications — not a transport error. */
     if (res.status === 404 && /no matching record/i.test(t)) {
-      return { total: 0, hits: [] };
+      return { ok: true, total: 0, hits: [] };
     }
-    throw new Error(`USPTO ODP patent search failed (${res.status}): ${t.slice(0, 280)}`);
+    return { ok: false, status: res.status, body: t };
   }
 
   const data = (await res.json()) as Record<string, unknown>;
   const rows = extractOdpSearchRows(data);
   const hits: OdpPatentHit[] = rows.map(normalizeOdpSearchRow);
 
-  return { total: extractOdpTotalCount(data, hits.length), hits };
+  return { ok: true, total: extractOdpTotalCount(data, hits.length), hits };
+}
+
+export async function searchOdpPatentApplications(
+  apiKey: string,
+  query: string,
+  offset: number,
+  limit: number
+): Promise<{ total: number; hits: OdpPatentHit[] }> {
+  let pageSize = Math.min(Math.max(limit, 1), 50);
+
+  while (pageSize >= 1) {
+    const result = await fetchOdpPatentApplicationsPage(apiKey, query, offset, pageSize);
+    if (result.ok) {
+      return { total: result.total, hits: result.hits };
+    }
+    /** USPTO rejects oversized JSON responses; halve page size and retry so pagination can still reach every row. */
+    if (result.status === 413 && pageSize > 1) {
+      pageSize = Math.max(1, Math.floor(pageSize / 2));
+      continue;
+    }
+    throw new Error(`USPTO ODP patent search failed (${result.status}): ${result.body.slice(0, 280)}`);
+  }
+
+  throw new Error("USPTO ODP patent search failed.");
 }
 
 /**

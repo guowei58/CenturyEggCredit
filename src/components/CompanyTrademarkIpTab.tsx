@@ -5,7 +5,7 @@ import { SaveFilingLinkButton } from "@/components/SaveFilingLinkButton";
 import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
 import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
 import { Card, DataTable } from "@/components/ui";
-import { formatOdpPatentQueryString } from "@/lib/uspto-ip";
+import { formatOdpPatentQueryString, ODP_PATENT_SEARCH_PAGE_SIZE } from "@/lib/uspto-ip";
 import { confidenceLevelColors, matchConfidenceFromQuery } from "@/lib/matchConfidenceFromQuery";
 
 type Links = {
@@ -69,8 +69,6 @@ type ApiErr = {
   odpSignup?: string;
 };
 
-const ODP_PAGE_LIMIT = 50;
-
 function ellipsize(s: string, max: number): string {
   const t = s.replace(/\s+/g, " ").trim();
   if (t.length <= max) return t;
@@ -107,7 +105,7 @@ export function CompanyTrademarkIpTab({
         const u = new URL(`/api/uspto-ip/${encodeURIComponent(safeTicker)}`, window.location.origin);
         if (qParam?.trim()) u.searchParams.set("q", qParam.trim());
         u.searchParams.set("offset", "0");
-        u.searchParams.set("limit", String(ODP_PAGE_LIMIT));
+        u.searchParams.set("limit", String(ODP_PATENT_SEARCH_PAGE_SIZE));
         const res = await fetch(u.toString(), { cache: "no-store" });
         const body = (await res.json()) as ApiOk | ApiErr;
         if (!res.ok || body.ok !== true) {
@@ -143,7 +141,7 @@ export function CompanyTrademarkIpTab({
       const u = new URL(`/api/uspto-ip/${encodeURIComponent(safeTicker)}`, window.location.origin);
       if (pagingQ) u.searchParams.set("q", pagingQ);
       u.searchParams.set("offset", String(odpPatentRows.length));
-      u.searchParams.set("limit", String(ODP_PAGE_LIMIT));
+      u.searchParams.set("limit", String(ODP_PATENT_SEARCH_PAGE_SIZE));
       const res = await fetch(u.toString(), { cache: "no-store" });
       const body = (await res.json()) as ApiOk | ApiErr;
       if (!res.ok || body.ok !== true) {
@@ -151,6 +149,7 @@ export function CompanyTrademarkIpTab({
         setError(e.error || `Request failed (HTTP ${res.status}).`);
         return;
       }
+      if (body.odpPatents.length === 0) return;
       setOdpPatentRows((prev) => [...prev, ...body.odpPatents]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load more.");
@@ -172,7 +171,7 @@ export function CompanyTrademarkIpTab({
     notes.unshift(`Query: "${payload.queryUsed}".`);
     if (payload.odpConfigured) {
       notes.push(
-        `ODP patent applications: ${odpPatentRows.length.toLocaleString()} loaded of ${payload.totalOdp.toLocaleString()} match(es) in index.`,
+        `ODP patent applications: ${odpPatentRows.length.toLocaleString()} loaded of ${payload.totalOdp.toLocaleString()} match(es) in index. Use Next page to load the rest (${ODP_PATENT_SEARCH_PAGE_SIZE} per request).`,
       );
       if (payload.patentsViewConfigured) {
         notes.push(
@@ -340,7 +339,7 @@ export function CompanyTrademarkIpTab({
               >
                 {loadingMoreOdp
                   ? "Loading…"
-                  : `Load more (${odpPatentRows.length.toLocaleString()} of ${payload.totalOdp.toLocaleString()} loaded)`}
+                  : `Next page (${odpPatentRows.length.toLocaleString()} of ${payload.totalOdp.toLocaleString()} shown)`}
               </button>
             </div>
           )}

@@ -9,6 +9,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { withTransientPgRetry } from "@/lib/pg-connection-retry";
 import { WORKSPACE_GLOBAL_TICKER } from "@/lib/user-ticker-workspace-constants";
 import {
   workspaceDeleteFile,
@@ -17,6 +18,7 @@ import {
 } from "@/lib/user-ticker-workspace-store";
 import { DEFAULT_EMBEDDING_DIMENSIONS, DEFAULT_EMBEDDING_MODEL } from "@/lib/openai-embeddings";
 import {
+  embedKpiBatchForRetrieval,
   embedTextsForKpiRetrieval,
   hasAnyKpiEmbeddingKey,
   resolveKpiEmbeddingBackendMetadata,
@@ -24,7 +26,7 @@ import {
 } from "@/lib/kpi-embedding-provider";
 import type { LlmCallApiKeys } from "@/lib/user-llm-keys";
 import type { CreditMemoProject, SourceChunkRecord } from "./types";
-import { buildEvidencePackSync } from "./evidencePack";
+import { buildEvidencePackSync, computeMemoEvidenceSourceRows } from "./evidencePack";
 import { MEMO_DECK_CONTEXT_MAX_CHARS } from "./config";
 import { sortSourcesForEvidence } from "./memoPlanner";
 import { CREDIT_MEMO_CHUNK_MAX_CHARS, CREDIT_MEMO_CHUNK_OVERLAP_CHARS } from "./chunkConstants";
@@ -48,7 +50,67 @@ type StoredEmbeddings = {
   dimensions: number;
   projectUpdatedAt: string;
   vectors: Record<string, number[]>;
+  /** Chunk ids embedded in this cache row (supports partial/resume). */
+  embeddedChunkIds?: string[];
 };
+
+/** Cap total chunks embedded for memo/KPI retrieval (corpus order; at least one chunk per source preserved). */
+export function memoEmbedMaxChunks(): number {
+  return parseEnvInt("MEMO_EMBED_MAX_CHUNKS", 5_000, 200, 25_000);
+}
+
+function memoEmbedBatchSize(): number {
+  return parseEnvInt("MEMO_EMBED_BATCH_SIZE", 64, 8, 128);
+}
+
+/** Persist partial cache every N embedding batches during long runs. */
+function memoEmbedSaveEveryBatches(): number {
+  return parseEnvInt("MEMO_EMBED_SAVE_EVERY_BATCHES", 4, 1, 32);
+}
+
+/**
+ * When the corpus exceeds `maxChunks`, keep at least one chunk per source file in the embed
+ * batch so no ingested file is excluded from embedding entirely.
+ */
+export function capMemoChunksPreservingEachSource(
+  chunks: SourceChunkRecord[],
+  maxChunks: number
+): { capped: SourceChunkRecord[]; corpusChunksWereCapped: boolean } {
+  if (chunks.length <= maxChunks) {
+    return { capped: chunks, corpusChunksWereCapped: false };
+  }
+
+  const bySource = new Map<string, SourceChunkRecord[]>();
+  for (const c of chunks) {
+    if (!bySource.has(c.sourceFileId)) bySource.set(c.sourceFileId, []);
+    bySource.get(c.sourceFileId)!.push(c);
+  }
+
+  const reserved: SourceChunkRecord[] = [];
+  const reservedIds = new Set<string>();
+  for (const sourceChunks of bySource.values()) {
+    sourceChunks.sort((a, b) => a.chunkIndex - b.chunkIndex);
+    const first = sourceChunks[0]!;
+    if (!reservedIds.has(first.id)) {
+      reserved.push(first);
+      reservedIds.add(first.id);
+    }
+  }
+
+  if (reserved.length >= maxChunks) {
+    return { capped: reserved.slice(0, maxChunks), corpusChunksWereCapped: true };
+  }
+
+  const tail: SourceChunkRecord[] = [];
+  for (const c of chunks) {
+    if (!reservedIds.has(c.id)) tail.push(c);
+  }
+
+  return {
+    capped: [...reserved, ...tail.slice(0, maxChunks - reserved.length)],
+    corpusChunksWereCapped: true,
+  };
+}
 
 function storagePath(projectId: string): string {
   const safe = projectId.replace(/[^a-zA-Z0-9_-]/g, "_");
@@ -80,12 +142,13 @@ export function isKpiRetrievalEnabled(): boolean {
 }
 
 /**
- * AI Memo & Deck: sequential packing of all ingested memo-scope sources up to 400K chars.
- * Set `MEMO_RETRIEVAL=1` to rank chunks by embedding similarity instead (smaller, query-focused window).
+ * AI Memo & Deck: embedding-ranked chunks by default (memo title + outline as query).
+ * Set `MEMO_RETRIEVAL=0` to pack all ingested sources sequentially instead.
  */
 export function isMemoRetrievalEnabled(): boolean {
   const v = process.env.MEMO_RETRIEVAL?.trim().toLowerCase();
-  return v === "1" || v === "true" || v === "on";
+  if (v === "0" || v === "false" || v === "off") return false;
+  return true;
 }
 
 /** Ranked chunk body budget when `MEMO_RETRIEVAL=1` and embeddings succeed. */
@@ -123,15 +186,68 @@ async function loadStored(userId: string, projectId: string): Promise<StoredEmbe
 
 async function saveStored(userId: string, projectId: string, data: StoredEmbeddings): Promise<void> {
   const json = JSON.stringify(data, null, 0);
-  /** Embedding API calls can run many minutes with no DB traffic; pooled TLS sockets may be dead. Warm before the large upsert. */
-  try {
-    await prisma.$connect();
-  } catch {
-    /* write path will surface real errors */
-  }
-  const w = await workspaceWriteUtf8(userId, WORKSPACE_GLOBAL_TICKER, storagePath(projectId), json);
-  if (!w.ok) throw new Error(w.error);
+  await withTransientPgRetry(
+    "kpiEmbeddingsSave",
+    async () => {
+      /** Long embed runs idle the pool; warm before the large upsert. */
+      try {
+        await prisma.$connect();
+      } catch {
+        /* retry wrapper surfaces real errors */
+      }
+      const w = await workspaceWriteUtf8(userId, WORKSPACE_GLOBAL_TICKER, storagePath(projectId), json);
+      if (!w.ok) throw new Error(w.error);
+    },
+    { retries: 10, baseDelayMs: 500 }
+  );
 }
+
+/** Best-effort cache write — never throws; retrieval can proceed with in-memory vectors. */
+async function trySaveStored(userId: string, projectId: string, data: StoredEmbeddings): Promise<boolean> {
+  try {
+    await saveStored(userId, projectId, data);
+    return true;
+  } catch (e) {
+    console.warn(
+      "[kpiRetrieval] embedding cache write failed:",
+      e instanceof Error ? e.message : e
+    );
+    return false;
+  }
+}
+
+async function pingPgDuringLongJob(): Promise<void> {
+  try {
+    await withTransientPgRetry("kpiEmbeddingsPing", () => prisma.$queryRaw`SELECT 1`, {
+      retries: 2,
+      baseDelayMs: 200,
+    });
+  } catch {
+    /* non-fatal — save path has its own retries */
+  }
+}
+
+function storedMatchesBackend(
+  existing: StoredEmbeddings,
+  backend: { provider: KpiEmbeddingProviderId; model: string; dimensions: number },
+  projectUpdatedAt: string
+): boolean {
+  return (
+    existing.projectUpdatedAt === projectUpdatedAt &&
+    existing.dimensions === backend.dimensions &&
+    (existing.embeddingProvider ?? "openai") === backend.provider &&
+    existing.embeddingModel === backend.model
+  );
+}
+
+export type EnsureKpiChunkEmbeddingsResult = {
+  vectors: Record<string, number[]> | null;
+  error?: string;
+  cacheSaved?: boolean;
+  chunksEmbedded?: number;
+  chunksEmbedCap?: number;
+  corpusChunksWereCapped?: boolean;
+};
 
 export async function deleteKpiEmbeddingsFile(userId: string, projectId: string): Promise<void> {
   await workspaceDeleteFile(userId, WORKSPACE_GLOBAL_TICKER, storagePath(projectId));
@@ -139,56 +255,115 @@ export async function deleteKpiEmbeddingsFile(userId: string, projectId: string)
 
 /**
  * Ensure we have one embedding vector per chunk (keyed by chunk id). Recomputes when project
- * `updatedAt` changes or counts mismatch.
+ * `updatedAt` changes or counts mismatch. Embeds incrementally with partial cache saves so a
+ * stale Postgres connection after a long run does not discard all vectors.
  */
 export async function ensureKpiChunkEmbeddings(
   userId: string,
   project: CreditMemoProject,
   apiKeys: LlmCallApiKeys | undefined
-): Promise<Record<string, number[]> | null> {
+): Promise<EnsureKpiChunkEmbeddingsResult> {
   const backend = resolveKpiEmbeddingBackendMetadata(apiKeys);
-  if (!backend) return null;
+  if (!backend) return { vectors: null, error: "No embedding API key configured." };
 
-  const chunks = project.chunks.filter((c) => c.text.trim().length > 0);
-  if (chunks.length === 0) return null;
+  const allChunks = project.chunks.filter((c) => c.text.trim().length > 0);
+  if (allChunks.length === 0) return { vectors: null, error: "No non-empty ingest chunks." };
+
+  const maxChunks = memoEmbedMaxChunks();
+  const { capped, corpusChunksWereCapped } = capMemoChunksPreservingEachSource(allChunks, maxChunks);
+  if (corpusChunksWereCapped) {
+    console.warn(
+      `[kpiRetrieval] capping embed corpus ${allChunks.length} → ${capped.length} (MEMO_EMBED_MAX_CHUNKS); at least one chunk per source preserved`
+    );
+  }
 
   const existing = await loadStored(userId, project.id);
-  if (
-    existing &&
-    existing.projectUpdatedAt === project.updatedAt &&
-    existing.dimensions === backend.dimensions &&
-    (existing.embeddingProvider ?? "openai") === backend.provider &&
-    existing.embeddingModel === backend.model &&
-    chunks.every((c) => existing.vectors[c.id]?.length)
-  ) {
-    return existing.vectors;
+  const vectors: Record<string, number[]> =
+    existing && storedMatchesBackend(existing, backend, project.updatedAt)
+      ? { ...existing.vectors }
+      : {};
+
+  if (capped.every((c) => vectors[c.id]?.length)) {
+    return {
+      vectors,
+      cacheSaved: true,
+      chunksEmbedded: capped.length,
+      chunksEmbedCap: maxChunks,
+      corpusChunksWereCapped,
+    };
   }
 
-  const texts = chunks.map((c) => c.text.slice(0, 30_000));
-  const res = await embedTextsForKpiRetrieval(texts, apiKeys, {
-    model: DEFAULT_EMBEDDING_MODEL,
-    dimensions: DEFAULT_EMBEDDING_DIMENSIONS,
-    batchSize: 64,
-  });
-  if (!res.ok) {
-    console.error("[kpiRetrieval] embedding failed:", res.error);
-    return null;
-  }
+  const batchSize = memoEmbedBatchSize();
+  const saveEvery = memoEmbedSaveEveryBatches();
+  let batchesSinceSave = 0;
+  let cacheSaved = Boolean(existing && storedMatchesBackend(existing, backend, project.updatedAt));
+  let lastError: string | undefined;
 
-  const vectors: Record<string, number[]> = {};
-  chunks.forEach((c, i) => {
-    vectors[c.id] = res.vectors[i]!;
-  });
-
-  await saveStored(userId, project.id, {
-    embeddingProvider: res.provider,
-    embeddingModel: res.model,
-    dimensions: res.dimensions,
+  const cachePayload = (): StoredEmbeddings => ({
+    embeddingProvider: backend.provider,
+    embeddingModel: backend.model,
+    dimensions: backend.dimensions,
     projectUpdatedAt: project.updatedAt,
     vectors,
+    embeddedChunkIds: Object.keys(vectors),
   });
 
-  return vectors;
+  for (let i = 0; i < capped.length; i += batchSize) {
+    const batchChunks = capped.slice(i, i + batchSize).filter((c) => !vectors[c.id]?.length);
+    if (batchChunks.length === 0) continue;
+
+    const texts = batchChunks.map((c) => c.text.slice(0, 30_000));
+    const res = await embedKpiBatchForRetrieval(texts, apiKeys, backend, { timeoutMs: 120_000 });
+    if (!res.ok) {
+      lastError = res.error;
+      console.error("[kpiRetrieval] embedding batch failed:", res.error);
+      await trySaveStored(userId, project.id, cachePayload());
+      const embedded = Object.keys(vectors).length;
+      return {
+        vectors: embedded > 0 ? vectors : null,
+        error: res.error,
+        cacheSaved: false,
+        chunksEmbedded: embedded,
+        chunksEmbedCap: maxChunks,
+        corpusChunksWereCapped,
+      };
+    }
+
+    batchChunks.forEach((c, j) => {
+      vectors[c.id] = res.vectors[j]!;
+    });
+    batchesSinceSave++;
+
+    const isLastBatch = i + batchSize >= capped.length;
+    if (batchesSinceSave >= saveEvery || isLastBatch) {
+      cacheSaved = (await trySaveStored(userId, project.id, cachePayload())) || cacheSaved;
+      batchesSinceSave = 0;
+      await pingPgDuringLongJob();
+    }
+  }
+
+  if (!capped.every((c) => vectors[c.id]?.length)) {
+    return {
+      vectors: null,
+      error: lastError ?? "Incomplete embedding batch",
+      cacheSaved,
+      chunksEmbedded: Object.keys(vectors).length,
+      chunksEmbedCap: maxChunks,
+      corpusChunksWereCapped,
+    };
+  }
+
+  if (!cacheSaved) {
+    cacheSaved = await trySaveStored(userId, project.id, cachePayload());
+  }
+
+  return {
+    vectors,
+    cacheSaved,
+    chunksEmbedded: capped.length,
+    chunksEmbedCap: maxChunks,
+    corpusChunksWereCapped,
+  };
 }
 
 export async function embedKpiQuery(apiKeys: LlmCallApiKeys | undefined): Promise<number[] | null> {
@@ -218,8 +393,9 @@ export async function embedCreditMemoRetrievalQuery(
 }
 
 /**
- * Pick chunks by cosine similarity to queryVec, then greedily pack by score until maxChars
- * (including synthetic block overhead).
+ * Pick chunks by cosine similarity to queryVec.
+ * Phase 1 reserves each source file's best-scoring chunk so no ingested file is omitted entirely.
+ * Phase 2 fills remaining budget by score.
  */
 export function selectChunksForKpiEvidence(
   project: CreditMemoProject,
@@ -229,23 +405,44 @@ export function selectChunksForKpiEvidence(
 ): SourceChunkRecord[] {
   const q = l2normalize(queryVec);
   const scored: { chunk: SourceChunkRecord; score: number }[] = [];
+  const bestBySource = new Map<string, { chunk: SourceChunkRecord; score: number }>();
   for (const c of project.chunks) {
     const v = vectors[c.id];
     if (!v?.length) continue;
-    const s = dot(q, l2normalize(v));
-    scored.push({ chunk: c, score: s });
+    const score = dot(q, l2normalize(v));
+    scored.push({ chunk: c, score });
+    const prev = bestBySource.get(c.sourceFileId);
+    if (!prev || score > prev.score) bestBySource.set(c.sourceFileId, { chunk: c, score });
   }
   scored.sort((a, b) => b.score - a.score);
 
   const picked: SourceChunkRecord[] = [];
+  const pickedIds = new Set<string>();
   let used = 0;
   const overheadPerBlock = 120;
+
+  const tryPick = (chunk: SourceChunkRecord): boolean => {
+    if (pickedIds.has(chunk.id)) return false;
+    const add = chunk.text.length + overheadPerBlock;
+    if (used + add > maxEvidenceChars && picked.length > 0) return false;
+    picked.push(chunk);
+    pickedIds.add(chunk.id);
+    used += add;
+    return true;
+  };
+
+  const guaranteed = [...bestBySource.values()].sort((a, b) => b.score - a.score);
+  for (const { chunk } of guaranteed) {
+    tryPick(chunk);
+  }
+
   for (const { chunk } of scored) {
+    if (pickedIds.has(chunk.id)) continue;
     const add = chunk.text.length + overheadPerBlock;
     if (used + add > maxEvidenceChars && picked.length > 0) break;
-    picked.push(chunk);
-    used += add;
+    tryPick(chunk);
   }
+
   return picked;
 }
 
@@ -304,13 +501,25 @@ export type CreditMemoEvidenceDiagnostics = {
   retrievalQueryChars: number;
   queryEmbeddedChars: number;
   fallbackReason?: "retrieval_disabled" | "no_embedding_key" | "no_user" | "no_chunks" | "embed_failed" | "empty_window" | "error";
+  /** Human-readable detail when fallbackReason is embed_failed or error. */
+  fallbackDetail?: string;
   embeddingProvider?: KpiEmbeddingProviderId;
   embeddingModel?: string;
   embeddingDimensions?: number;
   chunksEmbedded?: number;
+  /** Max chunks considered for embedding (MEMO_EMBED_MAX_CHUNKS). */
+  chunksEmbedCap?: number;
+  corpusChunksWereCapped?: boolean;
   chunksInWindow?: number;
   rankingQueryLines: string[];
   documentsInWindow: Array<{ relPath: string; chunkCount: number }>;
+  /** Per indexed file: available text, chars packed into the last context window, chunk count. */
+  sourceRows: Array<{
+    relPath: string;
+    charsAvailable: number;
+    packedChars: number;
+    chunksInWindow: number;
+  }>;
 };
 
 export type CreditMemoEvidencePackResult = {
@@ -361,7 +570,11 @@ export async function resolveCreditMemoEvidencePack(params: {
   const qEmb = Math.min(30_000, qLen);
   const lines = rankingQueryLinesFromMemoQuery(query);
   const rawSourceCharsSum = projectRawSourceCharsSum(project);
-  const seqFallback = (evidence: string, reason: NonNullable<CreditMemoEvidenceDiagnostics["fallbackReason"]>): CreditMemoEvidencePackResult => {
+  const seqFallback = (
+    evidence: string,
+    reason: NonNullable<CreditMemoEvidenceDiagnostics["fallbackReason"]>,
+    detail?: string
+  ): CreditMemoEvidencePackResult => {
     const cap = memoFallbackMaxEvidenceChars();
     return {
       evidence,
@@ -378,8 +591,10 @@ export async function resolveCreditMemoEvidencePack(params: {
         retrievalQueryChars: qLen,
         queryEmbeddedChars: qEmb,
         fallbackReason: reason,
+        fallbackDetail: detail,
         rankingQueryLines: lines,
         documentsInWindow: [],
+        sourceRows: computeMemoEvidenceSourceRows(project, evidence),
       },
     };
   };
@@ -420,7 +635,8 @@ export async function resolveCreditMemoEvidencePack(params: {
   const backend = resolveKpiEmbeddingBackendMetadata(apiKeys);
 
   try {
-    const vectors = await ensureKpiChunkEmbeddings(userId, project, apiKeys);
+    const embedResult = await ensureKpiChunkEmbeddings(userId, project, apiKeys);
+    const vectors = embedResult.vectors;
     const qVec = await embedCreditMemoRetrievalQuery(query, apiKeys);
     if (!vectors || !qVec) {
       const evidence = buildEvidencePackSync(project, {
@@ -428,11 +644,15 @@ export async function resolveCreditMemoEvidencePack(params: {
         query,
         memoDeckOrder: true,
       });
-      return seqFallback(evidence, "embed_failed");
+      return seqFallback(
+        evidence,
+        "embed_failed",
+        embedResult.error ?? (qVec ? undefined : "Query embedding returned no vector.")
+      );
     }
     const cap = memoRetrievalMaxEvidenceChars();
     const picked = selectChunksForKpiEvidence(project, vectors, qVec, cap);
-    const chunksEmbedded = Object.keys(vectors).length;
+    const chunksEmbedded = embedResult.chunksEmbedded ?? Object.keys(vectors).length;
     if (picked.length === 0) {
       const evidence = buildEvidencePackSync(project, {
         maxChars: memoFallbackMaxEvidenceChars(),
@@ -446,6 +666,8 @@ export async function resolveCreditMemoEvidencePack(params: {
       picked,
       "retrieval — ranked chunks for credit memo / deck outline (embeddings)"
     );
+    const docsInWindow = documentsInWindowFromPicked(project, picked);
+    const chunkCountsByPath = new Map(docsInWindow.map((d) => [d.relPath, d.chunkCount]));
     return {
       evidence,
       retrievalUsed: true,
@@ -461,21 +683,25 @@ export async function resolveCreditMemoEvidencePack(params: {
         retrievalQueryChars: qLen,
         queryEmbeddedChars: qEmb,
         rankingQueryLines: lines,
-        documentsInWindow: documentsInWindowFromPicked(project, picked),
+        documentsInWindow: docsInWindow,
+        sourceRows: computeMemoEvidenceSourceRows(project, evidence, chunkCountsByPath),
         embeddingProvider: backend?.provider,
         embeddingModel: backend?.model,
         embeddingDimensions: backend?.dimensions,
         chunksEmbedded,
+        chunksEmbedCap: embedResult.chunksEmbedCap,
+        corpusChunksWereCapped: embedResult.corpusChunksWereCapped,
         chunksInWindow: picked.length,
       },
     };
   } catch (e) {
-    console.error("[memoRetrieval] ranked pack failed:", e instanceof Error ? e.message : e);
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("[memoRetrieval] ranked pack failed:", msg);
     const evidence = buildEvidencePackSync(project, {
       maxChars: memoFallbackMaxEvidenceChars(),
       query,
       memoDeckOrder: true,
     });
-    return seqFallback(evidence, "error");
+    return seqFallback(evidence, "error", msg.slice(0, 500));
   }
 }

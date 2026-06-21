@@ -1,12 +1,12 @@
 /**
- * KPI Commentary source pack: Saved Documents only, limited to Period Financials
- * management presentations and earnings transcripts. This keeps the KPI tab focused
- * on the curated investor materials the user explicitly saved from Period Financials.
+ * KPI Commentary source pack: Period Financials management presentations and earnings
+ * transcripts from Saved Documents, plus the saved Competitor Earnings ReadThrus tab response.
  */
 
 import { loadCreditMemoConfig } from "@/lib/creditMemo/config";
 import { CREDIT_AGREEMENTS_SAVED_KEYS } from "@/lib/covenant-sources";
 import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
+import { readSavedContent } from "@/lib/saved-content-hybrid";
 import { listAllUserSavedDocumentsBodiesForIngest } from "@/lib/user-workspace-store";
 import { extractBytesForAi } from "@/lib/ticker-file-text-extract";
 import { tierForExtractedBody } from "@/lib/lme-tier-classify";
@@ -21,6 +21,11 @@ import {
   type LmeSourcePart,
   type LmeRunPackingStats,
 } from "@/lib/lme-sources";
+import { collectWorkProductRawDocumentsWithAdditions } from "@/lib/work-product-ingest-additions";
+import {
+  runExtractLoop,
+  type SourceGatherProgressReporter,
+} from "@/lib/work-product-source-progress-reporter";
 
 /** App-internal embedding caches (vector JSON — not research text). Sync with `lme-retrieval.ts` / `kpiRetrieval.ts` STORAGE_PREFIX. */
 const INTERNAL_EMBEDDING_WORKSPACE_PREFIXES = [
@@ -169,12 +174,20 @@ function nextKpiDocId(): string {
   return `kpi-${kpiDocCounter.toString(36)}`;
 }
 
+const KPI_SAVED_TAB_KEYS: ReadonlyArray<{ key: string; label: string }> = [
+  { key: "competitor-earnings-readthrus", label: "Competitor Earnings ReadThrus — Saved response" },
+];
+
 /**
- * Raw documents for KPI: Saved Documents containing Period Financials management
- * presentations or earnings transcripts.
+ * Raw documents for KPI: saved Competitor Earnings ReadThrus response plus Saved Documents
+ * containing Period Financials management presentations or earnings transcripts.
  * Requires `userId` for anything beyond an empty list.
  */
-export async function collectKpiCommentaryRawDocuments(ticker: string, userId?: string | null): Promise<LmeRawDocument[]> {
+export async function collectKpiCommentaryRawDocuments(
+  ticker: string,
+  userId?: string | null,
+  reporter?: SourceGatherProgressReporter
+): Promise<LmeRawDocument[]> {
   kpiDocCounter = 0;
   const out: LmeRawDocument[] = [];
   let seq = 0;
@@ -194,36 +207,58 @@ export async function collectKpiCommentaryRawDocuments(ticker: string, userId?: 
   const sym = sanitizeTicker(ticker);
   if (!userId || !sym) return out.sort((a, b) => a.tier - b.tier || a.seq - b.seq);
 
+  for (const { key, label } of KPI_SAVED_TAB_KEYS) {
+    const raw = (await readSavedContent(ticker, key, userId))?.trim() ?? "";
+    if (!raw) continue;
+    const fn = SAVED_DATA_FILES[key as keyof typeof SAVED_DATA_FILES];
+    const tier = tierForExtractedBody(fn, raw);
+    push({
+      tier,
+      label,
+      key,
+      file: fn,
+      raw,
+    });
+  }
+
   const maxBytes = loadCreditMemoConfig().maxIngestFileBytes;
 
+  reporter?.({ phase: "loading", detail: "Loading saved document bodies…", done: 0, total: 0 });
   const savedDocs = await listAllUserSavedDocumentsBodiesForIngest(userId, sym);
+  const extractItems: Array<{ label: string; run: () => Promise<void> }> = [];
   for (const { filename, body } of savedDocs) {
     const fn = filename.trim();
     if (!fn) continue;
     if (body.length > maxBytes) continue;
     if (isWorkspaceSpreadsheetFilename(fn)) continue;
     if (!isKpiPeriodFinancialsSourceFilename(fn)) continue;
-    try {
-      const extracted = (await extractBytesForAi(fn, body)).trim();
-      if (!extracted) continue;
-      const tier = tierForExtractedBody(fn, extracted);
-      push({
-        tier,
-        label: `Saved Documents — ${fn}`,
-        file: fn,
-        raw: extracted,
-      });
-    } catch {
-      /* skip */
-    }
+    extractItems.push({
+      label: fn,
+      run: async () => {
+        try {
+          const extracted = (await extractBytesForAi(fn, body)).trim();
+          if (!extracted) return;
+          const tier = tierForExtractedBody(fn, extracted);
+          push({
+            tier,
+            label: `Saved Documents — ${fn}`,
+            file: fn,
+            raw: extracted,
+          });
+        } catch {
+          /* skip */
+        }
+      },
+    });
   }
+  await runExtractLoop(reporter, "extracting", extractItems);
 
   return out.sort((a, b) => a.tier - b.tier || a.seq - b.seq);
 }
 
 export function formatSourcesForKpiCommentary(ticker: string, parts: LmeSourcePart[]): string {
   const sym = ticker.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  const header = `Ticker: ${sym}\nThe blocks below are Saved Documents only, limited to management presentations and earnings transcripts saved from Period Financials. Ask users to save at least one management presentation or earnings transcript in Period Financials before running KPI commentary. When retrieval is enabled, you usually receive one embedding-ranked context pack from this corpus under the character ceiling; otherwise you receive ordinary per-source blocks. Use them as the primary factual basis for KPI commentary.\n\n`;
+  const header = `Ticker: ${sym}\nThe blocks below combine (1) the saved Competitor Earnings ReadThrus tab response and (2) Saved Documents limited to management presentations and earnings transcripts saved from Period Financials. When embedding retrieval is active (default), each source contributes at least one ranked excerpt under the character ceiling; otherwise sources pack sequentially. Set \`LME_RETRIEVAL=0\` to force sequential pack. Use them as the primary factual basis for KPI commentary.\n\n`;
   const blocks = parts.map(
     (p) =>
       `==========\nSOURCE: ${p.label}${p.key ? ` [key:${p.key}]` : ""}${p.file ? ` [file:${p.file}]` : ""}\n==========\n${p.content}\n`
@@ -235,7 +270,7 @@ export async function gatherKpiCommentarySources(
   ticker: string,
   limits?: GatherLmeLimits,
   userId?: string | null,
-  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean }
+  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean; progressKey?: string }
 ): Promise<{
   parts: LmeSourcePart[];
   totalChars: number;
@@ -245,9 +280,15 @@ export async function gatherKpiCommentarySources(
   sourceFingerprint: string;
   packingStats?: LmeRunPackingStats;
 }> {
-  const rawDocs = await collectKpiCommentaryRawDocuments(ticker, userId);
+  const rawDocs = await collectWorkProductRawDocumentsWithAdditions(
+    "kpi",
+    ticker,
+    userId,
+    (reporter) => collectKpiCommentaryRawDocuments(ticker, userId, reporter),
+    opts?.progressKey
+  );
   const sourceFingerprint = lmeRawSourcesFingerprint(rawDocs);
-  const { parts, retrievalUsed, retrievalPack } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
+  const { parts, retrievalUsed, retrievalPack, documentRows } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
     useRetrieval: opts?.useRetrieval === true,
     apiKeys: opts?.apiKeys,
     inventoryOnly: opts?.inventoryOnly === true,
@@ -276,6 +317,7 @@ export async function gatherKpiCommentarySources(
             packedChars: p.content.length,
             truncated: p.truncated,
           })),
+          documentRows,
           retrievalPack,
         };
 

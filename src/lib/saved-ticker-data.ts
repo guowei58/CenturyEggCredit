@@ -122,6 +122,10 @@ export const SAVED_DATA_FILES = {
   "credit-decision-dashboard-inputs": "credit-decision-dashboard-inputs.json",
   /** Cached memo/deck context-window prompts (per product type) until the user rebuilds. */
   "ai-memo-deck-built-prompt-cache": "ai-memo-deck-built-prompt-cache.json",
+  /** Per-tab user-selected extra Work Product ingestion sources. */
+  "work-product-ingest-additions": "work-product-ingest-additions.json",
+  /** Change Log: update periods, draft, and historical saved updates (JSON). */
+  "change-log-data": "change-log-data.json",
 } as const satisfies Record<string, string>;
 
 /**

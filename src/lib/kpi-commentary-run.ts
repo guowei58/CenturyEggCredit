@@ -10,7 +10,7 @@ import { isProviderConfigured } from "@/lib/llm-router";
 import type { CovenantResolvedModels } from "@/lib/covenant-synthesis-claude";
 
 const NO_SOURCES_ERROR =
-  "No substantive KPI sources found. Add files to your ticker workspace (outside the LME-only folders) and/or save content on other company tabs; exclude-only workspace yields nothing. Excel files (.xls/.xlsx/.xlsm/.xlsb) are never included.";
+  "No substantive KPI sources found. Save at least one management presentation or earnings transcript from Period Financials, and/or save a Competitor Earnings ReadThrus response.";
 
 export async function runKpiCommentaryFromTicker(params: {
   ticker: string;

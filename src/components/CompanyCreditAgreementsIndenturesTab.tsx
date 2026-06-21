@@ -385,7 +385,7 @@ export function CompanyCreditDocWorkspaceTab({
               refreshKey={savedRefreshKey}
               onLinkAnalyze={config.enableLinkAnalyze ? openDistressedAnalyzeForUrl : undefined}
             />
-          </div>
+        </div>
         }
         prompt={
           <div className="flex w-full flex-col gap-4">
@@ -496,7 +496,7 @@ export function CompanyCreditDocWorkspaceTab({
             </p>
           )}
 
-          </div>
+        </div>
         }
       />
     </Card>

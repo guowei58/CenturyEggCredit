@@ -8,6 +8,7 @@ import {
   isPeriodFinancialsEarningsTranscriptFilename,
   isWorkspaceSpreadsheetFilename,
 } from "@/lib/kpi-workspace-sources";
+import { filterEarningsTranscriptPathsToLastNQuarters } from "@/lib/period-financials-ingest-filter";
 import { sanitizeTicker, SAVED_DATA_FILES } from "@/lib/saved-ticker-data";
 import { listAllUserSavedDocumentsBodiesForIngest, listUserTickerDocuments } from "@/lib/user-workspace-store";
 import { extractBytesForAi } from "@/lib/ticker-file-text-extract";
@@ -23,6 +24,12 @@ import {
   type LmeSourcePart,
   type LmeRunPackingStats,
 } from "@/lib/lme-sources";
+import { collectWorkProductRawDocumentsWithAdditions } from "@/lib/work-product-ingest-additions";
+import {
+  reporterFromKey,
+  runExtractLoop,
+  type SourceGatherProgressReporter,
+} from "@/lib/work-product-source-progress-reporter";
 
 export type CreativeWorkspacePromptKind = "literary" | "biblical" | "dumbass" | "earnings-transcript";
 
@@ -113,7 +120,8 @@ function nextCreativeDocId(): string {
 export async function collectCreativeWorkspaceRawDocuments(
   kind: CreativeWorkspaceSourceKind,
   ticker: string,
-  userId?: string | null
+  userId?: string | null,
+  reporter?: SourceGatherProgressReporter
 ): Promise<LmeRawDocument[]> {
   creativeDocCounter = 0;
   const out: LmeRawDocument[] = [];
@@ -152,27 +160,38 @@ export async function collectCreativeWorkspaceRawDocuments(
   }
 
   const maxBytes = loadCreditMemoConfig().maxIngestFileBytes;
+  reporter?.({ phase: "loading", detail: "Loading saved document bodies…", done: 0, total: 0 });
   const savedDocs = await listAllUserSavedDocumentsBodiesForIngest(userId, sym);
+  const transcriptFilenames = savedDocs.map((d) => d.filename.trim()).filter(Boolean);
+  const allowedTranscriptNorms = filterEarningsTranscriptPathsToLastNQuarters(transcriptFilenames);
+  const extractItems: Array<{ label: string; run: () => Promise<void> }> = [];
   for (const { filename, body } of savedDocs) {
     const fn = filename.trim();
     if (!fn) continue;
     if (body.length > maxBytes) continue;
     if (isWorkspaceSpreadsheetFilename(fn)) continue;
     if (!isPeriodFinancialsEarningsTranscriptFilename(fn)) continue;
-    try {
-      const extracted = (await extractBytesForAi(fn, body)).trim();
-      if (!extracted) continue;
-      const tier = tierForExtractedBody(fn, extracted);
-      push({
-        tier,
-        label: `Saved Documents — ${fn}`,
-        file: fn,
-        raw: extracted,
-      });
-    } catch {
-      /* skip */
-    }
+    if (!allowedTranscriptNorms.has(fn.toLowerCase())) continue;
+    extractItems.push({
+      label: fn,
+      run: async () => {
+        try {
+          const extracted = (await extractBytesForAi(fn, body)).trim();
+          if (!extracted) return;
+          const tier = tierForExtractedBody(fn, extracted);
+          push({
+            tier,
+            label: `Saved Documents — ${fn}`,
+            file: fn,
+            raw: extracted,
+          });
+        } catch {
+          /* skip */
+        }
+      },
+    });
   }
+  await runExtractLoop(reporter, "extracting", extractItems);
 
   return out.sort((a, b) => a.tier - b.tier || a.seq - b.seq);
 }
@@ -203,7 +222,14 @@ export async function gatherCreativeWorkspaceSources(
   ticker: string,
   limits?: GatherLmeLimits,
   userId?: string | null,
-  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean }
+  opts?: {
+    apiKeys?: LlmCallApiKeys;
+    useRetrieval?: boolean;
+    inventoryOnly?: boolean;
+    /** Tab id for user-added ingestion sources (literary, biblical, etc.). */
+    workProductTabKind?: CreativeWorkspacePromptKind;
+    progressKey?: string;
+  }
 ): Promise<{
   parts: LmeSourcePart[];
   totalChars: number;
@@ -214,9 +240,18 @@ export async function gatherCreativeWorkspaceSources(
   packingStats?: LmeRunPackingStats;
   rawDocuments: LmeRawDocument[];
 }> {
-  const rawDocs = await collectCreativeWorkspaceRawDocuments(kind, ticker, userId);
+  const tabKind = opts?.workProductTabKind;
+  const rawDocs = tabKind
+    ? await collectWorkProductRawDocumentsWithAdditions(
+        tabKind,
+        ticker,
+        userId,
+        (reporter) => collectCreativeWorkspaceRawDocuments(kind, ticker, userId, reporter),
+        opts?.progressKey
+      )
+    : await collectCreativeWorkspaceRawDocuments(kind, ticker, userId, reporterFromKey(opts?.progressKey));
   const sourceFingerprint = lmeRawSourcesFingerprint(rawDocs);
-  const { parts, retrievalUsed, retrievalPack } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
+  const { parts, retrievalUsed, retrievalPack, documentRows } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
     useRetrieval: opts?.useRetrieval === true,
     apiKeys: opts?.apiKeys,
     inventoryOnly: opts?.inventoryOnly === true,
@@ -245,6 +280,7 @@ export async function gatherCreativeWorkspaceSources(
             packedChars: p.content.length,
             truncated: p.truncated,
           })),
+          documentRows,
           retrievalPack,
         };
 

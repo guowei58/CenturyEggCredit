@@ -1,8 +1,9 @@
 /**
- * KPI chunk/query embeddings: prefer Gemini when both Gemini+OpenAI keys exist (spares OpenAI for chat).
+ * KPI chunk/query embeddings: default to OpenAI when configured; Gemini and DeepSeek are fallbacks.
  * Anthropic (Claude) has no first-party
  * text-embeddings API for this use case — skipped. DeepSeek is attempted via OpenAI-compatible
  * /v1/embeddings when configured (see DEEPSEEK_EMBEDDING_MODEL).
+ * Override order with KPI_EMBEDDING_PROVIDER=openai|gemini|deepseek.
  */
 
 import {
@@ -55,9 +56,6 @@ function kpiEmbeddingProviderOrder(apiKeys: LlmCallApiKeys | undefined): KpiEmbe
   const hasGemini = Boolean(resolveGeminiKey(apiKeys));
   const hasOpenAi = Boolean(resolveOpenAiKey(apiKeys));
   const hasDeepSeek = Boolean(resolveDeepSeekKey(apiKeys));
-  // When both Gemini and OpenAI are configured, prefer Gemini for embeddings so OpenAI RPM/TPM
-  // stays available for ChatGPT tab prompts and forensic/LME/memo completions.
-  if (hasGemini && hasOpenAi) return ["gemini", "openai", "deepseek"];
   if (hasOpenAi) return ["openai", "gemini", "deepseek"];
   if (hasGemini) return ["gemini", "deepseek", "openai"];
   if (hasDeepSeek) return ["deepseek", "gemini", "openai"];
@@ -73,7 +71,7 @@ function providerHasEmbeddingKey(
   return Boolean(resolveDeepSeekKey(apiKeys));
 }
 
-/** Provider order: Gemini (when both Gemini+OpenAI) → OpenAI → DeepSeek; override with KPI_EMBEDDING_PROVIDER. */
+/** Provider order: OpenAI (default when configured) → Gemini → DeepSeek; override with KPI_EMBEDDING_PROVIDER. */
 export function hasAnyKpiEmbeddingKey(apiKeys: LlmCallApiKeys | undefined): boolean {
   return resolveKpiEmbeddingBackendMetadata(apiKeys) != null;
 }
@@ -229,7 +227,7 @@ async function embedTextsDeepSeekOpenAICompat(
 }
 
 /**
- * Embed texts for KPI retrieval. Default order prefers Gemini when both Gemini and OpenAI keys exist.
+ * Embed texts for KPI retrieval. Default order prefers OpenAI when an OpenAI key is configured.
  */
 export async function embedTextsForKpiRetrieval(
   texts: string[],
@@ -291,4 +289,49 @@ export async function embedTextsForKpiRetrieval(
     error:
       "No embedding-capable API key: configure OpenAI, Gemini, or DeepSeek (embeddings) in Settings or env.",
   };
+}
+
+/** Embed one batch with a known backend (no provider fallback loop) — used for incremental memo/KPI caches. */
+export async function embedKpiBatchForRetrieval(
+  texts: string[],
+  apiKeys: LlmCallApiKeys | undefined,
+  backend: { provider: KpiEmbeddingProviderId; model: string; dimensions: number },
+  options?: { timeoutMs?: number; geminiConcurrency?: number }
+): Promise<KpiEmbeddingsOutcome> {
+  if (texts.length === 0) {
+    return { ok: true, vectors: [], provider: backend.provider, model: backend.model, dimensions: backend.dimensions };
+  }
+  const timeoutMs = options?.timeoutMs ?? 120_000;
+  const batchSize = Math.min(128, Math.max(1, texts.length));
+  const geminiConcurrency = Math.min(16, Math.max(1, options?.geminiConcurrency ?? 8));
+
+  if (backend.provider === "openai") {
+    const r = await embedTextsOpenAI(texts, apiKeys, {
+      model: backend.model,
+      dimensions: backend.dimensions,
+      batchSize,
+      timeoutMs,
+    });
+    return r.ok ? toEmbeddingsResult(r, backend.provider, backend.model, backend.dimensions) : { ok: false, error: r.error };
+  }
+
+  if (backend.provider === "gemini") {
+    const geminiKey = resolveGeminiKey(apiKeys);
+    if (!geminiKey) return { ok: false, error: "Gemini API key not configured." };
+    const r = await embedTextsGemini(texts, geminiKey, backend.dimensions, timeoutMs, geminiConcurrency);
+    return r.ok
+      ? toEmbeddingsResult(r, backend.provider, backend.model, backend.dimensions)
+      : { ok: false, error: r.error };
+  }
+
+  const deepseekKey = resolveDeepSeekKey(apiKeys);
+  if (!deepseekKey) return { ok: false, error: "DeepSeek API key not configured." };
+  const r = await embedTextsDeepSeekOpenAICompat(texts, deepseekKey, {
+    dimensions: backend.dimensions,
+    batchSize,
+    timeoutMs,
+  });
+  return r.ok
+    ? toEmbeddingsResult(r, backend.provider, backend.model, backend.dimensions)
+    : { ok: false, error: r.error };
 }

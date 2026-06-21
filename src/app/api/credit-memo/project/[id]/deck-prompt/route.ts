@@ -6,7 +6,7 @@ import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 600;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const llmAuth = await getAuthenticatedLlmContext();

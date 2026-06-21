@@ -6,6 +6,7 @@ import {
   gatherCreativeWorkspaceSources,
   type CreativeWorkspaceSourceKind,
 } from "@/lib/creative-workspace-sources";
+import { runWorkProductInventoryGather } from "@/lib/work-product-source-progress";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured } from "@/lib/llm-router";
 import { getDeepSeekModel } from "@/lib/deepseek";
@@ -101,9 +102,17 @@ export async function GET(
     );
   }
 
-  const bundled = await gatherCreativeWorkspaceSources(kind, sym, undefined, userId, {
-    useRetrieval: false,
-    inventoryOnly: true,
+  const bundled = await runWorkProductInventoryGather({
+    userId,
+    kind,
+    ticker: sym,
+    gather: (progressKey) =>
+      gatherCreativeWorkspaceSources("other-memos", sym, undefined, userId, {
+        useRetrieval: false,
+        inventoryOnly: true,
+        workProductTabKind: kind === "other-memos" ? undefined : kind,
+        progressKey,
+      }),
   });
   const fp = bundled.sourceFingerprint;
   const meta =

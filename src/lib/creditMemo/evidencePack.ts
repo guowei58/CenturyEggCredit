@@ -64,3 +64,54 @@ export function formatSourceInventoryList(sources: SourceFileRecord[]): string {
     .map((s) => `- ${s.relPath} (${s.category}, ${s.parseStatus}, ${s.charExtracted} chars)`)
     .join("\n");
 }
+
+export type MemoEvidenceSourceRow = {
+  relPath: string;
+  charsAvailable: number;
+  packedChars: number;
+  /** Populated when embedding retrieval ranked chunks; 0 when omitted from window. */
+  chunksInWindow: number;
+};
+
+function inventorySources(project: CreditMemoProject): SourceFileRecord[] {
+  return project.sources.filter((s) => s.parseStatus !== "skipped");
+}
+
+/** Parse per-source body lengths from a built evidence pack string. */
+export function parseEvidencePackedCharsBySource(evidence: string): Map<string, number> {
+  const out = new Map<string, number>();
+  const beginRe = /<<<BEGIN SOURCE: ([^|>]+)[^>]*>>>/g;
+  let m: RegExpExecArray | null;
+  while ((m = beginRe.exec(evidence)) !== null) {
+    const relPath = m[1].trim();
+    const start = m.index + m[0].length;
+    const endMarker = `<<<END SOURCE: ${relPath}>>>`;
+    const end = evidence.indexOf(endMarker, start);
+    if (end === -1) continue;
+    // Strip framing newlines between BEGIN/END markers (not part of source text).
+    const body = evidence.slice(start, end).replace(/^\n/, "").replace(/\n$/, "");
+    out.set(relPath, body.length);
+  }
+  return out;
+}
+
+export function computeMemoEvidenceSourceRows(
+  project: CreditMemoProject,
+  evidence: string,
+  chunkCountsByPath?: Map<string, number>
+): MemoEvidenceSourceRow[] {
+  const packedByPath = parseEvidencePackedCharsBySource(evidence);
+  return inventorySources(project)
+    .map((s) => ({
+      relPath: s.relPath,
+      charsAvailable: s.charExtracted,
+      packedChars: packedByPath.get(s.relPath) ?? 0,
+      chunksInWindow: chunkCountsByPath?.get(s.relPath) ?? 0,
+    }))
+    .sort(
+      (a, b) =>
+        b.packedChars - a.packedChars ||
+        b.charsAvailable - a.charsAvailable ||
+        a.relPath.localeCompare(b.relPath, undefined, { sensitivity: "base" })
+    );
+}

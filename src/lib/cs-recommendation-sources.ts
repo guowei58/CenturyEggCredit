@@ -17,6 +17,8 @@ import {
   type LmeSourcePart,
   type LmeRunPackingStats,
 } from "@/lib/lme-sources";
+import { collectWorkProductRawDocumentsWithAdditions } from "@/lib/work-product-ingest-additions";
+import type { SourceGatherProgressReporter } from "@/lib/work-product-source-progress-reporter";
 
 let csRecDocCounter = 0;
 function nextCsRecDocId(): string {
@@ -48,7 +50,11 @@ function includeRecommendationSavedTab(dataKey: string, filename: string): boole
   return false;
 }
 
-export async function collectCsRecommendationRawDocuments(ticker: string, userId?: string | null): Promise<LmeRawDocument[]> {
+export async function collectCsRecommendationRawDocuments(
+  ticker: string,
+  userId?: string | null,
+  _reporter?: SourceGatherProgressReporter
+): Promise<LmeRawDocument[]> {
   csRecDocCounter = 0;
   const out: LmeRawDocument[] = [];
   let seq = 0;
@@ -107,7 +113,7 @@ export async function gatherCsRecommendationSources(
   ticker: string,
   limits?: GatherLmeLimits,
   userId?: string | null,
-  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean }
+  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean; progressKey?: string }
 ): Promise<{
   parts: LmeSourcePart[];
   totalChars: number;
@@ -118,9 +124,15 @@ export async function gatherCsRecommendationSources(
   packingStats?: LmeRunPackingStats;
   rawDocuments: LmeRawDocument[];
 }> {
-  const rawDocs = await collectCsRecommendationRawDocuments(ticker, userId);
+  const rawDocs = await collectWorkProductRawDocumentsWithAdditions(
+    "recommendation",
+    ticker,
+    userId,
+    (reporter) => collectCsRecommendationRawDocuments(ticker, userId, reporter),
+    opts?.progressKey
+  );
   const sourceFingerprint = lmeRawSourcesFingerprint(rawDocs);
-  const { parts, retrievalUsed, retrievalPack } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
+  const { parts, retrievalUsed, retrievalPack, documentRows } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
     useRetrieval: opts?.useRetrieval === true,
     apiKeys: opts?.apiKeys,
     inventoryOnly: opts?.inventoryOnly === true,
@@ -149,6 +161,7 @@ export async function gatherCsRecommendationSources(
             packedChars: p.content.length,
             truncated: p.truncated,
           })),
+          documentRows,
           retrievalPack,
         };
 

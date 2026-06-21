@@ -90,7 +90,7 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
     expect(workspaceFileSkippedForWorkProductIngest("ai-credit-memo-buffett.md", "forensic").skip).toBe(true);
   });
 
-  it("memo scope keeps only latest 10-K and latest 10-Q among SEC filings", () => {
+  it("memo scope keeps only latest 10-K among SEC filings (no 10-Q)", () => {
     const paths = [
       "__ceg_user_saved_documents__/MSFT_10-K-FY2022.html",
       "__ceg_user_saved_documents__/MSFT_10-K-FY2024.html",
@@ -100,23 +100,34 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
     ];
     expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-K-FY2024.html")).toBe(true);
     expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-K-FY2022.html")).toBe(false);
-    expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q3.html")).toBe(true);
+    expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q3.html")).toBe(false);
     expect(memoAllows(paths, "__ceg_user_saved_documents__/MSFT_10-Q-2024-Q1.html")).toBe(false);
     expect(memoAllows(paths, "__ceg_user_saved_documents__/d353521dex101.html")).toBe(false);
   });
 
-  it("memo scope keeps saved-tab txt, mgmt presentations, and earnings transcripts", () => {
+  it("memo scope keeps saved-tab txt and last-four-quarters period financials only", () => {
     const paths = [
       "overview.txt",
       "employee-contacts.html",
-      "MSFT_earnings-transcript_2024-Q3.txt",
-      "MSFT-mgmt-presentation.pdf",
+      "GEN_earnings-transcript_1Q_2025.txt",
+      "GEN_earnings-transcript_2Q_2025.txt",
+      "GEN_earnings-transcript_3Q_2025.txt",
+      "GEN_earnings-transcript_1Q_2026.txt",
+      "GEN_earnings-transcript_2Q_2026.txt",
+      "GEN-Q1-2026-mgmt-presentation.pdf",
+      "GEN-Q3-2023-mgmt-presentation.pdf",
       "research/notes.txt",
     ];
     expect(memoAllows(paths, "overview.txt")).toBe(true);
-    expect(memoAllows(paths, "employee-contacts.html")).toBe(true);
-    expect(memoAllows(paths, "MSFT_earnings-transcript_2024-Q3.txt")).toBe(true);
-    expect(memoAllows(paths, "MSFT-mgmt-presentation.pdf")).toBe(true);
+    expect(memoAllows(paths, "employee-contacts.html")).toBe(false);
+    expect(memoAllows(paths, "industry-contacts.html")).toBe(false);
+    expect(memoAllows(paths, "GEN_earnings-transcript_2Q_2026.txt")).toBe(true);
+    expect(memoAllows(paths, "GEN_earnings-transcript_1Q_2026.txt")).toBe(true);
+    expect(memoAllows(paths, "GEN_earnings-transcript_1Q_2025.txt")).toBe(false);
+    expect(memoAllows(paths, "GEN_earnings-transcript_2Q_2025.txt")).toBe(false);
+    expect(memoAllows(paths, "GEN_earnings-transcript_3Q_2025.txt")).toBe(true);
+    expect(memoAllows(paths, "GEN-Q1-2026-mgmt-presentation.pdf")).toBe(true);
+    expect(memoAllows(paths, "GEN-Q3-2023-mgmt-presentation.pdf")).toBe(false);
     expect(memoAllows(paths, "research/notes.txt")).toBe(false);
     expect(memoDeckRestrictedIngestKeep("research/investor-deck-roadshow.pdf")).toBe(false);
   });
@@ -136,22 +147,29 @@ describe("workspaceFileSkippedForWorkProductIngest", () => {
 });
 
 describe("buildMemoDeckIngestAllowSet", () => {
-  it("includes all five source categories", () => {
+  it("includes work-product md, saved tabs, latest 10-K, and recent period financials", () => {
     const allow = buildMemoDeckIngestAllowSet([
       "kpi-latest.md",
       "overview.txt",
       "MSFT_10-K-FY2024.html",
       "MSFT_10-K-FY2022.html",
       "MSFT_10-Q-2024-Q2.html",
-      "AAPL-mgmt-presentation.pdf",
-      "AAPL_earnings-transcript_2024-Q1.txt",
+      "GEN_earnings-transcript_3Q_2025.txt",
+      "GEN_earnings-transcript_1Q_2026.txt",
+      "GEN_earnings-transcript_2Q_2026.txt",
+      "GEN-Q1-2026-mgmt-presentation.pdf",
+      "GEN-Q3-2023-mgmt-presentation.pdf",
     ]);
     expect(allow.has("kpi-latest.md")).toBe(true);
     expect(allow.has("overview.txt")).toBe(true);
     expect(allow.has("msft_10-k-fy2024.html")).toBe(true);
     expect(allow.has("msft_10-k-fy2022.html")).toBe(false);
-    expect(allow.has("msft_10-q-2024-q2.html")).toBe(true);
-    expect(allow.has("aapl-mgmt-presentation.pdf")).toBe(true);
-    expect(allow.has("aapl_earnings-transcript_2024-q1.txt")).toBe(true);
+    expect(allow.has("msft_10-q-2024-q2.html")).toBe(false);
+    expect(allow.has("gen_earnings-transcript_2q_2026.txt")).toBe(true);
+    expect(allow.has("gen_earnings-transcript_1q_2026.txt")).toBe(true);
+    expect(allow.has("gen_earnings-transcript_3q_2025.txt")).toBe(true);
+    expect(allow.has("gen_earnings-transcript_1q_2025.txt")).toBe(false);
+    expect(allow.has("gen-q1-2026-mgmt-presentation.pdf")).toBe(true);
+    expect(allow.has("gen-q3-2023-mgmt-presentation.pdf")).toBe(false);
   });
 });

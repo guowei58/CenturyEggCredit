@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { readSavedContent, writeSavedContent } from "@/lib/saved-content-hybrid";
 import { gatherKpiCommentarySources } from "@/lib/kpi-workspace-sources";
+import { runWorkProductInventoryGather } from "@/lib/work-product-source-progress";
 import { runKpiCommentaryFromTicker } from "@/lib/kpi-commentary-run";
 import { resolveProvider } from "@/lib/ai-provider";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
@@ -61,7 +62,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
     );
   }
 
-  const bundled = await gatherKpiCommentarySources(sym, undefined, userId, { useRetrieval: false, inventoryOnly: true });
+  const bundled = await runWorkProductInventoryGather({
+    userId,
+    kind: "kpi",
+    ticker: sym,
+    gather: (progressKey) =>
+      gatherKpiCommentarySources(sym, undefined, userId, {
+        useRetrieval: false,
+        inventoryOnly: true,
+        progressKey,
+      }),
+  });
   const fp = bundled.sourceFingerprint;
   const meta = parseMeta(await readSavedContent(sym, "kpi-latest-meta", userId));
   const cached = (await readSavedContent(sym, "kpi-latest", userId)) ?? "";

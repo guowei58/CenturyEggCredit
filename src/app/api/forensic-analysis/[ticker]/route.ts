@@ -6,6 +6,7 @@ import { resolveProvider } from "@/lib/ai-provider";
 import { resolveLmeAnalysisModels } from "@/lib/ai-model-from-request";
 import { runForensicAccountingAnalysisGeneration } from "@/lib/creditMemo/generateForensicAccountingAnalysis";
 import { gatherForensicWorkspaceSources } from "@/lib/forensic-workspace-sources";
+import { runWorkProductInventoryGather } from "@/lib/work-product-source-progress";
 import { getAuthenticatedLlmContext } from "@/lib/llm-session-keys";
 import { isProviderConfigured } from "@/lib/llm-router";
 import { getDeepSeekModel } from "@/lib/deepseek";
@@ -67,7 +68,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tic
   }
 
   try {
-    const bundled = await gatherForensicWorkspaceSources(sym, undefined, userId, { useRetrieval: false, inventoryOnly: true });
+    const bundled = await runWorkProductInventoryGather({
+      userId,
+      kind: "forensic",
+      ticker: sym,
+      gather: (progressKey) =>
+        gatherForensicWorkspaceSources(sym, undefined, userId, {
+          useRetrieval: false,
+          inventoryOnly: true,
+          progressKey,
+        }),
+    });
     const fp = bundled.sourceFingerprint;
     const meta = parseMeta(await readSavedContent(sym, "forensic-accounting-latest-meta", userId));
     const cached = (await readSavedContent(sym, "forensic-accounting-latest", userId)) ?? "";

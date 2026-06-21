@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCompanyProfile } from "@/lib/sec-edgar";
 import {
   formatOdpPatentQueryString,
+  ODP_PATENT_SEARCH_PAGE_SIZE,
   patentNumberToGooglePatentsUrl,
   searchOdpPatentApplications,
   searchPatentsViewAssignees,
@@ -30,7 +31,10 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const qOverride = searchParams.get("q")?.trim() || "";
   const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0", 10) || 0);
-  const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? "50", 10) || 50));
+  const limit = Math.min(
+    50,
+    Math.max(1, parseInt(searchParams.get("limit") ?? String(ODP_PATENT_SEARCH_PAGE_SIZE), 10) || ODP_PATENT_SEARCH_PAGE_SIZE)
+  );
   const pvTop = Math.min(15, Math.max(1, parseInt(searchParams.get("pvTop") ?? "5", 10) || 5));
   const pvPatentsPer = Math.min(25, Math.max(5, parseInt(searchParams.get("pvPer") ?? "15", 10) || 15));
 

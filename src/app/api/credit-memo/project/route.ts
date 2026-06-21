@@ -86,6 +86,7 @@ export async function POST(req: Request) {
       ticker: sym,
       folderAbs: abs,
       workProductIngestScope,
+      userId,
     });
 
     const chatPayload = await getAiChatPayload(userId, sym);

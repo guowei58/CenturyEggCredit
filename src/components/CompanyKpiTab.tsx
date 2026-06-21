@@ -12,7 +12,7 @@ const CONFIG: WorkProductSourcedTabConfig = {
   savedContentKey: "kpi-latest",
   includeCompanyName: true,
   noSubstantiveMessage:
-    "No substantive KPI pack yet. Save at least one management presentation or earnings transcript from Period Financials.",
+    "No substantive KPI pack yet. Save at least one management presentation or earnings transcript from Period Financials, and/or save a Competitor Earnings ReadThrus response.",
   emptyOutputMessage: "No saved commentary yet. Build the context window, run the model, then paste or save the response here.",
 };
 

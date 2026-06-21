@@ -19,6 +19,11 @@ import {
   type LmeSourcePart,
   type LmeRunPackingStats,
 } from "@/lib/lme-sources";
+import { collectWorkProductRawDocumentsWithAdditions } from "@/lib/work-product-ingest-additions";
+import {
+  runExtractLoop,
+  type SourceGatherProgressReporter,
+} from "@/lib/work-product-source-progress-reporter";
 
 let forensicDocCounter = 0;
 function nextForensicDocId(): string {
@@ -42,7 +47,11 @@ function extractTenKYear(filename: string): number {
   return m ? Number(m[1]) : -1;
 }
 
-export async function collectForensicWorkspaceRawDocuments(ticker: string, userId?: string | null): Promise<LmeRawDocument[]> {
+export async function collectForensicWorkspaceRawDocuments(
+  ticker: string,
+  userId?: string | null,
+  reporter?: SourceGatherProgressReporter
+): Promise<LmeRawDocument[]> {
   forensicDocCounter = 0;
   const out: LmeRawDocument[] = [];
   let seq = 0;
@@ -81,6 +90,7 @@ export async function collectForensicWorkspaceRawDocuments(ticker: string, userI
     });
   }
 
+  reporter?.({ phase: "loading", detail: "Loading saved document bodies…", done: 0, total: 0 });
   const savedDocs = await listAllUserSavedDocumentsBodiesForIngest(userId, sym);
   const latestTenK = savedDocs
     .map((doc, index) => ({ ...doc, index }))
@@ -95,22 +105,28 @@ export async function collectForensicWorkspaceRawDocuments(ticker: string, userI
     })[0];
 
   if (latestTenK) {
-    try {
-      const fn = latestTenK.filename.trim();
-      const base = fn.split("/").pop() ?? fn;
-      const extracted = (await extractBytesForAi(base, latestTenK.body)).trim();
-      if (extracted) {
-        const tier = tierForExtractedBody(fn, extracted);
-        push({
-          tier,
-          label: `Saved Documents — ${fn}`,
-          file: fn,
-          raw: extracted,
-        });
-      }
-    } catch {
-      /* skip */
-    }
+    await runExtractLoop(reporter, "extracting", [
+      {
+        label: latestTenK.filename.trim(),
+        run: async () => {
+          try {
+            const fn = latestTenK.filename.trim();
+            const base = fn.split("/").pop() ?? fn;
+            const extracted = (await extractBytesForAi(base, latestTenK.body)).trim();
+            if (!extracted) return;
+            const tier = tierForExtractedBody(fn, extracted);
+            push({
+              tier,
+              label: `Saved Documents — ${fn}`,
+              file: fn,
+              raw: extracted,
+            });
+          } catch {
+            /* skip */
+          }
+        },
+      },
+    ]);
   }
 
   return out.sort((a, b) => a.tier - b.tier || a.seq - b.seq);
@@ -120,7 +136,7 @@ export async function gatherForensicWorkspaceSources(
   ticker: string,
   limits?: GatherLmeLimits,
   userId?: string | null,
-  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean }
+  opts?: { apiKeys?: LlmCallApiKeys; useRetrieval?: boolean; inventoryOnly?: boolean; progressKey?: string }
 ): Promise<{
   parts: LmeSourcePart[];
   totalChars: number;
@@ -131,9 +147,15 @@ export async function gatherForensicWorkspaceSources(
   packingStats?: LmeRunPackingStats;
   rawDocuments: LmeRawDocument[];
 }> {
-  const rawDocs = await collectForensicWorkspaceRawDocuments(ticker, userId);
+  const rawDocs = await collectWorkProductRawDocumentsWithAdditions(
+    "forensic",
+    ticker,
+    userId,
+    (reporter) => collectForensicWorkspaceRawDocuments(ticker, userId, reporter),
+    opts?.progressKey
+  );
   const sourceFingerprint = lmeRawSourcesFingerprint(rawDocs);
-  const { parts, retrievalUsed, retrievalPack } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
+  const { parts, retrievalUsed, retrievalPack, documentRows } = await packLmeSourcesForModel(ticker, userId, rawDocs, limits, {
     useRetrieval: opts?.useRetrieval === true,
     apiKeys: opts?.apiKeys,
     inventoryOnly: opts?.inventoryOnly === true,
@@ -162,6 +184,7 @@ export async function gatherForensicWorkspaceSources(
             packedChars: p.content.length,
             truncated: p.truncated,
           })),
+          documentRows,
           retrievalPack,
         };
 
