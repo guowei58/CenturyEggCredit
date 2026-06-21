@@ -888,6 +888,35 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     }
   }, [editDraft, tk, selectedProductKey, pushMemoToLibrary]);
 
+  const memoContextSummary = useMemo(() => {
+    const d = lastRunGuide?.evidenceDiagnostics;
+    if (!d?.sourceRows?.length) return null;
+    const packed = d.sourceRows.reduce((s, r) => s + r.packedChars, 0);
+    const mode =
+      d.mode === "retrieval"
+        ? d.corpusChunksWereCapped
+          ? `retrieval-ranked (${d.chunksEmbedded?.toLocaleString() ?? "?"} / ${d.nonEmptyChunkCount.toLocaleString()} chunks embedded)`
+          : "retrieval-ranked"
+        : d.fallbackReason === "embed_failed"
+          ? d.fallbackDetail
+            ? `sequential (embedding failed — ${d.fallbackDetail.slice(0, 80)})`
+            : "sequential (embedding failed — quota or API error)"
+          : d.fallbackReason === "error"
+            ? d.fallbackDetail
+              ? `sequential (${d.fallbackDetail.slice(0, 80)})`
+              : "sequential (retrieval error)"
+            : d.fallbackReason === "no_embedding_key"
+              ? "sequential (no OpenAI/Gemini embedding key)"
+              : d.fallbackReason === "retrieval_disabled"
+                ? "sequential (MEMO_RETRIEVAL=0)"
+                : "sequential";
+    const parts = [`${packed.toLocaleString()} chars in context`, mode, `${d.evidenceCharCap.toLocaleString()} cap`];
+    if (d.mode === "retrieval" && typeof d.chunksInWindow === "number") {
+      parts.push(`${d.chunksInWindow} chunks selected`);
+    }
+    return parts.join(" · ");
+  }, [lastRunGuide]);
+
   if (!tk) {
     return (
       <Card title="AI Memo and Deck">
@@ -940,35 +969,6 @@ export function CompanyAiCreditMemoTab({ ticker, companyName }: { ticker: string
     if (!copyPrompt) return;
     openGeminiWithClipboard(copyPrompt, setPromptStatus, setClipboardFailed);
   }
-
-  const memoContextSummary = useMemo(() => {
-    const d = lastRunGuide?.evidenceDiagnostics;
-    if (!d?.sourceRows?.length) return null;
-    const packed = d.sourceRows.reduce((s, r) => s + r.packedChars, 0);
-    const mode =
-      d.mode === "retrieval"
-        ? d.corpusChunksWereCapped
-          ? `retrieval-ranked (${d.chunksEmbedded?.toLocaleString() ?? "?"} / ${d.nonEmptyChunkCount.toLocaleString()} chunks embedded)`
-          : "retrieval-ranked"
-        : d.fallbackReason === "embed_failed"
-          ? d.fallbackDetail
-            ? `sequential (embedding failed — ${d.fallbackDetail.slice(0, 80)})`
-            : "sequential (embedding failed — quota or API error)"
-          : d.fallbackReason === "error"
-            ? d.fallbackDetail
-              ? `sequential (${d.fallbackDetail.slice(0, 80)})`
-              : "sequential (retrieval error)"
-            : d.fallbackReason === "no_embedding_key"
-              ? "sequential (no OpenAI/Gemini embedding key)"
-              : d.fallbackReason === "retrieval_disabled"
-                ? "sequential (MEMO_RETRIEVAL=0)"
-                : "sequential";
-    const parts = [`${packed.toLocaleString()} chars in context`, mode, `${d.evidenceCharCap.toLocaleString()} cap`];
-    if (d.mode === "retrieval" && typeof d.chunksInWindow === "number") {
-      parts.push(`${d.chunksInWindow} chunks selected`);
-    }
-    return parts.join(" · ");
-  }, [lastRunGuide]);
 
   const sourceToolbar = (
     <WorkProductStepToolbar

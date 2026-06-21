@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import type { AiProvider } from "@/lib/ai-provider";
@@ -136,13 +136,13 @@ async function ensureCatalogLoaded(forceRefresh = false): Promise<void> {
 /** Merged presets for one provider (static immediately, then provider catalog when available). */
 export function useAiModelPresets(provider: AiProvider): { presets: ModelPreset[]; loading: boolean } {
   const { status } = useSession();
-  const [, tick] = useState(0);
+  const [, setCatalogVersion] = useState(0);
   const mounted = useRef(true);
 
   useEffect(() => {
     mounted.current = true;
     const listener = () => {
-      if (mounted.current) tick((n) => n + 1);
+      if (mounted.current) setCatalogVersion((n) => n + 1);
     };
     listeners.add(listener);
     return () => {
@@ -156,10 +156,8 @@ export function useAiModelPresets(provider: AiProvider): { presets: ModelPreset[
     void ensureCatalogLoaded(false);
   }, [status]);
 
-  const presets = useMemo(
-    () => sharedPresets[provider] ?? presetsForProvider(provider),
-    [provider, sharedFetchedAt]
-  );
+  // Re-render when the shared module cache updates (see listener above).
+  const presets = sharedPresets[provider] ?? presetsForProvider(provider);
 
   return {
     presets,

@@ -160,7 +160,7 @@ export function CompanyChangeLogTab({ ticker, companyName }: { ticker: string; c
   const draftRunning = store?.draft?.status === "running" || updating;
   const draftFailed = store?.draft?.status === "failed";
 
-  const savedUpdates = store?.updates ?? [];
+  const savedUpdates = useMemo(() => store?.updates ?? [], [store?.updates]);
 
   const selectedSaved: ChangeLogSavedUpdate | null = useMemo(() => {
     if (selection?.kind !== "saved") return null;
