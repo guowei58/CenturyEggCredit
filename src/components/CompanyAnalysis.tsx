@@ -86,6 +86,7 @@ import {
 } from "@/components/CompanyRoicAiV2StatementsTab";
 import { DownloadAllUserDataButton } from "@/components/DownloadAllUserDataButton";
 import { DownloadAllPromptsButton } from "@/components/DownloadAllPromptsButton";
+import { UploadPromptResponsesButton } from "@/components/UploadPromptResponsesButton";
 import { CompanyChangeLogTab } from "@/components/CompanyChangeLogTab";
 import { Card, EmptyState, TabBar } from "@/components/ui";
 
@@ -263,6 +264,7 @@ export function CompanyAnalysis({
                 Saved Documents
               </button>
               <DownloadAllPromptsButton ticker={ticker} companyName={companyName} />
+              <UploadPromptResponsesButton ticker={ticker} />
               <DownloadAllUserDataButton />
             </div>
           </nav>
