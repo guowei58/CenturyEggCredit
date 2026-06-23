@@ -85,6 +85,7 @@ import {
   ROIC_QUARTERLY_FINANCIAL_STATEMENTS_TAB_ID,
 } from "@/components/CompanyRoicAiV2StatementsTab";
 import { DownloadAllUserDataButton } from "@/components/DownloadAllUserDataButton";
+import { DownloadAllPromptsButton } from "@/components/DownloadAllPromptsButton";
 import { CompanyChangeLogTab } from "@/components/CompanyChangeLogTab";
 import { Card, EmptyState, TabBar } from "@/components/ui";
 
@@ -261,6 +262,7 @@ export function CompanyAnalysis({
               >
                 Saved Documents
               </button>
+              <DownloadAllPromptsButton ticker={ticker} companyName={companyName} />
               <DownloadAllUserDataButton />
             </div>
           </nav>
