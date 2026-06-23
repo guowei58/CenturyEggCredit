@@ -47,6 +47,7 @@ import {
 } from "@/lib/credit-agreements-prompts";
 import { fillCompanyPromptTemplate, resolveCompanyPromptLabels } from "@/lib/company-prompt-labels";
 import { readPromptTemplateOverride } from "@/lib/prompt-template-storage";
+import { withPromptBenchmarkNotice } from "@/lib/prompt-benchmark-notice";
 
 const PROMPT_EXPORT_SECTIONS: CompanyTopSectionId[] = [
   "overview",
@@ -250,7 +251,7 @@ export function formatTickerPromptExportText(bundle: TickerPromptExportBundle): 
       promptNumber += 1;
       lines.push(`Prompt #${promptNumber}: ${entry.tabLabel}`);
       lines.push("-".repeat(80));
-      lines.push(entry.prompt);
+      lines.push(withPromptBenchmarkNotice(entry.prompt));
       lines.push("");
     }
   }
@@ -260,4 +261,76 @@ export function formatTickerPromptExportText(bundle: TickerPromptExportBundle): 
   }
 
   return lines.join("\n");
+}
+
+function slugifyExportSegment(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/\s+&\s+/g, "-and-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function padExportIndex(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+export function formatTickerPromptFileContent(
+  bundle: TickerPromptExportBundle,
+  section: TickerPromptExportSection,
+  entry: TickerPromptExportEntry,
+  promptNumber: number
+): string {
+  const headerName = bundle.companyName
+    ? `${bundle.ticker} (${bundle.companyName})`
+    : bundle.ticker;
+
+  return [
+    `Prompt #${promptNumber}: ${entry.tabLabel}`,
+    `Section: ${section.sectionLabel}`,
+    `Company: ${headerName}`,
+    `Generated: ${bundle.generatedAt}`,
+    "",
+    withPromptBenchmarkNotice(entry.prompt),
+    "",
+  ].join("\n");
+}
+
+export function tickerPromptExportZipPath(promptNumber: number, tabLabel: string): string {
+  return `${padExportIndex(promptNumber)}-${slugifyExportSegment(tabLabel)}.txt`;
+}
+
+export async function buildTickerPromptExportZip(bundle: TickerPromptExportBundle): Promise<Blob> {
+  const JSZip = (await import("jszip")).default;
+  const zip = new JSZip();
+
+  const headerName = bundle.companyName
+    ? `${bundle.ticker} (${bundle.companyName})`
+    : bundle.ticker;
+
+  let promptNumber = 0;
+  const manifestLines = [
+    `OREO Prompt Export — ${headerName}`,
+    `Generated: ${bundle.generatedAt}`,
+    "",
+    "Files:",
+  ];
+
+  for (const section of bundle.sections) {
+    for (const entry of section.prompts) {
+      promptNumber += 1;
+      const relPath = tickerPromptExportZipPath(promptNumber, entry.tabLabel);
+      zip.file(relPath, formatTickerPromptFileContent(bundle, section, entry, promptNumber));
+      manifestLines.push(`  ${promptNumber}. ${section.sectionLabel} — ${entry.tabLabel} (${relPath})`);
+    }
+  }
+
+  if (promptNumber === 0) {
+    throw new Error("No prompts available for this company.");
+  }
+
+  zip.file("README.txt", manifestLines.join("\n") + "\n");
+
+  return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } });
 }
