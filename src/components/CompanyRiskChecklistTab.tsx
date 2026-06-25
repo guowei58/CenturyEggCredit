@@ -22,7 +22,15 @@ type Workspace = {
     manualOverrideReviewDate: string | null;
   };
   scores: {
+    riskVelocity: number | null;
+    riskVelocityStatus: string;
+    rawScoreRounded: number;
+    effectiveScoreRounded: number;
     finalScoreRounded: number;
+    rawScore: number;
+    effectiveScore: number;
+    finalScore: number;
+    classification: RiskClassification;
     effectiveClassification: RiskClassification;
   };
   categories: Array<{
@@ -31,6 +39,7 @@ type Workspace = {
     maxPoints: number;
     earnedPoints: number;
     applicableMaxPoints: number;
+    displayScore: number;
     displayScoreRounded: number;
     unansweredCount: number;
   }>;
@@ -261,8 +270,8 @@ export function CompanyRiskChecklistTab({ ticker }: { ticker: string }) {
             workspaceRef.current = server;
             return server;
           }
-          const next = mergeSavedAnswerBatch(prev, server, batch, stillPending, inFlight) as Workspace;
-          const merged = {
+          const next = mergeSavedAnswerBatch(prev, server, batch, stillPending, inFlight);
+          const merged: Workspace = {
             ...next,
             assessment: {
               ...next.assessment,
