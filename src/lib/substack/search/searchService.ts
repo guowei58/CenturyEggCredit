@@ -1,4 +1,5 @@
 import { loadSubstackConfigFromEnv } from "../config";
+import { isPrivateWorkspaceKey, workspaceSearchCompanyName } from "@/lib/company-workspace-key";
 import type {
   SubstackPublication,
   SubstackPost,
@@ -66,8 +67,8 @@ function isHighConfidence(r: SubstackSearchResult): boolean {
 
 export async function runSubstackSearch(req: SubstackSearchRequest, userId: string): Promise<SubstackSearchResponse> {
   const cfg = loadSubstackConfigFromEnv();
-  const ticker = (req.ticker ?? "").trim().toUpperCase();
-  if (!ticker) {
+  const workspaceKey = (req.ticker ?? "").trim().toUpperCase();
+  if (!workspaceKey) {
     return {
       ticker: "",
       aliases: [],
@@ -85,7 +86,9 @@ export async function runSubstackSearch(req: SubstackSearchRequest, userId: stri
   }
 
   const aliases = (req.aliases ?? []).map((a) => a.trim()).filter(Boolean);
-  const companyName = req.companyName?.trim() || undefined;
+  const ticker = workspaceKey;
+  const companyName = workspaceSearchCompanyName(workspaceKey, req.companyName) || undefined;
+  const matchTicker = isPrivateWorkspaceKey(workspaceKey) ? "" : ticker;
   const wantDiscovery = req.liveDiscovery !== false;
   const maxResults = clampInt(req.maxResults ?? 80, 10, 200);
   const sortMode: SortMode = req.sortMode === "recent" || req.sortMode === "publication" ? req.sortMode : "relevance";
@@ -98,7 +101,7 @@ export async function runSubstackSearch(req: SubstackSearchRequest, userId: stri
   const indexedMatches: SubstackSearchResult[] = [];
   for (const p of db.posts) {
     const blob = `${p.title} ${p.summary ?? ""} ${p.contentSnippet ?? ""}`.toLowerCase();
-    const m = matchText({ ticker, companyName, aliases, text: blob });
+    const m = matchText({ ticker: matchTicker, companyName, aliases, text: blob });
     if (m.matchType === "none") continue;
     indexedMatches.push({
       post: { ...p, tickers: m.tickers, companyMentions: m.companies, matchedTerms: m.matchedTerms, confidenceScore: Math.max(p.confidenceScore, m.confidence) },

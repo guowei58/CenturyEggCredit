@@ -4,6 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
+import {
+  isPrivateWorkspaceKey,
+  workspaceSearchCompanyName,
+} from "@/lib/company-workspace-key";
 import { rankResults } from "@/lib/ratings-link-search/ranker";
 import type { DiscoverRatingsLinksOutput, NormalizedRatingsLink, RatingsAgency } from "@/lib/ratings-link-search/types";
 import { RatingsResearchLinkCard } from "./RatingsResearchLinkCard";
@@ -64,12 +68,14 @@ export function RatingsResearchLinks({
   companyName?: string;
 }) {
   const tkProp = ticker.trim().toUpperCase();
+  const isPrivate = isPrivateWorkspaceKey(tkProp);
+  const defaultCompanyName = workspaceSearchCompanyName(tkProp, initialCompanyName);
   const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
   const feedCacheKey = tkProp ? cacheKey(tkProp) : "";
   const feedCacheBlob = feedCacheKey ? preferences.feedCaches?.[feedCacheKey] : undefined;
 
-  const [inputTicker, setInputTicker] = useState(ticker.toUpperCase());
-  const [companyName, setCompanyName] = useState((initialCompanyName ?? "").trim());
+  const [inputTicker, setInputTicker] = useState(isPrivate ? "" : ticker.toUpperCase());
+  const [companyName, setCompanyName] = useState(defaultCompanyName);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payload, setPayload] = useState<DiscoverRatingsLinksOutput | null>(null);
@@ -78,12 +84,12 @@ export function RatingsResearchLinks({
   const [sortMode, setSortMode] = useState<SortMode>("relevance");
 
   useEffect(() => {
-    setInputTicker(ticker.toUpperCase());
+    setInputTicker(isPrivateWorkspaceKey(ticker) ? "" : ticker.toUpperCase());
   }, [ticker]);
 
   useEffect(() => {
-    if (initialCompanyName?.trim()) setCompanyName(initialCompanyName.trim());
-  }, [initialCompanyName]);
+    setCompanyName(workspaceSearchCompanyName(tkProp, initialCompanyName));
+  }, [tkProp, initialCompanyName]);
 
   useEffect(() => {
     if (!tkProp) {
@@ -98,9 +104,14 @@ export function RatingsResearchLinks({
   }, [tkProp, prefsReady, feedCacheBlob]);
 
   const runSearch = useCallback(async () => {
-    const tk = inputTicker.trim().toUpperCase();
+    const tk = tkProp;
+    const name = companyName.trim() || defaultCompanyName;
     if (!tk) {
-      setError("Enter a ticker.");
+      setError("Select a company.");
+      return;
+    }
+    if (!name) {
+      setError("Enter a company name.");
       return;
     }
     setLoading(true);
@@ -111,7 +122,7 @@ export function RatingsResearchLinks({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ticker: tk,
-          companyName: companyName.trim() || undefined,
+          companyName: name,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as DiscoverRatingsLinksOutput & { error?: string };
@@ -136,7 +147,7 @@ export function RatingsResearchLinks({
     } finally {
       setLoading(false);
     }
-  }, [inputTicker, companyName, updatePreferences]);
+  }, [tkProp, companyName, defaultCompanyName, updatePreferences]);
 
   const baseResults = useMemo(() => payload?.results ?? [], [payload]);
 
@@ -189,24 +200,26 @@ export function RatingsResearchLinks({
       filterSection={
         <div className="space-y-4">
           <div className="flex flex-wrap items-end gap-3">
-            <label className="flex flex-col gap-1 text-[11px]" style={{ color: "var(--muted)" }}>
-              Ticker
-              <input
-                value={inputTicker}
-                onChange={(e) => setInputTicker(e.target.value.toUpperCase())}
-                className="rounded-md border bg-[var(--card)] px-3 py-2 font-mono text-sm outline-none"
-                style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-                placeholder="LUMN"
-              />
-            </label>
+            {!isPrivate ? (
+              <label className="flex flex-col gap-1 text-[11px]" style={{ color: "var(--muted)" }}>
+                Ticker
+                <input
+                  value={inputTicker}
+                  onChange={(e) => setInputTicker(e.target.value.toUpperCase())}
+                  className="rounded-md border bg-[var(--card)] px-3 py-2 font-mono text-sm outline-none"
+                  style={{ borderColor: "var(--border2)", color: "var(--text)" }}
+                  placeholder="LUMN"
+                />
+              </label>
+            ) : null}
             <label className="min-w-[12rem] flex flex-1 flex-col gap-1 text-[11px]" style={{ color: "var(--muted)" }}>
-              Company name (optional, improves queries)
+              {isPrivate ? "Company name" : "Company name (optional, improves queries)"}
               <input
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 className="rounded-md border bg-[var(--card)] px-3 py-2 text-sm outline-none"
                 style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-                placeholder="Resolved from SEC when empty"
+                placeholder={isPrivate ? "Imprivata" : "Resolved from SEC when empty"}
               />
             </label>
           </div>

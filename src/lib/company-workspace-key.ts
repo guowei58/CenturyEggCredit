@@ -40,6 +40,30 @@ export function privateWorkspaceDisplayName(key: string, storedName?: string | n
   return privateWorkspaceSlugToDisplayName(privateWorkspaceSlugFromKey(key));
 }
 
+/**
+ * Human-readable label for search UIs (tab titles, empty states).
+ * Private workspaces: company name. Public: ticker symbol.
+ */
+export function workspaceSearchLabel(key: string, companyName?: string | null): string {
+  if (isPrivateWorkspaceKey(key)) {
+    return privateWorkspaceDisplayName(key, companyName);
+  }
+  return key.trim().toUpperCase();
+}
+
+/**
+ * Company name / query string for third-party searches.
+ * Never returns a PRIV… workspace key — private companies search by display name.
+ */
+export function workspaceSearchCompanyName(key: string, companyName?: string | null): string {
+  if (isPrivateWorkspaceKey(key)) {
+    return privateWorkspaceDisplayName(key, companyName);
+  }
+  const stored = companyName?.trim();
+  if (stored) return stored;
+  return key.trim().toUpperCase();
+}
+
 /** Stable workspace key for a private company (PRIV + name slug, max 12 chars). */
 export function privateWorkspaceKeyFromName(displayName: string): string {
   const slug = privateWorkspaceSlugFromName(displayName);

@@ -89,6 +89,7 @@ export const companyAnalysisFraudChecksTabs = [
 ] as const;
 
 export const pmDashboardTabs = [
+  "Risk Watchlist",
   "Screeners",
   "Relative Value",
   "Distressed",

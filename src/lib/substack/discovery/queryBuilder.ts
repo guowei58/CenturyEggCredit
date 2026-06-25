@@ -1,3 +1,5 @@
+import { isPrivateWorkspaceKey, workspaceSearchCompanyName } from "@/lib/company-workspace-key";
+
 const FINANCE_TERMS = [
   "earnings",
   "credit",
@@ -20,13 +22,20 @@ export function buildDiscoveryQueries(params: {
   companyName?: string;
   aliases: string[];
 }): string[] {
-  const tk = params.ticker.trim().toUpperCase();
-  const name = params.companyName?.trim();
+  const rawTicker = params.ticker.trim().toUpperCase();
+  const isPrivate = isPrivateWorkspaceKey(rawTicker);
+  const tk = isPrivate ? "" : rawTicker;
+  const name = isPrivate
+    ? workspaceSearchCompanyName(rawTicker, params.companyName)
+    : params.companyName?.trim();
   const aliases = (params.aliases ?? []).map((a) => a.trim()).filter(Boolean).slice(0, 4);
 
-  const entity: string[] = [q(tk)];
+  const entity: string[] = [];
+  if (tk) entity.push(q(tk));
   if (name) entity.push(q(name));
   for (const a of aliases) entity.push(q(a));
+
+  if (entity.length === 0) return [];
 
   const core = `(${entity.join(" OR ")})`;
   const finance = `(${FINANCE_TERMS.join(" OR ")})`;
@@ -35,8 +44,8 @@ export function buildDiscoveryQueries(params: {
     `${core} (site:substack.com OR Substack)`,
     `${core} (Substack OR newsletter)`,
     `${core} ${finance} (Substack OR newsletter)`,
-    name ? `${q(name)} site:substack.com` : `${q(tk)} site:substack.com`,
-    `${q(tk)} site:substack.com`,
+    name ? `${q(name)} site:substack.com` : tk ? `${q(tk)} site:substack.com` : "",
+    tk ? `${q(tk)} site:substack.com` : "",
     `${core} ("published on Substack" OR "Substack")`,
   ];
 
@@ -44,7 +53,7 @@ export function buildDiscoveryQueries(params: {
   const out: string[] = [];
   for (const t of templates) {
     const k = t.replace(/\s+/g, " ").trim();
-    if (seen.has(k)) continue;
+    if (!k || seen.has(k)) continue;
     seen.add(k);
     out.push(k);
   }

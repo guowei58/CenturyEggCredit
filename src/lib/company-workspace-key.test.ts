@@ -6,6 +6,8 @@ import {
   parseCompanyLookupInput,
   privateWorkspaceDisplayName,
   privateWorkspaceKeyFromName,
+  workspaceSearchCompanyName,
+  workspaceSearchLabel,
 } from "@/lib/company-workspace-key";
 
 describe("isCikWorkspaceKey", () => {
@@ -55,6 +57,13 @@ describe("privateWorkspaceKeyFromName", () => {
   it("decodes display name from slug when metadata is missing", () => {
     expect(privateWorkspaceDisplayName("PRIVMIXBOOK")).toBe("Mixbook");
     expect(privateWorkspaceDisplayName("PRIVMIXBOOK", "Mixbook Inc.")).toBe("Mixbook Inc.");
+  });
+
+  it("uses company name for search labels on private workspaces", () => {
+    expect(workspaceSearchLabel("PRIVMIXBOOK", "Mixbook Inc.")).toBe("Mixbook Inc.");
+    expect(workspaceSearchCompanyName("PRIVIMPRIVAT")).toBe("Imprivat");
+    expect(workspaceSearchLabel("LUMN")).toBe("LUMN");
+    expect(workspaceSearchCompanyName("LUMN", "Lumen Technologies")).toBe("Lumen Technologies");
   });
 });
 

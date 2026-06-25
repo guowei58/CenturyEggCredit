@@ -1,3 +1,4 @@
+import { isPrivateWorkspaceKey } from "@/lib/company-workspace-key";
 import { isAmbiguousTicker } from "@/lib/xSearch/utils";
 
 export type MatchResult = {
@@ -46,7 +47,7 @@ export function matchText(params: {
   const hay = text.toLowerCase();
   const aliases = (params.aliases ?? []).map((a) => a.trim()).filter(Boolean);
 
-  const tickers = findTickerMentions(text, tk);
+  const tickers = isPrivateWorkspaceKey(tk) ? [] : findTickerMentions(text, tk);
   const companies: string[] = [];
   const terms: string[] = [];
 

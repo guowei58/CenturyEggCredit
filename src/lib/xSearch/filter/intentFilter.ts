@@ -1,4 +1,5 @@
 import type { NormalizedXPost } from "../types";
+import { isPrivateWorkspaceKey } from "@/lib/company-workspace-key";
 import { isCashtagNoisyTicker } from "../utils";
 
 /** Bare homonym in text without cashtag (e.g. crypto "sats" for ticker SATS). */
@@ -19,10 +20,12 @@ export function postMatchesSearchIntent(
 
   if (isCashtagHomonymFalsePositive(post.text, tk)) return false;
 
-  if (post.cashtags.some((c) => c.toUpperCase() === tk)) return true;
+  if (!isPrivateWorkspaceKey(tk)) {
+    if (post.cashtags.some((c) => c.toUpperCase() === tk)) return true;
 
-  const cashtagRe = new RegExp(`\\$${tk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
-  if (cashtagRe.test(post.text)) return true;
+    const cashtagRe = new RegExp(`\\$${tk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    if (cashtagRe.test(post.text)) return true;
+  }
 
   const blob = post.text.toLowerCase();
   const name = ctx.companyName?.trim();

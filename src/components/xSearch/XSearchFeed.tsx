@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
+import { isPrivateWorkspaceKey } from "@/lib/company-workspace-key";
 import type { NormalizedXPost, XSearchResponse } from "@/lib/xSearch/types";
 import { filterBySearchIntent } from "@/lib/xSearch/filter/intentFilter";
 import { filterLowQualityPosts } from "@/lib/xSearch/filter/qualityFilter";
@@ -27,9 +28,18 @@ function parseFeedCache(raw: string | null | undefined): XSearchResponse | null 
   }
 }
 
-export function XSearchFeed({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
+export function XSearchFeed({
+  ticker,
+  companyName,
+  searchLabel,
+}: {
+  ticker: string;
+  companyName?: string | null;
+  searchLabel?: string;
+}) {
   const tk = ticker?.trim() ?? "";
   const name = companyName?.trim() || undefined;
+  const displayLabel = searchLabel?.trim() || (isPrivateWorkspaceKey(tk) ? name : tk.toUpperCase()) || tk.toUpperCase();
   const { ready: prefsReady, preferences } = useUserPreferences();
   const feedCacheKey = tk ? cacheKey(tk) : "";
   const feedCacheBlob = feedCacheKey ? preferences.feedCaches?.[feedCacheKey] : undefined;
@@ -107,7 +117,11 @@ export function XSearchFeed({ ticker, companyName }: { ticker: string; companyNa
             style={{ borderColor: "var(--border2)", color: "var(--muted2)" }}
           >
             In-app X API search is paused. Click <strong style={{ color: "var(--text)" }}>Find Twits</strong> to
-            open X.com search for <strong style={{ color: "var(--text)" }}>${tk.toUpperCase()}</strong> in a new tab.
+            open X.com search for{" "}
+            <strong style={{ color: "var(--text)" }}>
+              {isPrivateWorkspaceKey(tk) ? `"${displayLabel}"` : `$${displayLabel.toUpperCase()}`}
+            </strong>{" "}
+            in a new tab.
           </p>
         ) : undefined
       }

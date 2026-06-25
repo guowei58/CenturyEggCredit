@@ -8,6 +8,7 @@ import { connectionBucketForSource } from "@/lib/regulatory/connectionBuckets";
 import { SubsidiaryQuerySuggestionsCard } from "@/components/company/SubsidiaryQuerySuggestionsCard";
 import { RegulatoryResultSourceLinks } from "@/components/company/RegulatoryResultSourceLinks";
 import { RegulatorySearchNotes } from "@/components/company/RegulatorySearchNotes";
+import { workspaceSearchCompanyName } from "@/lib/company-workspace-key";
 
 type SearchResp =
   | {
@@ -61,7 +62,7 @@ export function CompanyRegulatoryApiTab({
   const bootstrapKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const seed = (companyName ?? "").trim() || safeTicker;
+    const seed = workspaceSearchCompanyName(safeTicker, companyName);
     setQueryDraft(seed);
   }, [safeTicker, companyName]);
 
@@ -120,7 +121,7 @@ export function CompanyRegulatoryApiTab({
   useEffect(() => {
     if (!autoSearchOnMount) return;
     if (!safeTicker || !source) return;
-    const seed = (companyName ?? "").trim() || safeTicker;
+    const seed = workspaceSearchCompanyName(safeTicker, companyName);
     if (!seed.trim()) return;
     const aliasKey = entityNameHints.slice(0, 12).join("|");
     const key = `${safeTicker}|${sourceId}|${seed}|${aliasKey}`;

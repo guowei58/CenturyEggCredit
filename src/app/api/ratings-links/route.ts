@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getCompanyProfile } from "@/lib/sec-edgar";
+import { resolveCompanySearchName } from "@/lib/company-search-context";
 import { getSearchProviderFromEnv } from "@/lib/ratings-link-search/provider";
 import { discoverRatingsLinksWithProvider } from "@/lib/ratings-link-search/service";
 
@@ -32,12 +32,13 @@ export async function POST(req: Request) {
 
   if (!companyName) {
     try {
-      const profile = await getCompanyProfile(ticker);
-      if (profile?.name?.trim()) companyName = profile.name.trim();
+      companyName = await resolveCompanySearchName(ticker);
     } catch (e) {
       console.error("ratings-links profile fetch:", e);
     }
   }
+
+  const resolvedName = companyName || ticker;
 
   const prov = getSearchProviderFromEnv();
   if (!prov.ok) {
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
 
   try {
     const data = await discoverRatingsLinksWithProvider(
-      { ticker, companyName: companyName || ticker, aliases },
+      { ticker, companyName: resolvedName, aliases },
       prov.provider
     );
     return NextResponse.json(data);

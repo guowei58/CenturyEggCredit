@@ -9,9 +9,12 @@ import { TopNav, LeftSidebar, ChatDrawer, EggHocCommitteeDrawer } from "@/compon
 import { DailyNewsDrawer } from "@/components/daily-news/DailyNewsDrawer";
 import { unlockEggHocNotificationAudio } from "@/lib/sounds/playEggHocBark";
 import { CompanyAnalysis } from "@/components/CompanyAnalysis";
+import { PMDashboard } from "@/components/PMDashboard";
 import { Card } from "@/components/ui";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
 import { getFirstTabIdForTopSection } from "@/data/company-navigation";
+import { canAccessRiskChecklist } from "@/lib/risk-checklist/access";
+import { getPMDashboardTabId } from "@/lib/tabs";
 
 async function fetchWatchlistForShell(): Promise<string[] | null> {
   try {
@@ -25,9 +28,10 @@ async function fetchWatchlistForShell(): Promise<string[] | null> {
 }
 
 export default function AppShellClient() {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const userPickedTickerRef = useRef(false);
   const [mode, setMode] = useState<"co" | "pm">("co");
+  const [pmTab, setPmTab] = useState(getPMDashboardTabId(0));
   const [companyTopSection, setCompanyTopSection] = useState<CompanyTopSectionId>("overview");
   const [ticker, setTicker] = useState<string | null>(null);
   const [companyTab, setCompanyTab] = useState<string>(getFirstTabIdForTopSection("overview"));
@@ -138,6 +142,23 @@ export default function AppShellClient() {
     setCompanyTab("historical-financial-statements");
   }, [companyTab, companyTopSection]);
 
+  /** PM Dashboard is restricted to the risk-checklist account. */
+  useEffect(() => {
+    if (mode !== "pm") return;
+    if (!canAccessRiskChecklist(session?.user?.email)) {
+      setMode("co");
+    }
+  }, [mode, session?.user?.email]);
+
+  const handlePmTickerSelect = useCallback(
+    (t: string) => {
+      handleTickerSelect(t);
+      setCompanyTopSection("risk-checklist");
+      setCompanyTab(getFirstTabIdForTopSection("risk-checklist"));
+    },
+    [handleTickerSelect]
+  );
+
   return (
     <div
       className="shell"
@@ -165,7 +186,9 @@ export default function AppShellClient() {
         }}
       />
       <div className="flex flex-1 overflow-hidden">
-        <LeftSidebar onTickerSelect={handleTickerSelect} currentTicker={ticker} />
+        {mode !== "pm" ? (
+          <LeftSidebar onTickerSelect={handleTickerSelect} currentTicker={ticker} />
+        ) : null}
         <div className="main flex min-h-0 flex-1 flex-col overflow-hidden">
           {mode === "co" ? (
             ticker === null ? (
@@ -194,11 +217,13 @@ export default function AppShellClient() {
               }}
             />
             )
+          ) : canAccessRiskChecklist(session?.user?.email) ? (
+            <PMDashboard activeTab={pmTab} onTabChange={setPmTab} onTickerSelect={handlePmTickerSelect} />
           ) : (
             <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-auto p-6">
               <Card title="PM Dashboard" className="w-full max-w-lg">
                 <p className="px-4 py-6 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-                  OREO is still undergoing training. This section is closed for now—check back later.
+                  PM Dashboard is not available for this account.
                 </p>
               </Card>
             </div>

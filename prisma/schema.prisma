@@ -117,6 +117,12 @@ model User {
   taxLienWorkflowCandidates        TaxLienWorkflowCandidate[]
   taxLienDocuments                 TaxLienDocument[]
   taxLienManualSearchTasks         TaxLienManualSearchTask[]
+  riskAssessments                  RiskAssessment[]
+  riskDaggerFlags                  RiskDaggerFlag[]
+  riskSecurityInstruments          RiskSecurityInstrument[]
+  riskIssuerSummaries              RiskIssuerSummary[]
+  riskAuditLogs                    RiskAuditLog[]
+  riskScoringConfig                RiskScoringConfig?
 
   @@map("users")
 }
@@ -2357,4 +2363,224 @@ model OpenCorporatesSubsidiaryAddressResult {
   @@unique([userId, ticker, subsidiaryRowIndex])
   @@index([userId, ticker])
   @@map("opencorporates_subsidiary_address_results")
+}
+
+// --- Credit Risk Checklist & Scoring ---
+
+enum RiskChecklistType {
+  issuer
+  security
+  dagger
+}
+
+enum RiskAssessmentStatus {
+  draft
+  completed
+  reopened
+  archived
+}
+
+enum RiskAnswerLabel {
+  no
+  mixed
+  yes
+  unknown
+  not_applicable
+}
+
+model RiskChecklistTemplate {
+  id             String              @id @default(cuid())
+  name           String
+  version        Int
+  checklistType  RiskChecklistType   @map("checklist_type")
+  isActive       Boolean             @default(true) @map("is_active")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  questions      RiskChecklistQuestion[]
+  assessments    RiskAssessment[]
+
+  @@unique([name, version, checklistType])
+  @@map("risk_checklist_templates")
+}
+
+model RiskChecklistQuestion {
+  id             String                @id @default(cuid())
+  templateId     String                @map("template_id")
+  template       RiskChecklistTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questionCode   String                @map("question_code")
+  category       String
+  questionText   String                @map("question_text") @db.Text
+  maxPoints      Decimal               @map("max_points") @db.Decimal(8, 2)
+  displayOrder   Int                   @map("display_order")
+  isDagger       Boolean               @default(false) @map("is_dagger")
+  isActive       Boolean               @default(true) @map("is_active")
+  guidanceText   String?               @map("guidance_text") @db.Text
+  createdAt      DateTime              @default(now()) @map("created_at")
+  updatedAt      DateTime              @updatedAt @map("updated_at")
+  answers        RiskAssessmentAnswer[]
+
+  @@unique([templateId, questionCode])
+  @@index([templateId, category, displayOrder])
+  @@map("risk_checklist_questions")
+}
+
+model RiskSecurityInstrument {
+  id               String           @id @default(cuid())
+  userId           String           @map("user_id")
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker           String
+  name             String
+  cusip            String?
+  isin             String?
+  priority         String?
+  lienLevel        String?          @map("lien_level")
+  maturityDate     DateTime?        @map("maturity_date")
+  debtInstrumentId String?          @map("debt_instrument_id")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  assessments      RiskAssessment[]
+
+  @@index([userId, ticker])
+  @@map("risk_security_instruments")
+}
+
+model RiskAssessment {
+  id                         String                 @id @default(cuid())
+  userId                     String                 @map("user_id")
+  user                       User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker                     String
+  securityInstrumentId       String?                @map("security_instrument_id")
+  securityInstrument         RiskSecurityInstrument? @relation(fields: [securityInstrumentId], references: [id], onDelete: SetNull)
+  templateId                 String                 @map("template_id")
+  template                   RiskChecklistTemplate  @relation(fields: [templateId], references: [id])
+  assessmentType             RiskChecklistType      @map("assessment_type")
+  status                     RiskAssessmentStatus   @default(draft)
+  rawScore                   Decimal?               @map("raw_score") @db.Decimal(8, 4)
+  effectiveScore             Decimal?               @map("effective_score") @db.Decimal(8, 4)
+  manualOverrideScore        Decimal?               @map("manual_override_score") @db.Decimal(8, 4)
+  finalScore                 Decimal?               @map("final_score") @db.Decimal(8, 4)
+  classification             String?
+  daggerOverrideReason       String?                @map("dagger_override_reason") @db.Text
+  dataConfidence             Decimal?               @map("data_confidence") @db.Decimal(8, 4)
+  assessmentDate             DateTime?              @map("assessment_date")
+  nextReviewDate             DateTime?              @map("next_review_date")
+  manualOverrideClassification String?              @map("manual_override_classification")
+  manualOverrideReason       String?                @map("manual_override_reason") @db.Text
+  manualOverrideReviewDate   DateTime?              @map("manual_override_review_date")
+  manualOverrideBy           String?                @map("manual_override_by")
+  createdBy                  String?                @map("created_by")
+  completedBy                String?                @map("completed_by")
+  completedAt                DateTime?              @map("completed_at")
+  createdAt                  DateTime               @default(now()) @map("created_at")
+  updatedAt                  DateTime               @updatedAt @map("updated_at")
+  answers                    RiskAssessmentAnswer[]
+
+  @@index([userId, ticker, status])
+  @@index([userId, ticker, assessmentType])
+  @@index([completedAt])
+  @@map("risk_assessments")
+}
+
+model RiskAssessmentAnswer {
+  id                String               @id @default(cuid())
+  assessmentId      String               @map("assessment_id")
+  assessment        RiskAssessment       @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  questionId        String               @map("question_id")
+  question          RiskChecklistQuestion @relation(fields: [questionId], references: [id])
+  answerLabel       RiskAnswerLabel      @map("answer_label")
+  answerValue       Decimal              @map("answer_value") @db.Decimal(4, 2)
+  calculatedPoints  Decimal              @map("calculated_points") @db.Decimal(8, 4)
+  metricValue       Decimal?             @map("metric_value") @db.Decimal(18, 6)
+  metricUnit        String?              @map("metric_unit")
+  metricPeriod      String?              @map("metric_period")
+  analystComment    String?              @map("analyst_comment") @db.Text
+  sourceUrl         String?              @map("source_url") @db.Text
+  sourceDescription String?              @map("source_description") @db.Text
+  sourceAsOfDate    DateTime?            @map("source_as_of_date")
+  internalDocumentId String?             @map("internal_document_id")
+  confidence        String?
+  createdBy         String?              @map("created_by")
+  updatedBy         String?              @map("updated_by")
+  createdAt         DateTime             @default(now()) @map("created_at")
+  updatedAt         DateTime             @updatedAt @map("updated_at")
+
+  @@unique([assessmentId, questionId])
+  @@map("risk_assessment_answers")
+}
+
+model RiskDaggerFlag {
+  id                 String    @id @default(cuid())
+  userId             String    @map("user_id")
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker             String
+  daggerCode         String    @map("dagger_code")
+  assessmentId       String?   @map("assessment_id")
+  isActive           Boolean   @default(true) @map("is_active")
+  severity           String?
+  analystComment     String?   @map("analyst_comment") @db.Text
+  sourceUrl          String?   @map("source_url") @db.Text
+  internalDocumentId String?   @map("internal_document_id")
+  identifiedDate     DateTime? @map("identified_date")
+  lastReviewedDate   DateTime? @map("last_reviewed_date")
+  resolvedDate       DateTime? @map("resolved_date")
+  resolvedBy         String?   @map("resolved_by")
+  resolutionComment  String?   @map("resolution_comment") @db.Text
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@unique([userId, ticker, daggerCode])
+  @@index([userId, ticker, isActive])
+  @@map("risk_dagger_flags")
+}
+
+model RiskIssuerSummary {
+  userId              String    @map("user_id")
+  ticker              String
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rawScore            Decimal?  @map("raw_score") @db.Decimal(8, 4)
+  effectiveScore      Decimal?  @map("effective_score") @db.Decimal(8, 4)
+  finalScore          Decimal?  @map("final_score") @db.Decimal(8, 4)
+  classification      String?
+  riskVelocity        Decimal?  @map("risk_velocity") @db.Decimal(8, 4)
+  riskVelocityStatus  String?   @map("risk_velocity_status")
+  activeDaggerCount   Int       @default(0) @map("active_dagger_count")
+  dataConfidence      Decimal?  @map("data_confidence") @db.Decimal(8, 4)
+  lastAssessmentId    String?   @map("last_assessment_id")
+  lastUpdatedAt       DateTime? @map("last_updated_at")
+  nextReviewDate      DateTime? @map("next_review_date")
+  assessmentOverdue   Boolean   @default(false) @map("assessment_overdue")
+
+  @@id([userId, ticker])
+  @@index([userId, effectiveScore])
+  @@index([userId, classification])
+  @@map("risk_issuer_summaries")
+}
+
+model RiskAuditLog {
+  id                   String   @id @default(cuid())
+  userId               String   @map("user_id")
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker               String
+  securityInstrumentId String?  @map("security_instrument_id")
+  assessmentId         String?  @map("assessment_id")
+  action               String
+  previousValue        String?  @map("previous_value") @db.Text
+  newValue             String?  @map("new_value") @db.Text
+  explanation          String?  @db.Text
+  performedBy          String?  @map("performed_by")
+  performedAt          DateTime @default(now()) @map("performed_at")
+
+  @@index([userId, ticker])
+  @@index([assessmentId])
+  @@map("risk_audit_logs")
+}
+
+model RiskScoringConfig {
+  userId                String @id @map("user_id")
+  user                  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issuerWeightPercent   Int    @default(75) @map("issuer_weight_percent")
+  securityWeightPercent Int    @default(25) @map("security_weight_percent")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("risk_scoring_configs")
 }

@@ -1,3 +1,4 @@
+import { isPrivateWorkspaceKey } from "@/lib/company-workspace-key";
 import type { ConfidenceBucket, ResearchProfile, ResearchProviderId } from "./types";
 import { isAmbiguousTicker } from "@/lib/xSearch/utils";
 
@@ -18,7 +19,7 @@ export function scoreMatch(args: {
   accessLevel: "public" | "partially_gated" | "gated";
   pageType: string;
 }): { score: number; bucket: ConfidenceBucket; reasons: string[]; matchedAlias: string | null } {
-  const tk = args.profile.ticker;
+  const tk = isPrivateWorkspaceKey(args.profile.ticker) ? "" : args.profile.ticker;
   const name = args.profile.companyName ?? "";
   const aliases = args.profile.aliases;
 

@@ -1,3 +1,7 @@
+import {
+  isPrivateWorkspaceKey,
+  workspaceSearchCompanyName,
+} from "@/lib/company-workspace-key";
 import type { RatingsLinkSearchContext } from "./types";
 
 const SUFFIX_RE =
@@ -16,7 +20,8 @@ function stripCorporateSuffixes(name: string): string {
 export function deriveAliases(companyName: string, ticker: string): string[] {
   const t = ticker.trim().toUpperCase();
   const raw = companyName.trim();
-  const out = new Set<string>([t]);
+  const out = new Set<string>();
+  if (t.length >= 1 && !isPrivateWorkspaceKey(t)) out.add(t);
   if (raw.length) {
     out.add(raw);
     const stripped = stripCorporateSuffixes(raw);
@@ -50,7 +55,10 @@ export function buildRatingsSearchContext(
   extraAliases?: string[]
 ): RatingsLinkSearchContext {
   const tk = ticker.trim().toUpperCase();
-  const name = companyName.trim() || tk;
-  const aliases = mergeAliases(deriveAliases(name, tk), extraAliases ?? []);
+  const isPrivate = isPrivateWorkspaceKey(tk);
+  const name = isPrivate
+    ? workspaceSearchCompanyName(tk, companyName)
+    : companyName.trim() || tk;
+  const aliases = mergeAliases(deriveAliases(name, isPrivate ? "" : tk), extraAliases ?? []);
   return { ticker: tk, companyName: name, aliases };
 }

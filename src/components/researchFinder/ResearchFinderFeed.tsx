@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
+import { workspaceSearchCompanyName } from "@/lib/company-workspace-key";
 import { ResearchFinderResultCard } from "@/components/researchFinder/ResearchFinderResultCard";
 import type { ResearchFinderSearchResponse, ResearchProviderId } from "@/lib/researchFinder/types";
 
@@ -31,7 +32,8 @@ function parseFeedCache(raw: string | null | undefined): ResearchFinderSearchRes
 
 export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
   const tk = (ticker ?? "").trim().toUpperCase();
-  const [name, setName] = useState((companyName ?? "").trim());
+  const defaultName = workspaceSearchCompanyName(tk, companyName);
+  const [name, setName] = useState(defaultName);
   const [aliases, setAliases] = useState("");
   const [selected, setSelected] = useState<Set<ResearchProviderId>>(new Set(PROVIDERS.map((p) => p.id)));
 
@@ -52,8 +54,8 @@ export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; co
   }, [tk, prefsReady, feedCacheBlob]);
 
   useEffect(() => {
-    if (companyName?.trim()) setName(companyName.trim());
-  }, [companyName]);
+    setName(workspaceSearchCompanyName(tk, companyName));
+  }, [tk, companyName]);
 
   const providers = useMemo(() => Array.from(selected.values()), [selected]);
 
@@ -139,14 +141,14 @@ export function ResearchFinderFeed({ ticker, companyName }: { ticker: string; co
           <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
             <div className="min-w-0 flex-1">
               <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                Company name (optional)
+                Company name
               </div>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full rounded-md border bg-[var(--card)] px-3 py-2 text-sm"
                 style={{ borderColor: "var(--border2)", color: "var(--text)" }}
-                placeholder="Optional — override if different from overview"
+                placeholder="Company name used in provider searches"
               />
             </div>
             <div className="min-w-0 flex-1">

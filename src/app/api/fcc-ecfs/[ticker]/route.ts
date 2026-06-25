@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCompanyProfile } from "@/lib/sec-edgar";
+import { resolveCompanySearchName } from "@/lib/company-search-context";
 import { getFccEcfsApiKey, searchEcfsFilings } from "@/lib/fcc-ecfs";
 import { sanitizeTicker } from "@/lib/saved-ticker-data";
 
@@ -42,10 +42,12 @@ export async function GET(
   let defaultQuery = safeTicker;
   let companyName: string | null = null;
   try {
-    const profile = await getCompanyProfile(safeTicker);
-    if (profile?.name?.trim()) {
-      companyName = profile.name.trim();
-      defaultQuery = companyName;
+    const resolved = await resolveCompanySearchName(safeTicker);
+    if (resolved && resolved.toUpperCase() !== safeTicker) {
+      companyName = resolved;
+      defaultQuery = resolved;
+    } else if (resolved) {
+      defaultQuery = resolved;
     }
   } catch {
     // keep ticker as default query

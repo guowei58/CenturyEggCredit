@@ -1,3 +1,4 @@
+import { isPrivateWorkspaceKey, workspaceSearchCompanyName } from "@/lib/company-workspace-key";
 import { isAmbiguousTicker } from "@/lib/xSearch/utils";
 import type { RedditSearchProfile } from "./types";
 import { uniq } from "./utils";
@@ -27,8 +28,12 @@ export function buildSearchProfile(params: {
   maxSubs: number;
   maxQueryVariants: number;
 }): { profile: RedditSearchProfile; error?: string } {
-  const ticker = (params.ticker ?? "").trim().toUpperCase();
-  const companyName = (params.companyName ?? "").trim();
+  const rawTicker = (params.ticker ?? "").trim().toUpperCase();
+  const isPrivate = isPrivateWorkspaceKey(rawTicker);
+  const ticker = isPrivate ? "" : rawTicker;
+  const companyName = isPrivate
+    ? workspaceSearchCompanyName(rawTicker, params.companyName)
+    : (params.companyName ?? "").trim();
   const aliases = uniq((params.aliases ?? []).map((a) => a.trim()).filter((a) => a.length >= 2)).slice(0, 12);
 
   if (!ticker && !companyName) {
@@ -77,7 +82,7 @@ export function buildSearchProfile(params: {
 
   return {
     profile: {
-      ticker,
+      ticker: rawTicker,
       companyName,
       aliases,
       selectedSubreddits,

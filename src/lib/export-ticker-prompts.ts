@@ -297,14 +297,19 @@ export function formatTickerPromptFileContent(
   ].join("\n");
 }
 
-export function tickerPromptExportZipPath(promptNumber: number, tabLabel: string): string {
+export function tickerPromptExportFilename(promptNumber: number, tabLabel: string): string {
   return `${padExportIndex(promptNumber)}-${slugifyExportSegment(tabLabel)}.txt`;
 }
 
-export async function buildTickerPromptExportZip(bundle: TickerPromptExportBundle): Promise<Blob> {
-  const JSZip = (await import("jszip")).default;
-  const zip = new JSZip();
+/** @deprecated Use `tickerPromptExportFilename` — kept for import-ticker-responses zip layout parity. */
+export const tickerPromptExportZipPath = tickerPromptExportFilename;
 
+export type TickerPromptExportFile = {
+  filename: string;
+  content: string;
+};
+
+export function listTickerPromptExportFiles(bundle: TickerPromptExportBundle): TickerPromptExportFile[] {
   const headerName = bundle.companyName
     ? `${bundle.ticker} (${bundle.companyName})`
     : bundle.ticker;
@@ -316,13 +321,17 @@ export async function buildTickerPromptExportZip(bundle: TickerPromptExportBundl
     "",
     "Files:",
   ];
+  const files: TickerPromptExportFile[] = [];
 
   for (const section of bundle.sections) {
     for (const entry of section.prompts) {
       promptNumber += 1;
-      const relPath = tickerPromptExportZipPath(promptNumber, entry.tabLabel);
-      zip.file(relPath, formatTickerPromptFileContent(bundle, section, entry, promptNumber));
-      manifestLines.push(`  ${promptNumber}. ${section.sectionLabel} — ${entry.tabLabel} (${relPath})`);
+      const filename = tickerPromptExportFilename(promptNumber, entry.tabLabel);
+      files.push({
+        filename,
+        content: formatTickerPromptFileContent(bundle, section, entry, promptNumber),
+      });
+      manifestLines.push(`  ${promptNumber}. ${section.sectionLabel} — ${entry.tabLabel} (${filename})`);
     }
   }
 
@@ -330,7 +339,17 @@ export async function buildTickerPromptExportZip(bundle: TickerPromptExportBundl
     throw new Error("No prompts available for this company.");
   }
 
-  zip.file("README.txt", manifestLines.join("\n") + "\n");
+  files.push({ filename: "README.txt", content: manifestLines.join("\n") + "\n" });
+  return files;
+}
+
+export async function buildTickerPromptExportZip(bundle: TickerPromptExportBundle): Promise<Blob> {
+  const JSZip = (await import("jszip")).default;
+  const zip = new JSZip();
+
+  for (const file of listTickerPromptExportFiles(bundle)) {
+    zip.file(file.filename, file.content);
+  }
 
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } });
 }

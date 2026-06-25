@@ -1,11 +1,13 @@
 "use client";
 
 import { Card } from "@/components/ui";
+import { workspaceSearchCompanyName, workspaceSearchLabel } from "@/lib/company-workspace-key";
 import { SubstackFeed } from "@/components/substack/SubstackFeed";
 
 export function CompanySubstackTab({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
   const safeTicker = (ticker ?? "").trim().toUpperCase();
-  const displayName = (companyName?.trim() || safeTicker) || "";
+  const searchLabel = workspaceSearchLabel(safeTicker, companyName);
+  const resolvedCompanyName = workspaceSearchCompanyName(safeTicker, companyName);
 
   if (!safeTicker) {
     return (
@@ -18,9 +20,8 @@ export function CompanySubstackTab({ ticker, companyName }: { ticker: string; co
   }
 
   return (
-    <Card title={`Substack Search — ${safeTicker}`}>
-      <SubstackFeed ticker={safeTicker} companyName={displayName || undefined} />
+    <Card title={`Substack Search — ${searchLabel}`}>
+      <SubstackFeed ticker={safeTicker} companyName={resolvedCompanyName} />
     </Card>
   );
 }
-

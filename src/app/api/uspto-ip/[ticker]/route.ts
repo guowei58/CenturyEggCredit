@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveCompanySearchName } from "@/lib/company-search-context";
 import { getCompanyProfile } from "@/lib/sec-edgar";
 import {
   formatOdpPatentQueryString,
@@ -9,6 +10,7 @@ import {
   searchPatentsViewPatentsByAssignee,
   unwrapOdpStylePhrase,
 } from "@/lib/uspto-ip";
+import { isPrivateWorkspaceKey } from "@/lib/company-workspace-key";
 
 export const dynamic = "force-dynamic";
 
@@ -42,11 +44,15 @@ export async function GET(
   const pvKey = process.env.USPTO_PATENTSVIEW_API_KEY?.trim();
 
   let companyName: string | null = null;
-  try {
-    const profile = await getCompanyProfile(ticker);
-    companyName = profile?.name ?? null;
-  } catch {
-    companyName = null;
+  if (isPrivateWorkspaceKey(ticker)) {
+    companyName = await resolveCompanySearchName(ticker);
+  } else {
+    try {
+      const profile = await getCompanyProfile(ticker);
+      companyName = profile?.name ?? null;
+    } catch {
+      companyName = null;
+    }
   }
 
   const queryRaw = qOverride || companyName || ticker;

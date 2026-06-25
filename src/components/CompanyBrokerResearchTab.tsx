@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui";
+import { workspaceSearchLabel } from "@/lib/company-workspace-key";
 import { BrokerActivitiesFeed } from "@/components/brokerActivities/BrokerActivitiesFeed";
 
 export function CompanyBrokerResearchTab({
@@ -11,7 +12,8 @@ export function CompanyBrokerResearchTab({
   companyName?: string | null;
 }) {
   const safeTicker = ticker?.trim() ?? "";
-  const displayName = (companyName?.trim() || safeTicker) || "";
+  const searchLabel = workspaceSearchLabel(safeTicker, companyName);
+  const displayName = (companyName?.trim() || searchLabel) || "";
 
   if (!safeTicker) {
     return (
@@ -24,7 +26,7 @@ export function CompanyBrokerResearchTab({
   }
 
   return (
-    <Card title={`Broker Activities — ${safeTicker}`}>
+    <Card title={`Broker Activities — ${searchLabel}`}>
       <BrokerActivitiesFeed ticker={safeTicker} companyName={displayName || undefined} />
     </Card>
   );

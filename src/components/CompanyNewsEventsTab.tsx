@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui";
+import { workspaceSearchCompanyName, workspaceSearchLabel } from "@/lib/company-workspace-key";
 import { NewsFeed } from "@/components/news/NewsFeed";
 
 export function CompanyNewsEventsTab({
@@ -11,8 +12,8 @@ export function CompanyNewsEventsTab({
   companyName?: string | null;
 }) {
   const safeTicker = ticker?.trim().toUpperCase() ?? "";
-  const resolvedCompanyName =
-    companyName?.trim() && companyName.trim().toUpperCase() !== safeTicker ? companyName.trim() : undefined;
+  const searchLabel = workspaceSearchLabel(safeTicker, companyName);
+  const resolvedCompanyName = workspaceSearchCompanyName(safeTicker, companyName);
 
   if (!safeTicker) {
     return (
@@ -25,7 +26,7 @@ export function CompanyNewsEventsTab({
   }
 
   return (
-    <Card title={`News & Events — ${safeTicker}`}>
+    <Card title={`News & Events — ${searchLabel}`}>
       <NewsFeed ticker={safeTicker} companyName={resolvedCompanyName} />
     </Card>
   );

@@ -1,5 +1,6 @@
 import { filterDisplayEvents } from "./confidence";
 import { dedupeEvents } from "./dedupe";
+import { isPrivateWorkspaceKey, workspaceSearchCompanyName } from "@/lib/company-workspace-key";
 import { getAnalystActivitySearchProvider } from "./searchProvider";
 import { buildBrokerActivitySummary } from "./summary";
 import { createAlphaVantageAdapter, createFinnhubAdapter, createFmpAdapter } from "./sources/apiStubs";
@@ -41,12 +42,15 @@ export async function ingestAnalystActivity(
   req: AnalystActivityRequest
 ): Promise<AnalystActivityResponse> {
   const ticker = req.ticker.trim().toUpperCase();
+  const resolvedCompanyName = isPrivateWorkspaceKey(ticker)
+    ? workspaceSearchCompanyName(ticker, req.companyName)
+    : req.companyName?.trim();
   const retrievedAt = new Date().toISOString();
   const providerResult = getAnalystActivitySearchProvider();
 
   const ctx: SourceAdapterContext = {
     ticker,
-    companyName: req.companyName?.trim(),
+    companyName: resolvedCompanyName,
     aliases: req.aliases,
     search: providerResult.ok ? providerResult.provider : undefined,
     retrievedAt,

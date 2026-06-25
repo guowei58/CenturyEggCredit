@@ -76,7 +76,10 @@ function getPrisma(): PrismaClient {
     typeof existing.userDailyNewsBatch?.upsert === "function" &&
     typeof existing.publicRecordsProfile?.findUnique === "function" &&
     typeof existing.openCorporatesSubsidiaryAddressResult?.upsert === "function" &&
-    typeof existing.openCorporatesApiCacheEntry?.upsert === "function"
+    typeof existing.openCorporatesApiCacheEntry?.upsert === "function" &&
+    typeof existing.riskChecklistTemplate?.findFirst === "function" &&
+    typeof existing.riskAssessment?.findFirst === "function" &&
+    typeof existing.riskIssuerSummary?.upsert === "function"
   ) {
     return existing;
   }

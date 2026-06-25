@@ -2,24 +2,12 @@
 
 import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
+import { downloadPromptExportFilesToDownloads } from "@/lib/download-prompt-export-files";
 import {
-  buildTickerPromptExportZip,
   canExportTickerPrompts,
   collectTickerPromptExport,
+  listTickerPromptExportFiles,
 } from "@/lib/export-ticker-prompts";
-
-function triggerBlobDownload(filename: string, blob: Blob) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.rel = "noopener";
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
 
 export function DownloadAllPromptsButton({
   ticker,
@@ -45,8 +33,8 @@ export function DownloadAllPromptsButton({
         companyName,
         appOrigin: typeof window !== "undefined" ? window.location.origin : "",
       });
-      const zipBlob = await buildTickerPromptExportZip(bundle);
-      triggerBlobDownload(`${safeTicker}-prompts.zip`, zipBlob);
+      const files = listTickerPromptExportFiles(bundle);
+      await downloadPromptExportFilesToDownloads(safeTicker, files);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed");
     } finally {
@@ -71,9 +59,9 @@ export function DownloadAllPromptsButton({
           background: "color-mix(in srgb, var(--card2) 65%, var(--card))",
           boxShadow: "0 1px 0 color-mix(in srgb, var(--border2) 60%, transparent)",
         }}
-        title="Download Overview, Industry & Competition, Capital Structure, and Research prompts as a ZIP (one .txt per prompt)"
+        title={`Download Overview, Industry & Competition, Capital Structure, and Research prompts as .txt files in your Downloads folder (${safeTicker}-prompts/)`}
       >
-        {busy ? "Preparing…" : "Download All Prompts"}
+        {busy ? "Downloading…" : "Download All Prompts"}
       </button>
       {error ? (
         <span className="max-w-[min(220px,45vw)] text-right text-[10px] leading-tight" style={{ color: "var(--danger, #f87171)" }}>

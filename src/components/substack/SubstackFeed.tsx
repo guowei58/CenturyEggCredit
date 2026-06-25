@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { CompanyFeedTabShell } from "@/components/company/CompanyFeedTabShell";
+import { workspaceSearchCompanyName } from "@/lib/company-workspace-key";
 import type { SubstackSearchResponse } from "@/lib/substack/types";
 import { rankResults, type SortMode } from "@/lib/substack/search/rank";
 import { SubstackCoveragePanel } from "./SubstackCoveragePanel";
@@ -25,7 +26,7 @@ function parseFeedCache(raw: string | null | undefined): SubstackSearchResponse 
 
 export function SubstackFeed({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
   const tk = (ticker ?? "").trim().toUpperCase();
-  const name = companyName?.trim() || "";
+  const name = workspaceSearchCompanyName(tk, companyName);
   const { ready: prefsReady, preferences, updatePreferences } = useUserPreferences();
   const feedCacheKey = tk ? cacheKey(tk) : "";
   const feedCacheBlob = feedCacheKey ? preferences.feedCaches?.[feedCacheKey] : undefined;

@@ -1141,6 +1141,31 @@
   }
   .table-institutional th.text-right,
   .table-institutional td.text-right { text-align: right; }
+  .table-institutional th.risk-question-th {
+    white-space: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    text-align: center;
+    min-width: 4.75rem;
+    max-width: 6rem;
+    vertical-align: bottom;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .table-institutional th.risk-bucket-expand-hint {
+    white-space: nowrap;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: bottom;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .table-institutional th.risk-bucket-label-th {
+    vertical-align: top;
+    padding-top: 0;
+  }
   .table-institutional td {
     padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid rgba(28, 42, 58, 0.5);
@@ -1148,6 +1173,31 @@
   }
   .table-institutional tbody tr:hover td { background: rgba(255, 255, 255, 0.02); }
   .table-institutional tbody tr:last-child td { border-bottom: none; }
+
+  .table-institutional-grid {
+    table-layout: fixed;
+  }
+  .table-institutional-grid th,
+  .table-institutional-grid td {
+    border-right: 1px solid var(--border);
+  }
+  .table-institutional-grid th:last-child,
+  .table-institutional-grid td:last-child {
+    border-right: none;
+  }
+  .table-institutional-grid tbody tr:last-child td {
+    border-bottom: 1px solid rgba(28, 42, 58, 0.5);
+  }
+
+  .table-institutional.risk-scoring-table-expanded {
+    width: max-content;
+    min-width: 100%;
+  }
+  .table-institutional.risk-scoring-table-expanded th.risk-question-th,
+  .table-institutional.risk-scoring-table-expanded td.risk-question-td {
+    width: 5.5rem;
+    max-width: 5.5rem;
+  }
 
   .divide-institutional > * + * { border-top: 1px solid rgba(28, 42, 58, 0.5); }
 

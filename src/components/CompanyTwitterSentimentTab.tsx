@@ -1,12 +1,13 @@
 "use client";
 
 import { Card } from "@/components/ui";
+import { workspaceSearchCompanyName, workspaceSearchLabel } from "@/lib/company-workspace-key";
 import { XSearchFeed } from "@/components/xSearch/XSearchFeed";
 
 export function CompanyTwitterSentimentTab({ ticker, companyName }: { ticker: string; companyName?: string | null }) {
   const safeTicker = ticker?.trim().toUpperCase() ?? "";
-  const resolvedCompanyName =
-    companyName?.trim() && companyName.trim().toUpperCase() !== safeTicker ? companyName.trim() : undefined;
+  const searchLabel = workspaceSearchLabel(safeTicker, companyName);
+  const resolvedCompanyName = workspaceSearchCompanyName(safeTicker, companyName);
 
   if (!safeTicker) {
     return (
@@ -19,9 +20,8 @@ export function CompanyTwitterSentimentTab({ ticker, companyName }: { ticker: st
   }
 
   return (
-    <Card title={`Twitter Sentiment — ${safeTicker}`}>
-      <XSearchFeed ticker={safeTicker} companyName={resolvedCompanyName} />
+    <Card title={`Twitter Sentiment — ${searchLabel}`}>
+      <XSearchFeed ticker={safeTicker} companyName={resolvedCompanyName} searchLabel={searchLabel} />
     </Card>
   );
 }
-

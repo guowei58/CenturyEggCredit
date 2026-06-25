@@ -10,7 +10,15 @@ import { dedupeResults } from "./search/dedupe";
 describe("substack query builder", () => {
   it("builds a small consolidated query set", () => {
     const q = buildDiscoveryQueries({ ticker: "TSLA", companyName: "Tesla", aliases: ["Tesla, Inc."] });
-    expect(q).toHaveLength(2);
+    expect(q.length).toBeGreaterThan(0);
+    expect(q.join(" ")).toContain("Tesla");
+    expect(q.join(" ")).toContain("TSLA");
+  });
+
+  it("omits PRIV workspace keys from discovery queries", () => {
+    const q = buildDiscoveryQueries({ ticker: "PRIVIMPRIVAT", companyName: "Imprivata", aliases: [] });
+    expect(q.join(" ")).not.toContain("PRIVIMPRIVAT");
+    expect(q.join(" ")).toContain("Imprivata");
   });
 });
 

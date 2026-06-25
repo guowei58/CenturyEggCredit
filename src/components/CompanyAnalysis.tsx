@@ -1,14 +1,16 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { tabLabelToId } from "@/lib/tabs";
 import type { CompanyTopSectionId } from "@/data/company-navigation";
-import { companyNav, companyTopSections } from "@/data/company-navigation";
+import { companyNav, companyTopSections, getFirstTabIdForTopSection } from "@/data/company-navigation";
 import {
   formatWorkspaceBadge,
   isCikWorkspaceKey,
   isPrivateWorkspaceKey,
   privateWorkspaceDisplayName,
+  workspaceSearchLabel,
 } from "@/lib/company-workspace-key";
 import {
   MOCK_TICKER,
@@ -88,6 +90,8 @@ import { DownloadAllUserDataButton } from "@/components/DownloadAllUserDataButto
 import { DownloadAllPromptsButton } from "@/components/DownloadAllPromptsButton";
 import { UploadPromptResponsesButton } from "@/components/UploadPromptResponsesButton";
 import { CompanyChangeLogTab } from "@/components/CompanyChangeLogTab";
+import { CompanyRiskChecklistTab } from "@/components/CompanyRiskChecklistTab";
+import { canAccessRiskChecklist } from "@/lib/risk-checklist/access";
 import { Card, EmptyState, TabBar } from "@/components/ui";
 
 /** Build company bar data: full mock for LUMN, else ticker/CIK + fetched name. */
@@ -135,6 +139,11 @@ export function CompanyAnalysis({
   aiChatOpen?: boolean;
   onOpenAiChat?: () => void;
 }) {
+  const { data: session, status } = useSession();
+  const riskChecklistAllowed = status === "authenticated" && canAccessRiskChecklist(session?.user?.email);
+  const visibleTopSections = companyTopSections.filter(
+    (s) => s.id !== "risk-checklist" || riskChecklistAllowed
+  );
   const [companyName, setCompanyName] = useState<string | null>(null);
 
   /** Avoid one frame (or parallel request) with the previous ticker’s display name — it seeds `PublicRecordsProfile.companyName` on first GET. */
@@ -161,6 +170,13 @@ export function CompanyAnalysis({
       cancelled = true;
     };
   }, [ticker]);
+
+  useEffect(() => {
+    if (!riskChecklistAllowed && topSection === "risk-checklist") {
+      onTopSectionChange("overview");
+      onTabChange(getFirstTabIdForTopSection("overview"));
+    }
+  }, [riskChecklistAllowed, topSection, onTopSectionChange, onTabChange]);
 
   useEffect(() => {
     if (activeTab === "edgartools-sec") {
@@ -211,6 +227,7 @@ export function CompanyAnalysis({
   const groups = navDef?.groups ?? [];
   const savedDocsActive = resolvedTab === "saved-documents";
   const changeLogActive = effectiveTopSection === "change-log";
+  const riskChecklistActive = effectiveTopSection === "risk-checklist";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -230,7 +247,7 @@ export function CompanyAnalysis({
             aria-label="Sections"
           >
             <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
-              {companyTopSections.map((s) => (
+              {visibleTopSections.map((s) => (
                 <button
                   key={s.id}
                   type="button"
@@ -273,6 +290,7 @@ export function CompanyAnalysis({
           {groups.length > 0 &&
             !savedDocsActive &&
             !changeLogActive &&
+            !riskChecklistActive &&
             !(groups.length === 1 && (groups[0]?.tabs?.length ?? 0) <= 1) &&
             (effectiveTopSection === "work-product" ? (
               <div className="nav-secondary nav-work-product-row flex w-full min-w-0 flex-shrink-0 flex-wrap items-center gap-x-3 gap-y-1 px-6 py-1 sm:px-8">
@@ -347,6 +365,10 @@ export function CompanyAnalysis({
             {changeLogActive ? (
               <div className="flex h-full min-h-0 flex-col overflow-hidden px-5 py-4 sm:px-8 sm:py-5" data-company-tab-workspace>
                 <CompanyChangeLogTab ticker={ticker!} companyName={co.name} />
+              </div>
+            ) : riskChecklistActive ? (
+              <div className="h-full min-h-0 overflow-y-auto px-5 py-4 sm:px-8 sm:py-5" data-company-tab-workspace>
+                <CompanyRiskChecklistTab ticker={ticker!} />
               </div>
             ) : resolvedTab === "sec-xbrl-financials" ? (
               <div className="flex h-full min-h-0 flex-col">
@@ -567,8 +589,9 @@ function CompanyTabContent({ tabId, ticker, companyName }: { tabId: string; tick
   }
   if (tabId === "ratings-research-links") {
     const sym = ticker?.trim().toUpperCase() ?? "";
+    const searchLabel = workspaceSearchLabel(sym, companyName);
     return (
-      <Card title={sym ? `Ratings Research Links — ${sym}` : "Ratings Research Links"}>
+      <Card title={sym ? `Ratings Research Links — ${searchLabel}` : "Ratings Research Links"}>
         <RatingsResearchLinks ticker={ticker} companyName={companyName} />
       </Card>
     );

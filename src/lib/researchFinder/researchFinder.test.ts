@@ -11,6 +11,13 @@ describe("researchFinder profile", () => {
     expect(p.ticker).toBe("HTZ");
     expect(p.aliases).toHaveLength(1);
   });
+
+  it("uses company name only for private workspace keys", () => {
+    const p = buildProfile({ ticker: "PRIVIMPRIVAT", companyName: "Imprivata", aliases: [] });
+    expect(p.companyName).toBe("Imprivata");
+    expect(p.terms.join(" ")).not.toContain("PRIVIMPRIVAT");
+    expect(p.terms).toContain('"Imprivata"');
+  });
 });
 
 describe("researchFinder query builder", () => {

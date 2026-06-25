@@ -12,6 +12,7 @@ import { useUserSettingsModal } from "@/components/layout/UserSettingsModalProvi
 import { DailyNewsMark } from "@/components/daily-news/DailyNewsMark";
 import { CONTACT_EMAIL } from "@/lib/contact";
 import { STRIPE_TIP_JAR_CHECKOUT_URL } from "@/lib/stripe-tip-jar";
+import { canAccessRiskChecklist } from "@/lib/risk-checklist/access";
 
 const accent = { color: "var(--accent)" } as const;
 
@@ -392,13 +393,15 @@ export function TopNav({
         >
           Company Analysis
         </button>
-        <button
-          type="button"
-          onClick={() => onModeChange("pm")}
-          className={`tab-bar-item ${mode === "pm" ? "active" : ""}`}
-        >
-          PM Dashboard
-        </button>
+        {canAccessRiskChecklist(session?.user?.email) ? (
+          <button
+            type="button"
+            onClick={() => onModeChange("pm")}
+            className={`tab-bar-item ${mode === "pm" ? "active" : ""}`}
+          >
+            PM Dashboard
+          </button>
+        ) : null}
       </nav>
       <div className="flex min-w-0 flex-col items-end justify-end gap-1.5 sm:gap-2">
         {status === "authenticated" && session?.user && (

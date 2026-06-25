@@ -1,3 +1,5 @@
+import { isPrivateWorkspaceKey, workspaceSearchCompanyName } from "@/lib/company-workspace-key";
+
 const TRACKING = new Set(["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"]);
 
 export function normalizeUrlForMatch(href: string): string | null {
@@ -61,11 +63,16 @@ export function postUrlFromId(id: string): string {
 
 /** Opens X.com search (Latest) for cashtag + optional company name. */
 export function xComSearchUrl(ticker: string, companyName?: string): string {
-  const tk = ticker.trim().toUpperCase();
+  const tk = ticker.trim();
   if (!tk) return "https://x.com/search";
+  if (isPrivateWorkspaceKey(tk)) {
+    const name = workspaceSearchCompanyName(tk, companyName);
+    return `https://x.com/search?q=${encodeURIComponent(`"${name}"`)}&f=live`;
+  }
+  const upper = tk.toUpperCase();
   const name = companyName?.trim();
   const q =
-    name && name.toUpperCase() !== tk ? `$${tk} OR "${name}"` : `$${tk}`;
+    name && name.toUpperCase() !== upper ? `$${upper} OR "${name}"` : `$${upper}`;
   return `https://x.com/search?q=${encodeURIComponent(q)}&f=live`;
 }
 
