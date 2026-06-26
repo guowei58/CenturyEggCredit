@@ -368,7 +368,7 @@ export function CompanyRiskChecklistTab({ ticker }: { ticker: string }) {
     return (
       <Card title="Risk Checklist">
         <p className="px-4 py-6 text-sm" style={{ color: "var(--muted2)" }}>
-          Risk Checklist is not available for this account.
+          Sign in to use Risk Checklist.
         </p>
       </Card>
     );

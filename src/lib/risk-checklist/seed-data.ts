@@ -10,11 +10,21 @@ export type SeedQuestion = {
 export type SeedQuestionDef = Omit<SeedQuestion, "maxPoints">;
 
 export const ISSUER_BUCKET_TOTAL_POINTS = 25;
+/** Points moved from each non-industry issuer bucket into industry & business. */
+export const ISSUER_INDUSTRY_POINTS_TRANSFER = 5;
 
-/** Split bucketTotal points evenly across questions in each category (to the cent). */
+/** Per-category issuer bucket caps (still sum to 100 across the four buckets). */
+export const ISSUER_CATEGORY_BUCKET_POINTS: Record<string, number> = {
+  industry_business: ISSUER_BUCKET_TOTAL_POINTS + ISSUER_INDUSTRY_POINTS_TRANSFER * 3,
+  financial: ISSUER_BUCKET_TOTAL_POINTS - ISSUER_INDUSTRY_POINTS_TRANSFER,
+  liquidity_capital: ISSUER_BUCKET_TOTAL_POINTS - ISSUER_INDUSTRY_POINTS_TRANSFER,
+  management_governance: ISSUER_BUCKET_TOTAL_POINTS - ISSUER_INDUSTRY_POINTS_TRANSFER,
+};
+
+/** Split each bucket's points evenly across its questions (to the cent). */
 export function assignEqualIssuerBucketPoints(
   questions: SeedQuestionDef[],
-  bucketTotal = ISSUER_BUCKET_TOTAL_POINTS
+  bucketTotals: Record<string, number> = ISSUER_CATEGORY_BUCKET_POINTS
 ): SeedQuestion[] {
   const byCategory = new Map<string, SeedQuestionDef[]>();
   for (const q of questions) {
@@ -23,8 +33,9 @@ export function assignEqualIssuerBucketPoints(
   }
 
   const pointsByCode = new Map<string, number>();
-  for (const group of byCategory.values()) {
+  for (const [category, group] of byCategory.entries()) {
     const ordered = group.slice().sort((a, b) => a.displayOrder - b.displayOrder);
+    const bucketTotal = bucketTotals[category] ?? ISSUER_BUCKET_TOTAL_POINTS;
     const totalCents = Math.round(bucketTotal * 100);
     const base = Math.floor(totalCents / ordered.length);
     const remainder = totalCents % ordered.length;
@@ -440,10 +451,7 @@ export const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const CATEGORY_MAX_POINTS: Record<string, number> = {
-  industry_business: ISSUER_BUCKET_TOTAL_POINTS,
-  financial: ISSUER_BUCKET_TOTAL_POINTS,
-  liquidity_capital: ISSUER_BUCKET_TOTAL_POINTS,
-  management_governance: ISSUER_BUCKET_TOTAL_POINTS,
+  ...ISSUER_CATEGORY_BUCKET_POINTS,
 };
 
 /** Issuer checklist buckets shown in PM dashboard and composite score header. */

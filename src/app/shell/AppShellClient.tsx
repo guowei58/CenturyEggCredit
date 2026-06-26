@@ -142,13 +142,13 @@ export default function AppShellClient() {
     setCompanyTab("historical-financial-statements");
   }, [companyTab, companyTopSection]);
 
-  /** PM Dashboard is restricted to the risk-checklist account. */
+  /** PM Dashboard requires a signed-in account. */
   useEffect(() => {
     if (mode !== "pm") return;
-    if (!canAccessRiskChecklist(session?.user?.email)) {
+    if (status !== "authenticated" || !canAccessRiskChecklist(session?.user?.email)) {
       setMode("co");
     }
-  }, [mode, session?.user?.email]);
+  }, [mode, status, session?.user?.email]);
 
   const handlePmTickerSelect = useCallback(
     (t: string) => {
@@ -217,13 +217,13 @@ export default function AppShellClient() {
               }}
             />
             )
-          ) : canAccessRiskChecklist(session?.user?.email) ? (
+          ) : status === "authenticated" && canAccessRiskChecklist(session?.user?.email) ? (
             <PMDashboard activeTab={pmTab} onTabChange={setPmTab} onTickerSelect={handlePmTickerSelect} />
           ) : (
             <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-auto p-6">
               <Card title="PM Dashboard" className="w-full max-w-lg">
                 <p className="px-4 py-6 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
-                  PM Dashboard is not available for this account.
+                  Sign in to use PM Dashboard.
                 </p>
               </Card>
             </div>

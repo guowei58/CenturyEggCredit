@@ -126,29 +126,9 @@ const SEED_SPECS = [
 
 let templatesSeedPromise: Promise<void> | null = null;
 
-async function templatesAreSeeded(): Promise<boolean> {
-  const checks = await Promise.all(
-    SEED_SPECS.map(async ({ template, questions }) => {
-      const row = await prisma.riskChecklistTemplate.findUnique({
-        where: {
-          name_version_checklistType: {
-            name: template.name,
-            version: template.version,
-            checklistType: template.checklistType,
-          },
-        },
-        include: { _count: { select: { questions: { where: { isActive: true } } } } },
-      });
-      return row != null && row._count.questions >= questions.length;
-    })
-  );
-  return checks.every(Boolean);
-}
-
 export async function ensureRiskChecklistTemplatesSeeded() {
   if (!templatesSeedPromise) {
     templatesSeedPromise = (async () => {
-      if (await templatesAreSeeded()) return;
       await Promise.all(
         SEED_SPECS.map(({ template, questions }) => upsertTemplateWithQuestions(template, questions))
       );
