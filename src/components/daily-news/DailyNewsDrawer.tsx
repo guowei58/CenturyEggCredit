@@ -237,14 +237,27 @@ export function DailyNewsDrawer({
   );
 }
 
+/** Legacy payloads included a filler line when a ticker had no headline. */
+const EMPTY_SUMMARY_TAIL =
+  /^no notable ticker-specific items in the summary window\.?$/i;
+
+function summaryBulletHasHeadline(line: string): boolean {
+  const normalized = dedupeTickerInBullet(line);
+  const m = normalized.match(/^(\s*•\s+)([^:]+):\s*(.*)$/);
+  if (!m) return true;
+  const rest = m[3]?.trim() ?? "";
+  return rest.length > 0 && !EMPTY_SUMMARY_TAIL.test(rest);
+}
+
 /** Strip intro line when it duplicates the card heading (payload includes it + we render title above). */
 function topLevelSummaryBodyLines(raw: string): string[] {
   const lines = raw.split(/\r?\n/);
   const first = lines[0]?.trim() ?? "";
-  if (/^today'?s biggest developments across the watchlist:?$/i.test(first)) {
-    return lines.slice(1).filter((l) => l.trim().length > 0);
-  }
-  return lines.filter((l) => l.trim().length > 0);
+  const body =
+    /^today'?s biggest developments across the watchlist:?$/i.test(first)
+      ? lines.slice(1)
+      : lines;
+  return body.filter((l) => l.trim().length > 0 && summaryBulletHasHeadline(l));
 }
 
 /** Legacy payloads: "• TICKER: TICKER: …" → "• TICKER: …" */
@@ -356,14 +369,20 @@ function DailyNewsBody({
           Today&apos;s biggest developments across the watchlist
         </div>
         <div className="mt-3 space-y-2 font-sans text-sm leading-relaxed sm:text-base">
-          {summaryLines.map((line, i) => (
-            <TopLevelSummaryBulletLine
-              key={i}
-              line={line}
-              summaryByTicker={p.summaryByTicker}
-              onSourcesChanged={onSourcesChanged}
-            />
-          ))}
+          {summaryLines.length > 0 ? (
+            summaryLines.map((line, i) => (
+              <TopLevelSummaryBulletLine
+                key={i}
+                line={line}
+                summaryByTicker={p.summaryByTicker}
+                onSourcesChanged={onSourcesChanged}
+              />
+            ))
+          ) : (
+            <p className="m-0 text-sm leading-relaxed" style={{ color: "var(--muted2)" }}>
+              No ticker-specific headlines in this window — check the full news list below.
+            </p>
+          )}
         </div>
         <div className="mt-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>
           Generated {new Date(p.generatedAt).toLocaleString()} · Sources: {p.sourcesUsed.slice(0, 6).join(", ")}

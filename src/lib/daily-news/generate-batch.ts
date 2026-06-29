@@ -425,11 +425,10 @@ export async function buildDailyNewsPayload(
     };
 
     /** Watchlist summary: SEC + company corpus only — never industry / trade front-page items. */
-    const first =
-      firstUsableHeadline(secFilings) ||
-      firstUsableHeadline(companyNews) ||
-      `no notable ticker-specific items in the summary window.`;
-    topBullets.push(`${watchlistNewsDisplayLabel(ticker, companyName)}: ${first}`);
+    const first = firstUsableHeadline(secFilings) || firstUsableHeadline(companyNews);
+    if (first) {
+      topBullets.push(`${watchlistNewsDisplayLabel(ticker, companyName)}: ${first}`);
+    }
   }
 
   const generatedAt = windowEnd.toISOString();
