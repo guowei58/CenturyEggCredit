@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DailyNewsBatchPayload, DailyNewsTickerBlock } from "@/lib/daily-news/types";
+import { DailyNewsTickerSourcesDropdown } from "@/components/daily-news/DailyNewsTickerSourcesDropdown";
 import { DailyNewsMark } from "@/components/daily-news/DailyNewsMark";
 import {
   buildAggregateNewsRows,
@@ -221,7 +222,12 @@ export function DailyNewsDrawer({
                 ))}
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
-                {selected && <DailyNewsBody block={selected} />}
+                {selected && (
+                  <DailyNewsBody
+                    block={selected}
+                    onSourcesChanged={() => setShowRefreshHintDot(true)}
+                  />
+                )}
               </div>
             </>
           )}
@@ -266,9 +272,11 @@ function resolveBulletWorkspaceKey(
 function TopLevelSummaryBulletLine({
   line,
   summaryByTicker,
+  onSourcesChanged,
 }: {
   line: string;
   summaryByTicker: Record<string, DailyNewsTickerBlock>;
+  onSourcesChanged?: () => void;
 }) {
   const normalized = dedupeTickerInBullet(line);
   const m = normalized.match(/^(\s*•\s+)([^:]+):\s*(.*)$/);
@@ -309,6 +317,13 @@ function TopLevelSummaryBulletLine({
             {display}
           </span>
         )}
+        {workspaceKey ? (
+          <DailyNewsTickerSourcesDropdown
+            ticker={workspaceKey}
+            initialPublications={block?.industryPublications}
+            onChanged={onSourcesChanged}
+          />
+        ) : null}
         <span>: {rest}</span>
       </p>
     );
@@ -320,7 +335,13 @@ function TopLevelSummaryBulletLine({
   );
 }
 
-function DailyNewsBody({ block }: { block: BatchRow }) {
+function DailyNewsBody({
+  block,
+  onSourcesChanged,
+}: {
+  block: BatchRow;
+  onSourcesChanged?: () => void;
+}) {
   const p = block.payload;
   const summaryLines = topLevelSummaryBodyLines(p.topLevelSummary);
   const aggregateRows = useMemo(() => buildAggregateNewsRows(p), [p]);
@@ -336,7 +357,12 @@ function DailyNewsBody({ block }: { block: BatchRow }) {
         </div>
         <div className="mt-3 space-y-2 font-sans text-sm leading-relaxed sm:text-base">
           {summaryLines.map((line, i) => (
-            <TopLevelSummaryBulletLine key={i} line={line} summaryByTicker={p.summaryByTicker} />
+            <TopLevelSummaryBulletLine
+              key={i}
+              line={line}
+              summaryByTicker={p.summaryByTicker}
+              onSourcesChanged={onSourcesChanged}
+            />
           ))}
         </div>
         <div className="mt-3 text-xs leading-relaxed" style={{ color: "var(--muted2)" }}>

@@ -12,6 +12,7 @@ import {
   CapitalStructureTabPromptApiButtons,
   useCapitalStructureExcel,
 } from "@/components/CapitalStructureExcelFileBox";
+import { CapitalStructureSecuritiesPanel } from "@/components/CapitalStructureSecuritiesPanel";
 import { usePromptTemplateOverride } from "@/lib/prompt-template-overrides";
 import {
   CAPITAL_STRUCTURE_PROMPT_TEMPLATE,
@@ -21,6 +22,69 @@ import { openClaudeWithClipboard } from "@/lib/claude-web-chat-url";
 import { openChatGptWithClipboard } from "@/lib/chatgpt-open-url";
 import { openGeminiWithClipboard, OPEN_IN_EXTERNAL_AI_FULL_LINE } from "@/lib/gemini-open-url";
 import { openDeepSeekWithClipboard } from "@/lib/deepseek-open-url";
+
+function CapitalStructureTabBody({
+  ticker,
+  prompt,
+  resolvePromptPreview,
+  statusMessage,
+  setStatusMessage,
+  clipboardFailed,
+  setClipboardFailed,
+  onCopy,
+  onClaude,
+  onChatGpt,
+  onGemini,
+  onDeepSeek,
+}: {
+  ticker: string;
+  prompt: string;
+  resolvePromptPreview: (tpl: string) => string;
+  statusMessage: string | null;
+  setStatusMessage: (msg: string | null) => void;
+  clipboardFailed: boolean;
+  setClipboardFailed: (v: boolean) => void;
+  onCopy: () => void;
+  onClaude: () => void;
+  onChatGpt: () => void;
+  onGemini: () => void;
+  onDeepSeek: () => void;
+}) {
+  const { latestItem } = useCapitalStructureExcel();
+
+  return (
+    <div className="space-y-8">
+      <Card
+        className="card-shell--excel-workbook"
+        title={`Capital Structure - ${ticker}`}
+        titleAside={
+          <div className="card-header-excel-upload shrink-0">
+            <CapitalStructureExcelUpload />
+          </div>
+        }
+      >
+        <CapitalStructureTabLayout
+          prompt={prompt}
+          resolvePromptPreview={resolvePromptPreview}
+          statusMessage={statusMessage}
+          setStatusMessage={setStatusMessage}
+          clipboardFailed={clipboardFailed}
+          setClipboardFailed={setClipboardFailed}
+          onCopy={onCopy}
+          onClaude={onClaude}
+          onChatGpt={onChatGpt}
+          onGemini={onGemini}
+          onDeepSeek={onDeepSeek}
+        />
+      </Card>
+      <CapitalStructureSecuritiesPanel
+        ticker={ticker}
+        latestExcelFilename={latestItem?.filename ?? null}
+        refreshKey={latestItem?.id ?? null}
+      />
+    </div>
+  );
+}
 
 function CapitalStructureTabLayout({
   prompt,
@@ -208,32 +272,21 @@ export function CompanyCapitalStructureTab({
   }
 
   return (
-    <div className="space-y-8">
-      <CapitalStructureExcelProvider ticker={safeTicker}>
-        <Card
-          className="card-shell--excel-workbook"
-          title={`Capital Structure - ${safeTicker}`}
-          titleAside={
-            <div className="card-header-excel-upload shrink-0">
-              <CapitalStructureExcelUpload />
-            </div>
-          }
-        >
-          <CapitalStructureTabLayout
-            prompt={prompt}
-            resolvePromptPreview={resolvePromptPreview}
-            statusMessage={statusMessage}
-            setStatusMessage={setStatusMessage}
-            clipboardFailed={clipboardFailed}
-            setClipboardFailed={setClipboardFailed}
-            onCopy={() => void copyToClipboard()}
-            onClaude={openInClaude}
-            onChatGpt={openInChatGPT}
-            onGemini={openInGemini}
-            onDeepSeek={openInDeepSeek}
-          />
-        </Card>
-      </CapitalStructureExcelProvider>
-    </div>
+    <CapitalStructureExcelProvider ticker={safeTicker}>
+      <CapitalStructureTabBody
+        ticker={safeTicker}
+        prompt={prompt}
+        resolvePromptPreview={resolvePromptPreview}
+        statusMessage={statusMessage}
+        setStatusMessage={setStatusMessage}
+        clipboardFailed={clipboardFailed}
+        setClipboardFailed={setClipboardFailed}
+        onCopy={() => void copyToClipboard()}
+        onClaude={openInClaude}
+        onChatGpt={openInChatGPT}
+        onGemini={openInGemini}
+        onDeepSeek={openInDeepSeek}
+      />
+    </CapitalStructureExcelProvider>
   );
 }

@@ -150,12 +150,24 @@ export function useExcelWorkbookUpload({
           method: "POST",
           body: form,
         });
-        const body = (await res.json()) as { ok?: boolean; error?: string; item?: ExcelUploadItem };
+        const body = (await res.json()) as {
+          ok?: boolean;
+          error?: string;
+          item?: ExcelUploadItem;
+          securitiesSync?: { ok: true; parsedCount: number; sheetName?: string | null } | { ok: false; error: string };
+        };
         if (!res.ok || body.ok !== true || !body.item) {
           throw new Error(body?.error ?? "Failed to upload Excel.");
         }
 
-        setStatus("Excel saved.");
+        const syncMsg =
+          body.securitiesSync?.ok === true
+            ? ` Extracted ${body.securitiesSync.parsedCount} securities.`
+            : body.securitiesSync?.ok === false
+              ? ` Securities sync: ${body.securitiesSync.error}`
+              : "";
+
+        setStatus(`Excel saved.${syncMsg}`);
         const buf = (await file.arrayBuffer()).slice(0);
         setWorkbookBuffer(buf);
         await refresh();
@@ -190,7 +202,12 @@ export function useExcelWorkbookUpload({
           method: "POST",
           body: form,
         });
-        const body = (await res.json()) as { ok?: boolean; error?: string; item?: ExcelUploadItem };
+        const body = (await res.json()) as {
+          ok?: boolean;
+          error?: string;
+          item?: ExcelUploadItem;
+          securitiesSync?: { ok: true; parsedCount: number; sheetName?: string | null } | { ok: false; error: string };
+        };
         if (!res.ok || body.ok !== true || !body.item) {
           throw new Error(body?.error ?? "Failed to save Excel.");
         }
@@ -198,7 +215,13 @@ export function useExcelWorkbookUpload({
         setWorkbookBuffer(buf.slice(0));
         await refresh();
         await fetchPreview(body.item.filename, filename, undefined, buf.slice(0));
-        setStatus("Excel saved.");
+        const syncMsg =
+          body.securitiesSync?.ok === true
+            ? ` Extracted ${body.securitiesSync.parsedCount} securities.`
+            : body.securitiesSync?.ok === false
+              ? ` Securities sync: ${body.securitiesSync.error}`
+              : "";
+        setStatus(`Excel saved.${syncMsg}`);
         return true;
       } catch (e) {
         setStatus(e instanceof Error ? e.message : "Failed to save Excel.");

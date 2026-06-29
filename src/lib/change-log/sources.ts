@@ -1,5 +1,5 @@
 import { fetchGoogleNewsRssSearch } from "@/lib/daily-news/rss";
-import { resolveTradePublications } from "@/lib/daily-news/industry-source-map";
+import { resolveIndustryPublicationsForDigest } from "@/lib/daily-news/custom-publications";
 import { getCompanyProfile } from "@/lib/sec-edgar";
 import {
   calendarDateKeyFromTimestamp,
@@ -224,7 +224,15 @@ export async function gatherChangeLogSources(params: {
   }
 
   try {
-    const trades = resolveTradePublications(ticker, companyName, sic, sicDescription, formerNames);
+    const industryResolution = await resolveIndustryPublicationsForDigest({
+      userId: params.userId,
+      ticker,
+      companyName,
+      sicRaw: sic,
+      sicDescription,
+      formerNames,
+    });
+    const trades = industryResolution.publications;
     for (const tr of trades.slice(0, 4)) {
       const q = `site:${tr.siteDomain} (${ticker} OR "${companyName.split(" ")[0] ?? ""}") after:${after} before:${before}`;
       const arts = await fetchGoogleNewsRssSearch(q, 8, "", true);

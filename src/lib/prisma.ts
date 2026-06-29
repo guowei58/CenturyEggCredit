@@ -79,7 +79,8 @@ function getPrisma(): PrismaClient {
     typeof existing.openCorporatesApiCacheEntry?.upsert === "function" &&
     typeof existing.riskChecklistTemplate?.findFirst === "function" &&
     typeof existing.riskAssessment?.findFirst === "function" &&
-    typeof existing.riskIssuerSummary?.upsert === "function"
+    typeof existing.riskIssuerSummary?.upsert === "function" &&
+    typeof existing.capitalStructureSecurity?.findMany === "function"
   ) {
     return existing;
   }

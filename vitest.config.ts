@@ -66,6 +66,7 @@ export default defineConfig({
       "src/lib/bulk-update-preflight.test.ts",
       "src/lib/research-tab-output-style.test.ts",
       "src/lib/extract-xlsx-from-api-text.test.ts",
+      "src/lib/capital-structure-excel-parse.test.ts",
       "src/lib/user-data-export-consolidated-text.test.ts",
       "src/lib/extract-credit-doc-save-label.test.ts",
     ],

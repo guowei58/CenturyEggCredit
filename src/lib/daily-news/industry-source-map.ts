@@ -510,6 +510,18 @@ export function listIndustryBuckets(): IndustryBucket[] {
   return [{ id: "scored-catalog", label: "Scored trade catalog", trades: TRADE_CATALOG.map(toPayload) }];
 }
 
+/** Human-readable outlet name for a domain (catalog match or derived from hostname). */
+export function lookupPublicationNameByDomain(siteDomain: string): string {
+  const domain = siteDomain.trim().toLowerCase().replace(/^www\./, "");
+  const fromCatalog = TRADE_CATALOG.find((p) => p.siteDomain === domain);
+  if (fromCatalog) return fromCatalog.name;
+  const fromGeneral = GENERAL_POOL.find((p) => p.siteDomain === domain);
+  if (fromGeneral) return fromGeneral.name;
+  const base = domain.split(".")[0] ?? domain;
+  if (!base) return domain;
+  return base.charAt(0).toUpperCase() + base.slice(1);
+}
+
 /**
  * Returns exactly three trade publications tailored to the ticker + company text + SEC industry fields.
  */

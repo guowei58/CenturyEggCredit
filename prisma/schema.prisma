@@ -120,6 +120,7 @@ model User {
   riskAssessments                  RiskAssessment[]
   riskDaggerFlags                  RiskDaggerFlag[]
   riskSecurityInstruments          RiskSecurityInstrument[]
+  capitalStructureSecurities       CapitalStructureSecurity[]
   riskIssuerSummaries              RiskIssuerSummary[]
   riskAuditLogs                    RiskAuditLog[]
   riskScoringConfig                RiskScoringConfig?
@@ -2442,6 +2443,42 @@ model RiskSecurityInstrument {
 
   @@index([userId, ticker])
   @@map("risk_security_instruments")
+}
+
+/** Parsed from Capital Structure Excel — one row per debt instrument / security. */
+model CapitalStructureSecurity {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticker            String
+  name              String
+  cusip             String?
+  cusipManuallySet  Boolean   @default(false) @map("cusip_manually_set")
+  isin              String?
+  instrumentType    String?   @map("instrument_type")
+  lienLevel         String?   @map("lien_level")
+  structuralRanking String?   @map("structural_ranking")
+  issuer            String?
+  coupon            String?
+  price             String?
+  yieldToMaturity   String?   @map("yield_to_maturity")
+  faceAmount        String?   @map("face_amount")
+  currency          String?   @default("USD")
+  maturityDate      DateTime? @map("maturity_date")
+  maturityLabel     String?   @map("maturity_label")
+  sourceExcelFile   String?   @map("source_excel_file")
+  sourceRowIndex    Int?      @map("source_row_index")
+  sortOrder         Int       @default(0) @map("sort_order")
+  /** User has edited one or more fields — preserved across Excel re-sync. */
+  userEdited        Boolean   @default(false) @map("user_edited")
+  /** CUSIP entered — treated as a real tradeable security for downstream work. */
+  isConfirmed       Boolean   @default(false) @map("is_confirmed")
+  confirmedAt       DateTime? @map("confirmed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId, ticker])
+  @@map("capital_structure_securities")
 }
 
 model RiskAssessment {

@@ -19,6 +19,10 @@ export type DailyNewsIndustryPublication = {
   id: string;
   name: string;
   siteDomain: string;
+  /** True when user-provided URLs override automatic SIC scoring. */
+  custom?: boolean;
+  /** Homepage or publication URL the user entered. */
+  url?: string | null;
 };
 
 export type DailyNewsTickerBlock = {

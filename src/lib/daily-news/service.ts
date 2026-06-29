@@ -93,7 +93,7 @@ export async function refreshDailyNewsForUser(userId: string): Promise<{ ok: tru
   }
   try {
     const windowEnd = new Date();
-    const { batchDateKey, payload, watchlistSignature } = await buildDailyNewsPayload(tickers, windowEnd);
+    const { batchDateKey, payload, watchlistSignature } = await buildDailyNewsPayload(tickers, windowEnd, userId);
     await upsertDailyNewsBatch(userId, batchDateKey, watchlistSignature, payload);
     await pruneDailyNewsHistory(userId);
     return { ok: true };

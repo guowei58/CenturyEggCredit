@@ -6,6 +6,7 @@ import {
   listCapitalStructureExcels,
   saveCapitalStructureExcelFile,
 } from "@/lib/capital-structure-excel";
+import { syncCapitalStructureSecuritiesFromExcel } from "@/lib/capital-structure-securities";
 import {
   excelWorkbookPreviewJson,
   isPreviewRequest,
@@ -84,5 +85,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ tic
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  return NextResponse.json({ ok: true, item: result.item });
+  const sync = await syncCapitalStructureSecuritiesFromExcel(userId, ticker, result.item.filename);
+
+  return NextResponse.json({
+    ok: true,
+    item: result.item,
+    securitiesSync: sync.ok
+      ? {
+          ok: true as const,
+          parsedCount: sync.parsedCount,
+          sheetName: sync.sheetName,
+        }
+      : { ok: false as const, error: sync.error },
+  });
 }

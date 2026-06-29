@@ -2,7 +2,7 @@ import { getCompanyProfile, getFilingsByTicker, type SecFiling } from "@/lib/sec
 import { dedupeHashFor, dedupeNewsItems } from "./dedupe";
 import { watchlistNewsDisplayLabel } from "./display-label";
 import { formatNyDateKey, isWithinRollingHours } from "./dates";
-import { resolveTradePublications } from "./industry-source-map";
+import { resolveIndustryPublicationsForDigest } from "./custom-publications";
 import { fetchGoogleNewsSearch } from "./rss";
 import { classifyOutletFromUrl } from "./classify-source";
 import { fetchNewsEventsTabItemsForDay } from "./news-events-ingest";
@@ -293,7 +293,8 @@ function companySearchFragment(ticker: string, escapedLegalName: string): string
  */
 export async function buildDailyNewsPayload(
   tickers: string[],
-  windowEnd: Date
+  windowEnd: Date,
+  userId?: string
 ): Promise<{ batchDateKey: string; payload: DailyNewsBatchPayload; watchlistSignature: string }> {
   const uniq = [...new Set(tickers.map((t) => t.trim().toUpperCase()).filter(Boolean))];
   const sig = watchlistSignature(uniq);
@@ -319,8 +320,19 @@ export async function buildDailyNewsPayload(
       fetchErrors.push({ source: `profile:${ticker}`, message: e instanceof Error ? e.message : String(e) });
     }
 
-    const trades = resolveTradePublications(ticker, companyName, sic, sicDescription, formerNames);
+    const industryResolution = await resolveIndustryPublicationsForDigest({
+      userId,
+      ticker,
+      companyName,
+      sicRaw: sic,
+      sicDescription,
+      formerNames,
+    });
+    const trades = industryResolution.publications;
     trades.forEach((t) => sourcesUsed.add(`trade:${t.siteDomain}`));
+    if (industryResolution.mode === "custom") {
+      sourcesUsed.add("Custom industry publications");
+    }
 
     let secItems: DailyNewsItem[] = [];
     try {
@@ -396,7 +408,16 @@ export async function buildDailyNewsPayload(
       ticker,
       companyName,
       newSinceLastUpdate: [],
-      industryPublications: trades.map((t) => ({ id: t.id, name: t.name, siteDomain: t.siteDomain })),
+      industryPublications: trades.map((t) => {
+        const custom = industryResolution.customPublications.find((c) => c.siteDomain === t.siteDomain);
+        return {
+          id: t.id,
+          name: t.name,
+          siteDomain: t.siteDomain,
+          custom: industryResolution.mode === "custom",
+          url: custom?.url ?? null,
+        };
+      }),
       companyNews,
       industryNews,
       secFilings,

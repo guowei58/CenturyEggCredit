@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useSession } from "next-auth/react";
+import { resolveProvider } from "@/lib/ai-provider";
 import { canAccessRiskChecklist } from "@/lib/risk-checklist/access";
 import { classifyRiskScore, calculateQuestionPoints, isUnknownAnswer, riskClassificationColor } from "@/lib/risk-checklist/classification";
 import { applyOptimisticAnswer, mergeSavedAnswerBatch, mergedQuestionIdsFromBatch } from "@/lib/risk-checklist/optimistic-workspace";
 import type { RiskAnswerLabel, RiskClassification } from "@/lib/risk-checklist/types";
+import { useUserPreferences } from "@/components/UserPreferencesProvider";
 import { Card } from "@/components/ui";
 
 type Workspace = {
@@ -175,11 +177,15 @@ function SegmentedAnswer({
 
 export function CompanyRiskChecklistTab({ ticker }: { ticker: string }) {
   const { data: session, status } = useSession();
+  const { preferences } = useUserPreferences();
   const allowed = status === "authenticated" && canAccessRiskChecklist(session?.user?.email);
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeNote, setAnalyzeNote] = useState<string | null>(null);
+  const [showAnalyzerHint, setShowAnalyzerHint] = useState(false);
   const workspaceRef = useRef<Workspace | null>(null);
   const saveQueueRef = useRef(Promise.resolve());
   const pendingSavesRef = useRef(0);
@@ -364,6 +370,44 @@ export function CompanyRiskChecklistTab({ ticker }: { ticker: string }) {
     [queueAnswerSave]
   );
 
+  const runAiAnalyzer = useCallback(async () => {
+    if (!workspaceRef.current?.assessment.isEditable || analyzing) return;
+    setShowAnalyzerHint(true);
+    setError(null);
+    setAnalyzeNote(null);
+    setAnalyzing(true);
+    try {
+      const provider = resolveProvider(preferences.aiProvider);
+      const res = await fetch(`/api/risk-checklist/${encodeURIComponent(ticker)}/ai-analyze`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        workspace?: Workspace;
+        answeredCount?: number;
+        questionCount?: number;
+        sourceCount?: number;
+      };
+      if (!res.ok || !data.workspace) {
+        throw new Error(data.error ?? "AI Risk Analyzer failed");
+      }
+      workspaceRef.current = data.workspace;
+      setWorkspace(data.workspace);
+      setAnswerOverrides({});
+      pendingAnswersRef.current.clear();
+      inFlightAnswersRef.current.clear();
+      setAnalyzeNote(
+        `AI filled ${data.answeredCount ?? 0} of ${data.questionCount ?? 0} questions using ${data.sourceCount ?? 0} saved response file(s). Review and edit any answer as needed.`
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "AI Risk Analyzer failed");
+    } finally {
+      setAnalyzing(false);
+    }
+  }, [analyzing, preferences.aiProvider, ticker]);
+
   if (!allowed) {
     return (
       <Card title="Risk Checklist">
@@ -387,35 +431,63 @@ export function CompanyRiskChecklistTab({ ticker }: { ticker: string }) {
   const editable = workspace.assessment.isEditable;
 
   return (
-    <div className="flex min-h-0 flex-col gap-4">
+    <div className="flex min-h-0 flex-col gap-3">
       {error ? (
         <p className="rounded border px-3 py-2 text-xs" style={{ borderColor: "var(--red, #ef4444)", color: "var(--red, #ef4444)" }}>
           {error}
         </p>
       ) : null}
 
-      <div className="flex min-w-0 flex-nowrap items-stretch gap-2 overflow-x-auto pb-1">
-        <HeaderMetricCard
-          label="Composite Risk Score"
-          value={<ScoreOutOf100 score={workspace.scores.finalScoreRounded} large />}
-          subtext={workspace.scores.effectiveClassification}
-          valueColor={riskClassificationColor(workspace.scores.effectiveClassification)}
-          subtextColor={riskClassificationColor(workspace.scores.effectiveClassification)}
-          largeValue
-        />
-        {workspace.categories.map((cat) => (
-          <CategoryBucketBadge key={cat.key} label={cat.label} score={cat.displayScoreRounded} />
-        ))}
-        <HeaderMetricCard
-          label="Last Updated"
-          value={new Date(workspace.assessment.updatedAt).toLocaleString()}
-          subtext={
-            <>
-              {workspace.assessment.status}
-              {syncing ? " · saving…" : ""}
-            </>
-          }
-        />
+      <div className="flex min-w-0 items-start gap-2">
+        <div className="flex min-w-0 flex-1 flex-nowrap items-stretch gap-2 overflow-x-auto pb-1">
+          <HeaderMetricCard
+            label="Composite Risk Score"
+            value={<ScoreOutOf100 score={workspace.scores.finalScoreRounded} large />}
+            subtext={workspace.scores.effectiveClassification}
+            valueColor={riskClassificationColor(workspace.scores.effectiveClassification)}
+            subtextColor={riskClassificationColor(workspace.scores.effectiveClassification)}
+            largeValue
+          />
+          {workspace.categories.map((cat) => (
+            <CategoryBucketBadge key={cat.key} label={cat.label} score={cat.displayScoreRounded} />
+          ))}
+          <HeaderMetricCard
+            label="Last Updated"
+            value={new Date(workspace.assessment.updatedAt).toLocaleString()}
+            subtext={
+              <>
+                {workspace.assessment.status}
+                {syncing ? " · saving…" : ""}
+              </>
+            }
+          />
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <button
+            type="button"
+            disabled={!editable || analyzing || syncing}
+            onClick={() => void runAiAnalyzer()}
+            className="shrink-0 rounded border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide disabled:opacity-50"
+            style={{
+              borderColor: "var(--accent)",
+              color: "var(--accent)",
+              background: "color-mix(in srgb, var(--accent) 10%, transparent)",
+            }}
+            title="Uses saved tab responses across this company to pre-fill checklist answers"
+          >
+            {analyzing ? "Analyzing…" : "AI Risk Analyzer"}
+          </button>
+          {showAnalyzerHint && !analyzeNote ? (
+            <p className="max-w-[14rem] text-right text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+              Aggregates saved research responses and suggests Yes / No / Mixed answers. You can change any answer afterward.
+            </p>
+          ) : null}
+          {analyzeNote ? (
+            <p className="max-w-[14rem] text-right text-[10px] leading-snug" style={{ color: "var(--muted2)" }}>
+              {analyzeNote}
+            </p>
+          ) : null}
+        </div>
       </div>
 
       {workspace.assessment.manualOverrideScore != null ? (

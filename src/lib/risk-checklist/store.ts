@@ -191,6 +191,24 @@ async function ensureIssuerDraft(userId: string, ticker: string, performedBy: st
   return draft;
 }
 
+export async function findIssuerDraftForAnalyze(userId: string, ticker: string) {
+  await ensureRiskChecklistTemplatesSeeded();
+  let draft = await findIssuerDraft(userId, ticker);
+  if (!draft) {
+    draft = await ensureIssuerDraft(userId, ticker, userId);
+  }
+  const questions = draft.template.questions.map((q) => ({
+    id: q.id,
+    questionCode: q.questionCode,
+    categoryLabel: CATEGORY_LABELS[q.category] ?? q.category,
+    questionText: q.questionText,
+  }));
+  return {
+    isEditable: draft.status === "draft" || draft.status === "reopened",
+    questions,
+  };
+}
+
 async function getLatestCompletedIssuer(userId: string, ticker: string) {
   return prisma.riskAssessment.findFirst({
     where: { userId, ticker, assessmentType: "issuer", status: "completed" },

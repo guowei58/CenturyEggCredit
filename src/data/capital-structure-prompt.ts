@@ -198,8 +198,8 @@ For each security or debt instrument, show as much of the following as possible:
 - Restricted / unrestricted status
 - Restricted group support
 - Public vs private
-- Ratings if available
-- Ticker / CUSIP if relevant
+- **CUSIP (required for each bond/note/security row — see CUSIP requirement below)**
+- ISIN if available (in addition to CUSIP)
 - Maturity year / maturity bucket
 - Notes / comments
 - Material nonguarantor / unrestricted asset notes
@@ -225,6 +225,21 @@ Also include summary rows where relevant, such as:
 - Secured leverage
 - Senior secured leverage
 - Other leverage metrics shown in my examples
+
+==================================================
+CUSIP COLUMN — MANDATORY ON CAPITAL STRUCTURE TAB
+==================================================
+The **Capital Structure** worksheet MUST include a dedicated **CUSIP** column (or CUSIP/ISIN column with CUSIP populated).
+
+This workbook is imported into a securities database. **Only rows with a valid CUSIP are imported as securities.** Rows without a CUSIP are ignored (summary lines, term loans, revolvers, EBITDA, leverage metrics, etc.).
+
+Rules:
+1. **Every publicly traded bond, note, or other security** listed as its own line item in the Capital Structure table MUST have its CUSIP filled in.
+2. Look up CUSIPs from filings, indentures, FINRA TRACE, Bloomberg, Refinitiv, the company’s investor relations materials, or other reliable sources — do not invent CUSIPs.
+3. **Term loans, revolvers, and other bank debt** that do not have a public CUSIP may remain in the capital structure table for reference but should leave the CUSIP cell **blank** — they will not be imported into the securities database.
+4. **Summary / subtotal / header rows** (totals, section headers, leverage lines) must leave CUSIP blank.
+5. If a CUSIP truly cannot be found for a traded security, leave it blank and document the gap in the Sources tab — do not guess.
+6. Place the CUSIP column in a consistent, visible position (match my examples if provided) so downstream import can map it reliably.
 
 ==================================================
 GUARANTOR / COLLATERAL / RESTRICTED STATUS REQUIREMENT
