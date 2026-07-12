@@ -28,6 +28,7 @@ export default defineConfig({
       "src/lib/buildPublicRecordsProfileFromSec.test.ts",
       "src/lib/company-workspace-key.test.ts",
       "src/lib/company-prompt-labels.test.ts",
+      "src/lib/import-ticker-responses.test.ts",
       "src/lib/subsidiary-name-hints.test.ts",
       "src/lib/debt-map/**/*.test.ts",
       "src/lib/secDebtFootnoteExtract.test.ts",

@@ -37,7 +37,9 @@ export function UploadPromptResponsesButton({
       const importResult = await importTickerResponseFiles(safeTicker, files);
       setResult(importResult);
       if (importResult.saved.length === 0 && importResult.failed.length === 0) {
-        setError("No files matched a tab name. Name each file after its tab (e.g. Business Overview.txt).");
+        setError(
+          "No files matched a tab name. Use the tab name (e.g. Business Overview.txt) or numbered deliverables (e.g. 01_business-overview.txt)."
+        );
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed");

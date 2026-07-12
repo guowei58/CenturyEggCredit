@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-28T22:55:14.205Z",
+  "fetchedAt": "2026-07-12T01:39:33.045Z",
   "discovered": [
     {
       "id": "gpt-3.5-turbo",
@@ -320,6 +320,18 @@
     {
       "id": "gpt-5.5-pro-2026-04-23",
       "label": "GPT 5 5 Pro 2026 04 23"
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "label": "GPT 5 6 Sol"
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "label": "GPT 5 6 Terra"
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "label": "GPT 5 6 Luna"
     }
   ]
 }

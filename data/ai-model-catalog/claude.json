@@ -1,6 +1,10 @@
 {
-  "fetchedAt": "2026-06-28T22:55:14.223Z",
+  "fetchedAt": "2026-07-12T01:39:33.042Z",
   "discovered": [
+    {
+      "id": "claude-sonnet-5",
+      "label": "Claude Sonnet 5"
+    },
     {
       "id": "claude-fable-5",
       "label": "Claude Fable 5"

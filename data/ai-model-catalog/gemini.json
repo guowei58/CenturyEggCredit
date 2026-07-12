@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-28T22:55:14.233Z",
+  "fetchedAt": "2026-07-12T01:39:33.041Z",
   "discovered": [
     {
       "id": "gemini-2.5-flash",
@@ -94,8 +94,16 @@
       "label": "Nano Banana 2"
     },
     {
+      "id": "gemini-3.1-flash-lite-image",
+      "label": "Nano Banana 2 Lite"
+    },
+    {
       "id": "gemini-3.5-flash",
       "label": "Gemini 3.5 Flash"
+    },
+    {
+      "id": "gemini-omni-flash-preview",
+      "label": "Gemini Omni Flash Preview"
     },
     {
       "id": "gemini-3.1-flash-tts-preview",

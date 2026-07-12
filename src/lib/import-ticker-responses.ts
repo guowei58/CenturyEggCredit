@@ -154,7 +154,10 @@ function stripExtension(name: string): string {
 
 function normalizeImportStem(filename: string): string {
   const base = stripExtension(basename(filename));
-  return base.replace(/^\d+-/, "").trim();
+  return base
+    .replace(/^\d+[-_]/, "")
+    .replace(/_/g, "-")
+    .trim();
 }
 
 export function resolveTabResponseImportTarget(filename: string): TabResponseImportTarget | null {
